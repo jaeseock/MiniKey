@@ -1,0 +1,14 @@
+
+//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path  : MDC_SETTING.txt
+//   - time stamp : 2014.04.29 (13:17:57),
+//   - exporter   : ø¿¿ÁºÆ (MkDataNodeConverter)
+//--------------------------------------------------------------------//
+
+
+bool DefBackupEnable = Yes;
+str DefExtensionValue = "mmd";
+bool DefNewExtension = Yes;
+int DefOutputType = 1;
+str DefTargetDirectory = "d:\Solutions\MiniKey\Tool\MkDataNodeConverter\bin\Debug";

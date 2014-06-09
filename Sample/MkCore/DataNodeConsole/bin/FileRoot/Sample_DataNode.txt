@@ -1,0 +1,33 @@
+//-----------------------------------------------------------------------------//
+// [ Sample_DataNode ]
+//    - Begin at : 2014.04.24 [18:28:57]
+//-----------------------------------------------------------------------------//
+
+< System environment >
+   - Application version : 0.0.0.0
+   - MiniKey version : 1.0.0.0
+   - Build mode : Debug
+   - User name : 오재석
+   - OS : Windows 6.1 Service Pack 1 (x86)
+   - Cores : 2
+   - Code page : 949
+   - Background resolution : 1920 * 1080
+   - Module directory :
+     d:\Solutions\MiniKey\Sample\Sample_DataNode\bin\Debug\
+   - Root directory :
+     d:\Solutions\MiniKey\Sample\Sample_DataNode\bin\FileRoot\
+
+< File system >
+   - Chunks : 0
+   - Files : 0
+
+[18:28:58] > Logic thread(7816) 등록
+[18:28:58] > BG Loading thread(9740) 등록
+[18:28:58] > MkBaseFramework 초기화 성공
+[18:28:58] > Logic thread(7816) 실행
+[18:28:58] > BG Loading thread(9740) 실행
+[18:28:58] > MkBaseFramework 루핑 진입
+[18:28:58] > MkPageManager::SetUp() - TestPage
+[18:33:09] > BG Loading thread(9740) end
+[18:33:09] > Logic thread(7816) end
+[18:33:09] > MkBaseFramework end. Bye~

@@ -1,0 +1,70 @@
+
+//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path  : Scene\sample_.txt
+//   - time stamp : 2014.05.30 (19:19:14),
+//   - exporter   : ¿ÀÀç¼® (MyLovelyMagic)
+//--------------------------------------------------------------------//
+
+
+vec3 Position = (50.000, 50.000, -1.000);
+
+Node "<SRect>"
+{
+	Node "r0" : "T_SRect"
+	{
+		uint Alpha = 128;
+		float Depth = -0.500;
+		vec2 Position = (100.000, 200.000);
+		bool Reflection = // [2]
+			Yes / No;
+		str Resource = // [2]
+			"odt" /
+			"<%T:±¼¸²12%><%S:»ùÇÃ02%>»ùÇÃ ¸Þ¼¼Áö´Ù¿ä";
+	}
+
+	Node "r1" : "T_SRect"
+	{
+		float Depth = -0.500;
+		vec2 Position = (100.000, 0.000);
+		str Resource = // [4]
+			"sdt" /
+			"SampleCategory" /
+			"ErrorMsg" /
+			"SampleMsg";
+	}
+
+	Node "r2" : "T_SRect"
+	{
+		uint Alpha = 128;
+		str Resource = // [4]
+			"map" /
+			"Image\s03.jpg" /
+			"0" /
+			"";
+	}
+}
+
+Node "<SceneNode>"
+{
+	Node "ChildScene" : "T_SceneNode"
+	{
+		vec3 Position = (400.000, 200.000, 100.000);
+		float Rotation = 30.000;
+
+		Node "<SRect>"
+		{
+			Node "SampleRect" : "T_SRect"
+			{
+				vec2 Position = (100.000, 200.000);
+				bool Reflection = // [2]
+					No / Yes;
+				str Resource = // [4]
+					"map" /
+					"Image\s02.jpg" /
+					"0" /
+					"";
+			}
+		}
+	}
+}

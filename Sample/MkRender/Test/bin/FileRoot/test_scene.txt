@@ -1,0 +1,1100 @@
+
+//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path  : test_scene.txt
+//   - time stamp : 2014.06.09 (00:26:04),
+//   - exporter   : 오군 (Test)
+//--------------------------------------------------------------------//
+
+
+vec3 Position = (0.000, 0.000, 1000.000);
+
+Node "<SceneNode>"
+{
+	Node "01" : "T_SceneNode"
+	{
+		vec3 Position = (400.000, 150.000, -910.000);
+
+		Node "<SceneNode>"
+		{
+			Node "02" : "T_SceneNode" {}
+
+			Node "BaseWindow" : "T_SceneNode"
+			{
+				Node "<SRect>"
+				{
+					Node "LB" : "T_SRect"
+					{
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_LB";
+					}
+
+					Node "LC" : "T_SRect"
+					{
+						vec2 Position = (0.000, 6.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_LC";
+					}
+
+					Node "LT" : "T_SRect"
+					{
+						vec2 Position = (0.000, 306.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_LT";
+					}
+
+					Node "MB" : "T_SRect"
+					{
+						vec2 Position = (6.000, 0.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_MB";
+					}
+
+					Node "MC" : "T_SRect"
+					{
+						vec2 Position = (6.000, 6.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_MC";
+					}
+
+					Node "MT" : "T_SRect"
+					{
+						vec2 Position = (6.000, 306.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_MT";
+					}
+
+					Node "RB" : "T_SRect"
+					{
+						vec2 Position = (206.000, 0.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_RB";
+					}
+
+					Node "RC" : "T_SRect"
+					{
+						vec2 Position = (206.000, 6.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_RC";
+					}
+
+					Node "RT" : "T_SRect"
+					{
+						vec2 Position = (206.000, 306.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"WB_SolidGray_RT";
+					}
+				}
+			}
+
+			Node "CancelIcon" : "T_SceneNode"
+			{
+				vec3 Position = (184.000, 289.000, -2.000);
+
+				Node "<SceneNode>"
+				{
+					Node "Default" : "T_SceneNode"
+					{
+						Node "<SRect>"
+						{
+							Node "SN" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_CancelIconDefault";
+							}
+						}
+					}
+
+					Node "Disable" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "SN" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_CancelIconDisable";
+							}
+						}
+					}
+
+					Node "OnClick" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "SN" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_CancelIconOnClick";
+							}
+						}
+					}
+
+					Node "OnCursor" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "SN" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_CancelIconOnCursor";
+							}
+						}
+					}
+				}
+			}
+
+			Node "NegativeButton" : "T_SceneNode"
+			{
+				vec3 Position = (110.000, 6.000, -1.000);
+
+				Node "<SceneNode>"
+				{
+					Node "Default" : "T_SceneNode"
+					{
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedDefault_RT";
+							}
+						}
+					}
+
+					Node "Disable" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_RT";
+							}
+						}
+					}
+
+					Node "OnClick" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnClick_RT";
+							}
+						}
+					}
+
+					Node "OnCursor" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingRedOnCursor_RT";
+							}
+						}
+					}
+				}
+			}
+
+			Node "PossitiveButton" : "T_SceneNode"
+			{
+				vec3 Position = (10.000, 6.000, -1.000);
+
+				Node "<SceneNode>"
+				{
+					Node "Default" : "T_SceneNode"
+					{
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueDefault_RT";
+							}
+						}
+					}
+
+					Node "Disable" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingDisable_RT";
+							}
+						}
+					}
+
+					Node "OnClick" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnClick_RT";
+							}
+						}
+					}
+
+					Node "OnCursor" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_LB";
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_LC";
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_LT";
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_MB";
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_MC";
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_MT";
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (76.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_RB";
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (76.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_RC";
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (76.000, 36.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_BlingBlueOnCursor_RT";
+							}
+						}
+					}
+				}
+			}
+
+			Node "WindowTitle" : "T_SceneNode"
+			{
+				vec3 Position = (6.000, 288.000, -1.000);
+
+				Node "<SceneNode>"
+				{
+					Node "LostFocus" : "T_SceneNode"
+					{
+						bool Visible = No;
+
+						Node "<SRect>"
+						{
+							Node "L" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_GradationDirtyBlue_L";
+							}
+
+							Node "M" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_GradationDirtyBlue_M";
+							}
+
+							Node "R" : "T_SRect"
+							{
+								vec2 Position = (194.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_GradationDirtyBlue_R";
+							}
+						}
+					}
+
+					Node "OnFocus" : "T_SceneNode"
+					{
+						Node "<SRect>"
+						{
+							Node "L" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_GradationBlue_L";
+							}
+
+							Node "M" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_GradationBlue_M";
+							}
+
+							Node "R" : "T_SRect"
+							{
+								vec2 Position = (194.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_GradationBlue_R";
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	Node "align node" : "T_BaseWindowNode"
+	{
+		int AlignType = 34;
+		vec3 Position = (0.000, 174.000, -900.000);
+
+		Node "<SRect>"
+		{
+			Node "bg" : "T_SRect"
+			{
+				str Resource = // [4]
+					"map" /
+					"Image\s03.jpg" /
+					"0" /
+					"";
+			}
+		}
+
+		Node "<SceneNode>"
+		{
+			Node "txt node" : "T_BaseWindowNode"
+			{
+				str AlignTargetName = "align node";
+				int AlignType = 68;
+				vec3 Position = (10.000, -50.000, 0.000);
+
+				Node "<SRect>"
+				{
+					Node "text" : "T_SRect"
+					{
+						float Depth = -1.000;
+						vec2 Position = (50.000, 50.000);
+						str Resource = // [2]
+							"odt" /
+							"<%LFS:5%><%T:나고20%><%S:제목%>첫번째 제목입니당.\r\n<%T:굴림16%><%S:일반항목%>  - 내용 항목 첫번째\r\n  - 내용 항목<%S:강조항목%> 이거이 바로 강조\r\n\r\n<%T:나고20%><%S:제목%>두번째 제목입니당.\r\n<%T:굴림16%><%S:일반항목%>  - 내용 항목 첫번째 또나옴\r\n  - 내용 항목<%S:강조항목%> 두번째 강조 ㄱㄱ\r\n\r\n<%T:맑고20%>new type <%T:남산16%>test <%T:맑고20%>again";
+					}
+				}
+			}
+		}
+	}
+}

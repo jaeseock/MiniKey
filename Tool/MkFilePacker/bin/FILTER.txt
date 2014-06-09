@@ -1,0 +1,8 @@
+
+str Name = "datanode_00.bin" / "src_3.jpg";
+
+str Extension = "exe" / "txt";
+
+//str Prefix = "";
+
+str Exception = "test_0.txt";

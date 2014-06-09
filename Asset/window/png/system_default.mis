@@ -1,0 +1,91 @@
+Template "T_WindowBaseIcon"
+{
+	int2 Position = (0, 0);
+	int2 Size = (16, 16);
+}
+
+Template "T_WindowBaseTable"
+{
+	int2 Position = (0, 0);
+	int2 Size = (6, 6);
+	int2 Table = (3, 3);
+}
+
+Node "WB_SemiTransPurple_" : "T_WindowBaseTable" {}
+
+Node "WB_SolidGray_" : "T_WindowBaseTable"
+{
+	int2 Position = (18, 0);
+}
+
+Node "WB_SolidBlue_" : "T_WindowBaseTable"
+{
+	int2 Position = (36, 0);
+}
+
+Node "WB_GradationBlue_" : "T_WindowBaseTable"
+{
+	int2 Position = (0, 18);
+	int2 Table = (3, 1);
+}
+
+Node "WB_GradationDirtyBlue_" : "T_WindowBaseTable"
+{
+	int2 Position = (18, 18);
+	int2 Table = (3, 1);
+}
+
+Node "WB_BlingRedDefault_" : "T_WindowBaseTable"
+{
+	int2 Position = (0, 36);
+}
+
+Node "WB_BlingRedOnCursor_" : "T_WindowBaseTable"
+{
+	int2 Position = (18, 36);
+}
+
+Node "WB_BlingRedOnClick_" : "T_WindowBaseTable"
+{
+	int2 Position = (36, 36);
+}
+
+Node "WB_BlingDisable_" : "T_WindowBaseTable"
+{
+	int2 Position = (54, 36);
+}
+
+Node "WB_BlingBlueDefault_" : "T_WindowBaseTable"
+{
+	int2 Position = (0, 54);
+}
+
+Node "WB_BlingBlueOnCursor_" : "T_WindowBaseTable"
+{
+	int2 Position = (18, 54);
+}
+
+Node "WB_BlingBlueOnClick_" : "T_WindowBaseTable"
+{
+	int2 Position = (36, 54);
+}
+
+Node "WB_CancelIconDefault" : "T_WindowBaseIcon"
+{
+	int2 Position = (0, 72);
+}
+
+Node "WB_CancelIconOnCursor" : "T_WindowBaseIcon"
+{
+	int2 Position = (18, 72);
+}
+
+Node "WB_CancelIconOnClick" : "T_WindowBaseIcon"
+{
+	int2 Position = (36, 72);
+}
+
+Node "WB_CancelIconDisable" : "T_WindowBaseIcon"
+{
+	int2 Position = (54, 72);
+}
