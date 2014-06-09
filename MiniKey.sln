@@ -3,16 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkCore", "Project\MkCore\MkCore.vcproj", "{095EB475-D5C1-414E-A4DC-9A44F2101C4D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EmptyRenderProject", "Sample\MkRender\EmptyRenderProject\EmptyRenderProject.vcproj", "{CF68A079-CF37-4ABC-A51D-FB2FB767BD11}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DisplayModeShuffle", "Sample\MkRender\DisplayModeShuffle\DisplayModeShuffle.vcproj", "{7CE50E74-43FB-40BE-8763-A3FFB2AC0017}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Sample\MkRender\Test\Test.vcproj", "{0B5AA43D-73F6-4144-952D-A791D188BE48}"
 	ProjectSection(ProjectDependencies) = postProject
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
@@ -73,18 +63,6 @@ Global
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D}.Release|Win32.Build.0 = Release|Win32
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D}.Shipping|Win32.ActiveCfg = Shipping|Win32
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D}.Shipping|Win32.Build.0 = Shipping|Win32
-		{CF68A079-CF37-4ABC-A51D-FB2FB767BD11}.Debug|Win32.ActiveCfg = Debug|Win32
-		{CF68A079-CF37-4ABC-A51D-FB2FB767BD11}.Debug|Win32.Build.0 = Debug|Win32
-		{CF68A079-CF37-4ABC-A51D-FB2FB767BD11}.Release|Win32.ActiveCfg = Release|Win32
-		{CF68A079-CF37-4ABC-A51D-FB2FB767BD11}.Release|Win32.Build.0 = Release|Win32
-		{CF68A079-CF37-4ABC-A51D-FB2FB767BD11}.Shipping|Win32.ActiveCfg = Shipping|Win32
-		{CF68A079-CF37-4ABC-A51D-FB2FB767BD11}.Shipping|Win32.Build.0 = Shipping|Win32
-		{7CE50E74-43FB-40BE-8763-A3FFB2AC0017}.Debug|Win32.ActiveCfg = Debug|Win32
-		{7CE50E74-43FB-40BE-8763-A3FFB2AC0017}.Debug|Win32.Build.0 = Debug|Win32
-		{7CE50E74-43FB-40BE-8763-A3FFB2AC0017}.Release|Win32.ActiveCfg = Release|Win32
-		{7CE50E74-43FB-40BE-8763-A3FFB2AC0017}.Release|Win32.Build.0 = Release|Win32
-		{7CE50E74-43FB-40BE-8763-A3FFB2AC0017}.Shipping|Win32.ActiveCfg = Shipping|Win32
-		{7CE50E74-43FB-40BE-8763-A3FFB2AC0017}.Shipping|Win32.Build.0 = Shipping|Win32
 		{0B5AA43D-73F6-4144-952D-A791D188BE48}.Debug|Win32.ActiveCfg = Debug|Win32
 		{0B5AA43D-73F6-4144-952D-A791D188BE48}.Debug|Win32.Build.0 = Debug|Win32
 		{0B5AA43D-73F6-4144-952D-A791D188BE48}.Release|Win32.ActiveCfg = Release|Win32

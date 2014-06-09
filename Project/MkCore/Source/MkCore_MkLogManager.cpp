@@ -15,7 +15,7 @@ bool MkLogManager::CreateNewPage(const MkStr& pageName, const MkPathName& filePa
 	MkPathName targetFilePath;
 	if (filePath.Empty())
 	{
-		targetFilePath.ConvertToRootBasisAbsolutePath(MkStr(pageName) + L".txt");
+		targetFilePath.ConvertToRootBasisAbsolutePath(MkStr(pageName) + L".log");
 	}
 	else
 	{
