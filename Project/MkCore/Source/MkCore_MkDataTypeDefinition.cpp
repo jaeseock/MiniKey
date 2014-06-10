@@ -3,6 +3,7 @@
 #include "MkCore_MkMat3.h"
 #include "MkCore_MkQuaternion.h"
 #include "MkCore_MkDataTypeDefinition.h"
+#include "MkCore_MkHashStr.h"
 
 
 //------------------------------------------------------------------------------------------------//
@@ -42,9 +43,12 @@ const MkColor MkColor::Violet(1.f, 0.4f, 0.8f, 1.f);
 const MkQuaternion MkQuaternion::Zero(0.f, 0.f, 0.f, 0.f);
 const MkQuaternion MkQuaternion::Identity(1.f, 0.f, 0.f, 0.f);
 
-// BsStr
+// MkStr
 const MkStr MkStr::Null(L"");
 const MkStr MkStr::CR(L"\r\n");
+
+// MkHashStr
+const MkHashStr MkHashStr::NullHash(L"");
 
 // MkPrimitiveDataType
 ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)

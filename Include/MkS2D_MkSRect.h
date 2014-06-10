@@ -105,6 +105,7 @@ public:
 	// texture
 	// (NOTE) SetDecoString()과 배타적. 기존 설정 된 original/scene deco text가 있을 경우 text 무효화
 	void SetTexture(const MkBaseTexturePtr& texture);
+	void SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetName);
 
 	// original deco text 설정
 	// deco string 문법으로 구성되어 있으면 그대로 적용되고, 일반 문자열이면 DSF가 적용되어 출력됨

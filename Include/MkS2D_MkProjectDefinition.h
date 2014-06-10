@@ -79,89 +79,22 @@
 #define MKDEF_S2D_IMAGE_SUBSET_FILE_TABLE_KEY L"Table"
 
 //------------------------------------------------------------------------------------------------//
-// building template node : MkSRect
+// building template node
 //------------------------------------------------------------------------------------------------//
 
-// 템플릿 이름
+// MkSRect 템플릿 이름
 #define MKDEF_S2D_BT_SRECT_TEMPLATE_NAME L"T_SRect"
 
-// 위치 key
-#define MKDEF_S2D_BT_SRECT_POSITION_KEY L"Position"
-
-// 깊이 key
-#define MKDEF_S2D_BT_SRECT_DEPTH_KEY L"Depth"
-
-// 리소스 key
-#define MKDEF_S2D_BT_SRECT_RESOURCE_KEY L"Resource"
-
-// 리소스 data가 bitmap texture임을 정의하는 태그
-#define MKDEF_S2D_BT_SRECT_RESOURCE_MAP_TAG L"map"
-
-// 리소스 data가 original deco text임을 정의하는 태그
-#define MKDEF_S2D_BT_SRECT_RESOURCE_TEXT_ORIGIN_TAG L"odt"
-
-// 리소스 data가 scene deco text table의 key임을 정의하는 태그
-#define MKDEF_S2D_BT_SRECT_RESOURCE_TEXT_SCENE_TAG L"sdt"
-
-// 알파값 key
-#define MKDEF_S2D_BT_SRECT_ALPHA_KEY L"Alpha"
-
-// 반전 플래그 key
-#define MKDEF_S2D_BT_SRECT_REFLECTION_KEY L"Reflection"
-
-// 보이기 여부 플래그 key
-#define MKDEF_S2D_BT_SRECT_VISIBLE_KEY L"Visible"
-
-//------------------------------------------------------------------------------------------------//
-// building template node : MkSceneNode
-//------------------------------------------------------------------------------------------------//
-
-// 템플릿 이름
+// MkSceneNode 템플릿 이름
 #define MKDEF_S2D_BT_SCENENODE_TEMPLATE_NAME L"T_SceneNode"
 
-// 노드 종류 key
-#define MKDEF_S2D_BT_SCENENODE_NODE_TYPE_KEY L"NodeType"
-
-// 위치 key
-#define MKDEF_S2D_BT_SCENENODE_POSITION_KEY L"Position"
-
-// 회전 key
-#define MKDEF_S2D_BT_SCENENODE_ROTATION_KEY L"Rotation"
-
-// 크기 key
-#define MKDEF_S2D_BT_SCENENODE_SCALE_KEY L"Scale"
-
-// 알파값 key
-#define MKDEF_S2D_BT_SCENENODE_ALPHA_KEY L"Alpha"
-
-// 보이기 여부 플래그 key
-#define MKDEF_S2D_BT_SCENENODE_VISIBLE_KEY L"Visible"
-
-//------------------------------------------------------------------------------------------------//
-// building template node : MkBaseWindowNode
-//------------------------------------------------------------------------------------------------//
-
-// 템플릿 이름
+// MkBaseWindowNode 템플릿 이름
 #define MKDEF_S2D_BT_BASEWINNODE_TEMPLATE_NAME L"T_BaseWindowNode"
 
-// 윈도우 상태 key
-#define MKDEF_S2D_BT_BASEWINNODE_ENABLE_KEY L"Enable"
-
-// 정렬 방식 key
-#define MKDEF_S2D_BT_BASEWINNODE_ALIGNMENT_TYPE_KEY L"AlignType"
-
-// 정렬 경계 key
-#define MKDEF_S2D_BT_BASEWINNODE_ALIGNMENT_BORDER_KEY L"AlignBorder"
-
-// 정렬 대상 이름 key
-#define MKDEF_S2D_BT_BASEWINNODE_ALIGNMENT_TARGET_NAME_KEY L"AlignTargetName"
-
-//------------------------------------------------------------------------------------------------//
-
-// scene node data에서 자식 SRect 노드명
+// MkSceneNode data에서 자식 SRect 노드명
 #define MKDEF_S2D_SND_CHILD_SRECT_NODE_NAME L"<SRect>"
 
-// scene node data에서 자식 scene node 노드명
+// MkSceneNode data에서 자식 scene node 노드명
 #define MKDEF_S2D_SND_CHILD_SNODE_NODE_NAME L"<SceneNode>"
 
 //------------------------------------------------------------------------------------------------//

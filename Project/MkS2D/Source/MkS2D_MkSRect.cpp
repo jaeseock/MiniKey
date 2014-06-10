@@ -11,39 +11,42 @@
 
 
 // MkVec2
-const static MkHashStr POSITION_KEY = MKDEF_S2D_BT_SRECT_POSITION_KEY;
+const static MkHashStr POSITION_KEY = L"Position";
+
+// MkVec2
+const static MkHashStr SIZE_KEY = L"Size";
 
 // float
-const static MkHashStr DEPTH_KEY = MKDEF_S2D_BT_SRECT_DEPTH_KEY;
+const static MkHashStr DEPTH_KEY = L"Depth";
 
 // MkArray<MkStr>
-const static MkHashStr RESOURCE_KEY = MKDEF_S2D_BT_SRECT_RESOURCE_KEY;
+const static MkHashStr RESOURCE_KEY = L"Resource";
 
 // map : MkStr 4개
-// - tag(MKDEF_S2D_BT_SRECT_RESOURCE_MAP_TAG)
+// - tag(MAP_TAG)
 // - bitmap file path
 // - group
 // - subset name
-const static MkStr MAP_TAG = MKDEF_S2D_BT_SRECT_RESOURCE_MAP_TAG;
+const static MkStr MAP_TAG = L"map";
 
 // original deco text : MkStr 2개
-// - tag(MKDEF_S2D_BT_SRECT_RESOURCE_TEXT_ORIGIN_TAG)
+// - tag(TEXT_O_TAG)
 // - deco text
-const static MkStr TEXT_O_TAG = MKDEF_S2D_BT_SRECT_RESOURCE_TEXT_ORIGIN_TAG;
+const static MkStr TEXT_O_TAG = L"odt";
 
 // scene deco text : MkStr 1 + n개
-// - tag(MKDEF_S2D_BT_SRECT_RESOURCE_TEXT_SCENE_TAG)
+// - tag(TEXT_S_TAG)
 // - MK_WIN_RES에 등록되어 있는 deco text node name & key
-const static MkStr TEXT_S_TAG = MKDEF_S2D_BT_SRECT_RESOURCE_TEXT_SCENE_TAG;
+const static MkStr TEXT_S_TAG = L"sdt";
 
 // unsigned int
-const static MkHashStr ALPHA_KEY = MKDEF_S2D_BT_SRECT_ALPHA_KEY;
+const static MkHashStr ALPHA_KEY = L"Alpha";
 
 // bool(horizontal), bool(vertical)
-const static MkHashStr REFLECTION_KEY = MKDEF_S2D_BT_SRECT_REFLECTION_KEY;
+const static MkHashStr REFLECTION_KEY = L"Reflection";
 
 // bool
-const static MkHashStr VISIBLE_KEY = MKDEF_S2D_BT_SRECT_VISIBLE_KEY;
+const static MkHashStr VISIBLE_KEY = L"Visible";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -55,6 +58,7 @@ void MkSRect::Load(const MkDataNode& node)
 	MkVec2 position;
 	node.GetData(POSITION_KEY, position, 0);
 	SetLocalPosition(MkFloat2(position.x, position.y));
+
 
 	// depth
 	float depth = 0.f;
@@ -76,8 +80,7 @@ void MkSRect::Load(const MkDataNode& node)
 			{
 				MkBaseTexturePtr texture;
 				MK_TEXTURE_POOL.GetBitmapTexture(filePath, texture, group);
-				SetTexture(texture);
-				SetSubset(resBuf[3]);
+				SetTexture(texture, resBuf[3]);
 			}
 		}
 		else if ((tag == TEXT_O_TAG) && (resBuf.GetSize() == 2)) // original deco text
@@ -95,6 +98,11 @@ void MkSRect::Load(const MkDataNode& node)
 			SetDecoString(nodeNameAndKey);
 		}
 	}
+
+	// size
+	MkVec2 size;
+	node.GetData(SIZE_KEY, size, 0);
+	SetLocalSize(MkFloat2(size.x, size.y));
 
 	// alpha
 	unsigned int alpha = 255;
@@ -123,6 +131,7 @@ void MkSRect::Save(MkDataNode& node) // Load의 역
 	node.ApplyTemplate(MKDEF_S2D_BT_SRECT_TEMPLATE_NAME);
 
 	node.SetData(POSITION_KEY, MkVec2(m_LocalRect.position.x, m_LocalRect.position.y), 0);
+	node.SetData(SIZE_KEY, MkVec2(m_LocalRect.size.x, m_LocalRect.size.y), 0);
 	node.SetData(DEPTH_KEY, m_LocalDepth, 0);
 
 	if (m_Texture != NULL)
@@ -177,12 +186,17 @@ float MkSRect::GetObjectAlpha(void) const
 
 void MkSRect::SetTexture(const MkBaseTexturePtr& texture)
 {
+	SetTexture(texture, L"");
+}
+
+void MkSRect::SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetName)
+{
 	Clear();
 
 	m_Texture = texture;
 	m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
 
-	SetSubset(L"");
+	SetSubset(subsetName);
 }
 
 bool MkSRect::SetDecoString(const MkStr& decoStr)
@@ -254,6 +268,7 @@ void MkSRect::__GenerateBuildingTemplate(void)
 		return;
 
 	tNode->CreateUnit(POSITION_KEY, MkVec2::Zero);
+	tNode->CreateUnit(SIZE_KEY, MkVec2::Zero);
 	tNode->CreateUnit(DEPTH_KEY, 0.f);
 	tNode->CreateUnit(RESOURCE_KEY, MkStr::Null);
 	tNode->CreateUnit(ALPHA_KEY, static_cast<unsigned int>(255));

@@ -30,9 +30,6 @@ public:
 	// MkDataNode로 출력
 	virtual void Save(MkDataNode& node);
 
-	// window preset 생성
-	MkSceneNode* CreateWindowPreset(const MkHashStr& theme, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
-
 	//------------------------------------------------------------------------------------------------//
 	// transform
 	//------------------------------------------------------------------------------------------------//
@@ -80,13 +77,16 @@ public:
 
 	// SRect 생성
 	MkSRect* CreateSRect(const MkHashStr& name);
-	MkSRect* CreateSRect(const MkHashStr& name, const MkBaseTexturePtr& texture, const MkHashStr& subsetName, const MkFloat2& position);
+
+	// SRect 존재 여부
+	inline bool ExistSRect(const MkHashStr& name) const { return m_SRects.Exist(name); }
 
 	// SRect 반환
 	MkSRect* GetSRect(const MkHashStr& name);
 
 	// SRect 삭제
 	bool DeleteSRect(const MkHashStr& name);
+	void DeleteAllSRects(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// proceed
@@ -129,19 +129,7 @@ protected:
 
 	//------------------------------------------------------------------------------------------------//
 
-	typedef struct __WindowPreset
-	{
-		MkHashStr theme;
-		eS2D_WindowPresetComponent component;
-		MkInt2 bodySize;
-	}
-	_WindowPreset;
-
 	void _ApplyBuildingTemplateToSave(MkDataNode& node, const MkHashStr& templateName);
-
-	bool _AddWindowTypeImageSet(const MkHashStr& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode);
-	bool _AddWindowTypeTitleImageSet(const MkArray<MkHashStr>& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode);
-	bool _AddWindowTypeStateImageSet(const MkArray<MkHashStr>& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode);
 
 	void _UpdateNodeTransform(const MkValueDecision<MkVec3>& worldPosition, const MkValueDecision<float>& worldRotation, const MkValueDecision<float>& worldScale);
 	void _UpdateNodeTransform(void);
@@ -167,6 +155,4 @@ protected:
 	MkFloatRect m_WorldAABR; // 자신과 하위 모든 자식 노드들의 m_NodeOnlyAABR 합산
 
 	MkHashMap<MkHashStr, MkSRect> m_SRects; // name, SRect
-
-	MkHashMap<MkHashStr, _WindowPreset> m_Presets; // preset name(MkWindowPreset::GetWindowPresetComponentKeyword()), preset data
 };

@@ -7,16 +7,16 @@
 
 
 // bool
-const static MkHashStr ENABLE_KEY = MKDEF_S2D_BT_BASEWINNODE_ENABLE_KEY;
+const static MkHashStr ENABLE_KEY =  L"Enable";
 
 // int
-const static MkHashStr ALIGNMENT_TYPE_KEY = MKDEF_S2D_BT_BASEWINNODE_ALIGNMENT_TYPE_KEY;
+const static MkHashStr ALIGNMENT_TYPE_KEY = L"AlignType";
 
 // int2
-const static MkHashStr ALIGNMENT_BORDER_KEY = MKDEF_S2D_BT_BASEWINNODE_ALIGNMENT_BORDER_KEY;
+const static MkHashStr ALIGNMENT_BORDER_KEY = L"AlignBorder";
 
 // MkStr
-const static MkHashStr ALIGNMENT_TARGET_NAME_KEY = MKDEF_S2D_BT_BASEWINNODE_ALIGNMENT_TARGET_NAME_KEY;
+const static MkHashStr ALIGNMENT_TARGET_NAME_KEY = L"AlignTargetName";
 
 
 //------------------------------------------------------------------------------------------------//

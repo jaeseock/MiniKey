@@ -338,8 +338,8 @@ Node "WindowPreset"
 	
 	Node "Default"
 	{
-		str BaseWindow = "SemiTransPurpleWindow";
-		str WindowTitle = "GradationClearBlue" / "GradationDirtyBlue";
+		str BackgroundWindow = "SemiTransPurpleWindow";
+		str TitleWindow = "GradationClearBlue" / "GradationDirtyBlue";
 		str NegativeButton = "BlingRedDefault" / "BlingRedOnCursor" / "BlingRedOnClick" / "BlingButtonDisable";
 		str PossitiveButton = "BlingBlueDefault" / "BlingBlueOnCursor" / "BlingBlueOnClick" / "BlingButtonDisable";
 		str CancelIcon =  "CancelIconDefault" / "CancelIconOnCursor" / "CancelIconOnClick" / "CancelIconDisable";
@@ -347,11 +347,11 @@ Node "WindowPreset"
 	
 	Node "SolidGray"
 	{
-		str BaseWindow = "SolidGrayWindow";
+		str BackgroundWindow = "SolidGrayWindow";
 	}
 	
 	Node "SolidBlue"
 	{
-		str BaseWindow = "SolidBlueWindow";
+		str BackgroundWindow = "SolidBlueWindow";
 	}
 }

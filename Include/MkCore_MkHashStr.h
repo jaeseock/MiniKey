@@ -134,6 +134,11 @@ protected:
 
 	MkStr m_Str;
 	DWORD m_HashKey;
+
+public:
+
+	// empty
+	static const MkHashStr NullHash;
 };
 
 

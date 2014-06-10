@@ -50,7 +50,8 @@ public:
 		m_RootNode = new MkSceneNode(L"Root");
 		m_RootNode->SetLocalPosition(MkVec3(0.f, 0.f, 1000.f));
 
-		m_Node01 = m_RootNode->CreateChildNode(L"01");
+		m_Node01 = new MkBaseWindowNode(L"01");
+		m_RootNode->AttachChildNode(m_Node01);
 
 		MkBaseWindowNode* alignNode = new MkBaseWindowNode(L"align node");
 		m_RootNode->AttachChildNode(alignNode);
@@ -73,8 +74,8 @@ public:
 		bufStr.ReadTextFile(L"DecoString.txt");
 		textRect->SetDecoString(bufStr);
 
-		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_BaseWindow, MkFloat2(200.f, 300.f)); // 212, 312
-		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_WindowTitle, MkFloat2(200.f - 12.f, 0.f))->SetLocalPosition(MkVec3(6.f, 312 - 6.f - 18.f, -1.f));
+		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_BackgroundWindow, MkFloat2(200.f, 300.f)); // 212, 312
+		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_TitleWindow, MkFloat2(200.f - 12.f, 0.f))->SetLocalPosition(MkVec3(6.f, 312 - 6.f - 18.f, -1.f));
 		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_NegativeButton, MkFloat2(70.f, 30.f))->SetLocalPosition(MkVec3(110.f, 6.f, -1.f));
 		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(70.f, 30.f))->SetLocalPosition(MkVec3(10.f, 6.f, -1.f));
 		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(212.f - 12.f - 16.f, 312 - 6.f - 17.f, -2.f));
@@ -112,23 +113,19 @@ public:
 		{
 			MkSRect* srect;
 			MkBaseTexturePtr diffTex;
+			MK_TEXTURE_POOL.GetBitmapTexture(L"Image\\s01.jpg", diffTex);
 			for (unsigned int i=0; i<10; ++i)
 			{
 				srect = m_Node02->CreateSRect(MkStr(m_RectCount));
 				srect->SetLocalPosition(MkFloat2(static_cast<float>(m_DiceX.GenerateRandomNumber()), static_cast<float>(m_DiceY.GenerateRandomNumber())));
 				srect->SetLocalDepth(-static_cast<float>(m_RectCount));
 				
-				MK_TEXTURE_POOL.GetBitmapTexture(L"Image\\s01.jpg", diffTex);
-				srect->SetTexture(diffTex);
-
 				srect->SetObjectAlpha(static_cast<float>(m_DiceA.GenerateRandomNumber()) * 0.2f);
 
 				MkStr subsetName = L"Face_";
 				subsetName += m_DiceT.GenerateRandomNumber();
-				srect->SetSubset(subsetName);
+				srect->SetTexture(diffTex, subsetName);
 				
-				diffTex = NULL;
-
 				++m_RectCount;
 			}
 		}
@@ -200,10 +197,14 @@ public:
 
 		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
 		{
-			m_RootNode->Update();
 			MkDataNode node;
 			m_RootNode->Save(node);
 			node.SaveToText(L"test_scene.txt");
+		}
+
+		if (MK_INPUT_MGR.GetKeyReleased('N'))
+		{
+			MK_PAGE_MGR.ChangePageDirectly(L"RestorePage");
 		}
 
 		MK_DEV_PANEL.MsgToFreeboard(0, m_RootNode->GetNodeName().GetString());
@@ -279,7 +280,7 @@ protected:
 protected:
 
 	MkSceneNode* m_RootNode;
-	MkSceneNode* m_Node01;
+	MkBaseWindowNode* m_Node01;
 	MkSceneNode* m_Node02;
 
 	MkSceneNode* m_ScreenNode;
@@ -297,14 +298,64 @@ protected:
 	MkUniformDice m_DiceA;
 };
 
+// RestorePage ¼±¾ð
+class RestorePage : public MkBasePage
+{
+public:
+	virtual bool SetUp(MkDataNode& sharingNode)
+	{
+		m_RootNode = new MkSceneNode(L"Root");
+		MkDataNode node;
+		if (node.Load(L"test_scene.txt"))
+		{
+			m_RootNode->Load(node);
+		}
+
+		MkBaseWindowNode* node01 = dynamic_cast<MkBaseWindowNode*>(m_RootNode->GetChildNode(L"01"));
+		node01->SetPresetThemeName(L"Default");
+		node01->SetPresetComponentBodySize(eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 100.f));
+		
+		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_RootNode);
+
+		return true;
+	}
+
+	virtual void Update(const MkTimeState& timeState)
+	{
+		m_RootNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
+	}
+
+	virtual void Clear(void)
+	{
+		MK_DELETE(m_RootNode);
+		
+		MK_RENDERER.GetDrawQueue().Clear();
+		MK_TEXTURE_POOL.UnloadGroup(0);
+	}
+
+	RestorePage(const MkHashStr& name) : MkBasePage(name)
+	{
+		m_RootNode = NULL;
+	}
+
+	virtual ~RestorePage() { Clear(); }
+
+protected:
+
+	MkSceneNode* m_RootNode;
+};
+
 class TestFramework : public MkRenderFramework
 {
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
 	{
-		MK_PAGE_MGR.SetUp(new TestPage(L"TestPage"));
+		MK_PAGE_MGR.SetUp(new MkBasePage(L"Root"));
+		MK_PAGE_MGR.RegisterChildPage(L"Root", new TestPage(L"TestPage"));
+		MK_PAGE_MGR.RegisterChildPage(L"Root", new RestorePage(L"RestorePage"));
+		
 		MK_PAGE_MGR.ChangePageDirectly(L"TestPage");
-
+		
 		return MkRenderFramework::SetUp(clientWidth, clientHeight, fullScreen, arg);
 	}
 

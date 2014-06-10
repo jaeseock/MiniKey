@@ -2,125 +2,277 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.06.09 (00:26:04),
-//   - exporter   : 오군 (Test)
+//   - time stamp : 2014.06.10 (17:13:38),
+//   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
 
-vec3 Position = (0.000, 0.000, 1000.000);
+vec3 Position = (-285.000, -100.000, 1000.000);
 
 Node "<SceneNode>"
 {
-	Node "01" : "T_SceneNode"
+	Node "01" : "T_BaseWindowNode"
 	{
 		vec3 Position = (400.000, 150.000, -910.000);
 
 		Node "<SceneNode>"
 		{
-			Node "02" : "T_SceneNode" {}
-
-			Node "BaseWindow" : "T_SceneNode"
+			Node "02" : "T_SceneNode"
 			{
 				Node "<SRect>"
 				{
-					Node "LB" : "T_SRect"
+					Node "0" : "T_SRect"
 					{
+						uint Alpha = 153;
+						vec2 Position = (286.000, 325.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_LB";
+							"Face_1";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "LC" : "T_SRect"
+					Node "1" : "T_SRect"
 					{
-						vec2 Position = (0.000, 6.000);
+						uint Alpha = 204;
+						float Depth = -1.000;
+						vec2 Position = (189.000, 390.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_LC";
+							"Face_4";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "LT" : "T_SRect"
+					Node "2" : "T_SRect"
 					{
-						vec2 Position = (0.000, 306.000);
+						uint Alpha = 204;
+						float Depth = -2.000;
+						vec2 Position = (649.000, 196.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_LT";
+							"Face_17";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "MB" : "T_SRect"
+					Node "3" : "T_SRect"
 					{
-						vec2 Position = (6.000, 0.000);
+						uint Alpha = 204;
+						float Depth = -3.000;
+						vec2 Position = (465.000, 461.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_MB";
+							"Face_38";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "MC" : "T_SRect"
+					Node "4" : "T_SRect"
 					{
-						vec2 Position = (6.000, 6.000);
+						uint Alpha = 102;
+						float Depth = -4.000;
+						vec2 Position = (229.000, 90.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_MC";
+							"Face_28";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "MT" : "T_SRect"
+					Node "5" : "T_SRect"
 					{
-						vec2 Position = (6.000, 306.000);
+						uint Alpha = 102;
+						float Depth = -5.000;
+						vec2 Position = (510.000, 389.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_MT";
+							"Face_4";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "RB" : "T_SRect"
+					Node "6" : "T_SRect"
 					{
-						vec2 Position = (206.000, 0.000);
+						uint Alpha = 153;
+						float Depth = -6.000;
+						vec2 Position = (524.000, 89.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_RB";
+							"Face_33";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "RC" : "T_SRect"
+					Node "7" : "T_SRect"
 					{
-						vec2 Position = (206.000, 6.000);
+						uint Alpha = 102;
+						float Depth = -7.000;
+						vec2 Position = (53.000, 112.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_RC";
+							"Face_44";
+						vec2 Size = (101.000, 101.000);
 					}
 
-					Node "RT" : "T_SRect"
+					Node "8" : "T_SRect"
 					{
-						vec2 Position = (206.000, 306.000);
+						uint Alpha = 204;
+						float Depth = -8.000;
+						vec2 Position = (432.000, 45.000);
 						str Resource = // [4]
 							"map" /
-							"Default\system_default.png" /
+							"Image\s01.jpg" /
 							"0" /
-							"WB_SolidGray_RT";
+							"Face_35";
+						vec2 Size = (101.000, 101.000);
+					}
+
+					Node "9" : "T_SRect"
+					{
+						uint Alpha = 204;
+						float Depth = -9.000;
+						vec2 Position = (130.000, 31.000);
+						str Resource = // [4]
+							"map" /
+							"Image\s01.jpg" /
+							"0" /
+							"Face_37";
+						vec2 Size = (101.000, 101.000);
 					}
 				}
 			}
 
-			Node "CancelIcon" : "T_SceneNode"
+			Node "BackgroundWindow" : "T_BaseWindowNode"
 			{
-				vec3 Position = (184.000, 289.000, -2.000);
+				int2 PresetBodySize = (200, 300);
+				str PresetThemeName = "SolidGray";
 
 				Node "<SceneNode>"
 				{
-					Node "Default" : "T_SceneNode"
+					Node "Default" : "T_BaseWindowNode"
+					{
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_LB";
+								vec2 Size = (6.000, 6.000);
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_LC";
+								vec2 Size = (6.000, 300.000);
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 306.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_LT";
+								vec2 Size = (6.000, 6.000);
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (6.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_MB";
+								vec2 Size = (200.000, 6.000);
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (6.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_MC";
+								vec2 Size = (200.000, 300.000);
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (6.000, 306.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_MT";
+								vec2 Size = (200.000, 6.000);
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (206.000, 0.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_RB";
+								vec2 Size = (6.000, 6.000);
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (206.000, 6.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_RC";
+								vec2 Size = (6.000, 300.000);
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (206.000, 306.000);
+								str Resource = // [4]
+									"map" /
+									"Default\system_default.png" /
+									"0" /
+									"WB_SolidGray_RT";
+								vec2 Size = (6.000, 6.000);
+							}
+						}
+					}
+				}
+			}
+
+			Node "CancelIcon" : "T_BaseWindowNode"
+			{
+				vec3 Position = (184.000, 289.000, -2.000);
+				str PresetThemeName = "SolidGray";
+
+				Node "<SceneNode>"
+				{
+					Node "Default" : "T_BaseWindowNode"
 					{
 						Node "<SRect>"
 						{
@@ -131,11 +283,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_CancelIconDefault";
+								vec2 Size = (16.000, 16.000);
 							}
 						}
 					}
 
-					Node "Disable" : "T_SceneNode"
+					Node "Disable" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -148,11 +301,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_CancelIconDisable";
+								vec2 Size = (16.000, 16.000);
 							}
 						}
 					}
 
-					Node "OnClick" : "T_SceneNode"
+					Node "OnClick" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -165,11 +319,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_CancelIconOnClick";
+								vec2 Size = (16.000, 16.000);
 							}
 						}
 					}
 
-					Node "OnCursor" : "T_SceneNode"
+					Node "OnCursor" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -182,19 +337,22 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_CancelIconOnCursor";
+								vec2 Size = (16.000, 16.000);
 							}
 						}
 					}
 				}
 			}
 
-			Node "NegativeButton" : "T_SceneNode"
+			Node "NegativeButton" : "T_BaseWindowNode"
 			{
 				vec3 Position = (110.000, 6.000, -1.000);
+				int2 PresetBodySize = (70, 30);
+				str PresetThemeName = "SolidGray";
 
 				Node "<SceneNode>"
 				{
-					Node "Default" : "T_SceneNode"
+					Node "Default" : "T_BaseWindowNode"
 					{
 						Node "<SRect>"
 						{
@@ -205,6 +363,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -215,6 +374,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -225,6 +385,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -235,6 +396,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -245,6 +407,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -255,6 +418,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -265,6 +429,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -275,6 +440,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -285,11 +451,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedDefault_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 
-					Node "Disable" : "T_SceneNode"
+					Node "Disable" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -302,6 +469,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -312,6 +480,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -322,6 +491,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -332,6 +502,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -342,6 +513,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -352,6 +524,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -362,6 +535,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -372,6 +546,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -382,11 +557,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 
-					Node "OnClick" : "T_SceneNode"
+					Node "OnClick" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -399,6 +575,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -409,6 +586,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -419,6 +597,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -429,6 +608,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -439,6 +619,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -449,6 +630,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -459,6 +641,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -469,6 +652,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -479,11 +663,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnClick_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 
-					Node "OnCursor" : "T_SceneNode"
+					Node "OnCursor" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -496,6 +681,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -506,6 +692,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -516,6 +703,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -526,6 +714,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -536,6 +725,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -546,6 +736,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -556,6 +747,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -566,6 +758,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -576,19 +769,22 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingRedOnCursor_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 				}
 			}
 
-			Node "PossitiveButton" : "T_SceneNode"
+			Node "PossitiveButton" : "T_BaseWindowNode"
 			{
 				vec3 Position = (10.000, 6.000, -1.000);
+				int2 PresetBodySize = (70, 30);
+				str PresetThemeName = "SolidGray";
 
 				Node "<SceneNode>"
 				{
-					Node "Default" : "T_SceneNode"
+					Node "Default" : "T_BaseWindowNode"
 					{
 						Node "<SRect>"
 						{
@@ -599,6 +795,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -609,6 +806,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -619,6 +817,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -629,6 +828,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -639,6 +839,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -649,6 +850,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -659,6 +861,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -669,6 +872,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -679,11 +883,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueDefault_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 
-					Node "Disable" : "T_SceneNode"
+					Node "Disable" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -696,6 +901,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -706,6 +912,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -716,6 +923,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -726,6 +934,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -736,6 +945,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -746,6 +956,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -756,6 +967,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -766,6 +978,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -776,11 +989,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingDisable_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 
-					Node "OnClick" : "T_SceneNode"
+					Node "OnClick" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -793,6 +1007,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -803,6 +1018,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -813,6 +1029,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -823,6 +1040,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -833,6 +1051,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -843,6 +1062,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -853,6 +1073,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -863,6 +1084,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -873,11 +1095,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnClick_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 
-					Node "OnCursor" : "T_SceneNode"
+					Node "OnCursor" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -890,6 +1113,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_LB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "LC" : "T_SRect"
@@ -900,6 +1124,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_LC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "LT" : "T_SRect"
@@ -910,6 +1135,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_LT";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "MB" : "T_SRect"
@@ -920,6 +1146,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_MB";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -930,6 +1157,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_MC";
+								vec2 Size = (70.000, 30.000);
 							}
 
 							Node "MT" : "T_SRect"
@@ -940,6 +1168,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_MT";
+								vec2 Size = (70.000, 6.000);
 							}
 
 							Node "RB" : "T_SRect"
@@ -950,6 +1179,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_RB";
+								vec2 Size = (6.000, 6.000);
 							}
 
 							Node "RC" : "T_SRect"
@@ -960,6 +1190,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_RC";
+								vec2 Size = (6.000, 30.000);
 							}
 
 							Node "RT" : "T_SRect"
@@ -970,19 +1201,22 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_BlingBlueOnCursor_RT";
+								vec2 Size = (6.000, 6.000);
 							}
 						}
 					}
 				}
 			}
 
-			Node "WindowTitle" : "T_SceneNode"
+			Node "TitleWindow" : "T_BaseWindowNode"
 			{
 				vec3 Position = (6.000, 288.000, -1.000);
+				int2 PresetBodySize = (188, 0);
+				str PresetThemeName = "SolidGray";
 
 				Node "<SceneNode>"
 				{
-					Node "LostFocus" : "T_SceneNode"
+					Node "LostFocus" : "T_BaseWindowNode"
 					{
 						bool Visible = No;
 
@@ -995,6 +1229,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_GradationDirtyBlue_L";
+								vec2 Size = (6.000, 18.000);
 							}
 
 							Node "M" : "T_SRect"
@@ -1005,6 +1240,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_GradationDirtyBlue_M";
+								vec2 Size = (188.000, 18.000);
 							}
 
 							Node "R" : "T_SRect"
@@ -1015,11 +1251,12 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_GradationDirtyBlue_R";
+								vec2 Size = (6.000, 18.000);
 							}
 						}
 					}
 
-					Node "OnFocus" : "T_SceneNode"
+					Node "OnFocus" : "T_BaseWindowNode"
 					{
 						Node "<SRect>"
 						{
@@ -1030,6 +1267,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_GradationBlue_L";
+								vec2 Size = (6.000, 18.000);
 							}
 
 							Node "M" : "T_SRect"
@@ -1040,6 +1278,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_GradationBlue_M";
+								vec2 Size = (188.000, 18.000);
 							}
 
 							Node "R" : "T_SRect"
@@ -1050,6 +1289,7 @@ Node "<SceneNode>"
 									"Default\system_default.png" /
 									"0" /
 									"WB_GradationBlue_R";
+								vec2 Size = (6.000, 18.000);
 							}
 						}
 					}
@@ -1061,7 +1301,7 @@ Node "<SceneNode>"
 	Node "align node" : "T_BaseWindowNode"
 	{
 		int AlignType = 34;
-		vec3 Position = (0.000, 174.000, -900.000);
+		vec3 Position = (285.000, 274.000, -900.000);
 
 		Node "<SRect>"
 		{
@@ -1072,6 +1312,7 @@ Node "<SceneNode>"
 					"Image\s03.jpg" /
 					"0" /
 					"";
+				vec2 Size = (300.000, 426.000);
 			}
 		}
 
@@ -1092,6 +1333,7 @@ Node "<SceneNode>"
 						str Resource = // [2]
 							"odt" /
 							"<%LFS:5%><%T:나고20%><%S:제목%>첫번째 제목입니당.\r\n<%T:굴림16%><%S:일반항목%>  - 내용 항목 첫번째\r\n  - 내용 항목<%S:강조항목%> 이거이 바로 강조\r\n\r\n<%T:나고20%><%S:제목%>두번째 제목입니당.\r\n<%T:굴림16%><%S:일반항목%>  - 내용 항목 첫번째 또나옴\r\n  - 내용 항목<%S:강조항목%> 두번째 강조 ㄱㄱ\r\n\r\n<%T:맑고20%>new type <%T:남산16%>test <%T:맑고20%>again";
+						vec2 Size = (240.000, 197.000);
 					}
 				}
 			}

@@ -113,8 +113,7 @@ const MkHashStr& MkWindowTypeImageSet::GetImageSetKeyword(eSetType type, eTypeIn
 	case e3And3Type: return KEY33[index];
 	}
 
-	const static MkHashStr NullHash;
-	return NullHash;
+	return MkHashStr::NullHash;
 }
 
 MkWindowTypeImageSet::MkWindowTypeImageSet()

@@ -26,13 +26,19 @@ public:
 	// 해제
 	void Clear(void);
 
-	// eS2D_WindowPresetComponent keyword 반환
+	// keyword에 해당하는 eS2D_WindowPresetComponent 반환
+	static eS2D_WindowPresetComponent GetWindowPresetComponentEnum(const MkHashStr& keyword);
+
+	// component에 해당하는 keyword 반환
 	static const MkHashStr& GetWindowPresetComponentKeyword(eS2D_WindowPresetComponent component);
 
-	// eS2D_TitleState keyword 반환
+	// state에 해당하는 keyword 반환
+	static const MkHashStr& GetBackgroundStateKeyword(eS2D_BackgroundState state);
+
+	// state에 해당하는 keyword 반환
 	static const MkHashStr& GetTitleStateKeyword(eS2D_TitleState state);
 
-	// eS2D_WindowState keyword 반환
+	// state에 해당하는 keyword 반환
 	static const MkHashStr& GetWindowStateKeyword(eS2D_WindowState state);
 
 	MkWindowPreset();
@@ -40,7 +46,7 @@ public:
 
 protected:
 
-	bool _LoadDataAndCheck(const MkDataNode& node, const MkHashStr& key, const MkHashStr& themeName, unsigned int size, bool defaultTheme, MkArray<MkHashStr>& buffer) const;
+	bool _LoadDataAndCheck(const MkDataNode& node, eS2D_WindowPresetComponent component, const MkHashStr& themeName, bool defaultTheme, MkArray<MkHashStr>& buffer) const;
 
 protected:
 
@@ -49,3 +55,32 @@ protected:
 
 	MkHashMap<MkHashStr, MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> > > m_Themes;
 };
+
+
+//------------------------------------------------------------------------------------------------//
+// 함수 특수화를 통한 state 관련 정보 반환
+// 템플릿화 하지 않으면 관련 구현 case by case가 너무 많아지는데다 향후 확장시 수정량이 많아지게 됨
+//------------------------------------------------------------------------------------------------//
+
+template <class DataType>
+class MkWindowPresetStateInterface
+{
+public:
+	static int GetBegin(void) { return 0; }
+	static int GetEnd(void) { return 0; }
+	static const MkHashStr& GetKeyword(DataType state) { return MkHashStr::NullHash; }
+};
+
+template <> int MkWindowPresetStateInterface<eS2D_BackgroundState>::GetBegin(void) { return eS2D_BS_DefaultState; }
+template <> int MkWindowPresetStateInterface<eS2D_TitleState>::GetBegin(void) { return eS2D_TS_OnFocusState; }
+template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetBegin(void) { return eS2D_WS_DefaultState; }
+
+template <> int MkWindowPresetStateInterface<eS2D_BackgroundState>::GetEnd(void) { return eS2D_BS_MaxBackgroundState; }
+template <> int MkWindowPresetStateInterface<eS2D_TitleState>::GetEnd(void) { return eS2D_TS_MaxTitleState; }
+template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetEnd(void) { return eS2D_WS_MaxWindowState; }
+
+template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_BackgroundState>::GetKeyword(eS2D_BackgroundState state) { return MkWindowPreset::GetBackgroundStateKeyword(state); }
+template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_TitleState>::GetKeyword(eS2D_TitleState state) { return MkWindowPreset::GetTitleStateKeyword(state); }
+template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_WindowState>::GetKeyword(eS2D_WindowState state) { return MkWindowPreset::GetWindowStateKeyword(state); }
+
+//------------------------------------------------------------------------------------------------//

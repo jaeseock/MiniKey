@@ -24,69 +24,37 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 		bool isDefaultTheme = (currThemeName == m_DefaultThemeName);
 		const MkDataNode& currNode = *node.GetChildNode(currThemeName);
 
-		MkArray<MkHashStr> baseWindowSN, windowTitleSN, negativeButtonSN, possitiveButtonSN, cancelIconSN;
+		MkArray<MkHashStr> subsetNameBuffer[eS2D_WPC_MaxWindowPresetComponent];
 		if (currThemeName == m_DefaultThemeName)
 		{
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_BaseWindow), currThemeName, 1, true, baseWindowSN))
-				return false;
+			for (int j=eS2D_WPC_BackgroundWindow; j<eS2D_WPC_MaxWindowPresetComponent; ++j)
+			{
+				if (!_LoadDataAndCheck(currNode, static_cast<eS2D_WindowPresetComponent>(j), currThemeName, true, subsetNameBuffer[j]))
+					return false;
+			}
 
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_WindowTitle), currThemeName, eS2D_TS_MaxTitleState, true, windowTitleSN))
-				return false;
-
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_NegativeButton), currThemeName, eS2D_WS_MaxWindowState, true, negativeButtonSN))
-				return false;
-
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_PossitiveButton), currThemeName, eS2D_WS_MaxWindowState, true, possitiveButtonSN))
-				return false;
-
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_CancelIcon), currThemeName, eS2D_WS_MaxWindowState, true, cancelIconSN))
-				return false;
-
-			m_DefaultThemeEnable = true;
+			m_DefaultThemeEnable = true; // 기본 테마는 모든 component를 가지고 있어야 함
 		}
 		else
 		{
-			bool skip = true;
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_BaseWindow), currThemeName, 1, false, baseWindowSN))
-				skip = false;
+			bool disable = true;
+			for (int j=eS2D_WPC_BackgroundWindow; j<eS2D_WPC_MaxWindowPresetComponent; ++j)
+			{
+				if (!_LoadDataAndCheck(currNode, static_cast<eS2D_WindowPresetComponent>(j), currThemeName, false, subsetNameBuffer[j]))
+					disable = false;
+			}
 
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_WindowTitle), currThemeName, eS2D_TS_MaxTitleState, false, windowTitleSN))
-				skip = false;
-
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_NegativeButton), currThemeName, eS2D_WS_MaxWindowState, false, negativeButtonSN))
-				skip = false;
-
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_PossitiveButton), currThemeName, eS2D_WS_MaxWindowState, false, possitiveButtonSN))
-				skip = false;
-
-			if (!_LoadDataAndCheck(currNode, GetWindowPresetComponentKeyword(eS2D_WPC_CancelIcon), currThemeName, eS2D_WS_MaxWindowState, false, cancelIconSN))
-				skip = false;
-
-			if (skip) // 하나라도 값을 만족하면 테마 성립
+			if (disable) // 확장 테마는 component를 최소 하나 이상 가지고 있어야 함
 				continue;
 		}
 
 		MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> >& currImageSet = m_Themes.Create(currThemeName);
-
-		if (!baseWindowSN.Empty())
+		for (int j=eS2D_WPC_BackgroundWindow; j<eS2D_WPC_MaxWindowPresetComponent; ++j)
 		{
-			currImageSet.Create(eS2D_WPC_BaseWindow, baseWindowSN);
-		}
-		if (!windowTitleSN.Empty())
-		{
-			currImageSet.Create(eS2D_WPC_WindowTitle, windowTitleSN);
-		}
-		if (!negativeButtonSN.Empty())
-		{
-			currImageSet.Create(eS2D_WPC_NegativeButton, negativeButtonSN);
-		}
-		if (!possitiveButtonSN.Empty())
-		{
-			currImageSet.Create(eS2D_WPC_PossitiveButton, possitiveButtonSN);
-		}
-		if (!cancelIconSN.Empty())
-		{
-			currImageSet.Create(eS2D_WPC_CancelIcon, cancelIconSN);
+			if (!subsetNameBuffer[j].Empty())
+			{
+				currImageSet.Create(static_cast<eS2D_WindowPresetComponent>(j), subsetNameBuffer[j]);
+			}
 		}
 
 		MK_DEV_PANEL.MsgToLog(L"> window theme : " + currThemeName.GetString() + MkStr((currThemeName == m_DefaultThemeName) ? L" << [DEF]" : L""), true);
@@ -124,10 +92,31 @@ void MkWindowPreset::Clear(void)
 	m_Themes.Clear();
 }
 
+const static MkHashStr sPresetKeywords[eS2D_WPC_MaxWindowPresetComponent] = { L"BackgroundWindow", L"TitleWindow", L"NegativeButton", L"PossitiveButton", L"CancelIcon" };
+
+eS2D_WindowPresetComponent MkWindowPreset::GetWindowPresetComponentEnum(const MkHashStr& keyword)
+{
+	static MkHashMap<MkHashStr, eS2D_WindowPresetComponent> sKeyMap;
+	if (sKeyMap.Empty())
+	{
+		for (int i=eS2D_WPC_BackgroundWindow; i<eS2D_WPC_MaxWindowPresetComponent; ++i)
+		{
+			sKeyMap.Create(sPresetKeywords[i], static_cast<eS2D_WindowPresetComponent>(i));
+		}
+		sKeyMap.Rehash();
+	}
+	return sKeyMap.Exist(keyword) ? sKeyMap[keyword] : eS2D_WPC_None;
+}
+
 const MkHashStr& MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WindowPresetComponent component)
 {
-	const static MkHashStr sKeywords[eS2D_WPC_MaxWindowPresetComponent] = { L"BaseWindow", L"WindowTitle", L"NegativeButton", L"PossitiveButton", L"CancelIcon" };
-	return sKeywords[component];
+	return sPresetKeywords[component];
+}
+
+const MkHashStr& MkWindowPreset::GetBackgroundStateKeyword(eS2D_BackgroundState state)
+{
+	const static MkHashStr sKeywords[eS2D_BS_MaxBackgroundState] = { L"Default" };
+	return sKeywords[state];
 }
 
 const MkHashStr& MkWindowPreset::GetTitleStateKeyword(eS2D_TitleState state)
@@ -148,9 +137,10 @@ MkWindowPreset::MkWindowPreset()
 }
 
 bool MkWindowPreset::_LoadDataAndCheck
-(const MkDataNode& node, const MkHashStr& key, const MkHashStr& themeName, unsigned int size, bool defaultTheme, MkArray<MkHashStr>& buffer) const
+(const MkDataNode& node, eS2D_WindowPresetComponent component, const MkHashStr& themeName, bool defaultTheme, MkArray<MkHashStr>& buffer) const
 {
 	MkArray<MkStr> strBuf;
+	const MkHashStr& key = GetWindowPresetComponentKeyword(component);
 	bool ok = node.GetData(key, strBuf);
 	if (defaultTheme)
 	{
@@ -160,7 +150,7 @@ bool MkWindowPreset::_LoadDataAndCheck
 
 	if (ok)
 	{
-		MK_CHECK(strBuf.GetSize() == size, themeName.GetString() + L" 테마에 " + key.GetString() + L" 항목의 크기가 맞지 않음")
+		MK_CHECK(strBuf.GetSize() == GetWindowPresetComponentSize(component), themeName.GetString() + L" 테마에 " + key.GetString() + L" 항목의 크기가 맞지 않음")
 			return false;
 
 		MK_INDEXING_LOOP(strBuf, i)

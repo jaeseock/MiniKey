@@ -4,8 +4,6 @@
 #include "MkCore_MkDataNode.h"
 
 #include "MkS2D_MkProjectDefinition.h"
-#include "MkS2D_MkWindowResourceManager.h"
-#include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkSceneNodeAllocator.h"
 
@@ -13,19 +11,19 @@
 const static MkHashStr TEMPLATE_NAME = MKDEF_S2D_BT_SCENENODE_TEMPLATE_NAME;
 
 // MkVec3
-const static MkHashStr POSITION_KEY = MKDEF_S2D_BT_SCENENODE_POSITION_KEY;
+const static MkHashStr POSITION_KEY = L"Position";
 
 // float
-const static MkHashStr ROTATION_KEY = MKDEF_S2D_BT_SCENENODE_ROTATION_KEY;
+const static MkHashStr ROTATION_KEY = L"Rotation";
 
 // float
-const static MkHashStr SCALE_KEY = MKDEF_S2D_BT_SCENENODE_SCALE_KEY;
+const static MkHashStr SCALE_KEY = L"Scale";
 
 // float
-const static MkHashStr ALPHA_KEY = MKDEF_S2D_BT_SCENENODE_ALPHA_KEY;
+const static MkHashStr ALPHA_KEY = L"Alpha";
 
 // bool
-const static MkHashStr VISIBLE_KEY = MKDEF_S2D_BT_SCENENODE_VISIBLE_KEY;
+const static MkHashStr VISIBLE_KEY = L"Visible";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -157,45 +155,6 @@ void MkSceneNode::Save(MkDataNode& node) // Load의 역
 	}
 }
 
-MkSceneNode* MkSceneNode::CreateWindowPreset(const MkHashStr& theme, eS2D_WindowPresetComponent component, const MkFloat2& bodySize)
-{
-	const MkHashStr& componentKeyword = MkWindowPreset::GetWindowPresetComponentKeyword(component);
-	if (!ChildExist(componentKeyword))
-	{
-		const MkArray<MkHashStr>& imageSets = MK_WR_PRESET.GetWindowTypeImageSet(theme, component);
-		if (!imageSets.Empty())
-		{
-			// data가 모두 준비된 상태. 노드 생성
-			MkSceneNode* targetNode = MkSceneNodeAllocator::Alloc(TEMPLATE_NAME, componentKeyword);
-			if (targetNode != NULL)
-			{
-				bool ok = false;
-				switch (component)
-				{
-				case eS2D_WPC_BaseWindow: ok = _AddWindowTypeImageSet(imageSets[0], bodySize, targetNode); break;
-				case eS2D_WPC_WindowTitle: ok = _AddWindowTypeTitleImageSet(imageSets, bodySize, targetNode); break;
-				case eS2D_WPC_NegativeButton:
-				case eS2D_WPC_PossitiveButton:
-				case eS2D_WPC_CancelIcon: ok = _AddWindowTypeStateImageSet(imageSets, bodySize, targetNode); break;
-				}
-
-				if (ok)
-				{
-					ok = AttachChildNode(targetNode);
-				}
-				else
-				{
-					delete targetNode;
-					targetNode = NULL;
-				}
-			}
-			return targetNode;
-		}
-	}
-	
-	return NULL;
-}
-
 void MkSceneNode::SetLocalRotation(float rotation)
 {
 	m_LocalRotation = MkAngleOp::Unitize2PI(rotation);
@@ -239,21 +198,6 @@ MkSRect* MkSceneNode::CreateSRect(const MkHashStr& name)
 	return srect;
 }
 
-MkSRect* MkSceneNode::CreateSRect(const MkHashStr& name, const MkBaseTexturePtr& texture, const MkHashStr& subsetName, const MkFloat2& position)
-{
-	MkSRect* srect = CreateSRect(name);
-	if (srect != NULL)
-	{
-		srect->SetLocalPosition(position);
-		srect->SetTexture(texture);
-		if (!subsetName.Empty())
-		{
-			srect->SetSubset(subsetName);
-		}
-	}
-	return srect;
-}
-
 MkSRect* MkSceneNode::GetSRect(const MkHashStr& name)
 {
 	MK_CHECK(m_SRects.Exist(name), m_NodeName.GetString() + L" SceneNode에 존재하지 않는 " + name.GetString() + L" SRect 참조 시도")
@@ -269,6 +213,11 @@ bool MkSceneNode::DeleteSRect(const MkHashStr& name)
 
 	m_SRects.Erase(name);
 	return true;
+}
+
+void MkSceneNode::DeleteAllSRects(void)
+{
+	m_SRects.Clear();
 }
 
 void MkSceneNode::Update(void)
@@ -287,7 +236,6 @@ void MkSceneNode::Update(const MkFloatRect& rootRegion)
 void MkSceneNode::Clear(void)
 {
 	m_SRects.Clear();
-	m_Presets.Clear();
 
 	MkSingleTypeTreePattern<MkSceneNode>::Clear();
 }
@@ -446,166 +394,6 @@ void MkSceneNode::_ApplyBuildingTemplateToSave(MkDataNode& node, const MkHashStr
 		node.Clear();
 		node.ApplyTemplate(templateName);
 	}
-}
-
-bool MkSceneNode::_AddWindowTypeImageSet(const MkHashStr& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode)
-{
-	if (targetNode != NULL)
-	{
-		const MkWindowTypeImageSet::Pack& pack = MK_WR_IMAGE_SET.GetPack(imageSet);
-		if (pack.type != MkWindowTypeImageSet::eNull)
-		{
-			// bitmap texture
-			MkBaseTexturePtr texture;
-			MK_TEXTURE_POOL.GetBitmapTexture(pack.filePath, texture, 0);
-			if (texture != NULL)
-			{
-				const MkArray<MkHashStr>& subsetNames = pack.subsetNames;
-
-				bool ok = false;
-				switch (pack.type)
-				{
-				case MkWindowTypeImageSet::eSingleType: // 하나만 생성
-					{
-						const MkHashStr& rectName = MkWindowTypeImageSet::GetImageSetKeyword(pack.type, static_cast<MkWindowTypeImageSet::eTypeIndex>(0));
-						ok = (targetNode->CreateSRect(rectName, texture, subsetNames[0], MkFloat2(0.f, 0.f)) != NULL);
-					}
-					break;
-
-				case MkWindowTypeImageSet::e3And1Type: // subset 갯수만큼 생성
-				case MkWindowTypeImageSet::e1And3Type:
-				case MkWindowTypeImageSet::e3And3Type:
-					{
-						MkArray<MkSRect*> srects(subsetNames.GetSize());
-						MK_INDEXING_LOOP(subsetNames, j)
-						{
-							const MkHashStr& rectName = MkWindowTypeImageSet::GetImageSetKeyword(pack.type, static_cast<MkWindowTypeImageSet::eTypeIndex>(j));
-							MkSRect* srect = targetNode->CreateSRect(rectName, texture, subsetNames[j], MkFloat2(0.f, 0.f));
-							if (srect != NULL)
-							{
-								srects.PushBack(srect);
-							}
-							else
-								break;
-						}
-
-						switch (pack.type)
-						{
-						case MkWindowTypeImageSet::e3And1Type:
-						case MkWindowTypeImageSet::e1And3Type:
-							ok = (srects.GetSize() == 3);
-							break;
-						case MkWindowTypeImageSet::e3And3Type:
-							ok = (srects.GetSize() == 9);
-							break;
-						}
-
-						if (ok)
-						{
-							switch (pack.type) // bodySize를 반영한 위치 재배치
-							{
-							case MkWindowTypeImageSet::e3And1Type:
-								{
-									MkSRect* lRect = srects[MkWindowTypeImageSet::eL];
-									MkSRect* mRect = srects[MkWindowTypeImageSet::eM];
-									MkSRect* rRect = srects[MkWindowTypeImageSet::eR];
-
-									mRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x, 0.f));
-									mRect->SetLocalSize(MkFloat2(bodySize.x, mRect->GetLocalSize().y));
-									rRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x + bodySize.x, 0.f));
-								}
-								break;
-							case MkWindowTypeImageSet::e1And3Type:
-								{
-									MkSRect* tRect = srects[MkWindowTypeImageSet::eT];
-									MkSRect* cRect = srects[MkWindowTypeImageSet::eC];
-									MkSRect* bRect = srects[MkWindowTypeImageSet::eB];
-
-									cRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y));
-									cRect->SetLocalSize(MkFloat2(cRect->GetLocalSize().x, bodySize.y));
-									tRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y + bodySize.y));
-								}
-								break;
-							case MkWindowTypeImageSet::e3And3Type:
-								{
-									MkSRect* ltRect = srects[MkWindowTypeImageSet::eLT];
-									MkSRect* mtRect = srects[MkWindowTypeImageSet::eMT];
-									MkSRect* rtRect = srects[MkWindowTypeImageSet::eRT];
-									MkSRect* lcRect = srects[MkWindowTypeImageSet::eLC];
-									MkSRect* mcRect = srects[MkWindowTypeImageSet::eMC];
-									MkSRect* rcRect = srects[MkWindowTypeImageSet::eRC];
-									MkSRect* lbRect = srects[MkWindowTypeImageSet::eLB];
-									MkSRect* mbRect = srects[MkWindowTypeImageSet::eMB];
-									MkSRect* rbRect = srects[MkWindowTypeImageSet::eRB];
-
-									mbRect->SetLocalPosition(MkFloat2(lbRect->GetLocalSize().x, 0.f));
-									mbRect->SetLocalSize(MkFloat2(bodySize.x, mbRect->GetLocalSize().y));
-									rbRect->SetLocalPosition(MkFloat2(lbRect->GetLocalSize().x + bodySize.x, 0.f));
-
-									lcRect->SetLocalPosition(MkFloat2(0.f, lbRect->GetLocalSize().y));
-									lcRect->SetLocalSize(MkFloat2(lcRect->GetLocalSize().x, bodySize.y));
-									mcRect->SetLocalPosition(MkFloat2(lcRect->GetLocalSize().x, mbRect->GetLocalSize().y));
-									mcRect->SetLocalSize(bodySize);
-									rcRect->SetLocalPosition(MkFloat2(lcRect->GetLocalSize().x + bodySize.x, rbRect->GetLocalSize().y));
-									rcRect->SetLocalSize(MkFloat2(rcRect->GetLocalSize().x, bodySize.y));
-
-									ltRect->SetLocalPosition(MkFloat2(0.f, lbRect->GetLocalSize().y + bodySize.y));
-									mtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x, mbRect->GetLocalSize().y + bodySize.y));
-									mtRect->SetLocalSize(MkFloat2(bodySize.x, mtRect->GetLocalSize().y));
-									rtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x + bodySize.x, rbRect->GetLocalSize().y + bodySize.y));
-								}
-								break;
-							}
-						}
-					}
-					break;
-				}
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
-bool MkSceneNode::_AddWindowTypeTitleImageSet(const MkArray<MkHashStr>& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode)
-{
-	if (targetNode != NULL)
-	{
-		MkSceneNode* onFocusNode = targetNode->CreateChildNode(MkWindowPreset::GetTitleStateKeyword(eS2D_TS_OnFocusState));
-		MkSceneNode* lostFocusNode = targetNode->CreateChildNode(MkWindowPreset::GetTitleStateKeyword(eS2D_TS_LostFocusState));
-
-		if (_AddWindowTypeImageSet(imageSet[eS2D_TS_OnFocusState], bodySize, onFocusNode) &&
-			_AddWindowTypeImageSet(imageSet[eS2D_TS_LostFocusState], bodySize, lostFocusNode))
-		{
-			lostFocusNode->SetVisible(false);
-			return true;
-		}
-	}
-	return false;
-}
-
-bool MkSceneNode::_AddWindowTypeStateImageSet(const MkArray<MkHashStr>& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode)
-{
-	if (targetNode != NULL)
-	{
-		eS2D_WindowState state = eS2D_WS_DefaultState;
-		while (state < eS2D_WS_MaxWindowState)
-		{
-			MkSceneNode* childNode = targetNode->CreateChildNode(MkWindowPreset::GetWindowStateKeyword(state));
-			if (_AddWindowTypeImageSet(imageSet[state], bodySize, childNode))
-			{
-				if (state != eS2D_WS_DefaultState)
-				{
-					childNode->SetVisible(false);
-				}
-				state = static_cast<eS2D_WindowState>(state + 1);
-			}
-			else
-				break;
-		}
-		return (state == eS2D_WS_MaxWindowState);
-	}
-	return false;
 }
 
 void MkSceneNode::_UpdateNodeTransform

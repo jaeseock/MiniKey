@@ -6,6 +6,7 @@
 //	+ enable
 //	+ alignment
 //	+ window/client rect interface
+//	+ window preset
 //------------------------------------------------------------------------------------------------//
 
 #include "MkS2D_MkSceneNode.h"
@@ -55,6 +56,25 @@ public:
 	virtual const MkFloatRect& GetWindowRect(void) const { return m_WorldAABR; }
 	virtual const MkFloatRect& GetClientRect(void) const { return m_WorldAABR; }
 
+	//------------------------------------------------------------------------------------------------//
+	// window preset
+	//------------------------------------------------------------------------------------------------//
+
+	// 자식으로 window preset이 적용된 component 노드 생성
+	MkBaseWindowNode* CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
+
+	// 자식으로 window preset이 적용된 노드들이 있으면 모두 테마 변경
+	void SetPresetThemeName(const MkHashStr& themeName);
+
+	// 자식으로 window preset이 적용된 component 노드가 있으면 크기 변경
+	void SetPresetComponentBodySize(eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
+
+	// 정보 반환
+	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
+	inline const MkFloat2& GetPresetBodySize(void) const { return m_PresetBodySize; }
+
+	//------------------------------------------------------------------------------------------------//
+
 	MkBaseWindowNode(const MkHashStr& name);
 	virtual ~MkBaseWindowNode() {}
 
@@ -64,12 +84,21 @@ public:
 
 	virtual void __UpdateWindow(const MkFloatRect& rootRegion);
 
+	inline void __SetThemeName(const MkHashStr& themeName) { m_PresetThemeName = themeName; }
+	inline void __SetBodySize(const MkFloat2& bodySize) { m_PresetBodySize = bodySize; }
+
 protected:
 
+	// enable
 	bool m_Enable;
 
+	// alignment
 	eRectAlignmentPosition m_AlignmentType;
 	MkHashStr m_TargetAlignmentWindowName;
 	MkFloat2 m_AlignmentBorder;
 	MkBaseWindowNode* m_TargetAlignmentWindowNode;
+
+	// window preset
+	MkHashStr m_PresetThemeName;
+	MkFloat2 m_PresetBodySize;
 };
