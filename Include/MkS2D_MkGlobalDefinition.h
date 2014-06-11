@@ -17,13 +17,22 @@ enum eS2D_WindowPresetComponent
 {
 	eS2D_WPC_None = -1,
 
+	// eS2D_BackgroundState
 	eS2D_WPC_BackgroundWindow = 0, // L"BackgroundWindow"
-	eS2D_WPC_TitleWindow, // eS2D_TitleState, L"TitleWindow"
-	eS2D_WPC_NegativeButton, // eS2D_WindowState, L"NegativeButton"
-	eS2D_WPC_PossitiveButton, // eS2D_WindowState, L"PossitiveButton"
-	eS2D_WPC_CancelIcon, // eS2D_WindowState, L"CancelIcon"
 
-	eS2D_WPC_MaxWindowPresetComponent
+	// eS2D_TitleState
+	eS2D_WPC_TitleWindow, // L"TitleWindow"
+
+	// eS2D_WindowState
+	eS2D_WPC_WindowStateTypeBegin,
+
+	eS2D_WPC_NegativeButton = eS2D_WPC_WindowStateTypeBegin, // L"NegativeButton"
+	eS2D_WPC_PossitiveButton, // L"PossitiveButton"
+	eS2D_WPC_CancelIcon, // L"CancelIcon"
+
+	eS2D_WPC_WindowStateTypeEnd,
+
+	eS2D_WPC_MaxWindowPresetComponent = eS2D_WPC_WindowStateTypeEnd
 };
 
 // eS2D_WPC_BackgroundWindow state

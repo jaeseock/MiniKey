@@ -2,8 +2,8 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : Scene\test_scene_.txt
-//   - time stamp : 2014.06.07 (19:11:25),
-//   - exporter   : 오군 (MyLovelyMagic)
+//   - time stamp : 2014.06.09 (18:39:41),
+//   - exporter   : 오재석 (MyLovelyMagic)
 //--------------------------------------------------------------------//
 
 

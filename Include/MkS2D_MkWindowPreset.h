@@ -37,9 +37,13 @@ public:
 
 	// state에 해당하는 keyword 반환
 	static const MkHashStr& GetTitleStateKeyword(eS2D_TitleState state);
+	static const MkArray<MkHashStr>& GetTitleStateKeywordList(void);
 
 	// state에 해당하는 keyword 반환
 	static const MkHashStr& GetWindowStateKeyword(eS2D_WindowState state);
+	static const MkArray<MkHashStr>& GetWindowStateKeywordList(void);
+
+	static const MkArray<MkHashStr>& __GetNullList(void);
 
 	MkWindowPreset();
 	~MkWindowPreset() { Clear(); }
@@ -69,6 +73,7 @@ public:
 	static int GetBegin(void) { return 0; }
 	static int GetEnd(void) { return 0; }
 	static const MkHashStr& GetKeyword(DataType state) { return MkHashStr::NullHash; }
+	static const MkArray<MkHashStr>& GetKeywordList(void) { return MkWindowPreset::__GetNullList(); }
 };
 
 template <> int MkWindowPresetStateInterface<eS2D_BackgroundState>::GetBegin(void) { return eS2D_BS_DefaultState; }
@@ -82,5 +87,8 @@ template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetEnd(void) { r
 template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_BackgroundState>::GetKeyword(eS2D_BackgroundState state) { return MkWindowPreset::GetBackgroundStateKeyword(state); }
 template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_TitleState>::GetKeyword(eS2D_TitleState state) { return MkWindowPreset::GetTitleStateKeyword(state); }
 template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_WindowState>::GetKeyword(eS2D_WindowState state) { return MkWindowPreset::GetWindowStateKeyword(state); }
+
+template <> const MkArray<MkHashStr>& MkWindowPresetStateInterface<eS2D_TitleState>::GetKeywordList(void) { return MkWindowPreset::GetTitleStateKeywordList(); }
+template <> const MkArray<MkHashStr>& MkWindowPresetStateInterface<eS2D_WindowState>::GetKeywordList(void) { return MkWindowPreset::GetWindowStateKeywordList(); }
 
 //------------------------------------------------------------------------------------------------//

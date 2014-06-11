@@ -11,7 +11,7 @@
 
 
 #include "MkCore_MkSingletonPattern.h"
-#include "MkCore_MkBitSet32.h"
+#include "MkCore_MkBitFieldDW.h"
 #include "MkCore_MkVersionTag.h"
 #include "MkCore_MkWindowUpdateListener.h"
 #include "MkCore_MkEventQueuePattern.h"
@@ -92,7 +92,7 @@ protected:
 	MkVersionTag m_RendererVersion;
 
 	// 렌더러 상태
-	MkBitSet32 m_RendererState;
+	MkBitFieldDW m_RendererState;
 
 	// 이벤트
 	MkEventQueuePattern<_RendererEvent> m_EventQueue;

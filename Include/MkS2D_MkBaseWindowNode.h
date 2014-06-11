@@ -7,13 +7,26 @@
 //	+ alignment
 //	+ window/client rect interface
 //	+ window preset
+//	+ component state(eS2D_BackgroundState, eS2D_TitleState, eS2D_WindowState)
+//	+ attribute
+//	+ input event
 //------------------------------------------------------------------------------------------------//
 
+#include "MkCore_MkBitFieldDW.h"
 #include "MkS2D_MkSceneNode.h"
 
 
 class MkBaseWindowNode : public MkSceneNode
 {
+public:
+
+	enum eAttribute
+	{
+		eNone = 0,
+		eDragMovement = 1,
+		eDragToHandling = 1 << 1
+	};
+
 public:
 
 	//------------------------------------------------------------------------------------------------//
@@ -30,7 +43,7 @@ public:
 	// enable
 	//------------------------------------------------------------------------------------------------//
 
-	virtual void SetEnable(bool enable) { m_Enable = enable; }
+	void SetEnable(bool enable);
 	inline bool GetEnable(void) const { return m_Enable; }
 
 	//------------------------------------------------------------------------------------------------//
@@ -38,9 +51,9 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// set alignment info
-	// pivotWinNodeName은 자신의 조상 노드 중에서 가장 가까운 MkBaseWindowNode 계열 노드
-	// (NOTE) pivot node의 window(outside alignment)/client(inside alignment) rect가 명확하지 않으면
-	// 정렬시 문제가 생길 수 있으므로 적절한 window/client 영역 설정이 필요
+	// - pivotWinNodeName은 자신의 조상 노드 중에서 가장 가까운 MkBaseWindowNode 계열 노드
+	// - outside alignment는 pivot node의 window rect를, inside alignment는 client rect 기준
+	// - 만약 적합한 pivotWinNodeName가 존재하지 않는다면 Update시 주어지는 rootRegion을 기준으로 함
 	bool SetAlignment(const MkHashStr& pivotWinNodeName, eRectAlignmentPosition alignment, const MkInt2& border);
 
 	// get alignment info
@@ -63,6 +76,9 @@ public:
 	// 자식으로 window preset이 적용된 component 노드 생성
 	MkBaseWindowNode* CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
 
+	// window preset이 적용된 자식 component 노드 반환
+	MkSceneNode* GetWindowPresetNode(eS2D_WindowPresetComponent component);
+
 	// 자식으로 window preset이 적용된 노드들이 있으면 모두 테마 변경
 	void SetPresetThemeName(const MkHashStr& themeName);
 
@@ -74,6 +90,35 @@ public:
 	inline const MkFloat2& GetPresetBodySize(void) const { return m_PresetBodySize; }
 
 	//------------------------------------------------------------------------------------------------//
+	// component state
+	//------------------------------------------------------------------------------------------------//
+
+	// 자식으로 eS2D_WPC_BackgroundWindow가 적용된 노드가 있으면 적용
+	void SetComponentState(eS2D_BackgroundState state);
+
+	// 자식으로 eS2D_WPC_TitleWindow가 적용된 노드가 있으면 적용
+	void SetComponentState(eS2D_TitleState state);
+
+	// 자식으로 eS2D_WindowState에 해당되는 component가 적용된 노드가 있으면 적용
+	void SetComponentState(eS2D_WindowPresetComponent component, eS2D_WindowState state);
+
+	//------------------------------------------------------------------------------------------------//
+	// attribute
+	//------------------------------------------------------------------------------------------------//
+
+	inline void SetAttribute(eAttribute attribute, bool enable) { m_Attribute.Assign(attribute, enable); }
+	inline bool GetAttribute(eAttribute attribute) const { return m_Attribute.Check(attribute); }
+
+	//------------------------------------------------------------------------------------------------//
+	// input event
+	//------------------------------------------------------------------------------------------------//
+	virtual bool InputEventKeyPress(unsigned int keyCode);
+	virtual bool InputEventKeyRelease(unsigned int keyCode);
+	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position);
+	virtual bool InputEventMouseRelease(unsigned int button, const MkFloat2& position);
+	virtual bool InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position);
+	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position);
+	virtual bool InputEventMouseMove(bool inside, const MkFloat2& position);
 
 	MkBaseWindowNode(const MkHashStr& name);
 	virtual ~MkBaseWindowNode() {}
@@ -101,4 +146,7 @@ protected:
 	// window preset
 	MkHashStr m_PresetThemeName;
 	MkFloat2 m_PresetBodySize;
+
+	// attribute
+	MkBitFieldDW m_Attribute;
 };

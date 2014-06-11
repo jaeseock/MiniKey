@@ -78,8 +78,7 @@ const MkArray<MkHashStr>& MkWindowPreset::GetWindowTypeImageSet(const MkHashStr&
 
 	if (currThemePtr == NULL)
 	{
-		const static MkArray<MkHashStr> Null;
-		return Null;
+		return __GetNullList();
 	}
 
 	return currThemePtr->Exist(component) ? (*currThemePtr)[component] : defTheme[component];
@@ -119,16 +118,50 @@ const MkHashStr& MkWindowPreset::GetBackgroundStateKeyword(eS2D_BackgroundState 
 	return sKeywords[state];
 }
 
+const static MkHashStr sTitleKeywords[eS2D_TS_MaxTitleState] = { L"OnFocus", L"LostFocus" };
+
 const MkHashStr& MkWindowPreset::GetTitleStateKeyword(eS2D_TitleState state)
 {
-	const static MkHashStr sKeywords[eS2D_TS_MaxTitleState] = { L"OnFocus", L"LostFocus" };
-	return sKeywords[state];
+	return sTitleKeywords[state];
 }
+
+const MkArray<MkHashStr>& MkWindowPreset::GetTitleStateKeywordList(void)
+{
+	static MkArray<MkHashStr> sKeyList(eS2D_TS_MaxTitleState);
+	if (sKeyList.Empty())
+	{
+		for (int i=eS2D_TS_OnFocusState; i<eS2D_TS_MaxTitleState; ++i)
+		{
+			sKeyList.PushBack(sTitleKeywords[i]);
+		}
+	}
+	return sKeyList;
+}
+
+const static MkHashStr sWindowKeywords[eS2D_WS_MaxWindowState] = { L"Default", L"OnCursor", L"OnClick", L"Disable" };
 
 const MkHashStr& MkWindowPreset::GetWindowStateKeyword(eS2D_WindowState state)
 {
-	const static MkHashStr sKeywords[eS2D_WS_MaxWindowState] = { L"Default", L"OnCursor", L"OnClick", L"Disable" };
-	return sKeywords[state];
+	return sWindowKeywords[state];
+}
+
+const MkArray<MkHashStr>& MkWindowPreset::GetWindowStateKeywordList(void)
+{
+	static MkArray<MkHashStr> sKeyList(eS2D_WS_MaxWindowState);
+	if (sKeyList.Empty())
+	{
+		for (int i=eS2D_WS_DefaultState; i<eS2D_WS_MaxWindowState; ++i)
+		{
+			sKeyList.PushBack(sWindowKeywords[i]);
+		}
+	}
+	return sKeyList;
+}
+
+const MkArray<MkHashStr>& MkWindowPreset::__GetNullList(void)
+{
+	const static MkArray<MkHashStr> Null;
+	return Null;
 }
 
 MkWindowPreset::MkWindowPreset()
