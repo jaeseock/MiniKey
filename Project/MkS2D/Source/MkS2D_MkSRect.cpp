@@ -36,7 +36,7 @@ const static MkStr TEXT_O_TAG = L"odt";
 
 // scene deco text : MkStr 1 + n개
 // - tag(TEXT_S_TAG)
-// - MK_WIN_RES에 등록되어 있는 deco text node name & key
+// - MK_WIN_RES_MGR에 등록되어 있는 deco text node name & key
 const static MkStr TEXT_S_TAG = L"sdt";
 
 // unsigned int

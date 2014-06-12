@@ -278,37 +278,37 @@ void MkInputManager::__CheckWndProc(HWND hWnd, unsigned int msg, WPARAM wParam, 
 		break;
 
 	case WM_LBUTTONDOWN:
-		m_EventQueue.RegisterEvent(InputEvent(eMousePress, MKDEF_MOUSE_LEFT_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMousePress, MKDEF_MOUSE_LEFT_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 	case WM_LBUTTONUP:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseRelease, MKDEF_MOUSE_LEFT_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMouseRelease, MKDEF_MOUSE_LEFT_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 	case WM_LBUTTONDBLCLK:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseDoubleClick, MKDEF_MOUSE_LEFT_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMouseDoubleClick, MKDEF_MOUSE_LEFT_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 
 	case WM_MBUTTONDOWN:
-		m_EventQueue.RegisterEvent(InputEvent(eMousePress, MKDEF_MOUSE_MIDDLE_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMousePress, MKDEF_MOUSE_MIDDLE_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 	case WM_MBUTTONUP:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseRelease, MKDEF_MOUSE_MIDDLE_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMouseRelease, MKDEF_MOUSE_MIDDLE_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 	case WM_MBUTTONDBLCLK:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseDoubleClick, MKDEF_MOUSE_MIDDLE_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMouseDoubleClick, MKDEF_MOUSE_MIDDLE_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 
 	case WM_RBUTTONDOWN:
-		m_EventQueue.RegisterEvent(InputEvent(eMousePress, MKDEF_MOUSE_RIGHT_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMousePress, MKDEF_MOUSE_RIGHT_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 	case WM_RBUTTONUP:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseRelease, MKDEF_MOUSE_RIGHT_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMouseRelease, MKDEF_MOUSE_RIGHT_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 	case WM_RBUTTONDBLCLK:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseDoubleClick, MKDEF_MOUSE_RIGHT_BUTTON, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMouseDoubleClick, MKDEF_MOUSE_RIGHT_BUTTON, static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 
 	case WM_MOUSEWHEEL:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseWheelMove, 0, static_cast<int>(GET_WHEEL_DELTA_WPARAM(wParam)), 0));
+		m_EventQueue.RegisterEvent(InputEvent(eMouseWheelMove, static_cast<int>(GET_WHEEL_DELTA_WPARAM(wParam)), static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
 		break;
 
 	case WM_MOUSEMOVE:
@@ -389,7 +389,7 @@ void MkInputManager::__Update(void)
 					break;
 
 				case eMouseWheelMove:
-					m_WheelMovement += evt.arg1;
+					m_WheelMovement += evt.arg0;
 					m_CurrentFrameEvents.PushBack(evt);
 					break;
 
@@ -511,7 +511,7 @@ void MkInputManager::_RegisterKeyEvent(eInputEvent inputEvent, WPARAM wParam)
 
 	if (existKey)
 	{
-		m_EventQueue.RegisterEvent(InputEvent(inputEvent, keyCode, 0, 0));
+		m_EventQueue.RegisterEvent(InputEvent(inputEvent, static_cast<int>(keyCode), 0, 0));
 	}
 }
 

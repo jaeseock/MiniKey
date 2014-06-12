@@ -18,6 +18,8 @@ class MkSceneNode : public MkSingleTypeTreePattern<MkSceneNode>
 {
 public:
 
+	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_SceneNode; }
+
 	//------------------------------------------------------------------------------------------------//
 	// ±¸¼º
 	//------------------------------------------------------------------------------------------------//

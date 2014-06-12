@@ -96,6 +96,7 @@ public:
 	}
 
 	// 크기가 존재하는지 여부 반환
+	inline bool SizeIsZero(void) const { return ((size.x == static_cast<DataType>(0)) || (size.y == static_cast<DataType>(0))); }
 	inline bool SizeIsNotZero(void) const { return ((size.x > static_cast<DataType>(0)) && (size.y > static_cast<DataType>(0))); }
 
 	// 초기화

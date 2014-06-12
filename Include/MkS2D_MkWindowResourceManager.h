@@ -30,7 +30,7 @@
 #include "MkS2D_MkWindowPreset.h"
 
 
-#define MK_WIN_RES MkWindowResourceManager::Instance()
+#define MK_WIN_RES_MGR MkWindowResourceManager::Instance()
 #define MK_WR_DECO_TEXT MkWindowResourceManager::Instance().GetDecoTextRoot()
 #define MK_WR_IMAGE_SET MkWindowResourceManager::Instance().GetWindowTypeImageSet()
 #define MK_WR_PRESET MkWindowResourceManager::Instance().GetWindowPreset()

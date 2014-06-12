@@ -9,7 +9,7 @@
 //	+ window preset
 //	+ component state(eS2D_BackgroundState, eS2D_TitleState, eS2D_WindowState)
 //	+ attribute
-//	+ input event
+//	+ event call
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkBitFieldDW.h"
@@ -22,12 +22,15 @@ public:
 
 	enum eAttribute
 	{
-		eNone = 0,
-		eDragMovement = 1,
-		eDragToHandling = 1 << 1
+		eIgnoreInput = 0,
+		eDragMovement,
+		eArrowKeyMovement,
+		eDragToHandling
 	};
 
 public:
+
+	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_BaseWindowNode; }
 
 	//------------------------------------------------------------------------------------------------//
 	// ±¸¼º
@@ -110,8 +113,10 @@ public:
 	inline bool GetAttribute(eAttribute attribute) const { return m_Attribute.Check(attribute); }
 
 	//------------------------------------------------------------------------------------------------//
-	// input event
+	// event call
 	//------------------------------------------------------------------------------------------------//
+
+	// input
 	virtual bool InputEventKeyPress(unsigned int keyCode);
 	virtual bool InputEventKeyRelease(unsigned int keyCode);
 	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position);
@@ -119,6 +124,16 @@ public:
 	virtual bool InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position);
 	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position);
 	virtual bool InputEventMouseMove(bool inside, const MkFloat2& position);
+
+	// activation
+	virtual void Activate(void) {}
+	virtual void Deactivate(void) {}
+
+	// focus
+	virtual void OnFocus(void) {}
+	virtual void LostFocus(void) {}
+
+	//------------------------------------------------------------------------------------------------//
 
 	MkBaseWindowNode(const MkHashStr& name);
 	virtual ~MkBaseWindowNode() {}
@@ -131,6 +146,13 @@ public:
 
 	inline void __SetThemeName(const MkHashStr& themeName) { m_PresetThemeName = themeName; }
 	inline void __SetBodySize(const MkFloat2& bodySize) { m_PresetBodySize = bodySize; }
+
+	inline bool __CheckEffectiveTarget(void) const { return (GetEnable() && (!GetAttribute(eIgnoreInput)) && GetWorldAABR().SizeIsNotZero()); }
+	inline bool __CheckInputTarget(const MkFloat2& cursorPosition) const { return (__CheckEffectiveTarget() && GetWorldAABR().CheckIntersection(cursorPosition)); }
+
+protected:
+
+	bool _GetInputUpdatableNodes(bool skipAABRCheck, const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer);
 
 protected:
 

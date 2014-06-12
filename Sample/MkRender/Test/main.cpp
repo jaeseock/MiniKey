@@ -25,6 +25,7 @@
 #include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkBaseWindowNode.h"
 #include "MkS2D_MkDrawStep.h"
+#include "MkS2D_MkWindowEventManager.h"
 
 //#include "MkCore_MkNameSelection.h"
 
@@ -80,6 +81,9 @@ public:
 		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(70.f, 30.f))->SetLocalPosition(MkVec3(10.f, 6.f, -1.f));
 		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(212.f - 12.f - 16.f, 312 - 6.f - 17.f, -2.f));
 		m_Node01->SetLocalPosition(MkVec3(400.f, 150.f, -910.f));
+		//m_Node01->SetAttribute(MkBaseWindowNode::eDragMovement, true);
+		//m_Node01->SetAttribute(MkBaseWindowNode::eArrowKeyMovement, true);
+		//m_Node01->SetAttribute(MkBaseWindowNode::eDragToHandling, true);
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");
 		
@@ -103,6 +107,8 @@ public:
 		m_DiceT.SetSeed(90);
 		m_DiceA.SetMinMax(2, 4);
 		m_DiceA.SetSeed(1000);
+
+		m_RootNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step_00")->GetRegionRect());
 
 		return true;
 	}
@@ -192,13 +198,13 @@ public:
 			node->SetLocalScale(m_Scale);
 		}
 
-		m_RootNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step_00")->GetRegionRect());
+		m_RootNode->Update();
 		m_ScreenNode->Update();
 
 		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
 		{
 			MkDataNode node;
-			m_RootNode->Save(node);
+			m_Node01->Save(node);
 			node.SaveToText(L"test_scene.txt");
 		}
 
@@ -304,30 +310,43 @@ class RestorePage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		m_RootNode = new MkSceneNode(L"Root");
+		m_WindowNode1 = new MkBaseWindowNode(L"01");
+		m_WindowNode2 = new MkBaseWindowNode(L"02");
 		MkDataNode node;
 		if (node.Load(L"test_scene.txt"))
 		{
-			m_RootNode->Load(node);
+			m_WindowNode1->Load(node);
+			m_WindowNode2->Load(node);
+			MK_WIN_EVENT_MGR.RegisterWindow(m_WindowNode1, true);
+			MK_WIN_EVENT_MGR.RegisterWindow(m_WindowNode2, true);
 		}
 
-		MkBaseWindowNode* node01 = dynamic_cast<MkBaseWindowNode*>(m_RootNode->GetChildNode(L"01"));
-		node01->SetPresetThemeName(L"Default");
-		node01->SetPresetComponentBodySize(eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 100.f));
+		m_WindowNode1->SetLocalDepth(100.f);
+		m_WindowNode2->SetLocalDepth(100.f);
+		m_WindowNode2->SetLocalPosition(MkFloat2(30.f, 100.f));
+		//m_WindowNode1->SetPresetThemeName(L"Default");
+		//m_WindowNode1->SetPresetComponentBodySize(eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 100.f));
 		
-		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_RootNode);
+		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_WindowNode1);
+		MK_RENDERER.GetDrawQueue().GetStep(L"step")->AddSceneNode(m_WindowNode2);
+		m_WindowNode1->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
+		m_WindowNode2->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
 
 		return true;
 	}
 
 	virtual void Update(const MkTimeState& timeState)
 	{
-		m_RootNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
+		//m_WindowNode1->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
+		m_WindowNode1->Update();
+		m_WindowNode2->Update();
 	}
 
 	virtual void Clear(void)
 	{
-		MK_DELETE(m_RootNode);
+		MK_WIN_EVENT_MGR.Clear();
+		MK_DELETE(m_WindowNode1);
+		MK_DELETE(m_WindowNode2);
 		
 		MK_RENDERER.GetDrawQueue().Clear();
 		MK_TEXTURE_POOL.UnloadGroup(0);
@@ -335,14 +354,16 @@ public:
 
 	RestorePage(const MkHashStr& name) : MkBasePage(name)
 	{
-		m_RootNode = NULL;
+		m_WindowNode1 = NULL;
+		m_WindowNode2 = NULL;
 	}
 
 	virtual ~RestorePage() { Clear(); }
 
 protected:
 
-	MkSceneNode* m_RootNode;
+	MkBaseWindowNode* m_WindowNode1;
+	MkBaseWindowNode* m_WindowNode2;
 };
 
 class TestFramework : public MkRenderFramework

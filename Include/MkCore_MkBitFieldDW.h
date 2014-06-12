@@ -4,6 +4,7 @@
 // double word bit field
 //------------------------------------------------------------------------------------------------//
 
+#include <assert.h>
 #include "MkCore_MkContainerDefinition.h"
 
 

@@ -12,6 +12,13 @@ enum eS2D_MaterialBlendType
 	eS2D_MBT_ColorMult
 };
 
+// scene node type
+enum eS2D_SceneNodeType
+{
+	eS2D_SNT_SceneNode = 0, // MkSceneNode
+	eS2D_SNT_BaseWindowNode // MkBaseWindowNode
+};
+
 // window preset component
 enum eS2D_WindowPresetComponent
 {

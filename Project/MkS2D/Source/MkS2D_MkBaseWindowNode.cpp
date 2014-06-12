@@ -523,17 +523,13 @@ void MkBaseWindowNode::SetComponentState(eS2D_WindowPresetComponent component, e
 
 bool MkBaseWindowNode::InputEventKeyPress(unsigned int keyCode)
 {
-	if (!m_ChildrenNode.Empty())
+	MkArray<MkBaseWindowNode*> buffer;
+	if (_GetInputUpdatableNodes(true, MkFloat2(0.f, 0.f), buffer))
 	{
-		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
-		MK_STL_LOOP(looper)
+		MK_INDEXING_LOOP(buffer, i)
 		{
-			MkBaseWindowNode* node = dynamic_cast<MkBaseWindowNode*>(looper.GetCurrentField());
-			if (node != NULL)
-			{
-				if (node->InputEventKeyPress(keyCode))
-					return true; // escape
-			}
+			if (buffer[i]->InputEventKeyPress(keyCode))
+				return true; // escape
 		}
 	}
 	return false;
@@ -541,17 +537,25 @@ bool MkBaseWindowNode::InputEventKeyPress(unsigned int keyCode)
 
 bool MkBaseWindowNode::InputEventKeyRelease(unsigned int keyCode)
 {
-	if (!m_ChildrenNode.Empty())
+	// attribute : eArrowKeyMovement
+	if (GetAttribute(eArrowKeyMovement))
 	{
-		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
-		MK_STL_LOOP(looper)
+		switch (keyCode)
 		{
-			MkBaseWindowNode* node = dynamic_cast<MkBaseWindowNode*>(looper.GetCurrentField());
-			if (node != NULL)
-			{
-				if (node->InputEventKeyRelease(keyCode))
-					return true; // escape
-			}
+		case VK_LEFT: SetLocalPosition(MkFloat2(GetLocalPosition().x - 1.f, GetLocalPosition().y)); break;
+		case VK_RIGHT: SetLocalPosition(MkFloat2(GetLocalPosition().x + 1.f, GetLocalPosition().y)); break;
+		case VK_UP: SetLocalPosition(MkFloat2(GetLocalPosition().x, GetLocalPosition().y + 1.f)); break;
+		case VK_DOWN: SetLocalPosition(MkFloat2(GetLocalPosition().x, GetLocalPosition().y - 1.f)); break;
+		}
+	}
+
+	MkArray<MkBaseWindowNode*> buffer;
+	if (_GetInputUpdatableNodes(true, MkFloat2(0.f, 0.f), buffer))
+	{
+		MK_INDEXING_LOOP(buffer, i)
+		{
+			if (buffer[i]->InputEventKeyRelease(keyCode))
+				return true; // escape
 		}
 	}
 	return false;
@@ -559,21 +563,13 @@ bool MkBaseWindowNode::InputEventKeyRelease(unsigned int keyCode)
 
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
 {
-	if (!m_ChildrenNode.Empty())
+	MkArray<MkBaseWindowNode*> buffer;
+	if (_GetInputUpdatableNodes(false, position, buffer))
 	{
-		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
-		MK_STL_LOOP(looper)
+		MK_INDEXING_LOOP(buffer, i)
 		{
-			MkSceneNode* node = looper.GetCurrentField();
-			if (node->GetWorldAABR().CheckIntersection(position))
-			{
-				MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(node);
-				if (winNode != NULL)
-				{
-					if (winNode->InputEventMousePress(button, position))
-						return true; // escape
-				}
-			}
+			if (buffer[i]->InputEventMousePress(button, position))
+				return true; // escape
 		}
 	}
 	return false;
@@ -581,21 +577,57 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 
 bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position)
 {
+	MkArray<MkBaseWindowNode*> buffer;
+	if (_GetInputUpdatableNodes(false, position, buffer))
+	{
+		MK_INDEXING_LOOP(buffer, i)
+		{
+			if (buffer[i]->InputEventMouseRelease(button, position))
+				return true; // escape
+		}
+	}
 	return false;
 }
 
 bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position)
 {
+	MkArray<MkBaseWindowNode*> buffer;
+	if (_GetInputUpdatableNodes(false, position, buffer))
+	{
+		MK_INDEXING_LOOP(buffer, i)
+		{
+			if (buffer[i]->InputEventMouseDoubleClick(button, position))
+				return true; // escape
+		}
+	}
 	return false;
 }
 
 bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& position)
 {
+	MkArray<MkBaseWindowNode*> buffer;
+	if (_GetInputUpdatableNodes(false, position, buffer))
+	{
+		MK_INDEXING_LOOP(buffer, i)
+		{
+			if (buffer[i]->InputEventMouseWheelMove(delta, position))
+				return true; // escape
+		}
+	}
 	return false;
 }
 
 bool MkBaseWindowNode::InputEventMouseMove(bool inside, const MkFloat2& position)
 {
+	MkArray<MkBaseWindowNode*> buffer;
+	if (_GetInputUpdatableNodes(false, position, buffer))
+	{
+		MK_INDEXING_LOOP(buffer, i)
+		{
+			if (buffer[i]->InputEventMouseMove(inside, position))
+				return true; // escape
+		}
+	}
 	return false;
 }
 
@@ -667,6 +699,29 @@ void MkBaseWindowNode::__UpdateWindow(const MkFloatRect& rootRegion)
 	}
 
 	MkSceneNode::__UpdateWindow(rootRegion);
+}
+
+bool MkBaseWindowNode::_GetInputUpdatableNodes(bool skipAABRCheck, const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer)
+{
+	if (!m_ChildrenNode.Empty())
+	{
+		buffer.Reserve(m_ChildrenNode.GetSize());
+
+		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
+		MK_STL_LOOP(looper)
+		{
+			MkSceneNode* node = looper.GetCurrentField();
+			if ((node->GetNodeType() > eS2D_SNT_SceneNode) && (skipAABRCheck || node->GetWorldAABR().CheckIntersection(position)))
+			{
+				MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(node);
+				if ((winNode != NULL) && winNode->GetEnable())
+				{
+					buffer.PushBack(winNode);
+				}
+			}
+		}
+	}
+	return (!buffer.Empty());
 }
 
 //------------------------------------------------------------------------------------------------//

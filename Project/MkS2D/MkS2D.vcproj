@@ -355,6 +355,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkS2D_MkWindowEventManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkS2D_MkWindowEventManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkS2D_MkWindowResourceManager.cpp"
 					>
 				</File>
@@ -447,7 +455,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="0. Scene node (load&amp;save)"
+					Name="0. Scene node"
 					>
 					<File
 						RelativePath=".\Source\MkS2D_MkSceneNode.cpp"
@@ -459,7 +467,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="1. Base window node (load&amp;save)"
+					Name="1. Base window node"
 					>
 					<File
 						RelativePath=".\Source\MkS2D_MkBaseWindowNode.cpp"

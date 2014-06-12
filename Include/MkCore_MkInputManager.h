@@ -57,14 +57,14 @@ public:
 	{
 		eKeyPress = 0, // arg0 : key code
 		eKeyRelease, // arg0 : key code
-		eMousePress, // arg0 : button
-		eMouseRelease, // arg0 : button
-		eMouseDoubleClick, // arg0 : button
-		eMouseWheelMove, // arg1 : delta
+		eMousePress, // arg0 : button, arg1 : x, arg2 : y
+		eMouseRelease, // arg0 : button, arg1 : x, arg2 : y
+		eMouseDoubleClick, // arg0 : button, arg1 : x, arg2 : y
+		eMouseWheelMove, // arg0 : delta, arg1 : x, arg2 : y
 		eMouseMove // arg0 : 0/1(client out/in), arg1 : x, arg2 : y
 	};
 
-	typedef MkEventUnitPack3<eInputEvent, unsigned int, int, int> InputEvent;
+	typedef MkEventUnitPack3<eInputEvent, int, int, int> InputEvent;
 
 	//------------------------------------------------------------------------------------------------//
 
