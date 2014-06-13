@@ -98,6 +98,14 @@
 #define MKDEF_S2D_SND_CHILD_SNODE_NODE_NAME L"<SceneNode>"
 
 //------------------------------------------------------------------------------------------------//
+
+// MkWindowEventManager에서의 깊이 대역폭
+// 시스템에서의 깊이 영역(0.f ~ MKDEF_S2D_MAX_WORLD_DEPTH) 중,
+// 해당 깊이(MKDEF_S2D_MIN_WINDOW_DEPTH_BANDWIDTH ~ MKDEF_S2D_MAX_WINDOW_DEPTH_BANDWIDTH)를 윈도우용으로 사용한다는 의미
+#define MKDEF_S2D_MIN_WINDOW_DEPTH_BANDWIDTH 10.f
+#define MKDEF_S2D_MAX_WINDOW_DEPTH_BANDWIDTH 100.f
+
+//------------------------------------------------------------------------------------------------//
 // DEBUG
 //------------------------------------------------------------------------------------------------//
 

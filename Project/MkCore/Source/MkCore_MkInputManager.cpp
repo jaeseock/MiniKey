@@ -3,7 +3,9 @@
 #define _WIN32_WINNT 0x0501
 #endif
 
+#include "MkCore_MkProjectDefinition.h"
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkDevPanel.h"
 #include "MkCore_MkInputManager.h"
 
 #define MKDEF_MAX_KEY_COUNT 60 // 사용가능한 최대 키 갯수
@@ -21,6 +23,7 @@ void MkInputManager::SetUp(HWND targetWindowHandle)
 		return;
 
 	m_TargetWindowHandle = targetWindowHandle;
+	UpdateTargetWindowClientSize();
 
 	MkArray<unsigned int> keyCodeList;
 	keyCodeList.Reserve(256);
@@ -88,6 +91,17 @@ void MkInputManager::SetUp(HWND targetWindowHandle)
 	}
 }
 
+void MkInputManager::UpdateTargetWindowClientSize(void)
+{
+	if (m_TargetWindowHandle != NULL)
+	{
+		RECT rect;
+		GetClientRect(m_TargetWindowHandle, &rect);
+		m_TargetWindowClientSize.x = static_cast<int>(rect.right);
+		m_TargetWindowClientSize.y = static_cast<int>(rect.bottom);
+	}
+}
+
 void MkInputManager::IgnoreWindowKey(bool enable)
 {
 	if (enable)
@@ -148,34 +162,44 @@ int MkInputManager::GetMouseWheelPosition(void)
 	return m_WheelPosition;
 }
 
-MkInt2 MkInputManager::GetAbsoluteMouseMovement(void)
+MkInt2 MkInputManager::GetAbsoluteMouseMovement(bool flipY)
 {
-	MkScopedCriticalSection(m_SnapShotCS);
-	return m_MouseMovement;
-}
-
-MkInt2 MkInputManager::GetAbsoluteMousePosition(void)
-{
-	MkScopedCriticalSection(m_SnapShotCS);
-	return m_MousePosition;
-}
-
-MkVec2 MkInputManager::GetRelativeMousePosition(void)
-{
-	if (m_TargetWindowHandle == NULL)
-		return MkVec2::Zero;
-
-	RECT rect;
-	GetClientRect(m_TargetWindowHandle, &rect);
-	MkVec2 clientSize(static_cast<float>(rect.right), static_cast<float>(rect.bottom));
-
-	MkInt2 absPosition;
+	MkInt2 pos;
 	MkWrapInCriticalSection(m_SnapShotCS)
 	{
-		absPosition = m_MousePosition;
+		pos = m_MouseMovement;
 	}
 
-	return MkVec2(static_cast<float>(absPosition.x) / clientSize.x, static_cast<float>(absPosition.y) / clientSize.y);
+	if (flipY)
+	{
+		pos.y = -pos.y;
+	}
+	return pos;
+}
+
+MkInt2 MkInputManager::GetAbsoluteMousePosition(bool flipY)
+{
+	MkInt2 pos;
+	MkWrapInCriticalSection(m_SnapShotCS)
+	{
+		pos = m_MousePosition;
+	}
+
+	if (flipY && (!m_TargetWindowClientSize.IsZero()))
+	{
+		pos.y = m_TargetWindowClientSize.y - pos.y;
+	}
+	return pos;
+}
+
+MkVec2 MkInputManager::GetRelativeMousePosition(bool flipY)
+{
+	if (m_TargetWindowClientSize.IsZero())
+		return MkVec2::Zero;
+
+	MkInt2 absPosition = GetAbsoluteMousePosition(flipY);
+	return MkVec2(static_cast<float>(absPosition.x) / static_cast<float>(m_TargetWindowClientSize.x),
+		static_cast<float>(absPosition.y) / static_cast<float>(m_TargetWindowClientSize.y));
 }
 
 bool MkInputManager::GetMousePointerAvailable(void)
@@ -399,6 +423,38 @@ void MkInputManager::__Update(void)
 			}
 
 			m_WheelPosition += m_WheelMovement;
+
+			if (MKDEF_SHOW_INPUT_EVENT)
+			{
+				MK_INDEXING_LOOP(m_CurrentFrameEvents, i)
+				{
+					const InputEvent& evt = m_CurrentFrameEvents[i];
+					switch (evt.eventType)
+					{
+					case eKeyPress:
+						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyPress : " + MkStr(evt.arg0));
+						break;
+					case eKeyRelease:
+						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyRelease : " + MkStr(evt.arg0));
+						break;
+					case eMousePress:
+						MK_DEV_PANEL.MsgToLog(L"> input evt eMousePress : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						break;
+					case eMouseRelease:
+						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseRelease : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						break;
+					case eMouseDoubleClick:
+						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseDoubleClick : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						break;
+					case eMouseWheelMove:
+						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseWheelMove : delta(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						break;
+					case eMouseMove:
+						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseMove : inside(" + MkStr(evt.arg0 == 1) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						break;
+					}
+				}
+			}
 		}
 	}
 }

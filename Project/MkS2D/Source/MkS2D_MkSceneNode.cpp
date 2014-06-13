@@ -289,11 +289,8 @@ void MkSceneNode::__UpdateTransform(void)
 	}
 
 	// child rect transform
-	if (m_SRects.Empty())
-	{
-		m_NodeOnlyAABR.Clear();
-	}
-	else
+	m_NodeOnlyAABR.Clear();
+	if (!m_SRects.Empty())
 	{
 		// update rect
 		float worldRotation = m_WorldRotation.GetDecision();
@@ -308,10 +305,6 @@ void MkSceneNode::__UpdateTransform(void)
 
 		// update local AABR
 		looper.SetUp(m_SRects);
-
-		m_NodeOnlyAABR = looper.GetCurrentField().GetAABR(); // init
-
-		looper.__MoveToNext();
 		MK_STL_LOOP(looper)
 		{
 			m_NodeOnlyAABR.UpdateToUnion(looper.GetCurrentField().GetAABR());

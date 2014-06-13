@@ -22,10 +22,13 @@ public:
 
 	enum eAttribute
 	{
-		eIgnoreInput = 0,
-		eDragMovement,
-		eArrowKeyMovement,
-		eDragToHandling
+		eIgnoreFocus = 0, // focus window가 될 수 없음
+		eDragMovement, // 커서 드래그 이동
+		eConfinedToScreen, // 커서 드래그 이동시 스크린 영역 제한
+		eDragToHandling, // 커서 드래그로 이미지 이동 허용
+
+		// edit mode 전용
+		eArrowKeyMovement // 화살표 키 이동
 	};
 
 public:
@@ -147,7 +150,7 @@ public:
 	inline void __SetThemeName(const MkHashStr& themeName) { m_PresetThemeName = themeName; }
 	inline void __SetBodySize(const MkFloat2& bodySize) { m_PresetBodySize = bodySize; }
 
-	inline bool __CheckEffectiveTarget(void) const { return (GetEnable() && (!GetAttribute(eIgnoreInput)) && GetWorldAABR().SizeIsNotZero()); }
+	inline bool __CheckEffectiveTarget(void) const { return (GetVisible() && GetEnable() && (!GetAttribute(eIgnoreFocus)) && GetWorldAABR().SizeIsNotZero()); }
 	inline bool __CheckInputTarget(const MkFloat2& cursorPosition) const { return (__CheckEffectiveTarget() && GetWorldAABR().CheckIntersection(cursorPosition)); }
 
 protected:

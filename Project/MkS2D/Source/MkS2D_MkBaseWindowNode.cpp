@@ -7,6 +7,8 @@
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkBaseWindowNode.h"
 
+#include "MkS2D_MkWindowEventManager.h"
+
 
 const static MkHashStr TEMPLATE_NAME = MKDEF_S2D_BT_BASEWINNODE_TEMPLATE_NAME;
 
@@ -563,6 +565,13 @@ bool MkBaseWindowNode::InputEventKeyRelease(unsigned int keyCode)
 
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
 {
+	// attribute : eDragMovement
+	if (GetAttribute(eDragMovement))
+	{
+		MK_WIN_EVENT_MGR.BeginWindowDragging(this, position);
+	}
+
+	// pass to children
 	MkArray<MkBaseWindowNode*> buffer;
 	if (_GetInputUpdatableNodes(false, position, buffer))
 	{

@@ -63,6 +63,9 @@
 // DEBUG
 //------------------------------------------------------------------------------------------------//
 
+// input event 정보 출력
+#define MKDEF_SHOW_INPUT_EVENT FALSE
+
 // background loading 종료 정보 출력
 #define MKDEF_SHOW_BGLOADING_COMPLETE TRUE
 

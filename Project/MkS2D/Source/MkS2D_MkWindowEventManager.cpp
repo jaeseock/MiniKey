@@ -13,6 +13,17 @@
 
 //------------------------------------------------------------------------------------------------//
 
+void MkWindowEventManager::SetDepthBandwidth(float minDepthBandwidth, float maxDepthBandwidth)
+{
+	m_MinDepthBandwidth = minDepthBandwidth;
+	m_MaxDepthBandwidth = maxDepthBandwidth;
+
+	MK_CHECK(minDepthBandwidth < maxDepthBandwidth, L"MkWindowEventManager의 깊이영역 설정 오류. min : " + MkStr(minDepthBandwidth) + L", max : " + MkStr(m_MaxDepthBandwidth))
+	{
+		SetDepthBandwidth();
+	}
+}
+
 bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool activate)
 {
 	MK_CHECK(windowNode != NULL, L"MkWindowEventManager에 NULL window 등록 시도")
@@ -23,6 +34,10 @@ bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool act
 		return false;
 
 	m_WindowTable.Create(name, windowNode);
+
+	// 포커스 전환
+	_LastWindowLostFocus();
+	_SetFocusToWindowNode(windowNode);
 
 	if (activate)
 	{
@@ -77,8 +92,33 @@ void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName)
 	}
 }
 
-void MkWindowEventManager::Update(void)
+void MkWindowEventManager::Update(const MkFloat2& screenSize)
 {
+	// cursor drag
+	if (m_CursorIsDragging)
+	{
+		if (MK_INPUT_MGR.GetMousePointerAvailable())
+		{
+			MkInt2 cp = MK_INPUT_MGR.GetAbsoluteMousePosition(true); // flip y
+			MkFloat2 currentCursorPos(static_cast<float>(cp.x), static_cast<float>(cp.y));
+			MkFloat2 offset = currentCursorPos - m_CursorStartPosition;
+			MkFloat2 newPosition = m_WindowStartPosition + offset;
+
+			// attribute : eConfinedToScreen
+			if (m_DraggingWindow->GetAttribute(MkBaseWindowNode::eConfinedToScreen))
+			{
+				MkFloatRect screenRect(MkFloat2(0.f, 0.f), screenSize);
+				newPosition = screenRect.Confine(MkFloatRect(newPosition, m_DraggingWindow->GetWorldAABR().size));
+			}
+
+			m_DraggingWindow->SetLocalPosition(newPosition);
+		}
+		else
+		{
+			m_CursorIsDragging = false;
+		}
+	}
+
 	// deactivation
 	if (!m_WaitForDeactivatingWindows.Empty())
 	{
@@ -116,8 +156,11 @@ void MkWindowEventManager::Update(void)
 
 	if (!m_OnActivatingWindows.Empty())
 	{
+		int inputClientY = MK_INPUT_MGR.GetTargetWindowClientSize().y;
+
 		// click event로 인한 순서 변화 반영
 		unsigned int onFocusIndex = m_OnActivatingWindows.GetSize() - 1;
+
 		MkArray<MkInputManager::InputEvent> inputEventList;
 		if (MK_INPUT_MGR.GetInputEvent(inputEventList) > 0)
 		{
@@ -126,7 +169,8 @@ void MkWindowEventManager::Update(void)
 				const MkInputManager::InputEvent& evt = inputEventList[i];
 				if ((evt.eventType == MkInputManager::eMousePress) || (evt.eventType == MkInputManager::eMouseDoubleClick))
 				{
-					MkFloat2 cursorPosition(static_cast<float>(evt.arg1), static_cast<float>(evt.arg2));
+					MkFloat2 cursorPosition(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)); // flip y
+					bool foundFocusWindow = false;
 
 					// 클릭 이벤트가 발생했을 경우 뒤부터 앞으로 순회하며 focus 윈도우를 찾는다
 					for (unsigned int j=onFocusIndex; j!=0xffffffff; --j)
@@ -134,53 +178,68 @@ void MkWindowEventManager::Update(void)
 						MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[j]];
 						if (windowNode->__CheckInputTarget(cursorPosition))
 						{
-							if (i < onFocusIndex)
+							if (j < onFocusIndex)
 							{
 								m_OnActivatingWindows.Erase(MkArraySection(j, 1));
 								m_OnActivatingWindows.PushBack(windowNode->GetNodeName());
 							}
+
+							foundFocusWindow = true;
 							break;
 						}
 					}
+
+					m_FocusLostByClick = !foundFocusWindow;
+					if (m_FocusLostByClick)
+					{
+						_LastWindowLostFocus();
+						m_LastFocusWindow.Clear();
+					}
 				}
 			}
 		}
 
-		// window focus. 활성화중인 윈도우 중 가장 마지막에 위치한 유효 윈도우가 focus를 가진다
-		for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
+		// 순서에 따른 깊이 재배치
+		m_WindowTable[m_OnActivatingWindows[onFocusIndex]]->SetLocalDepth(m_MinDepthBandwidth);
+
+		if (m_OnActivatingWindows.GetSize() > 1)
 		{
-			const MkHashStr& currWindowName = m_OnActivatingWindows[i];
-			MkBaseWindowNode* windowNode = m_WindowTable[currWindowName];
-			if (windowNode->__CheckEffectiveTarget())
+			float windowDepthUnit = (m_MaxDepthBandwidth - m_MinDepthBandwidth) / static_cast<float>(m_OnActivatingWindows.GetSize() - 1);
+			float offset = windowDepthUnit;
+
+			for (unsigned int i=onFocusIndex-1; i!=0xffffffff; --i)
 			{
-				if (currWindowName != m_LastFocusWindow)
-				{
-					if (m_LastFocusWindow.Empty()) // 최초 실행
-					{
-						for (unsigned int cnt=onFocusIndex, j=0; j<cnt; ++j)
-						{
-							MkBaseWindowNode* lostFocusWindowNode = m_WindowTable[m_OnActivatingWindows[j]];
-							lostFocusWindowNode->SetComponentState(eS2D_TS_LostFocusState);
-							lostFocusWindowNode->LostFocus();
-						}
-					}
-					else
-					{
-						MkBaseWindowNode* lostFocusWindowNode = m_WindowTable[m_LastFocusWindow];
-						lostFocusWindowNode->SetComponentState(eS2D_TS_LostFocusState);
-						lostFocusWindowNode->LostFocus();
-					}
-
-					windowNode->SetComponentState(eS2D_TS_OnFocusState);
-					windowNode->OnFocus();
-
-					m_LastFocusWindow = currWindowName;
-				}
-				break;
+				m_WindowTable[m_OnActivatingWindows[i]]->SetLocalDepth(m_MinDepthBandwidth + offset);
+				offset += windowDepthUnit;
 			}
 		}
-			/*
-			// 커서 push에 의한 
+
+		MkBaseWindowNode* onFocusWindowNode = NULL;
+
+		// window focus. 무효 click이 없었다면 활성화중인 윈도우 중 가장 마지막에 위치한 유효 윈도우가 focus를 가진다
+		if (!m_FocusLostByClick)
+		{
+			for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
+			{
+				const MkHashStr& currWindowName = m_OnActivatingWindows[i];
+				MkBaseWindowNode* windowNode = m_WindowTable[currWindowName];
+				if (windowNode->__CheckEffectiveTarget())
+				{
+					if (currWindowName != m_LastFocusWindow)
+					{
+						_LastWindowLostFocus();
+						_SetFocusToWindowNode(windowNode);
+					}
+
+					onFocusWindowNode = windowNode;
+					break;
+				}
+			}
+		}
+
+		// input event
+		if (onFocusWindowNode != NULL)
+		{
 			MK_INDEXING_LOOP(inputEventList, i)
 			{
 				const MkInputManager::InputEvent& evt = inputEventList[i];
@@ -189,38 +248,40 @@ void MkWindowEventManager::Update(void)
 				case MkInputManager::eKeyPress:
 					onFocusWindowNode->InputEventKeyPress(evt.arg0);
 					break;
-
 				case MkInputManager::eKeyRelease:
 					onFocusWindowNode->InputEventKeyRelease(evt.arg0);
 					break;
-
 				case MkInputManager::eMousePress:
+					onFocusWindowNode->InputEventMousePress(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					break;
 				case MkInputManager::eMouseRelease:
+					m_CursorIsDragging = false;
+					onFocusWindowNode->InputEventMouseRelease(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					break;
 				case MkInputManager::eMouseDoubleClick:
+					onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					break;
 				case MkInputManager::eMouseWheelMove:
+					onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					break;
 				case MkInputManager::eMouseMove:
-					{
-						MkFloat2 position(static_cast<float>(evt.arg1), static_cast<float>(evt.arg2));
-						if (onFocusWindowNode->GetWorldAABR().CheckIntersection(position))
-						{
-							switch (evt.eventType)
-							{
-							case MkInputManager::eMousePress: onFocusWindowNode->InputEventMousePress(evt.arg0, position); break;
-							case MkInputManager::eMouseRelease: onFocusWindowNode->InputEventMouseRelease(evt.arg0, position); break;
-							case MkInputManager::eMouseDoubleClick: onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, position); break;
-							case MkInputManager::eMouseWheelMove: onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, position); break;
-							case MkInputManager::eMouseMove: onFocusWindowNode->InputEventMouseMove(evt.arg0 == 1, position); break;
-							}
-						}
-						else
-						{
-						}
-
-					}
+					onFocusWindowNode->InputEventMouseMove(evt.arg0 == 1, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
 					break;
 				}
 			}
-			*/
+		}
+	}
+}
+
+void MkWindowEventManager::BeginWindowDragging(MkBaseWindowNode* draggingWindow, const MkFloat2& cursorStartPosition)
+{
+	if (draggingWindow != NULL)
+	{
+		m_CursorIsDragging = true;
+		m_DraggingWindow = draggingWindow;
+		m_CursorStartPosition = cursorStartPosition;
+		m_WindowStartPosition.x = draggingWindow->GetWorldPosition().x;
+		m_WindowStartPosition.y = draggingWindow->GetWorldPosition().y;
 	}
 }
 
@@ -231,6 +292,32 @@ void MkWindowEventManager::Clear(void)
 	m_WaitForActivatingWindows.Clear();
 	m_WaitForDeactivatingWindows.Clear();
 	m_LastFocusWindow.Clear();
+	m_FocusLostByClick = false;
+
+	m_CursorIsDragging = false;
+}
+
+MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventManager>()
+{
+	SetDepthBandwidth();
+	m_CursorIsDragging = false;
+}
+
+void MkWindowEventManager::_LastWindowLostFocus(void)
+{
+	if (!m_LastFocusWindow.Empty())
+	{
+		MkBaseWindowNode* lostFocusWindowNode = m_WindowTable[m_LastFocusWindow];
+		lostFocusWindowNode->SetComponentState(eS2D_TS_LostFocusState);
+		lostFocusWindowNode->LostFocus();
+	}
+}
+
+void MkWindowEventManager::_SetFocusToWindowNode(MkBaseWindowNode* targetNode)
+{
+	targetNode->SetComponentState(eS2D_TS_OnFocusState);
+	targetNode->OnFocus();
+	m_LastFocusWindow = targetNode->GetNodeName();
 }
 
 //------------------------------------------------------------------------------------------------//

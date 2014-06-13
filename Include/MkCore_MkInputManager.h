@@ -44,6 +44,12 @@ public:
 	// targetWindowHandle는 입력 메시지가 발생되는 윈도우 핸들
 	void SetUp(HWND targetWindowHandle);
 
+	// SetUp()에서 설정된 targetWindow client 영역 크기 재계산 요청
+	void UpdateTargetWindowClientSize(void);
+
+	// SetUp()에서 설정된 targetWindow client 영역 크기 반환
+	inline const MkInt2& GetTargetWindowClientSize(void) const { return m_TargetWindowClientSize; }
+
 	// main window가 focus 상태일때 L/R window key 무시여부 설정
 	// enable : true일 경우 무시, false일 경우 이전 상태 복원
 	void IgnoreWindowKey(bool enable);
@@ -101,13 +107,13 @@ public:
 	int GetMouseWheelPosition(void);
 
 	// 현재 프레임의 마우스 client상 좌표 변위 반환
-	MkInt2 GetAbsoluteMouseMovement(void);
+	MkInt2 GetAbsoluteMouseMovement(bool flipY = false);
 
 	// 현재 프레임의 마우스 client상 좌표 반환 (0 <= x <= client width, 0 <= y <= client height)
-	MkInt2 GetAbsoluteMousePosition(void);
+	MkInt2 GetAbsoluteMousePosition(bool flipY = false);
 
 	// 현재 프레임의 마우스 client상 좌표를 해상도에 따른 비율로 반환 (0.f <= x <= 1.f, 0.f <= y <= 1.f)
-	MkVec2 GetRelativeMousePosition(void);
+	MkVec2 GetRelativeMousePosition(bool flipY = false);
 
 	// 현재 프레임의 마우스 포인터가 클라이언트 영역에 속하는지 여부 반환
 	bool GetMousePointerAvailable(void);
@@ -215,6 +221,9 @@ protected:
 
 	// target window
 	HWND m_TargetWindowHandle;
+
+	// target window size
+	MkInt2 m_TargetWindowClientSize;
 
 	// 후킹 핸들
 	HHOOK m_HookingHandle;

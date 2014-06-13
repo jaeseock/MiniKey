@@ -75,15 +75,16 @@ public:
 		bufStr.ReadTextFile(L"DecoString.txt");
 		textRect->SetDecoString(bufStr);
 
-		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_BackgroundWindow, MkFloat2(200.f, 300.f)); // 212, 312
-		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_TitleWindow, MkFloat2(200.f - 12.f, 0.f))->SetLocalPosition(MkVec3(6.f, 312 - 6.f - 18.f, -1.f));
-		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_NegativeButton, MkFloat2(70.f, 30.f))->SetLocalPosition(MkVec3(110.f, 6.f, -1.f));
-		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(70.f, 30.f))->SetLocalPosition(MkVec3(10.f, 6.f, -1.f));
-		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(212.f - 12.f - 16.f, 312 - 6.f - 17.f, -2.f));
+		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 150.f)); // 112, 162
+		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_TitleWindow, MkFloat2(100.f, 0.f))->SetLocalPosition(MkVec3(0.f, 162 - 18.f, -0.001f));
+		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_NegativeButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(112 - 6.f - 42.f, 6.f, -0.001f));
+		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(6.f, 6.f, -0.001f));
+		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(112 - 17.f, 162 - 17.f, -0.002f));
 		m_Node01->SetLocalPosition(MkVec3(400.f, 150.f, -910.f));
-		//m_Node01->SetAttribute(MkBaseWindowNode::eDragMovement, true);
-		//m_Node01->SetAttribute(MkBaseWindowNode::eArrowKeyMovement, true);
-		//m_Node01->SetAttribute(MkBaseWindowNode::eDragToHandling, true);
+		m_Node01->SetAttribute(MkBaseWindowNode::eDragMovement, true);
+		m_Node01->SetAttribute(MkBaseWindowNode::eArrowKeyMovement, true);
+		m_Node01->SetAttribute(MkBaseWindowNode::eConfinedToScreen, true);
+		m_Node01->SetAttribute(MkBaseWindowNode::eDragToHandling, true);
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");
 		
@@ -310,43 +311,65 @@ class RestorePage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		m_WindowNode1 = new MkBaseWindowNode(L"01");
-		m_WindowNode2 = new MkBaseWindowNode(L"02");
+		m_RootNode = new MkBaseWindowNode(L"Root");
+
 		MkDataNode node;
 		if (node.Load(L"test_scene.txt"))
 		{
-			m_WindowNode1->Load(node);
-			m_WindowNode2->Load(node);
-			MK_WIN_EVENT_MGR.RegisterWindow(m_WindowNode1, true);
-			MK_WIN_EVENT_MGR.RegisterWindow(m_WindowNode2, true);
-		}
+			MkUniformDice diceX, diceY;
+			diceX.SetMinMax(0, 700);
+			diceX.SetSeed(1234);
+			diceY.SetMinMax(0, 460);
+			diceY.SetSeed(5678);
 
-		m_WindowNode1->SetLocalDepth(100.f);
-		m_WindowNode2->SetLocalDepth(100.f);
-		m_WindowNode2->SetLocalPosition(MkFloat2(30.f, 100.f));
+			for (unsigned int i=0; i<15; ++i)
+			{
+				MkBaseWindowNode* winNode = new MkBaseWindowNode(MkStr(i));
+				winNode->Load(node);
+				//winNode->SetLocalDepth(10.f - static_cast<float>(i));
+				winNode->SetLocalPosition(MkFloat2(static_cast<float>(diceX.GenerateRandomNumber()), static_cast<float>(diceY.GenerateRandomNumber())));
+				m_RootNode->AttachChildNode(winNode);
+
+				MkSRect* nameTag = winNode->CreateSRect(L"Name");
+				nameTag->SetDecoString(winNode->GetNodeName().GetString());
+				nameTag->SetLocalPosition(MkFloat2(6.f, winNode->GetChildNode(L"TitleWindow")->GetLocalPosition().y + 2.f));
+				nameTag->SetLocalDepth(-0.002f);
+
+				MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
+			}
+		}
+		
 		//m_WindowNode1->SetPresetThemeName(L"Default");
 		//m_WindowNode1->SetPresetComponentBodySize(eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 100.f));
 		
-		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_WindowNode1);
-		MK_RENDERER.GetDrawQueue().GetStep(L"step")->AddSceneNode(m_WindowNode2);
-		m_WindowNode1->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
-		m_WindowNode2->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
+		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_RootNode);
+		m_RootNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
 
 		return true;
 	}
 
 	virtual void Update(const MkTimeState& timeState)
 	{
-		//m_WindowNode1->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
-		m_WindowNode1->Update();
-		m_WindowNode2->Update();
+		// window 이벤트 처리
+		MK_WIN_EVENT_MGR.Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect().size);
+
+		m_RootNode->Update();
+
+		for (unsigned int i=0; i<15; ++i)
+		{
+			MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(m_RootNode->GetChildNode(MkStr(i)));
+			const MkFloatRect& wr = winNode->GetWorldAABR();
+			MkStr msg = MkStr(MkInt2(static_cast<int>(wr.position.x), static_cast<int>(wr.position.y)));
+			msg += L", ";
+			msg += MkStr(MkInt2(static_cast<int>(wr.size.x), static_cast<int>(wr.size.y)));
+			MK_DEV_PANEL.MsgToFreeboard(i, msg);
+		}
 	}
 
 	virtual void Clear(void)
 	{
 		MK_WIN_EVENT_MGR.Clear();
-		MK_DELETE(m_WindowNode1);
-		MK_DELETE(m_WindowNode2);
+		MK_DELETE(m_RootNode);
 		
 		MK_RENDERER.GetDrawQueue().Clear();
 		MK_TEXTURE_POOL.UnloadGroup(0);
@@ -354,16 +377,14 @@ public:
 
 	RestorePage(const MkHashStr& name) : MkBasePage(name)
 	{
-		m_WindowNode1 = NULL;
-		m_WindowNode2 = NULL;
+		m_RootNode = NULL;
 	}
 
 	virtual ~RestorePage() { Clear(); }
 
 protected:
 
-	MkBaseWindowNode* m_WindowNode1;
-	MkBaseWindowNode* m_WindowNode2;
+	MkBaseWindowNode* m_RootNode;
 };
 
 class TestFramework : public MkRenderFramework

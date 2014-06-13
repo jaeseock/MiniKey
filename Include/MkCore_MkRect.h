@@ -110,10 +110,17 @@ public:
 	// ex> MkRect(0, 0, 100, 200).UpdateToUnion(MkRect(80, 70, 60, 150)) -> MkRect(0, 0, 140, 220)
 	void UpdateToUnion(const MkRect& rect)
 	{
-		size += position;
-		position.CompareAndKeepMin(rect.position);
-		size.CompareAndKeepMax(rect.position + rect.size);
-		size -= position;
+		if (SizeIsZero())
+		{
+			*this = rect;
+		}
+		else if (rect.SizeIsNotZero())
+		{
+			size += position;
+			position.CompareAndKeepMin(rect.position);
+			size.CompareAndKeepMax(rect.position + rect.size);
+			size -= position;
+		}
 	}
 
 	// 자신과 rect를 모두 포괄하는 사각형을 반환

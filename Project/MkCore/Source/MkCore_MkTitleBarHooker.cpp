@@ -1,5 +1,6 @@
 
 #include "MkCore_MkBaseWindow.h"
+#include "MkCore_MkInputManager.h"
 #include "MkCore_MkTitleBarHooker.h"
 
 
@@ -82,6 +83,8 @@ bool MkTitleBarHooker::CheckWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 			{
 				m_TargetWindow->WindowRestored();
 				m_Minimized = false;
+
+				MK_INPUT_MGR.UpdateTargetWindowClientSize();
 			}
 			break;
 		}
