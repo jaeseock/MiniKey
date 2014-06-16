@@ -23,7 +23,7 @@ public:
 	enum eAttribute
 	{
 		eIgnoreFocus = 0, // focus window가 될 수 없음
-		eDragMovement, // 커서 드래그 이동
+		eDragMovement, // 커서 드래그 이동(window rect)
 		eConfinedToScreen, // 커서 드래그 이동시 스크린 영역 제한
 		eDragToHandling, // 커서 드래그로 이미지 이동 허용
 
@@ -100,13 +100,14 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// 자식으로 eS2D_WPC_BackgroundWindow가 적용된 노드가 있으면 적용
-	void SetComponentState(eS2D_BackgroundState state);
+	// (NOTE) 현재는 eS2D_BackgroundState가 하나의 상태만 존재하기때문에 의미 없음
+	//void SetComponentState(eS2D_BackgroundState state) {}
 
 	// 자식으로 eS2D_WPC_TitleWindow가 적용된 노드가 있으면 적용
 	void SetComponentState(eS2D_TitleState state);
 
 	// 자식으로 eS2D_WindowState에 해당되는 component가 적용된 노드가 있으면 적용
-	void SetComponentState(eS2D_WindowPresetComponent component, eS2D_WindowState state);
+	//void SetComponentState(eS2D_WindowPresetComponent component, eS2D_WindowState state);
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute
@@ -150,12 +151,13 @@ public:
 	inline void __SetThemeName(const MkHashStr& themeName) { m_PresetThemeName = themeName; }
 	inline void __SetBodySize(const MkFloat2& bodySize) { m_PresetBodySize = bodySize; }
 
-	inline bool __CheckEffectiveTarget(void) const { return (GetVisible() && GetEnable() && (!GetAttribute(eIgnoreFocus)) && GetWorldAABR().SizeIsNotZero()); }
-	inline bool __CheckInputTarget(const MkFloat2& cursorPosition) const { return (__CheckEffectiveTarget() && GetWorldAABR().CheckIntersection(cursorPosition)); }
+	inline bool __CheckFocusingTarget(void) const { return (GetVisible() && GetEnable() && (!GetAttribute(eIgnoreFocus))); }
+	inline bool __CheckInputTarget(const MkFloat2& cursorPosition) const { return (__CheckFocusingTarget() && GetWorldAABR().CheckIntersection(cursorPosition)); }
 
 protected:
 
-	bool _GetInputUpdatableNodes(bool skipAABRCheck, const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer);
+	bool _GetInputUpdatableNodes(bool skipCondition, MkArray<MkBaseWindowNode*>& buffer);
+	bool _GetInputUpdatableNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer);
 
 protected:
 

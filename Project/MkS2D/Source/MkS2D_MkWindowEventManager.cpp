@@ -194,6 +194,8 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 					{
 						_LastWindowLostFocus();
 						m_LastFocusWindow.Clear();
+
+						m_CurrentTargetWindowComponent = NULL;
 					}
 				}
 			}
@@ -223,7 +225,7 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 			{
 				const MkHashStr& currWindowName = m_OnActivatingWindows[i];
 				MkBaseWindowNode* windowNode = m_WindowTable[currWindowName];
-				if (windowNode->__CheckEffectiveTarget())
+				if (windowNode->__CheckFocusingTarget())
 				{
 					if (currWindowName != m_LastFocusWindow)
 					{
@@ -238,37 +240,108 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 		}
 
 		// input event
-		if (onFocusWindowNode != NULL)
+		MK_INDEXING_LOOP(inputEventList, i)
 		{
-			MK_INDEXING_LOOP(inputEventList, i)
+			const MkInputManager::InputEvent& evt = inputEventList[i];
+			switch (evt.eventType)
 			{
-				const MkInputManager::InputEvent& evt = inputEventList[i];
-				switch (evt.eventType)
+			case MkInputManager::eKeyPress:
 				{
-				case MkInputManager::eKeyPress:
-					onFocusWindowNode->InputEventKeyPress(evt.arg0);
-					break;
-				case MkInputManager::eKeyRelease:
-					onFocusWindowNode->InputEventKeyRelease(evt.arg0);
-					break;
-				case MkInputManager::eMousePress:
-					onFocusWindowNode->InputEventMousePress(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
-					break;
-				case MkInputManager::eMouseRelease:
-					m_CursorIsDragging = false;
-					onFocusWindowNode->InputEventMouseRelease(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
-					break;
-				case MkInputManager::eMouseDoubleClick:
-					onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
-					break;
-				case MkInputManager::eMouseWheelMove:
-					onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
-					break;
-				case MkInputManager::eMouseMove:
-					onFocusWindowNode->InputEventMouseMove(evt.arg0 == 1, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
-					break;
+					if (onFocusWindowNode != NULL)
+					{
+						onFocusWindowNode->InputEventKeyPress(evt.arg0);
+					}
 				}
+				break;
+			case MkInputManager::eKeyRelease:
+				{
+					if (onFocusWindowNode != NULL)
+					{
+						onFocusWindowNode->InputEventKeyRelease(evt.arg0);
+					}
+				}
+				break;
+			case MkInputManager::eMousePress:
+				{
+					if (onFocusWindowNode != NULL)
+					{
+						onFocusWindowNode->InputEventMousePress(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					}
+				}
+				break;
+			case MkInputManager::eMouseRelease:
+				{
+					if (onFocusWindowNode != NULL)
+					{
+						m_CursorIsDragging = false;
+						onFocusWindowNode->InputEventMouseRelease(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					}
+				}
+				break;
+			case MkInputManager::eMouseDoubleClick:
+				{
+					if (onFocusWindowNode != NULL)
+					{
+						onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					}
+				}
+				break;
+			case MkInputManager::eMouseWheelMove:
+				{
+					if (onFocusWindowNode != NULL)
+					{
+						onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
+					}
+				}
+				break;
+			case MkInputManager::eMouseMove:
+				{
+					bool inside = (evt.arg0 == 1);
+					MkFloat2 cursorPosition(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2));
+
+					for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
+					{
+						MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
+						if (windowNode->__CheckFocusingTarget())
+						{
+							windowNode->InputEventMouseMove(inside, cursorPosition);
+						}
+					}
+				}
+				break;
 			}
+		}
+	}
+
+	// debug
+	if (m_CurrentTargetWindowComponent != NULL)
+	{
+		MkInt2 cp = MK_INPUT_MGR.GetAbsoluteMousePosition(true); // flip y
+		MK_DEV_PANEL.MsgToFreeboard(17, L"Mouse position : " + MkStr(cp.x) + L", " + MkStr(cp.y) + L" : " +
+			MkStr(MK_INPUT_MGR.GetMouseLeftButtonPushing()) + L", " + MkStr(MK_INPUT_MGR.GetMouseMiddleButtonPushing()) + L", " + MkStr(MK_INPUT_MGR.GetMouseRightButtonPushing()));
+
+		const MkFloatRect& winRect = m_CurrentTargetWindowComponent->GetWindowRect();
+		MkStr buf = m_CurrentTargetWindowComponent->GetNodeName().GetString();
+		buf += L" : (";
+		buf += MkStr(winRect.position.x) + L", " + MkStr(winRect.position.y);
+		buf += L"), (";
+		buf += MkStr(winRect.size.x) + L", " + MkStr(winRect.size.y);
+		buf += L") -> ";
+		buf += winRect.CheckIntersection(MkFloat2(static_cast<float>(cp.x), static_cast<float>(cp.y)));
+		MK_DEV_PANEL.MsgToFreeboard(18, buf);
+
+		MkArray<MkHashStr> keys;
+		m_CurrentTargetWindowComponent->GetChildNodeList(keys);
+		buf.Flush();
+		MK_INDEXING_LOOP(keys, i)
+		{
+			buf += keys[i];
+			buf += m_CurrentTargetWindowComponent->GetChildNode(keys[i])->GetVisible() ? L"(0) " : L"(X) ";
+		}
+		if (!buf.Empty())
+		{
+			buf.BackSpace(1);
+			MK_DEV_PANEL.MsgToFreeboard(19, buf);
 		}
 	}
 }
@@ -301,22 +374,21 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 {
 	SetDepthBandwidth();
 	m_CursorIsDragging = false;
+
+	m_CurrentTargetWindowComponent = NULL;
 }
 
 void MkWindowEventManager::_LastWindowLostFocus(void)
 {
 	if (!m_LastFocusWindow.Empty())
 	{
-		MkBaseWindowNode* lostFocusWindowNode = m_WindowTable[m_LastFocusWindow];
-		lostFocusWindowNode->SetComponentState(eS2D_TS_LostFocusState);
-		lostFocusWindowNode->LostFocus();
+		m_WindowTable[m_LastFocusWindow]->SetComponentState(eS2D_TS_LostFocusState);
 	}
 }
 
 void MkWindowEventManager::_SetFocusToWindowNode(MkBaseWindowNode* targetNode)
 {
 	targetNode->SetComponentState(eS2D_TS_OnFocusState);
-	targetNode->OnFocus();
 	m_LastFocusWindow = targetNode->GetNodeName();
 }
 
