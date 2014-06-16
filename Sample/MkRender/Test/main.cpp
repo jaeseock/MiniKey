@@ -81,10 +81,6 @@ public:
 		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(6.f, 6.f, -0.001f));
 		m_Node01->CreateWindowPreset(L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(112 - 17.f, 162 - 17.f, -0.002f));
 		m_Node01->SetLocalPosition(MkVec3(400.f, 150.f, -910.f));
-		m_Node01->SetAttribute(MkBaseWindowNode::eDragMovement, true);
-		m_Node01->SetAttribute(MkBaseWindowNode::eArrowKeyMovement, true);
-		m_Node01->SetAttribute(MkBaseWindowNode::eConfinedToScreen, true);
-		m_Node01->SetAttribute(MkBaseWindowNode::eDragToHandling, true);
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");
 		

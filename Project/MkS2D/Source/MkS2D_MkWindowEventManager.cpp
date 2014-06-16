@@ -94,29 +94,32 @@ void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName)
 
 void MkWindowEventManager::Update(const MkFloat2& screenSize)
 {
-	// cursor drag
-	if (m_CursorIsDragging)
+	// cursor operation
+	if (MK_INPUT_MGR.GetMousePointerAvailable())
 	{
-		if (MK_INPUT_MGR.GetMousePointerAvailable())
+		if (m_CursorIsDragging)
 		{
 			MkInt2 cp = MK_INPUT_MGR.GetAbsoluteMousePosition(true); // flip y
 			MkFloat2 currentCursorPos(static_cast<float>(cp.x), static_cast<float>(cp.y));
 			MkFloat2 offset = currentCursorPos - m_CursorStartPosition;
 			MkFloat2 newPosition = m_WindowStartPosition + offset;
 
-			// attribute : eConfinedToScreen
-			if (m_DraggingWindow->GetAttribute(MkBaseWindowNode::eConfinedToScreen))
+			// attribute : eConfinedToRect
+			if (m_DraggingWindow->GetAttribute(MkBaseWindowNode::eConfinedToRect))
 			{
-				MkFloatRect screenRect(MkFloat2(0.f, 0.f), screenSize);
+				MkBaseWindowNode* pivotNode = m_DraggingWindow->GetAncestorWindowNode();
+				MkFloatRect screenRect;
+				screenRect.size = (pivotNode == NULL) ? screenSize : pivotNode->GetClientRect().size;
 				newPosition = screenRect.Confine(MkFloatRect(newPosition, m_DraggingWindow->GetWorldAABR().size));
 			}
 
 			m_DraggingWindow->SetLocalPosition(newPosition);
 		}
-		else
-		{
-			m_CursorIsDragging = false;
-		}
+	}
+	else
+	{
+		m_CursorIsDragging = false;
+		m_CurrentTargetWindowNode = NULL;
 	}
 
 	// deactivation
@@ -195,7 +198,7 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 						_LastWindowLostFocus();
 						m_LastFocusWindow.Clear();
 
-						m_CurrentTargetWindowComponent = NULL;
+						m_CurrentTargetWindowNode = NULL;
 					}
 				}
 			}
@@ -273,7 +276,6 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 				{
 					if (onFocusWindowNode != NULL)
 					{
-						m_CursorIsDragging = false;
 						onFocusWindowNode->InputEventMouseRelease(evt.arg0, MkFloat2(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2)));
 					}
 				}
@@ -311,17 +313,68 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 				break;
 			}
 		}
+
+		// click target
+		if (m_CurrentTargetWindowNode != NULL)
+		{
+			MkInt2 cp = MK_INPUT_MGR.GetAbsoluteMousePosition(true); // flip y
+			MkFloat2 currentCursorPos(static_cast<float>(cp.x), static_cast<float>(cp.y));
+			if (m_CurrentTargetWindowNode->GetWindowRect().CheckIntersection(currentCursorPos))
+			{
+				eS2D_WindowPresetComponent component = m_CurrentTargetWindowNode->GetWindowPresetComponentType();
+				if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+				{
+					eS2D_WindowState windowState = MK_INPUT_MGR.GetMouseLeftButtonPushing() ? eS2D_WS_OnClickState : eS2D_WS_OnCursorState;
+					m_CurrentTargetWindowNode->SetComponentState(component, windowState);
+				}
+			}
+		}
+
+		if (MK_INPUT_MGR.GetMouseLeftButtonReleased())
+		{
+			m_CursorIsDragging = false;
+			m_CurrentTargetWindowNode = NULL;
+		}
 	}
 
 	// debug
-	if (m_CurrentTargetWindowComponent != NULL)
+	MkInt2 cp = MK_INPUT_MGR.GetAbsoluteMousePosition(true); // flip y
+	MK_DEV_PANEL.MsgToFreeboard(15, L"Mouse position : " + MkStr(cp.x) + L", " + MkStr(cp.y) + L" : " +
+		MkStr(MK_INPUT_MGR.GetMouseLeftButtonPushing()) + L", " + MkStr(MK_INPUT_MGR.GetMouseMiddleButtonPushing()) + L", " + MkStr(MK_INPUT_MGR.GetMouseRightButtonPushing()));
+	if (m_CursorIsDragging)
 	{
-		MkInt2 cp = MK_INPUT_MGR.GetAbsoluteMousePosition(true); // flip y
-		MK_DEV_PANEL.MsgToFreeboard(17, L"Mouse position : " + MkStr(cp.x) + L", " + MkStr(cp.y) + L" : " +
-			MkStr(MK_INPUT_MGR.GetMouseLeftButtonPushing()) + L", " + MkStr(MK_INPUT_MGR.GetMouseMiddleButtonPushing()) + L", " + MkStr(MK_INPUT_MGR.GetMouseRightButtonPushing()));
+		const MkFloatRect& winRect = m_DraggingWindow->GetWindowRect();
+		MkStr buf = L"Drag >> ";
+		buf += m_DraggingWindow->GetNodeName().GetString();
+		buf += L" : (";
+		buf += MkStr(winRect.position.x) + L", " + MkStr(winRect.position.y);
+		buf += L"), (";
+		buf += MkStr(winRect.size.x) + L", " + MkStr(winRect.size.y);
+		buf += L") -> ";
+		buf += winRect.CheckIntersection(MkFloat2(static_cast<float>(cp.x), static_cast<float>(cp.y)));
+		MK_DEV_PANEL.MsgToFreeboard(16, buf);
 
-		const MkFloatRect& winRect = m_CurrentTargetWindowComponent->GetWindowRect();
-		MkStr buf = m_CurrentTargetWindowComponent->GetNodeName().GetString();
+		MkArray<MkHashStr> keys;
+		m_DraggingWindow->GetChildNodeList(keys);
+		buf.Flush();
+		MK_INDEXING_LOOP(keys, i)
+		{
+			buf += L"   ";
+			buf += keys[i];
+			buf += m_DraggingWindow->GetChildNode(keys[i])->GetVisible() ? L"(0) " : L"(X) ";
+		}
+		if (!buf.Empty())
+		{
+			buf.BackSpace(1);
+			MK_DEV_PANEL.MsgToFreeboard(17, buf);
+		}
+	}
+
+	if (m_CurrentTargetWindowNode != NULL)
+	{
+		const MkFloatRect& winRect = m_CurrentTargetWindowNode->GetWindowRect();
+		MkStr buf = L"Target >> ";
+		buf += m_CurrentTargetWindowNode->GetNodeName().GetString();
 		buf += L" : (";
 		buf += MkStr(winRect.position.x) + L", " + MkStr(winRect.position.y);
 		buf += L"), (";
@@ -331,12 +384,13 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 		MK_DEV_PANEL.MsgToFreeboard(18, buf);
 
 		MkArray<MkHashStr> keys;
-		m_CurrentTargetWindowComponent->GetChildNodeList(keys);
+		m_CurrentTargetWindowNode->GetChildNodeList(keys);
 		buf.Flush();
 		MK_INDEXING_LOOP(keys, i)
 		{
+			buf += L"   ";
 			buf += keys[i];
-			buf += m_CurrentTargetWindowComponent->GetChildNode(keys[i])->GetVisible() ? L"(0) " : L"(X) ";
+			buf += m_CurrentTargetWindowNode->GetChildNode(keys[i])->GetVisible() ? L"(0) " : L"(X) ";
 		}
 		if (!buf.Empty())
 		{
@@ -344,17 +398,38 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 			MK_DEV_PANEL.MsgToFreeboard(19, buf);
 		}
 	}
+	else
+	{
+		MK_DEV_PANEL.MsgToFreeboard(18, L"");
+		MK_DEV_PANEL.MsgToFreeboard(19, L"");
+	}
 }
 
-void MkWindowEventManager::BeginWindowDragging(MkBaseWindowNode* draggingWindow, const MkFloat2& cursorStartPosition)
+void MkWindowEventManager::BeginWindowDragging(MkBaseWindowNode* targetWindow, const MkFloat2& cursorStartPosition)
 {
-	if (draggingWindow != NULL)
+	if (targetWindow != NULL)
 	{
-		m_CursorIsDragging = true;
-		m_DraggingWindow = draggingWindow;
-		m_CursorStartPosition = cursorStartPosition;
-		m_WindowStartPosition.x = draggingWindow->GetWorldPosition().x;
-		m_WindowStartPosition.y = draggingWindow->GetWorldPosition().y;
+		// 가장 앞에 위치한 윈도우를 대상으로 함
+		if ((!m_CursorIsDragging) || (m_DraggingWindow == NULL) || (targetWindow->GetLocalPosition().z < m_DraggingWindow->GetLocalPosition().z))
+		{
+			m_CursorIsDragging = true;
+			m_DraggingWindow = targetWindow;
+			m_CursorStartPosition = cursorStartPosition;
+			m_WindowStartPosition.x = m_DraggingWindow->GetLocalPosition().x;
+			m_WindowStartPosition.y = m_DraggingWindow->GetLocalPosition().y;
+		}
+	}
+}
+
+void MkWindowEventManager::SetCurrentTargetWindowNode(MkBaseWindowNode* targetWindow)
+{
+	if (targetWindow != NULL)
+	{
+		// 가장 앞에 위치한 윈도우를 대상으로 함
+		if ((m_CurrentTargetWindowNode == NULL) || (targetWindow->GetLocalPosition().z < m_CurrentTargetWindowNode->GetLocalPosition().z))
+		{
+			m_CurrentTargetWindowNode = targetWindow;
+		}
 	}
 }
 
@@ -374,8 +449,7 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 {
 	SetDepthBandwidth();
 	m_CursorIsDragging = false;
-
-	m_CurrentTargetWindowComponent = NULL;
+	m_CurrentTargetWindowNode = NULL;
 }
 
 void MkWindowEventManager::_LastWindowLostFocus(void)

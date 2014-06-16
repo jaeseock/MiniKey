@@ -24,7 +24,7 @@ public:
 	{
 		eIgnoreFocus = 0, // focus window가 될 수 없음
 		eDragMovement, // 커서 드래그 이동(window rect)
-		eConfinedToScreen, // 커서 드래그 이동시 스크린 영역 제한
+		eConfinedToRect, // 커서 드래그 이동시 스크린 영역 제한(부모가 있으면 부모의 client rect, 없으면 스크린 영역)
 		eDragToHandling, // 커서 드래그로 이미지 이동 허용
 
 		// edit mode 전용
@@ -34,6 +34,8 @@ public:
 public:
 
 	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_BaseWindowNode; }
+
+	MkBaseWindowNode* GetAncestorWindowNode(void) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성
@@ -85,6 +87,9 @@ public:
 	// window preset이 적용된 자식 component 노드 반환
 	MkSceneNode* GetWindowPresetNode(eS2D_WindowPresetComponent component);
 
+	// window preset 노드면 component type 반환
+	eS2D_WindowPresetComponent GetWindowPresetComponentType(void) const;
+
 	// 자식으로 window preset이 적용된 노드들이 있으면 모두 테마 변경
 	void SetPresetThemeName(const MkHashStr& themeName);
 
@@ -101,13 +106,13 @@ public:
 
 	// 자식으로 eS2D_WPC_BackgroundWindow가 적용된 노드가 있으면 적용
 	// (NOTE) 현재는 eS2D_BackgroundState가 하나의 상태만 존재하기때문에 의미 없음
-	//void SetComponentState(eS2D_BackgroundState state) {}
+	void SetComponentState(eS2D_BackgroundState state) {}
 
 	// 자식으로 eS2D_WPC_TitleWindow가 적용된 노드가 있으면 적용
 	void SetComponentState(eS2D_TitleState state);
 
 	// 자식으로 eS2D_WindowState에 해당되는 component가 적용된 노드가 있으면 적용
-	//void SetComponentState(eS2D_WindowPresetComponent component, eS2D_WindowState state);
+	void SetComponentState(eS2D_WindowPresetComponent component, eS2D_WindowState state);
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute

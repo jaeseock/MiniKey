@@ -340,6 +340,21 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
+MkBaseWindowNode* MkBaseWindowNode::GetAncestorWindowNode(void) const
+{
+	MkSceneNode* parentNode = m_ParentNodePtr;
+	while (true)
+	{
+		if (parentNode == NULL)
+			return NULL;
+
+		if (parentNode->GetNodeType() == eS2D_SNT_BaseWindowNode)
+			return dynamic_cast<MkBaseWindowNode*>(parentNode);
+
+		parentNode = parentNode->GetParentNode();
+	}
+}
+
 void MkBaseWindowNode::Load(const MkDataNode& node)
 {
 	// enable
@@ -378,6 +393,11 @@ void MkBaseWindowNode::Load(const MkDataNode& node)
 	// 따라서 그 뒤에 읽어들인 enable을 적용 해 주어야 올바른 eS2D_WindowState가 적용 됨
 	m_Enable = true;
 	SetEnable(enable);
+
+	SetAttribute(MkBaseWindowNode::eDragMovement, true);
+	SetAttribute(MkBaseWindowNode::eArrowKeyMovement, true);
+	SetAttribute(MkBaseWindowNode::eConfinedToRect, true);
+	SetAttribute(MkBaseWindowNode::eDragToHandling, true);
 }
 
 void MkBaseWindowNode::Save(MkDataNode& node)
@@ -411,7 +431,7 @@ void MkBaseWindowNode::SetEnable(bool enable)
 
 	if (winState != eS2D_WS_MaxWindowState)
 	{
-		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(GetNodeName());
+		eS2D_WindowPresetComponent component = GetWindowPresetComponentType();
 		if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
 		{
 			__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(winState, this);
@@ -489,6 +509,11 @@ MkSceneNode* MkBaseWindowNode::GetWindowPresetNode(eS2D_WindowPresetComponent co
 	return ChildExist(componentKeyword) ? GetChildNode(componentKeyword) : NULL;
 }
 
+eS2D_WindowPresetComponent MkBaseWindowNode::GetWindowPresetComponentType(void) const
+{
+	return MkWindowPreset::GetWindowPresetComponentEnum(GetNodeName());
+}
+
 void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 {
 	for (int i=eS2D_WPC_BackgroundWindow; i<eS2D_WPC_MaxWindowPresetComponent; ++i)
@@ -550,10 +575,9 @@ void MkBaseWindowNode::SetComponentState(eS2D_TitleState state)
 	}
 }
 
-/*
 void MkBaseWindowNode::SetComponentState(eS2D_WindowPresetComponent component, eS2D_WindowState state)
 {
-	if (component == MkWindowPreset::GetWindowPresetComponentEnum(GetNodeName()))
+	if (component == GetWindowPresetComponentType())
 	{
 		__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(state, this);
 	}
@@ -567,7 +591,6 @@ void MkBaseWindowNode::SetComponentState(eS2D_WindowPresetComponent component, e
 		}
 	}
 }
-*/
 
 bool MkBaseWindowNode::InputEventKeyPress(unsigned int keyCode)
 {
@@ -611,16 +634,17 @@ bool MkBaseWindowNode::InputEventKeyRelease(unsigned int keyCode)
 
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
 {
-	// attribute : eDragMovement
-	if (GetAttribute(eDragMovement) && (button == 0) && GetWindowRect().CheckIntersection(position)) // left click
+	if ((button == 0) && GetWindowRect().CheckIntersection(position)) // left click
 	{
-		MK_WIN_EVENT_MGR.BeginWindowDragging(this, position);
+		// attribute : eDragMovement
+		if (GetAttribute(eDragMovement))
+		{
+			MK_WIN_EVENT_MGR.BeginWindowDragging(this, position);
+		}
+
+		MK_WIN_EVENT_MGR.SetCurrentTargetWindowNode(this);
 	}
 
-	// debug
-	MK_WIN_EVENT_MGR.SetCurrentTargetWindowComponent(this);
-
-	// pass to children
 	MkArray<MkBaseWindowNode*> buffer;
 	if (_GetInputUpdatableNodes(position, buffer))
 	{
@@ -677,7 +701,7 @@ bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& posit
 
 bool MkBaseWindowNode::InputEventMouseMove(bool inside, const MkFloat2& position)
 {
-	eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(GetNodeName());
+	eS2D_WindowPresetComponent component = GetWindowPresetComponentType();
 	if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
 	{
 		eS2D_WindowState windowState = GetWindowRect().CheckIntersection(position) ? eS2D_WS_OnCursorState : eS2D_WS_DefaultState;

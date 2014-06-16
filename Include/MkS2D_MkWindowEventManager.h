@@ -36,10 +36,8 @@ public:
 
 	// cursor
 	void BeginWindowDragging(MkBaseWindowNode* draggingWindow, const MkFloat2& cursorStartPosition);
+	void SetCurrentTargetWindowNode(MkBaseWindowNode* targetWindow);
 
-	// debug
-	inline void SetCurrentTargetWindowComponent(MkBaseWindowNode* targetWindow) { m_CurrentTargetWindowComponent = targetWindow; }
-	
 	MkWindowEventManager();
 	virtual ~MkWindowEventManager() { Clear(); }
 
@@ -68,6 +66,5 @@ protected:
 	MkFloat2 m_CursorStartPosition;
 	MkFloat2 m_WindowStartPosition;
 
-	// debug
-	MkBaseWindowNode* m_CurrentTargetWindowComponent;
+	MkBaseWindowNode* m_CurrentTargetWindowNode;
 };
