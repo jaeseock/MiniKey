@@ -155,6 +155,29 @@ void MkSceneNode::Save(MkDataNode& node) // Load의 역
 	}
 }
 
+void MkSceneNode::SetLocalAsWorldPosition(const MkFloat2& worldPosition, bool update)
+{
+	MkFloat2 newLocalPos = worldPosition;
+	if (m_ParentNodePtr != NULL)
+	{
+		const MkVec3& pwp = m_ParentNodePtr->GetWorldPosition();
+		newLocalPos.x -= pwp.x;
+		newLocalPos.y -= pwp.y;
+	}
+
+	// 이동 필요성이 있으면 갱신 진행
+	MkFloat2 oldLocalPos(m_LocalPosition.GetDecision().x, m_LocalPosition.GetDecision().y);
+	if (newLocalPos != oldLocalPos)
+	{
+		SetLocalPosition(newLocalPos);
+
+		if (update)
+		{
+			Update();
+		}
+	}
+}
+
 void MkSceneNode::SetLocalRotation(float rotation)
 {
 	m_LocalRotation = MkAngleOp::Unitize2PI(rotation);

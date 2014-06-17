@@ -7,6 +7,7 @@
 #include "MkCore_MkSingletonPattern.h"
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
+#include "MkCore_MkRect.h"
 
 #include "MkS2D_MkProjectDefinition.h"
 
@@ -34,10 +35,6 @@ public:
 	// «ÿ¡¶
 	void Clear(void);
 
-	// cursor
-	void BeginWindowDragging(MkBaseWindowNode* draggingWindow, const MkFloat2& cursorStartPosition);
-	void SetCurrentTargetWindowNode(MkBaseWindowNode* targetWindow);
-
 	MkWindowEventManager();
 	virtual ~MkWindowEventManager() { Clear(); }
 
@@ -45,6 +42,8 @@ protected:
 
 	void _LastWindowLostFocus(void);
 	void _SetFocusToWindowNode(MkBaseWindowNode* targetNode);
+
+	MkFloat2 _ConfineMovement(MkBaseWindowNode* targetNode, const MkFloat2& screenSize, const MkFloat2& posBegin, const MkFloat2& toWorld, const MkFloat2& offset) const;
 
 protected:
 
@@ -64,7 +63,8 @@ protected:
 	bool m_CursorIsDragging;
 	MkBaseWindowNode* m_DraggingWindow;
 	MkFloat2 m_CursorStartPosition;
-	MkFloat2 m_WindowStartPosition;
+	MkFloat2 m_WindowAABRBegin;
+	MkFloat2 m_WindowOffsetToWorldPos;
 
 	MkBaseWindowNode* m_CurrentTargetWindowNode;
 };

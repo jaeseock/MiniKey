@@ -38,9 +38,10 @@ public:
 
 	// set & get local position
 	inline void SetLocalPosition(const MkVec3& position) { m_LocalPosition = position; }
+	inline void SetLocalPosition(const MkFloat2& position) { SetLocalPosition(MkVec3(position.x, position.y, m_LocalPosition.GetBuffer().z)); }
 	inline const MkVec3& GetLocalPosition(void) const { return m_LocalPosition.GetBuffer(); }
 
-	inline void SetLocalPosition(const MkFloat2& position) { SetLocalPosition(MkVec3(position.x, position.y, m_LocalPosition.GetBuffer().z)); }
+	void SetLocalAsWorldPosition(const MkFloat2& worldPosition, bool update = false);
 
 	inline void SetLocalDepth(float depth) { SetLocalPosition(MkVec3(m_LocalPosition.GetBuffer().x, m_LocalPosition.GetBuffer().y, depth)); }
 	inline float GetLocalDepth(void) const { return m_LocalPosition.GetBuffer().z; }

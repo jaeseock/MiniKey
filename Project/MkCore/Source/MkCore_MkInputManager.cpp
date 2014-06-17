@@ -378,6 +378,11 @@ void MkInputManager::__Update(void)
 		else
 		{
 			m_MouseMovement.Clear();
+
+			if (MKDEF_GEN_MOUSE_MOVE_EVENT_ALWAYS)
+			{
+				m_CurrentFrameEvents.PushBack(InputEvent(eMouseMove, (m_AvailablePoint) ? 1 : 0, m_MousePosition.x, m_MousePosition.y));
+			}
 		}
 		
 		// 이벤트 처리

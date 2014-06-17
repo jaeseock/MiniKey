@@ -51,8 +51,6 @@ void MkTextCacheStep::Draw(void)
 			{
 				sourceRT.__Clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER);
 
-				MK_DRAWING_MONITOR.IncreaseValidDecoStrCounter();
-
 				// 텍스트를 찍고
 				bool ok = MK_FONT_MGR.DrawMessage(MkInt2(0, 0), m_DecoStr);
 

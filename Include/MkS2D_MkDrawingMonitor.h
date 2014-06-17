@@ -25,7 +25,6 @@ public:
 	inline void IncreaseRenderTargetCounter(void) { ++m_RenderTargetCounter; }
 
 	inline void IncreaseValidSRectCounter(unsigned int count) { m_ValidSRectCounter += count; }
-	inline void IncreaseValidDecoStrCounter(void) { ++m_ValidDecoStrCounter; }
 	inline void IncreaseValidTextureCounter(unsigned int count) { m_ValidTextureCounter += count; }
 	inline void IncreaseRectSetCounter(unsigned int count) { m_RectSetCounter += count; }
 
@@ -41,7 +40,6 @@ protected:
 	unsigned int m_RenderTargetCounter;
 
 	unsigned int m_ValidSRectCounter;
-	unsigned int m_ValidDecoStrCounter;
 	unsigned int m_ValidTextureCounter;
 	unsigned int m_RectSetCounter;
 
