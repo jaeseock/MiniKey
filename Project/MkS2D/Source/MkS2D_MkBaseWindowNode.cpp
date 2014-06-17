@@ -429,7 +429,6 @@ void MkBaseWindowNode::Load(const MkDataNode& node)
 	SetEnable(enable);
 
 	// temp
-	SetAttribute(MkBaseWindowNode::eDragMovement, true);
 	SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
 	SetAttribute(MkBaseWindowNode::eDragToHandling, true);
 }

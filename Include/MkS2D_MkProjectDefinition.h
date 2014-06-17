@@ -105,6 +105,9 @@
 #define MKDEF_S2D_MIN_WINDOW_DEPTH_BANDWIDTH 10.f
 #define MKDEF_S2D_MAX_WINDOW_DEPTH_BANDWIDTH 100.f
 
+// normalmode <-> edit mode ÀüÈ¯ key. VK_CONTROL + VK_SHIFT + 
+#define MKDEF_S2D_TOGGLE_KEY_BETWEEN_NORMAL_AND_EDIT_MODE L'E'
+
 //------------------------------------------------------------------------------------------------//
 // DEBUG
 //------------------------------------------------------------------------------------------------//

@@ -32,6 +32,9 @@ public:
 
 	void Update(const MkFloat2& screenSize);
 
+	inline void SetEditMode(bool enable) { m_EditMode = enable; }
+	inline bool GetEditMode(void) const { return m_EditMode; }
+
 	// «ÿ¡¶
 	void Clear(void);
 
@@ -49,6 +52,8 @@ protected:
 
 	float m_MinDepthBandwidth;
 	float m_MaxDepthBandwidth;
+
+	bool m_EditMode;
 
 	MkHashMap<MkHashStr, MkBaseWindowNode*> m_WindowTable;
 

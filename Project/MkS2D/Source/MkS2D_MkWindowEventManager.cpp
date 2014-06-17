@@ -94,6 +94,16 @@ void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName)
 
 void MkWindowEventManager::Update(const MkFloat2& screenSize)
 {
+	if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
+	{
+		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_TOGGLE_KEY_BETWEEN_NORMAL_AND_EDIT_MODE))
+		{
+			m_EditMode = !m_EditMode;
+
+			MK_DEV_PANEL.MsgToLog((m_EditMode) ? L"> Toggle to Edit mode" : L"> Toggle to Normal mode");
+		}
+	}
+
 	// current cursor state
 	MkInt2 currentCursorPoint = MK_INPUT_MGR.GetAbsoluteMousePosition(true); // flip y
 	MkFloat2 currentCursorPosition(static_cast<float>(currentCursorPoint.x), static_cast<float>(currentCursorPoint.y));
@@ -254,20 +264,25 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 				MkBaseWindowNode* frontWindow[2] = { NULL, NULL };
 				onFocusWindowNode->__GetFrontHitWindow(currentCursorPosition, frontWindow);
 
-				if (frontWindow[0] != NULL)
+				MkBaseWindowNode* draggingWindow = (m_EditMode) ? frontWindow[1] : frontWindow[0];
+				if (draggingWindow != NULL)
 				{
 					if (!m_CursorIsDragging)
 					{
 						m_CursorIsDragging = true;
-						m_DraggingWindow = frontWindow[0];
+						m_DraggingWindow = draggingWindow;
 						m_CursorStartPosition = currentCursorPosition;
 						m_WindowAABRBegin = m_DraggingWindow->GetWorldAABR().position;
 						m_WindowOffsetToWorldPos = MkFloat2(m_DraggingWindow->GetWorldPosition().x, m_DraggingWindow->GetWorldPosition().y) - m_WindowAABRBegin;
 					}
 				}
-				if (frontWindow[1] != NULL)
+
+				if (m_EditMode)
 				{
-					m_CurrentTargetWindowNode = frontWindow[1];
+					if (frontWindow[1] != NULL)
+					{
+						m_CurrentTargetWindowNode = frontWindow[1];
+					}
 				}
 			}
 		}
@@ -293,40 +308,47 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 		m_CursorIsDragging = false;
 	}
 
-	// click target
-	if (m_CurrentTargetWindowNode != NULL)
+	if (m_EditMode)
 	{
-		MkFloat2 offset;
-		if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT)) offset.x = -1.f;
-		if (MK_INPUT_MGR.GetKeyReleased(VK_RIGHT)) offset.x = 1.f;
-		if (MK_INPUT_MGR.GetKeyReleased(VK_UP)) offset.y = 1.f;
-		if (MK_INPUT_MGR.GetKeyReleased(VK_DOWN)) offset.y = -1.f;
-
-		if (!offset.IsZero())
+		// movement by arrow key
+		if (m_CurrentTargetWindowNode != NULL)
 		{
-			const MkFloat2& worldAABRBegin = m_CurrentTargetWindowNode->GetWorldAABR().position;
-			MkFloat2 oldPosition = MkFloat2(m_CurrentTargetWindowNode->GetWorldPosition().x, m_CurrentTargetWindowNode->GetWorldPosition().y);
-			MkFloat2 newPosition = _ConfineMovement(m_CurrentTargetWindowNode, screenSize, worldAABRBegin, oldPosition - worldAABRBegin, offset);
-			m_CurrentTargetWindowNode->SetLocalAsWorldPosition(newPosition, false);
+			MkFloat2 offset;
+			if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT)) offset.x = -1.f;
+			if (MK_INPUT_MGR.GetKeyReleased(VK_RIGHT)) offset.x = 1.f;
+			if (MK_INPUT_MGR.GetKeyReleased(VK_UP)) offset.y = 1.f;
+			if (MK_INPUT_MGR.GetKeyReleased(VK_DOWN)) offset.y = -1.f;
+
+			if (!offset.IsZero())
+			{
+				const MkFloat2& worldAABRBegin = m_CurrentTargetWindowNode->GetWorldAABR().position;
+				MkFloat2 oldPosition = MkFloat2(m_CurrentTargetWindowNode->GetWorldPosition().x, m_CurrentTargetWindowNode->GetWorldPosition().y);
+				MkFloat2 newPosition = _ConfineMovement(m_CurrentTargetWindowNode, screenSize, worldAABRBegin, oldPosition - worldAABRBegin, offset);
+				m_CurrentTargetWindowNode->SetLocalAsWorldPosition(newPosition, false);
+			}
 		}
 	}
 
 	// debug
-	MkStr debugMsg(512);
-	debugMsg = L"[Mouse] : ";
-	debugMsg += currentCursorPoint;
-	debugMsg += L", L(";
-	debugMsg += currentButtonPushing[0];
-	debugMsg += L") M(";
-	debugMsg += currentButtonPushing[1];
-	debugMsg += L") R(";
-	debugMsg += currentButtonPushing[2];
-	debugMsg += L")";
-	MK_DEV_PANEL.__MsgToDrawingBoard(5, debugMsg);
-	debugMsg.Flush();
+	{
+		MK_DEV_PANEL.__MsgToDrawingBoard(5, (m_EditMode) ? L"[Edit mode]" : L"[Normal mode]");
+
+		MkStr debugMsg(512);
+		debugMsg = L"[Mouse] : ";
+		debugMsg += currentCursorPoint;
+		debugMsg += L", L(";
+		debugMsg += currentButtonPushing[0];
+		debugMsg += L") M(";
+		debugMsg += currentButtonPushing[1];
+		debugMsg += L") R(";
+		debugMsg += currentButtonPushing[2];
+		debugMsg += L")";
+		MK_DEV_PANEL.__MsgToDrawingBoard(6, debugMsg);
+	}
 
 	if (m_CurrentTargetWindowNode != NULL)
 	{
+		MkStr debugMsg(512);
 		const MkFloatRect& winRect = m_CurrentTargetWindowNode->GetWindowRect();
 		debugMsg = L"[";
 		debugMsg += m_CurrentTargetWindowNode->GetNodeName().GetString();
@@ -338,8 +360,7 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 		{
 			debugMsg += L" -> on cursor";
 		}
-		MK_DEV_PANEL.__MsgToDrawingBoard(6, debugMsg);
-		debugMsg.Flush();
+		MK_DEV_PANEL.__MsgToDrawingBoard(7, debugMsg);
 
 		if (!m_CurrentTargetWindowNode->GetPresetComponentName().Empty())
 		{
@@ -357,7 +378,7 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 					break;
 				}
 			}
-			MK_DEV_PANEL.__MsgToDrawingBoard(7, debugMsg);
+			MK_DEV_PANEL.__MsgToDrawingBoard(8, debugMsg);
 		}
 	}
 }
@@ -378,6 +399,7 @@ void MkWindowEventManager::Clear(void)
 MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventManager>()
 {
 	SetDepthBandwidth();
+	m_EditMode = true;
 	m_CursorIsDragging = false;
 	m_CurrentTargetWindowNode = NULL;
 }
