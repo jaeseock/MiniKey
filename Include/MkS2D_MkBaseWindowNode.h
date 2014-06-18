@@ -73,6 +73,18 @@ public:
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경
 	void SetPresetComponentBodySize(const MkFloat2& bodySize);
 
+	// 해당 윈도우 노드가 eS2D_TitleState 기반 window preset이 적용된 component 노드면 해당 state에 토큰(SRect) 설정
+	// (NOTE) 각각의 설정 사항에 대해서는 MkSRect의 항목 참조
+	bool SetPresetComponentToken(eS2D_TitleState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkBaseTexturePtr& texture, const MkHashStr& subsetName); // SetTexture()
+	bool SetPresetComponentToken(eS2D_TitleState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr); // SetDecoString()
+	bool SetPresetComponentToken(eS2D_TitleState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey); // SetDecoString()
+
+	// 해당 윈도우 노드가 eS2D_WindowState 기반 window preset이 적용된 component 노드면 해당 state에 토큰(SRect) 설정
+	// (NOTE) 각각의 설정 사항에 대해서는 MkSRect의 항목 참조
+	bool SetPresetComponentToken(eS2D_WindowState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkBaseTexturePtr& texture, const MkHashStr& subsetName); // SetTexture()
+	bool SetPresetComponentToken(eS2D_WindowState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr); // SetDecoString()
+	bool SetPresetComponentToken(eS2D_WindowState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey); // SetDecoString()
+
 	// 정보 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
 	inline const MkHashStr& GetPresetComponentName(void) const { return m_PresetComponentName; }

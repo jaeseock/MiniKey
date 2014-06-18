@@ -80,6 +80,11 @@ public:
 		bgWin->CreateWindowPreset(L"NButton", L"SolidGray", eS2D_WPC_NegativeButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(6.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 6.f - 42.f, 6.f - 162.f, -0.001f));
 		bgWin->CreateWindowPreset(L"PButton", L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(60.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(6.f, 6.f - 162.f, -0.001f));
 		titleWin->CreateWindowPreset(L"Cancel", L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(titleWin->GetPresetFullSize().x - 20.f, 1.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 17.f, 17.f, -0.001f));
+
+		titleWin->SetPresetComponentToken(eS2D_TS_OnFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:강조항목%>타 이 틀");
+		titleWin->SetPresetComponentToken(eS2D_TS_LostFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:일반항목%>타 이 틀");
+
+
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");

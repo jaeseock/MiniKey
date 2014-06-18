@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.06.18 (16:47:10),
+//   - time stamp : 2014.06.18 (19:08:43),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -1117,6 +1117,16 @@ Node "<SceneNode>"
 					"WB_GradationDirtyBlue_R";
 				vec2 Size = (6.000, 18.000);
 			}
+
+			Node "Tag" : "T_SRect"
+			{
+				float Depth = -0.001;
+				vec2 Position = (32.000, 3.000);
+				str Resource = // [2]
+					"odt" /
+					"<%T:굴림12%><%S:일반항목%>타 이 틀";
+				vec2 Size = (48.000, 12.000);
+			}
 		}
 	}
 
@@ -1154,6 +1164,16 @@ Node "<SceneNode>"
 					"0" /
 					"WB_GradationBlue_R";
 				vec2 Size = (6.000, 18.000);
+			}
+
+			Node "Tag" : "T_SRect"
+			{
+				float Depth = -0.001;
+				vec2 Position = (32.000, 3.000);
+				str Resource = // [2]
+					"odt" /
+					"<%T:굴림12%><%S:강조항목%>타 이 틀";
+				vec2 Size = (48.000, 12.000);
 			}
 		}
 	}

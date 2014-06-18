@@ -30,6 +30,10 @@ const static MkHashStr ATTRIBUTE_KEY = L"Attribute";
 
 //------------------------------------------------------------------------------------------------//
 
+const static MkHashStr COMPONENT_TAG_NAME = L"Tag";
+
+//------------------------------------------------------------------------------------------------//
+
 class __TSI_ImageSetToTargetNode
 {
 protected:
@@ -249,6 +253,15 @@ public:
 template <class DataType>
 class __TSI_ImageSetToStateNode
 {
+protected:
+	static void _AlignTagRect(MkBaseWindowNode* targetNode, MkSRect* stateRect, eRectAlignmentPosition alignment, const MkFloat2& border)
+	{
+		MkFloatRect anchorRect(MkFloat2(0.f, 0.f), targetNode->GetPresetFullSize());
+		MkFloat2 position = anchorRect.GetSnapPosition(stateRect->GetLocalRect(), alignment, border);
+		stateRect->SetLocalPosition(position);
+		stateRect->SetLocalDepth(-0.001f); // 살짝 앞으로 나오게
+	}
+
 public:
 	static bool ApplyImageSetAndBodySize(const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
 	{
@@ -350,6 +363,67 @@ public:
 		}
 		return NULL;
 	}
+
+	static bool SetComponentToken
+		(DataType state, MkBaseWindowNode* targetNode, eRectAlignmentPosition alignment, const MkFloat2& border, const MkBaseTexturePtr& texture, const MkHashStr& subsetName)
+	{
+		if (targetNode != NULL)
+		{
+			const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(state);
+			MkSceneNode* stateNode = targetNode->GetChildNode(stateKeyword);
+			if (stateNode != NULL)
+			{
+				MkSRect* stateRect = stateNode->ExistSRect(COMPONENT_TAG_NAME) ? stateNode->GetSRect(COMPONENT_TAG_NAME) : stateNode->CreateSRect(COMPONENT_TAG_NAME);
+				if (stateRect != NULL)
+				{
+					stateRect->SetTexture(texture, subsetName);
+					_AlignTagRect(targetNode, stateRect, alignment, border);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	static bool SetComponentToken(DataType state, MkBaseWindowNode* targetNode, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr)
+	{
+		if (targetNode != NULL)
+		{
+			const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(state);
+			MkSceneNode* stateNode = targetNode->GetChildNode(stateKeyword);
+			if (stateNode != NULL)
+			{
+				MkSRect* stateRect = stateNode->ExistSRect(COMPONENT_TAG_NAME) ? stateNode->GetSRect(COMPONENT_TAG_NAME) : stateNode->CreateSRect(COMPONENT_TAG_NAME);
+				if (stateRect != NULL)
+				{
+					stateRect->SetDecoString(decoStr);
+					_AlignTagRect(targetNode, stateRect, alignment, border);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	static bool SetComponentToken(DataType state, MkBaseWindowNode* targetNode, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey)
+	{
+		if (targetNode != NULL)
+		{
+			const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(state);
+			MkSceneNode* stateNode = targetNode->GetChildNode(stateKeyword);
+			if (stateNode != NULL)
+			{
+				MkSRect* stateRect = stateNode->ExistSRect(COMPONENT_TAG_NAME) ? stateNode->GetSRect(COMPONENT_TAG_NAME) : stateNode->CreateSRect(COMPONENT_TAG_NAME);
+				if (stateRect != NULL)
+				{
+					stateRect->SetDecoString(nodeNameAndKey);
+					_AlignTagRect(targetNode, stateRect, alignment, border);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 };
 
 class __TSI_ImageSetToComponentNode
@@ -357,38 +431,50 @@ class __TSI_ImageSetToComponentNode
 public:
 	static bool ApplyImageSetAndBodySize(eS2D_WindowPresetComponent component, const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
 	{
-		switch (component)
+		if (component == eS2D_WPC_BackgroundWindow)
 		{
-		case eS2D_WPC_BackgroundWindow: return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyImageSetAndBodySize(imageSets, targetNode);
-		case eS2D_WPC_TitleWindow: return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyImageSetAndBodySize(imageSets, targetNode);
-		case eS2D_WPC_NegativeButton:
-		case eS2D_WPC_PossitiveButton:
-		case eS2D_WPC_CancelIcon: return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyImageSetAndBodySize(imageSets, targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyImageSetAndBodySize(imageSets, targetNode);
+		}
+		else if (component == eS2D_WPC_TitleWindow)
+		{
+			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyImageSetAndBodySize(imageSets, targetNode);
+		}
+		else if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		{
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyImageSetAndBodySize(imageSets, targetNode);
 		}
 		return false;
 	}
 
 	static void ApplyBodySize(eS2D_WindowPresetComponent component, MkBaseWindowNode* targetNode)
 	{
-		switch (component)
+		if (component == eS2D_WPC_BackgroundWindow)
 		{
-		case eS2D_WPC_BackgroundWindow: __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyBodySize(targetNode); break;
-		case eS2D_WPC_TitleWindow: __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyBodySize(targetNode); break;
-		case eS2D_WPC_NegativeButton:
-		case eS2D_WPC_PossitiveButton:
-		case eS2D_WPC_CancelIcon: __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyBodySize(targetNode); break;
+			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyBodySize(targetNode);
+		}
+		else if (component == eS2D_WPC_TitleWindow)
+		{
+			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyBodySize(targetNode);
+		}
+		else if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		{
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyBodySize(targetNode);
 		}
 	}
 
 	static const MkFloatRect* GetWorldAABR(eS2D_WindowPresetComponent component, const MkBaseWindowNode* targetNode)
 	{
-		switch (component)
+		if (component == eS2D_WPC_BackgroundWindow)
 		{
-		case eS2D_WPC_BackgroundWindow: return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::GetWorldAABR(targetNode);
-		case eS2D_WPC_TitleWindow: return __TSI_ImageSetToStateNode<eS2D_TitleState>::GetWorldAABR(targetNode);
-		case eS2D_WPC_NegativeButton:
-		case eS2D_WPC_PossitiveButton:
-		case eS2D_WPC_CancelIcon: return __TSI_ImageSetToStateNode<eS2D_WindowState>::GetWorldAABR(targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::GetWorldAABR(targetNode);
+		}
+		else if (component == eS2D_WPC_TitleWindow)
+		{
+			return __TSI_ImageSetToStateNode<eS2D_TitleState>::GetWorldAABR(targetNode);
+		}
+		else if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		{
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::GetWorldAABR(targetNode);
 		}
 		return NULL;
 	}
@@ -579,6 +665,65 @@ void MkBaseWindowNode::SetPresetComponentBodySize(const MkFloat2& bodySize)
 		m_PresetBodySize = bodySize;
 		__TSI_ImageSetToComponentNode::ApplyBodySize(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName), this);
 	}
+}
+
+bool MkBaseWindowNode::SetPresetComponentToken
+(eS2D_TitleState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkBaseTexturePtr& texture, const MkHashStr& subsetName)
+{
+	return ((!m_PresetComponentName.Empty()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_TitleWindow)) ?
+		__TSI_ImageSetToStateNode<eS2D_TitleState>::SetComponentToken(state, this, alignment, border, texture, subsetName) : false;
+}
+
+bool MkBaseWindowNode::SetPresetComponentToken(eS2D_TitleState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr)
+{
+	return ((!m_PresetComponentName.Empty()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_TitleWindow)) ?
+		__TSI_ImageSetToStateNode<eS2D_TitleState>::SetComponentToken(state, this, alignment, border, decoStr) : false;
+}
+
+bool MkBaseWindowNode::SetPresetComponentToken(eS2D_TitleState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey)
+{
+	return ((!m_PresetComponentName.Empty()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_TitleWindow)) ?
+		__TSI_ImageSetToStateNode<eS2D_TitleState>::SetComponentToken(state, this, alignment, border, nodeNameAndKey) : false;
+}
+
+bool MkBaseWindowNode::SetPresetComponentToken
+(eS2D_WindowState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkBaseTexturePtr& texture, const MkHashStr& subsetName)
+{
+	if (!m_PresetComponentName.Empty())
+	{
+		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+		if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		{
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::SetComponentToken(state, this, alignment, border, texture, subsetName);
+		}
+	}
+	return false;
+}
+
+bool MkBaseWindowNode::SetPresetComponentToken(eS2D_WindowState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr)
+{
+	if (!m_PresetComponentName.Empty())
+	{
+		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+		if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		{
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::SetComponentToken(state, this, alignment, border, decoStr);
+		}
+	}
+	return false;
+}
+
+bool MkBaseWindowNode::SetPresetComponentToken(eS2D_WindowState state, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey)
+{
+	if (!m_PresetComponentName.Empty())
+	{
+		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+		if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		{
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::SetComponentToken(state, this, alignment, border, nodeNameAndKey);
+		}
+	}
+	return false;
 }
 
 void MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)

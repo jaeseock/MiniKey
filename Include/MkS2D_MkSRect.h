@@ -64,12 +64,6 @@ public:
 	inline const MkFloatRect& GetLocalRect(void) const { return m_LocalRect; }
 
 	// set & get local position
-	// step 안에서 eRectAlignmentPosition을 이용해 정렬 할 때는 이런 식으로 하면 됨
-	// ex>
-	//	MkDrawStep* drawStep = MK_RENDERER.GetDrawQueue().GetStep(L"...");
-	//	MkSRect* sRect = sceneNode->GetSRect(L"...");
-	//	MkFloat2 alignedPos = drawStep->GetRegionRect().GetSnapPosition(sRect->GetLocalRect(), eRAP_MiddleCenter, MkFloat2(0.f, 0.f));
-	//	sRect->SetLocalPosition(alignedPos);
 	inline void SetLocalPosition(const MkFloat2& position) { m_LocalRect.position = position; }
 	inline const MkFloat2& GetLocalPosition(void) const { return m_LocalRect.position; }
 
