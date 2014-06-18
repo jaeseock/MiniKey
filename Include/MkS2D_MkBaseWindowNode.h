@@ -13,6 +13,8 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkBitFieldDW.h"
+#include "MkCore_MkPairArray.h"
+
 #include "MkS2D_MkSceneNode.h"
 
 
@@ -51,21 +53,6 @@ public:
 
 	void SetEnable(bool enable);
 	inline bool GetEnable(void) const { return m_Enable; }
-
-	//------------------------------------------------------------------------------------------------//
-	// alignment
-	//------------------------------------------------------------------------------------------------//
-
-	// set alignment info
-	// - pivotWinNodeName은 자신의 조상 노드 중에서 가장 가까운 MkBaseWindowNode 계열 노드
-	// - 만약 적합한 pivotWinNodeName가 존재하지 않는다면 Update시 주어지는 rootRegion을 기준으로 함
-	bool SetAlignment(const MkHashStr& pivotWinNodeName, eRectAlignmentPosition alignment, const MkInt2& border);
-
-	// get alignment info
-	inline eRectAlignmentPosition GetAlignmentType(void) const { return m_AlignmentType; }
-	inline const MkHashStr& GeTargetAlignmentWindowName(void) const { return m_TargetAlignmentWindowName; }
-	inline const MkFloat2& GetAlignmentBorder(void) const { return m_AlignmentBorder; }
-	inline const MkBaseWindowNode* GetTargetAlignmentWindowNode(void) const { return m_TargetAlignmentWindowNode; }
 	
 	//------------------------------------------------------------------------------------------------//
 	// window rect interface
@@ -88,8 +75,9 @@ public:
 
 	// 정보 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
-	inline const MkFloat2& GetPresetBodySize(void) const { return m_PresetBodySize; }
 	inline const MkHashStr& GetPresetComponentName(void) const { return m_PresetComponentName; }
+	inline const MkFloat2& GetPresetBodySize(void) const { return m_PresetBodySize; }
+	inline const MkFloat2& GetPresetFullSize(void) const { return m_PresetFullSize; }
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute
@@ -103,13 +91,13 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// input
-	virtual bool InputEventKeyPress(unsigned int keyCode) { return false; }
-	virtual bool InputEventKeyRelease(unsigned int keyCode) { return false; }
-	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position);
-	virtual bool InputEventMouseRelease(unsigned int button, const MkFloat2& position);
-	virtual bool InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position);
-	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position);
-	virtual bool InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position);
+	virtual void InputEventKeyPress(unsigned int keyCode) {}
+	virtual void InputEventKeyRelease(unsigned int keyCode) {}
+	virtual void InputEventMousePress(unsigned int button, const MkFloat2& position); // sample : how to get hit window?
+	virtual void InputEventMouseRelease(unsigned int button, const MkFloat2& position) {}
+	virtual void InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position) {}
+	virtual void InputEventMouseWheelMove(int delta, const MkFloat2& position) {}
+	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position);
 
 	// activation
 	virtual void Activate(void) {}
@@ -129,34 +117,31 @@ public:
 
 	static void __GenerateBuildingTemplate(void);
 
-	virtual void __UpdateWindow(const MkFloatRect& rootRegion);
-
 	inline bool __CheckFocusingTarget(void) const { return (GetVisible() && GetEnable() && (!GetAttribute(eIgnoreFocus))); }
 	inline bool __CheckInputTarget(const MkFloat2& cursorPosition) const { return (__CheckFocusingTarget() && GetWorldAABR().CheckIntersection(cursorPosition)); }
 
-	void __GetFrontHitWindow(const MkFloat2& position, MkBaseWindowNode* (&frontWindow)[2]);
+	inline void __SetFullSize(const MkFloat2& size) { m_PresetFullSize = size; }
+
+	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows);
 
 protected:
 
 	bool _CollectUpdatableWindowNodes(bool skipCondition, MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer);
 
+	const MkHashStr& _GetFrontHitWindowName(const MkFloat2& position);
+
 protected:
 
 	// enable
 	bool m_Enable;
 
-	// alignment
-	eRectAlignmentPosition m_AlignmentType;
-	MkHashStr m_TargetAlignmentWindowName;
-	MkFloat2 m_AlignmentBorder;
-	MkBaseWindowNode* m_TargetAlignmentWindowNode;
-
 	// window preset
 	MkHashStr m_PresetThemeName;
-	MkFloat2 m_PresetBodySize;
 	MkHashStr m_PresetComponentName;
-
+	MkFloat2 m_PresetBodySize;
+	MkFloat2 m_PresetFullSize;
+	
 	// attribute
 	MkBitFieldDW m_Attribute;
 };

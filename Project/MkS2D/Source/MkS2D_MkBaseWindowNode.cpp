@@ -13,23 +13,17 @@ const static MkHashStr TEMPLATE_NAME = MKDEF_S2D_BT_BASEWINNODE_TEMPLATE_NAME;
 // bool
 const static MkHashStr ENABLE_KEY =  L"Enable";
 
-// int
-const static MkHashStr ALIGNMENT_TYPE_KEY = L"AlignType";
-
-// int2
-const static MkHashStr ALIGNMENT_BORDER_KEY = L"AlignBorder";
-
-// MkStr
-const static MkHashStr ALIGNMENT_TARGET_NAME_KEY = L"AlignTargetName";
-
 // MkStr
 const static MkHashStr PRESET_THEME_NAME_KEY = L"PresetThemeName";
+
+// MkStr
+const static MkHashStr PRESET_COMPONENT_KEY = L"PresetComponent";
 
 // MkInt2
 const static MkHashStr PRESET_BODY_SIZE_KEY = L"PresetBodySize";
 
-// MkStr
-const static MkHashStr PRESET_COMPONENT_KEY = L"Component";
+// MkInt2
+const static MkHashStr PRESET_FULL_SIZE_KEY = L"PresetFullSize";
 
 // unsigned int
 const static MkHashStr ATTRIBUTE_KEY = L"Attribute";
@@ -49,10 +43,13 @@ protected:
 		return targetRect;
 	}
 
-	static void _LineUpSRects(MkWindowTypeImageSet::eSetType setType, MkArray<MkSRect*>& srects, const MkFloat2& bodySize)
+	static void _LineUpSRects(MkWindowTypeImageSet::eSetType setType, MkArray<MkSRect*>& srects, const MkFloat2& bodySize, MkFloat2& fullSize)
 	{
 		switch (setType) // bodySize를 반영한 위치 및 크기 재배치
 		{
+		case MkWindowTypeImageSet::eSingleType:
+			fullSize = srects[MkWindowTypeImageSet::eL]->GetLocalSize();
+			break;
 		case MkWindowTypeImageSet::e3And1Type:
 			{
 				MkSRect* lRect = srects[MkWindowTypeImageSet::eL];
@@ -62,6 +59,9 @@ protected:
 				mRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x, 0.f));
 				mRect->SetLocalSize(MkFloat2(bodySize.x, mRect->GetLocalSize().y));
 				rRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x + bodySize.x, 0.f));
+
+				fullSize.x = lRect->GetLocalSize().x + bodySize.x + rRect->GetLocalSize().x;
+				fullSize.y = lRect->GetLocalSize().y;
 			}
 			break;
 		case MkWindowTypeImageSet::e1And3Type:
@@ -73,6 +73,9 @@ protected:
 				cRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y));
 				cRect->SetLocalSize(MkFloat2(cRect->GetLocalSize().x, bodySize.y));
 				tRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y + bodySize.y));
+
+				fullSize.x = tRect->GetLocalSize().y;
+				fullSize.y = tRect->GetLocalSize().y + bodySize.y + bRect->GetLocalSize().y;
 			}
 			break;
 		case MkWindowTypeImageSet::e3And3Type:
@@ -102,6 +105,9 @@ protected:
 				mtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x, mbRect->GetLocalSize().y + bodySize.y));
 				mtRect->SetLocalSize(MkFloat2(bodySize.x, mtRect->GetLocalSize().y));
 				rtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x + bodySize.x, rbRect->GetLocalSize().y + bodySize.y));
+
+				fullSize.x = ltRect->GetLocalSize().x + bodySize.x + rtRect->GetLocalSize().x;
+				fullSize.y = ltRect->GetLocalSize().y + bodySize.y + lbRect->GetLocalSize().y;
 			}
 			break;
 		}
@@ -120,7 +126,7 @@ protected:
 	}
 
 public:
-	static bool ApplyImageSetAndBodySize(const MkHashStr& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode)
+	static bool ApplyImageSetAndBodySize(const MkHashStr& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode, MkFloat2& fullSize)
 	{
 		if (targetNode != NULL)
 		{
@@ -136,12 +142,18 @@ public:
 					const MkArray<MkHashStr>& subsetNames = pack.subsetNames;
 
 					bool ok = false;
+					MkArray<MkSRect*> srects(subsetNames.GetSize());
 					switch (pack.type)
 					{
 					case MkWindowTypeImageSet::eSingleType:
 						{
 							const MkHashStr& rectName = MkWindowTypeImageSet::GetImageSetKeyword(pack.type, static_cast<MkWindowTypeImageSet::eTypeIndex>(0));
-							ok = (_SetSRect(rectName, texture, subsetNames[0], targetNode) != NULL);
+							MkSRect* srect = _SetSRect(rectName, texture, subsetNames[0], targetNode);
+							if (srect != NULL)
+							{
+								srects.PushBack(srect);
+								ok = true;
+							}
 						}
 						break;
 
@@ -149,7 +161,6 @@ public:
 					case MkWindowTypeImageSet::e1And3Type:
 					case MkWindowTypeImageSet::e3And3Type:
 						{
-							MkArray<MkSRect*> srects(subsetNames.GetSize());
 							MK_INDEXING_LOOP(subsetNames, j)
 							{
 								const MkHashStr& rectName = MkWindowTypeImageSet::GetImageSetKeyword(pack.type, static_cast<MkWindowTypeImageSet::eTypeIndex>(j));
@@ -172,14 +183,15 @@ public:
 								ok = (srects.GetSize() == 9);
 								break;
 							}
-
-							if (ok)
-							{
-								_LineUpSRects(pack.type, srects, bodySize);
-							}
 						}
 						break;
 					}
+
+					if (ok)
+					{
+						_LineUpSRects(pack.type, srects, bodySize, fullSize);
+					}
+
 					return true;
 				}
 			}
@@ -187,7 +199,7 @@ public:
 		return false;
 	}
 
-	static void ApplyBodySize(const MkFloat2& bodySize, MkSceneNode* targetNode)
+	static void ApplyBodySize(const MkFloat2& bodySize, MkSceneNode* targetNode, MkFloat2& fullSize)
 	{
 		if (targetNode != NULL)
 		{
@@ -195,7 +207,7 @@ public:
 
 			if (_GetMatchingSRect(targetNode, MkWindowTypeImageSet::eSingleType, MkWindowTypeImageSet::eL, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::eSingleType, srects, bodySize);
+				_LineUpSRects(MkWindowTypeImageSet::eSingleType, srects, bodySize, fullSize);
 				return;
 			}
 			srects.Flush();
@@ -204,7 +216,7 @@ public:
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eM, srects) &&
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eR, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::e3And1Type, srects, bodySize);
+				_LineUpSRects(MkWindowTypeImageSet::e3And1Type, srects, bodySize, fullSize);
 				return;
 			}
 			srects.Flush();
@@ -213,7 +225,7 @@ public:
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eC, srects) &&
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eB, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::e1And3Type, srects, bodySize);
+				_LineUpSRects(MkWindowTypeImageSet::e1And3Type, srects, bodySize, fullSize);
 				return;
 			}
 			srects.Flush();
@@ -228,7 +240,7 @@ public:
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMB, srects) &&
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRB, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::e3And3Type, srects, bodySize);
+				_LineUpSRects(MkWindowTypeImageSet::e3And3Type, srects, bodySize, fullSize);
 			}
 		}
 	}
@@ -254,9 +266,16 @@ public:
 				// 동일 component 노드는 네이밍 규칙에 의해 동일한 이름의 자식(state)들을 가지고 있음을 보장
 				MkSceneNode* stateNode = targetNode->ChildExist(stateKeyword) ? targetNode->GetChildNode(stateKeyword) : targetNode->CreateChildNode(stateKeyword);
 
-				if (__TSI_ImageSetToTargetNode::ApplyImageSetAndBodySize(imageSets[currState], bodySize, stateNode))
+				MkFloat2 rectSize;
+				if (__TSI_ImageSetToTargetNode::ApplyImageSetAndBodySize(imageSets[currState], bodySize, stateNode, rectSize))
 				{
-					stateNode->SetVisible(currState == beginState);
+					bool defaultState = (currState == beginState);
+					stateNode->SetVisible(defaultState);
+					if (defaultState)
+					{
+						targetNode->__SetFullSize(rectSize);
+					}
+
 					currState = static_cast<DataType>(currState + 1);
 				}
 				else
@@ -273,12 +292,20 @@ public:
 		{
 			const MkFloat2& bodySize = targetNode->GetPresetBodySize();
 
+			DataType beginState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin());
 			DataType endState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetEnd());
-			DataType currState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin());
+			DataType currState = beginState;
 			while (currState < endState)
 			{
 				const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(currState);
-				__TSI_ImageSetToTargetNode::ApplyBodySize(bodySize, targetNode->GetChildNode(stateKeyword));
+
+				MkFloat2 rectSize;
+				__TSI_ImageSetToTargetNode::ApplyBodySize(bodySize, targetNode->GetChildNode(stateKeyword), rectSize);
+				if (currState == beginState)
+				{
+					targetNode->__SetFullSize(rectSize);
+				}
+
 				currState = static_cast<DataType>(currState + 1);
 			}
 		}
@@ -390,31 +417,22 @@ void MkBaseWindowNode::Load(const MkDataNode& node)
 	bool enable = true;
 	node.GetData(ENABLE_KEY, enable, 0);
 
-	// alignment
-	int alignmentType = 0; // eRAP_NonePosition
-	node.GetData(ALIGNMENT_TYPE_KEY, alignmentType, 0);
-
-	MkInt2 alignmentBorder;
-	node.GetData(ALIGNMENT_BORDER_KEY, alignmentBorder, 0);
-
-	MkStr alignTargetName;
-	node.GetData(ALIGNMENT_TARGET_NAME_KEY, alignTargetName, 0);
-
-	SetAlignment(alignTargetName, static_cast<eRectAlignmentPosition>(alignmentType), alignmentBorder);
-
 	// preset
 	MkStr presetThemeName;
 	node.GetData(PRESET_THEME_NAME_KEY, presetThemeName, 0);
 	m_PresetThemeName = presetThemeName;
 
+	MkStr componentName;
+	node.GetData(PRESET_COMPONENT_KEY, componentName, 0);
+	m_PresetComponentName = componentName;
+
 	MkInt2 presetBodySize;
 	node.GetData(PRESET_BODY_SIZE_KEY, presetBodySize, 0);
 	m_PresetBodySize = MkFloat2(static_cast<float>(presetBodySize.x), static_cast<float>(presetBodySize.y));
 
-	// component
-	MkStr componentName;
-	node.GetData(PRESET_COMPONENT_KEY, componentName, 0);
-	m_PresetComponentName = componentName;
+	MkInt2 presetFullSize;
+	node.GetData(PRESET_FULL_SIZE_KEY, presetFullSize, 0);
+	m_PresetFullSize = MkFloat2(static_cast<float>(presetFullSize.x), static_cast<float>(presetFullSize.y));
 
 	// attribute
 	m_Attribute.Clear();
@@ -439,12 +457,10 @@ void MkBaseWindowNode::Save(MkDataNode& node)
 	_ApplyBuildingTemplateToSave(node, TEMPLATE_NAME);
 
 	node.SetData(ENABLE_KEY, m_Enable, 0);
-	node.SetData(ALIGNMENT_TYPE_KEY, static_cast<int>(m_AlignmentType), 0);
-	node.SetData(ALIGNMENT_BORDER_KEY, MkInt2(static_cast<int>(m_AlignmentBorder.x), static_cast<int>(m_AlignmentBorder.y)), 0);
-	node.SetData(ALIGNMENT_TARGET_NAME_KEY, m_TargetAlignmentWindowName.GetString(), 0);
 	node.SetData(PRESET_THEME_NAME_KEY, m_PresetThemeName.GetString(), 0);
-	node.SetData(PRESET_BODY_SIZE_KEY, MkInt2(static_cast<int>(m_PresetBodySize.x), static_cast<int>(m_PresetBodySize.y)), 0);
 	node.SetData(PRESET_COMPONENT_KEY, m_PresetComponentName.GetString(), 0);
+	node.SetData(PRESET_BODY_SIZE_KEY, MkInt2(static_cast<int>(m_PresetBodySize.x), static_cast<int>(m_PresetBodySize.y)), 0);
+	node.SetData(PRESET_FULL_SIZE_KEY, MkInt2(static_cast<int>(m_PresetFullSize.x), static_cast<int>(m_PresetFullSize.y)), 0);
 	node.SetData(ATTRIBUTE_KEY, m_Attribute.m_Field, 0);
 
 	// MkSceneNode
@@ -482,27 +498,6 @@ void MkBaseWindowNode::SetEnable(bool enable)
 			}
 		}
 	}
-}
-
-bool MkBaseWindowNode::SetAlignment(const MkHashStr& pivotWinNodeName, eRectAlignmentPosition alignment, const MkInt2& border)
-{
-	m_AlignmentType = alignment;
-	m_TargetAlignmentWindowName.Clear();
-	m_AlignmentBorder.Clear();
-	m_TargetAlignmentWindowNode = NULL;
-	
-	if (!pivotWinNodeName.Empty())
-	{
-		MkBaseWindowNode* target = dynamic_cast<MkBaseWindowNode*>(GetAncestorNode(pivotWinNodeName));
-		if (target != NULL)
-		{
-			m_TargetAlignmentWindowName = pivotWinNodeName;
-			m_AlignmentBorder = MkFloat2(static_cast<float>(border.x), static_cast<float>(border.y));
-			m_TargetAlignmentWindowNode = target;
-			return true;
-		}
-	}
-	return false;
 }
 
 const MkFloatRect& MkBaseWindowNode::GetWindowRect(void) const
@@ -586,63 +581,16 @@ void MkBaseWindowNode::SetPresetComponentBodySize(const MkFloat2& bodySize)
 	}
 }
 
-bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
+void MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
 {
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(position, buffer))
+	const MkHashStr& hitWindowName = _GetFrontHitWindowName(position);
+	if (!hitWindowName.Empty())
 	{
-		MK_INDEXING_LOOP(buffer, i)
-		{
-			if (buffer[i]->InputEventMousePress(button, position))
-				return true; // escape
-		}
+		// do something
 	}
-	return false;
 }
 
-bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position)
-{
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(position, buffer))
-	{
-		MK_INDEXING_LOOP(buffer, i)
-		{
-			if (buffer[i]->InputEventMouseRelease(button, position))
-				return true; // escape
-		}
-	}
-	return false;
-}
-
-bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position)
-{
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(position, buffer))
-	{
-		MK_INDEXING_LOOP(buffer, i)
-		{
-			if (buffer[i]->InputEventMouseDoubleClick(button, position))
-				return true; // escape
-		}
-	}
-	return false;
-}
-
-bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& position)
-{
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(position, buffer))
-	{
-		MK_INDEXING_LOOP(buffer, i)
-		{
-			if (buffer[i]->InputEventMouseWheelMove(delta, position))
-				return true; // escape
-		}
-	}
-	return false;
-}
-
-bool MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position)
+void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position)
 {
 	// eS2D_WindowState가 적용된 노드면 eS2D_WS_DefaultState, eS2D_WS_OnClickState, eS2D_WS_OnCursorState 중 하나를 지정
 	eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
@@ -662,11 +610,9 @@ bool MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			if (buffer[i]->InputEventMouseMove(inside, btnPushing, position))
-				return true; // escape
+			buffer[i]->InputEventMouseMove(inside, btnPushing, position);
 		}
 	}
-	return false;
 }
 
 void MkBaseWindowNode::OnFocus(void)
@@ -706,15 +652,11 @@ void MkBaseWindowNode::LostFocus(void)
 MkBaseWindowNode::MkBaseWindowNode(const MkHashStr& name) : MkSceneNode(name)
 {
 	m_Enable = true;
-	m_AlignmentType = eRAP_NonePosition;
-	m_TargetAlignmentWindowNode = NULL;
 }
 
 MkBaseWindowNode::MkBaseWindowNode(const MkHashStr& name, const MkHashStr& themeName, const MkFloat2& bodySize, const MkHashStr& componentName) : MkSceneNode(name)
 {
 	m_Enable = true;
-	m_AlignmentType = eRAP_NonePosition;
-	m_TargetAlignmentWindowNode = NULL;
 
 	m_PresetThemeName = themeName;
 	m_PresetBodySize = bodySize;
@@ -733,57 +675,20 @@ void MkBaseWindowNode::__GenerateBuildingTemplate(void)
 	tNode->ApplyTemplate(MKDEF_S2D_BT_SCENENODE_TEMPLATE_NAME); // MkSceneNode의 template 적용
 
 	tNode->CreateUnit(ENABLE_KEY, true);
-	tNode->CreateUnit(ALIGNMENT_TYPE_KEY, static_cast<int>(eRAP_NonePosition));
-	tNode->CreateUnit(ALIGNMENT_BORDER_KEY, MkInt2(0, 0));
-	tNode->CreateUnit(ALIGNMENT_TARGET_NAME_KEY, MkStr::Null);
 	tNode->CreateUnit(PRESET_THEME_NAME_KEY, MkStr::Null);
-	tNode->CreateUnit(PRESET_BODY_SIZE_KEY, MkInt2(0, 0));
 	tNode->CreateUnit(PRESET_COMPONENT_KEY, MkStr::Null);
+	tNode->CreateUnit(PRESET_BODY_SIZE_KEY, MkInt2(0, 0));
+	tNode->CreateUnit(PRESET_FULL_SIZE_KEY, MkInt2(0, 0));
 	tNode->CreateUnit(ATTRIBUTE_KEY, static_cast<unsigned int>(0));
 
 	tNode->DeclareToTemplate(true);
 }
 
-void MkBaseWindowNode::__UpdateWindow(const MkFloatRect& rootRegion)
-{
-	// world AABR의 크기가 zero라는 의미는 모든 자식 노드 포함해 의미 있는 rect가 없다는 의미
-	if (m_WorldAABR.SizeIsNotZero())
-	{
-		// 정렬
-		if (m_AlignmentType != eRAP_NonePosition)
-		{
-			const MkFloatRect& pivotRegion = (m_TargetAlignmentWindowNode == NULL) ? rootRegion : m_TargetAlignmentWindowNode->GetWindowRect();
-
-			// 배경 영역이 의미 있으면 정렬 계산
-			if (pivotRegion.SizeIsNotZero())
-			{
-				MkFloat2 validToWorld = MkFloat2(m_WorldPosition.GetDecision().x, m_WorldPosition.GetDecision().y) - m_WorldAABR.position;
-				MkFloat2 alignedPos = pivotRegion.GetSnapPosition(m_WorldAABR, m_AlignmentType, m_AlignmentBorder);
-				SetLocalAsWorldPosition(alignedPos + validToWorld, true);
-			}
-		}
-	}
-
-	MkSceneNode::__UpdateWindow(rootRegion);
-}
-
-void MkBaseWindowNode::__GetFrontHitWindow(const MkFloat2& position, MkBaseWindowNode* (&frontWindow)[2])
+void MkBaseWindowNode::__GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows)
 {
 	if (GetWindowRect().CheckIntersection(position))
 	{
-		// attribute : eDragMovement
-		if (GetAttribute(eDragMovement))
-		{
-			if ((frontWindow[0] == NULL) || (GetWorldPosition().z < frontWindow[0]->GetWorldPosition().z))
-			{
-				frontWindow[0] = this;
-			}
-		}
-
-		if ((frontWindow[1] == NULL) || (GetWorldPosition().z < frontWindow[1]->GetWorldPosition().z))
-		{
-			frontWindow[1] = this;
-		}
+		hitWindows.PushBack(GetWorldPosition().z, this);
 	}
 
 	MkArray<MkBaseWindowNode*> buffer;
@@ -791,7 +696,7 @@ void MkBaseWindowNode::__GetFrontHitWindow(const MkFloat2& position, MkBaseWindo
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			buffer[i]->__GetFrontHitWindow(position, frontWindow);
+			buffer[i]->__GetHitWindows(position, hitWindows);
 		}
 	}
 }
@@ -838,6 +743,21 @@ bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, Mk
 		}
 	}
 	return (!buffer.Empty());
+}
+
+const MkHashStr& MkBaseWindowNode::_GetFrontHitWindowName(const MkFloat2& position)
+{
+	MkPairArray<float, MkBaseWindowNode*> hitWindows(8);
+	__GetHitWindows(position, hitWindows);
+	if (hitWindows.Empty())
+	{
+		return MkHashStr::NullHash;
+	}
+	else if (hitWindows.GetSize() > 1)
+	{
+		hitWindows.SortInAscendingOrder();
+	}
+	return hitWindows.GetFieldAt(0)->GetNodeName();
 }
 
 //------------------------------------------------------------------------------------------------//

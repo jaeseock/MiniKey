@@ -57,7 +57,6 @@ public:
 		MkBaseWindowNode* alignNode = new MkBaseWindowNode(L"align node");
 		m_RootNode->AttachChildNode(alignNode);
 		alignNode->SetLocalPosition(MkVec3(100.f, 50.f, -900.f));
-		alignNode->SetAlignment(L"", eRAP_LeftTop, MkInt2(10, 10));
 		MkSRect* bgRect = alignNode->CreateSRect(L"bg");
 		MkBaseTexturePtr bgTex;
 		MK_TEXTURE_POOL.GetBitmapTexture(L"Image\\s03.jpg", bgTex);
@@ -66,7 +65,6 @@ public:
 
 		MkBaseWindowNode* txtNode = new MkBaseWindowNode(L"txt node");
 		alignNode->AttachChildNode(txtNode);
-		txtNode->SetAlignment(L"align node", eRAP_RightBottom, MkInt2(0, 0));
 		MkSRect* textRect = txtNode->CreateSRect(L"text");
 		textRect->SetLocalPosition(MkFloat2(50.f, 50.f));
 		textRect->SetLocalDepth(-1.f);
@@ -78,10 +76,10 @@ public:
 		MkBaseWindowNode* titleWin = m_Node01->CreateWindowPreset(L"Title", L"SolidGray", eS2D_WPC_TitleWindow, MkFloat2(100.f, 0.f));
 		titleWin->SetAttribute(MkBaseWindowNode::eConfinedToScreen, true);
 		MkBaseWindowNode* bgWin = titleWin->CreateWindowPreset(L"BG", L"SolidGray", eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 150.f)); // 112, 162
-		bgWin->SetLocalPosition(MkVec3(0.f, -162.f , 0.5f));
-		bgWin->CreateWindowPreset(L"NButton", L"SolidGray", eS2D_WPC_NegativeButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(0.f, 0.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 6.f - 42.f, 6.f - 162.f, -0.001f));
-		bgWin->CreateWindowPreset(L"PButton", L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(0.f, 0.f, -0.001f));//->SetLocalPosition(MkVec3(6.f, 6.f - 162.f, -0.001f));
-		titleWin->CreateWindowPreset(L"Cancel", L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(0.f, 0.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 17.f, 17.f, -0.001f));
+		bgWin->SetLocalPosition(MkVec3(0.f, titleWin->GetPresetFullSize().y - bgWin->GetPresetFullSize().y, 0.8f));
+		bgWin->CreateWindowPreset(L"NButton", L"SolidGray", eS2D_WPC_NegativeButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(6.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 6.f - 42.f, 6.f - 162.f, -0.001f));
+		bgWin->CreateWindowPreset(L"PButton", L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(60.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(6.f, 6.f - 162.f, -0.001f));
+		titleWin->CreateWindowPreset(L"Cancel", L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(titleWin->GetPresetFullSize().x - 20.f, 1.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 17.f, 17.f, -0.001f));
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");
@@ -106,8 +104,6 @@ public:
 		m_DiceT.SetSeed(90);
 		m_DiceA.SetMinMax(2, 4);
 		m_DiceA.SetSeed(1000);
-
-		m_RootNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step_00")->GetRegionRect());
 
 		return true;
 	}
@@ -315,16 +311,15 @@ public:
 		if (node.Load(L"test_scene.txt"))
 		{
 			MkUniformDice diceX, diceY;
-			diceX.SetMinMax(0, 700);
+			diceX.SetMinMax(0, 800);
 			diceX.SetSeed(1234);
-			diceY.SetMinMax(0, 460);
+			diceY.SetMinMax(200, 700);
 			diceY.SetSeed(5678);
 
 			for (unsigned int i=0; i<15; ++i)
 			{
 				MkBaseWindowNode* winNode = new MkBaseWindowNode(MkStr(i));
 				winNode->Load(node);
-				//winNode->SetLocalDepth(10.f - static_cast<float>(i));
 				winNode->SetLocalPosition(MkFloat2(static_cast<float>(diceX.GenerateRandomNumber()), static_cast<float>(diceY.GenerateRandomNumber())));
 				m_RootNode->AttachChildNode(winNode);
 
@@ -337,13 +332,15 @@ public:
 
 				MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
 			}
+
+			m_RootNode->Update();
 		}
 		
 		//m_WindowNode1->SetPresetThemeName(L"Default");
 		//m_WindowNode1->SetPresetComponentBodySize(eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 100.f));
 		
 		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_RootNode);
-		m_RootNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect());
+		m_RootNode->Update();
 
 		return true;
 	}
@@ -422,7 +419,7 @@ public:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	TestApplication application;
-	application.Run(hI, L"¶¼½º¶Ç", L"..\\FileRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, false, false, NULL, cmdline);
+	application.Run(hI, L"¶¼½º¶Ç", L"..\\FileRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, false, false, NULL, cmdline);
 
 	return 0;
 }

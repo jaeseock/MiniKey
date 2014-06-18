@@ -2,23 +2,25 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.06.17 (22:23:45),
+//   - time stamp : 2014.06.18 (16:47:10),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
 
 uint Attribute = 8;
-str Component = "TitleWindow";
 int2 PresetBodySize = (100, 0);
+str PresetComponent = "TitleWindow";
+int2 PresetFullSize = (112, 18);
 str PresetThemeName = "SolidGray";
 
 Node "<SceneNode>"
 {
 	Node "BG" : "T_BaseWindowNode"
 	{
-		str Component = "BackgroundWindow";
-		vec3 Position = (0.000, -162.000, 0.500);
+		vec3 Position = (0.000, -144.000, 0.800);
 		int2 PresetBodySize = (100, 150);
+		str PresetComponent = "BackgroundWindow";
+		int2 PresetFullSize = (112, 162);
 		str PresetThemeName = "SolidGray";
 
 		Node "<SceneNode>"
@@ -129,9 +131,10 @@ Node "<SceneNode>"
 
 			Node "NButton" : "T_BaseWindowNode"
 			{
-				str Component = "NegativeButton";
-				vec3 Position = (0.000, 0.000, -0.001);
+				vec3 Position = (6.000, 6.000, -0.001);
 				int2 PresetBodySize = (30, 8);
+				str PresetComponent = "NegativeButton";
+				int2 PresetFullSize = (42, 20);
 				str PresetThemeName = "SolidGray";
 
 				Node "<SceneNode>"
@@ -562,9 +565,10 @@ Node "<SceneNode>"
 
 			Node "PButton" : "T_BaseWindowNode"
 			{
-				str Component = "PossitiveButton";
-				vec3 Position = (0.000, 0.000, -0.001);
+				vec3 Position = (60.000, 6.000, -0.001);
 				int2 PresetBodySize = (30, 8);
+				str PresetComponent = "PossitiveButton";
+				int2 PresetFullSize = (42, 20);
 				str PresetThemeName = "SolidGray";
 
 				Node "<SceneNode>"
@@ -997,8 +1001,9 @@ Node "<SceneNode>"
 
 	Node "Cancel" : "T_BaseWindowNode"
 	{
-		str Component = "CancelIcon";
-		vec3 Position = (0.000, 0.000, -0.001);
+		vec3 Position = (92.000, 1.000, -0.001);
+		str PresetComponent = "CancelIcon";
+		int2 PresetFullSize = (16, 16);
 		str PresetThemeName = "SolidGray";
 
 		Node "<SceneNode>"

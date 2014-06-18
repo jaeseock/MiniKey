@@ -261,27 +261,44 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 		{
 			if (currentButtonPressed[0] && onFocusWindowNode->GetWorldAABR().CheckIntersection(currentCursorPosition))
 			{
-				MkBaseWindowNode* frontWindow[2] = { NULL, NULL };
-				onFocusWindowNode->__GetFrontHitWindow(currentCursorPosition, frontWindow);
-
-				MkBaseWindowNode* draggingWindow = (m_EditMode) ? frontWindow[1] : frontWindow[0];
-				if (draggingWindow != NULL)
+				MkPairArray<float, MkBaseWindowNode*> hitWindows(8);
+				onFocusWindowNode->__GetHitWindows(currentCursorPosition, hitWindows);
+				if (!hitWindows.Empty())
 				{
+					hitWindows.SortInAscendingOrder();
+
+					if (m_EditMode)
+					{
+						m_CurrentTargetWindowNode = hitWindows.GetFieldAt(0);
+					}
+
 					if (!m_CursorIsDragging)
 					{
-						m_CursorIsDragging = true;
-						m_DraggingWindow = draggingWindow;
-						m_CursorStartPosition = currentCursorPosition;
-						m_WindowAABRBegin = m_DraggingWindow->GetWorldAABR().position;
-						m_WindowOffsetToWorldPos = MkFloat2(m_DraggingWindow->GetWorldPosition().x, m_DraggingWindow->GetWorldPosition().y) - m_WindowAABRBegin;
-					}
-				}
+						MkBaseWindowNode* draggingWindow = NULL;
+						if (m_EditMode)
+						{
+							draggingWindow = m_CurrentTargetWindowNode;
+						}
+						else
+						{
+							MK_INDEXING_LOOP(hitWindows, i)
+							{
+								if (hitWindows.GetFieldAt(0)->GetAttribute(MkBaseWindowNode::eDragMovement))
+								{
+									draggingWindow = hitWindows.GetFieldAt(0);
+									break;
+								}
+							}
+						}
 
-				if (m_EditMode)
-				{
-					if (frontWindow[1] != NULL)
-					{
-						m_CurrentTargetWindowNode = frontWindow[1];
+						if (draggingWindow != NULL)
+						{
+							m_CursorIsDragging = true;
+							m_DraggingWindow = draggingWindow;
+							m_CursorStartPosition = currentCursorPosition;
+							m_WindowAABRBegin = m_DraggingWindow->GetWorldAABR().position;
+							m_WindowOffsetToWorldPos = MkFloat2(m_DraggingWindow->GetWorldPosition().x, m_DraggingWindow->GetWorldPosition().y) - m_WindowAABRBegin;
+						}
 					}
 				}
 			}

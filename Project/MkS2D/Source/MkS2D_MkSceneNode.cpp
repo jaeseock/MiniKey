@@ -243,17 +243,28 @@ void MkSceneNode::DeleteAllSRects(void)
 	m_SRects.Clear();
 }
 
+void MkSceneNode::AlignPosition(const MkFloatRect& anchorRect, eRectAlignmentPosition alignment, const MkInt2& border)
+{
+	if (anchorRect.SizeIsNotZero() && (alignment != eRAP_NonePosition))
+	{
+		MkFloat2 offsetToWorldPos = MkFloat2(m_WorldPosition.GetDecision().x, m_WorldPosition.GetDecision().y) - m_WorldAABR.position;
+		MkFloat2 newPos = anchorRect.GetSnapPosition(m_WorldAABR, alignment, MkFloat2(static_cast<float>(border.x), static_cast<float>(border.y)));
+		SetLocalAsWorldPosition(newPos + offsetToWorldPos, true);
+	}
+}
+
+void MkSceneNode::AlignPosition(const MkSceneNode* anchorNode, eRectAlignmentPosition alignment, const MkInt2& border)
+{
+	if (anchorNode != NULL)
+	{
+		AlignPosition(anchorNode->GetWorldAABR(), alignment, border);
+	}
+}
+
 void MkSceneNode::Update(void)
 {
 	__UpdateTransform();
 	__UpdateWorldAABR();
-}
-
-void MkSceneNode::Update(const MkFloatRect& rootRegion)
-{
-	MkSceneNode::Update();
-
-	__UpdateWindow(rootRegion);
 }
 
 void MkSceneNode::Clear(void)
@@ -385,19 +396,6 @@ void MkSceneNode::__GetAllValidSRects(const MkFloatRect& cameraAABR, MkPairArray
 			{
 				looper.GetCurrentField()->__GetAllValidSRects(cameraAABR, buffer);
 			}
-		}
-	}
-}
-
-void MkSceneNode::__UpdateWindow(const MkFloatRect& rootRegion)
-{
-	// world AABR의 크기가 zero라는 의미는 모든 자식 노드 포함해 의미 있는 rect가 없다는 의미
-	if (m_WorldAABR.SizeIsNotZero() && (!m_ChildrenNode.Empty()))
-	{
-		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
-		MK_STL_LOOP(looper)
-		{
-			looper.GetCurrentField()->__UpdateWindow(rootRegion);
 		}
 	}
 }

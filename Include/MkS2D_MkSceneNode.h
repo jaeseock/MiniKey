@@ -92,14 +92,22 @@ public:
 	void DeleteAllSRects(void);
 
 	//------------------------------------------------------------------------------------------------//
+	// 정렬
+	// (NOTE) 호출 전 Update()가 실행 된 상태여야 하며 호출 후 다시 Update()를 실행 할 필요 없음
+	//------------------------------------------------------------------------------------------------//
+
+	// anchorRect를 기준으로 정렬
+	void AlignPosition(const MkFloatRect& anchorRect, eRectAlignmentPosition alignment, const MkInt2& border);
+
+	// anchorNode의 world AABR 기준으로 정렬
+	void AlignPosition(const MkSceneNode* anchorNode, eRectAlignmentPosition alignment, const MkInt2& border);
+
+	//------------------------------------------------------------------------------------------------//
 	// proceed
 	//------------------------------------------------------------------------------------------------//
 
 	// 자신과 모든 하위 노드 정보 갱신
 	void Update(void);
-
-	// Update() + WindowNode 포함 갱신
-	void Update(const MkFloatRect& rootRegion);
 
 	// 해제
 	virtual void Clear(void);
@@ -121,12 +129,6 @@ public:
 	void __UpdateWorldAABR(void);
 
 	void __GetAllValidSRects(const MkFloatRect& cameraAABR, MkPairArray<float, const MkSRect*>& buffer) const;
-
-	//------------------------------------------------------------------------------------------------//
-	// MkBaseWindowNode interface
-	//------------------------------------------------------------------------------------------------//
-
-	virtual void __UpdateWindow(const MkFloatRect& rootRegion);
 
 protected:
 

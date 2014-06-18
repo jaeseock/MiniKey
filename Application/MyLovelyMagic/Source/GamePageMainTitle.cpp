@@ -30,7 +30,7 @@ bool GamePageMainTitle::SetUp(MkDataNode& sharingNode)
 	{
 		m_SceneNode->Load(loadDN);
 
-		m_SceneNode->Update(drawStep->GetRegionRect());
+		m_SceneNode->Update();
 
 		m_SceneNode->Save(saveDN);
 		saveDN.SaveToText(L"Scene\\test_scene_.txt");
