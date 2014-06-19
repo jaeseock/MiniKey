@@ -39,7 +39,7 @@ class __TSI_ImageSetToTargetNode
 protected:
 	static MkSRect* _SetSRect(const MkHashStr& name, const MkBaseTexturePtr& texture, const MkHashStr& subsetName, MkSceneNode* targetNode)
 	{
-		MkSRect* targetRect = targetNode->ExistSRect(name) ? targetNode->GetSRect(name) : targetNode->CreateSRect(name);
+		MkSRect* targetRect = targetNode->CreateSRect(name);
 		if (targetRect != NULL)
 		{
 			targetRect->SetTexture(texture, subsetName);
@@ -117,6 +117,35 @@ protected:
 		}
 	}
 
+	static void _DeleteSRect(MkSceneNode* targetNode, MkWindowTypeImageSet::eSetType setType, MkWindowTypeImageSet::eTypeIndex typeIndex)
+	{
+		const MkHashStr& key = MkWindowTypeImageSet::GetImageSetKeyword(setType, typeIndex);
+		if (targetNode->ExistSRect(key))
+		{
+			targetNode->DeleteSRect(key);
+		}
+	}
+
+	static void _DeleteSRects(MkSceneNode* targetNode)
+	{
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::eSingleType, static_cast<MkWindowTypeImageSet::eTypeIndex>(0));
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eL);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eM);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eR);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eT);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eC);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eB);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eLT);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMT);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRT);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eLC);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMC);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRC);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eLB);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMB);
+		_DeleteSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRB);
+	}
+
 	static bool _GetMatchingSRect
 		(MkSceneNode* targetNode, MkWindowTypeImageSet::eSetType setType, MkWindowTypeImageSet::eTypeIndex typeIndex, MkArray<MkSRect*>& srects)
 	{
@@ -142,6 +171,9 @@ public:
 				MK_TEXTURE_POOL.GetBitmapTexture(pack.filePath, texture, 0);
 				if (texture != NULL)
 				{
+					// 기존 SRect 삭제
+					_DeleteSRects(targetNode);
+
 					// image set 형태(pack.type)에 맞게 처리
 					const MkArray<MkHashStr>& subsetNames = pack.subsetNames;
 
@@ -196,6 +228,30 @@ public:
 						_LineUpSRects(pack.type, srects, bodySize, fullSize);
 					}
 
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	static bool ApplyFreeImage(const MkPathName& imagePath, const MkHashStr& subsetName, MkSceneNode* targetNode, MkFloat2& fullSize)
+	{
+		if (targetNode != NULL)
+		{
+			MkBaseTexturePtr texture;
+			MK_TEXTURE_POOL.GetBitmapTexture(imagePath, texture, 0);
+			if (texture != NULL)
+			{
+				// 기존 SRect 삭제
+				_DeleteSRects(targetNode);
+
+				// MkWindowTypeImageSet::eSingleType으로 처리
+				const MkHashStr& rectName = MkWindowTypeImageSet::GetImageSetKeyword(MkWindowTypeImageSet::eSingleType, static_cast<MkWindowTypeImageSet::eTypeIndex>(0));
+				MkSRect* srect = _SetSRect(rectName, texture, subsetName, targetNode);
+				if (srect != NULL)
+				{
+					fullSize = srect->GetLocalSize();
 					return true;
 				}
 			}
@@ -295,6 +351,23 @@ public:
 					break;
 			}
 			return (currState == endState);
+		}
+		return false;
+	}
+
+	static bool ApplyFreeImageToState(DataType state, const MkPathName& imagePath, const MkHashStr& subsetName, MkBaseWindowNode* targetNode)
+	{
+		if (targetNode != NULL)
+		{
+			const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(state);
+			MkSceneNode* stateNode = targetNode->ChildExist(stateKeyword) ? targetNode->GetChildNode(stateKeyword) : targetNode->CreateChildNode(stateKeyword);
+			MkFloat2 rectSize;
+			if (__TSI_ImageSetToTargetNode::ApplyFreeImage(imagePath, subsetName, stateNode, rectSize))
+			{
+				stateNode->SetVisible(true);
+				targetNode->__SetFullSize(rectSize);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -482,6 +555,55 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
+void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, const MkFloat2& windowSize)
+{
+	this->themeName = themeName;
+
+	hasTitle = true;
+	titleHeight = 20.f;
+	hasIcon = false;
+	hasCancelIcon = true;
+	dragMovement = true;
+
+	hasFreeImageBG = false;
+	this->windowSize = windowSize;
+
+	hasOKButton = true;
+	hasCancelButton = true;
+}
+
+void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, const MkPathName& bgFilePath, const MkHashStr& subsetName)
+{
+	SetStandardDesc(themeName, MkFloat2(0.f, 0.f));
+
+	hasFreeImageBG = true;
+	bgImageFilePath = bgFilePath;
+	bgImageSubsetName = subsetName;
+}
+
+void MkBaseWindowNode::BasicPresetWindowDesc::SetNoneTitleDesc(const MkHashStr& themeName, const MkFloat2& windowSize, bool dragMovement)
+{
+	SetStandardDesc(themeName, windowSize);
+
+	hasTitle = false;
+	this->dragMovement = dragMovement;
+}
+
+void MkBaseWindowNode::BasicPresetWindowDesc::SetNoneTitleDesc(const MkHashStr& themeName, const MkPathName& bgFilePath, const MkHashStr& subsetName, bool dragMovement)
+{
+	SetStandardDesc(themeName, bgFilePath, subsetName);
+
+	hasTitle = false;
+	this->dragMovement = dragMovement;
+}
+
+MkBaseWindowNode::BasicPresetWindowDesc::BasicPresetWindowDesc()
+{
+	SetStandardDesc(MK_WR_PRESET.GetDefaultThemeName(), MkFloat2(160.f, 80.f));
+}
+
+//------------------------------------------------------------------------------------------------//
+
 MkBaseWindowNode* MkBaseWindowNode::GetAncestorWindowNode(void) const
 {
 	MkSceneNode* parentNode = m_ParentNodePtr;
@@ -627,6 +749,191 @@ MkBaseWindowNode* MkBaseWindowNode::CreateWindowPreset(const MkHashStr& nodeName
 	return NULL;
 }
 
+MkBaseWindowNode* MkBaseWindowNode::CreateFreeImageBaseBackgroundWindow(const MkHashStr& nodeName, const MkPathName& imagePath, const MkHashStr& subsetName)
+{
+	if (!ChildExist(nodeName))
+	{
+		const MkHashStr& componentKeyword = MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WPC_BackgroundWindow);
+		MkBaseWindowNode* targetNode = new MkBaseWindowNode(nodeName, L"", MkFloat2(0.f, 0.f), componentKeyword);
+		if (targetNode != NULL)
+		{
+			if (__TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyFreeImageToState(eS2D_BS_DefaultState, imagePath, subsetName, targetNode))
+			{
+				AttachChildNode(targetNode);
+			}
+			else
+			{
+				delete targetNode;
+				targetNode = NULL;
+			}
+			return targetNode;
+		}
+	}
+	
+	return NULL;
+}
+
+MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName, const BasicPresetWindowDesc& desc)
+{
+	BasicPresetWindowDesc d = desc;
+	/*
+	bool hasIcon; // title 아이콘. 기본적으로 왼쪽 중앙에 margin만큼 떨어져 정렬됨
+	MkPathName iconImageFilePath; // title 아이콘의 image file 경로
+	MkHashStr iconImageSubsetName; // title 아이콘의 subset name
+	float iconImageHeightOffset; // title 아이콘 정렬 후 추가 y축 위치 offset. 아이콘 크기가 작으면 문제될게 없지만 타이틀보다 클 수 있기 때문
+
+	// ok(possitive) button
+	bool hasOKButton;
+
+	// cancel(negative) button
+	bool hasCancelButton;*/
+
+	// free image BG일 경우 먼저 windowSize 설정
+	if (d.hasFreeImageBG)
+	{
+		MkBaseTexturePtr texture;
+		MK_TEXTURE_POOL.GetBitmapTexture(d.bgImageFilePath, texture, 0);
+		if (texture != NULL)
+		{
+			d.windowSize = texture->GetSubsetSize(d.bgImageSubsetName);
+		}
+	}
+
+	const float MARGIN = MK_WR_PRESET.GetMargin();
+	const float DEPTH_GRID = 0.001f;
+
+	// sindow size 유효성 검사
+	if (d.windowSize.x < MARGIN * 4.f)
+	{
+		d.windowSize.x = MARGIN * 4.f;
+	}
+	if (d.windowSize.y < MARGIN * 4.f)
+	{
+		d.windowSize.x = MARGIN * 4.f;
+	}
+
+	// 반환 할 노드
+	MkBaseWindowNode* rootWindow = NULL;
+
+	// title bar
+	MkBaseWindowNode* titleWindow = NULL;
+	if (d.hasTitle)
+	{
+		// title body size 검사
+		if (d.titleHeight < MARGIN * 2.f)
+		{
+			d.titleHeight = MARGIN * 2.f;
+		}
+		MkFloat2 titleBodySize(d.windowSize.x - MARGIN * 4.f, d.titleHeight - MARGIN * 2.f);
+
+		titleWindow = CreateWindowPreset(nodeName, d.themeName, eS2D_WPC_TitleWindow, titleBodySize);
+		if (titleWindow != NULL)
+		{
+			rootWindow = titleWindow;
+
+			titleWindow->SetLocalPosition(MkFloat2(0.f, -titleWindow->GetPresetFullSize().y));
+
+			// window icon
+			if (d.hasIcon)
+			{
+				MkSRect* iconRect = titleWindow->CreateSRect(L"WindowIcon");
+				if (iconRect != NULL)
+				{
+					MkBaseTexturePtr texture;
+					MK_TEXTURE_POOL.GetBitmapTexture(d.iconImageFilePath, texture, 0);
+					if (texture != NULL)
+					{
+						iconRect->SetTexture(texture, d.iconImageSubsetName);
+						iconRect->SetLocalPosition(MkFloat2(iconRect->GetLocalPosition().x, iconRect->GetLocalPosition().y + d.iconImageHeightOffset));
+					}
+				}
+			}
+
+			// cancel icon
+			if (d.hasCancelIcon)
+			{
+				MkBaseWindowNode* cancelWindow = titleWindow->CreateWindowPreset(L"CancelIcon", d.themeName, eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f));
+				if (cancelWindow != NULL)
+				{
+					float posX = titleWindow->GetPresetFullSize().x - cancelWindow->GetPresetFullSize().x - MARGIN;
+					float posY = (titleWindow->GetPresetFullSize().y - cancelWindow->GetPresetFullSize().y) / 2.f;
+					cancelWindow->SetLocalPosition(MkVec3(posX, posY, -DEPTH_GRID));
+				}
+			}
+		}
+	}
+
+	// background
+	MkBaseWindowNode* backgroundWindow = NULL;
+	MkBaseWindowNode* parentWindow = (titleWindow == NULL) ? this : titleWindow;
+	MkHashStr bgNodeName = (titleWindow == NULL) ? nodeName : L"Background";
+	if (d.hasFreeImageBG)
+	{
+		backgroundWindow = parentWindow->CreateFreeImageBaseBackgroundWindow(bgNodeName, d.bgImageFilePath, d.bgImageSubsetName);
+	}
+	else
+	{
+		// background body size 검사
+		MkFloat2 bgBodySize(d.windowSize.x - MARGIN * 2.f, d.windowSize.y - MARGIN * 2.f);
+		backgroundWindow = parentWindow->CreateWindowPreset(bgNodeName, d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize);
+	}
+
+	if (backgroundWindow != NULL)
+	{
+		float heightOffset = 0.f;
+		if (titleWindow == NULL)
+		{
+			rootWindow = backgroundWindow;
+		}
+		else
+		{
+			heightOffset = titleWindow->GetPresetFullSize().y;
+		}
+		backgroundWindow->SetLocalPosition(MkVec3(-MARGIN, heightOffset - backgroundWindow->GetPresetFullSize().y + MARGIN, DEPTH_GRID));
+
+		const MkFloat2 buttonBodySize(50.f, 12.f);
+		// ok button
+		MkBaseWindowNode* okWindow = NULL;
+		if (d.hasOKButton)
+		{
+			okWindow = backgroundWindow->CreateWindowPreset(L"OKButton", d.themeName, eS2D_WPC_PossitiveButton, buttonBodySize);
+		}
+
+		// cancel button
+		MkBaseWindowNode* cancelWindow = NULL;
+		if (d.hasCancelButton)
+		{
+			cancelWindow = backgroundWindow->CreateWindowPreset(L"CencelButton", d.themeName, eS2D_WPC_NegativeButton, buttonBodySize);
+		}
+
+		if ((okWindow != NULL) && (cancelWindow == NULL))
+		{
+			float posX = (backgroundWindow->GetPresetFullSize().x - okWindow->GetPresetFullSize().x) / 2.f;
+			okWindow->SetLocalPosition(MkVec3(posX, MARGIN, -DEPTH_GRID));
+		}
+		else if ((okWindow == NULL) && (cancelWindow != NULL))
+		{
+			float posX = (backgroundWindow->GetPresetFullSize().x - cancelWindow->GetPresetFullSize().x) / 2.f;
+			cancelWindow->SetLocalPosition(MkVec3(posX, MARGIN, -DEPTH_GRID));
+		}
+		else if ((okWindow != NULL) && (cancelWindow != NULL))
+		{
+			float blank = (backgroundWindow->GetPresetFullSize().x - okWindow->GetPresetFullSize().x * 2.f) / 3.f;
+			okWindow->SetLocalPosition(MkVec3(blank, MARGIN, -DEPTH_GRID));
+			cancelWindow->SetLocalPosition(MkVec3(blank * 2.f + okWindow->GetPresetFullSize().x, MARGIN, -DEPTH_GRID));
+		}
+	}
+
+	if (rootWindow != NULL)
+	{
+		// drag movement
+		rootWindow->SetAttribute(MkBaseWindowNode::eDragMovement, d.dragMovement);
+		rootWindow->SetAttribute(MkBaseWindowNode::eConfinedToScreen, true);
+	}
+
+	return rootWindow;
+}
+
 void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 {
 	if ((!m_PresetThemeName.Empty()) && (themeName != m_PresetThemeName) && (!m_PresetComponentName.Empty())) // 테마가 다르면
@@ -635,7 +942,7 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 		const MkArray<MkHashStr>& newImageSets = MK_WR_PRESET.GetWindowTypeImageSet(themeName, component);
 		const MkArray<MkHashStr>& oldImageSets = MK_WR_PRESET.GetWindowTypeImageSet(m_PresetThemeName, component);
 
-		if ((!newImageSets.Empty()) && (newImageSets != oldImageSets) && // 테마명은 다르더라고 image set은 같을 수 있으므로 비교 필요
+		if ((!newImageSets.Empty()) && (newImageSets != oldImageSets) && // 테마명은 다르더라도 image set은 같을 수 있으므로 비교 필요
 			__TSI_ImageSetToComponentNode::ApplyImageSetAndBodySize(component, newImageSets, this))
 		{
 			m_PresetThemeName = themeName;
@@ -665,6 +972,16 @@ void MkBaseWindowNode::SetPresetComponentBodySize(const MkFloat2& bodySize)
 		m_PresetBodySize = bodySize;
 		__TSI_ImageSetToComponentNode::ApplyBodySize(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName), this);
 	}
+}
+
+bool MkBaseWindowNode::SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName)
+{
+	// 테마가 없고 component가 eS2D_WPC_BackgroundWindow 타입이면
+	if (m_PresetThemeName.Empty() && (m_PresetComponentName == MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WPC_BackgroundWindow)))
+	{
+		return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyFreeImageToState(eS2D_BS_DefaultState, imagePath, subsetName, this);
+	}
+	return false;
 }
 
 bool MkBaseWindowNode::SetPresetComponentToken

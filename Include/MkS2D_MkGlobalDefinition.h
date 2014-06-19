@@ -35,6 +35,7 @@ enum eS2D_WindowPresetComponent
 
 	eS2D_WPC_NegativeButton = eS2D_WPC_WindowStateTypeBegin, // L"NegativeButton"
 	eS2D_WPC_PossitiveButton, // L"PossitiveButton"
+	eS2D_WPC_ListButton, // L"ListButton"
 	eS2D_WPC_CancelIcon, // L"CancelIcon"
 
 	eS2D_WPC_WindowStateTypeEnd,
@@ -59,7 +60,7 @@ enum eS2D_TitleState
 	eS2D_TS_MaxTitleState
 };
 
-// eS2D_WPC_NegativeButton, eS2D_WPC_PossitiveButton, eS2D_WPC_CancelIcon state
+// eS2D_WPC_NegativeButton, eS2D_WPC_PossitiveButton, eS2D_WPC_ListButton, eS2D_WPC_CancelIcon state
 enum eS2D_WindowState
 {
 	eS2D_WS_DefaultState = 0, // L"Default"
@@ -83,6 +84,7 @@ inline unsigned int GetWindowPresetComponentSize(eS2D_WindowPresetComponent comp
 
 	case eS2D_WPC_NegativeButton:
 	case eS2D_WPC_PossitiveButton:
+	case eS2D_WPC_ListButton:
 	case eS2D_WPC_CancelIcon:
 		return eS2D_WS_MaxWindowState;
 	}

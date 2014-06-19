@@ -23,6 +23,12 @@ public:
 	// 해당 window type image set 반환
 	const MkArray<MkHashStr>& GetWindowTypeImageSet(const MkHashStr& themeName, eS2D_WindowPresetComponent component) const;
 
+	// 기본 테마명 반환
+	inline const MkHashStr& GetDefaultThemeName(void) const { return (m_DefaultThemeEnable) ? m_DefaultThemeName : MkHashStr::NullHash; }
+
+	// margin 값 반환
+	inline float GetMargin(void) const { return m_Margin; }
+
 	// 해제
 	void Clear(void);
 
@@ -56,6 +62,8 @@ protected:
 
 	MkHashStr m_DefaultThemeName;
 	bool m_DefaultThemeEnable;
+
+	float m_Margin;
 
 	MkHashMap<MkHashStr, MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> > > m_Themes;
 };

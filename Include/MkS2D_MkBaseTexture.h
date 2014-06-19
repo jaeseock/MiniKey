@@ -33,7 +33,7 @@ public:
 	// 기초 정보로 texture & surface 생성
 	bool SetUp
 		(const MkUInt2& size, unsigned int mipLevel, DWORD usage, D3DFORMAT format, // 이미지 데이터에 종속
-		eFilterType filterType = eLinear, D3DTEXTUREADDRESS addressMode = D3DTADDRESS_WRAP, const MkColor& borderColor = MkColor::Black, // 외부 설정
+		eFilterType filterType = ePoint, D3DTEXTUREADDRESS addressMode = D3DTADDRESS_WRAP, const MkColor& borderColor = MkColor::Black, // 외부 설정
 		const MkDataNode* subsetNode = NULL); // subset
 
 	// 렌더 스테이트 갱신
@@ -84,6 +84,7 @@ public:
 	inline const MkHashStr& GetPoolKey(void) const { return m_PoolKey; }
 
 	// image subset
+	const MkFloat2& GetSubsetSize(const MkHashStr& name) const { return m_Subset.GetSubsetSize(name); }
 	inline void GetSubsetInfo(const MkHashStr& name, MkFloat2& localSize, MkFloat2 (&uv)[MkFloatRect::eMaxPointName]) const { m_Subset.GetSubsetInfo(name, localSize, uv); }
 
 	// bitmap group

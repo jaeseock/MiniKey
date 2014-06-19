@@ -126,6 +126,11 @@ void MkImageSubset::SetUp(const MkUInt2& imageSize, const MkDataNode* node)
 	}
 }
 
+const MkFloat2& MkImageSubset::GetSubsetSize(const MkHashStr& name) const
+{
+	return (name.Empty() || (!m_Subsets.Exist(name))) ? m_DefaultSubset.originalSize : m_Subsets[name].originalSize;
+}
+
 void MkImageSubset::GetSubsetInfo(const MkHashStr& name, MkFloat2& localSize, MkFloat2 (&uv)[MkFloatRect::eMaxPointName]) const
 {
 	const Subset& ss = (name.Empty() || (!m_Subsets.Exist(name))) ? m_DefaultSubset : m_Subsets[name];

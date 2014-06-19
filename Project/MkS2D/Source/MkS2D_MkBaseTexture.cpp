@@ -228,8 +228,8 @@ void MkBaseTexture::SetFilterType(eFilterType filterType)
 			}
 			else
 			{
-				filterType = eLinear;
-				m_MinMagFilter = D3DTEXF_LINEAR;
+				filterType = ePoint;
+				m_MinMagFilter = D3DTEXF_POINT;
 				m_MaxAnisotropic = 0;
 			}
 		}
@@ -244,7 +244,7 @@ MkBaseTexture::MkBaseTexture()
 	m_Format = D3DFMT_UNKNOWN;
 
 	m_AlphaTestingRef = 1;
-	SetFilterType(eLinear);
+	SetFilterType(ePoint);
 	m_AddressMode = D3DTADDRESS_WRAP;
 	m_BorderColor = MkColor::Black.ConvertToD3DCOLOR();
 	m_UseMipmap = false;

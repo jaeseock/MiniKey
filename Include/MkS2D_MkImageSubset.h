@@ -49,6 +49,8 @@ public:
 
 	void SetUp(const MkUInt2& imageSize, const MkDataNode* node);
 
+	const MkFloat2& GetSubsetSize(const MkHashStr& name) const;
+
 	void GetSubsetInfo(const MkHashStr& name, MkFloat2& localSize, MkFloat2 (&uv)[MkFloatRect::eMaxPointName]) const;
 
 	void Clear(void);

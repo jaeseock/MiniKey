@@ -13,8 +13,12 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 	MkStr defaultThemeName;
 	MK_CHECK(node.GetData(L"DefaultThemeName", defaultThemeName, 0) && (!defaultThemeName.Empty()), L"window preset 노드에 DefaultThemeName이 지정되어 있지 않음")
 		return false;
-
 	m_DefaultThemeName = defaultThemeName;
+
+	int margin;
+	MK_CHECK(node.GetData(L"Margin", margin, 0) && (margin > 0), L"window preset 노드에 Margin이 정상적으로 지정되어 있지 않음")
+		return false;
+	m_Margin = static_cast<float>(margin);
 
 	MkArray<MkHashStr> themeNames;
 	node.GetChildNodeList(themeNames);
@@ -91,7 +95,8 @@ void MkWindowPreset::Clear(void)
 	m_Themes.Clear();
 }
 
-const static MkHashStr sPresetKeywords[eS2D_WPC_MaxWindowPresetComponent] = { L"BackgroundWindow", L"TitleWindow", L"NegativeButton", L"PossitiveButton", L"CancelIcon" };
+const static MkHashStr sPresetKeywords[eS2D_WPC_MaxWindowPresetComponent] =
+	{ L"BackgroundWindow", L"TitleWindow", L"NegativeButton", L"PossitiveButton", L"ListButton", L"CancelIcon" };
 
 eS2D_WindowPresetComponent MkWindowPreset::GetWindowPresetComponentEnum(const MkHashStr& keyword)
 {
@@ -167,6 +172,7 @@ const MkArray<MkHashStr>& MkWindowPreset::__GetNullList(void)
 MkWindowPreset::MkWindowPreset()
 {
 	m_DefaultThemeEnable = false;
+	m_Margin = 0.f;
 }
 
 bool MkWindowPreset::_LoadDataAndCheck

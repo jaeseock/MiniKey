@@ -27,6 +27,11 @@ Node "FontResource"
 		}
 
 		Node "±¼¸²12" : "T_FontType" {}
+		
+		Node "±¼¸²14" : "T_FontType"
+		{
+			uint size = 14;
+		}
 
 		Node "±¼¸²16" : "T_FontType"
 		{
@@ -42,6 +47,12 @@ Node "FontResource"
 		{
 			str face = "³ª´®°íµñ";
 			uint size = 12;
+		}
+		
+		Node "³ª°í14" : "T_FontType"
+		{
+			str face = "³ª´®°íµñ";
+			uint size = 14;
 		}
 		
 		Node "³ª°í16" : "T_FontType"
@@ -130,228 +141,257 @@ Node "FontResource"
 			int mode = 2;
 			str modeColor = "Black";
 		}
+		
+		Node "WinTitleLF" : "T_FontState"
+		{
+			str textColor = "White";
+		}
+
+		Node "WinTitleOF" : "T_FontState"
+		{
+			str textColor = "Yellow";
+		}
 	}
 }
 
 Node "WindowTypeImageSet"
 {
-	Node "SemiTransPurpleWindow"
+	Node "DefaultBackground"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_SemiTransPurple_LT";
-		str MT = "WB_SemiTransPurple_MT";
-		str RT = "WB_SemiTransPurple_RT";
-		str LC = "WB_SemiTransPurple_LC";
-		str MC = "WB_SemiTransPurple_MC";
-		str RC = "WB_SemiTransPurple_RC";
-		str LB = "WB_SemiTransPurple_LB";
-		str MB = "WB_SemiTransPurple_MB";
-		str RB = "WB_SemiTransPurple_RB";
+		str LT = "DefBG_LT";
+		str MT = "DefBG_MT";
+		str RT = "DefBG_RT";
+		str LC = "DefBG_LC";
+		str MC = "DefBG_MC";
+		str RC = "DefBG_RC";
+		str LB = "DefBG_LB";
+		str MB = "DefBG_MB";
+		str RB = "DefBG_RB";
 	}
 	
-	Node "GradationClearBlue"
-	{
-		int Type = 1;
-		str Image = "Default\system_default.png";
-		str L = "WB_GradationBlue_L";
-		str M = "WB_GradationBlue_M";
-		str R = "WB_GradationBlue_R";
-	}
-	
-	Node "GradationDirtyBlue"
-	{
-		int Type = 1;
-		str Image = "Default\system_default.png";
-		str L = "WB_GradationDirtyBlue_L";
-		str M = "WB_GradationDirtyBlue_M";
-		str R = "WB_GradationDirtyBlue_R";
-	}
-	
-	Node "BlingRedDefault"
+	Node "DefaultTitleOnFocus"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_BlingRedDefault_LT";
-		str MT = "WB_BlingRedDefault_MT";
-		str RT = "WB_BlingRedDefault_RT";
-		str LC = "WB_BlingRedDefault_LC";
-		str MC = "WB_BlingRedDefault_MC";
-		str RC = "WB_BlingRedDefault_RC";
-		str LB = "WB_BlingRedDefault_LB";
-		str MB = "WB_BlingRedDefault_MB";
-		str RB = "WB_BlingRedDefault_RB";
+		str LT = "DefTitleOF_LT";
+		str MT = "DefTitleOF_MT";
+		str RT = "DefTitleOF_RT";
+		str LC = "DefTitleOF_LC";
+		str MC = "DefTitleOF_MC";
+		str RC = "DefTitleOF_RC";
+		str LB = "DefTitleOF_LB";
+		str MB = "DefTitleOF_MB";
+		str RB = "DefTitleOF_RB";
 	}
 	
-	Node "BlingRedOnCursor"
+	Node "DefaultTitleLostFocus"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_BlingRedOnCursor_LT";
-		str MT = "WB_BlingRedOnCursor_MT";
-		str RT = "WB_BlingRedOnCursor_RT";
-		str LC = "WB_BlingRedOnCursor_LC";
-		str MC = "WB_BlingRedOnCursor_MC";
-		str RC = "WB_BlingRedOnCursor_RC";
-		str LB = "WB_BlingRedOnCursor_LB";
-		str MB = "WB_BlingRedOnCursor_MB";
-		str RB = "WB_BlingRedOnCursor_RB";
+		str LT = "DefTitleLF_LT";
+		str MT = "DefTitleLF_MT";
+		str RT = "DefTitleLF_RT";
+		str LC = "DefTitleLF_LC";
+		str MC = "DefTitleLF_MC";
+		str RC = "DefTitleLF_RC";
+		str LB = "DefTitleLF_LB";
+		str MB = "DefTitleLF_MB";
+		str RB = "DefTitleLF_RB";
 	}
 	
-	Node "BlingRedOnClick"
+	Node "DefaultPBtnDefault"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_BlingRedOnClick_LT";
-		str MT = "WB_BlingRedOnClick_MT";
-		str RT = "WB_BlingRedOnClick_RT";
-		str LC = "WB_BlingRedOnClick_LC";
-		str MC = "WB_BlingRedOnClick_MC";
-		str RC = "WB_BlingRedOnClick_RC";
-		str LB = "WB_BlingRedOnClick_LB";
-		str MB = "WB_BlingRedOnClick_MB";
-		str RB = "WB_BlingRedOnClick_RB";
+		str LT = "DefPBtnDef_LT";
+		str MT = "DefPBtnDef_MT";
+		str RT = "DefPBtnDef_RT";
+		str LC = "DefPBtnDef_LC";
+		str MC = "DefPBtnDef_MC";
+		str RC = "DefPBtnDef_RC";
+		str LB = "DefPBtnDef_LB";
+		str MB = "DefPBtnDef_MB";
+		str RB = "DefPBtnDef_RB";
 	}
 	
-	Node "BlingBlueDefault"
+	Node "DefaultPBtnOnCursor"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_BlingBlueDefault_LT";
-		str MT = "WB_BlingBlueDefault_MT";
-		str RT = "WB_BlingBlueDefault_RT";
-		str LC = "WB_BlingBlueDefault_LC";
-		str MC = "WB_BlingBlueDefault_MC";
-		str RC = "WB_BlingBlueDefault_RC";
-		str LB = "WB_BlingBlueDefault_LB";
-		str MB = "WB_BlingBlueDefault_MB";
-		str RB = "WB_BlingBlueDefault_RB";
+		str LT = "DefPBtnOCu_LT";
+		str MT = "DefPBtnOCu_MT";
+		str RT = "DefPBtnOCu_RT";
+		str LC = "DefPBtnOCu_LC";
+		str MC = "DefPBtnOCu_MC";
+		str RC = "DefPBtnOCu_RC";
+		str LB = "DefPBtnOCu_LB";
+		str MB = "DefPBtnOCu_MB";
+		str RB = "DefPBtnOCu_RB";
 	}
 	
-	Node "BlingBlueOnCursor"
+	Node "DefaultPBtnOnClick"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_BlingBlueOnCursor_LT";
-		str MT = "WB_BlingBlueOnCursor_MT";
-		str RT = "WB_BlingBlueOnCursor_RT";
-		str LC = "WB_BlingBlueOnCursor_LC";
-		str MC = "WB_BlingBlueOnCursor_MC";
-		str RC = "WB_BlingBlueOnCursor_RC";
-		str LB = "WB_BlingBlueOnCursor_LB";
-		str MB = "WB_BlingBlueOnCursor_MB";
-		str RB = "WB_BlingBlueOnCursor_RB";
+		str LT = "DefPBtnOCl_LT";
+		str MT = "DefPBtnOCl_MT";
+		str RT = "DefPBtnOCl_RT";
+		str LC = "DefPBtnOCl_LC";
+		str MC = "DefPBtnOCl_MC";
+		str RC = "DefPBtnOCl_RC";
+		str LB = "DefPBtnOCl_LB";
+		str MB = "DefPBtnOCl_MB";
+		str RB = "DefPBtnOCl_RB";
 	}
 	
-	Node "BlingBlueOnClick"
+	Node "DefaultNBtnDefault"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_BlingBlueOnClick_LT";
-		str MT = "WB_BlingBlueOnClick_MT";
-		str RT = "WB_BlingBlueOnClick_RT";
-		str LC = "WB_BlingBlueOnClick_LC";
-		str MC = "WB_BlingBlueOnClick_MC";
-		str RC = "WB_BlingBlueOnClick_RC";
-		str LB = "WB_BlingBlueOnClick_LB";
-		str MB = "WB_BlingBlueOnClick_MB";
-		str RB = "WB_BlingBlueOnClick_RB";
+		str LT = "DefNBtnDef_LT";
+		str MT = "DefNBtnDef_MT";
+		str RT = "DefNBtnDef_RT";
+		str LC = "DefNBtnDef_LC";
+		str MC = "DefNBtnDef_MC";
+		str RC = "DefNBtnDef_RC";
+		str LB = "DefNBtnDef_LB";
+		str MB = "DefNBtnDef_MB";
+		str RB = "DefNBtnDef_RB";
 	}
 	
-	Node "BlingButtonDisable"
+	Node "DefaultNBtnOnCursor"
 	{
 		int Type = 3;
 		str Image = "Default\system_default.png";
-		str LT = "WB_BlingDisable_LT";
-		str MT = "WB_BlingDisable_MT";
-		str RT = "WB_BlingDisable_RT";
-		str LC = "WB_BlingDisable_LC";
-		str MC = "WB_BlingDisable_MC";
-		str RC = "WB_BlingDisable_RC";
-		str LB = "WB_BlingDisable_LB";
-		str MB = "WB_BlingDisable_MB";
-		str RB = "WB_BlingDisable_RB";
+		str LT = "DefNBtnOCu_LT";
+		str MT = "DefNBtnOCu_MT";
+		str RT = "DefNBtnOCu_RT";
+		str LC = "DefNBtnOCu_LC";
+		str MC = "DefNBtnOCu_MC";
+		str RC = "DefNBtnOCu_RC";
+		str LB = "DefNBtnOCu_LB";
+		str MB = "DefNBtnOCu_MB";
+		str RB = "DefNBtnOCu_RB";
 	}
 	
-	Node "CancelIconDefault"
+	Node "DefaultNBtnOnClick"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefNBtnOCl_LT";
+		str MT = "DefNBtnOCl_MT";
+		str RT = "DefNBtnOCl_RT";
+		str LC = "DefNBtnOCl_LC";
+		str MC = "DefNBtnOCl_MC";
+		str RC = "DefNBtnOCl_RC";
+		str LB = "DefNBtnOCl_LB";
+		str MB = "DefNBtnOCl_MB";
+		str RB = "DefNBtnOCl_RB";
+	}
+	
+	Node "DefaultBtnDisable"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefBtnDis_LT";
+		str MT = "DefBtnDis_MT";
+		str RT = "DefBtnDis_RT";
+		str LC = "DefBtnDis_LC";
+		str MC = "DefBtnDis_MC";
+		str RC = "DefBtnDis_RC";
+		str LB = "DefBtnDis_LB";
+		str MB = "DefBtnDis_MB";
+		str RB = "DefBtnDis_RB";
+	}
+	
+	Node "DefaultLBtnDefault"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefLBtnDef_LT";
+		str MT = "DefLBtnDef_MT";
+		str RT = "DefLBtnDef_RT";
+		str LC = "DefLBtnDef_LC";
+		str MC = "DefLBtnDef_MC";
+		str RC = "DefLBtnDef_RC";
+		str LB = "DefLBtnDef_LB";
+		str MB = "DefLBtnDef_MB";
+		str RB = "DefLBtnDef_RB";
+	}
+	
+	Node "DefaultLBtnOnCursor"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefLBtnOCu_LT";
+		str MT = "DefLBtnOCu_MT";
+		str RT = "DefLBtnOCu_RT";
+		str LC = "DefLBtnOCu_LC";
+		str MC = "DefLBtnOCu_MC";
+		str RC = "DefLBtnOCu_RC";
+		str LB = "DefLBtnOCu_LB";
+		str MB = "DefLBtnOCu_MB";
+		str RB = "DefLBtnOCu_RB";
+	}
+	
+	Node "DefaultLBtnDisable"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefLBtnDis_LT";
+		str MT = "DefLBtnDis_MT";
+		str RT = "DefLBtnDis_RT";
+		str LC = "DefLBtnDis_LC";
+		str MC = "DefLBtnDis_MC";
+		str RC = "DefLBtnDis_RC";
+		str LB = "DefLBtnDis_LB";
+		str MB = "DefLBtnDis_MB";
+		str RB = "DefLBtnDis_RB";
+	}
+	
+	Node "DefaultCancelDefault"
 	{
 		int Type = 0;
 		str Image = "Default\system_default.png";
-		str SN = "WB_CancelIconDefault";
+		str SN = "DefCancelDef";
 	}
 	
-	Node "CancelIconOnCursor"
+	Node "DefaultCancelOnCursor"
 	{
 		int Type = 0;
 		str Image = "Default\system_default.png";
-		str SN = "WB_CancelIconOnCursor";
+		str SN = "DefCancelOCu";
 	}
 	
-	Node "CancelIconOnClick"
+	Node "DefaultCancelOnClick"
 	{
 		int Type = 0;
 		str Image = "Default\system_default.png";
-		str SN = "WB_CancelIconOnClick";
+		str SN = "DefCancelOCl";
 	}
 	
-	Node "CancelIconDisable"
+	Node "DefaultCancelDisable"
 	{
 		int Type = 0;
 		str Image = "Default\system_default.png";
-		str SN = "WB_CancelIconDisable";
-	}
-	
-	Node "SolidGrayWindow"
-	{
-		int Type = 3;
-		str Image = "Default\system_default.png";
-		str LT = "WB_SolidGray_LT";
-		str MT = "WB_SolidGray_MT";
-		str RT = "WB_SolidGray_RT";
-		str LC = "WB_SolidGray_LC";
-		str MC = "WB_SolidGray_MC";
-		str RC = "WB_SolidGray_RC";
-		str LB = "WB_SolidGray_LB";
-		str MB = "WB_SolidGray_MB";
-		str RB = "WB_SolidGray_RB";
-	}
-	
-	Node "SolidBlueWindow"
-	{
-		int Type = 3;
-		str Image = "Default\system_default.png";
-		str LT = "WB_SolidBlue_LT";
-		str MT = "WB_SolidBlue_MT";
-		str RT = "WB_SolidBlue_RT";
-		str LC = "WB_SolidBlue_LC";
-		str MC = "WB_SolidBlue_MC";
-		str RC = "WB_SolidBlue_RC";
-		str LB = "WB_SolidBlue_LB";
-		str MB = "WB_SolidBlue_MB";
-		str RB = "WB_SolidBlue_RB";
+		str SN = "DefCancelDis";
 	}
 }
 
 Node "WindowPreset"
 {
 	str DefaultThemeName = "Default";
+	int Margin = 3;
 	
 	Node "Default"
 	{
-		str BackgroundWindow = "SemiTransPurpleWindow";
-		str TitleWindow = "GradationClearBlue" / "GradationDirtyBlue";
-		str NegativeButton = "BlingRedDefault" / "BlingRedOnCursor" / "BlingRedOnClick" / "BlingButtonDisable";
-		str PossitiveButton = "BlingBlueDefault" / "BlingBlueOnCursor" / "BlingBlueOnClick" / "BlingButtonDisable";
-		str CancelIcon =  "CancelIconDefault" / "CancelIconOnCursor" / "CancelIconOnClick" / "CancelIconDisable";
-	}
-	
-	Node "SolidGray"
-	{
-		str BackgroundWindow = "SolidGrayWindow";
-	}
-	
-	Node "SolidBlue"
-	{
-		str BackgroundWindow = "SolidBlueWindow";
+		str BackgroundWindow = "DefaultBackground";
+		str TitleWindow = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
+		str NegativeButton = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
+		str PossitiveButton = "DefaultPBtnDefault" / "DefaultPBtnOnCursor" / "DefaultPBtnOnClick" / "DefaultBtnDisable";
+		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
+		str CancelIcon =  "DefaultCancelDefault" / "DefaultCancelOnCursor" / "DefaultCancelOnClick" / "DefaultCancelDisable";
 	}
 }

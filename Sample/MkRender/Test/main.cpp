@@ -73,16 +73,23 @@ public:
 		bufStr.ReadTextFile(L"DecoString.txt");
 		textRect->SetDecoString(bufStr);
 
-		MkBaseWindowNode* titleWin = m_Node01->CreateWindowPreset(L"Title", L"SolidGray", eS2D_WPC_TitleWindow, MkFloat2(100.f, 0.f));
+		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
+		//winDesc.SetStandardDesc(L"Default", L"Image\\s02.jpg", L"");
+		//winDesc.SetNoneTitleDesc(L"Default", MkFloat2(200.f, 150.f), true);
+		//winDesc.SetNoneTitleDesc(L"Default",  L"Image\\s02.jpg", L"", true);
+		MkBaseWindowNode* titleWin = m_Node01->CreateBasicWindow(L"WinRoot", winDesc);
+		/*
+		MkBaseWindowNode* titleWin = m_Node01->CreateWindowPreset(L"WinRoot", L"Default", eS2D_WPC_TitleWindow, MkFloat2(100.f, 18.f));
 		titleWin->SetAttribute(MkBaseWindowNode::eConfinedToScreen, true);
-		MkBaseWindowNode* bgWin = titleWin->CreateWindowPreset(L"BG", L"SolidGray", eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 150.f)); // 112, 162
+		MkBaseWindowNode* bgWin = titleWin->CreateWindowPreset(L"BG", L"Default", eS2D_WPC_BackgroundWindow, MkFloat2(titleWin->GetPresetBodySize().x, 150.f)); // 112, 162
 		bgWin->SetLocalPosition(MkVec3(0.f, titleWin->GetPresetFullSize().y - bgWin->GetPresetFullSize().y, 0.8f));
-		bgWin->CreateWindowPreset(L"NButton", L"SolidGray", eS2D_WPC_NegativeButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(6.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 6.f - 42.f, 6.f - 162.f, -0.001f));
-		bgWin->CreateWindowPreset(L"PButton", L"SolidGray", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(60.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(6.f, 6.f - 162.f, -0.001f));
-		titleWin->CreateWindowPreset(L"Cancel", L"SolidGray", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(titleWin->GetPresetFullSize().x - 20.f, 1.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 17.f, 17.f, -0.001f));
+		bgWin->CreateWindowPreset(L"NButton", L"Default", eS2D_WPC_NegativeButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(6.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 6.f - 42.f, 6.f - 162.f, -0.001f));
+		bgWin->CreateWindowPreset(L"PButton", L"Default", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(60.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(6.f, 6.f - 162.f, -0.001f));
+		titleWin->CreateWindowPreset(L"Cancel", L"Default", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(titleWin->GetPresetFullSize().x - 21.f, 3.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 17.f, 17.f, -0.001f));
+		*/
 
-		titleWin->SetPresetComponentToken(eS2D_TS_OnFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:강조항목%>타 이 틀");
-		titleWin->SetPresetComponentToken(eS2D_TS_LostFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:일반항목%>타 이 틀");
+		titleWin->SetPresetComponentToken(eS2D_TS_OnFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:WinTitleOF%>타 이 틀");
+		titleWin->SetPresetComponentToken(eS2D_TS_LostFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:WinTitleLF%>타 이 틀");
 
 
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
@@ -204,7 +211,7 @@ public:
 		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
 		{
 			MkDataNode node;
-			m_Node01->GetChildNode(L"Title")->Save(node);
+			m_Node01->GetChildNode(L"WinRoot")->Save(node);
 			node.SaveToText(L"test_scene.txt");
 		}
 
@@ -333,7 +340,7 @@ public:
 				nameTag->SetLocalPosition(MkFloat2(6.f, 2.f));
 				nameTag->SetLocalDepth(-0.002f);
 
-				winNode->SetPresetThemeName(L"Default");
+				//winNode->SetPresetThemeName(L"Default");
 
 				MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
 			}
@@ -342,7 +349,7 @@ public:
 		}
 		
 		//m_WindowNode1->SetPresetThemeName(L"Default");
-		//m_WindowNode1->SetPresetComponentBodySize(eS2D_WPC_BackgroundWindow, MkFloat2(100.f, 100.f));
+		//m_WindowNode1->SetPresetComponentBodySize(MkFloat2(100.f, 100.f));
 		
 		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_RootNode);
 		m_RootNode->Update();

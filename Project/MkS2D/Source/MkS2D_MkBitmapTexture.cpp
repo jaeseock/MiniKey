@@ -14,7 +14,7 @@ bool MkBitmapTexture::SetUp(const MkByteArray& srcData, const MkDataNode* subset
 		return false;
 
 	// 텍스쳐 생성
-	if (!MkBaseTexture::SetUp(MkUInt2(imgInfo.Width, imgInfo.Height), imgInfo.MipLevels, 0, imgInfo.Format, eLinear, D3DTADDRESS_WRAP, MkColor::Black, subsetNode))
+	if (!MkBaseTexture::SetUp(MkUInt2(imgInfo.Width, imgInfo.Height), imgInfo.MipLevels, 0, imgInfo.Format, ePoint, D3DTADDRESS_WRAP, MkColor::Black, subsetNode))
 		return false;
 
 	// 서페이스에 이미지 출력
