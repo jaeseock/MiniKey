@@ -31,3 +31,10 @@ Node "DefCancelDef" : "T_SysDefIcon" { int2 Position = (0, 36); }
 Node "DefCancelOCu" : "T_SysDefIcon" { int2 Position = (14, 36); }
 Node "DefCancelOCl" : "T_SysDefIcon" { int2 Position = (28, 36); }
 Node "DefCancelDis" : "T_SysDefIcon" { int2 Position = (42, 36); }
+
+Node "Darken" { int2 Position = (27, 0); int2 Size = (9, 9); }
+
+Node "SolLBBG_" : "T_SysDefTable" { int2 Position = (36, 0); }
+
+Node "WinIconSP" { int2 Position = (0, 50); int2 Size = (16, 16); }
+Node "WinBGSP" { int2 Position = (0, 66); int2 Size = (150, 100); }

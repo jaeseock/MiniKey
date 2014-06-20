@@ -7,6 +7,7 @@
 #include "MkCore_MkMap.h"
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
+#include "MkCore_MkPathName.h"
 
 #include "MkS2D_MkGlobalDefinition.h"
 
@@ -28,6 +29,12 @@ public:
 
 	// margin 값 반환
 	inline float GetMargin(void) const { return m_Margin; }
+
+	// 시스템 이미지 정보 반환
+	inline const MkPathName& GetSystemImageFilePath(void) const { return m_SystemImageFilePath; }
+	inline const MkHashStr& GetDarkenLayerSubsetName(void) const { return m_DarkenLayerSubsetName; }
+	inline const MkHashStr& GetWindowIconSampleSubsetName(void) const { return m_WindowIconSampleSubsetName; }
+	inline const MkHashStr& GetWindowBackgroundSampleSubsetName(void) const { return m_WindowBackgroundSampleSubsetName; }
 
 	// 해제
 	void Clear(void);
@@ -64,6 +71,10 @@ protected:
 	bool m_DefaultThemeEnable;
 
 	float m_Margin;
+	MkPathName m_SystemImageFilePath;
+	MkHashStr m_DarkenLayerSubsetName;
+	MkHashStr m_WindowIconSampleSubsetName;
+	MkHashStr m_WindowBackgroundSampleSubsetName;
 
 	MkHashMap<MkHashStr, MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> > > m_Themes;
 };

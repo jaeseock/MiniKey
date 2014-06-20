@@ -15,22 +15,39 @@
 #define MK_WIN_EVENT_MGR MkWindowEventManager::Instance()
 
 
+class MkSceneNode;
 class MkBaseWindowNode;
+class MkDrawStep;
 
 class MkWindowEventManager : public MkSingletonPattern<MkWindowEventManager>
 {
 public:
 
-	void SetDepthBandwidth(float minDepthBandwidth = MKDEF_S2D_MIN_WINDOW_DEPTH_BANDWIDTH, float maxDepthBandwidth = MKDEF_S2D_MAX_WINDOW_DEPTH_BANDWIDTH);
+	void SetUp(MkDrawStep* drawStep);
 
+	// 해당 윈도우를 등록
+	// (NOTE) 호출 전 SetUp()이 완료 된 상태이어야 함
+	// (NOTE) 등록될 windowNode는 부모 노드가 없어야 함
 	bool RegisterWindow(MkBaseWindowNode* windowNode, bool activate);
 
+	// 윈도우 활성화 여부 반환
 	bool IsOnActivation(const MkHashStr& windowName) const;
+
+	// 윈도우 활성화
 	void ActivateWindow(const MkHashStr& windowName);
+
+	// 윈도우 비활성화
 	void DeactivateWindow(const MkHashStr& windowName);
+
+	// 윈도우 활성화 여부 토글
 	void ToggleWindow(const MkHashStr& windowName);
 
-	void Update(const MkFloat2& screenSize);
+	// 해당 윈도우를 normal/modal top 윈도우로 지정
+	// modal 상태 해제는 해당 윈도우의 비활성화
+	void SetFocus(const MkHashStr& windowName, bool modal = false);
+
+	// 갱신
+	void Update(void);
 
 	inline void SetEditMode(bool enable) { m_EditMode = enable; }
 	inline bool GetEditMode(void) const { return m_EditMode; }
@@ -46,12 +63,17 @@ protected:
 	void _LastWindowLostFocus(void);
 	void _SetFocusToWindowNode(MkBaseWindowNode* targetNode);
 
+	void _SetDarkenLayerEnable(bool enable);
+
 	MkFloat2 _ConfineMovement(MkBaseWindowNode* targetNode, const MkFloat2& screenSize, const MkFloat2& posBegin, const MkFloat2& toWorld, const MkFloat2& offset) const;
 
 protected:
 
 	float m_MinDepthBandwidth;
 	float m_MaxDepthBandwidth;
+
+	MkDrawStep* m_DrawStep;
+	MkSceneNode* m_RootNode;
 
 	bool m_EditMode;
 
@@ -70,6 +92,9 @@ protected:
 	MkFloat2 m_CursorStartPosition;
 	MkFloat2 m_WindowAABRBegin;
 	MkFloat2 m_WindowOffsetToWorldPos;
+
+	// modal
+	MkHashStr m_ModalWindow;
 
 	MkBaseWindowNode* m_CurrentTargetWindowNode;
 };

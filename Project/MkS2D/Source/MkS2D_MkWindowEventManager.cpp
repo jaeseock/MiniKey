@@ -1,9 +1,11 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkInputManager.h"
-
 #include "MkCore_MkDevPanel.h"
 
+#include "MkS2D_MkTexturePool.h"
+#include "MkS2D_MkWindowResourceManager.h"
+#include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkBaseWindowNode.h"
 #include "MkS2D_MkWindowEventManager.h"
 
@@ -11,27 +13,66 @@
 #define MKDEF_ARRAY_EXIST(names, target) (names.FindFirstInclusion(MkArraySection(0), target) != MKDEF_ARRAY_ERROR)
 #define MKDEF_ARRAY_ERASE(names, target) names.EraseFirstInclusion(MkArraySection(0), target)
 
+const static MkHashStr DARKEN_RECT_NAME = L"Darken";
+
 //------------------------------------------------------------------------------------------------//
 
-void MkWindowEventManager::SetDepthBandwidth(float minDepthBandwidth, float maxDepthBandwidth)
+void MkWindowEventManager::SetUp(MkDrawStep* drawStep)
 {
-	m_MinDepthBandwidth = minDepthBandwidth;
-	m_MaxDepthBandwidth = maxDepthBandwidth;
+	m_DrawStep = drawStep;
 
-	MK_CHECK(minDepthBandwidth < maxDepthBandwidth, L"MkWindowEventManager의 깊이영역 설정 오류. min : " + MkStr(minDepthBandwidth) + L", max : " + MkStr(m_MaxDepthBandwidth))
+	if (m_RootNode == NULL)
 	{
-		SetDepthBandwidth();
+		m_RootNode = new MkSceneNode(L"Root");
+		MkSRect* srect = m_RootNode->CreateSRect(DARKEN_RECT_NAME);
+
+		// modal 윈도우 출력때 화면 어둡게 만드는 레이어 생성
+		MkBaseTexturePtr texture;
+		MK_TEXTURE_POOL.GetBitmapTexture(MK_WR_PRESET.GetSystemImageFilePath(), texture, 0);
+
+		MK_CHECK(texture != NULL, L"MkWindowEventManager의 Darken layer 생성 실패") {}
+		if (texture != NULL)
+		{
+			srect->SetTexture(texture, MK_WR_PRESET.GetDarkenLayerSubsetName());
+		}
+		else
+		{
+			m_RootNode->DeleteSRect(DARKEN_RECT_NAME);
+		}
+
+		m_RootNode->Update();
+	}
+
+	if ((m_RootNode != NULL) && (m_DrawStep != NULL))
+	{
+		m_DrawStep->AddSceneNode(m_RootNode);
+
+		MkSRect* srect = m_RootNode->GetSRect(DARKEN_RECT_NAME);
+		if (srect != NULL)
+		{
+			srect->SetLocalRect(m_DrawStep->GetRegionRect());
+			srect->SetVisible(false);
+		}
 	}
 }
 
 bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool activate)
 {
+	MK_CHECK((m_DrawStep != NULL) && (m_RootNode != NULL), L"초기화되지 않은 MkWindowEventManager에 window 등록 시도")
+		return false;
+	
 	MK_CHECK(windowNode != NULL, L"MkWindowEventManager에 NULL window 등록 시도")
 		return false;
 
 	const MkHashStr& name = windowNode->GetNodeName();
 	MK_CHECK(!m_WindowTable.Exist(name), L"MkWindowEventManager에 이미 존재하는 " + name.GetString() + L" window 등록 시도")
 		return false;
+
+	MK_CHECK(windowNode->GetParentNode() == NULL, L"MkWindowEventManager에 부모가 존재하는 " + name.GetString() + L" window 등록 시도")
+		return false;
+
+	m_RootNode->AttachChildNode(windowNode);
+	windowNode->Update(); // 초기화
 
 	m_WindowTable.Create(name, windowNode);
 
@@ -92,8 +133,32 @@ void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName)
 	}
 }
 
-void MkWindowEventManager::Update(const MkFloat2& screenSize)
+void MkWindowEventManager::SetFocus(const MkHashStr& windowName, bool modal)
 {
+	if (m_WindowTable.Exist(windowName))
+	{
+		ActivateWindow(windowName);
+
+		if (modal)
+		{
+			// modal off -> on
+			if (m_ModalWindow.Empty())
+			{
+				_SetDarkenLayerEnable(true);
+			}
+
+			m_ModalWindow = windowName;
+		}
+	}
+}
+
+void MkWindowEventManager::Update(void)
+{
+	if ((m_DrawStep == NULL) || (m_RootNode == NULL))
+		return;
+
+	const MkFloat2& screenSize = m_DrawStep->GetRegionRect().size;
+
 	if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
 	{
 		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_TOGGLE_KEY_BETWEEN_NORMAL_AND_EDIT_MODE))
@@ -118,6 +183,13 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 			MkBaseWindowNode* windowNode = m_WindowTable[m_WaitForDeactivatingWindows[i]];
 			windowNode->Deactivate();
 			windowNode->SetVisible(false);
+
+			// 비활성화 목록 중 모달 윈도우가 있다면 모달상태 해제
+			if ((!m_ModalWindow.Empty()) && (m_WaitForDeactivatingWindows[i] == m_ModalWindow))
+			{
+				m_ModalWindow.Clear();
+				_SetDarkenLayerEnable(false);
+			}
 		}
 
 		m_OnActivatingWindows.EraseAllTagInclusions(MkArraySection(0), m_WaitForDeactivatingWindows);
@@ -143,6 +215,15 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 
 		m_OnActivatingWindows.PushBack(m_WaitForActivatingWindows);
 		m_WaitForActivatingWindows.Clear();
+
+		// 활성화 목록 중 모달 윈도우가 마지막 윈도우가 아니라면 강제로 마지막에 위치하게 함(focusing)
+		if ((!m_ModalWindow.Empty()) && (m_OnActivatingWindows[m_OnActivatingWindows.GetSize() - 1] != m_ModalWindow))
+		{
+			MKDEF_ARRAY_ERASE(m_OnActivatingWindows, m_ModalWindow);
+			m_OnActivatingWindows.PushBack(m_ModalWindow);
+		}
+
+		m_FocusLostByClick = false;
 	}
 
 	// 활성화된 윈도우가 있으면
@@ -150,35 +231,38 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 	{
 		unsigned int onFocusIndex = m_OnActivatingWindows.GetSize() - 1;
 
-		// click event로 인한 순서 변화 반영
-		if (currentButtonPressed[0] || currentButtonPressed[1] || currentButtonPressed[2])
+		// 모달 상태중이 아니면 click event로 인한 순서 변화 반영
+		if (m_ModalWindow.Empty())
 		{
-			// 클릭 이벤트가 발생했을 경우 뒤부터 앞으로 순회하며 focus 윈도우를 찾는다
-			bool foundFocusWindow = false;
-			for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
+			if (currentButtonPressed[0] || currentButtonPressed[1] || currentButtonPressed[2])
 			{
-				MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
-				if (windowNode->__CheckInputTarget(currentCursorPosition))
+				// 클릭 이벤트가 발생했을 경우 뒤부터 앞으로 순회하며 focus 윈도우를 찾는다
+				bool foundFocusWindow = false;
+				for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
 				{
-					if (i < onFocusIndex)
+					MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
+					if (windowNode->__CheckInputTarget(currentCursorPosition))
 					{
-						m_OnActivatingWindows.Erase(MkArraySection(i, 1));
-						m_OnActivatingWindows.PushBack(windowNode->GetNodeName());
+						if (i < onFocusIndex)
+						{
+							m_OnActivatingWindows.Erase(MkArraySection(i, 1));
+							m_OnActivatingWindows.PushBack(windowNode->GetNodeName());
+						}
+
+						foundFocusWindow = true;
+						break;
 					}
-
-					foundFocusWindow = true;
-					break;
 				}
-			}
 
-			// 아무런 윈도우도 선택되지 않았면 focus 무효화
-			m_FocusLostByClick = !foundFocusWindow;
-			if (m_FocusLostByClick)
-			{
-				_LastWindowLostFocus();
-				m_LastFocusWindow.Clear();
+				// 아무런 윈도우도 선택되지 않았면 focus 무효화
+				m_FocusLostByClick = !foundFocusWindow;
+				if (m_FocusLostByClick)
+				{
+					_LastWindowLostFocus();
+					m_LastFocusWindow.Clear();
 
-				m_CurrentTargetWindowNode = NULL;
+					m_CurrentTargetWindowNode = NULL;
+				}
 			}
 		}
 
@@ -198,6 +282,7 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 
 		// focus window 선택. 무효 click이 없었다면 활성화중인 윈도우 중 가장 마지막에 위치한 유효 윈도우가 focus를 가진다
 		MkBaseWindowNode* onFocusWindowNode = NULL;
+		MkBaseWindowNode* nextWindowNode = NULL; // focus window 바로 뒤의 window
 		if (!m_FocusLostByClick)
 		{
 			for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
@@ -206,15 +291,47 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 				MkBaseWindowNode* windowNode = m_WindowTable[currWindowName];
 				if (windowNode->__CheckFocusingTarget())
 				{
-					if (currWindowName != m_LastFocusWindow)
+					if (onFocusWindowNode == NULL)
 					{
-						_LastWindowLostFocus();
-						_SetFocusToWindowNode(windowNode);
-					}
+						if (currWindowName != m_LastFocusWindow)
+						{
+							_LastWindowLostFocus();
+							_SetFocusToWindowNode(windowNode);
+						}
 
-					onFocusWindowNode = windowNode;
-					break;
+						onFocusWindowNode = windowNode;
+					}
+					else
+					{
+						nextWindowNode = windowNode;
+						break;
+					}
 				}
+			}
+		}
+
+		// 모달 상태면 darken layer 깊이 조정
+		if (!m_ModalWindow.Empty())
+		{
+			if ((onFocusWindowNode != NULL) && (onFocusWindowNode->GetNodeName() == m_ModalWindow))
+			{
+				float darkenLayerDepth = m_MaxDepthBandwidth;
+				if (nextWindowNode != NULL)
+				{
+					darkenLayerDepth = (onFocusWindowNode->GetLocalDepth() + nextWindowNode->GetLocalDepth()) * 0.5f;
+				}
+
+				MkSRect* srect = m_RootNode->GetSRect(DARKEN_RECT_NAME);
+				if (srect != NULL)
+				{
+					srect->SetLocalDepth(darkenLayerDepth);
+				}
+			}
+			// 있어서는 안되는 일이기는 하지만, 모달 윈도우를 지정한 다음 바로 disable 시켜버리면 포커스를 갖지 못할 경우도 있음
+			else
+			{
+				m_ModalWindow.Clear();
+				_SetDarkenLayerEnable(false);
 			}
 		}
 
@@ -228,17 +345,24 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 				const MkInputManager::InputEvent& evt = inputEventList[i];
 				MkFloat2 cursorPosition(static_cast<float>(evt.arg1), static_cast<float>(inputClientY - evt.arg2));
 
-				// eMouseMove 이벤트는 focus 상관 없이 전체 순회
+				// eMouseMove 이벤트는 모달 상태면 focus window만, 아니면 전체 순회
 				if (evt.eventType == MkInputManager::eMouseMove)
 				{
 					bool inside = (evt.arg0 == 1);
-					for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
+					if (m_ModalWindow.Empty())
 					{
-						MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
-						if (windowNode->__CheckFocusingTarget())
+						for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
 						{
-							windowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition);
+							MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
+							if (windowNode->__CheckFocusingTarget())
+							{
+								windowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition);
+							}
 						}
+					}
+					else
+					{
+						onFocusWindowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition);
 					}
 				}
 				// 그 외 이벤트는 focus window에만 적용
@@ -259,6 +383,7 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 
 		if (onFocusWindowNode != NULL)
 		{
+			// 드래그 이동 및 타겟 윈도우(에디터 모드용) 선택
 			if (currentButtonPressed[0] && onFocusWindowNode->GetWorldAABR().CheckIntersection(currentCursorPosition))
 			{
 				MkPairArray<float, MkBaseWindowNode*> hitWindows(8);
@@ -346,6 +471,9 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 		}
 	}
 
+	// scene graph update
+	m_RootNode->Update();
+
 	// debug
 	{
 		MK_DEV_PANEL.__MsgToDrawingBoard(5, (m_EditMode) ? L"[Edit mode]" : L"[Normal mode]");
@@ -402,21 +530,28 @@ void MkWindowEventManager::Update(const MkFloat2& screenSize)
 
 void MkWindowEventManager::Clear(void)
 {
+	m_DrawStep = NULL;
+	MK_DELETE(m_RootNode);
 	m_WindowTable.Clear();
 	m_OnActivatingWindows.Clear();
 	m_WaitForActivatingWindows.Clear();
 	m_WaitForDeactivatingWindows.Clear();
 	m_LastFocusWindow.Clear();
 	m_FocusLostByClick = false;
-
 	m_CursorIsDragging = false;
+	m_ModalWindow.Clear();
 	m_CurrentTargetWindowNode = NULL;
 }
 
 MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventManager>()
 {
-	SetDepthBandwidth();
+	m_MinDepthBandwidth = MKDEF_S2D_MAX_WORLD_DEPTH * 0.1f;
+	m_MaxDepthBandwidth = MKDEF_S2D_MAX_WORLD_DEPTH * 0.9f;
+
+	m_DrawStep = NULL;
+	m_RootNode = NULL;
 	m_EditMode = true;
+	m_FocusLostByClick = false;
 	m_CursorIsDragging = false;
 	m_CurrentTargetWindowNode = NULL;
 }
@@ -433,6 +568,18 @@ void MkWindowEventManager::_SetFocusToWindowNode(MkBaseWindowNode* targetNode)
 {
 	targetNode->OnFocus();
 	m_LastFocusWindow = targetNode->GetNodeName();
+}
+
+void MkWindowEventManager::_SetDarkenLayerEnable(bool enable)
+{
+	if (m_RootNode != NULL)
+	{
+		MkSRect* srect = m_RootNode->GetSRect(DARKEN_RECT_NAME);
+		if (srect != NULL)
+		{
+			srect->SetVisible(enable);
+		}
+	}
 }
 
 MkFloat2 MkWindowEventManager::_ConfineMovement

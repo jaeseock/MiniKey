@@ -378,12 +378,31 @@ Node "WindowTypeImageSet"
 		str Image = "Default\system_default.png";
 		str SN = "DefCancelDis";
 	}
+	
+	Node "SolidLightBlueBackground"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "SolLBBG_LT";
+		str MT = "SolLBBG_MT";
+		str RT = "SolLBBG_RT";
+		str LC = "SolLBBG_LC";
+		str MC = "SolLBBG_MC";
+		str RC = "SolLBBG_RC";
+		str LB = "SolLBBG_LB";
+		str MB = "SolLBBG_MB";
+		str RB = "SolLBBG_RB";
+	}
 }
 
 Node "WindowPreset"
 {
 	str DefaultThemeName = "Default";
 	int Margin = 3;
+	str SystemImageFilePath = "Default\system_default.png";
+	str DarkenLayerSubsetName = "Darken";
+	str WindowIconSampleSubsetName = "WinIconSP";
+	str WindowBackgroundSampleSubsetName = "WinBGSP";
 	
 	Node "Default"
 	{
@@ -393,5 +412,10 @@ Node "WindowPreset"
 		str PossitiveButton = "DefaultPBtnDefault" / "DefaultPBtnOnCursor" / "DefaultPBtnOnClick" / "DefaultBtnDisable";
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
 		str CancelIcon =  "DefaultCancelDefault" / "DefaultCancelOnCursor" / "DefaultCancelOnClick" / "DefaultCancelDisable";
+	}
+	
+	Node "SolidLB"
+	{
+		str BackgroundWindow = "SolidLightBlueBackground";
 	}
 }

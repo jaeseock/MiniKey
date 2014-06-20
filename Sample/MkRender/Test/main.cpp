@@ -74,9 +74,12 @@ public:
 		textRect->SetDecoString(bufStr);
 
 		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
-		//winDesc.SetStandardDesc(L"Default", L"Image\\s02.jpg", L"");
-		//winDesc.SetNoneTitleDesc(L"Default", MkFloat2(200.f, 150.f), true);
-		//winDesc.SetNoneTitleDesc(L"Default",  L"Image\\s02.jpg", L"", true);
+		//winDesc.SetStandardDesc(L"Default", true);
+		winDesc.SetStandardDesc(L"Default", true, MkFloat2(150.f, 100.f));
+		//winDesc.SetStandardDesc(L"Default", true, L"Image\\s02.jpg", L"");
+		//winDesc.SetStandardDesc(L"Default", false);
+		//winDesc.SetStandardDesc(L"Default", false, MkFloat2(150.f, 100.f));
+		//winDesc.SetStandardDesc(L"Default", false, L"Image\\s02.jpg", L"");
 		MkBaseWindowNode* titleWin = m_Node01->CreateBasicWindow(L"WinRoot", winDesc);
 		/*
 		MkBaseWindowNode* titleWin = m_Node01->CreateWindowPreset(L"WinRoot", L"Default", eS2D_WPC_TitleWindow, MkFloat2(100.f, 18.f));
@@ -318,6 +321,9 @@ public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
 		m_RootNode = new MkBaseWindowNode(L"Root");
+		MK_RENDERER.GetDrawQueue().CreateStep(L"scene step", 0)->AddSceneNode(m_RootNode);
+
+		MK_WIN_EVENT_MGR.SetUp(MK_RENDERER.GetDrawQueue().CreateStep(L"window step", 1));
 
 		MkDataNode node;
 		if (node.Load(L"test_scene.txt"))
@@ -333,8 +339,7 @@ public:
 				MkBaseWindowNode* winNode = new MkBaseWindowNode(MkStr(i));
 				winNode->Load(node);
 				winNode->SetLocalPosition(MkFloat2(static_cast<float>(diceX.GenerateRandomNumber()), static_cast<float>(diceY.GenerateRandomNumber())));
-				m_RootNode->AttachChildNode(winNode);
-
+				
 				MkSRect* nameTag = winNode->CreateSRect(L"Name");
 				nameTag->SetDecoString(winNode->GetNodeName().GetString());
 				nameTag->SetLocalPosition(MkFloat2(6.f, 2.f));
@@ -344,35 +349,37 @@ public:
 
 				MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
 			}
-
-			m_RootNode->Update();
 		}
 		
 		//m_WindowNode1->SetPresetThemeName(L"Default");
 		//m_WindowNode1->SetPresetComponentBodySize(MkFloat2(100.f, 100.f));
-		
-		MK_RENDERER.GetDrawQueue().CreateStep(L"step", -1)->AddSceneNode(m_RootNode);
-		m_RootNode->Update();
 
+		m_RootNode->Update();
+		
 		return true;
 	}
 
 	virtual void Update(const MkTimeState& timeState)
 	{
+		if (MK_INPUT_MGR.GetKeyReleased('R'))
+		{
+			MK_WIN_EVENT_MGR.SetFocus(L"10", true);
+		}
+
+		if (MK_INPUT_MGR.GetKeyReleased('T'))
+		{
+			MK_WIN_EVENT_MGR.DeactivateWindow(L"10");
+		}
+
+		if (MK_INPUT_MGR.GetKeyReleased('Y'))
+		{
+			MK_WIN_EVENT_MGR.SetFocus(L"1", true);
+		}
+
 		// window 이벤트 처리
-		MK_WIN_EVENT_MGR.Update(MK_RENDERER.GetDrawQueue().GetStep(L"step")->GetRegionRect().size);
+		MK_WIN_EVENT_MGR.Update();
 
 		m_RootNode->Update();
-
-		for (unsigned int i=0; i<15; ++i)
-		{
-			MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(m_RootNode->GetChildNode(MkStr(i)));
-			const MkFloatRect& wr = winNode->GetWorldAABR();
-			MkStr msg = MkStr(MkInt2(static_cast<int>(wr.position.x), static_cast<int>(wr.position.y)));
-			msg += L", ";
-			msg += MkStr(MkInt2(static_cast<int>(wr.size.x), static_cast<int>(wr.size.y)));
-			MK_DEV_PANEL.MsgToFreeboard(i, msg);
-		}
 	}
 
 	virtual void Clear(void)

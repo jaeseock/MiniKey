@@ -20,6 +20,26 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 		return false;
 	m_Margin = static_cast<float>(margin);
 
+	MkStr systemImageFilePath;
+	MK_CHECK(node.GetData(L"SystemImageFilePath", systemImageFilePath, 0) && (!systemImageFilePath.Empty()), L"window preset 노드에 SystemImageFilePath이 지정되어 있지 않음")
+		return false;
+	m_SystemImageFilePath = systemImageFilePath;
+
+	MkStr darkenLayerSubsetName;
+	MK_CHECK(node.GetData(L"DarkenLayerSubsetName", darkenLayerSubsetName, 0) && (!darkenLayerSubsetName.Empty()), L"window preset 노드에 DarkenLayerSubsetName이 지정되어 있지 않음")
+		return false;
+	m_DarkenLayerSubsetName = darkenLayerSubsetName;
+
+	MkStr windowIconSampleSubsetName;
+	MK_CHECK(node.GetData(L"WindowIconSampleSubsetName", windowIconSampleSubsetName, 0) && (!windowIconSampleSubsetName.Empty()), L"window preset 노드에 WindowIconSampleSubsetName이 지정되어 있지 않음")
+		return false;
+	m_WindowIconSampleSubsetName = windowIconSampleSubsetName;
+
+	MkStr windowBackgroundSampleSubsetName;
+	MK_CHECK(node.GetData(L"WindowBackgroundSampleSubsetName", windowBackgroundSampleSubsetName, 0) && (!windowBackgroundSampleSubsetName.Empty()), L"window preset 노드에 WindowBackgroundSampleSubsetName이 지정되어 있지 않음")
+		return false;
+	m_WindowBackgroundSampleSubsetName = windowBackgroundSampleSubsetName;
+
 	MkArray<MkHashStr> themeNames;
 	node.GetChildNodeList(themeNames);
 	MK_INDEXING_LOOP(themeNames, i)

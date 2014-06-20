@@ -36,15 +36,20 @@ public:
 	{
 	public:
 
-		void SetStandardDesc(const MkHashStr& themeName, const MkFloat2& windowSize);
-		void SetStandardDesc(const MkHashStr& themeName, const MkPathName& bgFilePath, const MkHashStr& subsetName);
-		void SetNoneTitleDesc(const MkHashStr& themeName, const MkFloat2& windowSize, bool dragMovement = false);
-		void SetNoneTitleDesc(const MkHashStr& themeName, const MkPathName& bgFilePath, const MkHashStr& subsetName, bool dragMovement = false);
+		// 샘플 이미지를 background로 생성
+		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle);
+
+		// 테마 윈도우셋으로 생성
+		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkFloat2& windowSize);
+
+		// 주어진 이미지를 background로 생성
+		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkPathName& bgFilePath, const MkHashStr& subsetName);
 
 	public:
 
 		// theme
 		MkHashStr themeName; // preset theme 이름
+		bool dragMovement; // root window(title bar or body)드래깅으로 윈도우 이동 가능 여부
 
 		// title
 		bool hasTitle; // title 존재여부
@@ -54,7 +59,6 @@ public:
 		MkHashStr iconImageSubsetName; // title 아이콘의 subset name
 		float iconImageHeightOffset; // title 아이콘 정렬 후 추가 y축 위치 offset. 아이콘 크기가 작으면 문제될게 없지만 타이틀보다 클 수 있기 때문
 		bool hasCancelIcon; // cancel icon 존재여부
-		bool dragMovement; // title bar 드래깅으로 윈도우 이동 가능 여부
 
 		// background
 		bool hasFreeImageBG; // bg를 preset이 아닌 free image로 구성할지 여부
@@ -158,8 +162,8 @@ public:
 	// input
 	virtual void InputEventKeyPress(unsigned int keyCode) {}
 	virtual void InputEventKeyRelease(unsigned int keyCode) {}
-	virtual void InputEventMousePress(unsigned int button, const MkFloat2& position); // sample : how to get hit window?
-	virtual void InputEventMouseRelease(unsigned int button, const MkFloat2& position) {}
+	virtual void InputEventMousePress(unsigned int button, const MkFloat2& position) {}
+	virtual void InputEventMouseRelease(unsigned int button, const MkFloat2& position);
 	virtual void InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position) {}
 	virtual void InputEventMouseWheelMove(int delta, const MkFloat2& position) {}
 	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position);
@@ -194,7 +198,7 @@ protected:
 	bool _CollectUpdatableWindowNodes(bool skipCondition, MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer);
 
-	const MkHashStr& _GetFrontHitWindowName(const MkFloat2& position);
+	MkBaseWindowNode* _GetFrontHitWindow(const MkFloat2& position);
 
 protected:
 
