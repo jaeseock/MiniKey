@@ -233,7 +233,7 @@ void MkWindowEventManager::Update(void)
 				for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
 				{
 					MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
-					if (windowNode->__CheckInputTarget(currentCursorPosition))
+					if (windowNode->GetVisible() && windowNode->GetWorldAABR().CheckIntersection(currentCursorPosition))
 					{
 						if (i < onFocusIndex)
 						{
@@ -281,7 +281,7 @@ void MkWindowEventManager::Update(void)
 			{
 				const MkHashStr& currWindowName = m_OnActivatingWindows[i];
 				MkBaseWindowNode* windowNode = m_WindowTable[currWindowName];
-				if (windowNode->__CheckFocusingTarget())
+				if (windowNode->GetVisible())
 				{
 					if (onFocusWindowNode == NULL)
 					{
@@ -327,7 +327,7 @@ void MkWindowEventManager::Update(void)
 			}
 		}
 
-		// input event
+		// input event : enable 상태일때만 전달
 		MkArray<MkInputManager::InputEvent> inputEventList;
 		if (MK_INPUT_MGR.GetInputEvent(inputEventList) > 0)
 		{
@@ -346,28 +346,28 @@ void MkWindowEventManager::Update(void)
 						for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
 						{
 							MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
-							if (windowNode->__CheckFocusingTarget())
+							if (windowNode->GetVisible() && windowNode->GetEnable())
 							{
-								windowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition);
+								windowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition, true);
 							}
 						}
 					}
-					else
+					else if (onFocusWindowNode->GetEnable())
 					{
-						onFocusWindowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition);
+						onFocusWindowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition, true);
 					}
 				}
 				// 그 외 이벤트는 focus window에만 적용
-				else if (onFocusWindowNode != NULL)
+				else if ((onFocusWindowNode != NULL) && onFocusWindowNode->GetEnable())
 				{
 					switch (evt.eventType)
 					{
 					case MkInputManager::eKeyPress: onFocusWindowNode->InputEventKeyPress(evt.arg0); break;
 					case MkInputManager::eKeyRelease: onFocusWindowNode->InputEventKeyRelease(evt.arg0); break;
-					case MkInputManager::eMousePress: onFocusWindowNode->InputEventMousePress(evt.arg0, cursorPosition); break;
-					case MkInputManager::eMouseRelease: onFocusWindowNode->InputEventMouseRelease(evt.arg0, cursorPosition); break;
-					case MkInputManager::eMouseDoubleClick: onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, cursorPosition); break;
-					case MkInputManager::eMouseWheelMove: onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, cursorPosition); break;
+					case MkInputManager::eMousePress: onFocusWindowNode->InputEventMousePress(evt.arg0, cursorPosition, true); break;
+					case MkInputManager::eMouseRelease: onFocusWindowNode->InputEventMouseRelease(evt.arg0, cursorPosition, true); break;
+					case MkInputManager::eMouseDoubleClick: onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, cursorPosition, true); break;
+					case MkInputManager::eMouseWheelMove: onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, cursorPosition, true); break;
 					}
 				}
 			}
@@ -400,9 +400,9 @@ void MkWindowEventManager::Update(void)
 						{
 							MK_INDEXING_LOOP(hitWindows, i)
 							{
-								if (hitWindows.GetFieldAt(0)->GetAttribute(MkBaseWindowNode::eDragMovement))
+								if (hitWindows.GetFieldAt(i)->GetAttribute(MkBaseWindowNode::eDragMovement))
 								{
-									draggingWindow = hitWindows.GetFieldAt(0);
+									draggingWindow = hitWindows.GetFieldAt(i);
 									break;
 								}
 							}
@@ -552,13 +552,13 @@ void MkWindowEventManager::_LastWindowLostFocus(void)
 {
 	if (!m_LastFocusWindow.Empty())
 	{
-		m_WindowTable[m_LastFocusWindow]->LostFocus();
+		m_WindowTable[m_LastFocusWindow]->LostFocus(true);
 	}
 }
 
 void MkWindowEventManager::_SetFocusToWindowNode(MkBaseWindowNode* targetNode)
 {
-	targetNode->OnFocus();
+	targetNode->OnFocus(true);
 	m_LastFocusWindow = targetNode->GetNodeName();
 }
 

@@ -3,8 +3,11 @@
 #include "MkCore_MkDataNode.h"
 #include "MkCore_MkDevPanel.h"
 
+#include "MkS2D_MkFontManager.h"
 #include "MkS2D_MkWindowResourceManager.h"
 
+
+#define MKDEF_THEME_FONT_TYPE_AND_STATE_KEY L"FontTypeAndState"
 
 //------------------------------------------------------------------------------------------------//
 
@@ -49,6 +52,8 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 		const MkDataNode& currNode = *node.GetChildNode(currThemeName);
 
 		MkArray<MkHashStr> subsetNameBuffer[eS2D_WPC_MaxWindowPresetComponent];
+		MkArray<MkStr> fontBuffer; // font type, highlight font state, normal font state
+
 		if (currThemeName == m_DefaultThemeName)
 		{
 			for (int j=eS2D_WPC_BackgroundWindow; j<eS2D_WPC_MaxWindowPresetComponent; ++j)
@@ -56,6 +61,9 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 				if (!_LoadDataAndCheck(currNode, static_cast<eS2D_WindowPresetComponent>(j), currThemeName, true, subsetNameBuffer[j]))
 					return false;
 			}
+
+			if ((!currNode.GetData(MKDEF_THEME_FONT_TYPE_AND_STATE_KEY, fontBuffer)) || (!_CheckFontData(fontBuffer)))
+				return false;
 
 			m_DefaultThemeEnable = true; // 기본 테마는 모든 component를 가지고 있어야 함
 		}
@@ -68,17 +76,29 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 					disable = false;
 			}
 
+			if ((!currNode.GetData(MKDEF_THEME_FONT_TYPE_AND_STATE_KEY, fontBuffer)) || (!_CheckFontData(fontBuffer)))
+				disable = false;
+
 			if (disable) // 확장 테마는 component를 최소 하나 이상 가지고 있어야 함
 				continue;
 		}
 
-		MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> >& currImageSet = m_Themes.Create(currThemeName);
+		MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> >& currImageSet = m_ThemeImageSubsets.Create(currThemeName);
 		for (int j=eS2D_WPC_BackgroundWindow; j<eS2D_WPC_MaxWindowPresetComponent; ++j)
 		{
 			if (!subsetNameBuffer[j].Empty())
 			{
 				currImageSet.Create(static_cast<eS2D_WindowPresetComponent>(j), subsetNameBuffer[j]);
 			}
+		}
+
+		if (_CheckFontData(fontBuffer))
+		{
+			MkArray<MkHashStr>& fonts = m_ThemeFonts.Create(currThemeName);
+			fonts.Reserve(3);
+			fonts.PushBack(fontBuffer[0]);
+			fonts.PushBack(fontBuffer[1]);
+			fonts.PushBack(fontBuffer[2]);
 		}
 
 		MK_DEV_PANEL.MsgToLog(L"> window theme : " + currThemeName.GetString() + MkStr((currThemeName == m_DefaultThemeName) ? L" << [DEF]" : L""), true);
@@ -89,30 +109,39 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 
 const MkArray<MkHashStr>& MkWindowPreset::GetWindowTypeImageSet(const MkHashStr& themeName, eS2D_WindowPresetComponent component) const
 {
-	const MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> >* currThemePtr;
-	const MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> >& defTheme = m_Themes[m_DefaultThemeName];
-	if (m_Themes.Exist(themeName))
+	if (m_ThemeImageSubsets.Exist(themeName))
 	{
-		currThemePtr = &m_Themes[themeName];
+		const MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> >& currTheme = m_ThemeImageSubsets[themeName];
+		if (currTheme.Exist(component))
+		{
+			return currTheme[component];
+		}
 	}
-	else
-	{
-		currThemePtr = (m_DefaultThemeEnable) ? &defTheme : NULL;
-	}
+	
+	return (m_DefaultThemeEnable) ? m_ThemeImageSubsets[m_DefaultThemeName][component] : __GetNullList();
+}
 
-	if (currThemePtr == NULL)
+bool MkWindowPreset::ConvertToDecoStr(const MkHashStr& themeName, const MkStr& msg, MkStr& highlightBuffer, MkStr& normalBuffer) const
+{
+	if (m_ThemeFonts.Exist(themeName))
 	{
-		return __GetNullList();
+		const MkArray<MkHashStr>& currTheme = m_ThemeFonts[themeName];
+		return (MkDecoStr::Convert(currTheme[0], currTheme[1], 0, msg, highlightBuffer) && MkDecoStr::Convert(currTheme[0], currTheme[2], 0, msg, normalBuffer));
 	}
-
-	return currThemePtr->Exist(component) ? (*currThemePtr)[component] : defTheme[component];
+	if (m_DefaultThemeEnable)
+	{
+		const MkArray<MkHashStr>& currTheme = m_ThemeFonts[m_DefaultThemeName];
+		return (MkDecoStr::Convert(currTheme[0], currTheme[1], 0, msg, highlightBuffer) && MkDecoStr::Convert(currTheme[0], currTheme[2], 0, msg, normalBuffer));
+	}
+	return false;
 }
 
 void MkWindowPreset::Clear(void)
 {
 	m_DefaultThemeName.Clear();
 	m_DefaultThemeEnable = false;
-	m_Themes.Clear();
+	m_ThemeImageSubsets.Clear();
+	m_ThemeFonts.Clear();
 }
 
 const static MkHashStr sPresetKeywords[eS2D_WPC_MaxWindowPresetComponent] =
@@ -227,6 +256,12 @@ bool MkWindowPreset::_LoadDataAndCheck
 	}
 
 	return false;
+}
+
+bool MkWindowPreset::_CheckFontData(const MkArray<MkStr>& buffer) const
+{
+	return ((buffer.GetSize() == 3) && MK_FONT_MGR.CheckAvailableFontType(buffer[0]) &&
+		MK_FONT_MGR.CheckAvailableFontState(buffer[1]) && MK_FONT_MGR.CheckAvailableFontState(buffer[2]));
 }
 
 //------------------------------------------------------------------------------------------------//

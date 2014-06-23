@@ -81,16 +81,7 @@ public:
 		//winDesc.SetStandardDesc(L"Default", false, MkFloat2(150.f, 100.f));
 		//winDesc.SetStandardDesc(L"Default", false, L"Image\\s02.jpg", L"");
 		MkBaseWindowNode* titleWin = m_Node01->CreateBasicWindow(L"WinRoot", winDesc);
-		/*
-		MkBaseWindowNode* titleWin = m_Node01->CreateWindowPreset(L"WinRoot", L"Default", eS2D_WPC_TitleWindow, MkFloat2(100.f, 18.f));
-		titleWin->SetAttribute(MkBaseWindowNode::eConfinedToScreen, true);
-		MkBaseWindowNode* bgWin = titleWin->CreateWindowPreset(L"BG", L"Default", eS2D_WPC_BackgroundWindow, MkFloat2(titleWin->GetPresetBodySize().x, 150.f)); // 112, 162
-		bgWin->SetLocalPosition(MkVec3(0.f, titleWin->GetPresetFullSize().y - bgWin->GetPresetFullSize().y, 0.8f));
-		bgWin->CreateWindowPreset(L"NButton", L"Default", eS2D_WPC_NegativeButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(6.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 6.f - 42.f, 6.f - 162.f, -0.001f));
-		bgWin->CreateWindowPreset(L"PButton", L"Default", eS2D_WPC_PossitiveButton, MkFloat2(30.f, 8.f))->SetLocalPosition(MkVec3(60.f, 6.f, -0.001f));//->SetLocalPosition(MkVec3(6.f, 6.f - 162.f, -0.001f));
-		titleWin->CreateWindowPreset(L"Cancel", L"Default", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(titleWin->GetPresetFullSize().x - 21.f, 3.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 17.f, 17.f, -0.001f));
-		*/
-
+		
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");

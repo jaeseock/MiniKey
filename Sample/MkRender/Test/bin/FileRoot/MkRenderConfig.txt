@@ -412,6 +412,8 @@ Node "WindowPreset"
 		str PossitiveButton = "DefaultPBtnDefault" / "DefaultPBtnOnCursor" / "DefaultPBtnOnClick" / "DefaultBtnDisable";
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
 		str CancelIcon =  "DefaultCancelDefault" / "DefaultCancelOnCursor" / "DefaultCancelOnClick" / "DefaultCancelDisable";
+		
+		str FontTypeAndState = "DSF" / "DHF" / "DSF";
 	}
 	
 	Node "SolidLB"

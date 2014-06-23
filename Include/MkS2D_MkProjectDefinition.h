@@ -91,6 +91,9 @@
 // MkBaseWindowNode 템플릿 이름
 #define MKDEF_S2D_BT_BASEWINNODE_TEMPLATE_NAME L"T_BaseWindowNode"
 
+// MkListButtonNode 템플릿 이름
+#define MKDEF_S2D_BT_LISTBUTTON_TEMPLATE_NAME L"T_ListButtonNode"
+
 // MkSceneNode data에서 자식 SRect 노드명
 #define MKDEF_S2D_SND_CHILD_SRECT_NODE_NAME L"<SRect>"
 

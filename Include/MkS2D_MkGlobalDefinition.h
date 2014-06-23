@@ -16,7 +16,8 @@ enum eS2D_MaterialBlendType
 enum eS2D_SceneNodeType
 {
 	eS2D_SNT_SceneNode = 0, // MkSceneNode
-	eS2D_SNT_BaseWindowNode // MkBaseWindowNode
+	eS2D_SNT_BaseWindowNode, // MkBaseWindowNode
+	eS2D_SNT_ListButtonNode // MkListButtonNode
 };
 
 // window preset component

@@ -3,13 +3,6 @@
 
 //------------------------------------------------------------------------------------------------//
 // base window node : MkSceneNode
-//	+ enable
-//	+ alignment
-//	+ window rect interface
-//	+ window preset
-//	+ component state(eS2D_BackgroundState, eS2D_TitleState, eS2D_WindowState)
-//	+ attribute
-//	+ event call
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkBitFieldDW.h"
@@ -82,6 +75,9 @@ public:
 
 	MkBaseWindowNode* GetAncestorWindowNode(void) const;
 
+	// MkWindowEventManager에 등록된 ancestor window 이름 반환
+	const MkHashStr& GetManagedRootName(void) const;
+
 	//------------------------------------------------------------------------------------------------//
 	// 구성
 	//------------------------------------------------------------------------------------------------//
@@ -109,16 +105,18 @@ public:
 	// window preset
 	//------------------------------------------------------------------------------------------------//
 
-	// 자식으로 window preset이 적용된 component 노드 생성
-	MkBaseWindowNode* CreateWindowPreset(const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
-
-	// CreateWindowPreset()에서 eS2D_WPC_BackgroundWindow만 해당되는 경우로 preset이 아닌 free image로 생성
-	// (NOTE) theme 기반이 아니기 때문에 SetPresetThemeName()의 적용을 받지 않음. 대신 SetFreeImageToBackgroundWindow()로 변경 가능
-	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentBodySize()의 적용을 받지 않음
-	MkBaseWindowNode* CreateFreeImageBaseBackgroundWindow(const MkHashStr& nodeName, const MkPathName& imagePath, const MkHashStr& subsetName);
-
 	// BasicPresetWindowDesc을 사용해 기본 윈도우 생성
 	MkBaseWindowNode* CreateBasicWindow(const MkHashStr& nodeName, const BasicPresetWindowDesc& desc);
+
+	// 해당 윈도우 노드에 window preset이 적용된 component 노드 적용
+	// 이미 component가 적용되어 있으면 false 반환
+	bool CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
+
+	// CreateWindowPreset()에서 eS2D_WPC_BackgroundWindow만 해당되는 경우로 preset이 아닌 free image로 생성
+	// 이미 component가 적용되어 있으면 false 반환
+	// (NOTE) theme 기반이 아니기 때문에 SetPresetThemeName()의 적용을 받지 않음. 대신 SetFreeImageToBackgroundWindow()로 변경 가능
+	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentBodySize()의 적용을 받지 않음
+	bool CreateFreeImageBaseBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
 
 	// 해당 윈도우 노드와 모든 자식 윈도우 노드에 window preset이 적용된 노드들이 있으면 모두 테마 변경
 	void SetPresetThemeName(const MkHashStr& themeName);
@@ -161,19 +159,19 @@ public:
 	// input
 	virtual void InputEventKeyPress(unsigned int keyCode) {}
 	virtual void InputEventKeyRelease(unsigned int keyCode) {}
-	virtual void InputEventMousePress(unsigned int button, const MkFloat2& position) {}
-	virtual void InputEventMouseRelease(unsigned int button, const MkFloat2& position);
-	virtual void InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position) {}
-	virtual void InputEventMouseWheelMove(int delta, const MkFloat2& position) {}
-	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position);
+	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot);
+	virtual bool InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot);
+	virtual bool InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position, bool managedRoot);
+	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position, bool managedRoot);
+	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position, bool managedRoot);
 
 	// activation
 	virtual void Activate(void) {}
 	virtual void Deactivate(void) {}
 
 	// focus
-	virtual void OnFocus(void);
-	virtual void LostFocus(void);
+	virtual void OnFocus(bool managedRoot);
+	virtual void LostFocus(bool managedRoot);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -185,21 +183,19 @@ public:
 
 	static void __GenerateBuildingTemplate(void);
 
-	inline bool __CheckFocusingTarget(void) const { return (GetVisible() && GetEnable() && (!GetAttribute(eIgnoreFocus))); }
-	inline bool __CheckInputTarget(const MkFloat2& cursorPosition) const { return (__CheckFocusingTarget() && GetWorldAABR().CheckIntersection(cursorPosition)); }
-
 	inline void __SetFullSize(const MkFloat2& size) { m_PresetFullSize = size; }
 
-	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows);
+	MkBaseWindowNode* __CreateWindowPreset(const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
+
+	MkBaseWindowNode* __GetHitWindows(const MkFloat2& position); // front only
+	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows); // all hits
 
 protected:
 
-	bool _CollectUpdatableWindowNodes(bool skipCondition, MkArray<MkBaseWindowNode*>& buffer);
-	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer);
+	bool _CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer);
+	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
 
-	MkBaseWindowNode* _GetFrontHitWindow(const MkFloat2& position);
-
-	void _SetSampleComponentIcon(MkBaseWindowNode* targetNode, const MkStr& tag);
+	void _SetSampleComponentIcon(const MkHashStr& themeName, MkBaseWindowNode* targetNode, const MkStr& tag);
 
 protected:
 

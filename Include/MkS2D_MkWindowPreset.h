@@ -21,8 +21,11 @@ public:
 	// 초기화
 	bool SetUp(const MkDataNode& node);
 
-	// 해당 window type image set 반환
+	// 해당 테마의 image set 반환
 	const MkArray<MkHashStr>& GetWindowTypeImageSet(const MkHashStr& themeName, eS2D_WindowPresetComponent component) const;
+
+	// msg를 해당 테마의 deco string으로 변환
+	bool ConvertToDecoStr(const MkHashStr& themeName, const MkStr& msg, MkStr& highlightBuffer, MkStr& normalBuffer) const;
 
 	// 기본 테마명 반환
 	inline const MkHashStr& GetDefaultThemeName(void) const { return (m_DefaultThemeEnable) ? m_DefaultThemeName : MkHashStr::NullHash; }
@@ -64,6 +67,7 @@ public:
 protected:
 
 	bool _LoadDataAndCheck(const MkDataNode& node, eS2D_WindowPresetComponent component, const MkHashStr& themeName, bool defaultTheme, MkArray<MkHashStr>& buffer) const;
+	bool _CheckFontData(const MkArray<MkStr>& buffer) const;
 
 protected:
 
@@ -76,7 +80,8 @@ protected:
 	MkHashStr m_WindowIconSampleSubsetName;
 	MkHashStr m_WindowBackgroundSampleSubsetName;
 
-	MkHashMap<MkHashStr, MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> > > m_Themes;
+	MkHashMap<MkHashStr, MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> > > m_ThemeImageSubsets;
+	MkHashMap<MkHashStr, MkArray<MkHashStr> > m_ThemeFonts;
 };
 
 

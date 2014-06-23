@@ -479,14 +479,14 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="2. State control node"
+					Name="2. Control node"
 					>
 					<File
-						RelativePath=".\Source\MkS2D_MkStateControlNode.cpp"
+						RelativePath=".\Source\MkS2D_MkListButtonNode.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\Include\MkS2D_MkStateControlNode.h"
+						RelativePath="..\..\Include\MkS2D_MkListButtonNode.h"
 						>
 					</File>
 				</Filter>
