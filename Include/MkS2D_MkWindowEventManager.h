@@ -25,7 +25,7 @@ public:
 
 	void SetUp(MkDrawStep* drawStep);
 
-	// 해당 윈도우를 등록
+	// 윈도우 등록
 	// (NOTE) 호출 전 SetUp()이 완료 된 상태이어야 함
 	// (NOTE) 등록될 windowNode는 부모 노드가 없어야 함
 	bool RegisterWindow(MkBaseWindowNode* windowNode, bool activate);
@@ -33,18 +33,15 @@ public:
 	// 윈도우 활성화 여부 반환
 	bool IsOnActivation(const MkHashStr& windowName) const;
 
-	// 윈도우 활성화
-	void ActivateWindow(const MkHashStr& windowName);
+	// 윈도우 활성화 및 modal 상태 지정
+	// modal 상태 해제는 해당 윈도우의 비활성화(DeactivateWindow(windowName))
+	void ActivateWindow(const MkHashStr& windowName, bool modal = false);
 
 	// 윈도우 비활성화
 	void DeactivateWindow(const MkHashStr& windowName);
 
 	// 윈도우 활성화 여부 토글
 	void ToggleWindow(const MkHashStr& windowName);
-
-	// 해당 윈도우를 normal/modal top 윈도우로 지정
-	// modal 상태 해제는 해당 윈도우의 비활성화
-	void SetFocus(const MkHashStr& windowName, bool modal = false);
 
 	// 갱신
 	void Update(void);

@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.06.20 (19:30:01),
+//   - time stamp : 2014.06.23 (14:48:50),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -16,16 +16,24 @@ str PresetThemeName = "Default";
 
 Node "<SRect>"
 {
-	Node "WindowIcon" : "T_SRect"
+	Node "HighlightTag" : "T_SRect"
 	{
 		float Depth = -0.001;
-		vec2 Position = (3.000, 2.000);
-		str Resource = // [4]
-			"map" /
-			"Default\system_default.png" /
-			"0" /
-			"WinIconSP";
-		vec2 Size = (16.000, 16.000);
+		vec2 Position = (48.000, 4.000);
+		str Resource = // [2]
+			"odt" /
+			"<%T:DSF%><%S:DHF%>타 이 틀";
+		vec2 Size = (48.000, 12.000);
+	}
+
+	Node "NormalTag" : "T_SRect"
+	{
+		float Depth = -0.001;
+		vec2 Position = (48.000, 4.000);
+		str Resource = // [2]
+			"odt" /
+			"<%T:DSF%><%S:DSF%>타 이 틀";
+		vec2 Size = (48.000, 12.000);
 	}
 }
 
@@ -41,13 +49,140 @@ Node "<SceneNode>"
 
 		Node "<SceneNode>"
 		{
-			Node "CencelButton" : "T_BaseWindowNode"
+			Node "Default" : "T_SceneNode"
+			{
+				Node "<SRect>"
+				{
+					Node "LB" : "T_SRect"
+					{
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_LB";
+						vec2 Size = (3.000, 3.000);
+					}
+
+					Node "LC" : "T_SRect"
+					{
+						vec2 Position = (0.000, 3.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_LC";
+						vec2 Size = (3.000, 94.000);
+					}
+
+					Node "LT" : "T_SRect"
+					{
+						vec2 Position = (0.000, 97.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_LT";
+						vec2 Size = (3.000, 3.000);
+					}
+
+					Node "MB" : "T_SRect"
+					{
+						vec2 Position = (3.000, 0.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_MB";
+						vec2 Size = (144.000, 3.000);
+					}
+
+					Node "MC" : "T_SRect"
+					{
+						vec2 Position = (3.000, 3.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_MC";
+						vec2 Size = (144.000, 94.000);
+					}
+
+					Node "MT" : "T_SRect"
+					{
+						vec2 Position = (3.000, 97.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_MT";
+						vec2 Size = (144.000, 3.000);
+					}
+
+					Node "RB" : "T_SRect"
+					{
+						vec2 Position = (147.000, 0.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_RB";
+						vec2 Size = (3.000, 3.000);
+					}
+
+					Node "RC" : "T_SRect"
+					{
+						vec2 Position = (147.000, 3.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_RC";
+						vec2 Size = (3.000, 94.000);
+					}
+
+					Node "RT" : "T_SRect"
+					{
+						vec2 Position = (147.000, 97.000);
+						str Resource = // [4]
+							"map" /
+							"Default\system_default.png" /
+							"0" /
+							"DefBG_RT";
+						vec2 Size = (3.000, 3.000);
+					}
+				}
+			}
+
+			Node "NButton00" : "T_BaseWindowNode"
 			{
 				vec3 Position = (81.333, 3.000, -0.001);
 				int2 PresetBodySize = (50, 12);
 				str PresetComponent = "NegativeButton";
 				int2 PresetFullSize = (56, 18);
 				str PresetThemeName = "Default";
+
+				Node "<SRect>"
+				{
+					Node "HighlightTag" : "T_SRect"
+					{
+						float Depth = -0.001;
+						vec2 Position = (13.000, 3.000);
+						str Resource = // [2]
+							"odt" /
+							"<%T:DSF%><%S:DHF%>취 소";
+						vec2 Size = (30.000, 12.000);
+					}
+
+					Node "NormalTag" : "T_SRect"
+					{
+						float Depth = -0.001;
+						vec2 Position = (13.000, 3.000);
+						str Resource = // [2]
+							"odt" /
+							"<%T:DSF%><%S:DSF%>취 소";
+						vec2 Size = (30.000, 12.000);
+					}
+				}
 
 				Node "<SceneNode>"
 				{
@@ -475,117 +610,36 @@ Node "<SceneNode>"
 				}
 			}
 
-			Node "Default" : "T_SceneNode"
-			{
-				Node "<SRect>"
-				{
-					Node "LB" : "T_SRect"
-					{
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_LB";
-						vec2 Size = (3.000, 3.000);
-					}
-
-					Node "LC" : "T_SRect"
-					{
-						vec2 Position = (0.000, 3.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_LC";
-						vec2 Size = (3.000, 94.000);
-					}
-
-					Node "LT" : "T_SRect"
-					{
-						vec2 Position = (0.000, 97.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_LT";
-						vec2 Size = (3.000, 3.000);
-					}
-
-					Node "MB" : "T_SRect"
-					{
-						vec2 Position = (3.000, 0.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_MB";
-						vec2 Size = (144.000, 3.000);
-					}
-
-					Node "MC" : "T_SRect"
-					{
-						vec2 Position = (3.000, 3.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_MC";
-						vec2 Size = (144.000, 94.000);
-					}
-
-					Node "MT" : "T_SRect"
-					{
-						vec2 Position = (3.000, 97.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_MT";
-						vec2 Size = (144.000, 3.000);
-					}
-
-					Node "RB" : "T_SRect"
-					{
-						vec2 Position = (147.000, 0.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_RB";
-						vec2 Size = (3.000, 3.000);
-					}
-
-					Node "RC" : "T_SRect"
-					{
-						vec2 Position = (147.000, 3.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_RC";
-						vec2 Size = (3.000, 94.000);
-					}
-
-					Node "RT" : "T_SRect"
-					{
-						vec2 Position = (147.000, 97.000);
-						str Resource = // [4]
-							"map" /
-							"Default\system_default.png" /
-							"0" /
-							"DefBG_RT";
-						vec2 Size = (3.000, 3.000);
-					}
-				}
-			}
-
-			Node "OKButton" : "T_BaseWindowNode"
+			Node "PButton00" : "T_BaseWindowNode"
 			{
 				vec3 Position = (12.667, 3.000, -0.001);
 				int2 PresetBodySize = (50, 12);
 				str PresetComponent = "PossitiveButton";
 				int2 PresetFullSize = (56, 18);
 				str PresetThemeName = "Default";
+
+				Node "<SRect>"
+				{
+					Node "HighlightTag" : "T_SRect"
+					{
+						float Depth = -0.001;
+						vec2 Position = (13.000, 3.000);
+						str Resource = // [2]
+							"odt" /
+							"<%T:DSF%><%S:DHF%>확 인";
+						vec2 Size = (30.000, 12.000);
+					}
+
+					Node "NormalTag" : "T_SRect"
+					{
+						float Depth = -0.001;
+						vec2 Position = (13.000, 3.000);
+						str Resource = // [2]
+							"odt" /
+							"<%T:DSF%><%S:DSF%>확 인";
+						vec2 Size = (30.000, 12.000);
+					}
+				}
 
 				Node "<SceneNode>"
 				{
@@ -1015,7 +1069,7 @@ Node "<SceneNode>"
 		}
 	}
 
-	Node "CancelIcon" : "T_BaseWindowNode"
+	Node "CancelButton" : "T_BaseWindowNode"
 	{
 		vec3 Position = (127.000, 3.000, -0.001);
 		str PresetComponent = "CancelIcon";
@@ -1199,16 +1253,6 @@ Node "<SceneNode>"
 					"DefTitleLF_RT";
 				vec2 Size = (3.000, 3.000);
 			}
-
-			Node "Tag" : "T_SRect"
-			{
-				float Depth = -0.001;
-				vec2 Position = (48.000, 4.000);
-				str Resource = // [2]
-					"odt" /
-					"<%T:굴림12%><%S:WinTitleLF%>타 이 틀";
-				vec2 Size = (48.000, 12.000);
-			}
 		}
 	}
 
@@ -1312,16 +1356,6 @@ Node "<SceneNode>"
 					"0" /
 					"DefTitleOF_RT";
 				vec2 Size = (3.000, 3.000);
-			}
-
-			Node "Tag" : "T_SRect"
-			{
-				float Depth = -0.001;
-				vec2 Position = (48.000, 4.000);
-				str Resource = // [2]
-					"odt" /
-					"<%T:굴림12%><%S:WinTitleOF%>타 이 틀";
-				vec2 Size = (48.000, 12.000);
 			}
 		}
 	}

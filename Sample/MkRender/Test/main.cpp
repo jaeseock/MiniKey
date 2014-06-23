@@ -91,10 +91,6 @@ public:
 		titleWin->CreateWindowPreset(L"Cancel", L"Default", eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f))->SetLocalPosition(MkVec3(titleWin->GetPresetFullSize().x - 21.f, 3.f, -0.001f));//->SetLocalPosition(MkVec3(112 - 17.f, 17.f, -0.001f));
 		*/
 
-		titleWin->SetPresetComponentToken(eS2D_TS_OnFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:WinTitleOF%>타 이 틀");
-		titleWin->SetPresetComponentToken(eS2D_TS_LostFocusState, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), L"<%T:굴림12%><%S:WinTitleLF%>타 이 틀");
-
-
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");
@@ -363,9 +359,8 @@ public:
 	{
 		if (MK_INPUT_MGR.GetKeyReleased('R'))
 		{
-			MK_WIN_EVENT_MGR.SetFocus(L"10", true);
+			MK_WIN_EVENT_MGR.ActivateWindow(L"10", true);
 		}
-
 		if (MK_INPUT_MGR.GetKeyReleased('T'))
 		{
 			MK_WIN_EVENT_MGR.DeactivateWindow(L"10");
@@ -373,7 +368,11 @@ public:
 
 		if (MK_INPUT_MGR.GetKeyReleased('Y'))
 		{
-			MK_WIN_EVENT_MGR.SetFocus(L"1", true);
+			MK_WIN_EVENT_MGR.ActivateWindow(L"1", true);
+		}
+		if (MK_INPUT_MGR.GetKeyReleased('U'))
+		{
+			MK_WIN_EVENT_MGR.DeactivateWindow(L"1");
 		}
 
 		// window 이벤트 처리

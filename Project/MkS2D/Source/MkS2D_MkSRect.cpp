@@ -199,6 +199,16 @@ void MkSRect::SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subse
 	SetSubset(subsetName);
 }
 
+void MkSRect::SetTexture(const MkPathName& imagePath, const MkHashStr& subsetName)
+{
+	MkBaseTexturePtr texture;
+	MK_TEXTURE_POOL.GetBitmapTexture(imagePath, texture, 0);
+	if (texture != NULL)
+	{
+		SetTexture(texture, subsetName);
+	}
+}
+
 bool MkSRect::SetDecoString(const MkStr& decoStr)
 {
 	Clear();
@@ -249,6 +259,17 @@ bool MkSRect::CheckValidation(const MkFloatRect& cameraAABR) const
 		(m_Texture != NULL) && // 텍스쳐가 있으며
 		(m_MaterialKey.m_ObjectAlpha > 0) && // 오브젝트 알파가 0보다 크고
 		m_AABR.CheckIntersection(cameraAABR)); // 프러스텀 체크도 통과하면 true
+}
+
+void MkSRect::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, float depthOffset)
+{
+	if (!anchorSize.IsZero() && m_LocalRect.SizeIsNotZero())
+	{
+		MkFloat2 localPos =	MkFloatRect(MkFloat2(0.f, 0.f), anchorSize).GetSnapPosition(m_LocalRect, alignment, border);
+		localPos.y += heightOffset;
+		SetLocalPosition(localPos);
+		SetLocalDepth(m_LocalDepth + depthOffset);
+	}
 }
 
 void MkSRect::Clear(void)

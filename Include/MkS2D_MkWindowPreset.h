@@ -91,6 +91,7 @@ class MkWindowPresetStateInterface
 public:
 	static int GetBegin(void) { return 0; }
 	static int GetEnd(void) { return 0; }
+	static int GetHighlight(void) { return 0; }
 	static const MkHashStr& GetKeyword(DataType state) { return MkHashStr::NullHash; }
 	static const MkArray<MkHashStr>& GetKeywordList(void) { return MkWindowPreset::__GetNullList(); }
 };
@@ -102,6 +103,9 @@ template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetBegin(void) {
 template <> int MkWindowPresetStateInterface<eS2D_BackgroundState>::GetEnd(void) { return eS2D_BS_MaxBackgroundState; }
 template <> int MkWindowPresetStateInterface<eS2D_TitleState>::GetEnd(void) { return eS2D_TS_MaxTitleState; }
 template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetEnd(void) { return eS2D_WS_MaxWindowState; }
+
+template <> int MkWindowPresetStateInterface<eS2D_TitleState>::GetHighlight(void) { return eS2D_TS_OnFocusState; }
+template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetHighlight(void) { return eS2D_WS_OnCursorState; }
 
 template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_BackgroundState>::GetKeyword(eS2D_BackgroundState state) { return MkWindowPreset::GetBackgroundStateKeyword(state); }
 template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_TitleState>::GetKeyword(eS2D_TitleState state) { return MkWindowPreset::GetTitleStateKeyword(state); }

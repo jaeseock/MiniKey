@@ -93,7 +93,7 @@ bool MkWindowEventManager::IsOnActivation(const MkHashStr& windowName) const
 	return m_WindowTable.Exist(windowName) ? MKDEF_ARRAY_EXIST(m_OnActivatingWindows, windowName) : false;
 }
 
-void MkWindowEventManager::ActivateWindow(const MkHashStr& windowName)
+void MkWindowEventManager::ActivateWindow(const MkHashStr& windowName, bool modal)
 {
 	if (m_WindowTable.Exist(windowName))
 	{
@@ -101,6 +101,17 @@ void MkWindowEventManager::ActivateWindow(const MkHashStr& windowName)
 
 		MKDEF_ARRAY_ERASE(m_WaitForActivatingWindows, windowName); // 활성화 대기 목록은 순서가 중요
 		m_WaitForActivatingWindows.PushBack(windowName);
+
+		if (modal)
+		{
+			// modal off -> on
+			if (m_ModalWindow.Empty())
+			{
+				_SetDarkenLayerEnable(true);
+			}
+
+			m_ModalWindow = windowName;
+		}
 	}
 }
 
@@ -129,25 +140,6 @@ void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName)
 		else
 		{
 			ActivateWindow(windowName);
-		}
-	}
-}
-
-void MkWindowEventManager::SetFocus(const MkHashStr& windowName, bool modal)
-{
-	if (m_WindowTable.Exist(windowName))
-	{
-		ActivateWindow(windowName);
-
-		if (modal)
-		{
-			// modal off -> on
-			if (m_ModalWindow.Empty())
-			{
-				_SetDarkenLayerEnable(true);
-			}
-
-			m_ModalWindow = windowName;
 		}
 	}
 }

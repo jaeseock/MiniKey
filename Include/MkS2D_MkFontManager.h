@@ -100,7 +100,10 @@ public:
 	void Clear(void);
 
 	// default system font key 반환. type과 state에 사용
-	inline const MkHashStr& DSF(void) const { return m_DefaultSystemFontKey; }
+	const MkHashStr& DSF(void) const;
+
+	// default highlight font key 반환. state에 사용
+	const MkHashStr& DHF(void) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 텍스트 실제 사용
@@ -211,8 +214,6 @@ protected:
 protected:
 
 	LPDIRECT3DDEVICE9 m_Device;
-
-	MkHashStr m_DefaultSystemFontKey;
 
 	// face, size, thickness 순서로 저장된 font key 테이블
 	MkHashMap<MkHashStr, MkMap<int, MkMap<eThickness, MkHashStr> > > m_FontKeyTable;

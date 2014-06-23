@@ -27,7 +27,11 @@ bool MkFontManager::SetUp(LPDIRECT3DDEVICE9 device)
 		return false;
 
 	// 扁夯 font state 积己
-	if (!CreateFontState(DSF(), MkColor::White.ConvertToD3DCOLOR(), eShadow, MkColor::Black.ConvertToD3DCOLOR()))
+	if (!CreateFontState(DSF(), MkColor::White.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+
+	// 扁夯 font state 积己
+	if (!CreateFontState(DHF(), MkColor::Yellow.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
 		return false;
 
 	return true;
@@ -214,6 +218,18 @@ bool MkFontManager::CreateFontState(const MkHashStr& fontState, D3DCOLOR textCol
 	MK_DEV_PANEL.MsgToLog(L"> font state : " + fontState.GetString(), true);
 
 	return true;
+}
+
+const MkHashStr& MkFontManager::DSF(void) const
+{
+	const static MkHashStr defaultSystemFontKey = L"DSF";
+	return defaultSystemFontKey;
+}
+
+const MkHashStr& MkFontManager::DHF(void) const
+{
+	const static MkHashStr defaultHighlightFontKey = L"DHF";
+	return defaultHighlightFontKey;
 }
 
 void MkFontManager::Clear(void)
@@ -452,7 +468,6 @@ void MkFontManager::ReloadResource(LPDIRECT3DDEVICE9 device)
 MkFontManager::MkFontManager() : MkBaseResetableResource(), MkSingletonPattern<MkFontManager>()
 {
 	m_Device = NULL;
-	m_DefaultSystemFontKey = L"DSF";
 	m_ErrorColor = MkColor::Pink.ConvertToD3DCOLOR();
 }
 
