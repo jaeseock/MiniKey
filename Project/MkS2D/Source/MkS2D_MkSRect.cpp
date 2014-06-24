@@ -263,7 +263,7 @@ bool MkSRect::CheckValidation(const MkFloatRect& cameraAABR) const
 
 void MkSRect::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, float depthOffset)
 {
-	if (!anchorSize.IsZero() && m_LocalRect.SizeIsNotZero())
+	if (!anchorSize.IsZero() && m_LocalRect.SizeIsNotZero() && (alignment != eRAP_NonePosition))
 	{
 		MkFloat2 localPos =	MkFloatRect(MkFloat2(0.f, 0.f), anchorSize).GetSnapPosition(m_LocalRect, alignment, border);
 		localPos.y += heightOffset;
@@ -279,6 +279,7 @@ void MkSRect::Clear(void)
 	m_SceneDecoTextNodeNameAndKey.Clear();
 	m_OriginalDecoStr.Clear();
 	m_MaterialKey.m_TextureID = 0;
+	m_LocalRect.size.Clear();
 }
 
 void MkSRect::__GenerateBuildingTemplate(void)

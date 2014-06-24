@@ -138,6 +138,13 @@ public:
 		return ((pt.x >= position.x) && (pt.y >= position.y) && (pt.x <= max.x) && (pt.y <= max.y));
 	}
 
+	// 자신 내부에 pt가 속하는지 여부 반환. max쪽 경계선은 제외
+	bool CheckGridIntersection(const MkType2<DataType>& pt) const
+	{
+		MkType2<DataType> max = position + size;
+		return ((pt.x >= position.x) && (pt.y >= position.y) && (pt.x < max.x) && (pt.y < max.y));
+	}
+
 	// 자신과 rect간 겹침 여부 반환
 	bool CheckIntersection(const MkRect& rect) const
 	{

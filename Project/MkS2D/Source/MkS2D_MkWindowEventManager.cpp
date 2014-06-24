@@ -166,6 +166,8 @@ void MkWindowEventManager::Update(void)
 	MkFloat2 currentCursorPosition(static_cast<float>(currentCursorPoint.x), static_cast<float>(currentCursorPoint.y));
 	bool currentButtonPressed[3] = { MK_INPUT_MGR.GetMouseLeftButtonPressed(), MK_INPUT_MGR.GetMouseMiddleButtonPressed(), MK_INPUT_MGR.GetMouseRightButtonPressed() };
 	bool currentButtonPushing[3] = { MK_INPUT_MGR.GetMouseLeftButtonPushing(), MK_INPUT_MGR.GetMouseMiddleButtonPushing(), MK_INPUT_MGR.GetMouseRightButtonPushing() };
+	bool currentButtonReleased[3] = { MK_INPUT_MGR.GetMouseLeftButtonReleased(), MK_INPUT_MGR.GetMouseMiddleButtonReleased(), MK_INPUT_MGR.GetMouseRightButtonReleased() };
+	bool cursorAvailable = MK_INPUT_MGR.GetMousePointerAvailable();
 
 	// deactivation
 	if (!m_WaitForDeactivatingWindows.Empty())
@@ -305,25 +307,16 @@ void MkWindowEventManager::Update(void)
 		// 모달 상태면 darken layer 깊이 조정
 		if (!m_ModalWindow.Empty())
 		{
-			if ((onFocusWindowNode != NULL) && (onFocusWindowNode->GetNodeName() == m_ModalWindow))
+			float darkenLayerDepth = m_MaxDepthBandwidth;
+			if (nextWindowNode != NULL)
 			{
-				float darkenLayerDepth = m_MaxDepthBandwidth;
-				if (nextWindowNode != NULL)
-				{
-					darkenLayerDepth = (onFocusWindowNode->GetLocalDepth() + nextWindowNode->GetLocalDepth()) * 0.5f;
-				}
-
-				MkSRect* srect = m_RootNode->GetSRect(DARKEN_RECT_NAME);
-				if (srect != NULL)
-				{
-					srect->SetLocalDepth(darkenLayerDepth);
-				}
+				darkenLayerDepth = (onFocusWindowNode->GetLocalDepth() + nextWindowNode->GetLocalDepth()) * 0.5f;
 			}
-			// 있어서는 안되는 일이기는 하지만, 모달 윈도우를 지정한 다음 바로 disable 시켜버리면 포커스를 갖지 못할 경우도 있음
-			else
+
+			MkSRect* srect = m_RootNode->GetSRect(DARKEN_RECT_NAME);
+			if (srect != NULL)
 			{
-				m_ModalWindow.Clear();
-				_SetDarkenLayerEnable(false);
+				srect->SetLocalDepth(darkenLayerDepth);
 			}
 		}
 
@@ -346,19 +339,19 @@ void MkWindowEventManager::Update(void)
 						for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
 						{
 							MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
-							if (windowNode->GetVisible() && windowNode->GetEnable())
+							if (windowNode->GetVisible() && windowNode->GetEnable() && (!windowNode->GetAttribute(MkBaseWindowNode::eIgnoreInputEvent)))
 							{
 								windowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition, true);
 							}
 						}
 					}
-					else if (onFocusWindowNode->GetEnable())
+					else if (onFocusWindowNode->GetEnable() && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eIgnoreInputEvent)))
 					{
 						onFocusWindowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition, true);
 					}
 				}
 				// 그 외 이벤트는 focus window에만 적용
-				else if ((onFocusWindowNode != NULL) && onFocusWindowNode->GetEnable())
+				else if ((onFocusWindowNode != NULL) && onFocusWindowNode->GetEnable() && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eIgnoreInputEvent)))
 				{
 					switch (evt.eventType)
 					{
@@ -373,79 +366,59 @@ void MkWindowEventManager::Update(void)
 			}
 		}
 
-		if (onFocusWindowNode != NULL)
+		if ((onFocusWindowNode != NULL) && cursorAvailable)
 		{
-			// 드래그 이동 및 타겟 윈도우(에디터 모드용) 선택
+			// 타겟 윈도우, 드래그 윈도우 선택
 			if (currentButtonPressed[0] && onFocusWindowNode->GetWorldAABR().CheckIntersection(currentCursorPosition))
 			{
-				MkPairArray<float, MkBaseWindowNode*> hitWindows(8);
-				onFocusWindowNode->__GetHitWindows(currentCursorPosition, hitWindows);
-				if (!hitWindows.Empty())
+				MkBaseWindowNode* frontHit = onFocusWindowNode->__GetFrontHitWindow(currentCursorPosition);
+				if (frontHit != NULL)
 				{
-					hitWindows.SortInAscendingOrder();
+					m_CurrentTargetWindowNode = frontHit;
 
-					if (m_EditMode)
+					if (m_FrontHitWindow == NULL)
 					{
-						m_CurrentTargetWindowNode = hitWindows.GetFieldAt(0);
-					}
+						m_FrontHitWindow = frontHit;
+						m_CursorStartPosition = currentCursorPosition;
+						m_WindowAABRBegin = m_FrontHitWindow->GetWorldAABR().position;
+						m_WindowOffsetToWorldPos = MkFloat2(m_FrontHitWindow->GetWorldPosition().x, m_FrontHitWindow->GetWorldPosition().y) - m_WindowAABRBegin;
 
-					if (!m_CursorIsDragging)
-					{
-						MkBaseWindowNode* draggingWindow = NULL;
-						if (m_EditMode)
+						// 핸들링 시작
+						if (m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragToHandling))
 						{
-							draggingWindow = m_CurrentTargetWindowNode;
-						}
-						else
-						{
-							MK_INDEXING_LOOP(hitWindows, i)
-							{
-								if (hitWindows.GetFieldAt(i)->GetAttribute(MkBaseWindowNode::eDragMovement))
-								{
-									draggingWindow = hitWindows.GetFieldAt(i);
-									break;
-								}
-							}
-						}
-
-						if (draggingWindow != NULL)
-						{
-							m_CursorIsDragging = true;
-							m_DraggingWindow = draggingWindow;
-							m_CursorStartPosition = currentCursorPosition;
-							m_WindowAABRBegin = m_DraggingWindow->GetWorldAABR().position;
-							m_WindowOffsetToWorldPos = MkFloat2(m_DraggingWindow->GetWorldPosition().x, m_DraggingWindow->GetWorldPosition().y) - m_WindowAABRBegin;
+							
 						}
 					}
+				}
+			}
+
+			if (m_FrontHitWindow != NULL)
+			{
+				// 핸들링 이동
+				if (m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragToHandling))
+				{
+				}
+				// 이동금지 속성이 없는 상태에서 에디트 모드거나 드래깅 윈도우가 이동 속성을 가지고 있을 경우 윈도우 이동
+				else if ((!m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eIgnoreMovement)) &&
+					(m_EditMode || m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragMovement)))
+				{
+					MkFloat2 offset = currentCursorPosition - m_CursorStartPosition;
+					MkFloat2 newPosition = _ConfineMovement(m_FrontHitWindow, screenSize, m_WindowAABRBegin, m_WindowOffsetToWorldPos, offset);
+					m_FrontHitWindow->SetLocalAsWorldPosition(newPosition, false);
 				}
 			}
 		}
 	}
 
-	// cursor operation
-	if (MK_INPUT_MGR.GetMousePointerAvailable())
+	if ((!cursorAvailable) || currentButtonReleased[0])
 	{
-		if (m_CursorIsDragging) // drag movement
-		{
-			MkFloat2 offset = currentCursorPosition - m_CursorStartPosition;
-			MkFloat2 newPosition = _ConfineMovement(m_DraggingWindow, screenSize, m_WindowAABRBegin, m_WindowOffsetToWorldPos, offset);
-			m_DraggingWindow->SetLocalAsWorldPosition(newPosition, false);
-		}
-	}
-	else
-	{
-		m_CursorIsDragging = false;
-	}
-
-	if (MK_INPUT_MGR.GetMouseLeftButtonReleased())
-	{
-		m_CursorIsDragging = false;
+		m_FrontHitWindow = NULL;
 	}
 
 	if (m_EditMode)
 	{
 		// movement by arrow key
-		if (m_CurrentTargetWindowNode != NULL)
+		if ((m_CurrentTargetWindowNode != NULL) && (!m_CurrentTargetWindowNode->GetAttribute(MkBaseWindowNode::eIgnoreMovement)))
 		{
 			MkFloat2 offset;
 			if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT)) offset.x = -1.f;
@@ -493,7 +466,7 @@ void MkWindowEventManager::Update(void)
 		debugMsg += MkInt2(static_cast<int>(winRect.position.x), static_cast<int>(winRect.position.y));
 		debugMsg += L", ";
 		debugMsg += MkInt2(static_cast<int>(winRect.size.x), static_cast<int>(winRect.size.y));
-		if (winRect.CheckIntersection(currentCursorPosition))
+		if (winRect.CheckGridIntersection(currentCursorPosition))
 		{
 			debugMsg += L" -> on cursor";
 		}
@@ -530,7 +503,7 @@ void MkWindowEventManager::Clear(void)
 	m_WaitForDeactivatingWindows.Clear();
 	m_LastFocusWindow.Clear();
 	m_FocusLostByClick = false;
-	m_CursorIsDragging = false;
+	m_FrontHitWindow = NULL;
 	m_ModalWindow.Clear();
 	m_CurrentTargetWindowNode = NULL;
 }
@@ -544,7 +517,7 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 	m_RootNode = NULL;
 	m_EditMode = true;
 	m_FocusLostByClick = false;
-	m_CursorIsDragging = false;
+	m_FrontHitWindow = NULL;
 	m_CurrentTargetWindowNode = NULL;
 }
 

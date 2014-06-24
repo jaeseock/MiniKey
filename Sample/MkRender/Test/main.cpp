@@ -24,6 +24,7 @@
 
 #include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkBaseWindowNode.h"
+#include "MkS2D_MkListButtonNode.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkWindowEventManager.h"
 
@@ -337,8 +338,38 @@ public:
 				MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
 			}
 		}
+
+		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
+		winDesc.SetStandardDesc(L"Default", true, MkFloat2(250.f, 200.f));
+		winDesc.hasCancelButton = false;
+		winDesc.hasOKButton = false;
+		MkBaseWindowNode* testWin = m_RootNode->CreateBasicWindow(L"test", winDesc);
+		m_RootNode->DetachChildNode(L"test");
+		testWin->SetLocalPosition(MkFloat2(200.f, 450.f));
+
+		MkListButtonNode* lbNode = new MkListButtonNode(L"LB");
+		lbNode->CreateListTypeButton(L"Default", MkFloat2(150.f, 20.f), MkListButtonNode::eSeletionRoot, MkListButtonNode::eRightside);
+		MkListButtonNode::ItemTagInfo tagInfo;
+		tagInfo.iconPath = L"Default\\system_default.png";
+		tagInfo.iconSubset = L"WinIconSP";
+		tagInfo.caption = L"≈◊Ω∫∆Æ «’¥œ¥Á!!!";
+		lbNode->SetItemTag(tagInfo);
+		lbNode->SetLocalPosition(MkVec3(30.f, 50.f, -0.001f));
+
+		tagInfo.caption = L"≤ø∫ÿ 0";
+		lbNode->AddItem(L"0", tagInfo, false);
+		tagInfo.caption = L"≤ø∫ÿ 1";
+		lbNode->AddItem(L"1", tagInfo, false);
+		tagInfo.caption = L"≤ø∫ÿ 2";
+		lbNode->AddItem(L"2", tagInfo, true);
+		tagInfo.caption = L"≤ø∫ÿ 3";
+		lbNode->AddItem(L"3", tagInfo, false);
+
+		testWin->GetChildNode(L"Background")->AttachChildNode(lbNode);
 		
-		//m_WindowNode1->SetPresetThemeName(L"Default");
+		MK_WIN_EVENT_MGR.RegisterWindow(testWin, true);
+		
+		//testWin->SetPresetThemeName(L"SolidLB");
 		//m_WindowNode1->SetPresetComponentBodySize(MkFloat2(100.f, 100.f));
 
 		m_RootNode->Update();
@@ -355,15 +386,6 @@ public:
 		if (MK_INPUT_MGR.GetKeyReleased('T'))
 		{
 			MK_WIN_EVENT_MGR.DeactivateWindow(L"10");
-		}
-
-		if (MK_INPUT_MGR.GetKeyReleased('Y'))
-		{
-			MK_WIN_EVENT_MGR.ActivateWindow(L"1", true);
-		}
-		if (MK_INPUT_MGR.GetKeyReleased('U'))
-		{
-			MK_WIN_EVENT_MGR.DeactivateWindow(L"1");
 		}
 
 		// window ¿Ã∫•∆Æ √≥∏Æ

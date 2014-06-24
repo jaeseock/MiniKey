@@ -16,25 +16,27 @@ public:
 	{
 		eSeletionRoot = 0, // 선택된 버튼을 표시하는 루트 버튼(ex> 일반 list button)
 		eConstantRoot, // 표시내용이 변하지 않는 루트(ex> 윈도우 시작 버튼)
-		eChildButton // 일반 버튼
+		eChildListButton // 일반 버튼
 	};
 
-	enum eOpeningMethod // 리스트 열리는 방식
-	{
-		ePressAndOnCursorInTimeOnly = 0, // 누르거나 일정 시간 머무르면
-		ePressOnly, // 누를 때
-		eOnCursorInTimeOnly, // 일정 시간 머무를 때
-		eRelease // 클릭되었을 때
-	};
-
-	enum eOpeningDirection // 리스트 전개 방향
+	enum eOpeningDirection // 하위 리스트 전개 방향
 	{
 		eRightside = 0, // 우측 전개
 		eDownward, // 하향 전개
 		eUpward // 상향 전개
 	};
 
+	typedef struct _ItemTagInfo
+	{
+		MkPathName iconPath;
+		MkHashStr iconSubset;
+		MkStr caption;
+	}
+	ItemTagInfo;
+
 	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_ListButtonNode; }
+
+	MkListButtonNode* GetRootListButton(void) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성
@@ -46,27 +48,54 @@ public:
 	// MkDataNode로 출력
 	virtual void Save(MkDataNode& node);
 
-	//bool CreateListButton(eListButtonType btnType, eOpeningMethod opMethod, eOpeningDirection opDir,
-	//	const MkHashStr& themeName, const MkPathName& iconPath, const MkHashStr& iconSubset)
+	bool CreateListTypeButton
+		(const MkHashStr& themeName, const MkFloat2& windowSize, eListButtonType buttonType, eOpeningDirection openingDirection);
 
-	//bool CreateList(const MkArray<MkHashStr>& menuList, unsigned int initIndex);
+	MkListButtonNode* AddItem(const MkHashStr& uniqueKey, const ItemTagInfo& tagInfo, bool initialItem = false);
+
+	bool SetItemTag(const ItemTagInfo& tagInfo);
+
+	inline const ItemTagInfo& GetItemTagInfo(void) const { return m_ItemTagInfo; }
+
+	void AlignChildItems(void);
+
+	inline eListButtonType GetListButtonType(void) const { return m_ButtonType; }
+	inline eOpeningDirection GetOpeningDirection(void) const { return m_OpeningDirection; }
+
+	inline bool IsRootListButton(void) const { return ((m_ButtonType == eSeletionRoot) || (m_ButtonType == eConstantRoot)); }
+
+	void OpenAllItems(void);
+	void CloseAllItems(void);
+
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void SetPresetThemeName(const MkHashStr& themeName);
 
 	//------------------------------------------------------------------------------------------------//
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
 	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot);
-	virtual bool InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot);
 
-	MkListButtonNode(const MkHashStr& name) : MkBaseWindowNode(name) {}
-	MkListButtonNode(const MkHashStr& name, const MkHashStr& themeName, const MkFloat2& bodySize, const MkHashStr& componentName) : MkBaseWindowNode(name, themeName, bodySize, componentName) {}
+	MkListButtonNode(const MkHashStr& name);
 	virtual ~MkListButtonNode() {}
 
 public:
 
 	static void __GenerateBuildingTemplate(void);
 
+	inline void __SetTargetUniqueKey(const MkHashStr& uniqueKey) { m_TargetUniqueKey = uniqueKey; }
+
 protected:
 
-	MkHashStr m_TargetNodeName;
+	eListButtonType m_ButtonType;
+	eOpeningDirection m_OpeningDirection;
+
+	ItemTagInfo m_ItemTagInfo;
+
+	MkHashStr m_TargetUniqueKey;
+
+	MkArray<MkHashStr> m_ChildButtonSequence;
+
+	bool m_ItemsAreOpened;
 };

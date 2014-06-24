@@ -2,12 +2,12 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.06.23 (22:30:50),
+//   - time stamp : 2014.06.24 (22:23:17),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
 
-uint Attribute = 10;
+uint Attribute = 20;
 vec3 Position = (0.000, -20.000, 0.000);
 int2 PresetBodySize = (138, 14);
 str PresetComponent = "TitleWindow";
@@ -41,7 +41,7 @@ Node "<SceneNode>"
 {
 	Node "Background" : "T_BaseWindowNode"
 	{
-		uint Attribute = 4;
+		uint Attribute = 8;
 		vec3 Position = (-3.000, -77.000, 0.001);
 		int2 PresetBodySize = (144, 94);
 		str PresetComponent = "BackgroundWindow";
@@ -156,7 +156,7 @@ Node "<SceneNode>"
 
 			Node "NButton00" : "T_BaseWindowNode"
 			{
-				uint Attribute = 4;
+				uint Attribute = 8;
 				vec3 Position = (81.333, 3.000, -0.001);
 				int2 PresetBodySize = (50, 12);
 				str PresetComponent = "NegativeButton";
@@ -614,7 +614,7 @@ Node "<SceneNode>"
 
 			Node "PButton00" : "T_BaseWindowNode"
 			{
-				uint Attribute = 4;
+				uint Attribute = 8;
 				vec3 Position = (12.667, 3.000, -0.001);
 				int2 PresetBodySize = (50, 12);
 				str PresetComponent = "PossitiveButton";

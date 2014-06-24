@@ -18,11 +18,15 @@ public:
 
 	enum eAttribute
 	{
-		eIgnoreFocus = 0, // focus window가 될 수 없음
-		eDragMovement, // 커서 드래그 이동(window rect)
+		eIgnoreInputEvent = 0, // input event를 무시
+
+		eIgnoreMovement, // 에디트 모드 상관 없이 커서 드래그, 키보드 이동 등을 무시
+
+		eDragMovement, // 커서 드래그로 이동
 		eConfinedToParent, // 이동시 부모 영역으로 범위 제한(부모 window node가 없으면 스크린 영역)
 		eConfinedToScreen, // 이동시 스크린 영역으로 범위 제한. eConfinedToRect보다 우선순위 높음
-		eDragToHandling, // 커서 드래그로 이미지 이동 허용
+
+		eDragToHandling // 커서 드래그로 핸들링 허용. eDragMovement보다 우선순위 높음
 	};
 
 	class BasicPresetWindowDesc
@@ -75,8 +79,8 @@ public:
 
 	MkBaseWindowNode* GetAncestorWindowNode(void) const;
 
-	// MkWindowEventManager에 등록된 ancestor window 이름 반환
-	const MkHashStr& GetManagedRootName(void) const;
+	// MkWindowEventManager에 등록된 ancestor window 환
+	MkBaseWindowNode* GetManagedRoot(void) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성
@@ -119,7 +123,7 @@ public:
 	bool CreateFreeImageBaseBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
 
 	// 해당 윈도우 노드와 모든 자식 윈도우 노드에 window preset이 적용된 노드들이 있으면 모두 테마 변경
-	void SetPresetThemeName(const MkHashStr& themeName);
+	virtual void SetPresetThemeName(const MkHashStr& themeName);
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경
 	// (NOTE) MkWindowTypeImageSet::eSingleType image set 기반으로 생성된 component면 적용을 받지 않음(image 크기로 고정)
@@ -138,6 +142,10 @@ public:
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkPathName& imagePath, const MkHashStr& subsetName);
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr);
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey);
+
+	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 caption 설정
+	// caption이 비었으면 삭제
+	bool SetPresetComponentCaption(const MkHashStr& themeName, const MkStr& caption, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
 
 	// 정보 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
@@ -165,6 +173,11 @@ public:
 	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position, bool managedRoot);
 	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position, bool managedRoot);
 
+	// clickWindow에서 left click 발생
+	// (NOTE) eS2D_WindowState 계열만이 아닌 모든 MkBaseWindowNode를 대상으로 함(title, background, etc...)
+	virtual void OnLeftClick(const MkFloat2& position) {} // clickWindow를 호출
+	virtual void OnLeftClick(MkBaseWindowNode* clickWindow, const MkFloat2& position) {} // managed root에 호출
+
 	// activation
 	virtual void Activate(void) {}
 	virtual void Deactivate(void) {}
@@ -176,7 +189,6 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	MkBaseWindowNode(const MkHashStr& name);
-	MkBaseWindowNode(const MkHashStr& name, const MkHashStr& themeName, const MkFloat2& bodySize, const MkHashStr& componentName);
 	virtual ~MkBaseWindowNode() {}
 
 public:
@@ -187,15 +199,13 @@ public:
 
 	MkBaseWindowNode* __CreateWindowPreset(const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
 
-	MkBaseWindowNode* __GetHitWindows(const MkFloat2& position); // front only
+	MkBaseWindowNode* __GetFrontHitWindow(const MkFloat2& position);
 	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows); // all hits
 
 protected:
 
 	bool _CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
-
-	void _SetSampleComponentIcon(const MkHashStr& themeName, MkBaseWindowNode* targetNode, const MkStr& tag);
 
 protected:
 

@@ -295,7 +295,7 @@ protected:
 		MkFloatRect anchorRect(MkFloat2(0.f, 0.f), targetNode->GetPresetFullSize());
 		MkFloat2 position = anchorRect.GetSnapPosition(stateRect->GetLocalRect(), alignment, border);
 		stateRect->SetLocalPosition(position);
-		stateRect->SetLocalDepth(-0.001f); // 살짝 앞으로 나오게
+		stateRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID); // 살짝 앞으로 나오게
 	}
 
 	static void _SetState(DataType state, MkSceneNode* targetNode)
@@ -559,21 +559,21 @@ MkBaseWindowNode* MkBaseWindowNode::GetAncestorWindowNode(void) const
 	}
 }
 
-const MkHashStr& MkBaseWindowNode::GetManagedRootName(void) const
+MkBaseWindowNode* MkBaseWindowNode::GetManagedRoot(void) const
 {
 	MkSceneNode* targetNode = const_cast<MkBaseWindowNode*>(this);
 	while (true)
 	{
 		if (targetNode == NULL)
-			return MkHashStr::NullHash; // error
+			return NULL; // error
 
 		MkSceneNode* parentNode = targetNode->GetParentNode();
 		if (parentNode == NULL)
-			return MkHashStr::NullHash; // root
+			return NULL; // root
 
 		if ((targetNode->GetNodeType() >= eS2D_SNT_BaseWindowNode) && (parentNode->GetParentNode() == NULL))
 		{
-			return targetNode->GetNodeName(); // 부모는 존재하지만 조부모가 없는 경우
+			return dynamic_cast<MkBaseWindowNode*>(targetNode); // 부모는 존재하지만 조부모가 없는 경우
 		}
 
 		targetNode = parentNode;
@@ -696,7 +696,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 
 	const float MARGIN = MK_WR_PRESET.GetMargin();
 	
-	// sindow size 유효성 검사
+	// window size 유효성 검사
 	if (d.windowSize.x < MARGIN * 4.f)
 	{
 		d.windowSize.x = MARGIN * 4.f;
@@ -746,7 +746,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 			}
 
 			// title icon
-			_SetSampleComponentIcon(d.themeName, titleWindow, MKDEF_TITLE_BAR_SAMPLE_STRING);
+			titleWindow->SetPresetComponentCaption(d.themeName, MKDEF_TITLE_BAR_SAMPLE_STRING);
 		}
 	}
 
@@ -797,7 +797,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 		{
 			okWindow = backgroundWindow->__CreateWindowPreset(L"PButton00", d.themeName, eS2D_WPC_PossitiveButton, buttonBodySize);
 			okWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
-			_SetSampleComponentIcon(d.themeName, okWindow, MKDEF_OK_BTN_SAMPLE_STRING);
+			okWindow->SetPresetComponentCaption(d.themeName, MKDEF_OK_BTN_SAMPLE_STRING);
 		}
 
 		// cancel button
@@ -806,7 +806,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 		{
 			cancelWindow = backgroundWindow->__CreateWindowPreset(L"NButton00", d.themeName, eS2D_WPC_NegativeButton, buttonBodySize);
 			cancelWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
-			_SetSampleComponentIcon(d.themeName, cancelWindow, MKDEF_CANCEL_BTN_SAMPLE_STRING);
+			cancelWindow->SetPresetComponentCaption(d.themeName, MKDEF_CANCEL_BTN_SAMPLE_STRING);
 		}
 
 		if ((okWindow != NULL) && (cancelWindow == NULL))
@@ -1005,6 +1005,33 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 	return false;
 }
 
+bool MkBaseWindowNode::SetPresetComponentCaption(const MkHashStr& themeName, const MkStr& caption, eRectAlignmentPosition alignment, const MkFloat2& border)
+{
+	if (caption.Empty())
+	{
+		if (ExistSRect(COMPONENT_HIGHLIGHT_TAG_NAME))
+		{
+			DeleteSRect(COMPONENT_HIGHLIGHT_TAG_NAME);
+		}
+		if (ExistSRect(COMPONENT_NORMAL_TAG_NAME))
+		{
+			DeleteSRect(COMPONENT_NORMAL_TAG_NAME);
+		}
+		return true;
+	}
+	else
+	{
+		MkStr hBuf, nBuf;
+		if (MK_WR_PRESET.ConvertToDecoStr(themeName, caption, hBuf, nBuf))
+		{
+			bool hOK = SetPresetComponentIcon(true, alignment, border, hBuf);
+			bool nOK = SetPresetComponentIcon(false, alignment, border, nBuf);
+			return (hOK && nOK);
+		}
+	}
+	return false;
+}
+
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot)
 {
 	MkArray<MkBaseWindowNode*> buffer;
@@ -1012,8 +1039,11 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			if (buffer[i]->InputEventMousePress(button, position, false))
-				return true;
+			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
+			{
+				if (buffer[i]->InputEventMousePress(button, position, false))
+					return true;
+			}
 		}
 	}
 	return false;
@@ -1021,12 +1051,18 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 
 bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot)
 {
-	if ((button == 0) && GetWindowRect().CheckIntersection(position)) // left release
+	if ((button == 0) && GetWindowRect().CheckGridIntersection(position)) // left release
 	{
 		if (MkWindowPreset::GetWindowPresetComponentEnum(GetPresetComponentName()) == eS2D_WPC_CancelIcon)
 		{
-			MK_WIN_EVENT_MGR.DeactivateWindow(GetManagedRootName());
+			MK_WIN_EVENT_MGR.DeactivateWindow(GetManagedRoot()->GetNodeName());
 			return true;
+		}
+
+		if (static_cast<MkBaseWindowNode*>(this) == MK_WIN_EVENT_MGR.GetFrontHitWindow())
+		{
+			OnLeftClick(position);
+			GetManagedRoot()->OnLeftClick(this, position);
 		}
 	}
 	
@@ -1035,8 +1071,11 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			if (buffer[i]->InputEventMouseRelease(button, position, false))
-				return true;
+			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
+			{
+				if (buffer[i]->InputEventMouseRelease(button, position, false))
+					return true;
+			}
 		}
 	}
 	return false;
@@ -1049,8 +1088,11 @@ bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkF
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			if (buffer[i]->InputEventMouseDoubleClick(button, position, false))
-				return true;
+			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
+			{
+				if (buffer[i]->InputEventMouseDoubleClick(button, position, false))
+					return true;
+			}
 		}
 	}
 	return false;
@@ -1063,8 +1105,11 @@ bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& posit
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			if (buffer[i]->InputEventMouseWheelMove(delta, position, false))
-				return true;
+			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
+			{
+				if (buffer[i]->InputEventMouseWheelMove(delta, position, false))
+					return true;
+			}
 		}
 	}
 	return false;
@@ -1077,9 +1122,9 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 	if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
 	{
 		eS2D_WindowState windowState = eS2D_WS_DefaultState;
-		if (GetWorldAABR().CheckIntersection(position))
+		if (GetWindowRect().CheckGridIntersection(position))
 		{
-			windowState = btnPushing[0] ? eS2D_WS_OnClickState : eS2D_WS_OnCursorState;
+			windowState = (btnPushing[0] && (static_cast<MkBaseWindowNode*>(this) == MK_WIN_EVENT_MGR.GetFrontHitWindow())) ? eS2D_WS_OnClickState : eS2D_WS_OnCursorState;
 		}
 
 		__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(windowState, this);
@@ -1090,9 +1135,10 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			if (buffer[i]->GetEnable())
+			MkBaseWindowNode* currNode = buffer[i];
+			if (currNode->GetEnable() && (!currNode->GetAttribute(eIgnoreInputEvent)))
 			{
-				buffer[i]->InputEventMouseMove(inside, btnPushing, position, false);
+				currNode->InputEventMouseMove(inside, btnPushing, position, false);
 			}
 		}
 	}
@@ -1137,15 +1183,6 @@ MkBaseWindowNode::MkBaseWindowNode(const MkHashStr& name) : MkSceneNode(name)
 	m_Enable = true;
 }
 
-MkBaseWindowNode::MkBaseWindowNode(const MkHashStr& name, const MkHashStr& themeName, const MkFloat2& bodySize, const MkHashStr& componentName) : MkSceneNode(name)
-{
-	m_Enable = true;
-
-	m_PresetThemeName = themeName;
-	m_PresetBodySize = bodySize;
-	m_PresetComponentName = componentName;
-}
-
 //------------------------------------------------------------------------------------------------//
 
 void MkBaseWindowNode::__GenerateBuildingTemplate(void)
@@ -1165,21 +1202,6 @@ void MkBaseWindowNode::__GenerateBuildingTemplate(void)
 	tNode->CreateUnit(ATTRIBUTE_KEY, static_cast<unsigned int>(0));
 
 	tNode->DeclareToTemplate(true);
-}
-
-MkBaseWindowNode* MkBaseWindowNode::__GetHitWindows(const MkFloat2& position)
-{
-	MkPairArray<float, MkBaseWindowNode*> hitWindows(8);
-	__GetHitWindows(position, hitWindows);
-	if (hitWindows.Empty())
-	{
-		return NULL;
-	}
-	else if (hitWindows.GetSize() > 1)
-	{
-		hitWindows.SortInAscendingOrder();
-	}
-	return hitWindows.GetFieldAt(0);
 }
 
 MkBaseWindowNode* MkBaseWindowNode::__CreateWindowPreset
@@ -1204,9 +1226,24 @@ MkBaseWindowNode* MkBaseWindowNode::__CreateWindowPreset
 	return NULL;
 }
 
+MkBaseWindowNode* MkBaseWindowNode::__GetFrontHitWindow(const MkFloat2& position)
+{
+	MkPairArray<float, MkBaseWindowNode*> hitWindows(8);
+	__GetHitWindows(position, hitWindows);
+	if (hitWindows.Empty())
+	{
+		return NULL;
+	}
+	else if (hitWindows.GetSize() > 1)
+	{
+		hitWindows.SortInAscendingOrder();
+	}
+	return hitWindows.GetFieldAt(0);
+}
+
 void MkBaseWindowNode::__GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows)
 {
-	if (GetWindowRect().CheckIntersection(position))
+	if (GetWindowRect().CheckGridIntersection(position))
 	{
 		hitWindows.PushBack(GetWorldPosition().z, this);
 	}
@@ -1254,7 +1291,7 @@ bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, Mk
 		MK_STL_LOOP(looper)
 		{
 			MkSceneNode* node = looper.GetCurrentField();
-			if ((node->GetNodeType() >= eS2D_SNT_BaseWindowNode) && (node->GetWorldAABR().CheckIntersection(position)))
+			if ((node->GetNodeType() >= eS2D_SNT_BaseWindowNode) && (node->GetWorldAABR().CheckGridIntersection(position)))
 			{
 				MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(node);
 				if ((winNode != NULL) && (winNode->GetEnable()))
@@ -1265,19 +1302,6 @@ bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, Mk
 		}
 	}
 	return (!buffer.Empty());
-}
-
-void MkBaseWindowNode::_SetSampleComponentIcon(const MkHashStr& themeName, MkBaseWindowNode* targetNode, const MkStr& tag)
-{
-	if (targetNode != NULL)
-	{
-		MkStr hBuf, nBuf;
-		if (MK_WR_PRESET.ConvertToDecoStr(themeName, tag, hBuf, nBuf))
-		{
-			targetNode->SetPresetComponentIcon(true, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), hBuf);
-			targetNode->SetPresetComponentIcon(false, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), nBuf);
-		}
-	}
 }
 
 //------------------------------------------------------------------------------------------------//

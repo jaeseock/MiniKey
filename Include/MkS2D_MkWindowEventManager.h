@@ -49,6 +49,8 @@ public:
 	inline void SetEditMode(bool enable) { m_EditMode = enable; }
 	inline bool GetEditMode(void) const { return m_EditMode; }
 
+	inline MkBaseWindowNode* GetFrontHitWindow(void) const { return m_FrontHitWindow; }
+
 	// «ÿ¡¶
 	void Clear(void);
 
@@ -84,8 +86,7 @@ protected:
 	bool m_FocusLostByClick;
 
 	// cursor
-	bool m_CursorIsDragging;
-	MkBaseWindowNode* m_DraggingWindow;
+	MkBaseWindowNode* m_FrontHitWindow;
 	MkFloat2 m_CursorStartPosition;
 	MkFloat2 m_WindowAABRBegin;
 	MkFloat2 m_WindowOffsetToWorldPos;
