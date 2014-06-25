@@ -6,6 +6,7 @@
 
 #include "MkS2D_MkProjectDefinition.h"
 #include "MkS2D_MkTexturePool.h"
+#include "MkS2D_MkFontManager.h"
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkSRect.h"
 
@@ -18,6 +19,12 @@ const static MkHashStr SIZE_KEY = L"Size";
 
 // float
 const static MkHashStr DEPTH_KEY = L"Depth";
+
+// MkStr
+const static MkHashStr FORCED_FONT_TYPE_KEY = L"FontType";
+
+// MkStr
+const static MkHashStr FORCED_FONT_STATE_KEY = L"FontState";
 
 // MkArray<MkStr>
 const static MkHashStr RESOURCE_KEY = L"Resource";
@@ -59,11 +66,20 @@ void MkSRect::Load(const MkDataNode& node)
 	node.GetData(POSITION_KEY, position, 0);
 	SetLocalPosition(MkFloat2(position.x, position.y));
 
-
 	// depth
 	float depth = 0.f;
 	node.GetData(DEPTH_KEY, depth, 0);
 	SetLocalDepth(depth);
+
+	// font type
+	MkStr fontType;
+	node.GetData(FORCED_FONT_TYPE_KEY, fontType, 0);
+	m_ForcedFontType = fontType;
+
+	// font state
+	MkStr fontState;
+	node.GetData(FORCED_FONT_STATE_KEY, fontState, 0);
+	m_ForcedFontState = fontState;
 
 	// resource
 	MkArray<MkStr> resBuf;
@@ -133,6 +149,8 @@ void MkSRect::Save(MkDataNode& node) // LoadÀÇ ¿ª
 	node.SetData(POSITION_KEY, MkVec2(m_LocalRect.position.x, m_LocalRect.position.y), 0);
 	node.SetData(SIZE_KEY, MkVec2(m_LocalRect.size.x, m_LocalRect.size.y), 0);
 	node.SetData(DEPTH_KEY, m_LocalDepth, 0);
+	node.SetData(FORCED_FONT_TYPE_KEY, m_ForcedFontType.GetString(), 0);
+	node.SetData(FORCED_FONT_STATE_KEY, m_ForcedFontState.GetString(), 0);
 
 	if (m_Texture != NULL)
 	{
@@ -182,6 +200,29 @@ void MkSRect::SetObjectAlpha(float alpha)
 float MkSRect::GetObjectAlpha(void) const
 {
 	return (static_cast<float>(m_MaterialKey.m_ObjectAlpha) / 255.f);
+}
+
+void MkSRect::SetFocedFontTypeAndState(const MkHashStr& type, const MkHashStr& state)
+{
+	bool typeDiff = (m_ForcedFontType != type);
+	bool stateDiff = (m_ForcedFontState != state);
+
+	if (typeDiff || stateDiff)
+	{
+		m_ForcedFontType = type;
+		if (!MK_FONT_MGR.CheckAvailableFontType(type))
+		{
+			m_ForcedFontType.Clear();
+		}
+
+		m_ForcedFontState = state;
+		if (!MK_FONT_MGR.CheckAvailableFontState(state))
+		{
+			m_ForcedFontState.Clear();
+		}
+
+		RestoreDecoString();
+	}
 }
 
 void MkSRect::SetTexture(const MkBaseTexturePtr& texture)
@@ -240,6 +281,20 @@ bool MkSRect::SetDecoString(const MkArray<MkHashStr>& nodeNameAndKey)
 	return false;
 }
 
+void MkSRect::RestoreDecoString(void)
+{
+	if (!m_OriginalDecoStr.Empty())
+	{
+		MkStr backup = m_OriginalDecoStr;
+		SetDecoString(backup);
+	}
+	else if (!m_SceneDecoTextNodeNameAndKey.Empty())
+	{
+		MkArray<MkHashStr> backup = m_SceneDecoTextNodeNameAndKey;
+		SetDecoString(backup);
+	}
+}
+
 void MkSRect::SetSubset(const MkHashStr& name)
 {
 	m_CurrentSubsetName = name;
@@ -265,7 +320,7 @@ void MkSRect::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition align
 {
 	if (!anchorSize.IsZero() && m_LocalRect.SizeIsNotZero() && (alignment != eRAP_NonePosition))
 	{
-		MkFloat2 localPos =	MkFloatRect(MkFloat2(0.f, 0.f), anchorSize).GetSnapPosition(m_LocalRect, alignment, border);
+		MkFloat2 localPos =	MkFloatRect(anchorSize).GetSnapPosition(m_LocalRect, alignment, border);
 		localPos.y += heightOffset;
 		SetLocalPosition(localPos);
 		SetLocalDepth(m_LocalDepth + depthOffset);
@@ -292,6 +347,8 @@ void MkSRect::__GenerateBuildingTemplate(void)
 	tNode->CreateUnit(POSITION_KEY, MkVec2::Zero);
 	tNode->CreateUnit(SIZE_KEY, MkVec2::Zero);
 	tNode->CreateUnit(DEPTH_KEY, 0.f);
+	tNode->CreateUnit(FORCED_FONT_TYPE_KEY, MkStr::Null);
+	tNode->CreateUnit(FORCED_FONT_STATE_KEY, MkStr::Null);
 	tNode->CreateUnit(RESOURCE_KEY, MkStr::Null);
 	tNode->CreateUnit(ALPHA_KEY, static_cast<unsigned int>(255));
 	MkArray<bool> refBuf;
@@ -400,7 +457,26 @@ void MkSRect::_FillVertexData(MkFloatRect::ePointName pn, MkArray<VertexData>& b
 
 bool MkSRect::_SetDecoString(const MkDecoStr& decoStr)
 {
-	bool ok = m_TextCacheStep.SetUp(decoStr);
+	bool ok;
+	bool changeType = (!m_ForcedFontType.Empty());
+	bool changeState = (!m_ForcedFontState.Empty());
+	if (changeType || changeState)
+	{
+		MkDecoStr tmpStr = decoStr;
+		if (changeType)
+		{
+			tmpStr.ChangeType(m_ForcedFontType);
+		}
+		if (changeState)
+		{
+			tmpStr.ChangeState(m_ForcedFontState);
+		}
+		ok = m_TextCacheStep.SetUp(tmpStr);
+	}
+	else
+	{
+		ok = m_TextCacheStep.SetUp(decoStr);
+	}
 	if (ok)
 	{
 		m_TextCacheStep.GetTargetTexture(m_Texture);

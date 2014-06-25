@@ -236,6 +236,32 @@ MkDecoStr& MkDecoStr::operator = (const MkDecoStr& decoStr)
 	return *this;
 }
 
+bool MkDecoStr::ChangeType(const MkHashStr& type)
+{
+	bool ok = MK_FONT_MGR.CheckAvailableFontType(type);
+	if (ok)
+	{
+		MK_INDEXING_LOOP(m_OutputList, i)
+		{
+			m_OutputList[i].type = type;
+		}
+	}
+	return ok;
+}
+
+bool MkDecoStr::ChangeState(const MkHashStr& state)
+{
+	bool ok = MK_FONT_MGR.CheckAvailableFontState(state);
+	if (ok)
+	{
+		MK_INDEXING_LOOP(m_OutputList, i)
+		{
+			m_OutputList[i].state = state;
+		}
+	}
+	return ok;
+}
+
 void MkDecoStr::Clear(void)
 {
 	m_OutputList.Clear();

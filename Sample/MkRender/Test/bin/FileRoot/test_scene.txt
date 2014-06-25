@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.06.24 (22:23:17),
+//   - time stamp : 2014.06.25 (21:24:55),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -19,20 +19,24 @@ Node "<SRect>"
 	Node "HighlightTag" : "T_SRect"
 	{
 		float Depth = -0.001;
+		str FontState = "DHF";
+		str FontType = "DSF";
 		vec2 Position = (48.000, 4.000);
 		str Resource = // [2]
 			"odt" /
-			"<%T:DSF%><%S:DHF%>타 이 틀";
+			"타 이 틀";
 		vec2 Size = (48.000, 12.000);
 	}
 
 	Node "NormalTag" : "T_SRect"
 	{
 		float Depth = -0.001;
+		str FontState = "DSF";
+		str FontType = "DSF";
 		vec2 Position = (48.000, 4.000);
 		str Resource = // [2]
 			"odt" /
-			"<%T:DSF%><%S:DSF%>타 이 틀";
+			"타 이 틀";
 		vec2 Size = (48.000, 12.000);
 	}
 }
@@ -50,7 +54,7 @@ Node "<SceneNode>"
 
 		Node "<SceneNode>"
 		{
-			Node "Default" : "T_SceneNode"
+			Node "BG" : "T_SceneNode"
 			{
 				Node "<SRect>"
 				{
@@ -168,20 +172,24 @@ Node "<SceneNode>"
 					Node "HighlightTag" : "T_SRect"
 					{
 						float Depth = -0.001;
+						str FontState = "DHF";
+						str FontType = "DSF";
 						vec2 Position = (13.000, 3.000);
 						str Resource = // [2]
 							"odt" /
-							"<%T:DSF%><%S:DHF%>취 소";
+							"취 소";
 						vec2 Size = (30.000, 12.000);
 					}
 
 					Node "NormalTag" : "T_SRect"
 					{
 						float Depth = -0.001;
+						str FontState = "DSF";
+						str FontType = "DSF";
 						vec2 Position = (13.000, 3.000);
 						str Resource = // [2]
 							"odt" /
-							"<%T:DSF%><%S:DSF%>취 소";
+							"취 소";
 						vec2 Size = (30.000, 12.000);
 					}
 				}
@@ -626,20 +634,24 @@ Node "<SceneNode>"
 					Node "HighlightTag" : "T_SRect"
 					{
 						float Depth = -0.001;
+						str FontState = "DHF";
+						str FontType = "DSF";
 						vec2 Position = (13.000, 3.000);
 						str Resource = // [2]
 							"odt" /
-							"<%T:DSF%><%S:DHF%>확 인";
+							"확 인";
 						vec2 Size = (30.000, 12.000);
 					}
 
 					Node "NormalTag" : "T_SRect"
 					{
 						float Depth = -0.001;
+						str FontState = "DSF";
+						str FontType = "DSF";
 						vec2 Position = (13.000, 3.000);
 						str Resource = // [2]
 							"odt" /
-							"<%T:DSF%><%S:DSF%>확 인";
+							"확 인";
 						vec2 Size = (30.000, 12.000);
 					}
 				}
@@ -1072,8 +1084,9 @@ Node "<SceneNode>"
 		}
 	}
 
-	Node "CancelButton" : "T_BaseWindowNode"
+	Node "CancelIcon" : "T_BaseWindowNode"
 	{
+		uint Attribute = 2;
 		vec3 Position = (127.000, 3.000, -0.001);
 		str PresetComponent = "CancelIcon";
 		int2 PresetFullSize = (14, 14);

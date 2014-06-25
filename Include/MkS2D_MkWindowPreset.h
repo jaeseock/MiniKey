@@ -24,8 +24,10 @@ public:
 	// 해당 테마의 image set 반환
 	const MkArray<MkHashStr>& GetWindowTypeImageSet(const MkHashStr& themeName, eS2D_WindowPresetComponent component) const;
 
-	// msg를 해당 테마의 deco string으로 변환
-	bool ConvertToDecoStr(const MkHashStr& themeName, const MkStr& msg, MkStr& highlightBuffer, MkStr& normalBuffer) const;
+	// 해당 테마의 font 정보 반환
+	inline const MkHashStr& GetThemeFontType(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 0); }
+	inline const MkHashStr& GetThemeFontHighlightState(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 1); }
+	inline const MkHashStr& GetThemeFontNormalState(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 2); }
 
 	// 기본 테마명 반환
 	inline const MkHashStr& GetDefaultThemeName(void) const { return (m_DefaultThemeEnable) ? m_DefaultThemeName : MkHashStr::NullHash; }
@@ -68,6 +70,7 @@ protected:
 
 	bool _LoadDataAndCheck(const MkDataNode& node, eS2D_WindowPresetComponent component, const MkHashStr& themeName, bool defaultTheme, MkArray<MkHashStr>& buffer) const;
 	bool _CheckFontData(const MkArray<MkStr>& buffer) const;
+	const MkHashStr& _GetThemeFont(const MkHashStr& themeName, unsigned int index) const;
 
 protected:
 

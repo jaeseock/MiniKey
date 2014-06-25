@@ -18,13 +18,14 @@
 
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkFontManager.h"
+#include "MkS2D_MkDisplayManager.h"
 #include "MkS2D_MkRenderer.h"
 
 #include "MkS2D_MkDecoStr.h"
 
 #include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkBaseWindowNode.h"
-#include "MkS2D_MkListButtonNode.h"
+#include "MkS2D_MkButtonChainNode.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkWindowEventManager.h"
 
@@ -308,10 +309,16 @@ class RestorePage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		m_RootNode = new MkBaseWindowNode(L"Root");
-		MK_RENDERER.GetDrawQueue().CreateStep(L"scene step", 0)->AddSceneNode(m_RootNode);
+		MkInt2 currResolution = MK_DISPLAY_MGR.GetCurrentResolution();
+		MkDrawStep* sceneStep = MK_RENDERER.GetDrawQueue().CreateStep(L"scene step", 0, MkRenderTarget::eTexture, 1, MkUInt2(currResolution.x, currResolution.y));
 
-		MK_WIN_EVENT_MGR.SetUp(MK_RENDERER.GetDrawQueue().CreateStep(L"window step", 1));
+		m_RootNode = new MkBaseWindowNode(L"Root");
+		sceneStep->AddSceneNode(m_RootNode);
+		m_RootNode->CreateSRect(L"BG")->SetTexture(L"Image\\rohan_screenshot.png", L"");
+
+		MkBaseTexturePtr sceneTexture;
+		sceneStep->GetTargetTexture(0, sceneTexture);
+		MK_WIN_EVENT_MGR.SetUp(sceneTexture);
 
 		MkDataNode node;
 		if (node.Load(L"test_scene.txt"))
@@ -347,25 +354,32 @@ public:
 		m_RootNode->DetachChildNode(L"test");
 		testWin->SetLocalPosition(MkFloat2(200.f, 450.f));
 
-		MkListButtonNode* lbNode = new MkListButtonNode(L"LB");
-		lbNode->CreateListTypeButton(L"Default", MkFloat2(150.f, 20.f), MkListButtonNode::eSeletionRoot, MkListButtonNode::eRightside);
-		MkListButtonNode::ItemTagInfo tagInfo;
+		MkButtonChainNode* lbNode = new MkButtonChainNode(L"LB");
+		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(150.f, 20.f), MkButtonChainNode::eRightside);
+		MkButtonChainNode::ItemTagInfo tagInfo;
 		tagInfo.iconPath = L"Default\\system_default.png";
 		tagInfo.iconSubset = L"WinIconSP";
-		tagInfo.caption = L"Å×½ºÆ® ÇÕ´Ï´ç!!!";
+		tagInfo.captionStr = L"Å×½ºÆ® ÇÕ´Ï´ç!!!";
 		lbNode->SetItemTag(tagInfo);
 		lbNode->SetLocalPosition(MkVec3(30.f, 50.f, -0.001f));
 
-		tagInfo.caption = L"²¿ºØ 0";
+		tagInfo.captionStr = L"²¿ºØ 0";
 		lbNode->AddItem(L"0", tagInfo, false);
-		tagInfo.caption = L"²¿ºØ 1";
+		tagInfo.captionStr = L"²¿ºØ 1";
 		lbNode->AddItem(L"1", tagInfo, false);
-		tagInfo.caption = L"²¿ºØ 2";
+		tagInfo.captionStr = L"²¿ºØ 2";
 		lbNode->AddItem(L"2", tagInfo, true);
-		tagInfo.caption = L"²¿ºØ 3";
+		tagInfo.captionStr = L"²¿ºØ 3";
 		lbNode->AddItem(L"3", tagInfo, false);
 
-		testWin->GetChildNode(L"Background")->AttachChildNode(lbNode);
+		MkBaseWindowNode* formNode = new MkBaseWindowNode(L"Form");
+		formNode->CreateWindowPreset(L"Default", eS2D_WPC_GuideBox, MkFloat2(230.f, 160.f));
+		formNode->SetLocalPosition(MkFloatRect(0.f, 0.f, 250.f, 180.f).GetSnapPosition(MkFloatRect(formNode->GetPresetFullSize()), eRAP_MiddleCenter, MkFloat2(0.f, 0.f)));
+		formNode->SetLocalDepth(-0.001f);
+
+		MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(testWin->GetChildNode(L"Background"));
+		bgNode->AttachChildNode(formNode);
+		formNode->AttachChildNode(lbNode);
 		
 		MK_WIN_EVENT_MGR.RegisterWindow(testWin, true);
 		

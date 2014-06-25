@@ -171,6 +171,36 @@ Node "WindowTypeImageSet"
 		str RB = "DefBG_RB";
 	}
 	
+	Node "DefaultStaticBG"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "StaticBG_LT";
+		str MT = "StaticBG_MT";
+		str RT = "StaticBG_RT";
+		str LC = "StaticBG_LC";
+		str MC = "StaticBG_MC";
+		str RC = "StaticBG_RC";
+		str LB = "StaticBG_LB";
+		str MB = "StaticBG_MB";
+		str RB = "StaticBG_RB";
+	}
+	
+	Node "DefaultGuideBox"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "GuideBox_LT";
+		str MT = "GuideBox_MT";
+		str RT = "GuideBox_RT";
+		str LC = "GuideBox_LC";
+		str MC = "GuideBox_MC";
+		str RC = "GuideBox_RC";
+		str LB = "GuideBox_LB";
+		str MB = "GuideBox_MB";
+		str RB = "GuideBox_RB";
+	}
+	
 	Node "DefaultTitleOnFocus"
 	{
 		int Type = 3;
@@ -306,6 +336,51 @@ Node "WindowTypeImageSet"
 		str RB = "DefBtnDis_RB";
 	}
 	
+	Node "DefaultRBtnDefault"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefRBtnDef_LT";
+		str MT = "DefRBtnDef_MT";
+		str RT = "DefRBtnDef_RT";
+		str LC = "DefRBtnDef_LC";
+		str MC = "DefRBtnDef_MC";
+		str RC = "DefRBtnDef_RC";
+		str LB = "DefRBtnDef_LB";
+		str MB = "DefRBtnDef_MB";
+		str RB = "DefRBtnDef_RB";
+	}
+	
+	Node "DefaultRBtnOnCursor"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefRBtnOCu_LT";
+		str MT = "DefRBtnOCu_MT";
+		str RT = "DefRBtnOCu_RT";
+		str LC = "DefRBtnOCu_LC";
+		str MC = "DefRBtnOCu_MC";
+		str RC = "DefRBtnOCu_RC";
+		str LB = "DefRBtnOCu_LB";
+		str MB = "DefRBtnOCu_MB";
+		str RB = "DefRBtnOCu_RB";
+	}
+	
+	Node "DefaultRBtnDisable"
+	{
+		int Type = 3;
+		str Image = "Default\system_default.png";
+		str LT = "DefRBtnDis_LT";
+		str MT = "DefRBtnDis_MT";
+		str RT = "DefRBtnDis_RT";
+		str LC = "DefRBtnDis_LC";
+		str MC = "DefRBtnDis_MC";
+		str RC = "DefRBtnDis_RC";
+		str LB = "DefRBtnDis_LB";
+		str MB = "DefRBtnDis_MB";
+		str RB = "DefRBtnDis_RB";
+	}
+	
 	Node "DefaultLBtnDefault"
 	{
 		int Type = 3;
@@ -351,6 +426,34 @@ Node "WindowTypeImageSet"
 		str RB = "DefLBtnDis_RB";
 	}
 	
+	Node "DefaultArrowLeft"
+	{
+		int Type = 0;
+		str Image = "Default\system_default.png";
+		str SN = "DefArrowL";
+	}
+	
+	Node "DefaultArrowRight"
+	{
+		int Type = 0;
+		str Image = "Default\system_default.png";
+		str SN = "DefArrowR";
+	}
+	
+	Node "DefaultArrowUp"
+	{
+		int Type = 0;
+		str Image = "Default\system_default.png";
+		str SN = "DefArrowU";
+	}
+	
+	Node "DefaultArrowDown"
+	{
+		int Type = 0;
+		str Image = "Default\system_default.png";
+		str SN = "DefArrowD";
+	}
+	
 	Node "DefaultCancelDefault"
 	{
 		int Type = 0;
@@ -378,21 +481,6 @@ Node "WindowTypeImageSet"
 		str Image = "Default\system_default.png";
 		str SN = "DefCancelDis";
 	}
-	
-	Node "SolidLightBlueBackground"
-	{
-		int Type = 3;
-		str Image = "Default\system_default.png";
-		str LT = "SolLBBG_LT";
-		str MT = "SolLBBG_MT";
-		str RT = "SolLBBG_RT";
-		str LC = "SolLBBG_LC";
-		str MC = "SolLBBG_MC";
-		str RC = "SolLBBG_RC";
-		str LB = "SolLBBG_LB";
-		str MB = "SolLBBG_MB";
-		str RB = "SolLBBG_RB";
-	}
 }
 
 Node "WindowPreset"
@@ -407,9 +495,16 @@ Node "WindowPreset"
 	Node "Default"
 	{
 		str BackgroundWindow = "DefaultBackground";
+		str StaticWindow = "DefaultStaticBG";
+		str GuideBox = "DefaultGuideBox";
+		str ArrowLeft = "DefaultArrowLeft";
+		str ArrowRight = "DefaultArrowRight";
+		str ArrowUp = "DefaultArrowUp";
+		str ArrowDown = "DefaultArrowDown";
 		str TitleWindow = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
 		str NegativeButton = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
 		str PossitiveButton = "DefaultPBtnDefault" / "DefaultPBtnOnCursor" / "DefaultPBtnOnClick" / "DefaultBtnDisable";
+		str RootButton = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
 		str CancelIcon =  "DefaultCancelDefault" / "DefaultCancelOnCursor" / "DefaultCancelOnClick" / "DefaultCancelDisable";
 		
@@ -418,6 +513,8 @@ Node "WindowPreset"
 	
 	Node "SolidLB"
 	{
-		str BackgroundWindow = "SolidLightBlueBackground";
+		str BackgroundWindow = "DefaultStaticBG";
+		
+		str FontTypeAndState = "DSF" / "ป๙วร02" / "ClientStartMsg";
 	}
 }

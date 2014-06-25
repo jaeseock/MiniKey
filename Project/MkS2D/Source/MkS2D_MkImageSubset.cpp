@@ -156,12 +156,14 @@ MkImageSubset& MkImageSubset::operator = (const MkImageSubset& source)
 
 void MkImageSubset::_RegisterSubset(const MkHashStr& name, const MkFloat2& fpos, const MkFloat2& fsize, const MkFloat2& fuv)
 {
+	MkFloat2 apos = fpos + MkFloat2(0.00001f, 0.00001f); // 정수 -> 실수 계산 삑사리 보정
+
 	Subset& ss = m_Subsets.Create(name);
 	ss.originalSize = fsize;
-	ss.uv[MkFloatRect::eLeftTop] = fpos;
-	ss.uv[MkFloatRect::eRightTop] = MkFloat2(fpos.x + fuv.x, fpos.y);
-	ss.uv[MkFloatRect::eLeftBottom] = MkFloat2(fpos.x, fpos.y + fuv.y);
-	ss.uv[MkFloatRect::eRightBottom] = fpos + fuv;
+	ss.uv[MkFloatRect::eLeftTop] = apos;
+	ss.uv[MkFloatRect::eRightTop] = MkFloat2(apos.x + fuv.x, apos.y);
+	ss.uv[MkFloatRect::eLeftBottom] = MkFloat2(apos.x, apos.y + fuv.y);
+	ss.uv[MkFloatRect::eRightBottom] = apos + fuv;
 }
 
 //------------------------------------------------------------------------------------------------//

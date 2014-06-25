@@ -96,6 +96,10 @@ public:
 	inline void SetVerticalReflection(bool enable) { m_VerticalReflection = enable; }
 	inline bool GetVerticalReflection(void) const { return m_VerticalReflection; }
 
+	// 강제 font type& state 설정. 이후 적용되는 모든 deco string은 해당 설정이 강제로 적용 됨
+	void SetFocedFontTypeAndState(const MkHashStr& type, const MkHashStr& state);
+	inline bool CheckFocedFontTypeAndState(void) const { return ((!m_ForcedFontType.Empty()) || (!m_ForcedFontState.Empty())); }
+
 	// texture
 	// (NOTE) SetDecoString()과 배타적. 기존 설정 된 original/scene deco text가 있을 경우 text 무효화
 	void SetTexture(const MkBaseTexturePtr& texture);
@@ -110,6 +114,9 @@ public:
 	// scene deco text table에서 nodeNameAndKey에 해당하는 deco text 설정
 	// (NOTE) SetTexture()와 배타적. 설정이 성공하면 캐쉬 텍스쳐가 기존 설정 된 texture를 교체(기존 texture 무효화)
 	bool SetDecoString(const MkArray<MkHashStr>& nodeNameAndKey);
+
+	// 기존 설정된 deco string이 있다면 재로딩
+	void RestoreDecoString(void);
 
 	// image subset
 	void SetSubset(const MkHashStr& name);
@@ -163,6 +170,9 @@ protected:
 	MkFloatRect m_AABR; // axis-aligned minimum bounding rect
 
 	MkFloat2 m_UV[MkFloatRect::eMaxPointName];
+
+	MkHashStr m_ForcedFontType;
+	MkHashStr m_ForcedFontState;
 
 	MkBaseTexturePtr m_Texture;
 	MkHashStr m_CurrentSubsetName;

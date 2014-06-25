@@ -48,6 +48,12 @@ public:
 		size = sizeIn;
 	}
 
+	inline MkRect(const MkType2<DataType>& sizeIn)
+	{
+		position.Clear();
+		size = sizeIn;
+	}
+
 	inline MkRect(const MkRect& rect)
 	{
 		position = rect.position;

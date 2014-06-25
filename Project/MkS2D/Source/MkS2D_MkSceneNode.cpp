@@ -341,7 +341,10 @@ void MkSceneNode::__UpdateTransform(void)
 		looper.SetUp(m_SRects);
 		MK_STL_LOOP(looper)
 		{
-			m_NodeOnlyAABR.UpdateToUnion(looper.GetCurrentField().GetAABR());
+			if (looper.GetCurrentField().GetVisible())
+			{
+				m_NodeOnlyAABR.UpdateToUnion(looper.GetCurrentField().GetAABR());
+			}
 		}
 	}
 
@@ -365,9 +368,12 @@ void MkSceneNode::__UpdateWorldAABR(void)
 		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
 		MK_STL_LOOP(looper)
 		{
-			looper.GetCurrentField()->__UpdateWorldAABR();
-
-			m_WorldAABR.UpdateToUnion(looper.GetCurrentField()->GetWorldAABR());
+			MkSceneNode* node = looper.GetCurrentField();
+			node->__UpdateWorldAABR();
+			if (node->GetVisible())
+			{
+				m_WorldAABR.UpdateToUnion(node->GetWorldAABR());
+			}
 		}
 	}
 }

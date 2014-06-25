@@ -61,6 +61,12 @@
 // world에서 image rect가 존재할 수 있는 가장 뒤의 거리(가장 앞은 0.f)
 #define MKDEF_S2D_MAX_WORLD_DEPTH 1000.f
 
+// 윈도우 깊이 grid 단위
+#define MKDEF_BASE_WINDOW_DEPTH_GRID 0.001f
+
+// 윈도우 관리자 draw step priority
+#define MKDEF_WINDOW_MGR_DRAW_STEP_PRIORITY 0x7fffffff
+
 //------------------------------------------------------------------------------------------------//
 
 // image subset 파일 확장자
@@ -91,8 +97,8 @@
 // MkBaseWindowNode 템플릿 이름
 #define MKDEF_S2D_BT_BASEWINNODE_TEMPLATE_NAME L"T_BaseWindowNode"
 
-// MkListButtonNode 템플릿 이름
-#define MKDEF_S2D_BT_LISTBUTTON_TEMPLATE_NAME L"T_ListButtonNode"
+// MkButtonChainNode 템플릿 이름
+#define MKDEF_S2D_BT_BUTTONCHAIN_TEMPLATE_NAME L"T_ButtonChainNode"
 
 // MkSceneNode data에서 자식 SRect 노드명
 #define MKDEF_S2D_SND_CHILD_SRECT_NODE_NAME L"<SRect>"

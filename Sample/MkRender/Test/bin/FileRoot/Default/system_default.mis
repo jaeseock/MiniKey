@@ -1,8 +1,3 @@
-Template "T_SysDefIcon"
-{
-	int2 Size = (14, 14);
-}
-
 Template "T_SysDefTable"
 {
 	int2 Size = (3, 3);
@@ -10,31 +5,40 @@ Template "T_SysDefTable"
 }
 
 Node "DefBG_" : "T_SysDefTable" { int2 Position = (0, 0); }
-Node "DefTitleOF_" : "T_SysDefTable" { int2 Position = (9, 0); }
-Node "DefTitleLF_" : "T_SysDefTable" { int2 Position = (18, 0); }
+Node "StaticBG_" : "T_SysDefTable" { int2 Position = (9, 0); }
+Node "GuideBox_" : "T_SysDefTable" { int2 Position = (18, 0); }
 
-Node "DefPBtnDef_" : "T_SysDefTable" { int2 Position = (0, 9); }
-Node "DefPBtnOCu_" : "T_SysDefTable" { int2 Position = (9, 9); }
-Node "DefPBtnOCl_" : "T_SysDefTable" { int2 Position = (18, 9); }
+Node "DefTitleOF_" : "T_SysDefTable" { int2 Position = (27, 0); }
+Node "DefTitleLF_" : "T_SysDefTable" { int2 Position = (36, 0); }
 
-Node "DefNBtnDef_" : "T_SysDefTable" { int2 Position = (0, 18); }
-Node "DefNBtnOCu_" : "T_SysDefTable" { int2 Position = (9, 18); }
-Node "DefNBtnOCl_" : "T_SysDefTable" { int2 Position = (18, 18); }
+Node "DefPBtnDef_" : "T_SysDefTable" { int2 Position = (45, 0); }
+Node "DefPBtnOCu_" : "T_SysDefTable" { int2 Position = (54, 0); }
+Node "DefPBtnOCl_" : "T_SysDefTable" { int2 Position = (63, 0); }
 
-Node "DefBtnDis_" : "T_SysDefTable" { int2 Position = (27, 9); }
+Node "DefNBtnDef_" : "T_SysDefTable" { int2 Position = (72, 0); }
+Node "DefNBtnOCu_" : "T_SysDefTable" { int2 Position = (81, 0); }
+Node "DefNBtnOCl_" : "T_SysDefTable" { int2 Position = (90, 0); }
 
-Node "DefLBtnDef_" : "T_SysDefTable" { int2 Position = (0, 27); }
-Node "DefLBtnOCu_" : "T_SysDefTable" { int2 Position = (9, 27); }
-Node "DefLBtnDis_" : "T_SysDefTable" { int2 Position = (18, 27); }
+Node "DefBtnDis_" : "T_SysDefTable" { int2 Position = (99, 0); }
 
-Node "DefCancelDef" : "T_SysDefIcon" { int2 Position = (0, 36); }
-Node "DefCancelOCu" : "T_SysDefIcon" { int2 Position = (14, 36); }
-Node "DefCancelOCl" : "T_SysDefIcon" { int2 Position = (28, 36); }
-Node "DefCancelDis" : "T_SysDefIcon" { int2 Position = (42, 36); }
+Node "DefRBtnDef_" : "T_SysDefTable" { int2 Position = (0, 9); }
+Node "DefRBtnOCu_" : "T_SysDefTable" { int2 Position = (9, 9); }
+Node "DefRBtnDis_" : "T_SysDefTable" { int2 Position = (18, 9); }
 
-Node "Darken" { int2 Position = (27, 0); int2 Size = (9, 9); }
+Node "DefLBtnDef_" : "T_SysDefTable" { int2 Position = (27, 9); }
+Node "DefLBtnOCu_" : "T_SysDefTable" { int2 Position = (36, 9); }
+Node "DefLBtnDis_" : "T_SysDefTable" { int2 Position = (45, 9); }
 
-Node "SolLBBG_" : "T_SysDefTable" { int2 Position = (36, 0); }
+Node "DefArrowL" { int2 Position = (54, 9); int2 Size = (8, 8); }
+Node "DefArrowR" { int2 Position = (63, 9); int2 Size = (8, 8); }
+Node "DefArrowU" { int2 Position = (72, 9); int2 Size = (8, 8); }
+Node "DefArrowD" { int2 Position = (81, 9); int2 Size = (8, 8); }
 
-Node "WinIconSP" { int2 Position = (0, 50); int2 Size = (16, 16); }
+Node "DefCancelDef" { int2 Position = (0, 18); int2 Size = (14, 14); }
+Node "DefCancelOCu" { int2 Position = (14, 18); int2 Size = (14, 14); }
+Node "DefCancelOCl" { int2 Position = (28, 18); int2 Size = (14, 14); }
+Node "DefCancelDis" { int2 Position = (42, 18); int2 Size = (14, 14); }
+
+Node "Darken" { int2 Position = (0, 32); int2 Size = (9, 9); }
+Node "WinIconSP" { int2 Position = (9, 32); int2 Size = (16, 16); }
 Node "WinBGSP" { int2 Position = (0, 66); int2 Size = (150, 100); }

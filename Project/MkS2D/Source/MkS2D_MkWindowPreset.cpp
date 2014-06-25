@@ -121,21 +121,6 @@ const MkArray<MkHashStr>& MkWindowPreset::GetWindowTypeImageSet(const MkHashStr&
 	return (m_DefaultThemeEnable) ? m_ThemeImageSubsets[m_DefaultThemeName][component] : __GetNullList();
 }
 
-bool MkWindowPreset::ConvertToDecoStr(const MkHashStr& themeName, const MkStr& msg, MkStr& highlightBuffer, MkStr& normalBuffer) const
-{
-	if (m_ThemeFonts.Exist(themeName))
-	{
-		const MkArray<MkHashStr>& currTheme = m_ThemeFonts[themeName];
-		return (MkDecoStr::Convert(currTheme[0], currTheme[1], 0, msg, highlightBuffer) && MkDecoStr::Convert(currTheme[0], currTheme[2], 0, msg, normalBuffer));
-	}
-	if (m_DefaultThemeEnable)
-	{
-		const MkArray<MkHashStr>& currTheme = m_ThemeFonts[m_DefaultThemeName];
-		return (MkDecoStr::Convert(currTheme[0], currTheme[1], 0, msg, highlightBuffer) && MkDecoStr::Convert(currTheme[0], currTheme[2], 0, msg, normalBuffer));
-	}
-	return false;
-}
-
 void MkWindowPreset::Clear(void)
 {
 	m_DefaultThemeName.Clear();
@@ -145,7 +130,8 @@ void MkWindowPreset::Clear(void)
 }
 
 const static MkHashStr sPresetKeywords[eS2D_WPC_MaxWindowPresetComponent] =
-	{ L"BackgroundWindow", L"TitleWindow", L"NegativeButton", L"PossitiveButton", L"ListButton", L"CancelIcon" };
+	{ L"BackgroundWindow", L"StaticWindow", L"GuideBox", L"ArrowLeft", L"ArrowRight", L"ArrowUp", L"ArrowDown",
+	L"TitleWindow", L"NegativeButton", L"PossitiveButton", L"RootButton", L"ListButton", L"CancelIcon" };
 
 eS2D_WindowPresetComponent MkWindowPreset::GetWindowPresetComponentEnum(const MkHashStr& keyword)
 {
@@ -168,7 +154,7 @@ const MkHashStr& MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WindowPres
 
 const MkHashStr& MkWindowPreset::GetBackgroundStateKeyword(eS2D_BackgroundState state)
 {
-	const static MkHashStr sKeywords[eS2D_BS_MaxBackgroundState] = { L"Default" };
+	const static MkHashStr sKeywords[eS2D_BS_MaxBackgroundState] = { L"BG" };
 	return sKeywords[state];
 }
 
@@ -262,6 +248,19 @@ bool MkWindowPreset::_CheckFontData(const MkArray<MkStr>& buffer) const
 {
 	return ((buffer.GetSize() == 3) && MK_FONT_MGR.CheckAvailableFontType(buffer[0]) &&
 		MK_FONT_MGR.CheckAvailableFontState(buffer[1]) && MK_FONT_MGR.CheckAvailableFontState(buffer[2]));
+}
+
+const MkHashStr& MkWindowPreset::_GetThemeFont(const MkHashStr& themeName, unsigned int index) const
+{
+	if (m_ThemeFonts.Exist(themeName))
+	{
+		return m_ThemeFonts[themeName][index];
+	}
+	if (m_DefaultThemeEnable)
+	{
+		return m_ThemeFonts[m_DefaultThemeName][index];
+	}
+	return MkHashStr::NullHash;
 }
 
 //------------------------------------------------------------------------------------------------//

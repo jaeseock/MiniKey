@@ -135,17 +135,17 @@ public:
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 icon(SRect) 설정
 	// (NOTE) 각각의 설정 사항에 대해서는 MkSRect의 항목 참조
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkPathName& imagePath, const MkHashStr& subsetName);
-	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkStr& decoStr);
-	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkArray<MkHashStr>& nodeNameAndKey);
+	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedType, const MkHashStr& forcedState, const MkStr& decoStr);
+	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedType, const MkHashStr& forcedState, const MkArray<MkHashStr>& nodeNameAndKey);
 
 	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 highlight/normal icon(SRect) 설정
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkPathName& imagePath, const MkHashStr& subsetName);
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr);
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey);
 
-	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 caption 설정
-	// caption이 비었으면 삭제
+	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 caption 설정, caption이 비었으면 삭제
 	bool SetPresetComponentCaption(const MkHashStr& themeName, const MkStr& caption, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
+	bool SetPresetComponentCaption(const MkHashStr& themeName, const MkArray<MkHashStr>& caption, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
 
 	// 정보 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
@@ -175,8 +175,8 @@ public:
 
 	// clickWindow에서 left click 발생
 	// (NOTE) eS2D_WindowState 계열만이 아닌 모든 MkBaseWindowNode를 대상으로 함(title, background, etc...)
-	virtual void OnLeftClick(const MkFloat2& position) {} // clickWindow를 호출
-	virtual void OnLeftClick(MkBaseWindowNode* clickWindow, const MkFloat2& position) {} // managed root에 호출
+	virtual void OnLeftClick(const MkFloat2& position) {} // clickWindow 대상
+	virtual void OnLeftClick(MkBaseWindowNode* clickWindow, const MkFloat2& position) {} // managed root 대상
 
 	// activation
 	virtual void Activate(void) {}
@@ -206,6 +206,8 @@ protected:
 
 	bool _CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
+
+	void _DeletePresetCaption(void);
 
 protected:
 

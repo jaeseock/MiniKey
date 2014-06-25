@@ -36,7 +36,6 @@ const static MkHashStr ATTRIBUTE_KEY = L"Attribute";
 const static MkHashStr COMPONENT_HIGHLIGHT_TAG_NAME = L"HighlightTag";
 const static MkHashStr COMPONENT_NORMAL_TAG_NAME = L"NormalTag";
 
-#define MKDEF_BASE_WINDOW_DEPTH_GRID 0.001f
 #define MKDEF_TITLE_BAR_SAMPLE_STRING L"타 이 틀"
 #define MKDEF_OK_BTN_SAMPLE_STRING L"확 인"
 #define MKDEF_CANCEL_BTN_SAMPLE_STRING L"취 소"
@@ -445,15 +444,15 @@ class __TSI_ImageSetToComponentNode
 public:
 	static bool ApplyImageSetAndBodySize(eS2D_WindowPresetComponent component, const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
 	{
-		if (component == eS2D_WPC_BackgroundWindow)
+		if (IsBackgroundStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyImageSetAndBodySize(imageSets, targetNode);
 		}
-		else if (component == eS2D_WPC_TitleWindow)
+		else if (IsTitleStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyImageSetAndBodySize(imageSets, targetNode);
 		}
-		else if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		else if (IsWindowStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyImageSetAndBodySize(imageSets, targetNode);
 		}
@@ -462,15 +461,15 @@ public:
 
 	static void ApplyBodySize(eS2D_WindowPresetComponent component, MkBaseWindowNode* targetNode)
 	{
-		if (component == eS2D_WPC_BackgroundWindow)
+		if (IsBackgroundStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyBodySize(targetNode);
 		}
-		else if (component == eS2D_WPC_TitleWindow)
+		else if (IsTitleStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyBodySize(targetNode);
 		}
-		else if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		else if (IsWindowStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyBodySize(targetNode);
 		}
@@ -478,15 +477,15 @@ public:
 
 	static const MkFloatRect* GetWorldAABR(eS2D_WindowPresetComponent component, const MkBaseWindowNode* targetNode)
 	{
-		if (component == eS2D_WPC_BackgroundWindow)
+		if (IsBackgroundStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::GetWorldAABR(targetNode);
 		}
-		else if (component == eS2D_WPC_TitleWindow)
+		else if (IsTitleStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_TitleState>::GetWorldAABR(targetNode);
 		}
-		else if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		else if (IsWindowStateType(component))
 		{
 			return __TSI_ImageSetToStateNode<eS2D_WindowState>::GetWorldAABR(targetNode);
 		}
@@ -649,7 +648,7 @@ void MkBaseWindowNode::SetEnable(bool enable)
 		m_Enable = enable;
 
 		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
-		if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+		if (IsWindowStateType(component))
 		{
 			__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(windowState, this);
 		}
@@ -736,12 +735,13 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 			// cancel icon
 			if (d.hasCancelIcon)
 			{
-				MkBaseWindowNode* cancelWindow = titleWindow->__CreateWindowPreset(L"CancelButton", d.themeName, eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f));
+				MkBaseWindowNode* cancelWindow = titleWindow->__CreateWindowPreset(L"CancelIcon", d.themeName, eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f));
 				if (cancelWindow != NULL)
 				{
-					MkFloat2 localPos =	MkFloatRect(MkFloat2(0.f, 0.f), titleWindow->GetPresetFullSize()).GetSnapPosition
-						(MkFloatRect(MkFloat2(0.f, 0.f), cancelWindow->GetPresetFullSize()), eRAP_RightCenter, MkFloat2(MARGIN, 0.f));
+					MkFloat2 localPos =	MkFloatRect(titleWindow->GetPresetFullSize()).GetSnapPosition
+						(MkFloatRect(cancelWindow->GetPresetFullSize()), eRAP_RightCenter, MkFloat2(MARGIN, 0.f));
 					cancelWindow->SetLocalPosition(MkVec3(localPos.x, localPos.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+					cancelWindow->SetAttribute(eIgnoreMovement, true);
 				}
 			}
 
@@ -791,6 +791,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 		backgroundWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
 
 		const MkFloat2 buttonBodySize(50.f, 12.f);
+
 		// ok button
 		MkBaseWindowNode* okWindow = NULL;
 		if (d.hasOKButton)
@@ -869,23 +870,44 @@ bool MkBaseWindowNode::CreateFreeImageBaseBackgroundWindow(const MkPathName& ima
 
 void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 {
-	if ((!m_PresetThemeName.Empty()) && (themeName != m_PresetThemeName) && (!m_PresetComponentName.Empty())) // 테마가 다르면
+	if ((!m_PresetThemeName.Empty()) && (themeName != m_PresetThemeName)) // 테마가 다르면
 	{
-		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
-		const MkArray<MkHashStr>& newImageSets = MK_WR_PRESET.GetWindowTypeImageSet(themeName, component);
-		const MkArray<MkHashStr>& oldImageSets = MK_WR_PRESET.GetWindowTypeImageSet(m_PresetThemeName, component);
-
-		if ((!newImageSets.Empty()) && (newImageSets != oldImageSets) && // 테마명은 다르더라도 image set은 같을 수 있으므로 비교 필요
-			__TSI_ImageSetToComponentNode::ApplyImageSetAndBodySize(component, newImageSets, this))
+		if (!m_PresetComponentName.Empty())
 		{
-			m_PresetThemeName = themeName;
+			eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+			const MkArray<MkHashStr>& newImageSets = MK_WR_PRESET.GetWindowTypeImageSet(themeName, component);
+			const MkArray<MkHashStr>& oldImageSets = MK_WR_PRESET.GetWindowTypeImageSet(m_PresetThemeName, component);
 
-			// 위의 ApplyImageSetAndBodySize()을 거치면 visible 상태가 초기화 되버리기 때문에 disable일 경우 반영해 주어야 함
-			if ((!m_Enable) && (component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+			if ((!newImageSets.Empty()) && (newImageSets != oldImageSets) && // 테마명은 다르더라도 image set은 같을 수 있으므로 비교 필요
+				__TSI_ImageSetToComponentNode::ApplyImageSetAndBodySize(component, newImageSets, this))
 			{
-				__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(eS2D_WS_DisableState, this);
+				// 위의 ApplyImageSetAndBodySize()을 거치면 visible 상태가 초기화 되버리기 때문에 disable일 경우 반영해 주어야 함
+				if ((!m_Enable) && IsWindowStateType(component))
+				{
+					__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(eS2D_WS_DisableState, this);
+				}
 			}
 		}
+
+		// caption
+		if (ExistSRect(COMPONENT_HIGHLIGHT_TAG_NAME))
+		{
+			MkSRect* srect = GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME);
+			if (srect->CheckFocedFontTypeAndState())
+			{
+				srect->SetFocedFontTypeAndState(MK_WR_PRESET.GetThemeFontType(themeName), MK_WR_PRESET.GetThemeFontHighlightState(themeName));
+			}
+		}
+		if (ExistSRect(COMPONENT_NORMAL_TAG_NAME))
+		{
+			MkSRect* srect = GetSRect(COMPONENT_NORMAL_TAG_NAME);
+			if (srect->CheckFocedFontTypeAndState())
+			{
+				srect->SetFocedFontTypeAndState(MK_WR_PRESET.GetThemeFontType(themeName), MK_WR_PRESET.GetThemeFontNormalState(themeName));
+			}
+		}
+
+		m_PresetThemeName = themeName;
 	}
 
 	MkArray<MkBaseWindowNode*> buffer;
@@ -925,6 +947,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 		MkSRect* iconRect = ExistSRect(iconName) ? GetSRect(iconName) : CreateSRect(iconName);
 		if (iconRect != NULL)
 		{
+			iconRect->SetFocedFontTypeAndState(MkHashStr::NullHash, MkHashStr::NullHash);
 			iconRect->SetTexture(imagePath, subsetName);
 			iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
@@ -934,13 +957,14 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 }
 
 bool MkBaseWindowNode::SetPresetComponentIcon
-(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkStr& decoStr)
+(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedType, const MkHashStr& forcedState, const MkStr& decoStr)
 {
 	if (!m_PresetComponentName.Empty())
 	{
 		MkSRect* iconRect = ExistSRect(iconName) ? GetSRect(iconName) : CreateSRect(iconName);
 		if (iconRect != NULL)
 		{
+			iconRect->SetFocedFontTypeAndState(forcedType, forcedState);
 			iconRect->SetDecoString(decoStr);
 			iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
@@ -950,13 +974,14 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 }
 
 bool MkBaseWindowNode::SetPresetComponentIcon
-(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkArray<MkHashStr>& nodeNameAndKey)
+(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedType, const MkHashStr& forcedState, const MkArray<MkHashStr>& nodeNameAndKey)
 {
 	if (!m_PresetComponentName.Empty())
 	{
 		MkSRect* iconRect = ExistSRect(iconName) ? GetSRect(iconName) : CreateSRect(iconName);
 		if (iconRect != NULL)
 		{
+			iconRect->SetFocedFontTypeAndState(forcedType, forcedState);
 			iconRect->SetDecoString(nodeNameAndKey);
 			iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
@@ -971,7 +996,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 	if (!m_PresetComponentName.Empty())
 	{
 		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
-		if ((component == eS2D_WPC_TitleWindow) || ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd)))
+		if (IsTitleStateType(component) || IsWindowStateType(component))
 		{
 			return SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f, imagePath, subsetName);
 		}
@@ -984,9 +1009,12 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 	if (!m_PresetComponentName.Empty())
 	{
 		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
-		if ((component == eS2D_WPC_TitleWindow) || ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd)))
+		if (IsTitleStateType(component) || IsWindowStateType(component))
 		{
-			return SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f, decoStr);
+			return SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f,
+				MK_WR_PRESET.GetThemeFontType(m_PresetThemeName),
+				(highlight) ? MK_WR_PRESET.GetThemeFontHighlightState(m_PresetThemeName) : MK_WR_PRESET.GetThemeFontNormalState(m_PresetThemeName),
+				decoStr);
 		}
 	}
 	return false;
@@ -997,9 +1025,12 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 	if (!m_PresetComponentName.Empty())
 	{
 		eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
-		if ((component == eS2D_WPC_TitleWindow) || ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd)))
+		if (IsTitleStateType(component) || IsWindowStateType(component))
 		{
-			return SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f, nodeNameAndKey);
+			return SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f,
+				MK_WR_PRESET.GetThemeFontType(m_PresetThemeName),
+				(highlight) ? MK_WR_PRESET.GetThemeFontHighlightState(m_PresetThemeName) : MK_WR_PRESET.GetThemeFontNormalState(m_PresetThemeName),
+				nodeNameAndKey);
 		}
 	}
 	return false;
@@ -1009,25 +1040,30 @@ bool MkBaseWindowNode::SetPresetComponentCaption(const MkHashStr& themeName, con
 {
 	if (caption.Empty())
 	{
-		if (ExistSRect(COMPONENT_HIGHLIGHT_TAG_NAME))
-		{
-			DeleteSRect(COMPONENT_HIGHLIGHT_TAG_NAME);
-		}
-		if (ExistSRect(COMPONENT_NORMAL_TAG_NAME))
-		{
-			DeleteSRect(COMPONENT_NORMAL_TAG_NAME);
-		}
+		_DeletePresetCaption();
 		return true;
 	}
 	else
 	{
-		MkStr hBuf, nBuf;
-		if (MK_WR_PRESET.ConvertToDecoStr(themeName, caption, hBuf, nBuf))
-		{
-			bool hOK = SetPresetComponentIcon(true, alignment, border, hBuf);
-			bool nOK = SetPresetComponentIcon(false, alignment, border, nBuf);
-			return (hOK && nOK);
-		}
+		bool hOK = SetPresetComponentIcon(true, alignment, border, caption);
+		bool nOK = SetPresetComponentIcon(false, alignment, border, caption);
+		return (hOK && nOK);
+	}
+	return false;
+}
+
+bool MkBaseWindowNode::SetPresetComponentCaption(const MkHashStr& themeName, const MkArray<MkHashStr>& caption, eRectAlignmentPosition alignment, const MkFloat2& border)
+{
+	if (caption.Empty())
+	{
+		_DeletePresetCaption();
+		return true;
+	}
+	else
+	{
+		bool hOK = SetPresetComponentIcon(true, alignment, border, caption);
+		bool nOK = SetPresetComponentIcon(false, alignment, border, caption);
+		return (hOK && nOK);
 	}
 	return false;
 }
@@ -1053,7 +1089,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 {
 	if ((button == 0) && GetWindowRect().CheckGridIntersection(position)) // left release
 	{
-		if (MkWindowPreset::GetWindowPresetComponentEnum(GetPresetComponentName()) == eS2D_WPC_CancelIcon)
+		if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(GetPresetComponentName()) == eS2D_WPC_CancelIcon))
 		{
 			MK_WIN_EVENT_MGR.DeactivateWindow(GetManagedRoot()->GetNodeName());
 			return true;
@@ -1118,8 +1154,7 @@ bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& posit
 void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position, bool managedRoot)
 {
 	// eS2D_WindowState가 적용된 노드면 eS2D_WS_DefaultState, eS2D_WS_OnClickState, eS2D_WS_OnCursorState 중 하나를 지정
-	eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
-	if ((component >= eS2D_WPC_WindowStateTypeBegin) && (component < eS2D_WPC_WindowStateTypeEnd))
+	if (IsWindowStateType(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName)))
 	{
 		eS2D_WindowState windowState = eS2D_WS_DefaultState;
 		if (GetWindowRect().CheckGridIntersection(position))
@@ -1302,6 +1337,18 @@ bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, Mk
 		}
 	}
 	return (!buffer.Empty());
+}
+
+void MkBaseWindowNode::_DeletePresetCaption(void)
+{
+	if (ExistSRect(COMPONENT_HIGHLIGHT_TAG_NAME))
+	{
+		DeleteSRect(COMPONENT_HIGHLIGHT_TAG_NAME);
+	}
+	if (ExistSRect(COMPONENT_NORMAL_TAG_NAME))
+	{
+		DeleteSRect(COMPONENT_NORMAL_TAG_NAME);
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

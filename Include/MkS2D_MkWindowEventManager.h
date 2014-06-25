@@ -10,6 +10,7 @@
 #include "MkCore_MkRect.h"
 
 #include "MkS2D_MkProjectDefinition.h"
+#include "MkS2D_MkBaseTexture.h"
 
 
 #define MK_WIN_EVENT_MGR MkWindowEventManager::Instance()
@@ -23,7 +24,7 @@ class MkWindowEventManager : public MkSingletonPattern<MkWindowEventManager>
 {
 public:
 
-	void SetUp(MkDrawStep* drawStep);
+	void SetUp(const MkBaseTexturePtr& sceneTexture);
 
 	// 윈도우 등록
 	// (NOTE) 호출 전 SetUp()이 완료 된 상태이어야 함
@@ -70,6 +71,7 @@ protected:
 
 	float m_MinDepthBandwidth;
 	float m_MaxDepthBandwidth;
+	float m_SceneLayerDepth;
 
 	MkDrawStep* m_DrawStep;
 	MkSceneNode* m_RootNode;

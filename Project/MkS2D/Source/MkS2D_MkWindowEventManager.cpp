@@ -5,6 +5,7 @@
 
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkWindowResourceManager.h"
+#include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkBaseWindowNode.h"
 #include "MkS2D_MkWindowEventManager.h"
@@ -13,27 +14,31 @@
 #define MKDEF_ARRAY_EXIST(names, target) (names.FindFirstInclusion(MkArraySection(0), target) != MKDEF_ARRAY_ERROR)
 #define MKDEF_ARRAY_ERASE(names, target) names.EraseFirstInclusion(MkArraySection(0), target)
 
+#define MKDEF_WIN_MGR_STEP_NAME L"__#WindowMgr"
+const static MkHashStr SCENE_RECT_NAME = L"Scene";
 const static MkHashStr DARKEN_RECT_NAME = L"Darken";
 
 //------------------------------------------------------------------------------------------------//
 
-void MkWindowEventManager::SetUp(MkDrawStep* drawStep)
+void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 {
-	m_DrawStep = drawStep;
-
 	if (m_RootNode == NULL)
 	{
 		m_RootNode = new MkSceneNode(L"Root");
-		MkSRect* srect = m_RootNode->CreateSRect(DARKEN_RECT_NAME);
 
-		// modal 윈도우 출력때 화면 어둡게 만드는 레이어 생성
+		// scene layer
+		MkSRect* sceneLayer = m_RootNode->CreateSRect(SCENE_RECT_NAME);
+		sceneLayer->SetLocalDepth(m_SceneLayerDepth);
+		
+		// modal 윈도우 출력때 화면 어둡게 만드는 layer 생성
+		MkSRect* darkenLayer = m_RootNode->CreateSRect(DARKEN_RECT_NAME);
 		MkBaseTexturePtr texture;
 		MK_TEXTURE_POOL.GetBitmapTexture(MK_WR_PRESET.GetSystemImageFilePath(), texture, 0);
 
 		MK_CHECK(texture != NULL, L"MkWindowEventManager의 Darken layer 생성 실패") {}
 		if (texture != NULL)
 		{
-			srect->SetTexture(texture, MK_WR_PRESET.GetDarkenLayerSubsetName());
+			darkenLayer->SetTexture(texture, MK_WR_PRESET.GetDarkenLayerSubsetName());
 		}
 		else
 		{
@@ -43,15 +48,29 @@ void MkWindowEventManager::SetUp(MkDrawStep* drawStep)
 		m_RootNode->Update();
 	}
 
-	if ((m_RootNode != NULL) && (m_DrawStep != NULL))
+	if (m_DrawStep == NULL)
 	{
-		m_DrawStep->AddSceneNode(m_RootNode);
+		m_DrawStep = MK_RENDERER.GetDrawQueue().GetStep(MKDEF_WIN_MGR_STEP_NAME);
+		if (m_DrawStep == NULL)
+		{
+			m_DrawStep = MK_RENDERER.GetDrawQueue().CreateStep(MKDEF_WIN_MGR_STEP_NAME, MKDEF_WINDOW_MGR_DRAW_STEP_PRIORITY);
+			m_DrawStep->AddSceneNode(m_RootNode);
+		}
 
 		MkSRect* srect = m_RootNode->GetSRect(DARKEN_RECT_NAME);
 		if (srect != NULL)
 		{
 			srect->SetLocalRect(m_DrawStep->GetRegionRect());
 			srect->SetVisible(false);
+		}
+	}
+
+	if (sceneTexture != NULL)
+	{
+		MkSRect* sceneLayer = m_RootNode->GetSRect(SCENE_RECT_NAME);
+		if (sceneLayer != NULL)
+		{
+			sceneLayer->SetTexture(sceneTexture);
 		}
 	}
 }
@@ -512,6 +531,7 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 {
 	m_MinDepthBandwidth = MKDEF_S2D_MAX_WORLD_DEPTH * 0.1f;
 	m_MaxDepthBandwidth = MKDEF_S2D_MAX_WORLD_DEPTH * 0.9f;
+	m_SceneLayerDepth = MKDEF_S2D_MAX_WORLD_DEPTH * 0.95f;
 
 	m_DrawStep = NULL;
 	m_RootNode = NULL;
@@ -552,14 +572,14 @@ MkFloat2 MkWindowEventManager::_ConfineMovement
 {
 	if (targetNode->GetAttribute(MkBaseWindowNode::eConfinedToScreen))
 	{
-		return (MkFloatRect(MkFloat2(0.f, 0.f), screenSize).Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
+		return (MkFloatRect(screenSize).Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
 	}
 	else if (targetNode->GetAttribute(MkBaseWindowNode::eConfinedToParent))
 	{
 		MkBaseWindowNode* anchorNode = targetNode->GetAncestorWindowNode();
 		if (anchorNode == NULL)
 		{
-			return (MkFloatRect(MkFloat2(0.f, 0.f), screenSize).Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
+			return (MkFloatRect(screenSize).Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
 		}
 		else
 		{
