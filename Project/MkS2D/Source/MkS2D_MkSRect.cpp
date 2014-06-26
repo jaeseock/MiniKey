@@ -21,9 +21,6 @@ const static MkHashStr SIZE_KEY = L"Size";
 const static MkHashStr DEPTH_KEY = L"Depth";
 
 // MkStr
-const static MkHashStr FORCED_FONT_TYPE_KEY = L"FontType";
-
-// MkStr
 const static MkHashStr FORCED_FONT_STATE_KEY = L"FontState";
 
 // MkArray<MkStr>
@@ -70,11 +67,6 @@ void MkSRect::Load(const MkDataNode& node)
 	float depth = 0.f;
 	node.GetData(DEPTH_KEY, depth, 0);
 	SetLocalDepth(depth);
-
-	// font type
-	MkStr fontType;
-	node.GetData(FORCED_FONT_TYPE_KEY, fontType, 0);
-	m_ForcedFontType = fontType;
 
 	// font state
 	MkStr fontState;
@@ -149,7 +141,6 @@ void MkSRect::Save(MkDataNode& node) // LoadÀÇ ¿ª
 	node.SetData(POSITION_KEY, MkVec2(m_LocalRect.position.x, m_LocalRect.position.y), 0);
 	node.SetData(SIZE_KEY, MkVec2(m_LocalRect.size.x, m_LocalRect.size.y), 0);
 	node.SetData(DEPTH_KEY, m_LocalDepth, 0);
-	node.SetData(FORCED_FONT_TYPE_KEY, m_ForcedFontType.GetString(), 0);
 	node.SetData(FORCED_FONT_STATE_KEY, m_ForcedFontState.GetString(), 0);
 
 	if (m_Texture != NULL)
@@ -202,21 +193,12 @@ float MkSRect::GetObjectAlpha(void) const
 	return (static_cast<float>(m_MaterialKey.m_ObjectAlpha) / 255.f);
 }
 
-void MkSRect::SetFocedFontTypeAndState(const MkHashStr& type, const MkHashStr& state)
+void MkSRect::SetFocedFontState(const MkHashStr& fontState)
 {
-	bool typeDiff = (m_ForcedFontType != type);
-	bool stateDiff = (m_ForcedFontState != state);
-
-	if (typeDiff || stateDiff)
+	if (m_ForcedFontState != fontState)
 	{
-		m_ForcedFontType = type;
-		if (!MK_FONT_MGR.CheckAvailableFontType(type))
-		{
-			m_ForcedFontType.Clear();
-		}
-
-		m_ForcedFontState = state;
-		if (!MK_FONT_MGR.CheckAvailableFontState(state))
+		m_ForcedFontState = fontState;
+		if (!MK_FONT_MGR.CheckAvailableFontState(fontState))
 		{
 			m_ForcedFontState.Clear();
 		}
@@ -347,7 +329,6 @@ void MkSRect::__GenerateBuildingTemplate(void)
 	tNode->CreateUnit(POSITION_KEY, MkVec2::Zero);
 	tNode->CreateUnit(SIZE_KEY, MkVec2::Zero);
 	tNode->CreateUnit(DEPTH_KEY, 0.f);
-	tNode->CreateUnit(FORCED_FONT_TYPE_KEY, MkStr::Null);
 	tNode->CreateUnit(FORCED_FONT_STATE_KEY, MkStr::Null);
 	tNode->CreateUnit(RESOURCE_KEY, MkStr::Null);
 	tNode->CreateUnit(ALPHA_KEY, static_cast<unsigned int>(255));
@@ -458,15 +439,10 @@ void MkSRect::_FillVertexData(MkFloatRect::ePointName pn, MkArray<VertexData>& b
 bool MkSRect::_SetDecoString(const MkDecoStr& decoStr)
 {
 	bool ok;
-	bool changeType = (!m_ForcedFontType.Empty());
 	bool changeState = (!m_ForcedFontState.Empty());
-	if (changeType || changeState)
+	if (changeState)
 	{
 		MkDecoStr tmpStr = decoStr;
-		if (changeType)
-		{
-			tmpStr.ChangeType(m_ForcedFontType);
-		}
 		if (changeState)
 		{
 			tmpStr.ChangeState(m_ForcedFontState);

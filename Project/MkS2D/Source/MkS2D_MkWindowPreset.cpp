@@ -7,7 +7,7 @@
 #include "MkS2D_MkWindowResourceManager.h"
 
 
-#define MKDEF_THEME_FONT_TYPE_AND_STATE_KEY L"FontTypeAndState"
+#define MKDEF_THEME_FONT_STATE_KEY L"FontState"
 
 //------------------------------------------------------------------------------------------------//
 
@@ -32,6 +32,11 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 	MK_CHECK(node.GetData(L"DarkenLayerSubsetName", darkenLayerSubsetName, 0) && (!darkenLayerSubsetName.Empty()), L"window preset 노드에 DarkenLayerSubsetName이 지정되어 있지 않음")
 		return false;
 	m_DarkenLayerSubsetName = darkenLayerSubsetName;
+
+	MkStr regionLayerSubsetName;
+	MK_CHECK(node.GetData(L"RegionLayerSubsetName", regionLayerSubsetName, 0) && (!regionLayerSubsetName.Empty()), L"window preset 노드에 RegionLayerSubsetName이 지정되어 있지 않음")
+		return false;
+	m_RegionLayerSubsetName = regionLayerSubsetName;
 
 	MkStr windowIconSampleSubsetName;
 	MK_CHECK(node.GetData(L"WindowIconSampleSubsetName", windowIconSampleSubsetName, 0) && (!windowIconSampleSubsetName.Empty()), L"window preset 노드에 WindowIconSampleSubsetName이 지정되어 있지 않음")
@@ -62,7 +67,7 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 					return false;
 			}
 
-			if ((!currNode.GetData(MKDEF_THEME_FONT_TYPE_AND_STATE_KEY, fontBuffer)) || (!_CheckFontData(fontBuffer)))
+			if ((!currNode.GetData(MKDEF_THEME_FONT_STATE_KEY, fontBuffer)) || (!_CheckFontData(fontBuffer)))
 				return false;
 
 			m_DefaultThemeEnable = true; // 기본 테마는 모든 component를 가지고 있어야 함
@@ -76,7 +81,7 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 					disable = false;
 			}
 
-			if ((!currNode.GetData(MKDEF_THEME_FONT_TYPE_AND_STATE_KEY, fontBuffer)) || (!_CheckFontData(fontBuffer)))
+			if ((!currNode.GetData(MKDEF_THEME_FONT_STATE_KEY, fontBuffer)) || (!_CheckFontData(fontBuffer)))
 				disable = false;
 
 			if (disable) // 확장 테마는 component를 최소 하나 이상 가지고 있어야 함
@@ -95,10 +100,9 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 		if (_CheckFontData(fontBuffer))
 		{
 			MkArray<MkHashStr>& fonts = m_ThemeFonts.Create(currThemeName);
-			fonts.Reserve(3);
+			fonts.Reserve(2);
 			fonts.PushBack(fontBuffer[0]);
 			fonts.PushBack(fontBuffer[1]);
-			fonts.PushBack(fontBuffer[2]);
 		}
 
 		MK_DEV_PANEL.MsgToLog(L"> window theme : " + currThemeName.GetString() + MkStr((currThemeName == m_DefaultThemeName) ? L" << [DEF]" : L""), true);
@@ -246,8 +250,7 @@ bool MkWindowPreset::_LoadDataAndCheck
 
 bool MkWindowPreset::_CheckFontData(const MkArray<MkStr>& buffer) const
 {
-	return ((buffer.GetSize() == 3) && MK_FONT_MGR.CheckAvailableFontType(buffer[0]) &&
-		MK_FONT_MGR.CheckAvailableFontState(buffer[1]) && MK_FONT_MGR.CheckAvailableFontState(buffer[2]));
+	return ((buffer.GetSize() == 2) && MK_FONT_MGR.CheckAvailableFontState(buffer[0]) && MK_FONT_MGR.CheckAvailableFontState(buffer[1]));
 }
 
 const MkHashStr& MkWindowPreset::_GetThemeFont(const MkHashStr& themeName, unsigned int index) const

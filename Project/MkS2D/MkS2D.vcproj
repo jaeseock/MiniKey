@@ -482,11 +482,11 @@
 					Name="2. Control node"
 					>
 					<File
-						RelativePath=".\Source\MkS2D_MkButtonChainNode.cpp"
+						RelativePath=".\Source\MkS2D_MkSpreadButtonNode.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\Include\MkS2D_MkButtonChainNode.h"
+						RelativePath="..\..\Include\MkS2D_MkSpreadButtonNode.h"
 						>
 					</File>
 				</Filter>

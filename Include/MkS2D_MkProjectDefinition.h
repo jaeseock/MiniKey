@@ -67,6 +67,9 @@
 // 윈도우 관리자 draw step priority
 #define MKDEF_WINDOW_MGR_DRAW_STEP_PRIORITY 0x7fffffff
 
+// 윈도우 관리자 영역 표시 레이어 지속시간
+#define MKDEF_WINDOW_MGR_REGION_LAYER_LIFETIME 0.5f
+
 //------------------------------------------------------------------------------------------------//
 
 // image subset 파일 확장자
@@ -97,8 +100,8 @@
 // MkBaseWindowNode 템플릿 이름
 #define MKDEF_S2D_BT_BASEWINNODE_TEMPLATE_NAME L"T_BaseWindowNode"
 
-// MkButtonChainNode 템플릿 이름
-#define MKDEF_S2D_BT_BUTTONCHAIN_TEMPLATE_NAME L"T_ButtonChainNode"
+// MkSpreadButtonNode 템플릿 이름
+#define MKDEF_S2D_BT_SPREADBUTTON_TEMPLATE_NAME L"T_SpreadButtonNode"
 
 // MkSceneNode data에서 자식 SRect 노드명
 #define MKDEF_S2D_SND_CHILD_SRECT_NODE_NAME L"<SRect>"

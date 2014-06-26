@@ -38,7 +38,3 @@ Node "DefCancelDef" { int2 Position = (0, 18); int2 Size = (14, 14); }
 Node "DefCancelOCu" { int2 Position = (14, 18); int2 Size = (14, 14); }
 Node "DefCancelOCl" { int2 Position = (28, 18); int2 Size = (14, 14); }
 Node "DefCancelDis" { int2 Position = (42, 18); int2 Size = (14, 14); }
-
-Node "Darken" { int2 Position = (0, 32); int2 Size = (9, 9); }
-Node "WinIconSP" { int2 Position = (9, 32); int2 Size = (16, 16); }
-Node "WinBGSP" { int2 Position = (0, 66); int2 Size = (150, 100); }

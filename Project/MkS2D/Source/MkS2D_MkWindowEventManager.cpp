@@ -1,13 +1,14 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkInputManager.h"
+#include "MkCore_MkTimeManager.h"
 #include "MkCore_MkDevPanel.h"
 
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkDrawStep.h"
-#include "MkS2D_MkBaseWindowNode.h"
+#include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkWindowEventManager.h"
 
 
@@ -17,6 +18,8 @@
 #define MKDEF_WIN_MGR_STEP_NAME L"__#WindowMgr"
 const static MkHashStr SCENE_RECT_NAME = L"Scene";
 const static MkHashStr DARKEN_RECT_NAME = L"Darken";
+const static MkHashStr REGION_RECT_NAME = L"Region";
+const static MkHashStr DEBUG_RECT_NAME = L"Debug";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -32,17 +35,25 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 		
 		// modal 윈도우 출력때 화면 어둡게 만드는 layer 생성
 		MkSRect* darkenLayer = m_RootNode->CreateSRect(DARKEN_RECT_NAME);
-		MkBaseTexturePtr texture;
-		MK_TEXTURE_POOL.GetBitmapTexture(MK_WR_PRESET.GetSystemImageFilePath(), texture, 0);
-
-		MK_CHECK(texture != NULL, L"MkWindowEventManager의 Darken layer 생성 실패") {}
-		if (texture != NULL)
+		if (darkenLayer != NULL)
 		{
-			darkenLayer->SetTexture(texture, MK_WR_PRESET.GetDarkenLayerSubsetName());
+			darkenLayer->SetTexture(MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetDarkenLayerSubsetName());
 		}
-		else
+
+		// 영역 표시용 layer 생성
+		MkSRect* regionLayer = m_RootNode->CreateSRect(REGION_RECT_NAME);
+		if (regionLayer != NULL)
 		{
-			m_RootNode->DeleteSRect(DARKEN_RECT_NAME);
+			regionLayer->SetTexture(MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetRegionLayerSubsetName());
+			regionLayer->SetVisible(false);
+		}
+
+		// 디버깅용 layer 생성
+		MkSRect* debugLayer = m_RootNode->CreateSRect(DEBUG_RECT_NAME);
+		if (debugLayer != NULL)
+		{
+			debugLayer->SetTexture(MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetRegionLayerSubsetName());
+			debugLayer->SetVisible(false);
 		}
 
 		m_RootNode->Update();
@@ -244,6 +255,39 @@ void MkWindowEventManager::Update(void)
 	{
 		unsigned int onFocusIndex = m_OnActivatingWindows.GetSize() - 1;
 
+		// 현재 전개중인 spread button이 있다면 item list world AABR 갱신
+		if (!m_OpeningSpreadButtons.Empty())
+		{
+			MK_INDEXING_LOOP(m_OpeningSpreadButtons, i)
+			{
+				m_OpeningSpreadButtons[i]->__UpdateItemRegion();
+			}
+
+			//__ShowDebugLayer(m_OpeningSpreadButtons[0]->GetItemWorldAABR(), 1.f);
+
+			// 클릭 이벤트가 발생했다면 spread button 영역 안에 존재하는지 확인
+			if (currentButtonPressed[0] || currentButtonPressed[1] || currentButtonPressed[2])
+			{
+				bool hit = false;
+				MK_INDEXING_LOOP(m_OpeningSpreadButtons, i)
+				{
+					if (m_OpeningSpreadButtons[i]->GetItemWorldAABR().CheckIntersection(currentCursorPosition))
+					{
+						hit = true;
+						break;
+					}
+				}
+
+				if (!hit) // 영역 외 클릭이므로 모두 닫음
+				{
+					MkSpreadButtonNode* oldBtn = m_OpeningSpreadButtons[0];
+					oldBtn->CloseAllItems();
+
+					//__HideDebugLayer();
+				}
+			}
+		}
+
 		// 모달 상태중이 아니면 click event로 인한 순서 변화 반영
 		if (m_ModalWindow.Empty())
 		{
@@ -275,6 +319,7 @@ void MkWindowEventManager::Update(void)
 					m_LastFocusWindow.Clear();
 
 					m_CurrentTargetWindowNode = NULL;
+					_SetRegionLayerVisible(false);
 				}
 			}
 		}
@@ -320,6 +365,16 @@ void MkWindowEventManager::Update(void)
 						break;
 					}
 				}
+			}
+		}
+
+		// 현재 전개중인 spread button이 있는데 포커스를 잃었다면 닫음
+		if (!m_OpeningSpreadButtons.Empty())
+		{
+			if (onFocusWindowNode != m_OpeningSpreadButtons[0]->GetManagedRoot())
+			{
+				MkSpreadButtonNode* oldBtn = m_OpeningSpreadButtons[0];
+				oldBtn->CloseAllItems();
 			}
 		}
 
@@ -395,6 +450,8 @@ void MkWindowEventManager::Update(void)
 				{
 					m_CurrentTargetWindowNode = frontHit;
 
+					_ShowRegionLayer();
+					
 					if (m_FrontHitWindow == NULL)
 					{
 						m_FrontHitWindow = frontHit;
@@ -436,22 +493,27 @@ void MkWindowEventManager::Update(void)
 
 	if (m_EditMode)
 	{
-		// movement by arrow key
-		if ((m_CurrentTargetWindowNode != NULL) && (!m_CurrentTargetWindowNode->GetAttribute(MkBaseWindowNode::eIgnoreMovement)))
+		if (m_CurrentTargetWindowNode != NULL)
 		{
-			MkFloat2 offset;
-			if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT)) offset.x = -1.f;
-			if (MK_INPUT_MGR.GetKeyReleased(VK_RIGHT)) offset.x = 1.f;
-			if (MK_INPUT_MGR.GetKeyReleased(VK_UP)) offset.y = 1.f;
-			if (MK_INPUT_MGR.GetKeyReleased(VK_DOWN)) offset.y = -1.f;
-
-			if (!offset.IsZero())
+			// movement by arrow key
+			if (!m_CurrentTargetWindowNode->GetAttribute(MkBaseWindowNode::eIgnoreMovement))
 			{
-				const MkFloat2& worldAABRBegin = m_CurrentTargetWindowNode->GetWorldAABR().position;
-				MkFloat2 oldPosition = MkFloat2(m_CurrentTargetWindowNode->GetWorldPosition().x, m_CurrentTargetWindowNode->GetWorldPosition().y);
-				MkFloat2 newPosition = _ConfineMovement(m_CurrentTargetWindowNode, screenSize, worldAABRBegin, oldPosition - worldAABRBegin, offset);
-				m_CurrentTargetWindowNode->SetLocalAsWorldPosition(newPosition, false);
+				MkFloat2 offset;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT)) offset.x = -1.f;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_RIGHT)) offset.x = 1.f;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_UP)) offset.y = 1.f;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_DOWN)) offset.y = -1.f;
+
+				if (!offset.IsZero())
+				{
+					const MkFloat2& worldAABRBegin = m_CurrentTargetWindowNode->GetWorldAABR().position;
+					MkFloat2 oldPosition = MkFloat2(m_CurrentTargetWindowNode->GetWorldPosition().x, m_CurrentTargetWindowNode->GetWorldPosition().y);
+					MkFloat2 newPosition = _ConfineMovement(m_CurrentTargetWindowNode, screenSize, worldAABRBegin, oldPosition - worldAABRBegin, offset);
+					m_CurrentTargetWindowNode->SetLocalAsWorldPosition(newPosition, false);
+				}
 			}
+
+			_UpdateRegionLayer(m_CurrentTargetWindowNode->GetWindowRect(), m_CurrentTargetWindowNode->GetWorldPosition().z - MKDEF_BASE_WINDOW_DEPTH_GRID * 0.5f);
 		}
 	}
 
@@ -512,6 +574,12 @@ void MkWindowEventManager::Update(void)
 	}
 }
 
+const MkFloatRect& MkWindowEventManager::GetRegionRect(void) const
+{
+	const static MkFloatRect nullRect;
+	return (m_DrawStep == NULL) ? nullRect : m_DrawStep->GetRegionRect();
+}
+
 void MkWindowEventManager::Clear(void)
 {
 	m_DrawStep = NULL;
@@ -524,6 +592,7 @@ void MkWindowEventManager::Clear(void)
 	m_FocusLostByClick = false;
 	m_FrontHitWindow = NULL;
 	m_ModalWindow.Clear();
+	m_OpeningSpreadButtons.Clear();
 	m_CurrentTargetWindowNode = NULL;
 }
 
@@ -539,6 +608,64 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 	m_FocusLostByClick = false;
 	m_FrontHitWindow = NULL;
 	m_CurrentTargetWindowNode = NULL;
+}
+
+void MkWindowEventManager::__SpreadButtonOpened(int index, MkSpreadButtonNode* button)
+{
+	if ((index >= 0) && (button != NULL))
+	{
+		unsigned int pos = static_cast<unsigned int>(index);
+		int oldSize = m_OpeningSpreadButtons.GetSize();
+
+		if (m_OpeningSpreadButtons.IsValidIndex(pos))
+		{
+			MkSpreadButtonNode* oldBtn = m_OpeningSpreadButtons[pos];
+			oldBtn->CloseAllItems();
+		}
+		else
+		{
+			MK_CHECK(pos == oldSize, L"잘못된 spread button 전개 순서")
+				return;
+		}
+		m_OpeningSpreadButtons.PushBack(button);
+	}
+}
+
+void MkWindowEventManager::__SpreadButtonClosed(int index)
+{
+	if (index >= 0)
+	{
+		MK_CHECK((static_cast<unsigned int>(index) + 1) == m_OpeningSpreadButtons.GetSize(), L"잘못된 spread button 해제 순서")
+			return;
+
+		m_OpeningSpreadButtons.PopBack();
+	}
+}
+
+void MkWindowEventManager::__ShowDebugLayer(const MkFloatRect& rect, float depth)
+{
+	if ((m_RootNode != NULL) && rect.SizeIsNotZero())
+	{
+		MkSRect* srect = m_RootNode->GetSRect(DEBUG_RECT_NAME);
+		if (srect != NULL)
+		{
+			srect->SetVisible(true);
+			srect->SetLocalRect(rect);
+			srect->SetLocalDepth(depth);
+		}
+	}
+}
+
+void MkWindowEventManager::__HideDebugLayer(void)
+{
+	if (m_RootNode != NULL)
+	{
+		MkSRect* srect = m_RootNode->GetSRect(DEBUG_RECT_NAME);
+		if (srect != NULL)
+		{
+			srect->SetVisible(false);
+		}
+	}
 }
 
 void MkWindowEventManager::_LastWindowLostFocus(void)
@@ -587,6 +714,54 @@ MkFloat2 MkWindowEventManager::_ConfineMovement
 		}
 	}
 	return (posBegin + offset + toWorld);
+}
+
+void MkWindowEventManager::_ShowRegionLayer(void)
+{
+	if (_SetRegionLayerVisible(true))
+	{
+		MkTimeState timeState;
+		MK_TIME_MGR.GetCurrentTimeState(timeState);
+		m_RegionLayerCounter.SetUp(timeState, MKDEF_WINDOW_MGR_REGION_LAYER_LIFETIME);
+	}
+}
+
+void MkWindowEventManager::_UpdateRegionLayer(const MkFloatRect& rect, float depth)
+{
+	if ((m_RootNode != NULL) && rect.SizeIsNotZero())
+	{
+		MkSRect* srect = m_RootNode->GetSRect(REGION_RECT_NAME);
+		if ((srect != NULL) && (srect->GetVisible()))
+		{
+			MkTimeState timeState;
+			MK_TIME_MGR.GetCurrentTimeState(timeState);
+
+			if (m_RegionLayerCounter.OnTick(timeState))
+			{
+				srect->SetVisible(false);
+			}
+			else
+			{
+				srect->SetLocalRect(rect);
+				srect->SetLocalDepth(depth);
+				srect->SetObjectAlpha(1.f - m_RegionLayerCounter.GetTickRatio(timeState));
+			}
+		}
+	}
+}
+
+bool MkWindowEventManager::_SetRegionLayerVisible(bool enable)
+{
+	if (m_RootNode != NULL)
+	{
+		MkSRect* srect = m_RootNode->GetSRect(REGION_RECT_NAME);
+		if (srect != NULL)
+		{
+			srect->SetVisible(enable);
+			return true;
+		}
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------//

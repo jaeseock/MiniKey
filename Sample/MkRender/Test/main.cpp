@@ -25,7 +25,7 @@
 
 #include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkBaseWindowNode.h"
-#include "MkS2D_MkButtonChainNode.h"
+#include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkWindowEventManager.h"
 
@@ -354,23 +354,39 @@ public:
 		m_RootNode->DetachChildNode(L"test");
 		testWin->SetLocalPosition(MkFloat2(200.f, 450.f));
 
-		MkButtonChainNode* lbNode = new MkButtonChainNode(L"LB");
-		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(150.f, 20.f), MkButtonChainNode::eRightside);
-		MkButtonChainNode::ItemTagInfo tagInfo;
-		tagInfo.iconPath = L"Default\\system_default.png";
-		tagInfo.iconSubset = L"WinIconSP";
+		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(L"SB");
+		lbNode->SetLocalScale(2.f);
+		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(150.f, 20.f), MkSpreadButtonNode::eRightside);
+		MkSpreadButtonNode::ItemTagInfo tagInfo;
+		tagInfo.iconPath = L"Default\\window_mgr.png";
+		tagInfo.iconSubset = L"SampleIcon";
 		tagInfo.captionStr = L"抛胶飘 钦聪寸!!!";
 		lbNode->SetItemTag(tagInfo);
 		lbNode->SetLocalPosition(MkVec3(30.f, 50.f, -0.001f));
 
 		tagInfo.captionStr = L"部贺 0";
 		lbNode->AddItem(L"0", tagInfo, false);
+
 		tagInfo.captionStr = L"部贺 1";
-		lbNode->AddItem(L"1", tagInfo, false);
+		MkSpreadButtonNode* g1 = lbNode->AddItem(L"1", tagInfo, false);
+		tagInfo.captionStr = L"部部贺 1-0";
+		g1->AddItem(L"1-0", tagInfo, false);
+		tagInfo.captionStr = L"部部贺 1-1";
+		g1->AddItem(L"1-1", tagInfo, false);
+		tagInfo.captionStr = L"部部贺 1-2";
+		g1->AddItem(L"1-2", tagInfo, false);
+
 		tagInfo.captionStr = L"部贺 2";
 		lbNode->AddItem(L"2", tagInfo, true);
+
 		tagInfo.captionStr = L"部贺 3";
-		lbNode->AddItem(L"3", tagInfo, false);
+		MkSpreadButtonNode* g3 = lbNode->AddItem(L"3", tagInfo, false);
+		tagInfo.captionStr = L"部部贺 3-0";
+		g3->AddItem(L"3-0", tagInfo, false);
+		tagInfo.captionStr = L"部部贺 3-1";
+		MkSpreadButtonNode* g31 = g3->AddItem(L"3-1", tagInfo, false);
+		tagInfo.captionStr = L"部部贺 3-1-0";
+		g31->AddItem(L"3-1-0", tagInfo, false);
 
 		MkBaseWindowNode* formNode = new MkBaseWindowNode(L"Form");
 		formNode->CreateWindowPreset(L"Default", eS2D_WPC_GuideBox, MkFloat2(230.f, 160.f));

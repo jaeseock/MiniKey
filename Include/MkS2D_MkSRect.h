@@ -96,9 +96,9 @@ public:
 	inline void SetVerticalReflection(bool enable) { m_VerticalReflection = enable; }
 	inline bool GetVerticalReflection(void) const { return m_VerticalReflection; }
 
-	// 강제 font type& state 설정. 이후 적용되는 모든 deco string은 해당 설정이 강제로 적용 됨
-	void SetFocedFontTypeAndState(const MkHashStr& type, const MkHashStr& state);
-	inline bool CheckFocedFontTypeAndState(void) const { return ((!m_ForcedFontType.Empty()) || (!m_ForcedFontState.Empty())); }
+	// 강제 font state 설정. 이후 적용되는 모든 deco string은 해당 설정이 강제로 적용 됨
+	void SetFocedFontState(const MkHashStr& fontState);
+	inline bool CheckFocedFontTypeAndState(void) const { return (!m_ForcedFontState.Empty()); }
 
 	// texture
 	// (NOTE) SetDecoString()과 배타적. 기존 설정 된 original/scene deco text가 있을 경우 text 무효화
@@ -171,7 +171,6 @@ protected:
 
 	MkFloat2 m_UV[MkFloatRect::eMaxPointName];
 
-	MkHashStr m_ForcedFontType;
 	MkHashStr m_ForcedFontState;
 
 	MkBaseTexturePtr m_Texture;

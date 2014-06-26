@@ -895,7 +895,7 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 			MkSRect* srect = GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME);
 			if (srect->CheckFocedFontTypeAndState())
 			{
-				srect->SetFocedFontTypeAndState(MK_WR_PRESET.GetThemeFontType(themeName), MK_WR_PRESET.GetThemeFontHighlightState(themeName));
+				srect->SetFocedFontState(MK_WR_PRESET.GetHighlightThemeFontState(themeName));
 			}
 		}
 		if (ExistSRect(COMPONENT_NORMAL_TAG_NAME))
@@ -903,7 +903,7 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 			MkSRect* srect = GetSRect(COMPONENT_NORMAL_TAG_NAME);
 			if (srect->CheckFocedFontTypeAndState())
 			{
-				srect->SetFocedFontTypeAndState(MK_WR_PRESET.GetThemeFontType(themeName), MK_WR_PRESET.GetThemeFontNormalState(themeName));
+				srect->SetFocedFontState(MK_WR_PRESET.GetNormalThemeFontState(themeName));
 			}
 		}
 
@@ -947,7 +947,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 		MkSRect* iconRect = ExistSRect(iconName) ? GetSRect(iconName) : CreateSRect(iconName);
 		if (iconRect != NULL)
 		{
-			iconRect->SetFocedFontTypeAndState(MkHashStr::NullHash, MkHashStr::NullHash);
+			iconRect->SetFocedFontState(MkHashStr::NullHash);
 			iconRect->SetTexture(imagePath, subsetName);
 			iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
@@ -957,14 +957,14 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 }
 
 bool MkBaseWindowNode::SetPresetComponentIcon
-(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedType, const MkHashStr& forcedState, const MkStr& decoStr)
+(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedState, const MkStr& decoStr)
 {
 	if (!m_PresetComponentName.Empty())
 	{
 		MkSRect* iconRect = ExistSRect(iconName) ? GetSRect(iconName) : CreateSRect(iconName);
 		if (iconRect != NULL)
 		{
-			iconRect->SetFocedFontTypeAndState(forcedType, forcedState);
+			iconRect->SetFocedFontState(forcedState);
 			iconRect->SetDecoString(decoStr);
 			iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
@@ -974,14 +974,14 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 }
 
 bool MkBaseWindowNode::SetPresetComponentIcon
-(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedType, const MkHashStr& forcedState, const MkArray<MkHashStr>& nodeNameAndKey)
+(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedState, const MkArray<MkHashStr>& nodeNameAndKey)
 {
 	if (!m_PresetComponentName.Empty())
 	{
 		MkSRect* iconRect = ExistSRect(iconName) ? GetSRect(iconName) : CreateSRect(iconName);
 		if (iconRect != NULL)
 		{
-			iconRect->SetFocedFontTypeAndState(forcedType, forcedState);
+			iconRect->SetFocedFontState(forcedState);
 			iconRect->SetDecoString(nodeNameAndKey);
 			iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
@@ -1012,9 +1012,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 		if (IsTitleStateType(component) || IsWindowStateType(component))
 		{
 			return SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f,
-				MK_WR_PRESET.GetThemeFontType(m_PresetThemeName),
-				(highlight) ? MK_WR_PRESET.GetThemeFontHighlightState(m_PresetThemeName) : MK_WR_PRESET.GetThemeFontNormalState(m_PresetThemeName),
-				decoStr);
+				(highlight) ? MK_WR_PRESET.GetHighlightThemeFontState(m_PresetThemeName) : MK_WR_PRESET.GetNormalThemeFontState(m_PresetThemeName), decoStr);
 		}
 	}
 	return false;
@@ -1028,9 +1026,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 		if (IsTitleStateType(component) || IsWindowStateType(component))
 		{
 			return SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f,
-				MK_WR_PRESET.GetThemeFontType(m_PresetThemeName),
-				(highlight) ? MK_WR_PRESET.GetThemeFontHighlightState(m_PresetThemeName) : MK_WR_PRESET.GetThemeFontNormalState(m_PresetThemeName),
-				nodeNameAndKey);
+				(highlight) ? MK_WR_PRESET.GetHighlightThemeFontState(m_PresetThemeName) : MK_WR_PRESET.GetNormalThemeFontState(m_PresetThemeName), nodeNameAndKey);
 		}
 	}
 	return false;

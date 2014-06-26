@@ -66,10 +66,6 @@ public:
 	// deep copy
 	MkDecoStr& operator = (const MkDecoStr& decoStr);
 
-	// type을 강제로 변경
-	// (NOTE) 설정된 position까지 재계산하지는 않으므로 폰트 크기는 변경하지 않기를 권장
-	bool ChangeType(const MkHashStr& type);
-
 	// state를 강제로 변경
 	bool ChangeState(const MkHashStr& state);
 

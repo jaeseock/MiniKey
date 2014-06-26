@@ -159,7 +159,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultBackground"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefBG_LT";
 		str MT = "DefBG_MT";
 		str RT = "DefBG_RT";
@@ -174,7 +174,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultStaticBG"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "StaticBG_LT";
 		str MT = "StaticBG_MT";
 		str RT = "StaticBG_RT";
@@ -189,7 +189,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultGuideBox"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "GuideBox_LT";
 		str MT = "GuideBox_MT";
 		str RT = "GuideBox_RT";
@@ -204,7 +204,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultTitleOnFocus"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefTitleOF_LT";
 		str MT = "DefTitleOF_MT";
 		str RT = "DefTitleOF_RT";
@@ -219,7 +219,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultTitleLostFocus"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefTitleLF_LT";
 		str MT = "DefTitleLF_MT";
 		str RT = "DefTitleLF_RT";
@@ -234,7 +234,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultPBtnDefault"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefPBtnDef_LT";
 		str MT = "DefPBtnDef_MT";
 		str RT = "DefPBtnDef_RT";
@@ -249,7 +249,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultPBtnOnCursor"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefPBtnOCu_LT";
 		str MT = "DefPBtnOCu_MT";
 		str RT = "DefPBtnOCu_RT";
@@ -264,7 +264,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultPBtnOnClick"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefPBtnOCl_LT";
 		str MT = "DefPBtnOCl_MT";
 		str RT = "DefPBtnOCl_RT";
@@ -279,7 +279,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultNBtnDefault"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefNBtnDef_LT";
 		str MT = "DefNBtnDef_MT";
 		str RT = "DefNBtnDef_RT";
@@ -294,7 +294,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultNBtnOnCursor"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefNBtnOCu_LT";
 		str MT = "DefNBtnOCu_MT";
 		str RT = "DefNBtnOCu_RT";
@@ -309,7 +309,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultNBtnOnClick"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefNBtnOCl_LT";
 		str MT = "DefNBtnOCl_MT";
 		str RT = "DefNBtnOCl_RT";
@@ -324,7 +324,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultBtnDisable"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefBtnDis_LT";
 		str MT = "DefBtnDis_MT";
 		str RT = "DefBtnDis_RT";
@@ -339,7 +339,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultRBtnDefault"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefRBtnDef_LT";
 		str MT = "DefRBtnDef_MT";
 		str RT = "DefRBtnDef_RT";
@@ -354,7 +354,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultRBtnOnCursor"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefRBtnOCu_LT";
 		str MT = "DefRBtnOCu_MT";
 		str RT = "DefRBtnOCu_RT";
@@ -369,7 +369,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultRBtnDisable"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefRBtnDis_LT";
 		str MT = "DefRBtnDis_MT";
 		str RT = "DefRBtnDis_RT";
@@ -384,7 +384,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultLBtnDefault"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefLBtnDef_LT";
 		str MT = "DefLBtnDef_MT";
 		str RT = "DefLBtnDef_RT";
@@ -399,7 +399,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultLBtnOnCursor"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefLBtnOCu_LT";
 		str MT = "DefLBtnOCu_MT";
 		str RT = "DefLBtnOCu_RT";
@@ -414,7 +414,7 @@ Node "WindowTypeImageSet"
 	Node "DefaultLBtnDisable"
 	{
 		int Type = 3;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str LT = "DefLBtnDis_LT";
 		str MT = "DefLBtnDis_MT";
 		str RT = "DefLBtnDis_RT";
@@ -429,56 +429,56 @@ Node "WindowTypeImageSet"
 	Node "DefaultArrowLeft"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefArrowL";
 	}
 	
 	Node "DefaultArrowRight"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefArrowR";
 	}
 	
 	Node "DefaultArrowUp"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefArrowU";
 	}
 	
 	Node "DefaultArrowDown"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefArrowD";
 	}
 	
 	Node "DefaultCancelDefault"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefCancelDef";
 	}
 	
 	Node "DefaultCancelOnCursor"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefCancelOCu";
 	}
 	
 	Node "DefaultCancelOnClick"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefCancelOCl";
 	}
 	
 	Node "DefaultCancelDisable"
 	{
 		int Type = 0;
-		str Image = "Default\system_default.png";
+		str Image = "Default\default_theme.png";
 		str SN = "DefCancelDis";
 	}
 }
@@ -487,10 +487,11 @@ Node "WindowPreset"
 {
 	str DefaultThemeName = "Default";
 	int Margin = 3;
-	str SystemImageFilePath = "Default\system_default.png";
+	str SystemImageFilePath = "Default\window_mgr.png";
 	str DarkenLayerSubsetName = "Darken";
-	str WindowIconSampleSubsetName = "WinIconSP";
-	str WindowBackgroundSampleSubsetName = "WinBGSP";
+	str RegionLayerSubsetName = "Region";
+	str WindowIconSampleSubsetName = "SampleIcon";
+	str WindowBackgroundSampleSubsetName = "SampleBG";
 	
 	Node "Default"
 	{
@@ -508,13 +509,13 @@ Node "WindowPreset"
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
 		str CancelIcon =  "DefaultCancelDefault" / "DefaultCancelOnCursor" / "DefaultCancelOnClick" / "DefaultCancelDisable";
 		
-		str FontTypeAndState = "DSF" / "DHF" / "DSF";
+		str FontState = "DHF" / "DSF";
 	}
 	
 	Node "SolidLB"
 	{
 		str BackgroundWindow = "DefaultStaticBG";
 		
-		str FontTypeAndState = "DSF" / "ป๙วร02" / "ClientStartMsg";
+		str FontState = "ป๙วร02" / "ClientStartMsg";
 	}
 }

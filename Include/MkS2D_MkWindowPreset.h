@@ -24,10 +24,9 @@ public:
 	// 해당 테마의 image set 반환
 	const MkArray<MkHashStr>& GetWindowTypeImageSet(const MkHashStr& themeName, eS2D_WindowPresetComponent component) const;
 
-	// 해당 테마의 font 정보 반환
-	inline const MkHashStr& GetThemeFontType(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 0); }
-	inline const MkHashStr& GetThemeFontHighlightState(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 1); }
-	inline const MkHashStr& GetThemeFontNormalState(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 2); }
+	// 해당 테마의 font state 반환
+	inline const MkHashStr& GetHighlightThemeFontState(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 0); }
+	inline const MkHashStr& GetNormalThemeFontState(const MkHashStr& themeName) const { return _GetThemeFont(themeName, 1); }
 
 	// 기본 테마명 반환
 	inline const MkHashStr& GetDefaultThemeName(void) const { return (m_DefaultThemeEnable) ? m_DefaultThemeName : MkHashStr::NullHash; }
@@ -38,6 +37,7 @@ public:
 	// 시스템 이미지 정보 반환
 	inline const MkPathName& GetSystemImageFilePath(void) const { return m_SystemImageFilePath; }
 	inline const MkHashStr& GetDarkenLayerSubsetName(void) const { return m_DarkenLayerSubsetName; }
+	inline const MkHashStr& GetRegionLayerSubsetName(void) const { return m_RegionLayerSubsetName; }
 	inline const MkHashStr& GetWindowIconSampleSubsetName(void) const { return m_WindowIconSampleSubsetName; }
 	inline const MkHashStr& GetWindowBackgroundSampleSubsetName(void) const { return m_WindowBackgroundSampleSubsetName; }
 
@@ -80,6 +80,7 @@ protected:
 	float m_Margin;
 	MkPathName m_SystemImageFilePath;
 	MkHashStr m_DarkenLayerSubsetName;
+	MkHashStr m_RegionLayerSubsetName;
 	MkHashStr m_WindowIconSampleSubsetName;
 	MkHashStr m_WindowBackgroundSampleSubsetName;
 

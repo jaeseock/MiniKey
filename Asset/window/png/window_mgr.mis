@@ -1,0 +1,23 @@
+Node "SampleBG"
+{
+	int2 Position = (0, 0);
+	int2 Size = (150, 100);
+}
+
+Node "Darken"
+{
+	int2 Position = (0, 100);
+	int2 Size = (9, 9);
+}
+
+Node "Region"
+{
+	int2 Position = (9, 100);
+	int2 Size = (9, 9);
+}
+
+Node "SampleIcon"
+{
+	int2 Position = (0, 109);
+	int2 Size = (16, 16);
+}
