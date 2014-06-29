@@ -428,7 +428,7 @@ void MkSpreadButtonNode::__UpdateItemRegion(void)
 				pivotPos = MkFloat2(0.f, btnSize.y);
 				break;
 			case eDownward:
-				pivotPos = MkFloat2(0.f, fCount * btnSize.y);
+				pivotPos = MkFloat2(0.f, -fCount * btnSize.y);
 				break;
 		}
 

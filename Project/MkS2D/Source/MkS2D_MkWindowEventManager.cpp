@@ -263,18 +263,25 @@ void MkWindowEventManager::Update(void)
 				m_OpeningSpreadButtons[i]->__UpdateItemRegion();
 			}
 
-			//__ShowDebugLayer(m_OpeningSpreadButtons[0]->GetItemWorldAABR(), 1.f);
+			//__ShowDebugLayer(m_OpeningSpreadButtons[m_OpeningSpreadButtons.GetSize() - 1]->GetItemWorldAABR(), 1.f);
 
 			// 클릭 이벤트가 발생했다면 spread button 영역 안에 존재하는지 확인
 			if (currentButtonPressed[0] || currentButtonPressed[1] || currentButtonPressed[2])
 			{
 				bool hit = false;
-				MK_INDEXING_LOOP(m_OpeningSpreadButtons, i)
+				if (m_OpeningSpreadButtons[0]->GetWindowRect().CheckIntersection(currentCursorPosition))
 				{
-					if (m_OpeningSpreadButtons[i]->GetItemWorldAABR().CheckIntersection(currentCursorPosition))
+					hit = true;
+				}
+				else
+				{
+					MK_INDEXING_LOOP(m_OpeningSpreadButtons, i)
 					{
-						hit = true;
-						break;
+						if (m_OpeningSpreadButtons[i]->GetItemWorldAABR().CheckIntersection(currentCursorPosition))
+						{
+							hit = true;
+							break;
+						}
 					}
 				}
 

@@ -1,5 +1,6 @@
 *.user
 *.log
+*.db
 *.exe
 *.htm
 *.dep

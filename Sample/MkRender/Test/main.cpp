@@ -355,8 +355,7 @@ public:
 		testWin->SetLocalPosition(MkFloat2(200.f, 450.f));
 
 		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(L"SB");
-		lbNode->SetLocalScale(2.f);
-		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(150.f, 20.f), MkSpreadButtonNode::eRightside);
+		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(150.f, 20.f), MkSpreadButtonNode::eDownward);
 		MkSpreadButtonNode::ItemTagInfo tagInfo;
 		tagInfo.iconPath = L"Default\\window_mgr.png";
 		tagInfo.iconSubset = L"SampleIcon";
