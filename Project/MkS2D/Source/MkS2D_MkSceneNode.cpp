@@ -5,27 +5,8 @@
 
 #include "MkS2D_MkProjectDefinition.h"
 #include "MkS2D_MkSceneNode.h"
-#include "MkS2D_MkSceneNodeAllocator.h"
+#include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
-
-const static MkHashStr TEMPLATE_NAME = MKDEF_S2D_BT_SCENENODE_TEMPLATE_NAME;
-
-// MkVec3
-const static MkHashStr POSITION_KEY = L"Position";
-
-// float
-const static MkHashStr ROTATION_KEY = L"Rotation";
-
-// float
-const static MkHashStr SCALE_KEY = L"Scale";
-
-// float
-const static MkHashStr ALPHA_KEY = L"Alpha";
-
-// bool
-const static MkHashStr VISIBLE_KEY = L"Visible";
-
-//------------------------------------------------------------------------------------------------//
 
 const static MkHashStr CHILD_SRECT_NODE_NAME = MKDEF_S2D_SND_CHILD_SRECT_NODE_NAME;
 const static MkHashStr CHILD_SNODE_NODE_NAME = MKDEF_S2D_SND_CHILD_SNODE_NODE_NAME;
@@ -36,27 +17,27 @@ void MkSceneNode::Load(const MkDataNode& node)
 {
 	// position
 	MkVec3 position;
-	node.GetData(POSITION_KEY, position, 0);
+	node.GetData(MkSceneNodeFamilyDefinition::Scene::PositionKey, position, 0);
 	SetLocalPosition(position);
 
 	// rotation
 	float rotation = 0.f;
-	node.GetData(ROTATION_KEY, rotation, 0);
+	node.GetData(MkSceneNodeFamilyDefinition::Scene::RotationKey, rotation, 0);
 	SetLocalRotation(MkAngleOp::DegreeToRadian(rotation)); // degree -> radian
 
 	// scale
 	float scale = 1.f;
-	node.GetData(SCALE_KEY, scale, 0);
+	node.GetData(MkSceneNodeFamilyDefinition::Scene::ScaleKey, scale, 0);
 	SetLocalScale(scale);
 
 	// alpha
 	float alpha = 1.f;
-	node.GetData(ALPHA_KEY, alpha, 0);
+	node.GetData(MkSceneNodeFamilyDefinition::Scene::AlphaKey, alpha, 0);
 	m_Alpha.SetUp(alpha); // SRect에서 바로 사용
 
 	// visible
 	bool visible = true;
-	node.GetData(VISIBLE_KEY, visible, 0);
+	node.GetData(MkSceneNodeFamilyDefinition::Scene::VisibleKey, visible, 0);
 	SetVisible(visible);
 
 	// SRects
@@ -100,7 +81,7 @@ void MkSceneNode::Load(const MkDataNode& node)
 			MkHashStr templateName;
 			if (targetDataNode->GetAppliedTemplateName(templateName))
 			{
-				MkSceneNode* targetInstance = MkSceneNodeAllocator::Alloc(templateName, currName);
+				MkSceneNode* targetInstance = MkSceneNodeFamilyDefinition::Alloc(templateName, currName);
 				if (targetInstance != NULL)
 				{
 					if (AttachChildNode(targetInstance))
@@ -120,13 +101,13 @@ void MkSceneNode::Load(const MkDataNode& node)
 void MkSceneNode::Save(MkDataNode& node) // Load의 역
 {
 	// 기존 템플릿이 없으면 템플릿 적용
-	_ApplyBuildingTemplateToSave(node, TEMPLATE_NAME);
+	_ApplyBuildingTemplateToSave(node, MkSceneNodeFamilyDefinition::Scene::TemplateName);
 
-	node.SetData(POSITION_KEY, m_LocalPosition.GetDecision(), 0);
-	node.SetData(ROTATION_KEY, MkAngleOp::RadianToDegree(m_LocalRotation.GetDecision()), 0); // radian -> degree
-	node.SetData(SCALE_KEY, m_LocalScale.GetDecision(), 0);
-	node.SetData(ALPHA_KEY, m_Alpha.GetDecision(), 0);
-	node.SetData(VISIBLE_KEY, m_Visible, 0);
+	node.SetData(MkSceneNodeFamilyDefinition::Scene::PositionKey, m_LocalPosition.GetDecision(), 0);
+	node.SetData(MkSceneNodeFamilyDefinition::Scene::RotationKey, MkAngleOp::RadianToDegree(m_LocalRotation.GetDecision()), 0); // radian -> degree
+	node.SetData(MkSceneNodeFamilyDefinition::Scene::ScaleKey, m_LocalScale.GetDecision(), 0);
+	node.SetData(MkSceneNodeFamilyDefinition::Scene::AlphaKey, m_Alpha.GetDecision(), 0);
+	node.SetData(MkSceneNodeFamilyDefinition::Scene::VisibleKey, m_Visible, 0);
 
 	if (!m_SRects.Empty())
 	{
@@ -243,6 +224,27 @@ void MkSceneNode::DeleteAllSRects(void)
 	m_SRects.Clear();
 }
 
+void MkSceneNode::RestoreDecoString(void)
+{
+	if (!m_SRects.Empty())
+	{
+		MkHashMapLooper<MkHashStr, MkSRect> looper(m_SRects);
+		MK_STL_LOOP(looper)
+		{
+			looper.GetCurrentField().RestoreDecoString();
+		}
+	}
+
+	if (!m_ChildrenNode.Empty())
+	{
+		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
+		MK_STL_LOOP(looper)
+		{
+			looper.GetCurrentField()->RestoreDecoString();
+		}
+	}
+}
+
 void MkSceneNode::AlignPosition(const MkFloatRect& anchorRect, eRectAlignmentPosition alignment, const MkInt2& border)
 {
 	if (anchorRect.SizeIsNotZero() && (alignment != eRAP_NonePosition))
@@ -297,17 +299,17 @@ MkSceneNode::MkSceneNode(const MkHashStr& name) : MkSingleTypeTreePattern<MkScen
 void MkSceneNode::__GenerateBuildingTemplate(void)
 {
 	MkDataNode node;
-	MkDataNode* tNode = node.CreateChildNode(TEMPLATE_NAME);
-	MK_CHECK(tNode != NULL, TEMPLATE_NAME.GetString() + L" template node alloc 실패")
-		return;
+	MkDataNode* tNode = node.CreateChildNode(MkSceneNodeFamilyDefinition::Scene::TemplateName);
+	if (tNode != NULL)
+	{
+		tNode->CreateUnit(MkSceneNodeFamilyDefinition::Scene::PositionKey, MkVec3::Zero);
+		tNode->CreateUnit(MkSceneNodeFamilyDefinition::Scene::RotationKey, 0.f);
+		tNode->CreateUnit(MkSceneNodeFamilyDefinition::Scene::ScaleKey, 1.f);
+		tNode->CreateUnit(MkSceneNodeFamilyDefinition::Scene::AlphaKey, 1.f);
+		tNode->CreateUnit(MkSceneNodeFamilyDefinition::Scene::VisibleKey, true);
 
-	tNode->CreateUnit(POSITION_KEY, MkVec3::Zero);
-	tNode->CreateUnit(ROTATION_KEY, 0.f);
-	tNode->CreateUnit(SCALE_KEY, 1.f);
-	tNode->CreateUnit(ALPHA_KEY, 1.f);
-	tNode->CreateUnit(VISIBLE_KEY, true);
-
-	tNode->DeclareToTemplate(true);
+		tNode->DeclareToTemplate(true);
+	}
 }
 
 void MkSceneNode::__UpdateTransform(void)

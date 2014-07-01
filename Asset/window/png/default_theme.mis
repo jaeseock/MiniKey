@@ -1,40 +1,46 @@
-Template "T_SysDefTable"
-{
-	int2 Size = (3, 3);
-	int2 Table = (3, 3);
-}
 
-Node "DefBG_" : "T_SysDefTable" { int2 Position = (0, 0); }
-Node "StaticBG_" : "T_SysDefTable" { int2 Position = (9, 0); }
-Node "GuideBox_" : "T_SysDefTable" { int2 Position = (18, 0); }
+uint Group = 0;
 
-Node "DefTitleOF_" : "T_SysDefTable" { int2 Position = (27, 0); }
-Node "DefTitleLF_" : "T_SysDefTable" { int2 Position = (36, 0); }
+Node "DefBG_" { int2 Position = (0, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "StaticBG_" { int2 Position = (9, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "GuideBox_" { int2 Position = (18, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
 
-Node "DefPBtnDef_" : "T_SysDefTable" { int2 Position = (45, 0); }
-Node "DefPBtnOCu_" : "T_SysDefTable" { int2 Position = (54, 0); }
-Node "DefPBtnOCl_" : "T_SysDefTable" { int2 Position = (63, 0); }
+Node "TitleOF_" { int2 Position = (27, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "TitleLF_" { int2 Position = (36, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
 
-Node "DefNBtnDef_" : "T_SysDefTable" { int2 Position = (72, 0); }
-Node "DefNBtnOCu_" : "T_SysDefTable" { int2 Position = (81, 0); }
-Node "DefNBtnOCl_" : "T_SysDefTable" { int2 Position = (90, 0); }
+Node "PBtnDef_" { int2 Position = (45, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "PBtnOCu_" { int2 Position = (54, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "PBtnOCl_" { int2 Position = (63, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
 
-Node "DefBtnDis_" : "T_SysDefTable" { int2 Position = (99, 0); }
+Node "NBtnDef_" { int2 Position = (72, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "NBtnOCu_" { int2 Position = (81, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "NBtnOCl_" { int2 Position = (90, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
 
-Node "DefRBtnDef_" : "T_SysDefTable" { int2 Position = (0, 9); }
-Node "DefRBtnOCu_" : "T_SysDefTable" { int2 Position = (9, 9); }
-Node "DefRBtnDis_" : "T_SysDefTable" { int2 Position = (18, 9); }
+Node "BtnDis_" { int2 Position = (99, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
 
-Node "DefLBtnDef_" : "T_SysDefTable" { int2 Position = (27, 9); }
-Node "DefLBtnOCu_" : "T_SysDefTable" { int2 Position = (36, 9); }
-Node "DefLBtnDis_" : "T_SysDefTable" { int2 Position = (45, 9); }
+Node "RBtnDef_" { int2 Position = (0, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "RBtnOCu_" { int2 Position = (9, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "RBtnDis_" { int2 Position = (18, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
 
-Node "DefArrowL" { int2 Position = (54, 9); int2 Size = (8, 8); }
-Node "DefArrowR" { int2 Position = (63, 9); int2 Size = (8, 8); }
-Node "DefArrowU" { int2 Position = (72, 9); int2 Size = (8, 8); }
-Node "DefArrowD" { int2 Position = (81, 9); int2 Size = (8, 8); }
+Node "LBtnDef_" { int2 Position = (27, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "LBtnOCu_" { int2 Position = (36, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "LBtnDis_" { int2 Position = (45, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
 
-Node "DefCancelDef" { int2 Position = (0, 18); int2 Size = (14, 14); }
-Node "DefCancelOCu" { int2 Position = (14, 18); int2 Size = (14, 14); }
-Node "DefCancelOCl" { int2 Position = (28, 18); int2 Size = (14, 14); }
-Node "DefCancelDis" { int2 Position = (42, 18); int2 Size = (14, 14); }
+Node "ArrowL" { int2 Position = (54, 9); int2 Size = (8, 8); }
+Node "ArrowR" { int2 Position = (63, 9); int2 Size = (8, 8); }
+Node "ArrowU" { int2 Position = (72, 9); int2 Size = (8, 8); }
+Node "ArrowD" { int2 Position = (81, 9); int2 Size = (8, 8); }
+
+Node "CancelDef" { int2 Position = (0, 18); int2 Size = (14, 14); }
+Node "CancelOCu" { int2 Position = (14, 18); int2 Size = (14, 14); }
+Node "CancelOCl" { int2 Position = (28, 18); int2 Size = (14, 14); }
+Node "CancelDis" { int2 Position = (42, 18); int2 Size = (14, 14); }
+
+Node "UnchkDef" { int2 Position = (0, 32); int2 Size = (14, 14); }
+Node "UnchkOCu" { int2 Position = (14, 32); int2 Size = (14, 14); }
+Node "UnchkOCl" { int2 Position = (28, 32); int2 Size = (14, 14); }
+
+Node "CheckDef" { int2 Position = (42, 32); int2 Size = (14, 14); }
+Node "CheckOCu" { int2 Position = (56, 32); int2 Size = (14, 14); }
+Node "CheckOCl" { int2 Position = (70, 32); int2 Size = (14, 14); }
+Node "CheckDis" { int2 Position = (84, 32); int2 Size = (14, 14); }

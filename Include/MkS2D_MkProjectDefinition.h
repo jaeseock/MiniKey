@@ -62,7 +62,13 @@
 #define MKDEF_S2D_MAX_WORLD_DEPTH 1000.f
 
 // 윈도우 깊이 grid 단위
-#define MKDEF_BASE_WINDOW_DEPTH_GRID 0.001f
+#define MKDEF_BASE_WINDOW_DEPTH_GRID 0.025f
+
+// list button(sub spread button) 깊이 grid 단위
+#define MKDEF_LIST_BUTTON_DEPTH_GRID 0.002f
+
+// check button에서 아이콘 크기에 몇 픽셀을 더해 배경 크기로 할지 결정(ex> 4일 경우 아이콘이 14px이면 버튼 배경은 18px)
+#define MKDEF_CHECK_BUTTON_SIZE_OFFSET 4
 
 // 윈도우 관리자 draw step priority
 #define MKDEF_WINDOW_MGR_DRAW_STEP_PRIORITY 0x7fffffff
@@ -74,6 +80,9 @@
 
 // image subset 파일 확장자
 #define MKDEF_S2D_IMAGE_SUBSET_FILE_EXTENSION L"mis"
+
+// image subset 파일에서 group key
+#define MKDEF_S2D_IMAGE_SUBSET_FILE_GROUP_KEY L"Group"
 
 // image subset 파일에서 위치 값 key
 #define MKDEF_S2D_IMAGE_SUBSET_FILE_POSITION_KEY L"Position"
@@ -103,6 +112,9 @@
 // MkSpreadButtonNode 템플릿 이름
 #define MKDEF_S2D_BT_SPREADBUTTON_TEMPLATE_NAME L"T_SpreadButtonNode"
 
+// MkCheckButtonNode 템플릿 이름
+#define MKDEF_S2D_BT_CHECKBUTTON_TEMPLATE_NAME L"T_CheckButtonNode"
+
 // MkSceneNode data에서 자식 SRect 노드명
 #define MKDEF_S2D_SND_CHILD_SRECT_NODE_NAME L"<SRect>"
 
@@ -113,6 +125,9 @@
 
 // normalmode <-> edit mode 전환 key. VK_CONTROL + VK_SHIFT + 
 #define MKDEF_S2D_TOGGLE_KEY_BETWEEN_NORMAL_AND_EDIT_MODE L'E'
+
+// edit mode시 설정창 토글 버튼
+#define MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY VK_F2
 
 //------------------------------------------------------------------------------------------------//
 // DEBUG

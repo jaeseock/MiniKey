@@ -205,281 +205,330 @@ Node "WindowTypeImageSet"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefTitleOF_LT";
-		str MT = "DefTitleOF_MT";
-		str RT = "DefTitleOF_RT";
-		str LC = "DefTitleOF_LC";
-		str MC = "DefTitleOF_MC";
-		str RC = "DefTitleOF_RC";
-		str LB = "DefTitleOF_LB";
-		str MB = "DefTitleOF_MB";
-		str RB = "DefTitleOF_RB";
+		str LT = "TitleOF_LT";
+		str MT = "TitleOF_MT";
+		str RT = "TitleOF_RT";
+		str LC = "TitleOF_LC";
+		str MC = "TitleOF_MC";
+		str RC = "TitleOF_RC";
+		str LB = "TitleOF_LB";
+		str MB = "TitleOF_MB";
+		str RB = "TitleOF_RB";
 	}
 	
 	Node "DefaultTitleLostFocus"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefTitleLF_LT";
-		str MT = "DefTitleLF_MT";
-		str RT = "DefTitleLF_RT";
-		str LC = "DefTitleLF_LC";
-		str MC = "DefTitleLF_MC";
-		str RC = "DefTitleLF_RC";
-		str LB = "DefTitleLF_LB";
-		str MB = "DefTitleLF_MB";
-		str RB = "DefTitleLF_RB";
+		str LT = "TitleLF_LT";
+		str MT = "TitleLF_MT";
+		str RT = "TitleLF_RT";
+		str LC = "TitleLF_LC";
+		str MC = "TitleLF_MC";
+		str RC = "TitleLF_RC";
+		str LB = "TitleLF_LB";
+		str MB = "TitleLF_MB";
+		str RB = "TitleLF_RB";
 	}
 	
 	Node "DefaultPBtnDefault"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefPBtnDef_LT";
-		str MT = "DefPBtnDef_MT";
-		str RT = "DefPBtnDef_RT";
-		str LC = "DefPBtnDef_LC";
-		str MC = "DefPBtnDef_MC";
-		str RC = "DefPBtnDef_RC";
-		str LB = "DefPBtnDef_LB";
-		str MB = "DefPBtnDef_MB";
-		str RB = "DefPBtnDef_RB";
+		str LT = "PBtnDef_LT";
+		str MT = "PBtnDef_MT";
+		str RT = "PBtnDef_RT";
+		str LC = "PBtnDef_LC";
+		str MC = "PBtnDef_MC";
+		str RC = "PBtnDef_RC";
+		str LB = "PBtnDef_LB";
+		str MB = "PBtnDef_MB";
+		str RB = "PBtnDef_RB";
 	}
 	
 	Node "DefaultPBtnOnCursor"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefPBtnOCu_LT";
-		str MT = "DefPBtnOCu_MT";
-		str RT = "DefPBtnOCu_RT";
-		str LC = "DefPBtnOCu_LC";
-		str MC = "DefPBtnOCu_MC";
-		str RC = "DefPBtnOCu_RC";
-		str LB = "DefPBtnOCu_LB";
-		str MB = "DefPBtnOCu_MB";
-		str RB = "DefPBtnOCu_RB";
+		str LT = "PBtnOCu_LT";
+		str MT = "PBtnOCu_MT";
+		str RT = "PBtnOCu_RT";
+		str LC = "PBtnOCu_LC";
+		str MC = "PBtnOCu_MC";
+		str RC = "PBtnOCu_RC";
+		str LB = "PBtnOCu_LB";
+		str MB = "PBtnOCu_MB";
+		str RB = "PBtnOCu_RB";
 	}
 	
 	Node "DefaultPBtnOnClick"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefPBtnOCl_LT";
-		str MT = "DefPBtnOCl_MT";
-		str RT = "DefPBtnOCl_RT";
-		str LC = "DefPBtnOCl_LC";
-		str MC = "DefPBtnOCl_MC";
-		str RC = "DefPBtnOCl_RC";
-		str LB = "DefPBtnOCl_LB";
-		str MB = "DefPBtnOCl_MB";
-		str RB = "DefPBtnOCl_RB";
+		str LT = "PBtnOCl_LT";
+		str MT = "PBtnOCl_MT";
+		str RT = "PBtnOCl_RT";
+		str LC = "PBtnOCl_LC";
+		str MC = "PBtnOCl_MC";
+		str RC = "PBtnOCl_RC";
+		str LB = "PBtnOCl_LB";
+		str MB = "PBtnOCl_MB";
+		str RB = "PBtnOCl_RB";
 	}
 	
 	Node "DefaultNBtnDefault"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefNBtnDef_LT";
-		str MT = "DefNBtnDef_MT";
-		str RT = "DefNBtnDef_RT";
-		str LC = "DefNBtnDef_LC";
-		str MC = "DefNBtnDef_MC";
-		str RC = "DefNBtnDef_RC";
-		str LB = "DefNBtnDef_LB";
-		str MB = "DefNBtnDef_MB";
-		str RB = "DefNBtnDef_RB";
+		str LT = "NBtnDef_LT";
+		str MT = "NBtnDef_MT";
+		str RT = "NBtnDef_RT";
+		str LC = "NBtnDef_LC";
+		str MC = "NBtnDef_MC";
+		str RC = "NBtnDef_RC";
+		str LB = "NBtnDef_LB";
+		str MB = "NBtnDef_MB";
+		str RB = "NBtnDef_RB";
 	}
 	
 	Node "DefaultNBtnOnCursor"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefNBtnOCu_LT";
-		str MT = "DefNBtnOCu_MT";
-		str RT = "DefNBtnOCu_RT";
-		str LC = "DefNBtnOCu_LC";
-		str MC = "DefNBtnOCu_MC";
-		str RC = "DefNBtnOCu_RC";
-		str LB = "DefNBtnOCu_LB";
-		str MB = "DefNBtnOCu_MB";
-		str RB = "DefNBtnOCu_RB";
+		str LT = "NBtnOCu_LT";
+		str MT = "NBtnOCu_MT";
+		str RT = "NBtnOCu_RT";
+		str LC = "NBtnOCu_LC";
+		str MC = "NBtnOCu_MC";
+		str RC = "NBtnOCu_RC";
+		str LB = "NBtnOCu_LB";
+		str MB = "NBtnOCu_MB";
+		str RB = "NBtnOCu_RB";
 	}
 	
 	Node "DefaultNBtnOnClick"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefNBtnOCl_LT";
-		str MT = "DefNBtnOCl_MT";
-		str RT = "DefNBtnOCl_RT";
-		str LC = "DefNBtnOCl_LC";
-		str MC = "DefNBtnOCl_MC";
-		str RC = "DefNBtnOCl_RC";
-		str LB = "DefNBtnOCl_LB";
-		str MB = "DefNBtnOCl_MB";
-		str RB = "DefNBtnOCl_RB";
+		str LT = "NBtnOCl_LT";
+		str MT = "NBtnOCl_MT";
+		str RT = "NBtnOCl_RT";
+		str LC = "NBtnOCl_LC";
+		str MC = "NBtnOCl_MC";
+		str RC = "NBtnOCl_RC";
+		str LB = "NBtnOCl_LB";
+		str MB = "NBtnOCl_MB";
+		str RB = "NBtnOCl_RB";
 	}
 	
 	Node "DefaultBtnDisable"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefBtnDis_LT";
-		str MT = "DefBtnDis_MT";
-		str RT = "DefBtnDis_RT";
-		str LC = "DefBtnDis_LC";
-		str MC = "DefBtnDis_MC";
-		str RC = "DefBtnDis_RC";
-		str LB = "DefBtnDis_LB";
-		str MB = "DefBtnDis_MB";
-		str RB = "DefBtnDis_RB";
+		str LT = "BtnDis_LT";
+		str MT = "BtnDis_MT";
+		str RT = "BtnDis_RT";
+		str LC = "BtnDis_LC";
+		str MC = "BtnDis_MC";
+		str RC = "BtnDis_RC";
+		str LB = "BtnDis_LB";
+		str MB = "BtnDis_MB";
+		str RB = "BtnDis_RB";
 	}
 	
 	Node "DefaultRBtnDefault"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefRBtnDef_LT";
-		str MT = "DefRBtnDef_MT";
-		str RT = "DefRBtnDef_RT";
-		str LC = "DefRBtnDef_LC";
-		str MC = "DefRBtnDef_MC";
-		str RC = "DefRBtnDef_RC";
-		str LB = "DefRBtnDef_LB";
-		str MB = "DefRBtnDef_MB";
-		str RB = "DefRBtnDef_RB";
+		str LT = "RBtnDef_LT";
+		str MT = "RBtnDef_MT";
+		str RT = "RBtnDef_RT";
+		str LC = "RBtnDef_LC";
+		str MC = "RBtnDef_MC";
+		str RC = "RBtnDef_RC";
+		str LB = "RBtnDef_LB";
+		str MB = "RBtnDef_MB";
+		str RB = "RBtnDef_RB";
 	}
 	
 	Node "DefaultRBtnOnCursor"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefRBtnOCu_LT";
-		str MT = "DefRBtnOCu_MT";
-		str RT = "DefRBtnOCu_RT";
-		str LC = "DefRBtnOCu_LC";
-		str MC = "DefRBtnOCu_MC";
-		str RC = "DefRBtnOCu_RC";
-		str LB = "DefRBtnOCu_LB";
-		str MB = "DefRBtnOCu_MB";
-		str RB = "DefRBtnOCu_RB";
+		str LT = "RBtnOCu_LT";
+		str MT = "RBtnOCu_MT";
+		str RT = "RBtnOCu_RT";
+		str LC = "RBtnOCu_LC";
+		str MC = "RBtnOCu_MC";
+		str RC = "RBtnOCu_RC";
+		str LB = "RBtnOCu_LB";
+		str MB = "RBtnOCu_MB";
+		str RB = "RBtnOCu_RB";
 	}
 	
 	Node "DefaultRBtnDisable"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefRBtnDis_LT";
-		str MT = "DefRBtnDis_MT";
-		str RT = "DefRBtnDis_RT";
-		str LC = "DefRBtnDis_LC";
-		str MC = "DefRBtnDis_MC";
-		str RC = "DefRBtnDis_RC";
-		str LB = "DefRBtnDis_LB";
-		str MB = "DefRBtnDis_MB";
-		str RB = "DefRBtnDis_RB";
+		str LT = "RBtnDis_LT";
+		str MT = "RBtnDis_MT";
+		str RT = "RBtnDis_RT";
+		str LC = "RBtnDis_LC";
+		str MC = "RBtnDis_MC";
+		str RC = "RBtnDis_RC";
+		str LB = "RBtnDis_LB";
+		str MB = "RBtnDis_MB";
+		str RB = "RBtnDis_RB";
 	}
 	
 	Node "DefaultLBtnDefault"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefLBtnDef_LT";
-		str MT = "DefLBtnDef_MT";
-		str RT = "DefLBtnDef_RT";
-		str LC = "DefLBtnDef_LC";
-		str MC = "DefLBtnDef_MC";
-		str RC = "DefLBtnDef_RC";
-		str LB = "DefLBtnDef_LB";
-		str MB = "DefLBtnDef_MB";
-		str RB = "DefLBtnDef_RB";
+		str LT = "LBtnDef_LT";
+		str MT = "LBtnDef_MT";
+		str RT = "LBtnDef_RT";
+		str LC = "LBtnDef_LC";
+		str MC = "LBtnDef_MC";
+		str RC = "LBtnDef_RC";
+		str LB = "LBtnDef_LB";
+		str MB = "LBtnDef_MB";
+		str RB = "LBtnDef_RB";
 	}
 	
 	Node "DefaultLBtnOnCursor"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefLBtnOCu_LT";
-		str MT = "DefLBtnOCu_MT";
-		str RT = "DefLBtnOCu_RT";
-		str LC = "DefLBtnOCu_LC";
-		str MC = "DefLBtnOCu_MC";
-		str RC = "DefLBtnOCu_RC";
-		str LB = "DefLBtnOCu_LB";
-		str MB = "DefLBtnOCu_MB";
-		str RB = "DefLBtnOCu_RB";
+		str LT = "LBtnOCu_LT";
+		str MT = "LBtnOCu_MT";
+		str RT = "LBtnOCu_RT";
+		str LC = "LBtnOCu_LC";
+		str MC = "LBtnOCu_MC";
+		str RC = "LBtnOCu_RC";
+		str LB = "LBtnOCu_LB";
+		str MB = "LBtnOCu_MB";
+		str RB = "LBtnOCu_RB";
 	}
 	
 	Node "DefaultLBtnDisable"
 	{
 		int Type = 3;
 		str Image = "Default\default_theme.png";
-		str LT = "DefLBtnDis_LT";
-		str MT = "DefLBtnDis_MT";
-		str RT = "DefLBtnDis_RT";
-		str LC = "DefLBtnDis_LC";
-		str MC = "DefLBtnDis_MC";
-		str RC = "DefLBtnDis_RC";
-		str LB = "DefLBtnDis_LB";
-		str MB = "DefLBtnDis_MB";
-		str RB = "DefLBtnDis_RB";
+		str LT = "LBtnDis_LT";
+		str MT = "LBtnDis_MT";
+		str RT = "LBtnDis_RT";
+		str LC = "LBtnDis_LC";
+		str MC = "LBtnDis_MC";
+		str RC = "LBtnDis_RC";
+		str LB = "LBtnDis_LB";
+		str MB = "LBtnDis_MB";
+		str RB = "LBtnDis_RB";
 	}
 	
 	Node "DefaultArrowLeft"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefArrowL";
+		str SN = "ArrowL";
 	}
 	
 	Node "DefaultArrowRight"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefArrowR";
+		str SN = "ArrowR";
 	}
 	
 	Node "DefaultArrowUp"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefArrowU";
+		str SN = "ArrowU";
 	}
 	
 	Node "DefaultArrowDown"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefArrowD";
+		str SN = "ArrowD";
 	}
 	
 	Node "DefaultCancelDefault"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefCancelDef";
+		str SN = "CancelDef";
 	}
 	
 	Node "DefaultCancelOnCursor"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefCancelOCu";
+		str SN = "CancelOCu";
 	}
 	
 	Node "DefaultCancelOnClick"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefCancelOCl";
+		str SN = "CancelOCl";
 	}
 	
 	Node "DefaultCancelDisable"
 	{
 		int Type = 0;
 		str Image = "Default\default_theme.png";
-		str SN = "DefCancelDis";
+		str SN = "CancelDis";
+	}
+	
+	Node "DefaultUncheckDefault"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "UnchkDef";
+	}
+	
+	Node "DefaultUncheckOnCursor"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "UnchkOCu";
+	}
+	
+	Node "DefaultUncheckOnClick"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "UnchkOCl";
+	}
+	
+	Node "DefaultCheckDefault"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "CheckDef";
+	}
+	
+	Node "DefaultCheckOnCursor"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "CheckOCu";
+	}
+	
+	Node "DefaultCheckOnClick"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "CheckOCl";
+	}
+	
+	Node "DefaultCheckDisable"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "CheckDis";
 	}
 }
 
@@ -507,6 +556,8 @@ Node "WindowPreset"
 		str PossitiveButton = "DefaultPBtnDefault" / "DefaultPBtnOnCursor" / "DefaultPBtnOnClick" / "DefaultBtnDisable";
 		str RootButton = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
+		str UncheckButton = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnClick" / "DefaultUncheckDefault";
+		str CheckButton = "DefaultCheckDefault" / "DefaultCheckOnCursor" / "DefaultCheckOnClick" / "DefaultCheckDisable";
 		str CancelIcon =  "DefaultCancelDefault" / "DefaultCancelOnCursor" / "DefaultCancelOnClick" / "DefaultCancelDisable";
 		
 		str FontState = "DHF" / "DSF";

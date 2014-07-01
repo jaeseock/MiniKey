@@ -437,10 +437,10 @@ void MkInputManager::__Update(void)
 					switch (evt.eventType)
 					{
 					case eKeyPress:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyPress : " + MkStr(evt.arg0));
+						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyPress : " + ConvertKeyCodeToString(evt.arg0));
 						break;
 					case eKeyRelease:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyRelease : " + MkStr(evt.arg0));
+						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyRelease : " + ConvertKeyCodeToString(evt.arg0));
 						break;
 					case eMousePress:
 						MK_DEV_PANEL.MsgToLog(L"> input evt eMousePress : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
@@ -546,11 +546,6 @@ bool MkInputManager::_GetCurrentMousePositionInClient(MkInt2& buffer) const
 
 bool MkInputManager::_GetCurrentKeyState(unsigned int keyCode, eButtonState btnState)
 {
-	if ((keyCode >= 0x61) && (keyCode <= 0x7A)) // 영문 소문자 -> 대문자
-	{
-		keyCode -= 0x20;
-	}
-
 	MkScopedCriticalSection(m_SnapShotCS);
 	return m_KeyState.Exist(keyCode) ? m_KeyState[keyCode].GetState(btnState) : false;
 }

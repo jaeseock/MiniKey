@@ -11,6 +11,8 @@
 #include "MkS2D_MkSRect.h"
 
 
+const static MkHashStr TEMPLATE_NAME = MKDEF_S2D_BT_SRECT_TEMPLATE_NAME;
+
 // MkVec2
 const static MkHashStr POSITION_KEY = L"Position";
 
@@ -26,10 +28,9 @@ const static MkHashStr FORCED_FONT_STATE_KEY = L"FontState";
 // MkArray<MkStr>
 const static MkHashStr RESOURCE_KEY = L"Resource";
 
-// map : MkStr 4개
+// map : MkStr 3개
 // - tag(MAP_TAG)
 // - bitmap file path
-// - group
 // - subset name
 const static MkStr MAP_TAG = L"map";
 
@@ -80,16 +81,9 @@ void MkSRect::Load(const MkDataNode& node)
 	{
 		MkStr tag = resBuf[0];
 		tag.ToLower();
-		if ((tag == MAP_TAG) && (resBuf.GetSize() == 4)) // map
+		if ((tag == MAP_TAG) && (resBuf.GetSize() == 3)) // map
 		{
-			MkPathName filePath = resBuf[1];
-			unsigned int group = resBuf[2].ToUnsignedInteger();
-			if (MK_TEXTURE_POOL.LoadBitmapTexture(filePath, group))
-			{
-				MkBaseTexturePtr texture;
-				MK_TEXTURE_POOL.GetBitmapTexture(filePath, texture, group);
-				SetTexture(texture, resBuf[3]);
-			}
+			SetTexture(resBuf[1], resBuf[2]);
 		}
 		else if ((tag == TEXT_O_TAG) && (resBuf.GetSize() == 2)) // original deco text
 		{
@@ -136,7 +130,7 @@ void MkSRect::Load(const MkDataNode& node)
 void MkSRect::Save(MkDataNode& node) // Load의 역
 {
 	node.Clear();
-	node.ApplyTemplate(MKDEF_S2D_BT_SRECT_TEMPLATE_NAME);
+	node.ApplyTemplate(TEMPLATE_NAME);
 
 	node.SetData(POSITION_KEY, MkVec2(m_LocalRect.position.x, m_LocalRect.position.y), 0);
 	node.SetData(SIZE_KEY, MkVec2(m_LocalRect.size.x, m_LocalRect.size.y), 0);
@@ -151,10 +145,9 @@ void MkSRect::Save(MkDataNode& node) // Load의 역
 		{
 			if (m_OriginalDecoStr.Empty()) // map
 			{
-				resBuf.Reserve(4);
+				resBuf.Reserve(3);
 				resBuf.PushBack(MAP_TAG);
 				resBuf.PushBack(m_Texture->GetPoolKey().GetString());
-				resBuf.PushBack(MkStr(m_Texture->GetBitmapGroup()));
 				resBuf.PushBack(m_CurrentSubsetName.GetString());
 			}
 			else // original deco text
@@ -225,7 +218,7 @@ void MkSRect::SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subse
 void MkSRect::SetTexture(const MkPathName& imagePath, const MkHashStr& subsetName)
 {
 	MkBaseTexturePtr texture;
-	MK_TEXTURE_POOL.GetBitmapTexture(imagePath, texture, 0);
+	MK_TEXTURE_POOL.GetBitmapTexture(imagePath, texture);
 	if (texture != NULL)
 	{
 		SetTexture(texture, subsetName);
@@ -305,8 +298,8 @@ void MkSRect::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition align
 		MkFloat2 localPos =	MkFloatRect(anchorSize).GetSnapPosition(m_LocalRect, alignment, border);
 		localPos.y += heightOffset;
 		SetLocalPosition(localPos);
-		SetLocalDepth(m_LocalDepth + depthOffset);
 	}
+	SetLocalDepth(m_LocalDepth + depthOffset);
 }
 
 void MkSRect::Clear(void)
@@ -322,8 +315,8 @@ void MkSRect::Clear(void)
 void MkSRect::__GenerateBuildingTemplate(void)
 {
 	MkDataNode node;
-	MkDataNode* tNode = node.CreateChildNode(MKDEF_S2D_BT_SRECT_TEMPLATE_NAME);
-	MK_CHECK(tNode != NULL, MkStr(MKDEF_S2D_BT_SRECT_TEMPLATE_NAME) + L" template node alloc 실패")
+	MkDataNode* tNode = node.CreateChildNode(TEMPLATE_NAME);
+	MK_CHECK(tNode != NULL, TEMPLATE_NAME.GetString() + L" template node alloc 실패")
 		return;
 
 	tNode->CreateUnit(POSITION_KEY, MkVec2::Zero);

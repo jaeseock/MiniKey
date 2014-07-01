@@ -23,6 +23,24 @@
 // QueryPerformanceFrequency() 기반이므로 tick freq.가 변경되는 하드웨어(모바일 CPU 등)에서는
 // 부정확한 결과를 보일 수 있음
 //
+// 일반적인 사용법
+// ex>
+//	const MkHashStr pkey = L"load";
+//	for (unsigned int i=0; i<15; ++i)
+//	{
+//		MK_PROF_MGR.Begin(pkey);
+//
+//		MkBaseWindowNode* winNode = new MkBaseWindowNode(MkStr(i));
+//		winNode->Load(node);
+//		
+//		MK_PROF_MGR.End(pkey, i == 14);
+//
+//		MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
+//	}
+//	MkStr sbuf;
+//	MK_PROF_MGR.GetEverageTimeStr(pkey, sbuf); // flush 시점의(15회 수행) 평균 수행 시간을 출력
+//	MK_DEV_PANEL.MsgToLog(sbuf);
+//
 // MkFocusProfiler를 통해 포커싱 내의 프로파일링 수행 가능
 // ex>
 //	{

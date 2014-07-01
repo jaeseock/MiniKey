@@ -17,7 +17,8 @@ enum eS2D_SceneNodeType
 {
 	eS2D_SNT_SceneNode = 0, // MkSceneNode
 	eS2D_SNT_BaseWindowNode, // MkBaseWindowNode
-	eS2D_SNT_SpreadButtonNode // MkSpreadButtonNode
+	eS2D_SNT_SpreadButtonNode, // MkSpreadButtonNode
+	eS2D_SNT_CheckButtonNode // MkCheckButtonNode
 };
 
 // window preset component
@@ -48,6 +49,8 @@ enum eS2D_WindowPresetComponent
 	eS2D_WPC_PossitiveButton, // L"PossitiveButton"
 	eS2D_WPC_RootButton, // L"RootButton"
 	eS2D_WPC_ListButton, // L"ListButton"
+	eS2D_WPC_UncheckButton, // L"UncheckButton"
+	eS2D_WPC_CheckButton, // L"CheckButton"
 	eS2D_WPC_CancelIcon, // L"CancelIcon"
 
 	eS2D_WPC_WindowStateTypeEnd,

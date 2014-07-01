@@ -9,6 +9,7 @@
 #include "MkCore_MkInputManager.h"
 #include "MkCore_MkTimeState.h"
 #include "MkCore_MkWin32Application.h"
+#include "MkCore_MkProfilingManager.h"
 
 #include "MkCore_MkDataNode.h"
 
@@ -26,6 +27,7 @@
 #include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkBaseWindowNode.h"
 #include "MkS2D_MkSpreadButtonNode.h"
+#include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkWindowEventManager.h"
 
@@ -41,10 +43,10 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s00.png", 0);
-		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s01.jpg", 0);
-		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s02.jpg", 0);
-		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s03.jpg", 0);
+		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s00.png");
+		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s01.jpg");
+		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s02.jpg");
+		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s03.jpg");
 
 		MkDrawQueue& drawQueue = MK_RENDERER.GetDrawQueue();
 		MkDrawStep* step00 = drawQueue.CreateStep(L"step_00", -1, MkRenderTarget::eTexture, 1, MkUInt2(800, 600), MkRenderToTexture::eRGBA);
@@ -82,8 +84,41 @@ public:
 		//winDesc.SetStandardDesc(L"Default", false);
 		//winDesc.SetStandardDesc(L"Default", false, MkFloat2(150.f, 100.f));
 		//winDesc.SetStandardDesc(L"Default", false, L"Image\\s02.jpg", L"");
-		MkBaseWindowNode* titleWin = m_Node01->CreateBasicWindow(L"WinRoot", winDesc);
-		
+		MkBaseWindowNode* titleWin = MkBaseWindowNode::CreateBasicWindow(L"WinRoot", winDesc);
+		m_Node01->AttachChildNode(titleWin);
+
+		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(L"SB");
+		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(100.f, 20.f), MkSpreadButtonNode::eDownward);
+		MkSpreadButtonNode::ItemTagInfo tagInfo;
+		tagInfo.iconPath = L"Default\\window_mgr.png";
+		tagInfo.iconSubset = L"SampleIcon";
+		lbNode->SetItemTag(tagInfo);
+		lbNode->SetLocalPosition(MkVec3(10.f, 50.f, -0.1f));
+
+		lbNode->AddItem(L"0", tagInfo);
+
+		MkSpreadButtonNode* g1 = lbNode->AddItem(L"1", tagInfo);
+		g1->AddItem(L"1-0", tagInfo);
+		g1->AddItem(L"1-1", tagInfo);
+		g1->AddItem(L"1-2", tagInfo);
+
+		lbNode->AddItem(L"2", tagInfo);
+
+		MkSpreadButtonNode* g3 = lbNode->AddItem(L"3", tagInfo);
+		g3->AddItem(L"3-0", tagInfo);
+		MkSpreadButtonNode* g31 = g3->AddItem(L"3-1", tagInfo);
+		g31->AddItem(L"3-1-0", tagInfo);
+		lbNode->SetTargetItem(L"1-1");
+
+		MkBaseWindowNode* formNode = new MkBaseWindowNode(L"Form");
+		formNode->CreateWindowPreset(L"Default", eS2D_WPC_GuideBox, MkFloat2(130.f, 60.f));
+		formNode->SetLocalPosition(MkFloatRect(0.f, 0.f, 150.f, 80.f).GetSnapPosition(MkFloatRect(formNode->GetPresetFullSize()), eRAP_MiddleCenter, MkFloat2(0.f, 0.f)));
+		formNode->SetLocalDepth(-0.001f);
+
+		MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(titleWin->GetChildNode(L"Background"));
+		bgNode->AttachChildNode(formNode);
+		formNode->AttachChildNode(lbNode);
+
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
 
 		m_Node02 = m_Node01->CreateChildNode(L"02");
@@ -203,7 +238,17 @@ public:
 		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
 		{
 			MkDataNode node;
+			
+			MkHashStr pkey = L"save";
+			MK_PROF_MGR.Begin(pkey);
+
 			m_Node01->GetChildNode(L"WinRoot")->Save(node);
+
+			MK_PROF_MGR.End(pkey, true);
+			MkStr sbuf;
+			MK_PROF_MGR.GetEverageTimeStr(pkey, sbuf);
+			MK_DEV_PANEL.MsgToLog(sbuf);
+
 			node.SaveToText(L"test_scene.txt");
 		}
 
@@ -329,74 +374,50 @@ public:
 			diceY.SetMinMax(200, 700);
 			diceY.SetSeed(5678);
 
-			for (unsigned int i=0; i<15; ++i)
+			const MkHashStr pkey = L"load";
+			for (unsigned int i=0; i<10; ++i)
 			{
+				MK_PROF_MGR.Begin(pkey);
+
 				MkBaseWindowNode* winNode = new MkBaseWindowNode(MkStr(i));
 				winNode->Load(node);
+				
+				MK_PROF_MGR.End(pkey, i == 9);
+
 				winNode->SetLocalPosition(MkFloat2(static_cast<float>(diceX.GenerateRandomNumber()), static_cast<float>(diceY.GenerateRandomNumber())));
 				
-				MkSRect* nameTag = winNode->CreateSRect(L"Name");
-				nameTag->SetDecoString(winNode->GetNodeName().GetString());
-				nameTag->SetLocalPosition(MkFloat2(6.f, 2.f));
-				nameTag->SetLocalDepth(-0.002f);
+				//MkSRect* nameTag = winNode->CreateSRect(L"Name");
+				//nameTag->SetDecoString(winNode->GetNodeName().GetString());
+				//nameTag->SetLocalPosition(MkFloat2(6.f, 2.f));
+				//nameTag->SetLocalDepth(-0.002f);
 
 				//winNode->SetPresetThemeName(L"Default");
 
 				MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
 			}
-		}
 
+			MkStr sbuf;
+			MK_PROF_MGR.GetEverageTimeStr(pkey, sbuf);
+			MK_DEV_PANEL.MsgToLog(sbuf);
+		}
+		/*
 		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
 		winDesc.SetStandardDesc(L"Default", true, MkFloat2(250.f, 200.f));
 		winDesc.hasCancelButton = false;
 		winDesc.hasOKButton = false;
-		MkBaseWindowNode* testWin = m_RootNode->CreateBasicWindow(L"test", winDesc);
-		m_RootNode->DetachChildNode(L"test");
+		MkBaseWindowNode* testWin = MkBaseWindowNode::CreateBasicWindow(L"test", winDesc);
 		testWin->SetLocalPosition(MkFloat2(200.f, 450.f));
 
-		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(L"SB");
-		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(150.f, 20.f), MkSpreadButtonNode::eDownward);
-		MkSpreadButtonNode::ItemTagInfo tagInfo;
-		tagInfo.iconPath = L"Default\\window_mgr.png";
-		tagInfo.iconSubset = L"SampleIcon";
-		tagInfo.captionStr = L"抛胶飘 钦聪寸!!!";
-		lbNode->SetItemTag(tagInfo);
-		lbNode->SetLocalPosition(MkVec3(30.f, 50.f, -0.001f));
-
-		tagInfo.captionStr = L"部贺 0";
-		lbNode->AddItem(L"0", tagInfo, false);
-
-		tagInfo.captionStr = L"部贺 1";
-		MkSpreadButtonNode* g1 = lbNode->AddItem(L"1", tagInfo, false);
-		tagInfo.captionStr = L"部部贺 1-0";
-		g1->AddItem(L"1-0", tagInfo, false);
-		tagInfo.captionStr = L"部部贺 1-1";
-		g1->AddItem(L"1-1", tagInfo, false);
-		tagInfo.captionStr = L"部部贺 1-2";
-		g1->AddItem(L"1-2", tagInfo, false);
-
-		tagInfo.captionStr = L"部贺 2";
-		lbNode->AddItem(L"2", tagInfo, true);
-
-		tagInfo.captionStr = L"部贺 3";
-		MkSpreadButtonNode* g3 = lbNode->AddItem(L"3", tagInfo, false);
-		tagInfo.captionStr = L"部部贺 3-0";
-		g3->AddItem(L"3-0", tagInfo, false);
-		tagInfo.captionStr = L"部部贺 3-1";
-		MkSpreadButtonNode* g31 = g3->AddItem(L"3-1", tagInfo, false);
-		tagInfo.captionStr = L"部部贺 3-1-0";
-		g31->AddItem(L"3-1-0", tagInfo, false);
-
-		MkBaseWindowNode* formNode = new MkBaseWindowNode(L"Form");
-		formNode->CreateWindowPreset(L"Default", eS2D_WPC_GuideBox, MkFloat2(230.f, 160.f));
-		formNode->SetLocalPosition(MkFloatRect(0.f, 0.f, 250.f, 180.f).GetSnapPosition(MkFloatRect(formNode->GetPresetFullSize()), eRAP_MiddleCenter, MkFloat2(0.f, 0.f)));
-		formNode->SetLocalDepth(-0.001f);
-
-		MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(testWin->GetChildNode(L"Background"));
-		bgNode->AttachChildNode(formNode);
-		formNode->AttachChildNode(lbNode);
+		MkCheckButtonNode* cbNode = new MkCheckButtonNode(L"CB");
+		MkSpreadButtonNode::CaptionDesc captionDesc;
+		captionDesc = L"抛胶飘母减";
+		cbNode->CreateCheckButton(L"Default", captionDesc, false);
+		cbNode->SetLocalPosition(MkVec3(50.f, 50.f, -0.001f));
+		testWin->GetChildNode(L"Background")->AttachChildNode(cbNode);
 		
 		MK_WIN_EVENT_MGR.RegisterWindow(testWin, true);
+		*/
+
 		
 		//testWin->SetPresetThemeName(L"SolidLB");
 		//m_WindowNode1->SetPresetComponentBodySize(MkFloat2(100.f, 100.f));

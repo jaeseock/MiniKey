@@ -250,7 +250,6 @@ MkBaseTexture::MkBaseTexture()
 	m_UseMipmap = false;
 	m_HasAlphaChannel = false;
 	m_BlendType = eS2D_MBT_Opaque;
-	m_BitmapGroup = 0;
 }
 
 void MkBaseTexture::_Clear(void)

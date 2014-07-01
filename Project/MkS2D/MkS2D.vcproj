@@ -442,18 +442,14 @@
 			<Filter
 				Name="Node"
 				>
-				<Filter
-					Name="Allocator"
+				<File
+					RelativePath=".\Source\MkS2D_MkSceneNodeFamilyDefinition.cpp"
 					>
-					<File
-						RelativePath=".\Source\MkS2D_MkSceneNodeAllocator.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\Include\MkS2D_MkSceneNodeAllocator.h"
-						>
-					</File>
-				</Filter>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkS2D_MkSceneNodeFamilyDefinition.h"
+					>
+				</File>
 				<Filter
 					Name="0. Scene node"
 					>
@@ -481,6 +477,14 @@
 				<Filter
 					Name="2. Control node"
 					>
+					<File
+						RelativePath=".\Source\MkS2D_MkCheckButtonNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkS2D_MkCheckButtonNode.h"
+						>
+					</File>
 					<File
 						RelativePath=".\Source\MkS2D_MkSpreadButtonNode.cpp"
 						>

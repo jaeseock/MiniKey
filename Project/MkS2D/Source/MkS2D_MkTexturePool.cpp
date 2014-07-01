@@ -13,7 +13,7 @@
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkTexturePool::LoadBitmapTexture(const MkPathName& filePath, unsigned int group)
+bool MkTexturePool::LoadBitmapTexture(const MkPathName& filePath)
 {
 	MkHashStr currKey = filePath;
 
@@ -50,18 +50,17 @@ bool MkTexturePool::LoadBitmapTexture(const MkPathName& filePath, unsigned int g
 	}
 
 	bitmapTex->SetPoolKey(currKey);
-	bitmapTex->SetBitmapGroup(group);
 
 	m_BitmapPool.Create(currKey) = bitmapTex; // ref+
 
-	m_GroupTable.Create(group, currKey);
+	m_GroupTable.Create(bitmapTex->GetBitmapGroup(), currKey);
 
-	MK_DEV_PANEL.MsgToLog(L"> MkTexturePool > bitmap 생성 : " + filePath, true);
+	MK_DEV_PANEL.MsgToLog(L"> MkTexturePool > bitmap 생성(" + MkStr(bitmapTex->GetBitmapGroup()) + L") : " + filePath, true);
 	MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_TEXPOOL, MKDEF_BITMAPS_ON_POOL_MSG_TEXT + MkStr(m_BitmapPool.GetSize()));
 	return true;
 }
 
-void MkTexturePool::GetBitmapTexture(const MkPathName& filePath, MkBaseTexturePtr& texture, unsigned int group)
+void MkTexturePool::GetBitmapTexture(const MkPathName& filePath, MkBaseTexturePtr& texture)
 {
 	MK_CHECK(texture == NULL, L"생성하려는 texture ptr에 이미 값이 들어 있음")
 		return;
@@ -71,7 +70,7 @@ void MkTexturePool::GetBitmapTexture(const MkPathName& filePath, MkBaseTexturePt
 	// 없으면 생성
 	if (!m_BitmapPool.Exist(currKey))
 	{
-		if (!LoadBitmapTexture(filePath, group))
+		if (!LoadBitmapTexture(filePath))
 			return;
 	}
 	

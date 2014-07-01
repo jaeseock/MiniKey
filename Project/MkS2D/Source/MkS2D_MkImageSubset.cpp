@@ -5,6 +5,12 @@
 #include "MkS2D_MkImageSubset.h"
 
 
+const static MkHashStr GROUP_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_GROUP_KEY;
+const static MkHashStr POSITION_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_POSITION_KEY;
+const static MkHashStr SIZE_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_SIZE_KEY;
+const static MkHashStr QUILT_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_QUILT_KEY;
+const static MkHashStr TABLE_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_TABLE_KEY;
+
 //------------------------------------------------------------------------------------------------//
 
 void MkImageSubset::SetUp(const MkUInt2& imageSize, const MkDataNode* node)
@@ -17,19 +23,17 @@ void MkImageSubset::SetUp(const MkUInt2& imageSize, const MkDataNode* node)
 	m_DefaultSubset.uv[MkFloatRect::eRightBottom] = MkFloat2(1.f, 1.f);
 
 	// image subset node
-	if ((node != NULL) && (imageSize.x > 0) && (imageSize.y > 0) && (node->GetChildNodeCount() > 0))
+	if ((node != NULL) && (imageSize.x > 0) && (imageSize.y > 0))
 	{
-		MkArray<MkHashStr> keyList;
-		node->GetChildNodeList(keyList);
+		// group
+		m_Group = 0;
+		node->GetData(GROUP_KEY, m_Group, 0);
 
-		// key
-		const static MkHashStr POSITION_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_POSITION_KEY;
-		const static MkHashStr SIZE_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_SIZE_KEY;
-		const static MkHashStr QUILT_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_QUILT_KEY;
-		const static MkHashStr TABLE_KEY = MKDEF_S2D_IMAGE_SUBSET_FILE_TABLE_KEY;
-
+		// subset
 		MkFloat2 fimg = MkFloat2(static_cast<float>(imageSize.x), static_cast<float>(imageSize.y));
 
+		MkArray<MkHashStr> keyList;
+		node->GetChildNodeList(keyList);
 		MK_INDEXING_LOOP(keyList, i)
 		{
 			const MkHashStr& subsetName = keyList[i];
@@ -152,6 +156,11 @@ MkImageSubset& MkImageSubset::operator = (const MkImageSubset& source)
 	memcpy_s(&m_DefaultSubset, sizeof(Subset), source.__GetDefaultSubsetPtr(), sizeof(Subset));
 
 	return *this;
+}
+
+MkImageSubset::MkImageSubset()
+{
+	m_Group = 0;
 }
 
 void MkImageSubset::_RegisterSubset(const MkHashStr& name, const MkFloat2& fpos, const MkFloat2& fsize, const MkFloat2& fuv)

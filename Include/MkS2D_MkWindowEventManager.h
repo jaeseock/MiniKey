@@ -44,7 +44,7 @@ public:
 	void DeactivateWindow(const MkHashStr& windowName);
 
 	// 윈도우 활성화 여부 토글
-	void ToggleWindow(const MkHashStr& windowName);
+	void ToggleWindow(const MkHashStr& windowName, bool modal = false);
 
 	// 갱신
 	void Update(void);

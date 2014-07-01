@@ -53,7 +53,7 @@ bool GamePageClientStart::SetUp(MkDataNode& sharingNode)
 	textRect->SetLocalDepth(-1.f);
 
 	/*
-	MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\MainTitle_Deco.png", 0);
+	MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\MainTitle_Deco.png");
 
 	MkSRect* decoRect = m_SceneNode->CreateSRect(L"deco");
 	decoRect->SetLocalPosition(MkFloat2(100.f, 0.f));

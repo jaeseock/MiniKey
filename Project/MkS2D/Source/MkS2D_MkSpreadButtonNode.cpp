@@ -6,15 +6,8 @@
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkSpreadButtonNode.h"
+#include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
-
-const static MkHashStr TEMPLATE_NAME = MKDEF_S2D_BT_SPREADBUTTON_TEMPLATE_NAME;
-
-// MkStr
-const static MkHashStr TARGET_UNIQUE_KEY = L"TargetUniqueKey";
-
-
-//------------------------------------------------------------------------------------------------//
 
 const static MkHashStr ITEM_ICON_NAME = L"ItemIcon";
 const static MkHashStr ARROW_PRESET_NAME = L"Arrow";
@@ -39,7 +32,7 @@ MkSpreadButtonNode* MkSpreadButtonNode::GetRootListButton(int& depthFromRoot) co
 			return NULL; // error
 		}
 
-		if (targetNode->GetNodeType() >= eS2D_SNT_SpreadButtonNode)
+		if (targetNode->GetNodeType() == eS2D_SNT_SpreadButtonNode)
 		{
 			MkSpreadButtonNode* lbNode = dynamic_cast<MkSpreadButtonNode*>(targetNode);
 			if ((lbNode != NULL) && lbNode->IsRootSpreadButton())
@@ -69,12 +62,7 @@ bool MkSpreadButtonNode::CreateStaticRootTypeButton(const MkHashStr& themeName, 
 	return ok;
 }
 
-bool MkSpreadButtonNode::CreateListTypeButton(const MkHashStr& themeName, const MkFloat2& windowSize, eOpeningDirection openingDirection)
-{
-	return _CreateTypeButton(themeName, windowSize, eChildListButton, openingDirection);
-}
-
-MkSpreadButtonNode* MkSpreadButtonNode::AddItem(const MkHashStr& uniqueKey, const ItemTagInfo& tagInfo, bool initialItem)
+MkSpreadButtonNode* MkSpreadButtonNode::AddItem(const MkHashStr& uniqueKey, const ItemTagInfo& tagInfo)
 {
 	MkSpreadButtonNode* rootButton = GetRootListButton();
 	if (rootButton != NULL)
@@ -83,26 +71,16 @@ MkSpreadButtonNode* MkSpreadButtonNode::AddItem(const MkHashStr& uniqueKey, cons
 		MK_CHECK(rootButton->__CheckUniqueKey(uniqueKey), GetNodeName().GetString() + L" button node의 하위로 유일하지 않은 " + uniqueKey.GetString() + L"item 추가 시도")
 			return NULL;
 
-		if (initialItem)
-		{
-			rootButton->__SetTargetUniqueKey(uniqueKey);
-
-			if (rootButton->GetSpreadButtonType() == eSeletionRoot)
-			{
-				rootButton->SetItemTag(tagInfo);
-			}
-		}
-
 		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(uniqueKey);
 		if (lbNode != NULL)
 		{
 			const MkFloat2& btnSize = rootButton->GetPresetFullSize();
-			if (lbNode->CreateListTypeButton(rootButton->GetPresetThemeName(), btnSize, eRightside))
+			if (lbNode->__CreateListTypeButton(rootButton->GetPresetThemeName(), btnSize, eRightside))
 			{
 				lbNode->SetItemTag(tagInfo);
 				lbNode->SetVisible(false);
 				lbNode->SetAttribute(eIgnoreMovement, true);
-				lbNode->SetLocalDepth(MKDEF_BASE_WINDOW_DEPTH_GRID * 0.01f); // 부모 버튼보다 아주 살짝 깊게 함. 부모와 자식이 겹쳐 있으면 선택이 힘듬
+				lbNode->SetLocalDepth(MKDEF_LIST_BUTTON_DEPTH_GRID); // 부모 버튼보다 아주 살짝 깊게 함. 부모와 자식이 겹쳐 있으면 선택이 힘듬
 				AttachChildNode(lbNode);
 
 				m_ItemSequence.PushBack(uniqueKey);
@@ -118,7 +96,7 @@ MkSpreadButtonNode* MkSpreadButtonNode::AddItem(const MkHashStr& uniqueKey, cons
 					}
 					if (component != eS2D_WPC_None)
 					{
-						MkBaseWindowNode* arrowNode = __CreateWindowPreset(ARROW_PRESET_NAME, rootButton->GetPresetThemeName(), component, MkFloat2(0.f, 0.f));
+						MkBaseWindowNode* arrowNode = __CreateWindowPreset(this, ARROW_PRESET_NAME, rootButton->GetPresetThemeName(), component, MkFloat2(0.f, 0.f));
 						MkFloat2 localPos = MkFloatRect(lbNode->GetPresetFullSize()).GetSnapPosition
 							(MkFloatRect(arrowNode->GetPresetFullSize()), eRAP_RightCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f));
 						arrowNode->SetLocalPosition(localPos);
@@ -160,6 +138,67 @@ MkSpreadButtonNode* MkSpreadButtonNode::GetItem(const MkHashStr& uniqueKey)
 	return NULL;
 }
 
+bool MkSpreadButtonNode::SetTargetItem(const MkHashStr& uniqueKey)
+{
+	bool ok = IsRootSpreadButton();
+	if (ok)
+	{
+		if (uniqueKey != m_TargetUniqueKey)
+		{
+			m_TargetUniqueKey = uniqueKey;
+
+			if (m_ButtonType == eSeletionRoot)
+			{
+				MkSpreadButtonNode* button = GetItem(uniqueKey);
+				MK_CHECK(button != NULL, GetNodeName().GetString() + L" selection root button의 타겟으로 존재하지 않는 " + uniqueKey.GetString() + L" 버튼이 지정 되었음")
+					return false;
+
+				SetItemTag(button->GetItemTagInfo());
+			}
+		}
+	}
+	return ok;
+}
+
+bool MkSpreadButtonNode::SetTargetItem(const MkSpreadButtonNode* targetNode)
+{
+	bool ok = (IsRootSpreadButton() && (targetNode != NULL));
+	if (ok)
+	{
+		const MkHashStr& uniqueKey = targetNode->GetNodeName();
+
+		MK_CHECK(this == targetNode->GetRootListButton(), GetNodeName().GetString() + L" root button의 타겟으로 하위가 아닌 " + uniqueKey.GetString() + L" 버튼이 지정 되었음")
+			return false;
+		
+		if (uniqueKey != m_TargetUniqueKey)
+		{
+			m_TargetUniqueKey = uniqueKey;
+
+			if (m_ButtonType == eSeletionRoot)
+			{
+				SetItemTag(targetNode->GetItemTagInfo());
+			}
+		}
+	}
+	return ok;
+}
+
+bool MkSpreadButtonNode::ClearTargetItem(void)
+{
+	bool ok = IsRootSpreadButton();
+	if (ok)
+	{
+		m_TargetUniqueKey.Clear();
+
+		if (m_ButtonType == eSeletionRoot)
+		{
+			ItemTagInfo nullTag;
+			SetItemTag(nullTag);
+		}
+	}
+	return ok;
+}
+
 bool MkSpreadButtonNode::RemoveItem(const MkHashStr& uniqueKey)
 {
 	if (!m_ItemSequence.Empty())
@@ -173,15 +212,9 @@ bool MkSpreadButtonNode::RemoveItem(const MkHashStr& uniqueKey)
 				m_ItemSequence.EraseFirstInclusion(MkArraySection(0), uniqueKey);
 
 				MkSpreadButtonNode* rootButton = GetRootListButton();
-				if ((rootButton != NULL) && (rootButton->GetTargetUniqueKey() == uniqueKey))
+				if ((rootButton != NULL) && (rootButton->GetTargetItemKey() == uniqueKey))
 				{
-					rootButton->__SetTargetUniqueKey(MkHashStr::NullHash);
-
-					if (rootButton->GetSpreadButtonType() == eSeletionRoot)
-					{
-						ItemTagInfo nullTag;
-						rootButton->SetItemTag(nullTag);
-					}
+					rootButton->ClearTargetItem();
 				}
 			}
 			return true;
@@ -222,19 +255,8 @@ bool MkSpreadButtonNode::SetItemTag(const ItemTagInfo& tagInfo)
 		captionBorderX += MARGIN;
 	}
 
-	bool captionOK;
-	if (!m_ItemTagInfo.captionStr.Empty()) // captionStr 우선
-	{
-		captionOK = SetPresetComponentCaption(m_PresetThemeName, m_ItemTagInfo.captionStr, eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f));
-	}
-	else if (!m_ItemTagInfo.captionList.Empty()) // captionStr가 비었으면 captionList
-	{
-		captionOK = SetPresetComponentCaption(m_PresetThemeName, m_ItemTagInfo.captionList, eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f));
-	}
-	else // 둘 다 비었으니 삭제
-	{
-		captionOK = SetPresetComponentCaption(m_PresetThemeName, MkHashStr::NullHash, eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f));
-	}
+	m_ItemTagInfo.captionDesc.__Check(GetNodeName().GetString());
+	bool captionOK = SetPresetComponentCaption(m_PresetThemeName, m_ItemTagInfo.captionDesc, eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f));
 	return (iconOK && captionOK);
 }
 
@@ -242,9 +264,25 @@ void MkSpreadButtonNode::OpenAllItems(void)
 {
 	if ((!m_ItemSequence.Empty()) && (!m_ItemsAreOpened) && GetVisible()) // 닫혀있다면 hide 상태
 	{
+		bool btnPushing[3] = { false, false, false };
+
 		MK_INDEXING_LOOP(m_ItemSequence, i)
 		{
-			GetChildNode(m_ItemSequence[i])->SetVisible(true);
+			MkSceneNode* targetNode = GetChildNode(m_ItemSequence[i]);
+			if (targetNode != NULL)
+			{
+				targetNode->SetVisible(true);
+
+				// 하위 버튼의 상태가 default가 아닐 수 있으므로 가상으로 자식들에게 InputEventMouseMove()를 주어 default로 초기화
+				if (targetNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+				{
+					MkBaseWindowNode* windowNode = dynamic_cast<MkBaseWindowNode*>(targetNode);
+					if (windowNode != NULL)
+					{
+						windowNode->InputEventMouseMove(false, btnPushing, MkFloat2(0.f, 0.f), false);
+					}
+				}
+			}
 		}
 		m_ItemsAreOpened = true;
 
@@ -253,79 +291,138 @@ void MkSpreadButtonNode::OpenAllItems(void)
 		{
 			MK_WIN_EVENT_MGR.__SpreadButtonOpened(depthFromRoot, this);
 		}
+
+		// hide된 버튼들은 상위 버튼과 동일 위치에 모여 있으므로 show시 다시 배치해 주어야 Update()시 반영 됨
+		__UpdateItemRegion();
 	}
 }
 
 bool MkSpreadButtonNode::CloseAllItems(void)
 {
-	if (!m_ItemSequence.Empty())
+	bool ok = (m_ItemsAreOpened && (!m_ItemSequence.Empty()));
+	if (ok)
 	{
 		MK_INDEXING_LOOP(m_ItemSequence, i) // 리프부터 닫음
 		{
-			MkSpreadButtonNode* node = dynamic_cast<MkSpreadButtonNode*>(GetChildNode(m_ItemSequence[i]));
-			if (node != NULL)
+			MkSpreadButtonNode* targetNode = dynamic_cast<MkSpreadButtonNode*>(GetChildNode(m_ItemSequence[i]));
+			if (targetNode != NULL)
 			{
-				if (node->CloseAllItems()) // 루트부터 리프까지 하나의 라인만 열려 있으므로 탈출
+				if (targetNode->CloseAllItems()) // 루트부터 리프까지 하나의 라인만 열려 있으므로 탈출
 					break;
 			}
 		}
 
-		if (m_ItemsAreOpened)
+		MK_INDEXING_LOOP(m_ItemSequence, i)
 		{
-			MK_INDEXING_LOOP(m_ItemSequence, i)
+			MkSceneNode* targetNode = GetChildNode(m_ItemSequence[i]);
+			if (targetNode != NULL)
 			{
-				GetChildNode(m_ItemSequence[i])->SetVisible(false);
+				targetNode->SetVisible(false);
+				targetNode->SetLocalPosition(MkFloat2(0.f, 0.f)); // item들을 부모 버튼과 겹침
 			}
-			m_ItemsAreOpened = false;
+		}
+		m_ItemsAreOpened = false;
 
-			int depthFromRoot;
-			if (GetRootListButton(depthFromRoot) != NULL)
+		int depthFromRoot;
+		if (GetRootListButton(depthFromRoot) != NULL)
+		{
+			MK_WIN_EVENT_MGR.__SpreadButtonClosed(depthFromRoot);
+		}
+
+		// 루트 버튼이면 managed root의 영역 재계산
+		// 전개된 버튼이 차지한 world AABR때문에 클릭으로 인한 포커스 판별이 잘못 될 수 있으므로 전개된 버튼을 접은 후 영역을 재 계산해 주어야 함
+		if (depthFromRoot == 0)
+		{
+			MkBaseWindowNode* managedRoot = GetManagedRoot();
+			if (managedRoot != NULL)
 			{
-				MK_WIN_EVENT_MGR.__SpreadButtonClosed(depthFromRoot);
+				managedRoot->Update();
 			}
-
-			// item들을 루트로 겹침
-			_FlushItemRegion();
-
-			// 루트 버튼이면 managed root의 영역 재계산
-			// 전개된 버튼이 차지한 world AABR때문에 클릭으로 인한 포커스 판별이 잘못 될 수 있으므로 전개된 버튼을 접은 후 영역을 재 계산해 주어야 함
-			if (depthFromRoot == 0)
-			{
-				MkBaseWindowNode* managedRoot = GetManagedRoot();
-				if (managedRoot != NULL)
-				{
-					managedRoot->Update();
-				}
-			}
-
-			return true;
 		}
 	}
-	return false;
+	return ok;
 }
 
 void MkSpreadButtonNode::Load(const MkDataNode& node)
 {
-	MkStr targetUniqueKey;
-	node.GetData(TARGET_UNIQUE_KEY, targetUniqueKey, 0);
-	m_TargetUniqueKey = targetUniqueKey;
+	unsigned int btnType = 0;
+	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::ButtonTypeKey, btnType, 0);
+	m_ButtonType = static_cast<eSpreadButtonType>(btnType);
+
+	unsigned int openingDir = 0;
+	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::OpeningDirKey, openingDir, 0);
+	m_OpeningDirection = static_cast<eOpeningDirection>(openingDir);
+
+	MkStr iconPath;
+	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::IconPathKey, iconPath, 0);
+	m_ItemTagInfo.iconPath = iconPath;
+
+	MkStr iconSubset;
+	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::IconSubsetKey, iconSubset, 0);
+	m_ItemTagInfo.iconSubset = iconSubset;
+
+	MkArray<MkStr> captions;
+	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::CaptionKey, captions);
+	m_ItemTagInfo.captionDesc.__Load(GetNodeName().GetString(), captions);
+
+	MkArray<MkStr> itemSeq;
+	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::ItemSeqKey, itemSeq);
+	if ((!itemSeq.Empty()) && (!itemSeq[0].Empty()))
+	{
+		m_ItemSequence.Reserve(itemSeq.GetSize());
+		MK_INDEXING_LOOP(itemSeq, i)
+		{
+			m_ItemSequence.PushBack(itemSeq[i]);
+		}
+	}
+
+	MkStr targetButton;
+	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::TargetButtonKey, targetButton, 0);
+	m_TargetUniqueKey = targetButton;
 
 	// MkBaseWindowNode
 	MkBaseWindowNode::Load(node);
+
+	// selection root면 item tag info 지정
+	if ((m_ButtonType == eSeletionRoot) && (!m_TargetUniqueKey.Empty()))
+	{
+		MkSpreadButtonNode* button = GetItem(m_TargetUniqueKey);
+		MK_CHECK(button != NULL, GetNodeName().GetString() + L" selection root button의 타겟으로 존재하지 않는 " + m_TargetUniqueKey.GetString() + L" 버튼이 지정 되었음")
+			return;
+
+		SetItemTag(button->GetItemTagInfo());
+	}
 }
 
 void MkSpreadButtonNode::Save(MkDataNode& node)
 {
 	// 저장 전 모든 전개를 닫음
-	if (IsRootSpreadButton())
-	{
-		CloseAllItems();
-	}
+	CloseAllItems();
 
 	// 기존 템플릿이 없으면 템플릿 적용
-	_ApplyBuildingTemplateToSave(node, TEMPLATE_NAME);
+	_ApplyBuildingTemplateToSave(node, MkSceneNodeFamilyDefinition::SpreadButton::TemplateName);
 
-	node.SetData(TARGET_UNIQUE_KEY, m_TargetUniqueKey.GetString(), 0);
+	node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::ButtonTypeKey, static_cast<unsigned int>(m_ButtonType), 0);
+	node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::OpeningDirKey, static_cast<unsigned int>(m_OpeningDirection), 0);
+	node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::IconPathKey, m_ItemTagInfo.iconPath, 0);
+	node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::IconSubsetKey, m_ItemTagInfo.iconSubset.GetString(), 0);
+	
+	MkArray<MkStr> captions;
+	m_ItemTagInfo.captionDesc.__Save(captions);
+	node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::CaptionKey, captions);
+
+	MkArray<MkStr> itemSeq;
+	if (!m_ItemSequence.Empty())
+	{
+		itemSeq.Reserve(m_ItemSequence.GetSize());
+		MK_INDEXING_LOOP(m_ItemSequence, i)
+		{
+			itemSeq.PushBack(m_ItemSequence[i]);
+		}
+		node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::ItemSeqKey, itemSeq);
+	}
+
+	node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::TargetButtonKey, m_TargetUniqueKey.GetString(), 0);
 
 	// MkBaseWindowNode
 	MkBaseWindowNode::Save(node);
@@ -340,16 +437,7 @@ bool MkSpreadButtonNode::InputEventMousePress(unsigned int button, const MkFloat
 			MkSpreadButtonNode* rootButton = GetRootListButton();
 			if (rootButton != NULL)
 			{
-				if (rootButton->GetTargetUniqueKey() != GetNodeName())
-				{
-					rootButton->__SetTargetUniqueKey(GetNodeName());
-
-					if (rootButton->GetSpreadButtonType() == eSeletionRoot)
-					{
-						rootButton->SetItemTag(GetItemTagInfo());
-					}
-				}
-
+				rootButton->SetTargetItem(this);
 				rootButton->CloseAllItems();
 			}
 		}
@@ -382,15 +470,26 @@ MkSpreadButtonNode::MkSpreadButtonNode(const MkHashStr& name) : MkBaseWindowNode
 void MkSpreadButtonNode::__GenerateBuildingTemplate(void)
 {
 	MkDataNode node;
-	MkDataNode* tNode = node.CreateChildNode(TEMPLATE_NAME);
-	MK_CHECK(tNode != NULL, TEMPLATE_NAME.GetString() + L" template node alloc 실패")
+	MkDataNode* tNode = node.CreateChildNode(MkSceneNodeFamilyDefinition::SpreadButton::TemplateName);
+	MK_CHECK(tNode != NULL, MkSceneNodeFamilyDefinition::SpreadButton::TemplateName.GetString() + L" template node alloc 실패")
 		return;
 
-	tNode->ApplyTemplate(MKDEF_S2D_BT_BASEWINNODE_TEMPLATE_NAME); // MkBaseWindowNode의 template 적용
+	tNode->ApplyTemplate(MkSceneNodeFamilyDefinition::BaseWindow::TemplateName); // MkBaseWindowNode의 template 적용
 
-	tNode->CreateUnit(TARGET_UNIQUE_KEY, MkStr::Null);
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::ButtonTypeKey, static_cast<unsigned int>(0));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::OpeningDirKey, static_cast<unsigned int>(0));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::IconPathKey, MkStr::Null);
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::IconSubsetKey, MkStr::Null);
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::CaptionKey, MkStr::Null);
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::ItemSeqKey, MkStr::Null);
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::TargetButtonKey, MkStr::Null);
 
 	tNode->DeclareToTemplate(true);
+}
+
+bool MkSpreadButtonNode::__CreateListTypeButton(const MkHashStr& themeName, const MkFloat2& windowSize, eOpeningDirection openingDirection)
+{
+	return _CreateTypeButton(themeName, windowSize, eChildListButton, openingDirection);
 }
 
 bool MkSpreadButtonNode::__CheckUniqueKey(const MkHashStr& uniqueKey)
@@ -488,14 +587,6 @@ bool MkSpreadButtonNode::_CreateTypeButton(const MkHashStr& themeName, const MkF
 		m_OpeningDirection = openingDirection;
 	}
 	return ok;
-}
-
-void MkSpreadButtonNode::_FlushItemRegion(void)
-{
-	MK_INDEXING_LOOP(m_ItemSequence, i)
-	{
-		GetChildNode(m_ItemSequence[i])->SetLocalPosition(MkFloat2(0.f, 0.f));
-	}
 }
 
 //------------------------------------------------------------------------------------------------//

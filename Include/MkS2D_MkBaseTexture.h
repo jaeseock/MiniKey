@@ -88,8 +88,7 @@ public:
 	inline void GetSubsetInfo(const MkHashStr& name, MkFloat2& localSize, MkFloat2 (&uv)[MkFloatRect::eMaxPointName]) const { m_Subset.GetSubsetInfo(name, localSize, uv); }
 
 	// bitmap group
-	inline void SetBitmapGroup(unsigned int group) { m_BitmapGroup = group; }
-	inline unsigned int GetBitmapGroup(void) const { return m_BitmapGroup; }
+	inline unsigned int GetBitmapGroup(void) const { return m_Subset.GetGroup(); }
 
 	MkBaseTexture();
 	virtual ~MkBaseTexture() { _Clear(); }
@@ -132,9 +131,6 @@ protected:
 
 	// subset
 	MkImageSubset m_Subset;
-	
-	// bitmap group
-	unsigned int m_BitmapGroup;
 };
 
 typedef MkSharedPointer<MkBaseTexture> MkBaseTexturePtr;

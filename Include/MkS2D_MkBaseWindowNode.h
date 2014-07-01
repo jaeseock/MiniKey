@@ -29,6 +29,9 @@ public:
 		eDragToHandling // 커서 드래그로 핸들링 허용. eDragMovement보다 우선순위 높음
 	};
 
+	//------------------------------------------------------------------------------------------------//
+
+	// 기본 윈도우 생성 정보 정의
 	class BasicPresetWindowDesc
 	{
 	public:
@@ -55,6 +58,7 @@ public:
 		MkPathName iconImageFilePath; // title 아이콘의 image file 경로
 		MkHashStr iconImageSubsetName; // title 아이콘의 subset name
 		float iconImageHeightOffset; // title 아이콘 정렬 후 추가 y축 위치 offset. 아이콘 크기가 작으면 문제될게 없지만 타이틀보다 클 수 있기 때문
+		MkStr titleCaption;
 		bool hasCancelIcon; // cancel icon 존재여부
 
 		// background
@@ -72,6 +76,38 @@ public:
 		BasicPresetWindowDesc();
 		~BasicPresetWindowDesc() {}
 	};
+
+	//------------------------------------------------------------------------------------------------//
+
+	// caption 표시 정보 정의
+	// msg(MkStr) 혹은 deco text에 정의된 nodeNameAndKey 둘 중 하나를 표시
+	class CaptionDesc
+	{
+	public:
+		void SetString(const MkStr& msg); // SetNameList()와 배타적
+		void SetNameList(const MkArray<MkHashStr>& nameList); // SetString()과 배타적
+
+		inline CaptionDesc& operator = (const MkStr& msg) { SetString(msg); return *this; }
+		inline CaptionDesc& operator = (const MkArray<MkHashStr>& nameList) { SetNameList(nameList); return *this; }
+
+		void __Load(const MkStr& defaultMsg, const MkArray<MkStr>& buffer);
+		void __Save(MkArray<MkStr>& buffer) const;
+		void __Check(const MkStr& defaultMsg);
+
+		inline const MkStr& GetString(void) const { return m_Str; }
+		inline const MkArray<MkHashStr>& GetNameList(void) const { return m_NameList; }
+
+		CaptionDesc() {}
+		CaptionDesc(const MkStr& msg) { SetString(msg); }
+		CaptionDesc(const MkArray<MkHashStr>& nameList) { SetNameList(nameList); }
+		~CaptionDesc() {}
+
+	protected:
+		MkStr m_Str;
+		MkArray<MkHashStr> m_NameList;
+	};
+
+	//------------------------------------------------------------------------------------------------//
 
 public:
 
@@ -110,7 +146,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// BasicPresetWindowDesc을 사용해 기본 윈도우 생성
-	MkBaseWindowNode* CreateBasicWindow(const MkHashStr& nodeName, const BasicPresetWindowDesc& desc);
+	static MkBaseWindowNode* CreateBasicWindow(const MkHashStr& nodeName, const BasicPresetWindowDesc& desc);
 
 	// 해당 윈도우 노드에 window preset이 적용된 component 노드 적용
 	// 이미 component가 적용되어 있으면 false 반환
@@ -132,20 +168,17 @@ public:
 	// 해당 윈도우 노드가 CreateFreeImageBaseBackgroundWindow()으로 생성된 윈도우일 경우 이미지 변경
 	bool SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
 
-	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 icon(SRect) 설정
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 일반 icon(SRect) 설정
 	// (NOTE) 각각의 설정 사항에 대해서는 MkSRect의 항목 참조
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkPathName& imagePath, const MkHashStr& subsetName);
-	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedState, const MkStr& decoStr);
-	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedState, const MkArray<MkHashStr>& nodeNameAndKey);
+	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedState, const CaptionDesc& captionDesc);
 
 	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 highlight/normal icon(SRect) 설정
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkPathName& imagePath, const MkHashStr& subsetName);
-	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkStr& decoStr);
-	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkArray<MkHashStr>& nodeNameAndKey);
+	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const CaptionDesc& captionDesc);
 
-	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 caption 설정, caption이 비었으면 삭제
-	bool SetPresetComponentCaption(const MkHashStr& themeName, const MkStr& caption, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
-	bool SetPresetComponentCaption(const MkHashStr& themeName, const MkArray<MkHashStr>& caption, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
+	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 highlight/normal caption 설정, captionDesc가 비었으면 삭제
+	bool SetPresetComponentCaption(const MkHashStr& themeName, const CaptionDesc& captionDesc, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
 
 	// 정보 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
@@ -195,9 +228,10 @@ public:
 
 	static void __GenerateBuildingTemplate(void);
 
-	inline void __SetFullSize(const MkFloat2& size) { m_PresetFullSize = size; }
+	static MkBaseWindowNode* __CreateWindowPreset
+		(MkSceneNode* parentNode, const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
 
-	MkBaseWindowNode* __CreateWindowPreset(const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
+	inline void __SetFullSize(const MkFloat2& size) { m_PresetFullSize = size; }
 
 	MkBaseWindowNode* __GetFrontHitWindow(const MkFloat2& position);
 	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows); // all hits
@@ -206,8 +240,6 @@ protected:
 
 	bool _CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
-
-	void _DeletePresetCaption(void);
 
 protected:
 

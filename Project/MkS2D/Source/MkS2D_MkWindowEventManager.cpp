@@ -9,6 +9,7 @@
 #include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkSpreadButtonNode.h"
+#include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkWindowEventManager.h"
 
 
@@ -20,6 +21,7 @@ const static MkHashStr SCENE_RECT_NAME = L"Scene";
 const static MkHashStr DARKEN_RECT_NAME = L"Darken";
 const static MkHashStr REGION_RECT_NAME = L"Region";
 const static MkHashStr DEBUG_RECT_NAME = L"Debug";
+const static MkHashStr SETTING_WINDOW_NAME = L"Setting";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -84,6 +86,29 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 			sceneLayer->SetTexture(sceneTexture);
 		}
 	}
+
+	// 설정 윈도우 생성
+	if (!m_WindowTable.Exist(SETTING_WINDOW_NAME))
+	{
+		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
+		winDesc.SetStandardDesc(MK_WR_PRESET.GetDefaultThemeName(), true, MkFloat2(300, 400.f));
+		winDesc.titleCaption = L"에디트 모드 세팅창 (F2 key 토글)";
+		winDesc.hasIcon = false;
+		winDesc.hasCancelIcon = false;
+		winDesc.hasCancelButton = false;
+		winDesc.hasOKButton = false;
+		MkBaseWindowNode* settingWindow = MkBaseWindowNode::CreateBasicWindow(SETTING_WINDOW_NAME, winDesc);
+
+		MkCheckButtonNode* cbNode = new MkCheckButtonNode(L"CB");
+		MkSpreadButtonNode::CaptionDesc captionDesc;
+		captionDesc = L"테스트캡숑";
+		cbNode->CreateCheckButton(L"Default", captionDesc, false);
+		cbNode->SetLocalPosition(MkFloat2(50.f, 50.f));
+		cbNode->SetLocalDepth(-0.001f);
+		settingWindow->GetChildNode(L"Background")->AttachChildNode(cbNode);
+		
+		RegisterWindow(settingWindow, false);
+	}
 }
 
 bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool activate)
@@ -106,13 +131,13 @@ bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool act
 
 	m_WindowTable.Create(name, windowNode);
 
-	// 포커스 전환
 	_LastWindowLostFocus();
 	_SetFocusToWindowNode(windowNode);
+	m_OnActivatingWindows.PushBack(name);
 
-	if (activate)
+	if (!activate)
 	{
-		m_OnActivatingWindows.PushBack(name);
+		DeactivateWindow(name);
 	}
 
 	return true;
@@ -159,7 +184,7 @@ void MkWindowEventManager::DeactivateWindow(const MkHashStr& windowName)
 	}
 }
 
-void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName)
+void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName, bool modal)
 {
 	if (m_WindowTable.Exist(windowName))
 	{
@@ -169,7 +194,7 @@ void MkWindowEventManager::ToggleWindow(const MkHashStr& windowName)
 		}
 		else
 		{
-			ActivateWindow(windowName);
+			ActivateWindow(windowName, modal);
 		}
 	}
 }
@@ -188,6 +213,21 @@ void MkWindowEventManager::Update(void)
 			m_EditMode = !m_EditMode;
 
 			MK_DEV_PANEL.MsgToLog((m_EditMode) ? L"> Toggle to Edit mode" : L"> Toggle to Normal mode");
+		}
+	}
+
+	if (m_EditMode && MK_INPUT_MGR.GetKeyReleased(VK_F2) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
+	{
+		if (MKDEF_ARRAY_EXIST(m_OnActivatingWindows, SETTING_WINDOW_NAME))
+		{
+			DeactivateWindow(SETTING_WINDOW_NAME);
+		}
+		else
+		{
+			ActivateWindow(SETTING_WINDOW_NAME, true);
+
+			// 중앙 정렬
+			m_WindowTable[SETTING_WINDOW_NAME]->AlignPosition(m_DrawStep->GetRegionRect(), eRAP_MiddleCenter, MkInt2(0, 0));
 		}
 	}
 
@@ -269,7 +309,7 @@ void MkWindowEventManager::Update(void)
 			if (currentButtonPressed[0] || currentButtonPressed[1] || currentButtonPressed[2])
 			{
 				bool hit = false;
-				if (m_OpeningSpreadButtons[0]->GetWindowRect().CheckIntersection(currentCursorPosition))
+				if (m_OpeningSpreadButtons[0]->GetWindowRect().CheckGridIntersection(currentCursorPosition))
 				{
 					hit = true;
 				}
@@ -277,7 +317,7 @@ void MkWindowEventManager::Update(void)
 				{
 					MK_INDEXING_LOOP(m_OpeningSpreadButtons, i)
 					{
-						if (m_OpeningSpreadButtons[i]->GetItemWorldAABR().CheckIntersection(currentCursorPosition))
+						if (m_OpeningSpreadButtons[i]->GetItemWorldAABR().CheckGridIntersection(currentCursorPosition))
 						{
 							hit = true;
 							break;

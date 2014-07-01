@@ -11,7 +11,7 @@
 //		vec2 Position = (100.000, 200.000);
 //		bool Reflection = // [2]
 //			Yes / No;
-//		//str Resource = "map" / "Image\s03.jpg" / "0" / ""; // 이미지 출력
+//		//str Resource = "map" / "Image\s03.jpg" / ""; // 이미지 출력
 //		str Resource = "odt" / "<%T:굴림12%><%S:샘플02%>샘플 메세지다요"; // original deco text 출력
 //		//str Resource = "sdt" / "SampleCategory" / "ErrorMsg" / "SampleMsg"; // scene deco text 출력
 //		bool Visible = Yes;

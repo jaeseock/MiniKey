@@ -7,6 +7,10 @@
 //
 // MkDataNode로 초기화
 // ex>
+//
+//	// bitmap group
+//	uint Group = 1; // 없으면 기본 0
+//
 //	// 일반 정의
 //	Node "Face"
 //	{
@@ -53,11 +57,13 @@ public:
 
 	void GetSubsetInfo(const MkHashStr& name, MkFloat2& localSize, MkFloat2 (&uv)[MkFloatRect::eMaxPointName]) const;
 
+	inline unsigned int GetGroup(void) const { return m_Group; }
+
 	void Clear(void);
 
 	MkImageSubset& operator = (const MkImageSubset& source);
 
-	MkImageSubset() {}
+	MkImageSubset();
 	virtual ~MkImageSubset() { Clear(); }
 
 public:
@@ -77,6 +83,8 @@ protected:
 	void _RegisterSubset(const MkHashStr& name, const MkFloat2& fpos, const MkFloat2& fsize, const MkFloat2& fuv);
 
 protected:
+
+	unsigned int m_Group;
 
 	MkHashMap<MkHashStr, Subset> m_Subsets;
 	Subset m_DefaultSubset;

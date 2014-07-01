@@ -79,7 +79,7 @@ public:
 	// 이전 프레임부터 현재 프레임 갱신시까지 발생한 이벤트 리스트 반환
 	unsigned int GetInputEvent(MkArray<InputEvent>& eventList);
 
-	// 현재 프레임의 해당 키 상태 반환
+	// 현재 프레임의 해당 키 상태 반환. 영문(A~Z)은 대문자만 인식
 	bool GetKeyPushing(unsigned int keyCode);
 	bool GetKeyPressed(unsigned int keyCode);
 	bool GetKeyReleased(unsigned int keyCode);

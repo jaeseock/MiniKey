@@ -91,6 +91,9 @@ public:
 	bool DeleteSRect(const MkHashStr& name);
 	void DeleteAllSRects(void);
 
+	// 기존 설정된 deco string이 있다면 재로딩
+	void RestoreDecoString(void);
+
 	//------------------------------------------------------------------------------------------------//
 	// 정렬
 	// (NOTE) 호출 전 Update()가 실행 된 상태여야 하며 호출 후 다시 Update()를 실행 할 필요 없음
