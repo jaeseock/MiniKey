@@ -10,6 +10,7 @@
 #include "MkCore_MkPathName.h"
 
 #include "MkS2D_MkSceneNode.h"
+#include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
 
 class MkBaseWindowNode : public MkSceneNode
@@ -109,13 +110,29 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 
+	typedef struct _WindowEvent
+	{
+		MkSceneNodeFamilyDefinition::eWindowEvent type;
+		MkBaseWindowNode* node;
+
+		_WindowEvent() {}
+		_WindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent targetType, MkBaseWindowNode* targetNode)
+		{
+			type = targetType;
+			node = targetNode;
+		}
+	}
+	WindowEvent;
+
+	//------------------------------------------------------------------------------------------------//
+
 public:
 
 	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_BaseWindowNode; }
 
 	MkBaseWindowNode* GetAncestorWindowNode(void) const;
 
-	// MkWindowEventManager에 등록된 ancestor window 환
+	// MkWindowEventManager에 등록된 ancestor window 반환
 	MkBaseWindowNode* GetManagedRoot(void) const;
 
 	//------------------------------------------------------------------------------------------------//
@@ -146,7 +163,18 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// BasicPresetWindowDesc을 사용해 기본 윈도우 생성
-	static MkBaseWindowNode* CreateBasicWindow(const MkHashStr& nodeName, const BasicPresetWindowDesc& desc);
+	// targetWindow가 NULL이면 새로 생성해 반환하고 존재하면 해당 윈도우에 생성(반환되는 윈도우와 동일)
+	//
+	// ex>
+	//	MkBaseWindowNode* titleWin = MkBaseWindowNode::CreateBasicWindow(NULL, L"WinRoot", winDesc);
+	// 위의 코드는 아래 코드와 같다
+	//	MkBaseWindowNode* titleWin = new MkBaseWindowNode(L"WinRoot");
+	//	MkBaseWindowNode* tmpWin = MkBaseWindowNode::CreateBasicWindow(titleWin, MkHashStr::NullHash, winDesc); // titleWin과 tmpWin은 동일
+	//
+	// 대신 이 방식은 확장 윈도우 객체를 생성 후 사용할 수 있다. 즉 이렇게 된다.
+	//	NewWindowNode* titleWin = new NewWindowNode(L"WinRoot"); // NewWindowNode는 MkBaseWindowNode를 상속받은 class
+	//	MkBaseWindowNode* tmpWin = MkBaseWindowNode::CreateBasicWindow(titleWin, MkHashStr::NullHash, winDesc);
+	static MkBaseWindowNode* CreateBasicWindow(MkBaseWindowNode* targetWindow, const MkHashStr& nodeName, const BasicPresetWindowDesc& desc);
 
 	// 해당 윈도우 노드에 window preset이 적용된 component 노드 적용
 	// 이미 component가 적용되어 있으면 false 반환
@@ -180,10 +208,17 @@ public:
 	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 highlight/normal caption 설정, captionDesc가 비었으면 삭제
 	bool SetPresetComponentCaption(const MkHashStr& themeName, const CaptionDesc& captionDesc, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
 
-	// 정보 반환
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 테마명 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
+
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 적용중인 component 반환
 	inline const MkHashStr& GetPresetComponentName(void) const { return m_PresetComponentName; }
+	eS2D_WindowPresetComponent GetPresetComponentType(void) const;
+
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 margin의 적용되지 않은 크기 반환
 	inline const MkFloat2& GetPresetBodySize(void) const { return m_PresetBodySize; }
+
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 margin까지 적용된 크기 반환
 	inline const MkFloat2& GetPresetFullSize(void) const { return m_PresetFullSize; }
 
 	//------------------------------------------------------------------------------------------------//
@@ -206,10 +241,8 @@ public:
 	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position, bool managedRoot);
 	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position, bool managedRoot);
 
-	// clickWindow에서 left click 발생
-	// (NOTE) eS2D_WindowState 계열만이 아닌 모든 MkBaseWindowNode를 대상으로 함(title, background, etc...)
-	virtual void OnLeftClick(const MkFloat2& position) {} // clickWindow 대상
-	virtual void OnLeftClick(MkBaseWindowNode* clickWindow, const MkFloat2& position) {} // managed root 대상
+	// input 처리가 종료되고 focus window일 경우 호출됨
+	virtual void UpdateManagedRoot(void);
 
 	// activation
 	virtual void Activate(void) {}
@@ -233,6 +266,8 @@ public:
 
 	inline void __SetFullSize(const MkFloat2& size) { m_PresetFullSize = size; }
 
+	inline void __PushEvent(const WindowEvent& evt) { m_WindowEvents.PushBack(evt); }
+
 	MkBaseWindowNode* __GetFrontHitWindow(const MkFloat2& position);
 	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows); // all hits
 
@@ -240,6 +275,11 @@ protected:
 
 	bool _CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
+
+	virtual bool _CheckCursorHitCondition(const MkFloat2& position) const;
+	virtual bool _CheckWheelMoveCondition(const MkFloat2& position) const { return false; }
+
+	void _PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type);
 
 protected:
 
@@ -254,4 +294,9 @@ protected:
 	
 	// attribute
 	MkBitFieldDW m_Attribute;
+
+	// event
+	MkArray<WindowEvent> m_WindowEvents;
 };
+
+MKDEF_DECLARE_FIXED_SIZE_TYPE(MkBaseWindowNode::WindowEvent)

@@ -371,6 +371,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="Edit mode window"
+				>
+				<File
+					RelativePath=".\Source\MkS2D_MkEditModeSettingWindow.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkS2D_MkEditModeSettingWindow.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Scene"

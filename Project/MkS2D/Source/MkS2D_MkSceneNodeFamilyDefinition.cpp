@@ -37,6 +37,8 @@ const MkHashStr MkSceneNodeFamilyDefinition::SpreadButton::ItemSeqKey(L"ItemSeq"
 const MkHashStr MkSceneNodeFamilyDefinition::SpreadButton::TargetButtonKey(L"TargetButton");
 
 const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::TemplateName(MKDEF_S2D_BT_CHECKBUTTON_TEMPLATE_NAME);
+const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::CaptionKey(L"Caption");
+const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey(L"OnCheck");
 
 
 MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, const MkHashStr& nodeName)
@@ -54,6 +56,10 @@ MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, c
 	else if (templateName == SpreadButton::TemplateName)
 	{
 		instance = new MkSpreadButtonNode(nodeName);
+	}
+	else if (templateName == CheckButton::TemplateName)
+	{
+		instance = new MkCheckButtonNode(nodeName);
 	}
 	
 	MK_CHECK(instance != NULL, templateName.GetString() + L" 템플릿을 사용하는 " + nodeName.GetString() + L" 노드 alloc 실패") {}

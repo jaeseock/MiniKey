@@ -2,15 +2,15 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.01 (19:42:17),
+//   - time stamp : 2014.07.02 (20:14:54),
 //   - exporter   : ¿ÀÀç¼® (Test)
 //--------------------------------------------------------------------//
 
 
 uint Attribute = 20;
-int2 PBodySize = (138, 14);
+int2 PBodySize = (288, 14);
 str PComponent = "TitleWindow";
-int2 PFullSize = (144, 20);
+int2 PFullSize = (294, 20);
 str PThemeName = "Default";
 vec3 Position = (0.000, -20.000, 0.000);
 
@@ -20,7 +20,7 @@ Node "<SRect>"
 	{
 		float Depth = -0.025;
 		str FontState = "DHF";
-		vec2 Position = (48.000, 4.000);
+		vec2 Position = (123.000, 4.000);
 		str Resource = // [2]
 			"odt" /
 			"Å¸ ÀÌ Æ²";
@@ -31,7 +31,7 @@ Node "<SRect>"
 	{
 		float Depth = -0.025;
 		str FontState = "DSF";
-		vec2 Position = (48.000, 4.000);
+		vec2 Position = (123.000, 4.000);
 		str Resource = // [2]
 			"odt" /
 			"Å¸ ÀÌ Æ²";
@@ -55,11 +55,11 @@ Node "<SceneNode>"
 	Node "Background" : "T_BaseWindowNode"
 	{
 		uint Attribute = 8;
-		int2 PBodySize = (144, 94);
+		int2 PBodySize = (294, 194);
 		str PComponent = "BackgroundWindow";
-		int2 PFullSize = (150, 100);
+		int2 PFullSize = (300, 200);
 		str PThemeName = "Default";
-		vec3 Position = (-3.000, -77.000, 0.025);
+		vec3 Position = (-3.000, -177.000, 0.025);
 
 		Node "<SceneNode>"
 		{
@@ -83,12 +83,12 @@ Node "<SceneNode>"
 							"map" /
 							"Default\default_theme.png" /
 							"DefBG_LC";
-						vec2 Size = (3.000, 94.000);
+						vec2 Size = (3.000, 194.000);
 					}
 
 					Node "LT" : "T_SRect"
 					{
-						vec2 Position = (0.000, 97.000);
+						vec2 Position = (0.000, 197.000);
 						str Resource = // [3]
 							"map" /
 							"Default\default_theme.png" /
@@ -103,7 +103,7 @@ Node "<SceneNode>"
 							"map" /
 							"Default\default_theme.png" /
 							"DefBG_MB";
-						vec2 Size = (144.000, 3.000);
+						vec2 Size = (294.000, 3.000);
 					}
 
 					Node "MC" : "T_SRect"
@@ -113,22 +113,22 @@ Node "<SceneNode>"
 							"map" /
 							"Default\default_theme.png" /
 							"DefBG_MC";
-						vec2 Size = (144.000, 94.000);
+						vec2 Size = (294.000, 194.000);
 					}
 
 					Node "MT" : "T_SRect"
 					{
-						vec2 Position = (3.000, 97.000);
+						vec2 Position = (3.000, 197.000);
 						str Resource = // [3]
 							"map" /
 							"Default\default_theme.png" /
 							"DefBG_MT";
-						vec2 Size = (144.000, 3.000);
+						vec2 Size = (294.000, 3.000);
 					}
 
 					Node "RB" : "T_SRect"
 					{
-						vec2 Position = (147.000, 0.000);
+						vec2 Position = (297.000, 0.000);
 						str Resource = // [3]
 							"map" /
 							"Default\default_theme.png" /
@@ -138,17 +138,17 @@ Node "<SceneNode>"
 
 					Node "RC" : "T_SRect"
 					{
-						vec2 Position = (147.000, 3.000);
+						vec2 Position = (297.000, 3.000);
 						str Resource = // [3]
 							"map" /
 							"Default\default_theme.png" /
 							"DefBG_RC";
-						vec2 Size = (3.000, 94.000);
+						vec2 Size = (3.000, 194.000);
 					}
 
 					Node "RT" : "T_SRect"
 					{
-						vec2 Position = (147.000, 97.000);
+						vec2 Position = (297.000, 197.000);
 						str Resource = // [3]
 							"map" /
 							"Default\default_theme.png" /
@@ -160,9 +160,9 @@ Node "<SceneNode>"
 
 			Node "Form" : "T_BaseWindowNode"
 			{
-				int2 PBodySize = (130, 60);
+				int2 PBodySize = (280, 160);
 				str PComponent = "GuideBox";
-				int2 PFullSize = (136, 66);
+				int2 PFullSize = (286, 166);
 				str PThemeName = "Default";
 				vec3 Position = (7.000, 7.000, -0.001);
 
@@ -188,12 +188,12 @@ Node "<SceneNode>"
 									"map" /
 									"Default\default_theme.png" /
 									"GuideBox_LC";
-								vec2 Size = (3.000, 60.000);
+								vec2 Size = (3.000, 160.000);
 							}
 
 							Node "LT" : "T_SRect"
 							{
-								vec2 Position = (0.000, 63.000);
+								vec2 Position = (0.000, 163.000);
 								str Resource = // [3]
 									"map" /
 									"Default\default_theme.png" /
@@ -208,7 +208,7 @@ Node "<SceneNode>"
 									"map" /
 									"Default\default_theme.png" /
 									"GuideBox_MB";
-								vec2 Size = (130.000, 3.000);
+								vec2 Size = (280.000, 3.000);
 							}
 
 							Node "MC" : "T_SRect"
@@ -218,22 +218,22 @@ Node "<SceneNode>"
 									"map" /
 									"Default\default_theme.png" /
 									"GuideBox_MC";
-								vec2 Size = (130.000, 60.000);
+								vec2 Size = (280.000, 160.000);
 							}
 
 							Node "MT" : "T_SRect"
 							{
-								vec2 Position = (3.000, 63.000);
+								vec2 Position = (3.000, 163.000);
 								str Resource = // [3]
 									"map" /
 									"Default\default_theme.png" /
 									"GuideBox_MT";
-								vec2 Size = (130.000, 3.000);
+								vec2 Size = (280.000, 3.000);
 							}
 
 							Node "RB" : "T_SRect"
 							{
-								vec2 Position = (133.000, 0.000);
+								vec2 Position = (283.000, 0.000);
 								str Resource = // [3]
 									"map" /
 									"Default\default_theme.png" /
@@ -243,22 +243,301 @@ Node "<SceneNode>"
 
 							Node "RC" : "T_SRect"
 							{
-								vec2 Position = (133.000, 3.000);
+								vec2 Position = (283.000, 3.000);
 								str Resource = // [3]
 									"map" /
 									"Default\default_theme.png" /
 									"GuideBox_RC";
-								vec2 Size = (3.000, 60.000);
+								vec2 Size = (3.000, 160.000);
 							}
 
 							Node "RT" : "T_SRect"
 							{
-								vec2 Position = (133.000, 63.000);
+								vec2 Position = (283.000, 163.000);
 								str Resource = // [3]
 									"map" /
 									"Default\default_theme.png" /
 									"GuideBox_RT";
 								vec2 Size = (3.000, 3.000);
+							}
+						}
+					}
+
+					Node "CB" : "T_CheckButtonNode"
+					{
+						str Caption = "Å×½ºÆ®Ä¸¼õ";
+						bool OnCheck = Yes;
+						int2 PBodySize = (12, 12);
+						str PComponent = "BackgroundWindow";
+						int2 PFullSize = (18, 18);
+						str PThemeName = "Default";
+						vec3 Position = (10.000, 100.000, -0.001);
+
+						Node "<SRect>"
+						{
+							Node "Caption" : "T_SRect"
+							{
+								float Depth = -0.025;
+								vec2 Position = (24.000, 3.000);
+								str Resource = // [2]
+									"odt" /
+									"Å×½ºÆ®Ä¸¼õ";
+								vec2 Size = (60.000, 12.000);
+							}
+						}
+
+						Node "<SceneNode>"
+						{
+							Node "BG" : "T_SceneNode"
+							{
+								Node "<SRect>"
+								{
+									Node "LB" : "T_SRect"
+									{
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_LB";
+										vec2 Size = (3.000, 3.000);
+									}
+
+									Node "LC" : "T_SRect"
+									{
+										vec2 Position = (0.000, 3.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_LC";
+										vec2 Size = (3.000, 12.000);
+									}
+
+									Node "LT" : "T_SRect"
+									{
+										vec2 Position = (0.000, 15.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_LT";
+										vec2 Size = (3.000, 3.000);
+									}
+
+									Node "MB" : "T_SRect"
+									{
+										vec2 Position = (3.000, 0.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_MB";
+										vec2 Size = (12.000, 3.000);
+									}
+
+									Node "MC" : "T_SRect"
+									{
+										vec2 Position = (3.000, 3.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_MC";
+										vec2 Size = (12.000, 12.000);
+									}
+
+									Node "MT" : "T_SRect"
+									{
+										vec2 Position = (3.000, 15.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_MT";
+										vec2 Size = (12.000, 3.000);
+									}
+
+									Node "RB" : "T_SRect"
+									{
+										vec2 Position = (15.000, 0.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_RB";
+										vec2 Size = (3.000, 3.000);
+									}
+
+									Node "RC" : "T_SRect"
+									{
+										vec2 Position = (15.000, 3.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_RC";
+										vec2 Size = (3.000, 12.000);
+									}
+
+									Node "RT" : "T_SRect"
+									{
+										vec2 Position = (15.000, 15.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_RT";
+										vec2 Size = (3.000, 3.000);
+									}
+								}
+							}
+
+							Node "Check" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								str PComponent = "CheckButton";
+								int2 PFullSize = (12, 12);
+								str PThemeName = "Default";
+								vec3 Position = (3.000, 3.000, -0.025);
+
+								Node "<SceneNode>"
+								{
+									Node "Default" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"CheckDef";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+
+									Node "Disable" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"CheckDis";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+
+									Node "OnClick" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"CheckOCl";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+
+									Node "OnCursor" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"CheckOCu";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+								}
+							}
+
+							Node "Uncheck" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								str PComponent = "UncheckButton";
+								int2 PFullSize = (12, 12);
+								str PThemeName = "Default";
+								vec3 Position = (3.000, 3.000, -0.025);
+								bool Visible = No;
+
+								Node "<SceneNode>"
+								{
+									Node "Default" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"UnchkDef";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+
+									Node "Disable" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"UnchkDef";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+
+									Node "OnClick" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"UnchkOCu";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+
+									Node "OnCursor" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"UnchkOCu";
+												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+								}
 							}
 						}
 					}
@@ -278,7 +557,7 @@ Node "<SceneNode>"
 						str PComponent = "RootButton";
 						int2 PFullSize = (100, 20);
 						str PThemeName = "Default";
-						vec3 Position = (10.000, 50.000, -0.100);
+						vec3 Position = (10.000, 130.000, -0.100);
 						str TargetButton = "1-1";
 
 						Node "<SRect>"
@@ -5232,7 +5511,7 @@ Node "<SceneNode>"
 				str PComponent = "NegativeButton";
 				int2 PFullSize = (56, 18);
 				str PThemeName = "Default";
-				vec3 Position = (81.333, 3.000, -0.025);
+				vec3 Position = (181.333, 3.000, -0.025);
 
 				Node "<SRect>"
 				{
@@ -5656,7 +5935,7 @@ Node "<SceneNode>"
 				str PComponent = "PossitiveButton";
 				int2 PFullSize = (56, 18);
 				str PThemeName = "Default";
-				vec3 Position = (12.667, 3.000, -0.025);
+				vec3 Position = (62.667, 3.000, -0.025);
 
 				Node "<SRect>"
 				{
@@ -6081,7 +6360,7 @@ Node "<SceneNode>"
 		str PComponent = "CancelIcon";
 		int2 PFullSize = (14, 14);
 		str PThemeName = "Default";
-		vec3 Position = (127.000, 3.000, -0.025);
+		vec3 Position = (277.000, 3.000, -0.025);
 
 		Node "<SceneNode>"
 		{
@@ -6195,7 +6474,7 @@ Node "<SceneNode>"
 					"map" /
 					"Default\default_theme.png" /
 					"TitleLF_MB";
-				vec2 Size = (138.000, 3.000);
+				vec2 Size = (288.000, 3.000);
 			}
 
 			Node "MC" : "T_SRect"
@@ -6205,7 +6484,7 @@ Node "<SceneNode>"
 					"map" /
 					"Default\default_theme.png" /
 					"TitleLF_MC";
-				vec2 Size = (138.000, 14.000);
+				vec2 Size = (288.000, 14.000);
 			}
 
 			Node "MT" : "T_SRect"
@@ -6215,12 +6494,12 @@ Node "<SceneNode>"
 					"map" /
 					"Default\default_theme.png" /
 					"TitleLF_MT";
-				vec2 Size = (138.000, 3.000);
+				vec2 Size = (288.000, 3.000);
 			}
 
 			Node "RB" : "T_SRect"
 			{
-				vec2 Position = (141.000, 0.000);
+				vec2 Position = (291.000, 0.000);
 				str Resource = // [3]
 					"map" /
 					"Default\default_theme.png" /
@@ -6230,7 +6509,7 @@ Node "<SceneNode>"
 
 			Node "RC" : "T_SRect"
 			{
-				vec2 Position = (141.000, 3.000);
+				vec2 Position = (291.000, 3.000);
 				str Resource = // [3]
 					"map" /
 					"Default\default_theme.png" /
@@ -6240,7 +6519,7 @@ Node "<SceneNode>"
 
 			Node "RT" : "T_SRect"
 			{
-				vec2 Position = (141.000, 17.000);
+				vec2 Position = (291.000, 17.000);
 				str Resource = // [3]
 					"map" /
 					"Default\default_theme.png" /
@@ -6290,7 +6569,7 @@ Node "<SceneNode>"
 					"map" /
 					"Default\default_theme.png" /
 					"TitleOF_MB";
-				vec2 Size = (138.000, 3.000);
+				vec2 Size = (288.000, 3.000);
 			}
 
 			Node "MC" : "T_SRect"
@@ -6300,7 +6579,7 @@ Node "<SceneNode>"
 					"map" /
 					"Default\default_theme.png" /
 					"TitleOF_MC";
-				vec2 Size = (138.000, 14.000);
+				vec2 Size = (288.000, 14.000);
 			}
 
 			Node "MT" : "T_SRect"
@@ -6310,12 +6589,12 @@ Node "<SceneNode>"
 					"map" /
 					"Default\default_theme.png" /
 					"TitleOF_MT";
-				vec2 Size = (138.000, 3.000);
+				vec2 Size = (288.000, 3.000);
 			}
 
 			Node "RB" : "T_SRect"
 			{
-				vec2 Position = (141.000, 0.000);
+				vec2 Position = (291.000, 0.000);
 				str Resource = // [3]
 					"map" /
 					"Default\default_theme.png" /
@@ -6325,7 +6604,7 @@ Node "<SceneNode>"
 
 			Node "RC" : "T_SRect"
 			{
-				vec2 Position = (141.000, 3.000);
+				vec2 Position = (291.000, 3.000);
 				str Resource = // [3]
 					"map" /
 					"Default\default_theme.png" /
@@ -6335,7 +6614,7 @@ Node "<SceneNode>"
 
 			Node "RT" : "T_SRect"
 			{
-				vec2 Position = (141.000, 17.000);
+				vec2 Position = (291.000, 17.000);
 				str Resource = // [3]
 					"map" /
 					"Default\default_theme.png" /

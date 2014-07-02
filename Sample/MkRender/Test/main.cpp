@@ -79,13 +79,21 @@ public:
 
 		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
 		//winDesc.SetStandardDesc(L"Default", true);
-		winDesc.SetStandardDesc(L"Default", true, MkFloat2(150.f, 100.f));
+		winDesc.SetStandardDesc(L"Default", true, MkFloat2(300.f, 200.f));
 		//winDesc.SetStandardDesc(L"Default", true, L"Image\\s02.jpg", L"");
 		//winDesc.SetStandardDesc(L"Default", false);
 		//winDesc.SetStandardDesc(L"Default", false, MkFloat2(150.f, 100.f));
 		//winDesc.SetStandardDesc(L"Default", false, L"Image\\s02.jpg", L"");
-		MkBaseWindowNode* titleWin = MkBaseWindowNode::CreateBasicWindow(L"WinRoot", winDesc);
+		MkBaseWindowNode* titleWin = MkBaseWindowNode::CreateBasicWindow(NULL, L"WinRoot", winDesc);
 		m_Node01->AttachChildNode(titleWin);
+
+		MkBaseWindowNode* formNode = new MkBaseWindowNode(L"Form");
+		formNode->CreateWindowPreset(L"Default", eS2D_WPC_GuideBox, MkFloat2(280.f, 160.f));
+		formNode->SetLocalPosition(MkFloatRect(0.f, 0.f, 300.f, 180.f).GetSnapPosition(MkFloatRect(formNode->GetPresetFullSize()), eRAP_MiddleCenter, MkFloat2(0.f, 0.f)));
+		formNode->SetLocalDepth(-0.001f);
+
+		MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>((winDesc.hasTitle) ? titleWin->GetChildNode(L"Background") : titleWin);
+		bgNode->AttachChildNode(formNode);
 
 		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(L"SB");
 		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(100.f, 20.f), MkSpreadButtonNode::eDownward);
@@ -93,7 +101,7 @@ public:
 		tagInfo.iconPath = L"Default\\window_mgr.png";
 		tagInfo.iconSubset = L"SampleIcon";
 		lbNode->SetItemTag(tagInfo);
-		lbNode->SetLocalPosition(MkVec3(10.f, 50.f, -0.1f));
+		lbNode->SetLocalPosition(MkVec3(10.f, 130.f, -0.1f));
 
 		lbNode->AddItem(L"0", tagInfo);
 
@@ -110,14 +118,15 @@ public:
 		g31->AddItem(L"3-1-0", tagInfo);
 		lbNode->SetTargetItem(L"1-1");
 
-		MkBaseWindowNode* formNode = new MkBaseWindowNode(L"Form");
-		formNode->CreateWindowPreset(L"Default", eS2D_WPC_GuideBox, MkFloat2(130.f, 60.f));
-		formNode->SetLocalPosition(MkFloatRect(0.f, 0.f, 150.f, 80.f).GetSnapPosition(MkFloatRect(formNode->GetPresetFullSize()), eRAP_MiddleCenter, MkFloat2(0.f, 0.f)));
-		formNode->SetLocalDepth(-0.001f);
-
-		MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(titleWin->GetChildNode(L"Background"));
-		bgNode->AttachChildNode(formNode);
 		formNode->AttachChildNode(lbNode);
+
+		MkCheckButtonNode* cbNode = new MkCheckButtonNode(L"CB");
+		MkBaseWindowNode::CaptionDesc captionDesc;
+		captionDesc = L"Å×½ºÆ®Ä¸¼õ";
+		cbNode->CreateCheckButton(L"Default", captionDesc, false);
+		cbNode->SetCheck(true);
+		cbNode->SetLocalPosition(MkVec3(10.f, 100.f, -0.001f));
+		formNode->AttachChildNode(cbNode);
 
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
 
@@ -375,14 +384,15 @@ public:
 			diceY.SetSeed(5678);
 
 			const MkHashStr pkey = L"load";
-			for (unsigned int i=0; i<10; ++i)
+			const unsigned int count = 3;
+			for (unsigned int i=0; i<count; ++i)
 			{
 				MK_PROF_MGR.Begin(pkey);
 
 				MkBaseWindowNode* winNode = new MkBaseWindowNode(MkStr(i));
 				winNode->Load(node);
 				
-				MK_PROF_MGR.End(pkey, i == 9);
+				MK_PROF_MGR.End(pkey, i == (count-1));
 
 				winNode->SetLocalPosition(MkFloat2(static_cast<float>(diceX.GenerateRandomNumber()), static_cast<float>(diceY.GenerateRandomNumber())));
 				
@@ -400,24 +410,6 @@ public:
 			MK_PROF_MGR.GetEverageTimeStr(pkey, sbuf);
 			MK_DEV_PANEL.MsgToLog(sbuf);
 		}
-		/*
-		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
-		winDesc.SetStandardDesc(L"Default", true, MkFloat2(250.f, 200.f));
-		winDesc.hasCancelButton = false;
-		winDesc.hasOKButton = false;
-		MkBaseWindowNode* testWin = MkBaseWindowNode::CreateBasicWindow(L"test", winDesc);
-		testWin->SetLocalPosition(MkFloat2(200.f, 450.f));
-
-		MkCheckButtonNode* cbNode = new MkCheckButtonNode(L"CB");
-		MkSpreadButtonNode::CaptionDesc captionDesc;
-		captionDesc = L"Å×½ºÆ®Ä¸¼õ";
-		cbNode->CreateCheckButton(L"Default", captionDesc, false);
-		cbNode->SetLocalPosition(MkVec3(50.f, 50.f, -0.001f));
-		testWin->GetChildNode(L"Background")->AttachChildNode(cbNode);
-		
-		MK_WIN_EVENT_MGR.RegisterWindow(testWin, true);
-		*/
-
 		
 		//testWin->SetPresetThemeName(L"SolidLB");
 		//m_WindowNode1->SetPresetComponentBodySize(MkFloat2(100.f, 100.f));

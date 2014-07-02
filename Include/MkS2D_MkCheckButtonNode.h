@@ -54,6 +54,10 @@ public:
 
 protected:
 
+	virtual bool _CheckCursorHitCondition(const MkFloat2& position) const;
+
+protected:
+
 	CaptionDesc m_CaptionDesc;
 
 	bool m_OnCheck;

@@ -67,9 +67,6 @@
 // list button(sub spread button) 깊이 grid 단위
 #define MKDEF_LIST_BUTTON_DEPTH_GRID 0.002f
 
-// check button에서 아이콘 크기에 몇 픽셀을 더해 배경 크기로 할지 결정(ex> 4일 경우 아이콘이 14px이면 버튼 배경은 18px)
-#define MKDEF_CHECK_BUTTON_SIZE_OFFSET 4
-
 // 윈도우 관리자 draw step priority
 #define MKDEF_WINDOW_MGR_DRAW_STEP_PRIORITY 0x7fffffff
 
@@ -127,7 +124,7 @@
 #define MKDEF_S2D_TOGGLE_KEY_BETWEEN_NORMAL_AND_EDIT_MODE L'E'
 
 // edit mode시 설정창 토글 버튼
-#define MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY VK_F2
+#define MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY VK_ESCAPE
 
 //------------------------------------------------------------------------------------------------//
 // DEBUG
@@ -135,3 +132,6 @@
 
 // SRect를 그릴 때 소팅되고 분류된 최종 결과인 그룹 정보 출력 여부
 //#define MKDEF_S2D_DEBUG_SHOW_SRECT_SET_INFO
+
+// 윈도우 이벤트 출력 여부
+//#define MKDEF_S2D_DEBUG_SHOW_WINDOW_EVENT

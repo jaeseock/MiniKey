@@ -9,7 +9,7 @@
 #include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkSpreadButtonNode.h"
-#include "MkS2D_MkCheckButtonNode.h"
+#include "MkS2D_MkEditModeSettingWindow.h"
 #include "MkS2D_MkWindowEventManager.h"
 
 
@@ -17,11 +17,13 @@
 #define MKDEF_ARRAY_ERASE(names, target) names.EraseFirstInclusion(MkArraySection(0), target)
 
 #define MKDEF_WIN_MGR_STEP_NAME L"__#WindowMgr"
+
 const static MkHashStr SCENE_RECT_NAME = L"Scene";
 const static MkHashStr DARKEN_RECT_NAME = L"Darken";
 const static MkHashStr REGION_RECT_NAME = L"Region";
 const static MkHashStr DEBUG_RECT_NAME = L"Debug";
-const static MkHashStr SETTING_WINDOW_NAME = L"Setting";
+
+const static MkHashStr SETTING_WINDOW_NAME = L"__#Setting";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -90,24 +92,20 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 	// 설정 윈도우 생성
 	if (!m_WindowTable.Exist(SETTING_WINDOW_NAME))
 	{
-		MkBaseWindowNode::BasicPresetWindowDesc winDesc;
-		winDesc.SetStandardDesc(MK_WR_PRESET.GetDefaultThemeName(), true, MkFloat2(300, 400.f));
-		winDesc.titleCaption = L"에디트 모드 세팅창 (F2 key 토글)";
-		winDesc.hasIcon = false;
-		winDesc.hasCancelIcon = false;
-		winDesc.hasCancelButton = false;
-		winDesc.hasOKButton = false;
-		MkBaseWindowNode* settingWindow = MkBaseWindowNode::CreateBasicWindow(SETTING_WINDOW_NAME, winDesc);
+		MkEditModeSettingWindow* settingWindow = new MkEditModeSettingWindow(SETTING_WINDOW_NAME);
+		if (settingWindow != NULL)
+		{
+			if (settingWindow->SetUp(MK_WR_PRESET.GetDefaultThemeName()))
+			{
+				RegisterWindow(settingWindow, false);
+			}
+			else
+			{
+				MK_DELETE(settingWindow);
+			}
+		}
 
-		MkCheckButtonNode* cbNode = new MkCheckButtonNode(L"CB");
-		MkSpreadButtonNode::CaptionDesc captionDesc;
-		captionDesc = L"테스트캡숑";
-		cbNode->CreateCheckButton(L"Default", captionDesc, false);
-		cbNode->SetLocalPosition(MkFloat2(50.f, 50.f));
-		cbNode->SetLocalDepth(-0.001f);
-		settingWindow->GetChildNode(L"Background")->AttachChildNode(cbNode);
-		
-		RegisterWindow(settingWindow, false);
+		MK_CHECK(settingWindow != NULL, L"edit mode용 setting window 생성 실패") {}
 	}
 }
 
@@ -141,6 +139,49 @@ bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool act
 	}
 
 	return true;
+}
+
+void MkWindowEventManager::RemoveWindow(const MkHashStr& windowName)
+{
+	if (m_WindowTable.Exist(windowName))
+	{
+		MKDEF_ARRAY_ERASE(m_OnActivatingWindows, windowName);
+		MKDEF_ARRAY_ERASE(m_WaitForActivatingWindows, windowName);
+		MKDEF_ARRAY_ERASE(m_WaitForDeactivatingWindows, windowName);
+
+		if (windowName == m_LastFocusWindow)
+		{
+			m_FocusLostByClick = true;
+			m_LastFocusWindow.Clear();
+			m_CurrentTargetWindowNode = NULL;
+			_SetRegionLayerVisible(false);
+		}
+
+		if ((m_FrontHitWindow != NULL) && (windowName == m_FrontHitWindow->GetManagedRoot()->GetNodeName()))
+		{
+			m_FrontHitWindow = NULL;
+		}
+
+		if (windowName == m_ModalWindow)
+		{
+			m_ModalWindow.Clear();
+			_SetDarkenLayerEnable(false);
+		}
+
+		if ((!m_OpeningSpreadButtons.Empty()) && (windowName == m_OpeningSpreadButtons[0]->GetManagedRoot()->GetNodeName()))
+		{
+			m_OpeningSpreadButtons.Clear();
+		}
+
+		if ((m_CurrentTargetWindowNode != NULL) && (windowName == m_CurrentTargetWindowNode->GetManagedRoot()->GetNodeName()))
+		{
+			m_CurrentTargetWindowNode = NULL;
+		}
+
+		m_RootNode->DetachChildNode(windowName);
+		delete m_WindowTable[windowName];
+		m_WindowTable.Erase(windowName);
+	}
 }
 
 bool MkWindowEventManager::IsOnActivation(const MkHashStr& windowName) const
@@ -204,8 +245,7 @@ void MkWindowEventManager::Update(void)
 	if ((m_DrawStep == NULL) || (m_RootNode == NULL))
 		return;
 
-	const MkFloat2& screenSize = m_DrawStep->GetRegionRect().size;
-
+	// normal mode <-> edit mode toggle
 	if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
 	{
 		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_TOGGLE_KEY_BETWEEN_NORMAL_AND_EDIT_MODE))
@@ -216,7 +256,8 @@ void MkWindowEventManager::Update(void)
 		}
 	}
 
-	if (m_EditMode && MK_INPUT_MGR.GetKeyReleased(VK_F2) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
+	// edit mode시 setting window toggle
+	if (m_EditMode && MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
 	{
 		if (MKDEF_ARRAY_EXIST(m_OnActivatingWindows, SETTING_WINDOW_NAME))
 		{
@@ -225,9 +266,6 @@ void MkWindowEventManager::Update(void)
 		else
 		{
 			ActivateWindow(SETTING_WINDOW_NAME, true);
-
-			// 중앙 정렬
-			m_WindowTable[SETTING_WINDOW_NAME]->AlignPosition(m_DrawStep->GetRegionRect(), eRAP_MiddleCenter, MkInt2(0, 0));
 		}
 	}
 
@@ -487,7 +525,12 @@ void MkWindowEventManager::Update(void)
 			}
 		}
 
-		if ((onFocusWindowNode != NULL) && cursorAvailable)
+		if (onFocusWindowNode != NULL)
+		{
+			onFocusWindowNode->UpdateManagedRoot();
+		}
+
+		if (cursorAvailable && (onFocusWindowNode != NULL))
 		{
 			// 타겟 윈도우, 드래그 윈도우 선택
 			if (currentButtonPressed[0] && onFocusWindowNode->GetWorldAABR().CheckIntersection(currentCursorPosition))
@@ -495,9 +538,12 @@ void MkWindowEventManager::Update(void)
 				MkBaseWindowNode* frontHit = onFocusWindowNode->__GetFrontHitWindow(currentCursorPosition);
 				if (frontHit != NULL)
 				{
-					m_CurrentTargetWindowNode = frontHit;
+					if (m_EditMode && (onFocusWindowNode->GetNodeName() != SETTING_WINDOW_NAME))
+					{
+						m_CurrentTargetWindowNode = frontHit;
 
-					_ShowRegionLayer();
+						_ShowRegionLayer();
+					}
 					
 					if (m_FrontHitWindow == NULL)
 					{
@@ -526,7 +572,7 @@ void MkWindowEventManager::Update(void)
 					(m_EditMode || m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragMovement)))
 				{
 					MkFloat2 offset = currentCursorPosition - m_CursorStartPosition;
-					MkFloat2 newPosition = _ConfineMovement(m_FrontHitWindow, screenSize, m_WindowAABRBegin, m_WindowOffsetToWorldPos, offset);
+					MkFloat2 newPosition = _ConfineMovement(m_FrontHitWindow, m_WindowAABRBegin, m_WindowOffsetToWorldPos, offset);
 					m_FrontHitWindow->SetLocalAsWorldPosition(newPosition, false);
 				}
 			}
@@ -555,7 +601,7 @@ void MkWindowEventManager::Update(void)
 				{
 					const MkFloat2& worldAABRBegin = m_CurrentTargetWindowNode->GetWorldAABR().position;
 					MkFloat2 oldPosition = MkFloat2(m_CurrentTargetWindowNode->GetWorldPosition().x, m_CurrentTargetWindowNode->GetWorldPosition().y);
-					MkFloat2 newPosition = _ConfineMovement(m_CurrentTargetWindowNode, screenSize, worldAABRBegin, oldPosition - worldAABRBegin, offset);
+					MkFloat2 newPosition = _ConfineMovement(m_CurrentTargetWindowNode, worldAABRBegin, oldPosition - worldAABRBegin, offset);
 					m_CurrentTargetWindowNode->SetLocalAsWorldPosition(newPosition, false);
 				}
 			}
@@ -655,6 +701,8 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 	m_FocusLostByClick = false;
 	m_FrontHitWindow = NULL;
 	m_CurrentTargetWindowNode = NULL;
+
+	m_ShowWindowSelection = true;
 }
 
 void MkWindowEventManager::__SpreadButtonOpened(int index, MkSpreadButtonNode* button)
@@ -741,19 +789,18 @@ void MkWindowEventManager::_SetDarkenLayerEnable(bool enable)
 	}
 }
 
-MkFloat2 MkWindowEventManager::_ConfineMovement
-(MkBaseWindowNode* targetNode, const MkFloat2& screenSize, const MkFloat2& posBegin, const MkFloat2& toWorld, const MkFloat2& offset) const
+MkFloat2 MkWindowEventManager::_ConfineMovement(MkBaseWindowNode* targetNode, const MkFloat2& posBegin, const MkFloat2& toWorld, const MkFloat2& offset) const
 {
 	if (targetNode->GetAttribute(MkBaseWindowNode::eConfinedToScreen))
 	{
-		return (MkFloatRect(screenSize).Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
+		return (m_DrawStep->GetRegionRect().Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
 	}
 	else if (targetNode->GetAttribute(MkBaseWindowNode::eConfinedToParent))
 	{
 		MkBaseWindowNode* anchorNode = targetNode->GetAncestorWindowNode();
 		if (anchorNode == NULL)
 		{
-			return (MkFloatRect(screenSize).Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
+			return (m_DrawStep->GetRegionRect().Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
 		}
 		else
 		{
@@ -765,7 +812,7 @@ MkFloat2 MkWindowEventManager::_ConfineMovement
 
 void MkWindowEventManager::_ShowRegionLayer(void)
 {
-	if (_SetRegionLayerVisible(true))
+	if (m_ShowWindowSelection && _SetRegionLayerVisible(true))
 	{
 		MkTimeState timeState;
 		MK_TIME_MGR.GetCurrentTimeState(timeState);

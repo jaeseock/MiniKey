@@ -1,13 +1,13 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkDataNode.h"
+#include "MkCore_MkDevPanel.h"
 
 #include "MkS2D_MkProjectDefinition.h"
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkFontManager.h"
 #include "MkS2D_MkBaseWindowNode.h"
-#include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
 #include "MkS2D_MkWindowEventManager.h"
 
@@ -676,10 +676,12 @@ void MkBaseWindowNode::SetEnable(bool enable)
 	if (m_Enable && (!enable)) // on -> off
 	{
 		windowState = eS2D_WS_DisableState;
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eDisable);
 	}
 	else if ((!m_Enable) && enable) // off -> on
 	{
 		windowState = eS2D_WS_DefaultState;
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eEnable);
 	}
 
 	if (windowState != eS2D_WS_MaxWindowState)
@@ -717,7 +719,7 @@ const MkFloatRect& MkBaseWindowNode::GetWindowRect(void) const
 	return m_WorldAABR;
 }
 
-MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName, const BasicPresetWindowDesc& desc)
+MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWindow, const MkHashStr& nodeName, const BasicPresetWindowDesc& desc)
 {
 	BasicPresetWindowDesc d = desc;
 
@@ -758,7 +760,15 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 		}
 		MkFloat2 titleBodySize(d.windowSize.x - MARGIN * 4.f, d.titleHeight - MARGIN * 2.f);
 
-		titleWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_TitleWindow, titleBodySize);
+		if (targetWindow == NULL)
+		{
+			titleWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_TitleWindow, titleBodySize);
+		}
+		else if (targetWindow->CreateWindowPreset(d.themeName, eS2D_WPC_TitleWindow, titleBodySize))
+		{
+			titleWindow = targetWindow;
+		}
+		
 		if (titleWindow != NULL)
 		{
 			rootWindow = titleWindow;
@@ -792,30 +802,59 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(const MkHashStr& nodeName,
 
 	// background
 	MkBaseWindowNode* backgroundWindow = NULL;
-	MkHashStr bgNodeName = (titleWindow == NULL) ? nodeName : L"Background";
-	if (d.hasFreeImageBG)
+	if (titleWindow == NULL)
 	{
-		backgroundWindow = new MkBaseWindowNode(bgNodeName);
-		if (backgroundWindow != NULL)
+		if (d.hasFreeImageBG)
 		{
-			if (backgroundWindow->CreateFreeImageBaseBackgroundWindow(d.bgImageFilePath, d.bgImageSubsetName))
+			if (targetWindow == NULL)
 			{
-				if (titleWindow != NULL)
+				backgroundWindow = new MkBaseWindowNode(nodeName);
+				if ((backgroundWindow != NULL) && (!backgroundWindow->CreateFreeImageBaseBackgroundWindow(d.bgImageFilePath, d.bgImageSubsetName)))
 				{
-					titleWindow->AttachChildNode(backgroundWindow);
+					MK_DELETE(backgroundWindow);
 				}
 			}
-			else
+			else if (targetWindow->CreateFreeImageBaseBackgroundWindow(d.bgImageFilePath, d.bgImageSubsetName))
 			{
-				MK_DELETE(backgroundWindow);
+				backgroundWindow = targetWindow;
+			}
+		}
+		else
+		{
+			MkFloat2 bgBodySize(d.windowSize.x - MARGIN * 2.f, d.windowSize.y - MARGIN * 2.f);
+			if (targetWindow == NULL)
+			{
+				backgroundWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize);
+			}
+			else if (targetWindow->CreateWindowPreset(d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize))
+			{
+				backgroundWindow = targetWindow;
 			}
 		}
 	}
 	else
 	{
-		// background body size °Ë»ç
-		MkFloat2 bgBodySize(d.windowSize.x - MARGIN * 2.f, d.windowSize.y - MARGIN * 2.f);
-		backgroundWindow = __CreateWindowPreset(titleWindow, bgNodeName, d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize);
+		MkHashStr bgNodeName = L"Background";
+		if (d.hasFreeImageBG)
+		{
+			backgroundWindow = new MkBaseWindowNode(bgNodeName);
+			if (backgroundWindow != NULL)
+			{
+				if (backgroundWindow->CreateFreeImageBaseBackgroundWindow(d.bgImageFilePath, d.bgImageSubsetName))
+				{
+					titleWindow->AttachChildNode(backgroundWindow);
+				}
+				else
+				{
+					MK_DELETE(backgroundWindow);
+				}
+			}
+		}
+		else
+		{
+			MkFloat2 bgBodySize(d.windowSize.x - MARGIN * 2.f, d.windowSize.y - MARGIN * 2.f);
+			backgroundWindow = __CreateWindowPreset(titleWindow, bgNodeName, d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize);
+		}
 	}
 
 	if (backgroundWindow != NULL)
@@ -1067,8 +1106,23 @@ bool MkBaseWindowNode::SetPresetComponentCaption(const MkHashStr& themeName, con
 	return (hOK && nOK);
 }
 
+eS2D_WindowPresetComponent MkBaseWindowNode::GetPresetComponentType(void) const
+{
+	return MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+}
+
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot)
 {
+	if (_CheckCursorHitCondition(position))
+	{
+		switch (button)
+		{
+		case 0: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorLeftPress); break;
+		case 1: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorMiddlePress); break;
+		case 2: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorRightPress); break;
+		}
+	}
+	
 	MkArray<MkBaseWindowNode*> buffer;
 	if (_CollectUpdatableWindowNodes(position, buffer))
 	{
@@ -1086,18 +1140,27 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 
 bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot)
 {
-	if ((button == 0) && GetWindowRect().CheckGridIntersection(position)) // left release
+	if (_CheckCursorHitCondition(position))
 	{
-		if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(GetPresetComponentName()) == eS2D_WPC_CancelIcon))
+		switch (button)
 		{
-			MK_WIN_EVENT_MGR.DeactivateWindow(GetManagedRoot()->GetNodeName());
-			return true;
+		case 0: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorLeftRelease); break;
+		case 1: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorMiddleRelease); break;
+		case 2: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorRightRelease); break;
 		}
 
-		if (static_cast<MkBaseWindowNode*>(this) == MK_WIN_EVENT_MGR.GetFrontHitWindow())
+		if (button == 0)
 		{
-			OnLeftClick(position);
-			GetManagedRoot()->OnLeftClick(this, position);
+			if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_CancelIcon))
+			{
+				MK_WIN_EVENT_MGR.DeactivateWindow(GetManagedRoot()->GetNodeName());
+				return true;
+			}
+
+			if (static_cast<MkBaseWindowNode*>(this) == MK_WIN_EVENT_MGR.GetFrontHitWindow())
+			{
+				_PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorLeftClick);
+			}
 		}
 	}
 	
@@ -1118,6 +1181,16 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 
 bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position, bool managedRoot)
 {
+	if (_CheckCursorHitCondition(position))
+	{
+		switch (button)
+		{
+		case 0: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorLeftDoubleClick); break;
+		case 1: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick); break;
+		case 2: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorRightDoubleClick); break;
+		}
+	}
+
 	MkArray<MkBaseWindowNode*> buffer;
 	if (_CollectUpdatableWindowNodes(position, buffer))
 	{
@@ -1135,6 +1208,11 @@ bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkF
 
 bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& position, bool managedRoot)
 {
+	if (_CheckWheelMoveCondition(position))
+	{
+		_PushWindowEvent((delta < 0) ? MkSceneNodeFamilyDefinition::eCursorWheelDecrease : MkSceneNodeFamilyDefinition::eCursorWheelIncrease);
+	}
+
 	MkArray<MkBaseWindowNode*> buffer;
 	if (_CollectUpdatableWindowNodes(position, buffer))
 	{
@@ -1176,6 +1254,44 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 			}
 		}
 	}
+}
+
+void MkBaseWindowNode::UpdateManagedRoot(void)
+{
+#ifdef MKDEF_S2D_DEBUG_SHOW_WINDOW_EVENT
+	MK_INDEXING_LOOP(m_WindowEvents, i)
+	{
+		WindowEvent& evt = m_WindowEvents[i];
+		switch (evt.type)
+		{
+		// MkBaseWindowNode
+		case MkSceneNodeFamilyDefinition::eEnable: MK_DEV_PANEL.MsgToLog(L"eEnable : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eDisable: MK_DEV_PANEL.MsgToLog(L"eDisable : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorLeftPress: MK_DEV_PANEL.MsgToLog(L"eCursorLeftPress : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorMiddlePress: MK_DEV_PANEL.MsgToLog(L"eCursorMiddlePress : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorRightPress: MK_DEV_PANEL.MsgToLog(L"eCursorRightPress : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorLeftRelease: MK_DEV_PANEL.MsgToLog(L"eCursorLeftRelease : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorMiddleRelease: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleRelease : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorRightRelease: MK_DEV_PANEL.MsgToLog(L"eCursorRightRelease : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorLeftClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftClick : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorLeftDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorRightDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorRightDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorWheelDecrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelDecrease : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCursorWheelIncrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelIncrease : " + evt.node->GetNodeName().GetString()); break;
+
+		// MkSpreadButtonNode
+		case MkSceneNodeFamilyDefinition::eOpenList: MK_DEV_PANEL.MsgToLog(L"eOpenList : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eSetTargetItem: MK_DEV_PANEL.MsgToLog(L"eSetTargetItem : " + evt.node->GetNodeName().GetString()); break;
+
+		// MkCheckButtonNode
+		case MkSceneNodeFamilyDefinition::eCheckOn: MK_DEV_PANEL.MsgToLog(L"eCheckOn : " + evt.node->GetNodeName().GetString()); break;
+		case MkSceneNodeFamilyDefinition::eCheckOff: MK_DEV_PANEL.MsgToLog(L"eCheckOff : " + evt.node->GetNodeName().GetString()); break;
+		}
+	}
+#endif
+
+	m_WindowEvents.Flush();
 }
 
 void MkBaseWindowNode::OnFocus(bool managedRoot)
@@ -1265,6 +1381,9 @@ MkBaseWindowNode* MkBaseWindowNode::__CreateWindowPreset
 
 MkBaseWindowNode* MkBaseWindowNode::__GetFrontHitWindow(const MkFloat2& position)
 {
+	if (!GetVisible())
+		return NULL;
+
 	MkPairArray<float, MkBaseWindowNode*> hitWindows(8);
 	__GetHitWindows(position, hitWindows);
 	if (hitWindows.Empty())
@@ -1328,7 +1447,7 @@ bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, Mk
 		MK_STL_LOOP(looper)
 		{
 			MkSceneNode* node = looper.GetCurrentField();
-			if ((node->GetNodeType() >= eS2D_SNT_BaseWindowNode) && (node->GetWorldAABR().CheckGridIntersection(position)))
+			if (node->GetVisible() && (node->GetNodeType() >= eS2D_SNT_BaseWindowNode) && (node->GetWorldAABR().CheckGridIntersection(position)))
 			{
 				MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(node);
 				if ((winNode != NULL) && (winNode->GetEnable()))
@@ -1339,6 +1458,21 @@ bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, Mk
 		}
 	}
 	return (!buffer.Empty());
+}
+
+bool MkBaseWindowNode::_CheckCursorHitCondition(const MkFloat2& position) const
+{
+	eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+	return ((IsTitleStateType(component) || IsWindowStateType(component)) && GetWindowRect().CheckGridIntersection(position));
+}
+
+void MkBaseWindowNode::_PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type)
+{
+	MkBaseWindowNode* rootNode = GetManagedRoot();
+	if (rootNode != NULL)
+	{
+		rootNode->__PushEvent(WindowEvent(type, this));
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

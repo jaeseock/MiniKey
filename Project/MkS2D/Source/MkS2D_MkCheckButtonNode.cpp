@@ -4,7 +4,6 @@
 
 #include "MkS2D_MkProjectDefinition.h"
 #include "MkS2D_MkWindowResourceManager.h"
-//#include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
@@ -21,7 +20,9 @@ bool MkCheckButtonNode::CreateCheckButton(const MkHashStr& themeName, const Capt
 	MkBaseWindowNode* checkNode = __CreateWindowPreset(this, CHECK_NODE_NAME, themeName, eS2D_WPC_CheckButton, MkFloat2(0.f, 0.f));
 	if ((unchkNode != NULL) && (checkNode != NULL))
 	{
-		MkFloat2 iconPos(MKDEF_CHECK_BUTTON_SIZE_OFFSET / 2.f, MKDEF_CHECK_BUTTON_SIZE_OFFSET / 2.f);
+		const float MARGIN = MK_WR_PRESET.GetMargin();
+
+		MkFloat2 iconPos(MARGIN, MARGIN);
 		unchkNode->SetLocalPosition(iconPos);
 		unchkNode->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 		unchkNode->SetAttribute(eIgnoreMovement, true);
@@ -33,13 +34,11 @@ bool MkCheckButtonNode::CreateCheckButton(const MkHashStr& themeName, const Capt
 		unchkNode->SetVisible(!m_OnCheck);
 		checkNode->SetVisible(m_OnCheck);
 
-		float sizeOffset = MKDEF_CHECK_BUTTON_SIZE_OFFSET - 2.f * MK_WR_PRESET.GetMargin();
-		MkFloat2 bodySize = checkNode->GetPresetFullSize() + MkFloat2(sizeOffset, sizeOffset);
-		if (CreateWindowPreset(themeName, eS2D_WPC_BackgroundWindow, bodySize))
+		if (CreateWindowPreset(themeName, eS2D_WPC_BackgroundWindow, checkNode->GetPresetFullSize())) // icon size -> body size
 		{
 			m_CaptionDesc = captionDesc;
 			m_CaptionDesc.__Check(GetNodeName().GetString());
-			float captionPos = checkNode->GetPresetFullSize().x + MKDEF_CHECK_BUTTON_SIZE_OFFSET + MK_WR_PRESET.GetMargin();
+			float captionPos = GetPresetFullSize().x + MARGIN * 2.f; // blank size
 			return SetPresetComponentIcon(CAPTION_RECT_NAME, eRAP_LeftCenter, MkFloat2(captionPos, 0.f), 0.f, MkHashStr::NullHash, m_CaptionDesc);
 		}
 	}
@@ -58,6 +57,8 @@ void MkCheckButtonNode::SetCheck(bool enable)
 			unchkNode->SetVisible(true);
 			checkNode->SetVisible(false);
 		}
+
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eCheckOff);
 	}
 	else if ((!m_OnCheck) && enable) // off -> on
 	{
@@ -68,6 +69,8 @@ void MkCheckButtonNode::SetCheck(bool enable)
 			unchkNode->SetVisible(false);
 			checkNode->SetVisible(true);
 		}
+
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eCheckOn);
 	}
 
 	m_OnCheck = enable;
@@ -75,27 +78,11 @@ void MkCheckButtonNode::SetCheck(bool enable)
 
 void MkCheckButtonNode::Load(const MkDataNode& node)
 {
-	//unsigned int btnType = 0;
-	//node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::ButtonTypeKey, btnType, 0);
-	//m_ButtonType = static_cast<eSpreadButtonType>(btnType);
-	/*
 	MkArray<MkStr> captions;
-	node.GetData(MkSceneNodeFamilyDefinition::SpreadButton::CaptionKey, captions);
-	if (!captions.Empty())
-	{
-		m_ItemTagInfo.captionStr = captions[0];
+	node.GetData(MkSceneNodeFamilyDefinition::CheckButton::CaptionKey, captions);
+	m_CaptionDesc.__Load(GetNodeName().GetString(), captions);
 
-		unsigned int cnt = captions.GetSize();
-		if (cnt > 1)
-		{
-			m_ItemTagInfo.captionList.Reserve(cnt - 1);
-			for (unsigned int i=1; i<cnt; ++i)
-			{
-				m_ItemTagInfo.captionList.PushBack(captions[i]);
-			}
-		}
-	}
-	*/
+	node.GetData(MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey, m_OnCheck, 0);
 
 	// MkBaseWindowNode
 	MkBaseWindowNode::Load(node);
@@ -106,16 +93,11 @@ void MkCheckButtonNode::Save(MkDataNode& node)
 	// 기존 템플릿이 없으면 템플릿 적용
 	_ApplyBuildingTemplateToSave(node, MkSceneNodeFamilyDefinition::CheckButton::TemplateName);
 
-	//node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::ButtonTypeKey, static_cast<unsigned int>(m_ButtonType), 0);
-	/*
-	MkArray<MkStr> captions(1 + m_ItemTagInfo.captionList.GetSize());
-	captions.PushBack(m_ItemTagInfo.captionStr);
-	MK_INDEXING_LOOP(m_ItemTagInfo.captionList, i)
-	{
-		captions.PushBack(m_ItemTagInfo.captionList[i]);
-	}
-	node.SetData(MkSceneNodeFamilyDefinition::SpreadButton::CaptionKey, captions);
-	*/
+	MkArray<MkStr> captions;
+	m_CaptionDesc.__Save(captions);
+	node.SetData(MkSceneNodeFamilyDefinition::CheckButton::CaptionKey, captions);
+
+	node.SetData(MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey, m_OnCheck, 0);
 
 	// MkBaseWindowNode
 	MkBaseWindowNode::Save(node);
@@ -126,7 +108,6 @@ bool MkCheckButtonNode::InputEventMouseRelease(unsigned int button, const MkFloa
 	if ((button == 0) && GetWindowRect().CheckGridIntersection(position)) // left release
 	{
 		SetCheck(!m_OnCheck); // toggle
-		return true;
 	}
 
 	return MkBaseWindowNode::InputEventMouseRelease(button, position, managedRoot);
@@ -148,9 +129,15 @@ void MkCheckButtonNode::__GenerateBuildingTemplate(void)
 
 	tNode->ApplyTemplate(MkSceneNodeFamilyDefinition::BaseWindow::TemplateName); // MkBaseWindowNode의 template 적용
 
-	//tNode->CreateUnit(MkSceneNodeFamilyDefinition::SpreadButton::IconPathKey, MkStr::Null);
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::CheckButton::CaptionKey, MkStr::Null);
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey, false);
 
 	tNode->DeclareToTemplate(true);
+}
+
+bool MkCheckButtonNode::_CheckCursorHitCondition(const MkFloat2& position) const
+{
+	return (IsBackgroundStateType(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName)) && GetWindowRect().CheckGridIntersection(position));
 }
 
 //------------------------------------------------------------------------------------------------//

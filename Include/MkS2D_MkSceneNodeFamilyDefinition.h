@@ -11,6 +11,33 @@ class MkSceneNodeFamilyDefinition
 {
 public:
 
+	enum eWindowEvent
+	{
+		// MkBaseWindowNode
+		eEnable = 0,
+		eDisable,
+		eCursorLeftPress,
+		eCursorMiddlePress,
+		eCursorRightPress,
+		eCursorLeftRelease,
+		eCursorMiddleRelease,
+		eCursorRightRelease,
+		eCursorLeftClick,
+		eCursorLeftDoubleClick,
+		eCursorMiddleDoubleClick,
+		eCursorRightDoubleClick,
+		eCursorWheelDecrease,
+		eCursorWheelIncrease,
+
+		// MkSpreadButtonNode
+		eOpenList,
+		eSetTargetItem,
+
+		// MkCheckButtonNode
+		eCheckOn,
+		eCheckOff
+	};
+
 	// MkSceneNode
 	class Scene
 	{
@@ -56,6 +83,8 @@ public:
 	{
 	public:
 		static const MkHashStr TemplateName;
+		static const MkHashStr CaptionKey; // MkArray<MkStr>
+		static const MkHashStr OnCheckKey; // bool
 	};
 
 	// alloc

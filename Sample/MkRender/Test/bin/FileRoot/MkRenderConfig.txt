@@ -496,13 +496,6 @@ Node "WindowTypeImageSet"
 		str SN = "UnchkOCu";
 	}
 	
-	Node "DefaultUncheckOnClick"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "UnchkOCl";
-	}
-	
 	Node "DefaultCheckDefault"
 	{
 		int Type = 0;
@@ -556,7 +549,7 @@ Node "WindowPreset"
 		str PossitiveButton = "DefaultPBtnDefault" / "DefaultPBtnOnCursor" / "DefaultPBtnOnClick" / "DefaultBtnDisable";
 		str RootButton = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
-		str UncheckButton = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnClick" / "DefaultUncheckDefault";
+		str UncheckButton = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnCursor" / "DefaultUncheckDefault";
 		str CheckButton = "DefaultCheckDefault" / "DefaultCheckOnCursor" / "DefaultCheckOnClick" / "DefaultCheckDisable";
 		str CancelIcon =  "DefaultCancelDefault" / "DefaultCancelOnCursor" / "DefaultCancelOnClick" / "DefaultCancelDisable";
 		

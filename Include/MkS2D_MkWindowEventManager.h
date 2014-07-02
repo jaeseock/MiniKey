@@ -33,6 +33,9 @@ public:
 	// (NOTE) 등록될 windowNode는 부모 노드가 없어야 함
 	bool RegisterWindow(MkBaseWindowNode* windowNode, bool activate);
 
+	// 등록된 윈도우 삭제
+	void RemoveWindow(const MkHashStr& windowName);
+
 	// 윈도우 활성화 여부 반환
 	bool IsOnActivation(const MkHashStr& windowName) const;
 
@@ -73,6 +76,10 @@ public:
 	void __ShowDebugLayer(const MkFloatRect& rect, float depth);
 	void __HideDebugLayer(void);
 
+	// setting
+	inline void __SetShowWindowSelection(bool enable) { m_ShowWindowSelection = enable; }
+	inline bool __GetShowWindowSelection(void) { return m_ShowWindowSelection; }
+
 protected:
 
 	void _LastWindowLostFocus(void);
@@ -80,7 +87,7 @@ protected:
 
 	void _SetDarkenLayerEnable(bool enable);
 
-	MkFloat2 _ConfineMovement(MkBaseWindowNode* targetNode, const MkFloat2& screenSize, const MkFloat2& posBegin, const MkFloat2& toWorld, const MkFloat2& offset) const;
+	MkFloat2 _ConfineMovement(MkBaseWindowNode* targetNode, const MkFloat2& posBegin, const MkFloat2& toWorld, const MkFloat2& offset) const;
 
 	// 영역지정용 레이어 설정
 	void _ShowRegionLayer(void);
@@ -121,5 +128,9 @@ protected:
 	// spread button
 	MkArray<MkSpreadButtonNode*> m_OpeningSpreadButtons;
 
+	// setting
+	bool m_ShowWindowSelection;
+
+	// windows for edit mode
 	MkBaseWindowNode* m_CurrentTargetWindowNode;
 };

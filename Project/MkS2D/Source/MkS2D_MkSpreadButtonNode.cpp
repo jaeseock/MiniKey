@@ -178,6 +178,9 @@ bool MkSpreadButtonNode::SetTargetItem(const MkSpreadButtonNode* targetNode)
 			{
 				SetItemTag(targetNode->GetItemTagInfo());
 			}
+
+			// window event
+			_PushWindowEvent(MkSceneNodeFamilyDefinition::eSetTargetItem);
 		}
 	}
 	return ok;
@@ -294,6 +297,9 @@ void MkSpreadButtonNode::OpenAllItems(void)
 
 		// hide된 버튼들은 상위 버튼과 동일 위치에 모여 있으므로 show시 다시 배치해 주어야 Update()시 반영 됨
 		__UpdateItemRegion();
+
+		// window event
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eOpenList);
 	}
 }
 
