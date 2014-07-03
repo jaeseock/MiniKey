@@ -149,7 +149,7 @@ public:
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
-	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot);
+	virtual bool HitEventMousePress(unsigned int button, const MkFloat2& position);
 
 	//------------------------------------------------------------------------------------------------//
 

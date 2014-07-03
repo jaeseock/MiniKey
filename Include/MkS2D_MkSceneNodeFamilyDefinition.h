@@ -58,8 +58,7 @@ public:
 		static const MkHashStr EnableKey; // bool
 		static const MkHashStr PresetThemeNameKey; // MkStr
 		static const MkHashStr PresetComponentKey; // MkStr
-		static const MkHashStr PresetBodySizeKey; // MkInt2
-		static const MkHashStr PresetFullSizeKey; // MkInt2
+		static const MkHashStr PresetComponentSizeKey; // MkInt2
 		static const MkHashStr AttributeKey; // unsigned int
 	};
 

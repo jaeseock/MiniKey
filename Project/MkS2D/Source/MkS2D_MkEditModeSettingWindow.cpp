@@ -6,6 +6,10 @@
 
 
 const static MkHashStr SHOW_TARGET_WIN_REGION_NAME = L"ShowTargetWinReg";
+const static MkHashStr ALLOW_DRAG_MOVEMENT_NAME = L"AllowDragMovement";
+
+#define MKDEF_EDIT_MODE_SETTING_WIN_SIDE_MARGIN MkFloat2(20.f, 20.f)
+#define MKDEF_EDIT_MODE_SETTING_WIN_CTRL_MARGIN 10.f
 
 //------------------------------------------------------------------------------------------------//
 
@@ -26,16 +30,37 @@ bool MkEditModeSettingWindow::SetUp(const MkHashStr& themeName)
 	if (bgNode == NULL)
 		return false;
 
-	MkFloatRect clientRect = bgNode->GetPresetFullSize();
-	clientRect.size.y -= GetPresetFullSize().y; // body size - title size
+	MkFloatRect clientRect = bgNode->GetPresetComponentSize();
+	clientRect.size.y -= GetPresetComponentSize().y; // body size - title size
 
-	MkCheckButtonNode* cbNode = new MkCheckButtonNode(SHOW_TARGET_WIN_REGION_NAME);
+	MkFloat2 alignBorder = MKDEF_EDIT_MODE_SETTING_WIN_SIDE_MARGIN;
 	MkBaseWindowNode::CaptionDesc captionDesc;
-	captionDesc = L"타겟 윈도우 영역 표시";
-	cbNode->CreateCheckButton(L"Default", captionDesc, MK_WIN_EVENT_MGR.__GetShowWindowSelection());
-	cbNode->SetLocalPosition(clientRect.GetSnapPosition(MkFloatRect(cbNode->GetPresetFullSize()), eRAP_LeftTop, MkFloat2(20.f, 20.f)));
-	cbNode->SetLocalDepth(-0.001f);
-	bgNode->AttachChildNode(cbNode);
+
+	for (unsigned int i=0; i<2; ++i)
+	{
+		MkCheckButtonNode* cbNode = NULL;
+		switch (i)
+		{
+		case 0:
+			cbNode = new MkCheckButtonNode(SHOW_TARGET_WIN_REGION_NAME);
+			captionDesc = L"타겟 윈도우 영역 표시";
+			break;
+		case 1:
+			cbNode = new MkCheckButtonNode(ALLOW_DRAG_MOVEMENT_NAME);
+			captionDesc = L"기본 드래그 이동 허용";
+			break;
+		}
+
+		if (cbNode != NULL)
+		{
+			cbNode->CreateCheckButton(themeName, captionDesc, MK_WIN_EVENT_MGR.__GetShowWindowSelection());
+			cbNode->SetLocalPosition(clientRect.GetSnapPosition(MkFloatRect(cbNode->GetPresetComponentSize()), eRAP_LeftTop, alignBorder));
+			cbNode->SetLocalDepth(-0.001f);
+			bgNode->AttachChildNode(cbNode);
+
+			alignBorder.y += cbNode->GetPresetComponentSize().y + MKDEF_EDIT_MODE_SETTING_WIN_CTRL_MARGIN;
+		}
+	}
 
 	return true;
 }
@@ -45,36 +70,24 @@ void MkEditModeSettingWindow::Activate(void)
 	AlignPosition(MK_WIN_EVENT_MGR.GetRegionRect(), eRAP_MiddleCenter, MkInt2(0, 0)); // 중앙 정렬
 }
 
-void MkEditModeSettingWindow::UpdateManagedRoot(void)
+void MkEditModeSettingWindow::UseWindowEvent(WindowEvent& evt)
 {
-	MK_INDEXING_LOOP(m_WindowEvents, i)
+	if (evt.node->GetNodeName() == SHOW_TARGET_WIN_REGION_NAME)
 	{
-		WindowEvent& evt = m_WindowEvents[i];
-		const MkHashStr& targetName = evt.node->GetNodeName();
-
 		switch (evt.type)
 		{
-		case MkSceneNodeFamilyDefinition::eCheckOn:
-			{
-				if (targetName == SHOW_TARGET_WIN_REGION_NAME)
-				{
-					MK_WIN_EVENT_MGR.__SetShowWindowSelection(true);
-				}
-			}
-			break;
-
-		case MkSceneNodeFamilyDefinition::eCheckOff:
-			{
-				if (targetName == SHOW_TARGET_WIN_REGION_NAME)
-				{
-					MK_WIN_EVENT_MGR.__SetShowWindowSelection(false);
-				}
-			}
-			break;
+		case MkSceneNodeFamilyDefinition::eCheckOn: MK_WIN_EVENT_MGR.__SetShowWindowSelection(true); break;
+		case MkSceneNodeFamilyDefinition::eCheckOff: MK_WIN_EVENT_MGR.__SetShowWindowSelection(false); break;
 		}
 	}
-
-	MkBaseWindowNode::UpdateManagedRoot();
+	else if (evt.node->GetNodeName() == ALLOW_DRAG_MOVEMENT_NAME)
+	{
+		switch (evt.type)
+		{
+		case MkSceneNodeFamilyDefinition::eCheckOn: MK_WIN_EVENT_MGR.__SetAllowDragMovement(true); break;
+		case MkSceneNodeFamilyDefinition::eCheckOff: MK_WIN_EVENT_MGR.__SetAllowDragMovement(false); break;
+		}
+	}
 }
 
 MkEditModeSettingWindow::MkEditModeSettingWindow(const MkHashStr& name) : MkBaseWindowNode(name)

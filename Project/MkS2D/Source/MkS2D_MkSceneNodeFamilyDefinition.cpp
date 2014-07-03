@@ -23,8 +23,7 @@ const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::TemplateName(MKDEF_S2D_
 const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::EnableKey(L"Enable");
 const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::PresetThemeNameKey(L"PThemeName");
 const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentKey(L"PComponent");
-const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::PresetBodySizeKey(L"PBodySize");
-const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::PresetFullSizeKey(L"PFullSize");
+const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentSizeKey(L"PCompSize");
 const MkHashStr MkSceneNodeFamilyDefinition::BaseWindow::AttributeKey(L"Attribute");
 
 const MkHashStr MkSceneNodeFamilyDefinition::SpreadButton::TemplateName(MKDEF_S2D_BT_SPREADBUTTON_TEMPLATE_NAME);

@@ -15,7 +15,7 @@ public:
 
 	virtual void Activate(void);
 
-	virtual void UpdateManagedRoot(void);
+	virtual void UseWindowEvent(WindowEvent& evt);
 
 	MkEditModeSettingWindow(const MkHashStr& name);
 	virtual ~MkEditModeSettingWindow() {}

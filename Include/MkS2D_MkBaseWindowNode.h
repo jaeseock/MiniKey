@@ -133,7 +133,10 @@ public:
 	MkBaseWindowNode* GetAncestorWindowNode(void) const;
 
 	// MkWindowEventManager에 등록된 ancestor window 반환
-	MkBaseWindowNode* GetManagedRoot(void) const;
+	MkBaseWindowNode* GetRootWindow(void) const;
+
+	inline void DeclareRootWindow(void) { m_RootWindow = true; }
+	inline bool CheckRootWindow(void) const { return m_RootWindow; }
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성
@@ -178,12 +181,12 @@ public:
 
 	// 해당 윈도우 노드에 window preset이 적용된 component 노드 적용
 	// 이미 component가 적용되어 있으면 false 반환
-	bool CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
+	bool CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& componentSize);
 
 	// CreateWindowPreset()에서 eS2D_WPC_BackgroundWindow만 해당되는 경우로 preset이 아닌 free image로 생성
 	// 이미 component가 적용되어 있으면 false 반환
 	// (NOTE) theme 기반이 아니기 때문에 SetPresetThemeName()의 적용을 받지 않음. 대신 SetFreeImageToBackgroundWindow()로 변경 가능
-	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentBodySize()의 적용을 받지 않음
+	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentSize()의 적용을 받지 않음
 	bool CreateFreeImageBaseBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
 
 	// 해당 윈도우 노드와 모든 자식 윈도우 노드에 window preset이 적용된 노드들이 있으면 모두 테마 변경
@@ -191,7 +194,7 @@ public:
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경
 	// (NOTE) MkWindowTypeImageSet::eSingleType image set 기반으로 생성된 component면 적용을 받지 않음(image 크기로 고정)
-	void SetPresetComponentBodySize(const MkFloat2& bodySize);
+	void SetPresetComponentSize(const MkFloat2& componentSize);
 
 	// 해당 윈도우 노드가 CreateFreeImageBaseBackgroundWindow()으로 생성된 윈도우일 경우 이미지 변경
 	bool SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
@@ -215,11 +218,8 @@ public:
 	inline const MkHashStr& GetPresetComponentName(void) const { return m_PresetComponentName; }
 	eS2D_WindowPresetComponent GetPresetComponentType(void) const;
 
-	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 margin의 적용되지 않은 크기 반환
-	inline const MkFloat2& GetPresetBodySize(void) const { return m_PresetBodySize; }
-
-	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 margin까지 적용된 크기 반환
-	inline const MkFloat2& GetPresetFullSize(void) const { return m_PresetFullSize; }
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 영역 크기 반환
+	inline const MkFloat2& GetPresetComponentSize(void) const { return m_PresetComponentSize; }
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute
@@ -232,25 +232,32 @@ public:
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
-	// input
+	// root -> leaf 순회 input event
+	// (NOTE) 특수한 상황이 아니면 윈도우별 처리는 하단의 HitEventMouse...()를 사용하길 권장
 	virtual void InputEventKeyPress(unsigned int keyCode) {}
 	virtual void InputEventKeyRelease(unsigned int keyCode) {}
-	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot);
-	virtual bool InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot);
-	virtual bool InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position, bool managedRoot);
-	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position, bool managedRoot);
-	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position, bool managedRoot);
+	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position);
+	virtual bool InputEventMouseRelease(unsigned int button, const MkFloat2& position);
+	virtual bool InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position);
+	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position);
+	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position);
 
-	// input 처리가 종료되고 focus window일 경우 호출됨
-	virtual void UpdateManagedRoot(void);
+	// hit condition(_CheckCursorHitCondition/_CheckWheelMoveCondition)을 만족한 윈도우만 호출
+	virtual bool HitEventMousePress(unsigned int button, const MkFloat2& position) { return false; }
+	virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position) { return false; }
+	virtual bool HitEventMouseDoubleClick(unsigned int button, const MkFloat2& position) { return false; }
+	virtual bool HitEventMouseWheelMove(int delta, const MkFloat2& position) { return false; }
 
+	// 하위 윈도우들이 발생시킨 window event가 존재 할 경우 호출됨
+	virtual void UseWindowEvent(WindowEvent& evt) {}
+	
 	// activation
 	virtual void Activate(void) {}
 	virtual void Deactivate(void) {}
 
 	// focus
-	virtual void OnFocus(bool managedRoot);
-	virtual void LostFocus(bool managedRoot);
+	virtual void OnFocus(void);
+	virtual void LostFocus(void);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -262,14 +269,16 @@ public:
 	static void __GenerateBuildingTemplate(void);
 
 	static MkBaseWindowNode* __CreateWindowPreset
-		(MkSceneNode* parentNode, const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize);
+		(MkSceneNode* parentNode, const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& componentSize);
 
-	inline void __SetFullSize(const MkFloat2& size) { m_PresetFullSize = size; }
+	inline void __SetPresetComponentSize(const MkFloat2& size) { m_PresetComponentSize = size; }
 
 	inline void __PushEvent(const WindowEvent& evt) { m_WindowEvents.PushBack(evt); }
-
+	
 	MkBaseWindowNode* __GetFrontHitWindow(const MkFloat2& position);
 	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows); // all hits
+
+	void __ConsumeWindowEvent(void);
 
 protected:
 
@@ -283,14 +292,15 @@ protected:
 
 protected:
 
+	bool m_RootWindow;
+
 	// enable
 	bool m_Enable;
 
 	// window preset
 	MkHashStr m_PresetThemeName;
 	MkHashStr m_PresetComponentName;
-	MkFloat2 m_PresetBodySize;
-	MkFloat2 m_PresetFullSize;
+	MkFloat2 m_PresetComponentSize;
 	
 	// attribute
 	MkBitFieldDW m_Attribute;

@@ -89,7 +89,7 @@ public:
 
 		MkBaseWindowNode* formNode = new MkBaseWindowNode(L"Form");
 		formNode->CreateWindowPreset(L"Default", eS2D_WPC_GuideBox, MkFloat2(280.f, 160.f));
-		formNode->SetLocalPosition(MkFloatRect(0.f, 0.f, 300.f, 180.f).GetSnapPosition(MkFloatRect(formNode->GetPresetFullSize()), eRAP_MiddleCenter, MkFloat2(0.f, 0.f)));
+		formNode->SetLocalPosition(MkFloatRect(0.f, 0.f, 300.f, 180.f).GetSnapPosition(MkFloatRect(formNode->GetPresetComponentSize()), eRAP_MiddleCenter, MkFloat2(0.f, 0.f)));
 		formNode->SetLocalDepth(-0.001f);
 
 		MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>((winDesc.hasTitle) ? titleWin->GetChildNode(L"Background") : titleWin);
@@ -412,7 +412,7 @@ public:
 		}
 		
 		//testWin->SetPresetThemeName(L"SolidLB");
-		//m_WindowNode1->SetPresetComponentBodySize(MkFloat2(100.f, 100.f));
+		//m_WindowNode1->SetPresetComponentSize(MkFloat2(100.f, 100.f));
 
 		m_RootNode->Update();
 		

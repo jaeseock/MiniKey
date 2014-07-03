@@ -79,6 +79,8 @@ public:
 	// setting
 	inline void __SetShowWindowSelection(bool enable) { m_ShowWindowSelection = enable; }
 	inline bool __GetShowWindowSelection(void) { return m_ShowWindowSelection; }
+	inline void __SetAllowDragMovement(bool enable) { m_AllowDragMovement = enable; }
+	inline bool __GetAllowDragMovement(void) { return m_AllowDragMovement; }
 
 protected:
 
@@ -130,6 +132,7 @@ protected:
 
 	// setting
 	bool m_ShowWindowSelection;
+	bool m_AllowDragMovement;
 
 	// windows for edit mode
 	MkBaseWindowNode* m_CurrentTargetWindowNode;

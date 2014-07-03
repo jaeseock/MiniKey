@@ -34,73 +34,82 @@ protected:
 		return targetRect;
 	}
 
-	static void _LineUpSRects(MkWindowTypeImageSet::eSetType setType, MkArray<MkSRect*>& srects, const MkFloat2& bodySize, MkFloat2& fullSize)
+	static void _LineUpSRects(MkWindowTypeImageSet::eSetType setType, MkArray<MkSRect*>& srects, const MkFloat2& sizeIn, MkFloat2& sizeOut)
 	{
-		switch (setType) // bodySize를 반영한 위치 및 크기 재배치
+		if (setType == MkWindowTypeImageSet::eSingleType)
 		{
-		case MkWindowTypeImageSet::eSingleType:
-			fullSize = srects[MkWindowTypeImageSet::eL]->GetLocalSize();
-			break;
-		case MkWindowTypeImageSet::e3And1Type:
+			sizeOut = srects[MkWindowTypeImageSet::eL]->GetLocalSize();
+		}
+		else
+		{
+			float gap = MK_WR_PRESET.GetMargin() * 2.f;
+			MkFloat2 bodySize = sizeIn - MkFloat2(gap, gap);
+			if (bodySize.x < 0.f) { bodySize.x = 0.f; }
+			if (bodySize.y < 0.f) { bodySize.y = 0.f; }
+
+			switch (setType) // size를 반영한 위치 및 크기 재배치
 			{
-				MkSRect* lRect = srects[MkWindowTypeImageSet::eL];
-				MkSRect* mRect = srects[MkWindowTypeImageSet::eM];
-				MkSRect* rRect = srects[MkWindowTypeImageSet::eR];
+			case MkWindowTypeImageSet::e3And1Type:
+				{
+					MkSRect* lRect = srects[MkWindowTypeImageSet::eL];
+					MkSRect* mRect = srects[MkWindowTypeImageSet::eM];
+					MkSRect* rRect = srects[MkWindowTypeImageSet::eR];
 
-				mRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x, 0.f));
-				mRect->SetLocalSize(MkFloat2(bodySize.x, mRect->GetLocalSize().y));
-				rRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x + bodySize.x, 0.f));
+					mRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x, 0.f));
+					mRect->SetLocalSize(MkFloat2(bodySize.x, mRect->GetLocalSize().y));
+					rRect->SetLocalPosition(MkFloat2(lRect->GetLocalSize().x + bodySize.x, 0.f));
 
-				fullSize.x = lRect->GetLocalSize().x + bodySize.x + rRect->GetLocalSize().x;
-				fullSize.y = lRect->GetLocalSize().y;
+					sizeOut.x = lRect->GetLocalSize().x + bodySize.x + rRect->GetLocalSize().x;
+					sizeOut.y = lRect->GetLocalSize().y;
+				}
+				break;
+			case MkWindowTypeImageSet::e1And3Type:
+				{
+					MkSRect* tRect = srects[MkWindowTypeImageSet::eT];
+					MkSRect* cRect = srects[MkWindowTypeImageSet::eC];
+					MkSRect* bRect = srects[MkWindowTypeImageSet::eB];
+
+					cRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y));
+					cRect->SetLocalSize(MkFloat2(cRect->GetLocalSize().x, bodySize.y));
+					tRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y + bodySize.y));
+
+					sizeOut.x = tRect->GetLocalSize().y;
+					sizeOut.y = tRect->GetLocalSize().y + bodySize.y + bRect->GetLocalSize().y;
+				}
+				break;
+			case MkWindowTypeImageSet::e3And3Type:
+				{
+					MkSRect* ltRect = srects[MkWindowTypeImageSet::eLT];
+					MkSRect* mtRect = srects[MkWindowTypeImageSet::eMT];
+					MkSRect* rtRect = srects[MkWindowTypeImageSet::eRT];
+					MkSRect* lcRect = srects[MkWindowTypeImageSet::eLC];
+					MkSRect* mcRect = srects[MkWindowTypeImageSet::eMC];
+					MkSRect* rcRect = srects[MkWindowTypeImageSet::eRC];
+					MkSRect* lbRect = srects[MkWindowTypeImageSet::eLB];
+					MkSRect* mbRect = srects[MkWindowTypeImageSet::eMB];
+					MkSRect* rbRect = srects[MkWindowTypeImageSet::eRB];
+
+					mbRect->SetLocalPosition(MkFloat2(lbRect->GetLocalSize().x, 0.f));
+					mbRect->SetLocalSize(MkFloat2(bodySize.x, mbRect->GetLocalSize().y));
+					rbRect->SetLocalPosition(MkFloat2(lbRect->GetLocalSize().x + bodySize.x, 0.f));
+
+					lcRect->SetLocalPosition(MkFloat2(0.f, lbRect->GetLocalSize().y));
+					lcRect->SetLocalSize(MkFloat2(lcRect->GetLocalSize().x, bodySize.y));
+					mcRect->SetLocalPosition(MkFloat2(lcRect->GetLocalSize().x, mbRect->GetLocalSize().y));
+					mcRect->SetLocalSize(bodySize);
+					rcRect->SetLocalPosition(MkFloat2(lcRect->GetLocalSize().x + bodySize.x, rbRect->GetLocalSize().y));
+					rcRect->SetLocalSize(MkFloat2(rcRect->GetLocalSize().x, bodySize.y));
+
+					ltRect->SetLocalPosition(MkFloat2(0.f, lbRect->GetLocalSize().y + bodySize.y));
+					mtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x, mbRect->GetLocalSize().y + bodySize.y));
+					mtRect->SetLocalSize(MkFloat2(bodySize.x, mtRect->GetLocalSize().y));
+					rtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x + bodySize.x, rbRect->GetLocalSize().y + bodySize.y));
+
+					sizeOut.x = ltRect->GetLocalSize().x + bodySize.x + rtRect->GetLocalSize().x;
+					sizeOut.y = ltRect->GetLocalSize().y + bodySize.y + lbRect->GetLocalSize().y;
+				}
+				break;
 			}
-			break;
-		case MkWindowTypeImageSet::e1And3Type:
-			{
-				MkSRect* tRect = srects[MkWindowTypeImageSet::eT];
-				MkSRect* cRect = srects[MkWindowTypeImageSet::eC];
-				MkSRect* bRect = srects[MkWindowTypeImageSet::eB];
-
-				cRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y));
-				cRect->SetLocalSize(MkFloat2(cRect->GetLocalSize().x, bodySize.y));
-				tRect->SetLocalPosition(MkFloat2(0.f, bRect->GetLocalSize().y + bodySize.y));
-
-				fullSize.x = tRect->GetLocalSize().y;
-				fullSize.y = tRect->GetLocalSize().y + bodySize.y + bRect->GetLocalSize().y;
-			}
-			break;
-		case MkWindowTypeImageSet::e3And3Type:
-			{
-				MkSRect* ltRect = srects[MkWindowTypeImageSet::eLT];
-				MkSRect* mtRect = srects[MkWindowTypeImageSet::eMT];
-				MkSRect* rtRect = srects[MkWindowTypeImageSet::eRT];
-				MkSRect* lcRect = srects[MkWindowTypeImageSet::eLC];
-				MkSRect* mcRect = srects[MkWindowTypeImageSet::eMC];
-				MkSRect* rcRect = srects[MkWindowTypeImageSet::eRC];
-				MkSRect* lbRect = srects[MkWindowTypeImageSet::eLB];
-				MkSRect* mbRect = srects[MkWindowTypeImageSet::eMB];
-				MkSRect* rbRect = srects[MkWindowTypeImageSet::eRB];
-
-				mbRect->SetLocalPosition(MkFloat2(lbRect->GetLocalSize().x, 0.f));
-				mbRect->SetLocalSize(MkFloat2(bodySize.x, mbRect->GetLocalSize().y));
-				rbRect->SetLocalPosition(MkFloat2(lbRect->GetLocalSize().x + bodySize.x, 0.f));
-
-				lcRect->SetLocalPosition(MkFloat2(0.f, lbRect->GetLocalSize().y));
-				lcRect->SetLocalSize(MkFloat2(lcRect->GetLocalSize().x, bodySize.y));
-				mcRect->SetLocalPosition(MkFloat2(lcRect->GetLocalSize().x, mbRect->GetLocalSize().y));
-				mcRect->SetLocalSize(bodySize);
-				rcRect->SetLocalPosition(MkFloat2(lcRect->GetLocalSize().x + bodySize.x, rbRect->GetLocalSize().y));
-				rcRect->SetLocalSize(MkFloat2(rcRect->GetLocalSize().x, bodySize.y));
-
-				ltRect->SetLocalPosition(MkFloat2(0.f, lbRect->GetLocalSize().y + bodySize.y));
-				mtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x, mbRect->GetLocalSize().y + bodySize.y));
-				mtRect->SetLocalSize(MkFloat2(bodySize.x, mtRect->GetLocalSize().y));
-				rtRect->SetLocalPosition(MkFloat2(ltRect->GetLocalSize().x + bodySize.x, rbRect->GetLocalSize().y + bodySize.y));
-
-				fullSize.x = ltRect->GetLocalSize().x + bodySize.x + rtRect->GetLocalSize().x;
-				fullSize.y = ltRect->GetLocalSize().y + bodySize.y + lbRect->GetLocalSize().y;
-			}
-			break;
 		}
 	}
 
@@ -117,7 +126,7 @@ protected:
 	}
 
 public:
-	static bool ApplyImageSetAndBodySize(const MkHashStr& imageSet, const MkFloat2& bodySize, MkSceneNode* targetNode, MkFloat2& fullSize)
+	static bool ApplyImageSetAndSize(const MkHashStr& imageSet, const MkFloat2& sizeIn, MkSceneNode* targetNode, MkFloat2& sizeOut)
 	{
 		if (targetNode != NULL)
 		{
@@ -183,7 +192,7 @@ public:
 
 					if (ok)
 					{
-						_LineUpSRects(pack.type, srects, bodySize, fullSize);
+						_LineUpSRects(pack.type, srects, sizeIn, sizeOut);
 					}
 
 					return true;
@@ -193,7 +202,7 @@ public:
 		return false;
 	}
 
-	static bool ApplyFreeImage(const MkPathName& imagePath, const MkHashStr& subsetName, MkSceneNode* targetNode, MkFloat2& fullSize)
+	static bool ApplyFreeImage(const MkPathName& imagePath, const MkHashStr& subsetName, MkSceneNode* targetNode, MkFloat2& sizeOut)
 	{
 		if (targetNode != NULL)
 		{
@@ -209,7 +218,7 @@ public:
 				MkSRect* srect = _SetSRect(rectName, texture, subsetName, targetNode);
 				if (srect != NULL)
 				{
-					fullSize = srect->GetLocalSize();
+					sizeOut = srect->GetLocalSize();
 					return true;
 				}
 			}
@@ -217,7 +226,7 @@ public:
 		return false;
 	}
 
-	static void ApplyBodySize(const MkFloat2& bodySize, MkSceneNode* targetNode, MkFloat2& fullSize)
+	static void ApplySize(const MkFloat2& sizeIn, MkSceneNode* targetNode, MkFloat2& sizeOut)
 	{
 		if (targetNode != NULL)
 		{
@@ -225,7 +234,7 @@ public:
 
 			if (_GetMatchingSRect(targetNode, MkWindowTypeImageSet::eSingleType, MkWindowTypeImageSet::eL, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::eSingleType, srects, bodySize, fullSize);
+				_LineUpSRects(MkWindowTypeImageSet::eSingleType, srects, sizeIn, sizeOut);
 				return;
 			}
 			srects.Flush();
@@ -234,7 +243,7 @@ public:
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eM, srects) &&
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eR, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::e3And1Type, srects, bodySize, fullSize);
+				_LineUpSRects(MkWindowTypeImageSet::e3And1Type, srects, sizeIn, sizeOut);
 				return;
 			}
 			srects.Flush();
@@ -243,7 +252,7 @@ public:
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eC, srects) &&
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eB, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::e1And3Type, srects, bodySize, fullSize);
+				_LineUpSRects(MkWindowTypeImageSet::e1And3Type, srects, sizeIn, sizeOut);
 				return;
 			}
 			srects.Flush();
@@ -258,7 +267,7 @@ public:
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMB, srects) &&
 				_GetMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRB, srects))
 			{
-				_LineUpSRects(MkWindowTypeImageSet::e3And3Type, srects, bodySize, fullSize);
+				_LineUpSRects(MkWindowTypeImageSet::e3And3Type, srects, sizeIn, sizeOut);
 			}
 		}
 	}
@@ -270,7 +279,7 @@ class __TSI_ImageSetToStateNode
 protected:
 	static void _AlignTagRect(MkBaseWindowNode* targetNode, MkSRect* stateRect, eRectAlignmentPosition alignment, const MkFloat2& border)
 	{
-		MkFloatRect anchorRect(MkFloat2(0.f, 0.f), targetNode->GetPresetFullSize());
+		MkFloatRect anchorRect(MkFloat2(0.f, 0.f), targetNode->GetPresetComponentSize());
 		MkFloat2 position = anchorRect.GetSnapPosition(stateRect->GetLocalRect(), alignment, border);
 		stateRect->SetLocalPosition(position);
 		stateRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID); // 살짝 앞으로 나오게
@@ -318,11 +327,11 @@ protected:
 	}
 
 public:
-	static bool ApplyImageSetAndBodySize(const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
+	static bool ApplyImageSetAndSize(const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
 	{
 		if (targetNode != NULL)
 		{
-			const MkFloat2& bodySize = targetNode->GetPresetBodySize();
+			const MkFloat2& sizeIn = targetNode->GetPresetComponentSize();
 
 			DataType beginState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin());
 			DataType endState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetEnd());
@@ -334,14 +343,14 @@ public:
 				// 동일 component 노드는 네이밍 규칙에 의해 동일한 이름의 자식(state)들을 가지고 있음을 보장
 				MkSceneNode* stateNode = targetNode->ChildExist(stateKeyword) ? targetNode->GetChildNode(stateKeyword) : targetNode->CreateChildNode(stateKeyword);
 
-				MkFloat2 rectSize;
-				if (__TSI_ImageSetToTargetNode::ApplyImageSetAndBodySize(imageSets[currState], bodySize, stateNode, rectSize))
+				MkFloat2 sizeOut;
+				if (__TSI_ImageSetToTargetNode::ApplyImageSetAndSize(imageSets[currState], sizeIn, stateNode, sizeOut))
 				{
 					bool defaultState = (currState == beginState);
 					stateNode->SetVisible(defaultState);
 					if (defaultState)
 					{
-						targetNode->__SetFullSize(rectSize);
+						targetNode->__SetPresetComponentSize(sizeOut);
 					}
 
 					currState = static_cast<DataType>(currState + 1);
@@ -360,22 +369,22 @@ public:
 		{
 			const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(state);
 			MkSceneNode* stateNode = targetNode->ChildExist(stateKeyword) ? targetNode->GetChildNode(stateKeyword) : targetNode->CreateChildNode(stateKeyword);
-			MkFloat2 rectSize;
-			if (__TSI_ImageSetToTargetNode::ApplyFreeImage(imagePath, subsetName, stateNode, rectSize))
+			MkFloat2 sizeOut;
+			if (__TSI_ImageSetToTargetNode::ApplyFreeImage(imagePath, subsetName, stateNode, sizeOut))
 			{
 				stateNode->SetVisible(true);
-				targetNode->__SetFullSize(rectSize);
+				targetNode->__SetPresetComponentSize(sizeOut);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	static void ApplyBodySize(MkBaseWindowNode* targetNode)
+	static void ApplySize(MkBaseWindowNode* targetNode)
 	{
 		if (targetNode != NULL)
 		{
-			const MkFloat2& bodySize = targetNode->GetPresetBodySize();
+			const MkFloat2& sizeIn = targetNode->GetPresetComponentSize();
 
 			DataType beginState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin());
 			DataType endState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetEnd());
@@ -384,11 +393,11 @@ public:
 			{
 				const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(currState);
 
-				MkFloat2 rectSize;
-				__TSI_ImageSetToTargetNode::ApplyBodySize(bodySize, targetNode->GetChildNode(stateKeyword), rectSize);
+				MkFloat2 sizeOut;
+				__TSI_ImageSetToTargetNode::ApplySize(sizeIn, targetNode->GetChildNode(stateKeyword), sizeOut);
 				if (currState == beginState)
 				{
-					targetNode->__SetFullSize(rectSize);
+					targetNode->__SetPresetComponentSize(sizeOut);
 				}
 
 				currState = static_cast<DataType>(currState + 1);
@@ -421,36 +430,36 @@ public:
 class __TSI_ImageSetToComponentNode
 {
 public:
-	static bool ApplyImageSetAndBodySize(eS2D_WindowPresetComponent component, const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
+	static bool ApplyImageSetAndSize(eS2D_WindowPresetComponent component, const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
 	{
 		if (IsBackgroundStateType(component))
 		{
-			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyImageSetAndBodySize(imageSets, targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyImageSetAndSize(imageSets, targetNode);
 		}
 		else if (IsTitleStateType(component))
 		{
-			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyImageSetAndBodySize(imageSets, targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyImageSetAndSize(imageSets, targetNode);
 		}
 		else if (IsWindowStateType(component))
 		{
-			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyImageSetAndBodySize(imageSets, targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyImageSetAndSize(imageSets, targetNode);
 		}
 		return false;
 	}
 
-	static void ApplyBodySize(eS2D_WindowPresetComponent component, MkBaseWindowNode* targetNode)
+	static void ApplySize(eS2D_WindowPresetComponent component, MkBaseWindowNode* targetNode)
 	{
 		if (IsBackgroundStateType(component))
 		{
-			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyBodySize(targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplySize(targetNode);
 		}
 		else if (IsTitleStateType(component))
 		{
-			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplyBodySize(targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_TitleState>::ApplySize(targetNode);
 		}
 		else if (IsWindowStateType(component))
 		{
-			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyBodySize(targetNode);
+			return __TSI_ImageSetToStateNode<eS2D_WindowState>::ApplySize(targetNode);
 		}
 	}
 
@@ -597,24 +606,28 @@ MkBaseWindowNode* MkBaseWindowNode::GetAncestorWindowNode(void) const
 	}
 }
 
-MkBaseWindowNode* MkBaseWindowNode::GetManagedRoot(void) const
+MkBaseWindowNode* MkBaseWindowNode::GetRootWindow(void) const
 {
-	MkSceneNode* targetNode = const_cast<MkBaseWindowNode*>(this);
+	if (CheckRootWindow())
+		return const_cast<MkBaseWindowNode*>(this);
+
+	MkSceneNode* parentNode = m_ParentNodePtr;
 	while (true)
 	{
-		if (targetNode == NULL)
-			return NULL; // error
-
-		MkSceneNode* parentNode = targetNode->GetParentNode();
 		if (parentNode == NULL)
-			return NULL; // root
+			return NULL;
 
-		if ((targetNode->GetNodeType() >= eS2D_SNT_BaseWindowNode) && (parentNode->GetParentNode() == NULL))
+		if (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
 		{
-			return dynamic_cast<MkBaseWindowNode*>(targetNode); // 부모는 존재하지만 조부모가 없는 경우
+			MkBaseWindowNode* targetNode = dynamic_cast<MkBaseWindowNode*>(parentNode);
+			if (targetNode != NULL)
+			{
+				if (targetNode->CheckRootWindow())
+					return targetNode;
+			}
 		}
 
-		targetNode = parentNode;
+		parentNode = parentNode->GetParentNode();
 	}
 }
 
@@ -633,13 +646,9 @@ void MkBaseWindowNode::Load(const MkDataNode& node)
 	node.GetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentKey, componentName, 0);
 	m_PresetComponentName = componentName;
 
-	MkInt2 presetBodySize;
-	node.GetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetBodySizeKey, presetBodySize, 0);
-	m_PresetBodySize = MkFloat2(static_cast<float>(presetBodySize.x), static_cast<float>(presetBodySize.y));
-
-	MkInt2 presetFullSize;
-	node.GetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetFullSizeKey, presetFullSize, 0);
-	m_PresetFullSize = MkFloat2(static_cast<float>(presetFullSize.x), static_cast<float>(presetFullSize.y));
+	MkInt2 presetCompSize;
+	node.GetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentSizeKey, presetCompSize, 0);
+	m_PresetComponentSize = MkFloat2(static_cast<float>(presetCompSize.x), static_cast<float>(presetCompSize.y));
 
 	// attribute
 	m_Attribute.Clear();
@@ -662,8 +671,7 @@ void MkBaseWindowNode::Save(MkDataNode& node)
 	node.SetData(MkSceneNodeFamilyDefinition::BaseWindow::EnableKey, m_Enable, 0);
 	node.SetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetThemeNameKey, m_PresetThemeName.GetString(), 0);
 	node.SetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentKey, m_PresetComponentName.GetString(), 0);
-	node.SetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetBodySizeKey, MkInt2(static_cast<int>(m_PresetBodySize.x), static_cast<int>(m_PresetBodySize.y)), 0);
-	node.SetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetFullSizeKey, MkInt2(static_cast<int>(m_PresetFullSize.x), static_cast<int>(m_PresetFullSize.y)), 0);
+	node.SetData(MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentSizeKey, MkInt2(static_cast<int>(m_PresetComponentSize.x), static_cast<int>(m_PresetComponentSize.y)), 0);
 	node.SetData(MkSceneNodeFamilyDefinition::BaseWindow::AttributeKey, m_Attribute.m_Field, 0);
 
 	// MkSceneNode
@@ -737,14 +745,9 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 	const float MARGIN = MK_WR_PRESET.GetMargin();
 	
 	// window size 유효성 검사
-	if (d.windowSize.x < MARGIN * 4.f)
-	{
-		d.windowSize.x = MARGIN * 4.f;
-	}
-	if (d.windowSize.y < MARGIN * 4.f)
-	{
-		d.windowSize.x = MARGIN * 4.f;
-	}
+	float minWinLength = MARGIN * 4.f;
+	if (d.windowSize.x < minWinLength) { d.windowSize.x = minWinLength; }
+	if (d.windowSize.y < minWinLength) { d.windowSize.x = minWinLength; }
 
 	// 반환 할 노드
 	MkBaseWindowNode* rootWindow = NULL;
@@ -753,18 +756,12 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 	MkBaseWindowNode* titleWindow = NULL;
 	if (d.hasTitle)
 	{
-		// title body size 검사
-		if (d.titleHeight < MARGIN * 2.f)
-		{
-			d.titleHeight = MARGIN * 2.f;
-		}
-		MkFloat2 titleBodySize(d.windowSize.x - MARGIN * 4.f, d.titleHeight - MARGIN * 2.f);
-
+		MkFloat2 titleCompSize(d.windowSize.x - MARGIN * 2.f, d.titleHeight);
 		if (targetWindow == NULL)
 		{
-			titleWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_TitleWindow, titleBodySize);
+			titleWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_TitleWindow, titleCompSize);
 		}
-		else if (targetWindow->CreateWindowPreset(d.themeName, eS2D_WPC_TitleWindow, titleBodySize))
+		else if (targetWindow->CreateWindowPreset(d.themeName, eS2D_WPC_TitleWindow, titleCompSize))
 		{
 			titleWindow = targetWindow;
 		}
@@ -773,7 +770,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		{
 			rootWindow = titleWindow;
 
-			titleWindow->SetLocalPosition(MkFloat2(0.f, -titleWindow->GetPresetFullSize().y));
+			titleWindow->SetLocalPosition(MkFloat2(0.f, -titleWindow->GetPresetComponentSize().y));
 
 			// window icon
 			if (d.hasIcon)
@@ -788,8 +785,8 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 				MkBaseWindowNode* cancelWindow = __CreateWindowPreset(titleWindow, L"CancelIcon", d.themeName, eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f));
 				if (cancelWindow != NULL)
 				{
-					MkFloat2 localPos =	MkFloatRect(titleWindow->GetPresetFullSize()).GetSnapPosition
-						(MkFloatRect(cancelWindow->GetPresetFullSize()), eRAP_RightCenter, MkFloat2(MARGIN, 0.f));
+					MkFloat2 localPos =	MkFloatRect(titleWindow->GetPresetComponentSize()).GetSnapPosition
+						(MkFloatRect(cancelWindow->GetPresetComponentSize()), eRAP_RightCenter, MkFloat2(MARGIN, 0.f));
 					cancelWindow->SetLocalPosition(MkVec3(localPos.x, localPos.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 					cancelWindow->SetAttribute(eIgnoreMovement, true);
 				}
@@ -821,12 +818,11 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		}
 		else
 		{
-			MkFloat2 bgBodySize(d.windowSize.x - MARGIN * 2.f, d.windowSize.y - MARGIN * 2.f);
 			if (targetWindow == NULL)
 			{
-				backgroundWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize);
+				backgroundWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_BackgroundWindow, d.windowSize);
 			}
-			else if (targetWindow->CreateWindowPreset(d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize))
+			else if (targetWindow->CreateWindowPreset(d.themeName, eS2D_WPC_BackgroundWindow, d.windowSize))
 			{
 				backgroundWindow = targetWindow;
 			}
@@ -852,8 +848,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		}
 		else
 		{
-			MkFloat2 bgBodySize(d.windowSize.x - MARGIN * 2.f, d.windowSize.y - MARGIN * 2.f);
-			backgroundWindow = __CreateWindowPreset(titleWindow, bgNodeName, d.themeName, eS2D_WPC_BackgroundWindow, bgBodySize);
+			backgroundWindow = __CreateWindowPreset(titleWindow, bgNodeName, d.themeName, eS2D_WPC_BackgroundWindow, d.windowSize);
 		}
 	}
 
@@ -866,18 +861,18 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		}
 		else
 		{
-			heightOffset = titleWindow->GetPresetFullSize().y;
+			heightOffset = titleWindow->GetPresetComponentSize().y;
 		}
-		backgroundWindow->SetLocalPosition(MkVec3(-MARGIN, heightOffset - backgroundWindow->GetPresetFullSize().y + MARGIN, MKDEF_BASE_WINDOW_DEPTH_GRID));
+		backgroundWindow->SetLocalPosition(MkVec3(-MARGIN, heightOffset - backgroundWindow->GetPresetComponentSize().y + MARGIN, MKDEF_BASE_WINDOW_DEPTH_GRID));
 		backgroundWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
 
-		const MkFloat2 buttonBodySize(50.f, 12.f);
+		const MkFloat2 buttonCompSize(60.f, 18.f);
 
 		// ok button
 		MkBaseWindowNode* okWindow = NULL;
 		if (d.hasOKButton)
 		{
-			okWindow = __CreateWindowPreset(backgroundWindow, L"PButton00", d.themeName, eS2D_WPC_PossitiveButton, buttonBodySize);
+			okWindow = __CreateWindowPreset(backgroundWindow, L"PButton00", d.themeName, eS2D_WPC_PossitiveButton, buttonCompSize);
 			okWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
 			okWindow->SetPresetComponentCaption(d.themeName, CaptionDesc(MKDEF_OK_BTN_SAMPLE_STRING));
 		}
@@ -886,26 +881,26 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		MkBaseWindowNode* cancelWindow = NULL;
 		if (d.hasCancelButton)
 		{
-			cancelWindow = __CreateWindowPreset(backgroundWindow, L"NButton00", d.themeName, eS2D_WPC_NegativeButton, buttonBodySize);
+			cancelWindow = __CreateWindowPreset(backgroundWindow, L"NButton00", d.themeName, eS2D_WPC_NegativeButton, buttonCompSize);
 			cancelWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
 			cancelWindow->SetPresetComponentCaption(d.themeName, CaptionDesc(MKDEF_CANCEL_BTN_SAMPLE_STRING));
 		}
 
 		if ((okWindow != NULL) && (cancelWindow == NULL))
 		{
-			float posX = (backgroundWindow->GetPresetFullSize().x - okWindow->GetPresetFullSize().x) / 2.f;
+			float posX = (backgroundWindow->GetPresetComponentSize().x - okWindow->GetPresetComponentSize().x) / 2.f;
 			okWindow->SetLocalPosition(MkVec3(posX, MARGIN, -MKDEF_BASE_WINDOW_DEPTH_GRID)); // 하단 중앙 정렬
 		}
 		else if ((okWindow == NULL) && (cancelWindow != NULL))
 		{
-			float posX = (backgroundWindow->GetPresetFullSize().x - cancelWindow->GetPresetFullSize().x) / 2.f;
+			float posX = (backgroundWindow->GetPresetComponentSize().x - cancelWindow->GetPresetComponentSize().x) / 2.f;
 			cancelWindow->SetLocalPosition(MkVec3(posX, MARGIN, -MKDEF_BASE_WINDOW_DEPTH_GRID)); // 하단 중앙 정렬
 		}
 		else if ((okWindow != NULL) && (cancelWindow != NULL))
 		{
-			float blank = (backgroundWindow->GetPresetFullSize().x - okWindow->GetPresetFullSize().x * 2.f) / 3.f;
+			float blank = (backgroundWindow->GetPresetComponentSize().x - okWindow->GetPresetComponentSize().x * 2.f) / 3.f;
 			okWindow->SetLocalPosition(MkVec3(blank, MARGIN, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-			cancelWindow->SetLocalPosition(MkVec3(blank * 2.f + okWindow->GetPresetFullSize().x, MARGIN, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+			cancelWindow->SetLocalPosition(MkVec3(blank * 2.f + okWindow->GetPresetComponentSize().x, MARGIN, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 		}
 	}
 
@@ -919,7 +914,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 	return rootWindow;
 }
 
-bool MkBaseWindowNode::CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize)
+bool MkBaseWindowNode::CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& componentSize)
 {
 	if (m_PresetComponentName.Empty())
 	{
@@ -927,10 +922,10 @@ bool MkBaseWindowNode::CreateWindowPreset(const MkHashStr& themeName, eS2D_Windo
 		if (!imageSets.Empty())
 		{
 			m_PresetThemeName = themeName;
-			m_PresetBodySize = bodySize;
+			m_PresetComponentSize = componentSize;
 			m_PresetComponentName = MkWindowPreset::GetWindowPresetComponentKeyword(component);
 
-			return __TSI_ImageSetToComponentNode::ApplyImageSetAndBodySize(component, imageSets, this);
+			return __TSI_ImageSetToComponentNode::ApplyImageSetAndSize(component, imageSets, this);
 		}
 	}
 	return false;
@@ -941,7 +936,6 @@ bool MkBaseWindowNode::CreateFreeImageBaseBackgroundWindow(const MkPathName& ima
 	if (m_PresetComponentName.Empty())
 	{
 		m_PresetThemeName.Clear();
-		m_PresetBodySize.Clear();
 		m_PresetComponentName = MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WPC_BackgroundWindow);
 
 		return __TSI_ImageSetToStateNode<eS2D_BackgroundState>::ApplyFreeImageToState(eS2D_BS_DefaultState, imagePath, subsetName, this);
@@ -960,9 +954,9 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 			const MkArray<MkHashStr>& oldImageSets = MK_WR_PRESET.GetWindowTypeImageSet(m_PresetThemeName, component);
 
 			if ((!newImageSets.Empty()) && (newImageSets != oldImageSets) && // 테마명은 다르더라도 image set은 같을 수 있으므로 비교 필요
-				__TSI_ImageSetToComponentNode::ApplyImageSetAndBodySize(component, newImageSets, this))
+				__TSI_ImageSetToComponentNode::ApplyImageSetAndSize(component, newImageSets, this))
 			{
-				// 위의 ApplyImageSetAndBodySize()을 거치면 visible 상태가 초기화 되버리기 때문에 disable일 경우 반영해 주어야 함
+				// 위의 ApplyImageSetAndSize()을 거치면 visible 상태가 초기화 되버리기 때문에 disable일 경우 반영해 주어야 함
 				if ((!m_Enable) && IsWindowStateType(component))
 				{
 					__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(eS2D_WS_DisableState, this);
@@ -1001,12 +995,12 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 	}
 }
 
-void MkBaseWindowNode::SetPresetComponentBodySize(const MkFloat2& bodySize)
+void MkBaseWindowNode::SetPresetComponentSize(const MkFloat2& componentSize)
 {
-	if ((!m_PresetComponentName.Empty()) && (bodySize != m_PresetBodySize))
+	if ((!m_PresetComponentName.Empty()) && (componentSize != m_PresetComponentSize))
 	{
-		m_PresetBodySize = bodySize;
-		__TSI_ImageSetToComponentNode::ApplyBodySize(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName), this);
+		m_PresetComponentSize = componentSize;
+		__TSI_ImageSetToComponentNode::ApplySize(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName), this);
 	}
 }
 
@@ -1030,7 +1024,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 		{
 			iconRect->SetFocedFontState(MkHashStr::NullHash);
 			iconRect->SetTexture(imagePath, subsetName);
-			iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
+			iconRect->AlignRect(GetPresetComponentSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
 		}
 	}
@@ -1059,7 +1053,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 
 			if (ok)
 			{
-				iconRect->AlignRect(GetPresetFullSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
+				iconRect->AlignRect(GetPresetComponentSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			}
 			else
 			{
@@ -1111,7 +1105,7 @@ eS2D_WindowPresetComponent MkBaseWindowNode::GetPresetComponentType(void) const
 	return MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
 }
 
-bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot)
+bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
 {
 	if (_CheckCursorHitCondition(position))
 	{
@@ -1121,6 +1115,9 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 		case 1: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorMiddlePress); break;
 		case 2: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorRightPress); break;
 		}
+
+		if (HitEventMousePress(button, position))
+			return true;
 	}
 	
 	MkArray<MkBaseWindowNode*> buffer;
@@ -1130,7 +1127,7 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 		{
 			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
 			{
-				if (buffer[i]->InputEventMousePress(button, position, false))
+				if (buffer[i]->InputEventMousePress(button, position))
 					return true;
 			}
 		}
@@ -1138,7 +1135,7 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 	return false;
 }
 
-bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot)
+bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position)
 {
 	if (_CheckCursorHitCondition(position))
 	{
@@ -1153,7 +1150,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 		{
 			if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_CancelIcon))
 			{
-				MK_WIN_EVENT_MGR.DeactivateWindow(GetManagedRoot()->GetNodeName());
+				MK_WIN_EVENT_MGR.DeactivateWindow(GetRootWindow()->GetNodeName());
 				return true;
 			}
 
@@ -1162,6 +1159,9 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 				_PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorLeftClick);
 			}
 		}
+
+		if (HitEventMouseRelease(button, position))
+			return true;
 	}
 	
 	MkArray<MkBaseWindowNode*> buffer;
@@ -1171,7 +1171,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 		{
 			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
 			{
-				if (buffer[i]->InputEventMouseRelease(button, position, false))
+				if (buffer[i]->InputEventMouseRelease(button, position))
 					return true;
 			}
 		}
@@ -1179,7 +1179,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 	return false;
 }
 
-bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position, bool managedRoot)
+bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position)
 {
 	if (_CheckCursorHitCondition(position))
 	{
@@ -1189,6 +1189,9 @@ bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkF
 		case 1: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick); break;
 		case 2: _PushWindowEvent(MkSceneNodeFamilyDefinition::eCursorRightDoubleClick); break;
 		}
+
+		if (HitEventMouseDoubleClick(button, position))
+			return true;
 	}
 
 	MkArray<MkBaseWindowNode*> buffer;
@@ -1198,7 +1201,7 @@ bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkF
 		{
 			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
 			{
-				if (buffer[i]->InputEventMouseDoubleClick(button, position, false))
+				if (buffer[i]->InputEventMouseDoubleClick(button, position))
 					return true;
 			}
 		}
@@ -1206,11 +1209,14 @@ bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkF
 	return false;
 }
 
-bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& position, bool managedRoot)
+bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& position)
 {
 	if (_CheckWheelMoveCondition(position))
 	{
 		_PushWindowEvent((delta < 0) ? MkSceneNodeFamilyDefinition::eCursorWheelDecrease : MkSceneNodeFamilyDefinition::eCursorWheelIncrease);
+
+		if (HitEventMouseWheelMove(delta, position))
+			return true;
 	}
 
 	MkArray<MkBaseWindowNode*> buffer;
@@ -1220,7 +1226,7 @@ bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& posit
 		{
 			if (!buffer[i]->GetAttribute(eIgnoreInputEvent))
 			{
-				if (buffer[i]->InputEventMouseWheelMove(delta, position, false))
+				if (buffer[i]->InputEventMouseWheelMove(delta, position))
 					return true;
 			}
 		}
@@ -1228,8 +1234,13 @@ bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& posit
 	return false;
 }
 
-void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position, bool managedRoot)
+void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position)
 {
+	if (inside)
+	{
+		inside = GetWorldAABR().CheckGridIntersection(position);
+	}
+
 	// eS2D_WindowState가 적용된 노드면 eS2D_WS_DefaultState, eS2D_WS_OnClickState, eS2D_WS_OnCursorState 중 하나를 지정
 	if (IsWindowStateType(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName)))
 	{
@@ -1250,51 +1261,13 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 			MkBaseWindowNode* currNode = buffer[i];
 			if (currNode->GetVisible() && currNode->GetEnable() && (!currNode->GetAttribute(eIgnoreInputEvent)))
 			{
-				currNode->InputEventMouseMove(inside, btnPushing, position, false);
+				currNode->InputEventMouseMove(inside, btnPushing, position);
 			}
 		}
 	}
 }
 
-void MkBaseWindowNode::UpdateManagedRoot(void)
-{
-#ifdef MKDEF_S2D_DEBUG_SHOW_WINDOW_EVENT
-	MK_INDEXING_LOOP(m_WindowEvents, i)
-	{
-		WindowEvent& evt = m_WindowEvents[i];
-		switch (evt.type)
-		{
-		// MkBaseWindowNode
-		case MkSceneNodeFamilyDefinition::eEnable: MK_DEV_PANEL.MsgToLog(L"eEnable : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eDisable: MK_DEV_PANEL.MsgToLog(L"eDisable : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorLeftPress: MK_DEV_PANEL.MsgToLog(L"eCursorLeftPress : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorMiddlePress: MK_DEV_PANEL.MsgToLog(L"eCursorMiddlePress : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorRightPress: MK_DEV_PANEL.MsgToLog(L"eCursorRightPress : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorLeftRelease: MK_DEV_PANEL.MsgToLog(L"eCursorLeftRelease : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorMiddleRelease: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleRelease : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorRightRelease: MK_DEV_PANEL.MsgToLog(L"eCursorRightRelease : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorLeftClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftClick : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorLeftDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorRightDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorRightDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorWheelDecrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelDecrease : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCursorWheelIncrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelIncrease : " + evt.node->GetNodeName().GetString()); break;
-
-		// MkSpreadButtonNode
-		case MkSceneNodeFamilyDefinition::eOpenList: MK_DEV_PANEL.MsgToLog(L"eOpenList : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eSetTargetItem: MK_DEV_PANEL.MsgToLog(L"eSetTargetItem : " + evt.node->GetNodeName().GetString()); break;
-
-		// MkCheckButtonNode
-		case MkSceneNodeFamilyDefinition::eCheckOn: MK_DEV_PANEL.MsgToLog(L"eCheckOn : " + evt.node->GetNodeName().GetString()); break;
-		case MkSceneNodeFamilyDefinition::eCheckOff: MK_DEV_PANEL.MsgToLog(L"eCheckOff : " + evt.node->GetNodeName().GetString()); break;
-		}
-	}
-#endif
-
-	m_WindowEvents.Flush();
-}
-
-void MkBaseWindowNode::OnFocus(bool managedRoot)
+void MkBaseWindowNode::OnFocus(void)
 {
 	if (m_PresetComponentName == MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WPC_TitleWindow))
 	{
@@ -1306,12 +1279,12 @@ void MkBaseWindowNode::OnFocus(bool managedRoot)
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			buffer[i]->OnFocus(false);
+			buffer[i]->OnFocus();
 		}
 	}
 }
 
-void MkBaseWindowNode::LostFocus(bool managedRoot)
+void MkBaseWindowNode::LostFocus(void)
 {
 	if (m_PresetComponentName == MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WPC_TitleWindow))
 	{
@@ -1323,13 +1296,14 @@ void MkBaseWindowNode::LostFocus(bool managedRoot)
 	{
 		MK_INDEXING_LOOP(buffer, i)
 		{
-			buffer[i]->LostFocus(false);
+			buffer[i]->LostFocus();
 		}
 	}
 }
 
 MkBaseWindowNode::MkBaseWindowNode(const MkHashStr& name) : MkSceneNode(name)
 {
+	m_RootWindow = false;
 	m_Enable = true;
 }
 
@@ -1347,22 +1321,21 @@ void MkBaseWindowNode::__GenerateBuildingTemplate(void)
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::BaseWindow::EnableKey, true);
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::BaseWindow::PresetThemeNameKey, MkStr::Null);
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentKey, MkStr::Null);
-	tNode->CreateUnit(MkSceneNodeFamilyDefinition::BaseWindow::PresetBodySizeKey, MkInt2(0, 0));
-	tNode->CreateUnit(MkSceneNodeFamilyDefinition::BaseWindow::PresetFullSizeKey, MkInt2(0, 0));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::BaseWindow::PresetComponentSizeKey, MkInt2(0, 0));
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::BaseWindow::AttributeKey, static_cast<unsigned int>(0));
 
 	tNode->DeclareToTemplate(true);
 }
 
 MkBaseWindowNode* MkBaseWindowNode::__CreateWindowPreset
-(MkSceneNode* parentNode, const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& bodySize)
+(MkSceneNode* parentNode, const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& componentSize)
 {
 	if ((parentNode == NULL) || (!parentNode->ChildExist(nodeName)))
 	{
 		MkBaseWindowNode* targetNode = new MkBaseWindowNode(nodeName);
 		if (targetNode != NULL)
 		{
-			if (targetNode->CreateWindowPreset(themeName, component, bodySize))
+			if (targetNode->CreateWindowPreset(themeName, component, componentSize))
 			{
 				if (parentNode != NULL)
 				{
@@ -1411,6 +1384,69 @@ void MkBaseWindowNode::__GetHitWindows(const MkFloat2& position, MkPairArray<flo
 		{
 			buffer[i]->__GetHitWindows(position, hitWindows);
 		}
+	}
+}
+
+void MkBaseWindowNode::__ConsumeWindowEvent(void)
+{
+	if (!m_WindowEvents.Empty())
+	{
+		// leaf -> root
+		MkArray<MkBaseWindowNode*> buffer;
+		if (_CollectUpdatableWindowNodes(buffer))
+		{
+			MK_INDEXING_LOOP(buffer, i)
+			{
+				MkBaseWindowNode* currNode = buffer[i];
+				if (currNode->GetVisible() && currNode->GetEnable())
+				{
+					currNode->__ConsumeWindowEvent();
+				}
+			}
+		}
+
+		MK_INDEXING_LOOP(m_WindowEvents, i)
+		{
+			UseWindowEvent(m_WindowEvents[i]);
+		}
+
+#ifdef MKDEF_S2D_DEBUG_SHOW_WINDOW_EVENT
+		if (CheckRootWindow())
+		{
+			MK_INDEXING_LOOP(m_WindowEvents, i)
+			{
+				WindowEvent& evt = m_WindowEvents[i];
+				switch (evt.type)
+				{
+				// MkBaseWindowNode
+				case MkSceneNodeFamilyDefinition::eEnable: MK_DEV_PANEL.MsgToLog(L"eEnable : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eDisable: MK_DEV_PANEL.MsgToLog(L"eDisable : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftPress: MK_DEV_PANEL.MsgToLog(L"eCursorLeftPress : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorMiddlePress: MK_DEV_PANEL.MsgToLog(L"eCursorMiddlePress : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorRightPress: MK_DEV_PANEL.MsgToLog(L"eCursorRightPress : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftRelease: MK_DEV_PANEL.MsgToLog(L"eCursorLeftRelease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorMiddleRelease: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleRelease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorRightRelease: MK_DEV_PANEL.MsgToLog(L"eCursorRightRelease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorRightDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorRightDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorWheelDecrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelDecrease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorWheelIncrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelIncrease : " + evt.node->GetNodeName().GetString()); break;
+
+				// MkSpreadButtonNode
+				case MkSceneNodeFamilyDefinition::eOpenList: MK_DEV_PANEL.MsgToLog(L"eOpenList : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eSetTargetItem: MK_DEV_PANEL.MsgToLog(L"eSetTargetItem : " + evt.node->GetNodeName().GetString()); break;
+
+				// MkCheckButtonNode
+				case MkSceneNodeFamilyDefinition::eCheckOn: MK_DEV_PANEL.MsgToLog(L"eCheckOn : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCheckOff: MK_DEV_PANEL.MsgToLog(L"eCheckOff : " + evt.node->GetNodeName().GetString()); break;
+				}
+			}
+		}
+#endif
+
+		m_WindowEvents.Flush();
 	}
 }
 
@@ -1468,10 +1504,28 @@ bool MkBaseWindowNode::_CheckCursorHitCondition(const MkFloat2& position) const
 
 void MkBaseWindowNode::_PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type)
 {
-	MkBaseWindowNode* rootNode = GetManagedRoot();
-	if (rootNode != NULL)
+	WindowEvent evt(type, this);
+
+	// 부모부터 루트 윈도우까지 이벤트를 통지함
+	MkSceneNode* parentNode = m_ParentNodePtr;
+	while (true)
 	{
-		rootNode->__PushEvent(WindowEvent(type, this));
+		if (parentNode == NULL)
+			break;
+
+		if (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+		{
+			MkBaseWindowNode* targetNode = dynamic_cast<MkBaseWindowNode*>(parentNode);
+			if (targetNode != NULL)
+			{
+				targetNode->__PushEvent(evt);
+
+				if (targetNode->CheckRootWindow())
+					break;
+			}
+		}
+
+		parentNode = parentNode->GetParentNode();
 	}
 }
 

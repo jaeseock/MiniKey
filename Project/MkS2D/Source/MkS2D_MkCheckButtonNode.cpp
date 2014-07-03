@@ -34,11 +34,12 @@ bool MkCheckButtonNode::CreateCheckButton(const MkHashStr& themeName, const Capt
 		unchkNode->SetVisible(!m_OnCheck);
 		checkNode->SetVisible(m_OnCheck);
 
-		if (CreateWindowPreset(themeName, eS2D_WPC_BackgroundWindow, checkNode->GetPresetFullSize())) // icon size -> body size
+		MkFloat2 boxSize = checkNode->GetPresetComponentSize() + MkFloat2(MARGIN * 2.f, MARGIN * 2.f); // icon size에서 MARGIN만큼 상하좌우 확장
+		if (CreateWindowPreset(themeName, eS2D_WPC_BackgroundWindow, boxSize))
 		{
 			m_CaptionDesc = captionDesc;
 			m_CaptionDesc.__Check(GetNodeName().GetString());
-			float captionPos = GetPresetFullSize().x + MARGIN * 2.f; // blank size
+			float captionPos = GetPresetComponentSize().x + MARGIN * 2.f; // blank size
 			return SetPresetComponentIcon(CAPTION_RECT_NAME, eRAP_LeftCenter, MkFloat2(captionPos, 0.f), 0.f, MkHashStr::NullHash, m_CaptionDesc);
 		}
 	}
@@ -103,14 +104,15 @@ void MkCheckButtonNode::Save(MkDataNode& node)
 	MkBaseWindowNode::Save(node);
 }
 
-bool MkCheckButtonNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot)
+bool MkCheckButtonNode::HitEventMouseRelease(unsigned int button, const MkFloat2& position)
 {
-	if ((button == 0) && GetWindowRect().CheckGridIntersection(position)) // left release
+	if (button == 0) // left release
 	{
 		SetCheck(!m_OnCheck); // toggle
+		return true;
 	}
 
-	return MkBaseWindowNode::InputEventMouseRelease(button, position, managedRoot);
+	return MkBaseWindowNode::HitEventMouseRelease(button, position);
 }
 
 MkCheckButtonNode::MkCheckButtonNode(const MkHashStr& name) : MkBaseWindowNode(name)

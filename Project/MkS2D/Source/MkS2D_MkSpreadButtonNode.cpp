@@ -74,7 +74,7 @@ MkSpreadButtonNode* MkSpreadButtonNode::AddItem(const MkHashStr& uniqueKey, cons
 		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(uniqueKey);
 		if (lbNode != NULL)
 		{
-			const MkFloat2& btnSize = rootButton->GetPresetFullSize();
+			const MkFloat2& btnSize = rootButton->GetPresetComponentSize();
 			if (lbNode->__CreateListTypeButton(rootButton->GetPresetThemeName(), btnSize, eRightside))
 			{
 				lbNode->SetItemTag(tagInfo);
@@ -97,8 +97,8 @@ MkSpreadButtonNode* MkSpreadButtonNode::AddItem(const MkHashStr& uniqueKey, cons
 					if (component != eS2D_WPC_None)
 					{
 						MkBaseWindowNode* arrowNode = __CreateWindowPreset(this, ARROW_PRESET_NAME, rootButton->GetPresetThemeName(), component, MkFloat2(0.f, 0.f));
-						MkFloat2 localPos = MkFloatRect(lbNode->GetPresetFullSize()).GetSnapPosition
-							(MkFloatRect(arrowNode->GetPresetFullSize()), eRAP_RightCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f));
+						MkFloat2 localPos = MkFloatRect(lbNode->GetPresetComponentSize()).GetSnapPosition
+							(MkFloatRect(arrowNode->GetPresetComponentSize()), eRAP_RightCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f));
 						arrowNode->SetLocalPosition(localPos);
 						arrowNode->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 						arrowNode->SetAttribute(eIgnoreMovement, true);
@@ -282,7 +282,7 @@ void MkSpreadButtonNode::OpenAllItems(void)
 					MkBaseWindowNode* windowNode = dynamic_cast<MkBaseWindowNode*>(targetNode);
 					if (windowNode != NULL)
 					{
-						windowNode->InputEventMouseMove(false, btnPushing, MkFloat2(0.f, 0.f), false);
+						windowNode->InputEventMouseMove(false, btnPushing, MkFloat2(0.f, 0.f));
 					}
 				}
 			}
@@ -339,10 +339,10 @@ bool MkSpreadButtonNode::CloseAllItems(void)
 		// 전개된 버튼이 차지한 world AABR때문에 클릭으로 인한 포커스 판별이 잘못 될 수 있으므로 전개된 버튼을 접은 후 영역을 재 계산해 주어야 함
 		if (depthFromRoot == 0)
 		{
-			MkBaseWindowNode* managedRoot = GetManagedRoot();
-			if (managedRoot != NULL)
+			MkBaseWindowNode* rootWindow = GetRootWindow();
+			if (rootWindow != NULL)
 			{
-				managedRoot->Update();
+				rootWindow->Update();
 			}
 		}
 	}
@@ -434,9 +434,9 @@ void MkSpreadButtonNode::Save(MkDataNode& node)
 	MkBaseWindowNode::Save(node);
 }
 
-bool MkSpreadButtonNode::InputEventMousePress(unsigned int button, const MkFloat2& position, bool managedRoot)
+bool MkSpreadButtonNode::HitEventMousePress(unsigned int button, const MkFloat2& position)
 {
-	if ((button == 0) && GetWindowRect().CheckGridIntersection(position)) // left press
+	if (button == 0) // left press
 	{
 		if (m_ItemSequence.Empty()) // leaf means selection
 		{
@@ -461,7 +461,7 @@ bool MkSpreadButtonNode::InputEventMousePress(unsigned int button, const MkFloat
 		return true;
 	}
 
-	return MkBaseWindowNode::InputEventMousePress(button, position, managedRoot);
+	return MkBaseWindowNode::HitEventMousePress(button, position);
 }
 
 MkSpreadButtonNode::MkSpreadButtonNode(const MkHashStr& name) : MkBaseWindowNode(name)
@@ -520,7 +520,7 @@ void MkSpreadButtonNode::__UpdateItemRegion(void)
 	unsigned int childCount = m_ItemSequence.GetSize();
 	if (childCount > 0)
 	{
-		const MkFloat2& btnSize = GetPresetFullSize();
+		const MkFloat2& btnSize = GetPresetComponentSize();
 		float fCount = static_cast<float>(childCount);
 		
 		MkFloat2 pivotPos;
@@ -579,14 +579,7 @@ void MkSpreadButtonNode::__UpdateItemRegion(void)
 
 bool MkSpreadButtonNode::_CreateTypeButton(const MkHashStr& themeName, const MkFloat2& windowSize, eSpreadButtonType buttonType, eOpeningDirection openingDirection)
 {
-	const float MARGIN = MK_WR_PRESET.GetMargin();
-
-	// window size 유효성 검사
-	MkFloat2 bodySize;
-	bodySize.x = Clamp<float>(windowSize.x - MARGIN * 2.f, 0.f, windowSize.x);
-	bodySize.y = Clamp<float>(windowSize.y - MARGIN * 2.f, 0.f, windowSize.y);
-
-	bool ok = CreateWindowPreset(themeName, ((buttonType == eSeletionRoot) || (buttonType == eStaticRoot)) ? eS2D_WPC_RootButton : eS2D_WPC_ListButton, bodySize);
+	bool ok = CreateWindowPreset(themeName, ((buttonType == eSeletionRoot) || (buttonType == eStaticRoot)) ? eS2D_WPC_RootButton : eS2D_WPC_ListButton, windowSize);
 	if (ok)
 	{
 		m_ButtonType = buttonType;

@@ -125,6 +125,7 @@ bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool act
 		return false;
 
 	m_RootNode->AttachChildNode(windowNode);
+	windowNode->DeclareRootWindow();
 	windowNode->Update(); // 초기화
 
 	m_WindowTable.Create(name, windowNode);
@@ -157,7 +158,7 @@ void MkWindowEventManager::RemoveWindow(const MkHashStr& windowName)
 			_SetRegionLayerVisible(false);
 		}
 
-		if ((m_FrontHitWindow != NULL) && (windowName == m_FrontHitWindow->GetManagedRoot()->GetNodeName()))
+		if ((m_FrontHitWindow != NULL) && (windowName == m_FrontHitWindow->GetRootWindow()->GetNodeName()))
 		{
 			m_FrontHitWindow = NULL;
 		}
@@ -168,12 +169,12 @@ void MkWindowEventManager::RemoveWindow(const MkHashStr& windowName)
 			_SetDarkenLayerEnable(false);
 		}
 
-		if ((!m_OpeningSpreadButtons.Empty()) && (windowName == m_OpeningSpreadButtons[0]->GetManagedRoot()->GetNodeName()))
+		if ((!m_OpeningSpreadButtons.Empty()) && (windowName == m_OpeningSpreadButtons[0]->GetRootWindow()->GetNodeName()))
 		{
 			m_OpeningSpreadButtons.Clear();
 		}
 
-		if ((m_CurrentTargetWindowNode != NULL) && (windowName == m_CurrentTargetWindowNode->GetManagedRoot()->GetNodeName()))
+		if ((m_CurrentTargetWindowNode != NULL) && (windowName == m_CurrentTargetWindowNode->GetRootWindow()->GetNodeName()))
 		{
 			m_CurrentTargetWindowNode = NULL;
 		}
@@ -456,7 +457,7 @@ void MkWindowEventManager::Update(void)
 		// 현재 전개중인 spread button이 있는데 포커스를 잃었다면 닫음
 		if (!m_OpeningSpreadButtons.Empty())
 		{
-			if (onFocusWindowNode != m_OpeningSpreadButtons[0]->GetManagedRoot())
+			if (onFocusWindowNode != m_OpeningSpreadButtons[0]->GetRootWindow())
 			{
 				MkSpreadButtonNode* oldBtn = m_OpeningSpreadButtons[0];
 				oldBtn->CloseAllItems();
@@ -500,13 +501,13 @@ void MkWindowEventManager::Update(void)
 							MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];
 							if (windowNode->GetVisible() && windowNode->GetEnable() && (!windowNode->GetAttribute(MkBaseWindowNode::eIgnoreInputEvent)))
 							{
-								windowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition, true);
+								windowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition);
 							}
 						}
 					}
 					else if (onFocusWindowNode->GetEnable() && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eIgnoreInputEvent)))
 					{
-						onFocusWindowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition, true);
+						onFocusWindowNode->InputEventMouseMove(inside, currentButtonPushing, cursorPosition);
 					}
 				}
 				// 그 외 이벤트는 focus window에만 적용
@@ -516,10 +517,10 @@ void MkWindowEventManager::Update(void)
 					{
 					case MkInputManager::eKeyPress: onFocusWindowNode->InputEventKeyPress(evt.arg0); break;
 					case MkInputManager::eKeyRelease: onFocusWindowNode->InputEventKeyRelease(evt.arg0); break;
-					case MkInputManager::eMousePress: onFocusWindowNode->InputEventMousePress(evt.arg0, cursorPosition, true); break;
-					case MkInputManager::eMouseRelease: onFocusWindowNode->InputEventMouseRelease(evt.arg0, cursorPosition, true); break;
-					case MkInputManager::eMouseDoubleClick: onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, cursorPosition, true); break;
-					case MkInputManager::eMouseWheelMove: onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, cursorPosition, true); break;
+					case MkInputManager::eMousePress: onFocusWindowNode->InputEventMousePress(evt.arg0, cursorPosition); break;
+					case MkInputManager::eMouseRelease: onFocusWindowNode->InputEventMouseRelease(evt.arg0, cursorPosition); break;
+					case MkInputManager::eMouseDoubleClick: onFocusWindowNode->InputEventMouseDoubleClick(evt.arg0, cursorPosition); break;
+					case MkInputManager::eMouseWheelMove: onFocusWindowNode->InputEventMouseWheelMove(evt.arg0, cursorPosition); break;
 					}
 				}
 			}
@@ -527,7 +528,7 @@ void MkWindowEventManager::Update(void)
 
 		if (onFocusWindowNode != NULL)
 		{
-			onFocusWindowNode->UpdateManagedRoot();
+			onFocusWindowNode->__ConsumeWindowEvent();
 		}
 
 		if (cursorAvailable && (onFocusWindowNode != NULL))
@@ -569,7 +570,7 @@ void MkWindowEventManager::Update(void)
 				}
 				// 이동금지 속성이 없는 상태에서 에디트 모드거나 드래깅 윈도우가 이동 속성을 가지고 있을 경우 윈도우 이동
 				else if ((!m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eIgnoreMovement)) &&
-					(m_EditMode || m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragMovement)))
+					((m_EditMode && m_AllowDragMovement) || m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragMovement)))
 				{
 					MkFloat2 offset = currentCursorPosition - m_CursorStartPosition;
 					MkFloat2 newPosition = _ConfineMovement(m_FrontHitWindow, m_WindowAABRBegin, m_WindowOffsetToWorldPos, offset);
@@ -703,6 +704,7 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 	m_CurrentTargetWindowNode = NULL;
 
 	m_ShowWindowSelection = true;
+	m_AllowDragMovement = true;
 }
 
 void MkWindowEventManager::__SpreadButtonOpened(int index, MkSpreadButtonNode* button)
@@ -767,13 +769,13 @@ void MkWindowEventManager::_LastWindowLostFocus(void)
 {
 	if (!m_LastFocusWindow.Empty())
 	{
-		m_WindowTable[m_LastFocusWindow]->LostFocus(true);
+		m_WindowTable[m_LastFocusWindow]->LostFocus();
 	}
 }
 
 void MkWindowEventManager::_SetFocusToWindowNode(MkBaseWindowNode* targetNode)
 {
-	targetNode->OnFocus(true);
+	targetNode->OnFocus();
 	m_LastFocusWindow = targetNode->GetNodeName();
 }
 

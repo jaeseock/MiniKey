@@ -41,7 +41,7 @@ public:
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
-	virtual bool InputEventMouseRelease(unsigned int button, const MkFloat2& position, bool managedRoot);
+	virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position);
 
 	//------------------------------------------------------------------------------------------------//
 
