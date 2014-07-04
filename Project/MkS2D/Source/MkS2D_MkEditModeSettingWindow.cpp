@@ -19,7 +19,7 @@ bool MkEditModeSettingWindow::SetUp(const MkHashStr& themeName)
 	winDesc.SetStandardDesc(themeName, true, MkFloat2(300, 400.f));
 	winDesc.titleCaption = L"에디트 모드 세팅";
 	winDesc.hasIcon = false;
-	winDesc.hasCancelIcon = false;
+	winDesc.hasCloseIcon = false;
 	winDesc.hasCancelButton = false;
 	winDesc.hasOKButton = false;
 

@@ -497,7 +497,7 @@ void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& t
 		iconImageHeightOffset = 0.f;
 		titleCaption = MKDEF_TITLE_BAR_SAMPLE_STRING;
 	}
-	hasCancelIcon = hasTitle;
+	hasCloseIcon = hasTitle;
 	
 	hasFreeImageBG = true;
 	bgImageFilePath = MK_WR_PRESET.GetSystemImageFilePath();
@@ -779,16 +779,16 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 					(L"WindowIcon", eRAP_LeftCenter, MkFloat2(MARGIN, 0.f), d.iconImageHeightOffset, d.iconImageFilePath, d.iconImageSubsetName);
 			}
 
-			// cancel icon
-			if (d.hasCancelIcon)
+			// close icon
+			if (d.hasCloseIcon)
 			{
-				MkBaseWindowNode* cancelWindow = __CreateWindowPreset(titleWindow, L"CancelIcon", d.themeName, eS2D_WPC_CancelIcon, MkFloat2(0.f, 0.f));
-				if (cancelWindow != NULL)
+				MkBaseWindowNode* closeWindow = __CreateWindowPreset(titleWindow, L"CloseIcon", d.themeName, eS2D_WPC_CloseIcon, MkFloat2(0.f, 0.f));
+				if (closeWindow != NULL)
 				{
 					MkFloat2 localPos =	MkFloatRect(titleWindow->GetPresetComponentSize()).GetSnapPosition
-						(MkFloatRect(cancelWindow->GetPresetComponentSize()), eRAP_RightCenter, MkFloat2(MARGIN, 0.f));
-					cancelWindow->SetLocalPosition(MkVec3(localPos.x, localPos.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-					cancelWindow->SetAttribute(eIgnoreMovement, true);
+						(MkFloatRect(closeWindow->GetPresetComponentSize()), eRAP_RightCenter, MkFloat2(MARGIN, 0.f));
+					closeWindow->SetLocalPosition(MkVec3(localPos.x, localPos.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+					closeWindow->SetAttribute(eIgnoreMovement, true);
 				}
 			}
 
@@ -872,7 +872,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		MkBaseWindowNode* okWindow = NULL;
 		if (d.hasOKButton)
 		{
-			okWindow = __CreateWindowPreset(backgroundWindow, L"PButton00", d.themeName, eS2D_WPC_PossitiveButton, buttonCompSize);
+			okWindow = __CreateWindowPreset(backgroundWindow, L"OKButton", d.themeName, eS2D_WPC_OKButton, buttonCompSize);
 			okWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
 			okWindow->SetPresetComponentCaption(d.themeName, CaptionDesc(MKDEF_OK_BTN_SAMPLE_STRING));
 		}
@@ -881,7 +881,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		MkBaseWindowNode* cancelWindow = NULL;
 		if (d.hasCancelButton)
 		{
-			cancelWindow = __CreateWindowPreset(backgroundWindow, L"NButton00", d.themeName, eS2D_WPC_NegativeButton, buttonCompSize);
+			cancelWindow = __CreateWindowPreset(backgroundWindow, L"CancelButton", d.themeName, eS2D_WPC_CancelButton, buttonCompSize);
 			cancelWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
 			cancelWindow->SetPresetComponentCaption(d.themeName, CaptionDesc(MKDEF_CANCEL_BTN_SAMPLE_STRING));
 		}
@@ -1148,7 +1148,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 
 		if (button == 0)
 		{
-			if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_CancelIcon))
+			if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_CloseIcon))
 			{
 				MK_WIN_EVENT_MGR.DeactivateWindow(GetRootWindow()->GetNodeName());
 				return true;
@@ -1413,34 +1413,38 @@ void MkBaseWindowNode::__ConsumeWindowEvent(void)
 #ifdef MKDEF_S2D_DEBUG_SHOW_WINDOW_EVENT
 		if (CheckRootWindow())
 		{
+			if (!m_WindowEvents.Empty())
+			{
+				MK_DEV_PANEL.MsgToLog(L"> WindowEvent > " + GetNodeName().GetString());
+			}
 			MK_INDEXING_LOOP(m_WindowEvents, i)
 			{
 				WindowEvent& evt = m_WindowEvents[i];
 				switch (evt.type)
 				{
 				// MkBaseWindowNode
-				case MkSceneNodeFamilyDefinition::eEnable: MK_DEV_PANEL.MsgToLog(L"eEnable : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eDisable: MK_DEV_PANEL.MsgToLog(L"eDisable : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorLeftPress: MK_DEV_PANEL.MsgToLog(L"eCursorLeftPress : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorMiddlePress: MK_DEV_PANEL.MsgToLog(L"eCursorMiddlePress : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorRightPress: MK_DEV_PANEL.MsgToLog(L"eCursorRightPress : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorLeftRelease: MK_DEV_PANEL.MsgToLog(L"eCursorLeftRelease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorMiddleRelease: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleRelease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorRightRelease: MK_DEV_PANEL.MsgToLog(L"eCursorRightRelease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorLeftClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorLeftDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorLeftDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorMiddleDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorRightDoubleClick: MK_DEV_PANEL.MsgToLog(L"eCursorRightDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorWheelDecrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelDecrease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorWheelIncrease: MK_DEV_PANEL.MsgToLog(L"eCursorWheelIncrease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eEnable: MK_DEV_PANEL.MsgToLog(L"   eEnable : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eDisable: MK_DEV_PANEL.MsgToLog(L"   eDisable : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftPress: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftPress : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorMiddlePress: MK_DEV_PANEL.MsgToLog(L"   eCursorMiddlePress : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorRightPress: MK_DEV_PANEL.MsgToLog(L"   eCursorRightPress : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftRelease: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftRelease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorMiddleRelease: MK_DEV_PANEL.MsgToLog(L"   eCursorMiddleRelease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorRightRelease: MK_DEV_PANEL.MsgToLog(L"   eCursorRightRelease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftClick: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorLeftDoubleClick: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick: MK_DEV_PANEL.MsgToLog(L"   eCursorMiddleDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorRightDoubleClick: MK_DEV_PANEL.MsgToLog(L"   eCursorRightDoubleClick : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorWheelDecrease: MK_DEV_PANEL.MsgToLog(L"   eCursorWheelDecrease : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCursorWheelIncrease: MK_DEV_PANEL.MsgToLog(L"   eCursorWheelIncrease : " + evt.node->GetNodeName().GetString()); break;
 
 				// MkSpreadButtonNode
-				case MkSceneNodeFamilyDefinition::eOpenList: MK_DEV_PANEL.MsgToLog(L"eOpenList : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eSetTargetItem: MK_DEV_PANEL.MsgToLog(L"eSetTargetItem : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eOpenList: MK_DEV_PANEL.MsgToLog(L"   eOpenList : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eSetTargetItem: MK_DEV_PANEL.MsgToLog(L"   eSetTargetItem : " + evt.node->GetNodeName().GetString()); break;
 
 				// MkCheckButtonNode
-				case MkSceneNodeFamilyDefinition::eCheckOn: MK_DEV_PANEL.MsgToLog(L"eCheckOn : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCheckOff: MK_DEV_PANEL.MsgToLog(L"eCheckOff : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCheckOn: MK_DEV_PANEL.MsgToLog(L"   eCheckOn : " + evt.node->GetNodeName().GetString()); break;
+				case MkSceneNodeFamilyDefinition::eCheckOff: MK_DEV_PANEL.MsgToLog(L"   eCheckOff : " + evt.node->GetNodeName().GetString()); break;
 				}
 			}
 		}

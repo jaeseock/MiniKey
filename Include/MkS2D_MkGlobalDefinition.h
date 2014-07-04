@@ -45,13 +45,14 @@ enum eS2D_WindowPresetComponent
 	// eS2D_WindowState
 	eS2D_WPC_WindowStateTypeBegin,
 
-	eS2D_WPC_NegativeButton = eS2D_WPC_WindowStateTypeBegin, // L"NegativeButton"
-	eS2D_WPC_PossitiveButton, // L"PossitiveButton"
+	eS2D_WPC_NormalButton = eS2D_WPC_WindowStateTypeBegin, // L"NormalButton"
+	eS2D_WPC_OKButton, // L"OKButton"
+	eS2D_WPC_CancelButton, // L"CancelButton"
 	eS2D_WPC_RootButton, // L"RootButton"
 	eS2D_WPC_ListButton, // L"ListButton"
 	eS2D_WPC_UncheckButton, // L"UncheckButton"
 	eS2D_WPC_CheckButton, // L"CheckButton"
-	eS2D_WPC_CancelIcon, // L"CancelIcon"
+	eS2D_WPC_CloseIcon, // L"CloseIcon"
 
 	eS2D_WPC_WindowStateTypeEnd,
 

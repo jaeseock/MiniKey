@@ -60,7 +60,7 @@ public:
 		MkHashStr iconImageSubsetName; // title 아이콘의 subset name
 		float iconImageHeightOffset; // title 아이콘 정렬 후 추가 y축 위치 offset. 아이콘 크기가 작으면 문제될게 없지만 타이틀보다 클 수 있기 때문
 		MkStr titleCaption;
-		bool hasCancelIcon; // cancel icon 존재여부
+		bool hasCloseIcon; // close icon 존재여부
 
 		// background
 		bool hasFreeImageBG; // bg를 preset이 아닌 free image로 구성할지 여부
