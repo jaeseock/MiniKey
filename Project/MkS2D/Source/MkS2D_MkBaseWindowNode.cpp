@@ -864,7 +864,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 			heightOffset = titleWindow->GetPresetComponentSize().y;
 		}
 		backgroundWindow->SetLocalPosition(MkVec3(-MARGIN, heightOffset - backgroundWindow->GetPresetComponentSize().y + MARGIN, MKDEF_BASE_WINDOW_DEPTH_GRID));
-		backgroundWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
+		backgroundWindow->SetAttribute(MkBaseWindowNode::eIgnoreMovement, true);
 
 		const MkFloat2 buttonCompSize(60.f, 18.f);
 

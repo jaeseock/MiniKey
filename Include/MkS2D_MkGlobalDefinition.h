@@ -18,7 +18,8 @@ enum eS2D_SceneNodeType
 	eS2D_SNT_SceneNode = 0, // MkSceneNode
 	eS2D_SNT_BaseWindowNode, // MkBaseWindowNode
 	eS2D_SNT_SpreadButtonNode, // MkSpreadButtonNode
-	eS2D_SNT_CheckButtonNode // MkCheckButtonNode
+	eS2D_SNT_CheckButtonNode, // MkCheckButtonNode
+	eS2D_SNT_ScrollBarNode, // MkScrollBarNode
 };
 
 // window preset component
@@ -36,6 +37,8 @@ enum eS2D_WindowPresetComponent
 	eS2D_WPC_ArrowRight, // L"ArrowRight"
 	eS2D_WPC_ArrowUp, // L"ArrowUp"
 	eS2D_WPC_ArrowDown, // L"ArrowDown"
+	eS2D_WPC_VSlideBar, // L"VSlideBar"
+	eS2D_WPC_HSlideBar, // L"HSlideBar"
 
 	eS2D_WPC_BackgroundStateTypeEnd,
 
@@ -52,6 +55,12 @@ enum eS2D_WindowPresetComponent
 	eS2D_WPC_ListButton, // L"ListButton"
 	eS2D_WPC_UncheckButton, // L"UncheckButton"
 	eS2D_WPC_CheckButton, // L"CheckButton"
+	eS2D_WPC_DirLeftButton, // L"DirLeftButton"
+	eS2D_WPC_DirRightButton, // L"DirRightButton"
+	eS2D_WPC_DirUpButton, // L"DirUpButton"
+	eS2D_WPC_DirDownButton, // L"DirDownButton"
+	eS2D_WPC_VSlideButton, // L"VSlideButton"
+	eS2D_WPC_HSlideButton, // L"HSlideButton"
 	eS2D_WPC_CloseIcon, // L"CloseIcon"
 
 	eS2D_WPC_WindowStateTypeEnd,

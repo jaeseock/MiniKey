@@ -28,6 +28,8 @@
 #include "MkS2D_MkBaseWindowNode.h"
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkCheckButtonNode.h"
+#include "MkS2D_MkScrollBarNode.h"
+
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkWindowEventManager.h"
 
@@ -127,6 +129,19 @@ public:
 		cbNode->SetCheck(true);
 		cbNode->SetLocalPosition(MkVec3(10.f, 100.f, -0.001f));
 		formNode->AttachChildNode(cbNode);
+
+		MkScrollBarNode* vsbNode = new MkScrollBarNode(L"VSB");
+		vsbNode->CreateScrollBar(L"Default", MkScrollBarNode::eVertical, true, 120.f);
+		vsbNode->SetLocalPosition(MkVec3(260.f, 20.f + 14.f, -0.001f));
+		vsbNode->SetPageInfo(47, 25, 15);
+		formNode->AttachChildNode(vsbNode);
+
+		MkScrollBarNode* hsbNode = new MkScrollBarNode(L"HSB");
+		hsbNode->CreateScrollBar(L"Default", MkScrollBarNode::eHorizontal, true, 120.f);
+		hsbNode->SetLocalPosition(MkVec3(140.f, 20.f, -0.001f));
+		hsbNode->SetPageInfo(47, 25, 15);
+		formNode->AttachChildNode(hsbNode);
+		
 
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
 

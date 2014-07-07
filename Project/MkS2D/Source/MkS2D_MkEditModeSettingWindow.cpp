@@ -39,21 +39,24 @@ bool MkEditModeSettingWindow::SetUp(const MkHashStr& themeName)
 	for (unsigned int i=0; i<2; ++i)
 	{
 		MkCheckButtonNode* cbNode = NULL;
+		bool available = false;
 		switch (i)
 		{
 		case 0:
 			cbNode = new MkCheckButtonNode(SHOW_TARGET_WIN_REGION_NAME);
 			captionDesc = L"타겟 윈도우 영역 표시";
+			available = MK_WIN_EVENT_MGR.__GetShowWindowSelection();
 			break;
 		case 1:
 			cbNode = new MkCheckButtonNode(ALLOW_DRAG_MOVEMENT_NAME);
 			captionDesc = L"기본 드래그 이동 허용";
+			available = MK_WIN_EVENT_MGR.__GetAllowDragMovement();
 			break;
 		}
 
 		if (cbNode != NULL)
 		{
-			cbNode->CreateCheckButton(themeName, captionDesc, MK_WIN_EVENT_MGR.__GetShowWindowSelection());
+			cbNode->CreateCheckButton(themeName, captionDesc, available);
 			cbNode->SetLocalPosition(clientRect.GetSnapPosition(MkFloatRect(cbNode->GetPresetComponentSize()), eRAP_LeftTop, alignBorder));
 			cbNode->SetLocalDepth(-0.001f);
 			bgNode->AttachChildNode(cbNode);

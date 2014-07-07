@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.04 (17:51:24),
+//   - time stamp : 2014.07.07 (18:57:11),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
@@ -53,7 +53,7 @@ Node "<SceneNode>"
 {
 	Node "Background" : "T_BaseWindowNode"
 	{
-		uint Attribute = 8;
+		uint Attribute = 2;
 		int2 PCompSize = (300, 200);
 		str PComponent = "BackgroundWindow";
 		str PThemeName = "Default";
@@ -953,6 +953,375 @@ Node "<SceneNode>"
 													"Default\default_theme.png" /
 													"UnchkOCu";
 												vec2 Size = (12.000, 12.000);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+
+					Node "HSB" : "T_ScrollBarNode"
+					{
+						int BarDirection = 1;
+						vec3 Position = (140.000, 20.000, -0.001);
+
+						Node "<SceneNode>"
+						{
+							Node "Bar" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (92, 14);
+								str PComponent = "HSlideBar";
+								str PThemeName = "Default";
+								vec3 Position = (14.000, 0.000, 0.000);
+
+								Node "<SceneNode>"
+								{
+									Node "BG" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "L" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"HSBar_L";
+												vec2 Size = (3.000, 14.000);
+											}
+
+											Node "M" : "T_SRect"
+											{
+												vec2 Position = (3.000, 0.000);
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"HSBar_M";
+												vec2 Size = (86.000, 14.000);
+											}
+
+											Node "R" : "T_SRect"
+											{
+												vec2 Position = (89.000, 0.000);
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"HSBar_R";
+												vec2 Size = (3.000, 14.000);
+											}
+										}
+									}
+
+									Node "Slide" : "T_BaseWindowNode"
+									{
+										uint Attribute = 12;
+										int2 PCompSize = (92, 14);
+										str PComponent = "HSlideButton";
+										str PThemeName = "Default";
+										vec3 Position = (0.000, 0.000, -0.025);
+
+										Node "<SceneNode>"
+										{
+											Node "Default" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "L" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnDef_L";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "M" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnDef_M";
+														vec2 Size = (86.000, 14.000);
+													}
+
+													Node "R" : "T_SRect"
+													{
+														vec2 Position = (89.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnDef_R";
+														vec2 Size = (3.000, 14.000);
+													}
+												}
+											}
+
+											Node "Disable" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "L" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnDis_L";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "M" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnDis_M";
+														vec2 Size = (86.000, 14.000);
+													}
+
+													Node "R" : "T_SRect"
+													{
+														vec2 Position = (89.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnDis_R";
+														vec2 Size = (3.000, 14.000);
+													}
+												}
+											}
+
+											Node "OnClick" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "L" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnOCl_L";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "M" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnOCl_M";
+														vec2 Size = (86.000, 14.000);
+													}
+
+													Node "R" : "T_SRect"
+													{
+														vec2 Position = (89.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnOCl_R";
+														vec2 Size = (3.000, 14.000);
+													}
+												}
+											}
+
+											Node "OnCursor" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "L" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnOCu_L";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "M" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnOCu_M";
+														vec2 Size = (86.000, 14.000);
+													}
+
+													Node "R" : "T_SRect"
+													{
+														vec2 Position = (89.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"HSBtnOCu_R";
+														vec2 Size = (3.000, 14.000);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+
+							Node "Next" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (14, 14);
+								str PComponent = "DirRightButton";
+								str PThemeName = "Default";
+								vec3 Position = (106.000, 0.000, 0.000);
+
+								Node "<SceneNode>"
+								{
+									Node "Default" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirRDef";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "Disable" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirRDis";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnClick" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirROCl";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnCursor" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirROCu";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+								}
+							}
+
+							Node "Prev" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (14, 14);
+								str PComponent = "DirLeftButton";
+								str PThemeName = "Default";
+
+								Node "<SceneNode>"
+								{
+									Node "Default" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirLDef";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "Disable" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirLDis";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnClick" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirLOCl";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnCursor" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirLOCu";
+												vec2 Size = (14.000, 14.000);
 											}
 										}
 									}
@@ -5904,6 +6273,374 @@ Node "<SceneNode>"
 											"Default\default_theme.png" /
 											"RBtnOCu_RT";
 										vec2 Size = (3.000, 3.000);
+									}
+								}
+							}
+						}
+					}
+
+					Node "VSB" : "T_ScrollBarNode"
+					{
+						vec3 Position = (260.000, 34.000, -0.001);
+
+						Node "<SceneNode>"
+						{
+							Node "Bar" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (3, 92);
+								str PComponent = "VSlideBar";
+								str PThemeName = "Default";
+								vec3 Position = (0.000, 14.000, 0.000);
+
+								Node "<SceneNode>"
+								{
+									Node "BG" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "B" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"VSBar_B";
+												vec2 Size = (14.000, 3.000);
+											}
+
+											Node "C" : "T_SRect"
+											{
+												vec2 Position = (0.000, 3.000);
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"VSBar_C";
+												vec2 Size = (14.000, 86.000);
+											}
+
+											Node "T" : "T_SRect"
+											{
+												vec2 Position = (0.000, 89.000);
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"VSBar_T";
+												vec2 Size = (14.000, 3.000);
+											}
+										}
+									}
+
+									Node "Slide" : "T_BaseWindowNode"
+									{
+										uint Attribute = 12;
+										int2 PCompSize = (3, 92);
+										str PComponent = "VSlideButton";
+										str PThemeName = "Default";
+										vec3 Position = (0.000, 0.000, -0.025);
+
+										Node "<SceneNode>"
+										{
+											Node "Default" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "B" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnDef_B";
+														vec2 Size = (14.000, 3.000);
+													}
+
+													Node "C" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnDef_C";
+														vec2 Size = (14.000, 86.000);
+													}
+
+													Node "T" : "T_SRect"
+													{
+														vec2 Position = (0.000, 89.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnDef_T";
+														vec2 Size = (14.000, 3.000);
+													}
+												}
+											}
+
+											Node "Disable" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "B" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnDis_B";
+														vec2 Size = (14.000, 3.000);
+													}
+
+													Node "C" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnDis_C";
+														vec2 Size = (14.000, 86.000);
+													}
+
+													Node "T" : "T_SRect"
+													{
+														vec2 Position = (0.000, 89.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnDis_T";
+														vec2 Size = (14.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnClick" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "B" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnOCl_B";
+														vec2 Size = (14.000, 3.000);
+													}
+
+													Node "C" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnOCl_C";
+														vec2 Size = (14.000, 86.000);
+													}
+
+													Node "T" : "T_SRect"
+													{
+														vec2 Position = (0.000, 89.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnOCl_T";
+														vec2 Size = (14.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnCursor" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "B" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnOCu_B";
+														vec2 Size = (14.000, 3.000);
+													}
+
+													Node "C" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnOCu_C";
+														vec2 Size = (14.000, 86.000);
+													}
+
+													Node "T" : "T_SRect"
+													{
+														vec2 Position = (0.000, 89.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"VSBtnOCu_T";
+														vec2 Size = (14.000, 3.000);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+
+							Node "Next" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (14, 14);
+								str PComponent = "DirDownButton";
+								str PThemeName = "Default";
+
+								Node "<SceneNode>"
+								{
+									Node "Default" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirDDef";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "Disable" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirDDis";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnClick" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirDOCl";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnCursor" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirDOCu";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+								}
+							}
+
+							Node "Prev" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (14, 14);
+								str PComponent = "DirUpButton";
+								str PThemeName = "Default";
+								vec3 Position = (0.000, 106.000, 0.000);
+
+								Node "<SceneNode>"
+								{
+									Node "Default" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirUDef";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "Disable" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirUDis";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnClick" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirUOCl";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
+									}
+
+									Node "OnCursor" : "T_SceneNode"
+									{
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"DirUOCu";
+												vec2 Size = (14.000, 14.000);
+											}
+										}
 									}
 								}
 							}

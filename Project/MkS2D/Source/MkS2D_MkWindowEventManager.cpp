@@ -537,6 +537,21 @@ void MkWindowEventManager::Update(void)
 			if (currentButtonPressed[0] && onFocusWindowNode->GetWorldAABR().CheckIntersection(currentCursorPosition))
 			{
 				MkBaseWindowNode* frontHit = onFocusWindowNode->__GetFrontHitWindow(currentCursorPosition);
+				if (m_AllowDragMovement && (frontHit != NULL)) // 이동 모드일때만 slide bar를 타게팅 할 수 있게 변환
+				{
+					switch (frontHit->GetPresetComponentType())
+					{
+					case eS2D_WPC_VSlideBar:
+					case eS2D_WPC_HSlideBar:
+						frontHit = dynamic_cast<MkBaseWindowNode*>(frontHit->GetParentNode());
+						break;
+					case eS2D_WPC_VSlideButton:
+					case eS2D_WPC_HSlideButton:
+						frontHit = dynamic_cast<MkBaseWindowNode*>(frontHit->GetParentNode()->GetParentNode());
+						break;
+					}
+				}
+
 				if (frontHit != NULL)
 				{
 					if (m_EditMode && (onFocusWindowNode->GetNodeName() != SETTING_WINDOW_NAME))
@@ -703,7 +718,7 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 	m_FrontHitWindow = NULL;
 	m_CurrentTargetWindowNode = NULL;
 
-	m_ShowWindowSelection = true;
+	m_ShowWindowSelection = false;
 	m_AllowDragMovement = true;
 }
 
@@ -800,14 +815,8 @@ MkFloat2 MkWindowEventManager::_ConfineMovement(MkBaseWindowNode* targetNode, co
 	else if (targetNode->GetAttribute(MkBaseWindowNode::eConfinedToParent))
 	{
 		MkBaseWindowNode* anchorNode = targetNode->GetAncestorWindowNode();
-		if (anchorNode == NULL)
-		{
-			return (m_DrawStep->GetRegionRect().Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
-		}
-		else
-		{
-			return (anchorNode->GetWorldAABR().Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
-		}
+		const MkFloatRect& anchorRect = (anchorNode == NULL) ? m_DrawStep->GetRegionRect() : anchorNode->GetWorldAABR();
+		return (anchorRect.Confine(MkFloatRect(posBegin + offset, targetNode->GetWorldAABR().size)) + toWorld);
 	}
 	return (posBegin + offset + toWorld);
 }

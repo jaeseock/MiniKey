@@ -7,6 +7,7 @@
 #include "MkS2D_MkBaseWindowNode.h"
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkCheckButtonNode.h"
+#include "MkS2D_MkScrollBarNode.h"
 
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
@@ -39,6 +40,18 @@ const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::TemplateName(MKDEF_S2D
 const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::CaptionKey(L"Caption");
 const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey(L"OnCheck");
 
+const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::TemplateName(MKDEF_S2D_BT_SCROLLBAR_TEMPLATE_NAME);
+const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::BarDirectionKey(L"BarDirection");
+
+
+void MkSceneNodeFamilyDefinition::GenerateBuildingTemplate(void)
+{
+	MkSceneNode::__GenerateBuildingTemplate();
+	MkBaseWindowNode::__GenerateBuildingTemplate();
+	MkSpreadButtonNode::__GenerateBuildingTemplate();
+	MkCheckButtonNode::__GenerateBuildingTemplate();
+	MkScrollBarNode::__GenerateBuildingTemplate();
+}
 
 MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, const MkHashStr& nodeName)
 {
@@ -59,6 +72,10 @@ MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, c
 	else if (templateName == CheckButton::TemplateName)
 	{
 		instance = new MkCheckButtonNode(nodeName);
+	}
+	else if (templateName == ScrollBar::TemplateName)
+	{
+		instance = new MkScrollBarNode(nodeName);
 	}
 	
 	MK_CHECK(instance != NULL, templateName.GetString() + L" 템플릿을 사용하는 " + nodeName.GetString() + L" 노드 alloc 실패") {}

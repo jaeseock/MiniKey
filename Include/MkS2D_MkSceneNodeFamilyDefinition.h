@@ -35,8 +35,13 @@ public:
 
 		// MkCheckButtonNode
 		eCheckOn,
-		eCheckOff
+		eCheckOff,
+
+		// MkScrollBarNode
+		eScrollPositionChanged
 	};
+
+	//------------------------------------------------------------------------------------------------//
 
 	// MkSceneNode
 	class Scene
@@ -86,6 +91,21 @@ public:
 		static const MkHashStr OnCheckKey; // bool
 	};
 
+	// MkScrollBarNode
+	class ScrollBar
+	{
+	public:
+		static const MkHashStr TemplateName;
+		static const MkHashStr BarDirectionKey; // int
+	};
+
+	//------------------------------------------------------------------------------------------------//
+
+	// template
+	static void GenerateBuildingTemplate(void);
+
 	// alloc
 	static MkSceneNode* Alloc(const MkHashStr& templateName, const MkHashStr& nodeName);
+
+	//------------------------------------------------------------------------------------------------//
 };

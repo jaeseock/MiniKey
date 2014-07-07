@@ -568,6 +568,208 @@ Node "WindowTypeImageSet"
 		str Image = "Default\default_theme.png";
 		str SN = "CheckDis";
 	}
+	
+	Node "DefaultDirLeftDefault"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirLDef";
+	}
+	
+	Node "DefaultDirLeftOnCursor"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirLOCu";
+	}
+	
+	Node "DefaultDirLeftOnClick"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirLOCl";
+	}
+	
+	Node "DefaultDirLeftDisable"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirLDis";
+	}
+	
+	Node "DefaultDirRightDefault"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirRDef";
+	}
+	
+	Node "DefaultDirRightOnCursor"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirROCu";
+	}
+	
+	Node "DefaultDirRightOnClick"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirROCl";
+	}
+	
+	Node "DefaultDirRightDisable"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirRDis";
+	}
+	
+	Node "DefaultDirUpDefault"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirUDef";
+	}
+	
+	Node "DefaultDirUpOnCursor"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirUOCu";
+	}
+	
+	Node "DefaultDirUpOnClick"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirUOCl";
+	}
+	
+	Node "DefaultDirUpDisable"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirUDis";
+	}
+	
+	Node "DefaultDirDownDefault"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirDDef";
+	}
+	
+	Node "DefaultDirDownOnCursor"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirDOCu";
+	}
+	
+	Node "DefaultDirDownOnClick"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirDOCl";
+	}
+	
+	Node "DefaultDirDownDisable"
+	{
+		int Type = 0;
+		str Image = "Default\default_theme.png";
+		str SN = "DirDDis";
+	}
+	
+	Node "DefaultVSlideBar"
+	{
+		int Type = 2;
+		str Image = "Default\default_theme.png";
+		str T = "VSBar_T";
+		str C = "VSBar_C";
+		str B = "VSBar_B";
+	}
+	
+	Node "DefaultVSlideBtnDefault"
+	{
+		int Type = 2;
+		str Image = "Default\default_theme.png";
+		str T = "VSBtnDef_T";
+		str C = "VSBtnDef_C";
+		str B = "VSBtnDef_B";
+	}
+	
+	Node "DefaultVSlideBtnOnCursor"
+	{
+		int Type = 2;
+		str Image = "Default\default_theme.png";
+		str T = "VSBtnOCu_T";
+		str C = "VSBtnOCu_C";
+		str B = "VSBtnOCu_B";
+	}
+	
+	Node "DefaultVSlideBtnOnClick"
+	{
+		int Type = 2;
+		str Image = "Default\default_theme.png";
+		str T = "VSBtnOCl_T";
+		str C = "VSBtnOCl_C";
+		str B = "VSBtnOCl_B";
+	}
+	
+	Node "DefaultVSlideBtnDisable"
+	{
+		int Type = 2;
+		str Image = "Default\default_theme.png";
+		str T = "VSBtnDis_T";
+		str C = "VSBtnDis_C";
+		str B = "VSBtnDis_B";
+	}
+	
+	Node "DefaultHSlideBar"
+	{
+		int Type = 1;
+		str Image = "Default\default_theme.png";
+		str L = "HSBar_L";
+		str M = "HSBar_M";
+		str R = "HSBar_R";
+	}
+	
+	Node "DefaultHSlideBtnDefault"
+	{
+		int Type = 1;
+		str Image = "Default\default_theme.png";
+		str L = "HSBtnDef_L";
+		str M = "HSBtnDef_M";
+		str R = "HSBtnDef_R";
+	}
+	
+	Node "DefaultHSlideBtnOnCursor"
+	{
+		int Type = 1;
+		str Image = "Default\default_theme.png";
+		str L = "HSBtnOCu_L";
+		str M = "HSBtnOCu_M";
+		str R = "HSBtnOCu_R";
+	}
+	
+	Node "DefaultHSlideBtnOnClick"
+	{
+		int Type = 1;
+		str Image = "Default\default_theme.png";
+		str L = "HSBtnOCl_L";
+		str M = "HSBtnOCl_M";
+		str R = "HSBtnOCl_R";
+	}
+	
+	Node "DefaultHSlideBtnDisable"
+	{
+		int Type = 1;
+		str Image = "Default\default_theme.png";
+		str L = "HSBtnDis_L";
+		str M = "HSBtnDis_M";
+		str R = "HSBtnDis_R";
+	}
 }
 
 Node "WindowPreset"
@@ -589,6 +791,8 @@ Node "WindowPreset"
 		str ArrowRight = "DefaultArrowRight";
 		str ArrowUp = "DefaultArrowUp";
 		str ArrowDown = "DefaultArrowDown";
+		str VSlideBar = "DefaultVSlideBar";
+		str HSlideBar = "DefaultHSlideBar";
 		str TitleWindow = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
 		str NormalButton = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
 		str OKButton = "DefaultOBtnDefault" / "DefaultOBtnOnCursor" / "DefaultOBtnOnClick" / "DefaultBtnDisable";
@@ -597,6 +801,12 @@ Node "WindowPreset"
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
 		str UncheckButton = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnCursor" / "DefaultUncheckDefault";
 		str CheckButton = "DefaultCheckDefault" / "DefaultCheckOnCursor" / "DefaultCheckOnClick" / "DefaultCheckDisable";
+		str DirLeftButton = "DefaultDirLeftDefault" / "DefaultDirLeftOnCursor" / "DefaultDirLeftOnClick" / "DefaultDirLeftDisable";
+		str DirRightButton = "DefaultDirRightDefault" / "DefaultDirRightOnCursor" / "DefaultDirRightOnClick" / "DefaultDirRightDisable";
+		str DirUpButton = "DefaultDirUpDefault" / "DefaultDirUpOnCursor" / "DefaultDirUpOnClick" / "DefaultDirUpDisable";
+		str DirDownButton = "DefaultDirDownDefault" / "DefaultDirDownOnCursor" / "DefaultDirDownOnClick" / "DefaultDirDownDisable";
+		str VSlideButton = "DefaultVSlideBtnDefault" / "DefaultVSlideBtnOnCursor" / "DefaultVSlideBtnOnClick" / "DefaultVSlideBtnDisable";
+		str HSlideButton = "DefaultHSlideBtnDefault" / "DefaultHSlideBtnOnCursor" / "DefaultHSlideBtnOnClick" / "DefaultHSlideBtnDisable";
 		str CloseIcon =  "DefaultCloseDefault" / "DefaultCloseOnCursor" / "DefaultCloseOnClick" / "DefaultCloseDisable";
 		
 		str FontState = "DHF" / "DSF";

@@ -498,6 +498,14 @@
 						>
 					</File>
 					<File
+						RelativePath=".\Source\MkS2D_MkScrollBarNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkS2D_MkScrollBarNode.h"
+						>
+					</File>
+					<File
 						RelativePath=".\Source\MkS2D_MkSpreadButtonNode.cpp"
 						>
 					</File>

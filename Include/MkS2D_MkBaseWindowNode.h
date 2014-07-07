@@ -21,10 +21,10 @@ public:
 	{
 		eIgnoreInputEvent = 0, // input event를 무시
 
-		eIgnoreMovement, // 에디트 모드 상관 없이 커서 드래그, 키보드 이동 등을 무시
+		eIgnoreMovement, // 일반/에디트 모드 상관 없이 커서 드래그, 키보드 이동 등을 무시
 
 		eDragMovement, // 커서 드래그로 이동
-		eConfinedToParent, // 이동시 부모 영역으로 범위 제한(부모 window node가 없으면 스크린 영역)
+		eConfinedToParent, // 이동시 부모의 AABR 영역으로 범위 제한(부모 window node가 없으면 스크린 영역)
 		eConfinedToScreen, // 이동시 스크린 영역으로 범위 제한. eConfinedToRect보다 우선순위 높음
 
 		eDragToHandling // 커서 드래그로 핸들링 허용. eDragMovement보다 우선순위 높음
