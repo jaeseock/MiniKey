@@ -104,6 +104,11 @@ void MkCheckButtonNode::Save(MkDataNode& node)
 	MkBaseWindowNode::Save(node);
 }
 
+bool MkCheckButtonNode::CheckCursorHitCondition(const MkFloat2& position) const
+{
+	return (IsBackgroundStateType(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName)) && GetWindowRect().CheckGridIntersection(position));
+}
+
 bool MkCheckButtonNode::HitEventMouseRelease(unsigned int button, const MkFloat2& position)
 {
 	if (button == 0) // left release
@@ -135,11 +140,6 @@ void MkCheckButtonNode::__GenerateBuildingTemplate(void)
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey, false);
 
 	tNode->DeclareToTemplate(true);
-}
-
-bool MkCheckButtonNode::_CheckCursorHitCondition(const MkFloat2& position) const
-{
-	return (IsBackgroundStateType(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName)) && GetWindowRect().CheckGridIntersection(position));
 }
 
 //------------------------------------------------------------------------------------------------//

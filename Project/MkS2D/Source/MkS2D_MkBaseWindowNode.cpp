@@ -1107,7 +1107,7 @@ eS2D_WindowPresetComponent MkBaseWindowNode::GetPresetComponentType(void) const
 
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
 {
-	if (_CheckCursorHitCondition(position))
+	if (CheckCursorHitCondition(position))
 	{
 		switch (button)
 		{
@@ -1137,7 +1137,7 @@ bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2&
 
 bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat2& position)
 {
-	if (_CheckCursorHitCondition(position))
+	if (CheckCursorHitCondition(position))
 	{
 		switch (button)
 		{
@@ -1181,7 +1181,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 
 bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkFloat2& position)
 {
-	if (_CheckCursorHitCondition(position))
+	if (CheckCursorHitCondition(position))
 	{
 		switch (button)
 		{
@@ -1211,7 +1211,7 @@ bool MkBaseWindowNode::InputEventMouseDoubleClick(unsigned int button, const MkF
 
 bool MkBaseWindowNode::InputEventMouseWheelMove(int delta, const MkFloat2& position)
 {
-	if (_CheckWheelMoveCondition(position))
+	if (CheckWheelMoveCondition(position))
 	{
 		_PushWindowEvent((delta < 0) ? MkSceneNodeFamilyDefinition::eCursorWheelDecrease : MkSceneNodeFamilyDefinition::eCursorWheelIncrease);
 
@@ -1265,6 +1265,12 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 			}
 		}
 	}
+}
+
+bool MkBaseWindowNode::CheckCursorHitCondition(const MkFloat2& position) const
+{
+	eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+	return ((IsTitleStateType(component) || IsWindowStateType(component)) && GetWindowRect().CheckGridIntersection(position));
 }
 
 void MkBaseWindowNode::OnFocus(void)
@@ -1498,12 +1504,6 @@ bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, Mk
 		}
 	}
 	return (!buffer.Empty());
-}
-
-bool MkBaseWindowNode::_CheckCursorHitCondition(const MkFloat2& position) const
-{
-	eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
-	return ((IsTitleStateType(component) || IsWindowStateType(component)) && GetWindowRect().CheckGridIntersection(position));
 }
 
 void MkBaseWindowNode::_PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type)

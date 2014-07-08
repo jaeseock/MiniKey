@@ -81,7 +81,7 @@ bool MkScrollBarNode::CreateScrollBar(const MkHashStr& themeName, eBarDirection 
 	return true;
 }
 
-void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize, unsigned int onePageSize, unsigned int sizePerGrid)
+void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize, unsigned int onePageSize, unsigned int sizePerGrid, unsigned int gridsPerAction)
 {
 	MK_CHECK(m_SlideNode != NULL, GetNodeName().GetString() + L" MkScrollBarNode가 생성되지 않았는데 SetPageInfo() 시도")
 		return;
@@ -96,6 +96,8 @@ void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize, unsigned int onePa
 	m_CurrentGridPosition = 0;
 
 	SetPageInfo(totalPageSize);
+
+	m_GridsPerAction = (m_GridCount > 1) ? static_cast<int>(Clamp<unsigned int>(gridsPerAction, 1, m_GridCount)) : 1;
 }
 
 void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize)
@@ -111,7 +113,7 @@ void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize)
 	if ((0 < m_SizePerGrid) && (m_SizePerGrid <= m_OnePageSize) && (m_OnePageSize < m_TotalPageSize))
 	{
 		unsigned int maxGridSize = m_TotalPageSize - m_OnePageSize;
-		m_GridCount = maxGridSize / m_SizePerGrid;
+		m_GridCount = maxGridSize / m_SizePerGrid + 1;
 		if ((maxGridSize % m_SizePerGrid) > 0)
 		{
 			++m_GridCount;
@@ -121,8 +123,15 @@ void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize)
 	_UpdateSlideTransform();
 }
 
-void MkScrollBarNode::SetWheelMovementCatchingArea(const MkFloat2& areaSize)
+void MkScrollBarNode::SetGridPosition(unsigned int gridPosition)
 {
+	if ((gridPosition < m_GridCount) && (gridPosition != m_CurrentGridPosition))
+	{
+		m_CurrentGridPosition = gridPosition;
+
+		_UpdateSlideTransform();
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eScrollPositionChanged);
+	}
 }
 
 void MkScrollBarNode::Load(const MkDataNode& node)
@@ -131,8 +140,33 @@ void MkScrollBarNode::Load(const MkDataNode& node)
 	node.GetData(MkSceneNodeFamilyDefinition::ScrollBar::BarDirectionKey, barDir, 0);
 	m_BarDirection = static_cast<eBarDirection>(barDir);
 
+	unsigned int totalPageSize = 0;
+	node.GetData(MkSceneNodeFamilyDefinition::ScrollBar::TotalPageSizeKey, totalPageSize, 0);
+
+	unsigned int onePageSize = 1;
+	node.GetData(MkSceneNodeFamilyDefinition::ScrollBar::OnePageSizeKey, onePageSize, 0);
+
+	unsigned int sizePerGrid = 1;
+	node.GetData(MkSceneNodeFamilyDefinition::ScrollBar::SizePerGridKey, sizePerGrid, 0);
+
+	int gridsPerAction = 1;
+	node.GetData(MkSceneNodeFamilyDefinition::ScrollBar::GridsPerActionKey, gridsPerAction, 0);
+
 	// MkBaseWindowNode
 	MkBaseWindowNode::Load(node);
+
+	// 하위 구성 후 나머지 초기화
+	MkBaseWindowNode* barNode = dynamic_cast<MkBaseWindowNode*>(GetChildNode(BAR_NODE_NAME));
+	if (barNode != NULL)
+	{
+		m_SlideNode = dynamic_cast<MkBaseWindowNode*>(barNode->GetChildNode(SLIDE_NODE_NAME));
+		if (m_SlideNode != NULL)
+		{
+			m_MaxSlideSize = (m_BarDirection == eVertical) ? barNode->GetPresetComponentSize().y : barNode->GetPresetComponentSize().x;
+
+			SetPageInfo(totalPageSize, onePageSize, sizePerGrid, gridsPerAction);
+		}
+	}
 }
 
 void MkScrollBarNode::Save(MkDataNode& node)
@@ -141,17 +175,70 @@ void MkScrollBarNode::Save(MkDataNode& node)
 	_ApplyBuildingTemplateToSave(node, MkSceneNodeFamilyDefinition::ScrollBar::TemplateName);
 
 	node.SetData(MkSceneNodeFamilyDefinition::ScrollBar::BarDirectionKey, static_cast<int>(m_BarDirection), 0);
-	
+	node.SetData(MkSceneNodeFamilyDefinition::ScrollBar::TotalPageSizeKey, m_TotalPageSize, 0);
+	node.SetData(MkSceneNodeFamilyDefinition::ScrollBar::OnePageSizeKey, m_OnePageSize, 0);
+	node.SetData(MkSceneNodeFamilyDefinition::ScrollBar::SizePerGridKey, m_SizePerGrid, 0);
+	node.SetData(MkSceneNodeFamilyDefinition::ScrollBar::GridsPerActionKey, m_GridsPerAction, 0);
+
 	// MkBaseWindowNode
 	MkBaseWindowNode::Save(node);
+}
+
+bool MkScrollBarNode::HitEventMouseWheelMove(int delta, const MkFloat2& position)
+{
+	switch (delta) // 3배속까지만 인식
+	{
+	case 120:
+		SetGridPosition(_GetNewGridPosition(-m_GridsPerAction));
+		return true;
+	case 240:
+		SetGridPosition(_GetNewGridPosition(-m_GridsPerAction * 2));
+		return true;
+	case 360:
+		SetGridPosition(_GetNewGridPosition(-m_GridsPerAction * 3));
+		return true;
+	case -120:
+		SetGridPosition(_GetNewGridPosition(m_GridsPerAction));
+		return true;
+	case -240:
+		SetGridPosition(_GetNewGridPosition(m_GridsPerAction * 2));
+		return true;
+	case -360:
+		SetGridPosition(_GetNewGridPosition(m_GridsPerAction * 3));
+		return true;
+	}
+	return false;
+}
+
+void MkScrollBarNode::UseWindowEvent(WindowEvent& evt)
+{
+	if (evt.node->GetNodeName() == PREV_BTN_NODE_NAME)
+	{
+		switch (evt.type)
+		{
+		case MkSceneNodeFamilyDefinition::eCursorLeftRelease:
+			SetGridPosition(_GetNewGridPosition(-m_GridsPerAction));
+			break;
+		}
+	}
+	else if (evt.node->GetNodeName() == NEXT_BTN_NODE_NAME)
+	{
+		switch (evt.type)
+		{
+		case MkSceneNodeFamilyDefinition::eCursorLeftRelease:
+			SetGridPosition(_GetNewGridPosition(m_GridsPerAction));
+			break;
+		}
+	}
 }
 
 MkScrollBarNode::MkScrollBarNode(const MkHashStr& name) : MkBaseWindowNode(name)
 {
 	m_BarDirection = eVertical;
 	m_TotalPageSize = 0;
-	m_OnePageSize = 0;
-	m_SizePerGrid = 0;
+	m_OnePageSize = 1;
+	m_SizePerGrid = 1;
+	m_GridsPerAction = 1;
 	
 	m_SlideNode = NULL;
 	m_MaxSlideSize = 0.f;
@@ -172,22 +259,16 @@ void MkScrollBarNode::__GenerateBuildingTemplate(void)
 	tNode->ApplyTemplate(MkSceneNodeFamilyDefinition::BaseWindow::TemplateName); // MkBaseWindowNode의 template 적용
 
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::ScrollBar::BarDirectionKey, static_cast<int>(0));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::ScrollBar::TotalPageSizeKey, static_cast<unsigned int>(0));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::ScrollBar::OnePageSizeKey, static_cast<unsigned int>(1));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::ScrollBar::SizePerGridKey, static_cast<unsigned int>(1));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::ScrollBar::GridsPerActionKey, static_cast<int>(1));
 
 	tNode->DeclareToTemplate(true);
 }
 
 void MkScrollBarNode::_UpdateSlideTransform(void)
 {
-	//m_BarDirection = eVertical;
-	//m_TotalPageSize = 0;
-	//m_OnePageSize = 0;
-	//m_SizePerGrid = 0;
-	
-	//m_SlideNode = NULL;
-	//m_MaxSlideSize = 0.f;
-	//m_GridCount = 0;
-	//m_CurrentGridPosition = 0;
-
 	if (m_SlideNode != NULL)
 	{
 		// 크기
@@ -219,6 +300,16 @@ void MkScrollBarNode::_UpdateSlideTransform(void)
 		}
 		m_SlideNode->SetLocalPosition(slidePos);
 	}
+}
+
+unsigned int MkScrollBarNode::_GetNewGridPosition(int offset) const
+{
+	if (m_GridCount > 0)
+	{
+		int pos = Clamp<int>(static_cast<int>(m_CurrentGridPosition) + offset, 0, static_cast<int>(m_GridCount) - 1);
+		return static_cast<unsigned int>(pos);
+	}
+	return 0;
 }
 
 //------------------------------------------------------------------------------------------------//

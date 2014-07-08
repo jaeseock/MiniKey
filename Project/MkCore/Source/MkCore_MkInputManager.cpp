@@ -332,7 +332,13 @@ void MkInputManager::__CheckWndProc(HWND hWnd, unsigned int msg, WPARAM wParam, 
 		break;
 
 	case WM_MOUSEWHEEL:
-		m_EventQueue.RegisterEvent(InputEvent(eMouseWheelMove, static_cast<int>(GET_WHEEL_DELTA_WPARAM(wParam)), static_cast<int>(LOWORD(lParam)), static_cast<int>(HIWORD(lParam))));
+		{
+			POINT pt;
+			pt.x = LOWORD(lParam);
+			pt.y = HIWORD(lParam);
+			ScreenToClient(m_TargetWindowHandle, &pt);
+			m_EventQueue.RegisterEvent(InputEvent(eMouseWheelMove, static_cast<int>(GET_WHEEL_DELTA_WPARAM(wParam)), static_cast<int>(pt.x), static_cast<int>(pt.y)));
+		}
 		break;
 
 	case WM_MOUSEMOVE:

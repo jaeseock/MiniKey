@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.07 (18:57:11),
+//   - time stamp : 2014.07.08 (19:07:10),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
@@ -964,17 +964,20 @@ Node "<SceneNode>"
 					Node "HSB" : "T_ScrollBarNode"
 					{
 						int BarDirection = 1;
+						uint OnePageSize = 30;
 						vec3 Position = (140.000, 20.000, -0.001);
+						uint SizePerGrid = 20;
+						uint TotalPageSize = 200;
 
 						Node "<SceneNode>"
 						{
 							Node "Bar" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
-								int2 PCompSize = (92, 14);
+								int2 PCompSize = (84, 18);
 								str PComponent = "HSlideBar";
 								str PThemeName = "Default";
-								vec3 Position = (14.000, 0.000, 0.000);
+								vec3 Position = (18.000, 0.000, 0.000);
 
 								Node "<SceneNode>"
 								{
@@ -988,7 +991,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"HSBar_L";
-												vec2 Size = (3.000, 14.000);
+												vec2 Size = (3.000, 18.000);
 											}
 
 											Node "M" : "T_SRect"
@@ -998,17 +1001,17 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"HSBar_M";
-												vec2 Size = (86.000, 14.000);
+												vec2 Size = (78.000, 18.000);
 											}
 
 											Node "R" : "T_SRect"
 											{
-												vec2 Position = (89.000, 0.000);
+												vec2 Position = (81.000, 0.000);
 												str Resource = // [3]
 													"map" /
 													"Default\default_theme.png" /
 													"HSBar_R";
-												vec2 Size = (3.000, 14.000);
+												vec2 Size = (3.000, 18.000);
 											}
 										}
 									}
@@ -1016,7 +1019,7 @@ Node "<SceneNode>"
 									Node "Slide" : "T_BaseWindowNode"
 									{
 										uint Attribute = 12;
-										int2 PCompSize = (92, 14);
+										int2 PCompSize = (12, 18);
 										str PComponent = "HSlideButton";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 0.000, -0.025);
@@ -1033,7 +1036,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnDef_L";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 
 													Node "M" : "T_SRect"
@@ -1043,17 +1046,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnDef_M";
-														vec2 Size = (86.000, 14.000);
+														vec2 Size = (6.600, 18.000);
 													}
 
 													Node "R" : "T_SRect"
 													{
-														vec2 Position = (89.000, 0.000);
+														vec2 Position = (9.600, 0.000);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnDef_R";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 												}
 											}
@@ -1070,7 +1073,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnDis_L";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 
 													Node "M" : "T_SRect"
@@ -1080,17 +1083,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnDis_M";
-														vec2 Size = (86.000, 14.000);
+														vec2 Size = (6.600, 18.000);
 													}
 
 													Node "R" : "T_SRect"
 													{
-														vec2 Position = (89.000, 0.000);
+														vec2 Position = (9.600, 0.000);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnDis_R";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 												}
 											}
@@ -1107,7 +1110,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnOCl_L";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 
 													Node "M" : "T_SRect"
@@ -1117,17 +1120,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnOCl_M";
-														vec2 Size = (86.000, 14.000);
+														vec2 Size = (6.600, 18.000);
 													}
 
 													Node "R" : "T_SRect"
 													{
-														vec2 Position = (89.000, 0.000);
+														vec2 Position = (9.600, 0.000);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnOCl_R";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 												}
 											}
@@ -1144,7 +1147,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnOCu_L";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 
 													Node "M" : "T_SRect"
@@ -1154,17 +1157,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnOCu_M";
-														vec2 Size = (86.000, 14.000);
+														vec2 Size = (6.600, 18.000);
 													}
 
 													Node "R" : "T_SRect"
 													{
-														vec2 Position = (89.000, 0.000);
+														vec2 Position = (9.600, 0.000);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"HSBtnOCu_R";
-														vec2 Size = (3.000, 14.000);
+														vec2 Size = (3.000, 18.000);
 													}
 												}
 											}
@@ -1176,10 +1179,10 @@ Node "<SceneNode>"
 							Node "Next" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
-								int2 PCompSize = (14, 14);
+								int2 PCompSize = (18, 18);
 								str PComponent = "DirRightButton";
 								str PThemeName = "Default";
-								vec3 Position = (106.000, 0.000, 0.000);
+								vec3 Position = (102.000, 0.000, 0.000);
 
 								Node "<SceneNode>"
 								{
@@ -1193,7 +1196,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirRDef";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -1210,7 +1213,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirRDis";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -1227,7 +1230,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirROCl";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -1244,7 +1247,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirROCu";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -1254,7 +1257,7 @@ Node "<SceneNode>"
 							Node "Prev" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
-								int2 PCompSize = (14, 14);
+								int2 PCompSize = (18, 18);
 								str PComponent = "DirLeftButton";
 								str PThemeName = "Default";
 
@@ -1270,7 +1273,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirLDef";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -1287,7 +1290,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirLDis";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -1304,7 +1307,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirLOCl";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -1321,7 +1324,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirLOCu";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6281,17 +6284,20 @@ Node "<SceneNode>"
 
 					Node "VSB" : "T_ScrollBarNode"
 					{
+						uint OnePageSize = 30;
 						vec3 Position = (260.000, 34.000, -0.001);
+						uint SizePerGrid = 20;
+						uint TotalPageSize = 200;
 
 						Node "<SceneNode>"
 						{
 							Node "Bar" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
-								int2 PCompSize = (3, 92);
+								int2 PCompSize = (3, 84);
 								str PComponent = "VSlideBar";
 								str PThemeName = "Default";
-								vec3 Position = (0.000, 14.000, 0.000);
+								vec3 Position = (0.000, 18.000, 0.000);
 
 								Node "<SceneNode>"
 								{
@@ -6305,7 +6311,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"VSBar_B";
-												vec2 Size = (14.000, 3.000);
+												vec2 Size = (18.000, 3.000);
 											}
 
 											Node "C" : "T_SRect"
@@ -6315,17 +6321,17 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"VSBar_C";
-												vec2 Size = (14.000, 86.000);
+												vec2 Size = (18.000, 78.000);
 											}
 
 											Node "T" : "T_SRect"
 											{
-												vec2 Position = (0.000, 89.000);
+												vec2 Position = (0.000, 81.000);
 												str Resource = // [3]
 													"map" /
 													"Default\default_theme.png" /
 													"VSBar_T";
-												vec2 Size = (14.000, 3.000);
+												vec2 Size = (18.000, 3.000);
 											}
 										}
 									}
@@ -6333,10 +6339,10 @@ Node "<SceneNode>"
 									Node "Slide" : "T_BaseWindowNode"
 									{
 										uint Attribute = 12;
-										int2 PCompSize = (3, 92);
+										int2 PCompSize = (3, 12);
 										str PComponent = "VSlideButton";
 										str PThemeName = "Default";
-										vec3 Position = (0.000, 0.000, -0.025);
+										vec3 Position = (0.000, 71.400, -0.025);
 
 										Node "<SceneNode>"
 										{
@@ -6350,7 +6356,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnDef_B";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 
 													Node "C" : "T_SRect"
@@ -6360,17 +6366,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnDef_C";
-														vec2 Size = (14.000, 86.000);
+														vec2 Size = (18.000, 6.600);
 													}
 
 													Node "T" : "T_SRect"
 													{
-														vec2 Position = (0.000, 89.000);
+														vec2 Position = (0.000, 9.600);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnDef_T";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 												}
 											}
@@ -6387,7 +6393,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnDis_B";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 
 													Node "C" : "T_SRect"
@@ -6397,17 +6403,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnDis_C";
-														vec2 Size = (14.000, 86.000);
+														vec2 Size = (18.000, 6.600);
 													}
 
 													Node "T" : "T_SRect"
 													{
-														vec2 Position = (0.000, 89.000);
+														vec2 Position = (0.000, 9.600);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnDis_T";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 												}
 											}
@@ -6424,7 +6430,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnOCl_B";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 
 													Node "C" : "T_SRect"
@@ -6434,17 +6440,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnOCl_C";
-														vec2 Size = (14.000, 86.000);
+														vec2 Size = (18.000, 6.600);
 													}
 
 													Node "T" : "T_SRect"
 													{
-														vec2 Position = (0.000, 89.000);
+														vec2 Position = (0.000, 9.600);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnOCl_T";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 												}
 											}
@@ -6461,7 +6467,7 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnOCu_B";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 
 													Node "C" : "T_SRect"
@@ -6471,17 +6477,17 @@ Node "<SceneNode>"
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnOCu_C";
-														vec2 Size = (14.000, 86.000);
+														vec2 Size = (18.000, 6.600);
 													}
 
 													Node "T" : "T_SRect"
 													{
-														vec2 Position = (0.000, 89.000);
+														vec2 Position = (0.000, 9.600);
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
 															"VSBtnOCu_T";
-														vec2 Size = (14.000, 3.000);
+														vec2 Size = (18.000, 3.000);
 													}
 												}
 											}
@@ -6493,7 +6499,7 @@ Node "<SceneNode>"
 							Node "Next" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
-								int2 PCompSize = (14, 14);
+								int2 PCompSize = (18, 18);
 								str PComponent = "DirDownButton";
 								str PThemeName = "Default";
 
@@ -6509,7 +6515,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirDDef";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6526,7 +6532,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirDDis";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6543,7 +6549,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirDOCl";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6560,7 +6566,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirDOCu";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6570,10 +6576,10 @@ Node "<SceneNode>"
 							Node "Prev" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
-								int2 PCompSize = (14, 14);
+								int2 PCompSize = (18, 18);
 								str PComponent = "DirUpButton";
 								str PThemeName = "Default";
-								vec3 Position = (0.000, 106.000, 0.000);
+								vec3 Position = (0.000, 102.000, 0.000);
 
 								Node "<SceneNode>"
 								{
@@ -6587,7 +6593,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirUDef";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6604,7 +6610,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirUDis";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6621,7 +6627,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirUOCl";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}
@@ -6638,7 +6644,7 @@ Node "<SceneNode>"
 													"map" /
 													"Default\default_theme.png" /
 													"DirUOCu";
-												vec2 Size = (14.000, 14.000);
+												vec2 Size = (18.000, 18.000);
 											}
 										}
 									}

@@ -24,16 +24,32 @@ public:
 	// component control
 	//------------------------------------------------------------------------------------------------//
 
+	// 생성
+	// hasDirBtn : prev/next 버튼 존재여부
+	// length : 버튼과 스크롤 바를 포함한 전체 길이
 	bool CreateScrollBar(const MkHashStr& themeName, eBarDirection direction, bool hasDirBtn, float length);
 
-	void SetPageInfo(unsigned int totalPageSize, unsigned int onePageSize, unsigned int sizePerGrid);
+	// 정보 입력
+	// totalPageSize : 전체에 해당하는 논리적 길이
+	// onePageSize : 한 페이지에 해당하는 논리적 길이(최소 1 이상)
+	// sizePerGrid : 위치 단위 하나에 해당하는 논리적 길이(onePageSize 이하)
+	// gridsPerAction : 이동 버튼/스크롤시 이동할 단위 갯수
+	void SetPageInfo(unsigned int totalPageSize, unsigned int onePageSize, unsigned int sizePerGrid, unsigned int gridsPerAction = 1);
+
+	// 전체에 해당하는 논리적 길이만 설정
 	void SetPageInfo(unsigned int totalPageSize);
 
-	inline unsigned int GetGridCount(void) const { return m_GridCount; }
-	inline unsigned int GetCurrentGridPosition(void) const { return m_CurrentGridPosition; }
-	inline unsigned int GetCurrentPagePosition(void) const { return m_CurrentPagePosition; }
+	// 현재 위치 단위 설정
+	void SetGridPosition(unsigned int gridPosition);
 
-	void SetWheelMovementCatchingArea(const MkFloat2& areaSize);
+	// 총 위치 단위 수 반환
+	inline unsigned int GetGridCount(void) const { return m_GridCount; }
+
+	// 현재 위치 단위 반환
+	inline unsigned int GetCurrentGridPosition(void) const { return m_CurrentGridPosition; }
+
+	// 현재 논리적 위치 반환(0 ~ [totalPageSize - onePageSize])
+	inline unsigned int GetCurrentPagePosition(void) const { return m_CurrentPagePosition; }
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성
@@ -49,6 +65,10 @@ public:
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
+	virtual bool HitEventMouseWheelMove(int delta, const MkFloat2& position);
+
+	virtual void UseWindowEvent(WindowEvent& evt);
+
 	//------------------------------------------------------------------------------------------------//
 
 	MkScrollBarNode(const MkHashStr& name);
@@ -62,18 +82,19 @@ protected:
 
 	void _UpdateSlideTransform(void);
 
+	unsigned int _GetNewGridPosition(int offset) const;
+
 protected:
 
 	eBarDirection m_BarDirection;
 	unsigned int m_TotalPageSize;
 	unsigned int m_OnePageSize;
 	unsigned int m_SizePerGrid;
+	int m_GridsPerAction;
 
 	MkBaseWindowNode* m_SlideNode;
 	float m_MaxSlideSize;
 	unsigned int m_GridCount;
 	unsigned int m_CurrentGridPosition;
 	unsigned int m_CurrentPagePosition;
-
-	MkFloat2 m_WheelMovementCatchingArea;
 };

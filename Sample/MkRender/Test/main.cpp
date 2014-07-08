@@ -133,13 +133,13 @@ public:
 		MkScrollBarNode* vsbNode = new MkScrollBarNode(L"VSB");
 		vsbNode->CreateScrollBar(L"Default", MkScrollBarNode::eVertical, true, 120.f);
 		vsbNode->SetLocalPosition(MkVec3(260.f, 20.f + 14.f, -0.001f));
-		vsbNode->SetPageInfo(47, 25, 15);
+		vsbNode->SetPageInfo(200, 30, 20);
 		formNode->AttachChildNode(vsbNode);
 
 		MkScrollBarNode* hsbNode = new MkScrollBarNode(L"HSB");
 		hsbNode->CreateScrollBar(L"Default", MkScrollBarNode::eHorizontal, true, 120.f);
 		hsbNode->SetLocalPosition(MkVec3(140.f, 20.f, -0.001f));
-		hsbNode->SetPageInfo(47, 25, 15);
+		hsbNode->SetPageInfo(200, 30, 20);
 		formNode->AttachChildNode(hsbNode);
 		
 

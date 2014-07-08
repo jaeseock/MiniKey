@@ -42,6 +42,10 @@ const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey(L"OnCheck")
 
 const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::TemplateName(MKDEF_S2D_BT_SCROLLBAR_TEMPLATE_NAME);
 const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::BarDirectionKey(L"BarDirection");
+const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::TotalPageSizeKey(L"TotalPageSize");
+const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::OnePageSizeKey(L"OnePageSize");
+const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::SizePerGridKey(L"SizePerGrid");
+const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::GridsPerActionKey(L"GridsPerAction");
 
 
 void MkSceneNodeFamilyDefinition::GenerateBuildingTemplate(void)

@@ -233,7 +233,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// root -> leaf 순회 input event
-	// (NOTE) 특수한 상황이 아니면 윈도우별 처리는 하단의 HitEventMouse...()를 사용하길 권장
+	// (NOTE) 특수한 상황이 아니면 윈도우별 처리는 하단의 HitEventMouse...(), 혹은 UseWindowEvent()를 사용하길 권장
 	virtual void InputEventKeyPress(unsigned int keyCode) {}
 	virtual void InputEventKeyRelease(unsigned int keyCode) {}
 	virtual bool InputEventMousePress(unsigned int button, const MkFloat2& position);
@@ -242,7 +242,12 @@ public:
 	virtual bool InputEventMouseWheelMove(int delta, const MkFloat2& position);
 	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position);
 
-	// hit condition(_CheckCursorHitCondition/_CheckWheelMoveCondition)을 만족한 윈도우만 호출
+	// InputEventMouse...() 순회중 해당 윈도우가 HitEvent...() 호출 될 조건(hit condition)
+	virtual bool CheckCursorHitCondition(const MkFloat2& position) const;
+	virtual bool CheckWheelMoveCondition(const MkFloat2& position) const { return true; }
+
+	// hit condition(CheckCursorHitCondition/CheckWheelMoveCondition)을 만족한 윈도우만 호출
+	// 자신의 input event는 여기서 처리
 	virtual bool HitEventMousePress(unsigned int button, const MkFloat2& position) { return false; }
 	virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position) { return false; }
 	virtual bool HitEventMouseDoubleClick(unsigned int button, const MkFloat2& position) { return false; }
@@ -284,9 +289,6 @@ protected:
 
 	bool _CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
-
-	virtual bool _CheckCursorHitCondition(const MkFloat2& position) const;
-	virtual bool _CheckWheelMoveCondition(const MkFloat2& position) const { return false; }
 
 	void _PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type);
 

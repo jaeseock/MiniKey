@@ -97,6 +97,10 @@ public:
 	public:
 		static const MkHashStr TemplateName;
 		static const MkHashStr BarDirectionKey; // int
+		static const MkHashStr TotalPageSizeKey; // unsigned int
+		static const MkHashStr OnePageSizeKey; // unsigned int
+		static const MkHashStr SizePerGridKey; // unsigned int
+		static const MkHashStr GridsPerActionKey; // int
 	};
 
 	//------------------------------------------------------------------------------------------------//

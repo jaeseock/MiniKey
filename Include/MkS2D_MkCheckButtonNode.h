@@ -41,6 +41,8 @@ public:
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
+	virtual bool CheckCursorHitCondition(const MkFloat2& position) const;
+
 	virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position);
 
 	//------------------------------------------------------------------------------------------------//
@@ -51,10 +53,6 @@ public:
 public:
 
 	static void __GenerateBuildingTemplate(void);
-
-protected:
-
-	virtual bool _CheckCursorHitCondition(const MkFloat2& position) const;
 
 protected:
 
