@@ -14,6 +14,9 @@ public:
 	// 초기화
 	bool SetUp(const MkDecoStr& decoStr);
 
+	// 설정된 deco str 반환
+	inline const MkDecoStr& GetDecoStr(void) const { return m_DecoStr; }
+
 	// 텍스쳐 참조 반환
 	inline void GetTargetTexture(MkBaseTexturePtr& buffer) const { buffer = m_TargetTexture; }
 

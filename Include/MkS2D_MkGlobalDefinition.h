@@ -20,6 +20,7 @@ enum eS2D_SceneNodeType
 	eS2D_SNT_SpreadButtonNode, // MkSpreadButtonNode
 	eS2D_SNT_CheckButtonNode, // MkCheckButtonNode
 	eS2D_SNT_ScrollBarNode, // MkScrollBarNode
+	eS2D_SNT_EditBoxNode // MkEditBoxNode
 };
 
 // window preset component

@@ -80,6 +80,7 @@ public:
 
 	MkDecoStr() {}
 	MkDecoStr(const MkStr& source) { SetUp(source); }
+	MkDecoStr(const MkDecoStr& source) { *this = source; }
 	~MkDecoStr() { Clear(); }
 
 	// 일반 문자열을 기본 설정의 deco string으로 변환

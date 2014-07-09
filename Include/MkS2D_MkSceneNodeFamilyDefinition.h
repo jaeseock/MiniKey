@@ -103,6 +103,19 @@ public:
 		static const MkHashStr GridsPerActionKey; // int
 	};
 
+	// MkEditBoxNode
+	class EditBox
+	{
+	public:
+		static const MkHashStr TemplateName;
+		static const MkHashStr TextKey; // MkStr
+		static const MkHashStr UseHistoryKey; // bool
+		static const MkHashStr FontTypeKey; // MkStr
+		static const MkHashStr NormalFontStateKey; // MkStr
+		static const MkHashStr SelectionFontStateKey; // MkStr
+		static const MkHashStr CursorFontStateKey; // MkStr
+	};
+
 	//------------------------------------------------------------------------------------------------//
 
 	// template

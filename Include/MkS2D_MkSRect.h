@@ -115,6 +115,9 @@ public:
 	// (NOTE) SetTexture()와 배타적. 설정이 성공하면 캐쉬 텍스쳐가 기존 설정 된 texture를 교체(기존 texture 무효화)
 	bool SetDecoString(const MkArray<MkHashStr>& nodeNameAndKey);
 
+	// 설정된 deco text 반환
+	inline const MkDecoStr& GetDecoString(void) const { return m_TextCacheStep.GetDecoStr(); }
+
 	// 기존 설정된 deco string이 있다면 재로딩
 	void RestoreDecoString(void);
 

@@ -6,6 +6,7 @@
 
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkWindowResourceManager.h"
+#include "MkS2D_MkHiddenEditBox.h"
 #include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkSpreadButtonNode.h"
@@ -245,6 +246,8 @@ void MkWindowEventManager::Update(void)
 {
 	if ((m_DrawStep == NULL) || (m_RootNode == NULL))
 		return;
+
+	MK_EDIT_BOX.Update();
 
 	// normal mode <-> edit mode toggle
 	if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
@@ -554,6 +557,9 @@ void MkWindowEventManager::Update(void)
 
 				if (frontHit != NULL)
 				{
+					// edit box 영역이 선택되었으면 알림. 다른 종류의 윈도우면 입력모드 취소
+					MK_EDIT_BOX.BindControl((frontHit->GetNodeType() == eS2D_SNT_EditBoxNode) ? frontHit : NULL);
+
 					if (m_EditMode && (onFocusWindowNode->GetNodeName() != SETTING_WINDOW_NAME))
 					{
 						m_CurrentTargetWindowNode = frontHit;
@@ -593,6 +599,16 @@ void MkWindowEventManager::Update(void)
 				}
 			}
 		}
+
+		// 포커싱중인 윈도우가 없거나 활성화중인 edit box 그룹이 아닌 다른 윈도우가 포커스를 가지고 있으면 입력모드 취소
+		if ((onFocusWindowNode == NULL) || (onFocusWindowNode->GetNodeName() != MK_EDIT_BOX.GetRootNodeNameOfBindingControl()))
+		{
+			MK_EDIT_BOX.BindControl(NULL);
+		}
+	}
+	else
+	{
+		MK_EDIT_BOX.BindControl(NULL); // 활성화중인 윈도우가 없어도 입력모드 취소
 	}
 
 	if ((!cursorAvailable) || currentButtonReleased[0])

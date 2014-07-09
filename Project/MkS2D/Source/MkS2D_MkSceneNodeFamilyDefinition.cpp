@@ -8,6 +8,7 @@
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkScrollBarNode.h"
+#include "MkS2D_MkEditBoxNode.h"
 
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
@@ -47,6 +48,14 @@ const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::OnePageSizeKey(L"OnePage
 const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::SizePerGridKey(L"SizePerGrid");
 const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::GridsPerActionKey(L"GridsPerAction");
 
+const MkHashStr MkSceneNodeFamilyDefinition::EditBox::TemplateName(MKDEF_S2D_BT_EDITBOX_TEMPLATE_NAME);
+const MkHashStr MkSceneNodeFamilyDefinition::EditBox::TextKey(L"Text");
+const MkHashStr MkSceneNodeFamilyDefinition::EditBox::UseHistoryKey(L"UseHistory");
+const MkHashStr MkSceneNodeFamilyDefinition::EditBox::FontTypeKey(L"FontType");
+const MkHashStr MkSceneNodeFamilyDefinition::EditBox::NormalFontStateKey(L"NorFontState");
+const MkHashStr MkSceneNodeFamilyDefinition::EditBox::SelectionFontStateKey(L"SelFontState");
+const MkHashStr MkSceneNodeFamilyDefinition::EditBox::CursorFontStateKey(L"CurFontState");
+
 
 void MkSceneNodeFamilyDefinition::GenerateBuildingTemplate(void)
 {
@@ -55,6 +64,7 @@ void MkSceneNodeFamilyDefinition::GenerateBuildingTemplate(void)
 	MkSpreadButtonNode::__GenerateBuildingTemplate();
 	MkCheckButtonNode::__GenerateBuildingTemplate();
 	MkScrollBarNode::__GenerateBuildingTemplate();
+	MkEditBoxNode::__GenerateBuildingTemplate();
 }
 
 MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, const MkHashStr& nodeName)
@@ -80,6 +90,10 @@ MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, c
 	else if (templateName == ScrollBar::TemplateName)
 	{
 		instance = new MkScrollBarNode(nodeName);
+	}
+	else if (templateName == EditBox::TemplateName)
+	{
+		instance = new MkEditBoxNode(nodeName);
 	}
 	
 	MK_CHECK(instance != NULL, templateName.GetString() + L" 템플릿을 사용하는 " + nodeName.GetString() + L" 노드 alloc 실패") {}

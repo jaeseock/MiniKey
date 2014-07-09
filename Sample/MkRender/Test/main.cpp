@@ -29,6 +29,7 @@
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkScrollBarNode.h"
+#include "MkS2D_MkEditBoxNode.h"
 
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkWindowEventManager.h"
@@ -141,6 +142,11 @@ public:
 		hsbNode->SetLocalPosition(MkVec3(140.f, 20.f, -0.001f));
 		hsbNode->SetPageInfo(200, 30, 20);
 		formNode->AttachChildNode(hsbNode);
+
+		MkEditBoxNode* ebNode = new MkEditBoxNode(L"EB");
+		ebNode->CreateEditBox(L"Default", MkFloat2(150.f, 20.f), L"", L"", L"", L"", L"³ª´Â ÀÌ»Ñ´Ù!!!", true);
+		ebNode->SetLocalPosition(MkVec3(10.f, 50.f, -0.001f));
+		formNode->AttachChildNode(ebNode);
 		
 
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
