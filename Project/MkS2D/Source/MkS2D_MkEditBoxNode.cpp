@@ -4,7 +4,6 @@
 
 #include "MkS2D_MkProjectDefinition.h"
 #include "MkS2D_MkWindowResourceManager.h"
-//#include "MkS2D_MkHiddenEditBox.h"
 #include "MkS2D_MkFontManager.h"
 #include "MkS2D_MkEditBoxNode.h"
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
@@ -16,6 +15,7 @@
 
 const static MkHashStr TEXT_SRECT_NAME = L"Text";
 const static MkHashStr CURSOR_SRECT_NAME = L"Cursor";
+const static MkHashStr SEL_SRECT_NAME = L"Selection";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -104,6 +104,7 @@ MkEditBoxNode::MkEditBoxNode(const MkHashStr& name) : MkBaseWindowNode(name)
 
 	m_SelStart = 0;
 	m_SelEnd = 0;
+	m_WindowOffset = 0;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -156,20 +157,32 @@ void MkEditBoxNode::__BindingLost(void)
 	{
 		DeleteSRect(CURSOR_SRECT_NAME);
 	}
+	if (ExistSRect(SEL_SRECT_NAME))
+	{
+		DeleteSRect(SEL_SRECT_NAME);
+	}
 }
 
 void MkEditBoxNode::__SetFocus(void)
 {
-	MkSRect* srect = CreateSRect(CURSOR_SRECT_NAME);
-	if (srect != NULL)
+	// 텍스트 영역은 처리 할 필요 없이 커서와 선택 영역만 생성
+	MkSRect* cursorRect = CreateSRect(CURSOR_SRECT_NAME);
+	if (cursorRect != NULL)
 	{
 		MkStr buffer;
-		if (MkDecoStr::Convert(_GetFontType(), _GetFontState(m_CursorFontState), 0, MKDEF_CURSOR_CHAR, buffer) &&
-			srect->SetDecoString(buffer))
+		if (MkDecoStr::Convert(_GetFontType(), _GetCursorFontState(), 0, MKDEF_CURSOR_CHAR, buffer))
 		{
-			_UpdateCursor();
+			cursorRect->SetDecoString(buffer);
 		}
 	}
+	
+	MkSRect* selRect = CreateSRect(SEL_SRECT_NAME);
+	if (selRect != NULL)
+	{
+		selRect->SetTexture(MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetEditBoxSelectionSubsetName());
+	}
+
+	_UpdateCursorAndSelection();
 }
 
 bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD setStart, DWORD setEnd)
@@ -177,38 +190,80 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD setStart, DWORD set
 	bool ok = ((msg != m_Text) || (setStart != m_SelStart) || (setEnd != m_SelEnd));
 	if (ok)
 	{
+		unsigned int oldTextSize = m_Text.GetSize();
+
 		m_Text = msg;
 		m_SelStart = setStart;
 		m_SelEnd = setEnd;
 
-		if (m_Text.Empty())
+		unsigned int newTextSize = m_Text.GetSize();
+		
+		// 문자 추가
+		if (newTextSize > oldTextSize)
 		{
-			if (ExistSRect(TEXT_SRECT_NAME))
+			float textWidth = _GetTextWidth(m_WindowOffset, msg.GetSize(), msg);
+			float availableWidth = GetPresetComponentSize().x - MKDEF_TEXT_START_POSITION * 2.f;
+			if (textWidth > availableWidth)
 			{
-				DeleteSRect(TEXT_SRECT_NAME);
 			}
 		}
+		// 문자 삭제
+		else if (newTextSize < oldTextSize)
+		{
+		}
+		else // newTextSize == oldTextSize
+		{
+		}
+
+		// 텍스트가 비었거나 공문자만 존재하면
+		if (m_Text.Empty() || (m_Text.GetFirstValidPosition() == MKDEF_ARRAY_ERROR))
+		{
+			_DeleteTextRect();
+		}
+		// 유효문자가 존재하면
 		else
 		{
-			MkSRect* textRect = ExistSRect(TEXT_SRECT_NAME) ? GetSRect(TEXT_SRECT_NAME) : CreateSRect(TEXT_SRECT_NAME);
-			if (textRect != NULL)
+			MkStr buffer;
+			if (m_SelStart == m_SelEnd)
 			{
-				if (m_SelStart == m_SelEnd) // 일반 커서상태면 바로 텍스트를 출력
-				{
-					MkStr buffer;
-					if (MkDecoStr::Convert(_GetFontType(), _GetFontState(m_NormalFontState), 0, m_Text, buffer))
-					{
-						textRect->SetDecoString(buffer);
-					}
-				}
+				MkDecoStr::Convert(_GetFontType(), _GetNormalFontState(), 0, m_Text, buffer);
+			}
+			else // m_SelStart < m_SelEnd
+			{
+				MkArray<MkHashStr> fontState(3);
+				fontState.PushBack(_GetNormalFontState());
+				fontState.PushBack(_GetSelectionFontState());
+				fontState.PushBack(_GetNormalFontState());
 
+				MkArray<unsigned int> statePos(3);
+				statePos.PushBack(0);
+				statePos.PushBack(static_cast<unsigned int>(m_SelStart));
+				statePos.PushBack(static_cast<unsigned int>(m_SelEnd));
+
+				MkDecoStr::Convert(_GetFontType(), fontState, statePos, 0, m_Text, buffer);
+			}
+
+			if (!buffer.Empty())
+			{
+				MkSRect* textRect = ExistSRect(TEXT_SRECT_NAME) ? GetSRect(TEXT_SRECT_NAME) : CreateSRect(TEXT_SRECT_NAME);
+				textRect->SetDecoString(buffer);
 				textRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(MKDEF_TEXT_START_POSITION, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			}
 		}
 
-		_UpdateCursor();
+		_UpdateCursorAndSelection();
 	}
 	return ok;
+}
+
+void MkEditBoxNode::__TakeCurrentText(void)
+{
+	_PushWindowEvent(MkSceneNodeFamilyDefinition::eTextInput);
+
+	if (m_UseHistory && (!m_Text.Empty()))
+	{
+		m_MessageHistory.Record(m_Text);
+	}
 }
 
 void MkEditBoxNode::_SetFontInfo(const MkHashStr& fontType, const MkHashStr& normalFontState, const MkHashStr& selectionFontState, const MkHashStr& cursorFontState)
@@ -230,58 +285,89 @@ void MkEditBoxNode::_SetFontInfo(const MkHashStr& fontType, const MkHashStr& nor
 		m_CursorFontState.Clear();
 }
 
-void MkEditBoxNode::_UpdateCursor(void)
+void MkEditBoxNode::_UpdateCursorAndSelection(void)
 {
-	if (ExistSRect(CURSOR_SRECT_NAME))
+	// 두 srect가 없으면 __BindingLost()에서 삭제된 상태임으로 아무 것도 하지 않음
+	if (ExistSRect(CURSOR_SRECT_NAME) && ExistSRect(SEL_SRECT_NAME))
 	{
-		MkSRect* cursorRect = GetSRect(CURSOR_SRECT_NAME);
-
 		if (m_SelStart == m_SelEnd)
 		{
-			cursorRect->SetVisible(true);
-
-			const MkInt2& cs = cursorRect->GetDecoString().GetDrawingSize();
-			float offset = static_cast<float>(cs.x) / 2.f;
-			float position = MKDEF_TEXT_START_POSITION - offset;
-
-			if ((m_SelEnd > 0) && ExistSRect(TEXT_SRECT_NAME))
-			{
-				MkStr subset;
-				m_Text.GetSubStr(MkArraySection(0, static_cast<unsigned int>(m_SelEnd)), subset);
-				subset.ReplaceKeyword(L" ", L"."); // GetTextSize()는 뒷부분의 공문자 인식을 못하기 때문에 치환
-				position += static_cast<float>(MK_FONT_MGR.GetTextSize(_GetFontType(), subset).x);
-			}
-
-			cursorRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(position, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 2.f);
+			_UpdateNormalCursor(GetSRect(CURSOR_SRECT_NAME));
+			GetSRect(SEL_SRECT_NAME)->SetVisible(false);
 		}
-		else // m_SelStart < m_SelEnd. 텍스트가 반드시 존재
+		else // m_SelStart < m_SelEnd
 		{
-			cursorRect->SetVisible(false);
-
-			MkSRect* textRect = ExistSRect(TEXT_SRECT_NAME) ? GetSRect(TEXT_SRECT_NAME) : NULL;
-			if (textRect != NULL)
-			{
-				MkStr buffer = m_Text;
-				//if (MkDecoStr::Convert(_GetFontType(), _GetFontState(m_CursorFontState), 0, MKDEF_CURSOR_CHAR, buffer))
-				{
-					textRect->SetDecoString(buffer);
-				}
-			}
-			//m_FontType;
-			//m_NormalFontState;
-			//m_SelectionFontState;
+			GetSRect(CURSOR_SRECT_NAME)->SetVisible(false);
+			_UpdateSelectionRegion(GetSRect(SEL_SRECT_NAME));
 		}
 	}
 }
 
-const MkHashStr& MkEditBoxNode::_GetFontType(void) const
+void MkEditBoxNode::_DeleteTextRect(void)
 {
-	return (m_FontType.Empty() ? MK_FONT_MGR.DSF() : m_FontType);
+	if (ExistSRect(TEXT_SRECT_NAME))
+	{
+		DeleteSRect(TEXT_SRECT_NAME);
+	}
 }
 
-const MkHashStr& MkEditBoxNode::_GetFontState(const MkHashStr& fontState) const
+void MkEditBoxNode::_UpdateNormalCursor(MkSRect* cursorRect)
 {
-	return (fontState.Empty() ? MK_FONT_MGR.DSF() : fontState);
+	if (cursorRect != NULL)
+	{
+		cursorRect->SetVisible(true);
+
+		const MkInt2& cs = cursorRect->GetDecoString().GetDrawingSize();
+		float offset = static_cast<float>(cs.x) / 2.f;
+		float position = MKDEF_TEXT_START_POSITION - offset + _GetTextWidth(0, m_SelEnd);
+		cursorRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(position, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 2.f);
+	}
+}
+
+void MkEditBoxNode::_UpdateSelectionRegion(MkSRect* selRect)
+{
+	if (selRect != NULL)
+	{
+		selRect->SetVisible(true);
+
+		float offset = MKDEF_TEXT_START_POSITION;
+		float beginPos = _GetTextWidth(0, m_SelStart);
+		float width = _GetTextWidth(m_SelStart, m_SelEnd);
+		selRect->SetLocalSize(MkFloat2(width, static_cast<float>(MK_FONT_MGR.GetFontHeight(_GetFontType()) + 2))); // 상하 1px씩 크게
+		selRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(offset + beginPos, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 0.5f);
+	}
+}
+
+float MkEditBoxNode::_GetTextWidth(DWORD beginPos, DWORD endPos, const MkStr& text) const
+{
+	if ((beginPos >= 0) && (beginPos < endPos))
+	{
+		MkStr subset;
+		text.GetSubStr(MkArraySection(static_cast<unsigned int>(beginPos), static_cast<unsigned int>(endPos - beginPos)), subset);
+		subset.ReplaceKeyword(L" ", L"."); // GetTextSize()는 뒷부분의 공문자 인식을 못하기 때문에 치환
+		return static_cast<float>(MK_FONT_MGR.GetTextSize(_GetFontType(), subset).x);
+	}
+	return 0.f;
+}
+
+const MkHashStr& MkEditBoxNode::_GetFontType(void) const
+{
+	return (m_FontType.Empty() ? MK_WR_PRESET.GetEditBoxFontType() : m_FontType);
+}
+
+const MkHashStr& MkEditBoxNode::_GetNormalFontState(void) const
+{
+	return (m_NormalFontState.Empty() ? MK_WR_PRESET.GetEditBoxNormalFontState() : m_NormalFontState);
+}
+
+const MkHashStr& MkEditBoxNode::_GetSelectionFontState(void) const
+{
+	return (m_SelectionFontState.Empty() ? MK_WR_PRESET.GetEditBoxSelectionFontState() : m_SelectionFontState);
+}
+
+const MkHashStr& MkEditBoxNode::_GetCursorFontState(void) const
+{
+	return (m_CursorFontState.Empty() ? MK_WR_PRESET.GetEditBoxCursorFontState() : m_CursorFontState);
 }
 
 //------------------------------------------------------------------------------------------------//

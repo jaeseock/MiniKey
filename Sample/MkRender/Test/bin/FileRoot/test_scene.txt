@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.09 (22:09:43),
+//   - time stamp : 2014.07.10 (18:41:05),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -967,7 +967,7 @@ Node "<SceneNode>"
 						str PComponent = "RootButton";
 						str PThemeName = "Default";
 						vec3 Position = (10.000, 50.000, -0.001);
-						str Text = "나는 이뿌다!!!";
+						str Text = "오이!!!";
 						bool UseHistory = Yes;
 
 						Node "<SceneNode>"

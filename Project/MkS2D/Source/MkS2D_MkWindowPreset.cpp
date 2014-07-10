@@ -48,6 +48,31 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 		return false;
 	m_WindowBackgroundSampleSubsetName = windowBackgroundSampleSubsetName;
 
+	MkStr editBoxFontType;
+	MK_CHECK(node.GetData(L"EditBoxFontType", editBoxFontType, 0) && (!editBoxFontType.Empty()), L"window preset 노드에 EditBoxFontType이 지정되어 있지 않음")
+		return false;
+	m_EditBoxFontType = editBoxFontType;
+
+	MkStr editBoxNormalFontState;
+	MK_CHECK(node.GetData(L"EditBoxNormalFontState", editBoxNormalFontState, 0) && (!editBoxNormalFontState.Empty()), L"window preset 노드에 EditBoxNormalFontState이 지정되어 있지 않음")
+		return false;
+	m_EditBoxNormalFontState = editBoxNormalFontState;
+
+	MkStr editBoxSelectionFontState;
+	MK_CHECK(node.GetData(L"EditBoxSelectionFontState", editBoxSelectionFontState, 0) && (!editBoxSelectionFontState.Empty()), L"window preset 노드에 EditBoxSelectionFontState이 지정되어 있지 않음")
+		return false;
+	m_EditBoxSelectionFontState = editBoxSelectionFontState;
+
+	MkStr editBoxCursorFontState;
+	MK_CHECK(node.GetData(L"EditBoxCursorFontState", editBoxCursorFontState, 0) && (!editBoxCursorFontState.Empty()), L"window preset 노드에 EditBoxCursorFontState이 지정되어 있지 않음")
+		return false;
+	m_EditBoxCursorFontState = editBoxCursorFontState;
+
+	MkStr editBoxSelectionSubsetName;
+	MK_CHECK(node.GetData(L"EditBoxSelectionSubsetName", editBoxSelectionSubsetName, 0) && (!editBoxSelectionSubsetName.Empty()), L"window preset 노드에 EditBoxSelectionSubsetName이 지정되어 있지 않음")
+		return false;
+	m_EditBoxSelectionSubsetName = editBoxSelectionSubsetName;
+
 	MkArray<MkHashStr> themeNames;
 	node.GetChildNodeList(themeNames);
 	MK_INDEXING_LOOP(themeNames, i)

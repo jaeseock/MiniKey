@@ -24,6 +24,8 @@ public:
 
 	void BindControl(MkBaseWindowNode* control);
 
+	void ReturnHit(void);
+
 	void StepBackMsgHistory(void);
 	void StepForwardMsgHistory(void);
 
@@ -34,13 +36,12 @@ public:
 	void Update(void);
 
 	MkHiddenEditBox();
-	virtual ~MkHiddenEditBox();
+	virtual ~MkHiddenEditBox() {}
 
 	static LRESULT CALLBACK __InputSubProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 protected:
 
-	HFONT m_Font;
 	HWND m_hWnd;
 
 	MkEditBoxNode* m_BindingControl;

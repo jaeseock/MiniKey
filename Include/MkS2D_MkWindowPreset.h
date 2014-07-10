@@ -41,6 +41,13 @@ public:
 	inline const MkHashStr& GetWindowIconSampleSubsetName(void) const { return m_WindowIconSampleSubsetName; }
 	inline const MkHashStr& GetWindowBackgroundSampleSubsetName(void) const { return m_WindowBackgroundSampleSubsetName; }
 
+	// edit box용 기본 폰트 정보 반환
+	inline const MkHashStr& GetEditBoxFontType(void) const { return m_EditBoxFontType; }
+	inline const MkHashStr& GetEditBoxNormalFontState(void) const { return m_EditBoxNormalFontState; }
+	inline const MkHashStr& GetEditBoxSelectionFontState(void) const { return m_EditBoxSelectionFontState; }
+	inline const MkHashStr& GetEditBoxCursorFontState(void) const { return m_EditBoxCursorFontState; }
+	inline const MkHashStr& GetEditBoxSelectionSubsetName(void) const { return m_EditBoxSelectionSubsetName; }
+
 	// 해제
 	void Clear(void);
 
@@ -83,6 +90,11 @@ protected:
 	MkHashStr m_RegionLayerSubsetName;
 	MkHashStr m_WindowIconSampleSubsetName;
 	MkHashStr m_WindowBackgroundSampleSubsetName;
+	MkHashStr m_EditBoxFontType;
+	MkHashStr m_EditBoxNormalFontState;
+	MkHashStr m_EditBoxSelectionFontState;
+	MkHashStr m_EditBoxCursorFontState;
+	MkHashStr m_EditBoxSelectionSubsetName;
 
 	MkHashMap<MkHashStr, MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> > > m_ThemeImageSubsets;
 	MkHashMap<MkHashStr, MkArray<MkHashStr> > m_ThemeFonts;

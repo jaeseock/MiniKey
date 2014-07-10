@@ -83,8 +83,22 @@ public:
 	MkDecoStr(const MkDecoStr& source) { *this = source; }
 	~MkDecoStr() { Clear(); }
 
-	// 일반 문자열을 기본 설정의 deco string으로 변환
+	// 일반 문자열 앞에 font type tag 적용
+	// ex> L"abc" + 굴림12 -> L"<%T:굴림12%>abc"
+	static bool InsertFontTypeTag(const MkHashStr& fontType, const MkStr& msg, MkStr& buffer);
+
+	// 일반 문자열 앞에 font state tag 적용
+	// ex> L"abc" + 일반문자 -> L"<%S:일반문자%>abc"
+	static bool InsertFontStateTag(const MkHashStr& fontState, const MkStr& msg, MkStr& buffer);
+
+	// 일반 문자열을 단일 font type, state가 적용된 deco string으로 변환
+	// ex> L"abc" + 굴림12, 일반문자, -5 -> L"<%LFS:-5%><%T:굴림12%><%S:일반문자%>abc"
 	static bool Convert(const MkHashStr& fontType, const MkHashStr& fontState, int lineFeedSize, const MkStr& msg, MkStr& buffer);
+
+	// 일반 문자열을 단일 font type, 복수의 font state가 적용된 deco string으로 변환
+	// ex> L"abcde" + 굴림12, [일반문자/타이틀/특수], [0/1/4], -5 -> L"<%LFS:-5%><%T:굴림12%><%S:일반문자%>a<%S:타이틀%>bcd<%S:특수%>e"
+	static bool Convert
+		(const MkHashStr& fontType, const MkArray<MkHashStr>& fontState, const MkArray<unsigned int>& statePos, int lineFeedSize, const MkStr& msg, MkStr& buffer);
 
 	// 일반 문자열을 DSF의 deco string으로 변환
 	static bool Convert(const MkStr& msg, MkStr& buffer);

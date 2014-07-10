@@ -144,7 +144,7 @@ public:
 		formNode->AttachChildNode(hsbNode);
 
 		MkEditBoxNode* ebNode = new MkEditBoxNode(L"EB");
-		ebNode->CreateEditBox(L"Default", MkFloat2(150.f, 20.f), L"", L"", L"", L"", L"나는 이뿌다!!!", true);
+		ebNode->CreateEditBox(L"Default", MkFloat2(150.f, 20.f), L"", L"", L"", L"", L"오이!!!", true);
 		ebNode->SetLocalPosition(MkVec3(10.f, 50.f, -0.001f));
 		formNode->AttachChildNode(ebNode);
 		

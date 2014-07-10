@@ -38,7 +38,10 @@ public:
 		eCheckOff,
 
 		// MkScrollBarNode
-		eScrollPositionChanged
+		eScrollPositionChanged,
+
+		// MkEditBoxNode
+		eTextInput
 	};
 
 	//------------------------------------------------------------------------------------------------//

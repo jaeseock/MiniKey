@@ -641,37 +641,45 @@ void MkStr::RemoveBlank(const MkArraySection& section)
 	m_Str.EraseAllTagInclusions(section, gBlankTag);
 }
 
-void MkStr::RemoveFrontSideBlank(void)
+unsigned int MkStr::RemoveFrontSideBlank(void)
 {
-	if (Empty())
-		return;
-
-	unsigned int removeSize = GetFirstValidPosition(0);
-	if (removeSize == MKDEF_ARRAY_ERROR)
+	unsigned int cnt = 0;
+	if (!Empty())
 	{
-		Flush(); // 유효문자 없음
+		unsigned int removeSize = GetFirstValidPosition(0);
+		if (removeSize == MKDEF_ARRAY_ERROR)
+		{
+			cnt = GetSize();
+			Flush(); // 유효문자 없음
+		}
+		else if (removeSize > 0)
+		{
+			cnt = removeSize;
+			m_Str.Erase(MkArraySection(0, removeSize));
+		}
 	}
-	else if (removeSize > 0)
-	{
-		m_Str.Erase(MkArraySection(0, removeSize));
-	}
+	return cnt;
 }
 
-void MkStr::RemoveRearSideBlank(void)
+unsigned int MkStr::RemoveRearSideBlank(void)
 {
-	if (Empty())
-		return;
-
-	unsigned int removePos = GetLastValidPosition(0);
-	if (removePos == MKDEF_ARRAY_ERROR)
+	unsigned int cnt = 0;
+	if (!Empty())
 	{
-		Flush(); // 유효문자 없음
+		unsigned int removePos = GetLastValidPosition(0);
+		if (removePos == MKDEF_ARRAY_ERROR)
+		{
+			cnt = GetSize();
+			Flush(); // 유효문자 없음
+		}
+		else if (removePos < (GetSize() - 1))
+		{
+			cnt = GetSize() - 1 - removePos;
+			m_Str.Erase(MkArraySection(removePos + 1));
+			m_Str.PushBack(NULL);
+		}
 	}
-	else if (removePos < (GetSize() - 1))
-	{
-		m_Str.Erase(MkArraySection(removePos + 1));
-		m_Str.PushBack(NULL);
-	}
+	return cnt;
 }
 
 //------------------------------------------------------------------------------------------------//

@@ -14,6 +14,11 @@ const static MkStr gTypeKeyword = MKDEF_S2D_DECOSTR_TYPE_KEYWORD;
 const static MkStr gStateKeyword = MKDEF_S2D_DECOSTR_STATE_KEYWORD;
 const static MkStr gLineFeedSizeKeyword = MKDEF_S2D_DECOSTR_LFS_KEYWORD;
 
+const static MkStr gLineFeedSizeKeywordPrefix = gTagBegin + gLineFeedSizeKeyword + gTagSeperator; // L"<%LFS:"
+const static MkStr gTypeKeywordPrefix = gTagBegin + gTypeKeyword + gTagSeperator; // L"<%T:"
+const static MkStr sStateKeywordPrefix = gTagBegin + gStateKeyword + gTagSeperator; // L"<%S:"
+
+
 void MkDecoStr::SetUp(const MkStr& source)
 {
 	Clear();
@@ -268,41 +273,171 @@ void MkDecoStr::_SetSector(MkMap<unsigned int, SectorInfo>& sectorInfos, unsigne
 	}
 }
 
+bool MkDecoStr::InsertFontTypeTag(const MkHashStr& fontType, const MkStr& msg, MkStr& buffer)
+{
+	bool ok = (MK_FONT_MGR.CheckAvailableFontType(fontType) && (!msg.Empty()));
+	if (ok)
+	{
+		buffer.Clear();
+		buffer.Reserve(gTypeKeywordPrefix.GetSize() + fontType.GetSize() + gTagEnd.GetSize() + msg.GetSize());
+
+		buffer += gTypeKeywordPrefix;
+		buffer += fontType.GetString();
+		buffer += gTagEnd;
+		buffer += msg;
+	}
+	return ok;
+}
+
+bool MkDecoStr::InsertFontStateTag(const MkHashStr& fontState, const MkStr& msg, MkStr& buffer)
+{
+	bool ok = (MK_FONT_MGR.CheckAvailableFontState(fontState) && (!msg.Empty()));
+	if (ok)
+	{
+		buffer.Clear();
+		buffer.Reserve(sStateKeywordPrefix.GetSize() + fontState.GetSize() + gTagEnd.GetSize() + msg.GetSize());
+
+		buffer += sStateKeywordPrefix;
+		buffer += fontState.GetString();
+		buffer += gTagEnd;
+		buffer += msg;
+	}
+	return ok;
+}
+
 bool MkDecoStr::Convert(const MkHashStr& fontType, const MkHashStr& fontState, int lineFeedSize, const MkStr& msg, MkStr& buffer)
 {
-	bool ok = (MK_FONT_MGR.CheckAvailableFontType(fontType) && MK_FONT_MGR.CheckAvailableFontState(fontState));
-	if (ok && (!msg.Empty()))
+	bool ok = (MK_FONT_MGR.CheckAvailableFontType(fontType) && MK_FONT_MGR.CheckAvailableFontState(fontState) && (!msg.Empty()));
+	if (ok)
 	{
-		const static MkStr LineFeedSizeKeywordPrefix = gTagBegin + gLineFeedSizeKeyword + gTagSeperator; // L"<%LFS:"
-		const static MkStr TypeKeywordPrefix = gTagBegin + gTypeKeyword + gTagSeperator; // L"<%T:"
-		const static MkStr StateKeywordPrefix = gTagBegin + gStateKeyword + gTagSeperator; // L"<%S:"
-
-		const static unsigned int TagSize =
-			LineFeedSizeKeywordPrefix.GetSize() + TypeKeywordPrefix.GetSize() + StateKeywordPrefix.GetSize() + gTagEnd.GetSize() * 3 + ((lineFeedSize == 0) ? 0 : 5);
+		unsigned int tagSize = gTypeKeywordPrefix.GetSize() + sStateKeywordPrefix.GetSize() + gTagEnd.GetSize() * 2;
+		if (lineFeedSize != 0)
+		{
+			tagSize += gLineFeedSizeKeywordPrefix.GetSize() + 5 + gTagEnd.GetSize();
+		}
 
 		buffer.Clear();
-		buffer.Reserve(fontType.GetSize() + fontState.GetSize() + msg.GetSize() + TagSize);
+		buffer.Reserve(fontType.GetSize() + fontState.GetSize() + msg.GetSize() + tagSize);
 
 		// line feed size tag
 		if (lineFeedSize != 0)
 		{
-			buffer += LineFeedSizeKeywordPrefix;
+			buffer += gLineFeedSizeKeywordPrefix;
 			buffer += lineFeedSize;
 			buffer += gTagEnd;
 		}
 
 		// font type tag
-		buffer += TypeKeywordPrefix;
+		buffer += gTypeKeywordPrefix;
 		buffer += fontType.GetString();
 		buffer += gTagEnd;
 
 		// font state tag
-		buffer += StateKeywordPrefix;
+		buffer += sStateKeywordPrefix;
 		buffer += fontState.GetString();
 		buffer += gTagEnd;
 
 		// msg
 		buffer += msg;
+	}
+	return ok;
+}
+
+bool MkDecoStr::Convert
+(const MkHashStr& fontType, const MkArray<MkHashStr>& fontState, const MkArray<unsigned int>& statePos, int lineFeedSize, const MkStr& msg, MkStr& buffer)
+{
+	unsigned int allStateTagSize = 0;
+	bool ok = (MK_FONT_MGR.CheckAvailableFontType(fontType) && (!msg.Empty()) && (!fontState.Empty()) && (!statePos.Empty()) && (fontState.GetSize() == statePos.GetSize()));
+	if (ok)
+	{
+		MK_INDEXING_LOOP(fontState, i)
+		{
+			if ((!MK_FONT_MGR.CheckAvailableFontState(fontState[i])) || (statePos[i] > msg.GetSize()))
+			{
+				ok = false;
+				break;
+			}
+			else
+			{
+				allStateTagSize += fontState[i].GetSize();
+			}
+		}
+	}
+	if (ok)
+	{
+		// header set
+		MkStr headerSet;
+		unsigned int headerSetSize = gTypeKeywordPrefix.GetSize() + fontType.GetSize() + gTagEnd.GetSize();
+		if (lineFeedSize != 0)
+		{
+			headerSetSize += gLineFeedSizeKeywordPrefix.GetSize() + 5 + gTagEnd.GetSize();
+		}
+		headerSet.Reserve(headerSetSize);
+
+		// line feed size tag
+		if (lineFeedSize != 0)
+		{
+			headerSet += gLineFeedSizeKeywordPrefix;
+			headerSet += lineFeedSize;
+			headerSet += gTagEnd;
+		}
+
+		// font type tag
+		headerSet += gTypeKeywordPrefix;
+		headerSet += fontType.GetString();
+		headerSet += gTagEnd;
+
+		// body set
+		MkStr bodySet;
+		bodySet.Reserve((sStateKeywordPrefix.GetSize() + gTagEnd.GetSize()) * fontState.GetSize() + allStateTagSize + msg.GetSize());
+
+		// currPos 구간별로 끊음
+		MkArray<MkStr> subset;
+		subset.Fill(fontState.GetSize() + 1);
+		unsigned int currPos = 0;
+		unsigned int prevBlankSize = 0;
+		MK_INDEXING_LOOP(fontState, i)
+		{
+			msg.GetSubStr(MkArraySection(currPos, statePos[i] - currPos), subset[i]);
+
+			// 이전 문자열 후반 공문자를 현재 문자열 앞에 삽입함
+			if (prevBlankSize > 0)
+			{
+				MkStr blank;
+				blank.AddRepetition(L" ", prevBlankSize);
+				subset[i].Insert(0, blank);
+			}
+			prevBlankSize = subset[i].RemoveRearSideBlank(); // 다음 문자열에 삽입할 공문자 삭제
+
+			currPos = statePos[i];
+		}
+		msg.GetSubStr(MkArraySection(currPos), subset[fontState.GetSize()]);
+		if (prevBlankSize > 0)
+		{
+			MkStr blank;
+			blank.AddRepetition(L" ", prevBlankSize);
+			subset[fontState.GetSize()].Insert(0, blank);
+		}
+
+		MK_INDEXING_LOOP(subset, i)
+		{
+			if (i == 0)
+			{
+				bodySet += subset[i];
+			}
+			else
+			{
+				MkStr tokenStr;
+				MkDecoStr::InsertFontStateTag(fontState[i-1], subset[i], tokenStr);
+				bodySet += tokenStr;
+			}
+		}
+
+		// result
+		buffer.Clear();
+		buffer.Reserve(headerSet.GetSize() + bodySet.GetSize());
+		buffer += headerSet;
+		buffer += bodySet;
 	}
 	return ok;
 }

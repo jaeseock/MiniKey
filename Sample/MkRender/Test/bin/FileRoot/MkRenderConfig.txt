@@ -92,6 +92,18 @@ Node "FontResource"
 
 	Node "FontState"
 	{
+		Node "EditBoxSelection" : "T_FontState"
+		{
+			str textColor = "Cian";
+			int mode = 2;
+			str modeColor = "DarkGray";
+		}
+		
+		Node "EditBoxCursor" : "T_FontState"
+		{
+			str textColor = "Pink";
+		}
+		
 		Node "³ë¶û±×¸²ÀÚ" : "T_FontState"
 		{
 			str textColor = "Yellow";
@@ -776,11 +788,18 @@ Node "WindowPreset"
 {
 	str DefaultThemeName = "Default";
 	int Margin = 3;
+	
 	str SystemImageFilePath = "Default\window_mgr.png";
 	str DarkenLayerSubsetName = "Darken";
 	str RegionLayerSubsetName = "Region";
 	str WindowIconSampleSubsetName = "SampleIcon";
 	str WindowBackgroundSampleSubsetName = "SampleBG";
+	
+	str EditBoxFontType = "DSF";
+	str EditBoxNormalFontState = "DSF";
+	str EditBoxSelectionFontState = "EditBoxSelection";
+	str EditBoxCursorFontState = "EditBoxCursor";
+	str EditBoxSelectionSubsetName = "EBSelection";
 	
 	Node "Default"
 	{

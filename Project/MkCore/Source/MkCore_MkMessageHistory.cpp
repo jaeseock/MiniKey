@@ -16,8 +16,11 @@ void MkMessageHistory::SetUp(unsigned int capacity)
 void MkMessageHistory::Record(const MkStr& msg)
 {
 	MkScopedCriticalSection(m_CS);
-	m_History.PushBack(msg);
-	m_CurrentPosition = 0xffffffff;
+	if (m_History.Empty() || (msg != m_History[m_History.GetSize() - 1]))
+	{
+		m_History.PushBack(msg);
+		m_CurrentPosition = 0xffffffff;
+	}
 }
 
 MkStr MkMessageHistory::StepBack(void)

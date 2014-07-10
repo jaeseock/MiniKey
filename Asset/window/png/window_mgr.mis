@@ -16,6 +16,12 @@ Node "Region"
 	int2 Size = (9, 9);
 }
 
+Node "EBSelection"
+{
+	int2 Position = (18, 100);
+	int2 Size = (9, 9);
+}
+
 Node "SampleIcon"
 {
 	int2 Position = (0, 109);

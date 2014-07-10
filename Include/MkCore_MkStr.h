@@ -306,12 +306,14 @@ public:
 	void RemoveBlank(const MkArraySection& section);
 
 	// 첫 유효문자까지의 블랭크(tab, space, line feed, return)를 삭제
+	// 삭제한 공문자 수 반환
 	// ex> (L"  a bc  ").RemoveFrontSideBlank() -> L"a bc  "
-	void RemoveFrontSideBlank(void);
+	unsigned int RemoveFrontSideBlank(void);
 
 	// 마지막 유효문자 이후의 블랭크(tab, space, line feed, return)를 삭제
+	// 삭제한 공문자 수 반환
 	// ex> (L"  a bc  ").RemoveFrontSideBlank() -> L"  a bc"
-	void RemoveRearSideBlank(void);
+	unsigned int RemoveRearSideBlank(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// 블록단위 처리
