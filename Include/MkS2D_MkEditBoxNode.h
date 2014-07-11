@@ -66,7 +66,7 @@ public:
 	void __BindingLost(void);
 	void __SetFocus(void);
 
-	bool __UpdateTextInfo(const MkStr& msg, DWORD setStart, DWORD setEnd);
+	bool __UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd);
 
 	void __TakeCurrentText(void);
 
@@ -80,11 +80,9 @@ protected:
 	void _UpdateCursorAndSelection(void);
 
 	void _DeleteTextRect(void);
-	void _UpdateNormalCursor(MkSRect* cursorRect);
-	void _UpdateSelectionRegion(MkSRect* selRect);
 
 	float _GetTextWidth(DWORD beginPos, DWORD endPos, const MkStr& text) const;
-	inline float _GetTextWidth(DWORD beginPos, DWORD endPos) const { return _GetTextWidth(beginPos, endPos, m_Text); }
+	//inline float _GetTextWidth(DWORD beginPos, DWORD endPos) const { return _GetTextWidth(beginPos, endPos, m_Text); }
 
 	const MkHashStr& _GetFontType(void) const;
 	const MkHashStr& _GetNormalFontState(void) const;
@@ -104,5 +102,6 @@ protected:
 	DWORD m_SelStart;
 	DWORD m_SelEnd;
 
-	DWORD m_WindowOffset;
+	DWORD m_CharStart;
+	DWORD m_CharEnd;
 };

@@ -413,7 +413,7 @@ unsigned int MkExcelFileReader::_GetLastBlankInBinarySearch
 			break;
 	}
 
-	// 원하는 지점은 beginPos와 endPos 사이에 존재하므로 binary search
+	// 원하는 지점은 beginPos와 endPos 사이에 존재하므로 이진탐색
 	while (true)
 	{
 		unsigned int currentPos = (beginPos + endPos) / 2;

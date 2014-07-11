@@ -40,7 +40,15 @@ void MkHiddenEditBox::BindControl(MkBaseWindowNode* control)
 		ebNode = dynamic_cast<MkEditBoxNode*>(control);
 	}
 
-	if (ebNode != m_BindingControl)
+	if (ebNode == m_BindingControl)
+	{
+		// 메인 윈도우 자체가 포커스를 잃을 경우 BindControl(NULL)을 호출해 주던가 아니면 이런 식으로 재활성화 시키면 됨
+		if ((ebNode != NULL) && (m_hWnd != NULL))
+		{
+			SetFocus(m_hWnd);
+		}
+	}
+	else
 	{
 		if (m_BindingControl != NULL)
 		{

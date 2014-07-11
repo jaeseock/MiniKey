@@ -2,6 +2,8 @@
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkDataNode.h"
 
+#include "MkCore_MkDevPanel.h"
+
 #include "MkS2D_MkProjectDefinition.h"
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkFontManager.h"
@@ -104,7 +106,8 @@ MkEditBoxNode::MkEditBoxNode(const MkHashStr& name) : MkBaseWindowNode(name)
 
 	m_SelStart = 0;
 	m_SelEnd = 0;
-	m_WindowOffset = 0;
+	m_CharStart = 0;
+	m_CharEnd = 0;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -185,62 +188,221 @@ void MkEditBoxNode::__SetFocus(void)
 	_UpdateCursorAndSelection();
 }
 
-bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD setStart, DWORD setEnd)
+bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd)
 {
-	bool ok = ((msg != m_Text) || (setStart != m_SelStart) || (setEnd != m_SelEnd));
+	bool ok = ((msg != m_Text) || (selStart != m_SelStart) || (selEnd != m_SelEnd));
 	if (ok)
 	{
-		unsigned int oldTextSize = m_Text.GetSize();
-
-		m_Text = msg;
-		m_SelStart = setStart;
-		m_SelEnd = setEnd;
-
-		unsigned int newTextSize = m_Text.GetSize();
-		
-		// 문자 추가
-		if (newTextSize > oldTextSize)
+		// 텍스트 크기가 윈도우 크기보다 클 수 있으므로 일정 영역(m_CharStart ~ m_CharEnd)만큼만 보여주어야 함
+		// 영역의 이동은 유저의 인풋으로 인한 커서/선택영역 변화에 따름
+		if (msg.Empty())
 		{
-			float textWidth = _GetTextWidth(m_WindowOffset, msg.GetSize(), msg);
+			m_CharStart = 0;
+			m_CharEnd = 0;
+		}
+		else
+		{
 			float availableWidth = GetPresetComponentSize().x - MKDEF_TEXT_START_POSITION * 2.f;
-			if (textWidth > availableWidth)
+			DWORD lookPos = 0xffffffff; // 기준 좌표 위치. 0xffffffff일 경우는 변화 없음을 의미
+			bool decreased = (msg.GetSize() < m_Text.GetSize()); // 삭제 여부
+
+			// 커서 변화를 통한 기준 좌표 탐색
+			if (selStart == selEnd) // 일반 커서
 			{
+				if (m_SelStart == m_SelEnd)
+				{
+					if (selEnd != m_SelEnd) // 일반 커서 이동이 있으면 기준 좌표 지정
+					{
+						lookPos = selEnd;
+					}
+				}
+				else // 이전 상태가 선택 영역
+				{
+					lookPos = selEnd;
+				}
+			}
+			else // 현재 선택 영역일 경우 start/end 중 변화가 있는 쪽이 기준 좌표가 됨
+			{
+				if (selStart != m_SelStart)
+				{
+					lookPos = selStart;
+				}
+				else if (selEnd != m_SelEnd)
+				{
+					lookPos = selEnd;
+				}
+			}
+
+			// m_CharStart 결정
+			if (lookPos != 0xffffffff)
+			{
+				// 기준 좌표가 출력 좌표보다 작을 경우 출력 좌표 이동
+				if (lookPos < m_CharStart)
+				{
+					m_CharStart = lookPos;
+				}
+				// 기준 좌표가 출력 좌표보다 클 경우 범위에 맞는 m_CharStart을 찾음
+				else if (lookPos > m_CharStart)
+				{
+					while (true)
+					{
+						if (_GetTextWidth(m_CharStart, lookPos, msg) <= availableWidth)
+							break;
+
+						++m_CharStart;
+					}
+				}
+			}
+
+			// 삭제는 재정렬 필요 할 수 있음
+			bool updateCharEnd = true;
+			if (decreased)
+			{
+				// 텍스트 크기가 작다면 리셋
+				if (_GetTextWidth(0, msg.GetSize(), msg) <= availableWidth)
+				{
+					m_CharStart = 0;
+					m_CharEnd = msg.GetSize();
+					updateCharEnd = false;
+				}
+				else
+				{
+					// 커서가 마지막 페이지 안에 있다면 이진탐색으로 출력 좌표 역산출
+					if (_GetTextWidth(selEnd, msg.GetSize(), msg) <= availableWidth)
+					{
+						unsigned int beginPos = 0;
+						unsigned int endPos = msg.GetSize();
+						while (true)
+						{
+							unsigned int currentPos = (beginPos + endPos) / 2;
+							if (beginPos == currentPos)
+								break;
+
+							float textWidth = _GetTextWidth(currentPos, msg.GetSize(), msg);
+							if (textWidth > availableWidth)
+							{
+								beginPos = currentPos;
+							}
+							else if (textWidth < availableWidth)
+							{
+								endPos = currentPos;
+							}
+							else // textWidth == availableWidth
+							{
+								beginPos = currentPos;
+								break;
+							}
+						}
+
+						if (_GetTextWidth(beginPos, msg.GetSize(), msg) > availableWidth)
+						{
+							++beginPos;
+						}
+
+						m_CharStart = static_cast<DWORD>(beginPos);
+						m_CharEnd = msg.GetSize();
+						updateCharEnd = false;
+					}
+				}
+			}
+
+			// m_CharStart에 맞추어 m_CharEnd 결정
+			if (updateCharEnd)
+			{
+				if (_GetTextWidth(m_CharStart, msg.GetSize(), msg) > availableWidth)
+				{
+					// 출력 좌표로부터의 텍스트가 범위를 넘어갈 경우 이진탐색으로 범위 계산
+					unsigned int beginPos = m_CharStart;
+					unsigned int endPos = msg.GetSize();
+					while (true)
+					{
+						unsigned int currentPos = (beginPos + endPos) / 2;
+						if (beginPos == currentPos)
+							break;
+
+						float textWidth = _GetTextWidth(m_CharStart, currentPos, msg);
+						if (textWidth > availableWidth)
+						{
+							endPos = currentPos;
+						}
+						else if (textWidth < availableWidth)
+						{
+							beginPos = currentPos;
+						}
+						else // textWidth == availableWidth
+						{
+							beginPos = currentPos;
+							break;
+						}
+					}
+
+					m_CharEnd = beginPos;
+				}
+				else
+				{
+					m_CharEnd = msg.GetSize();
+				}
 			}
 		}
-		// 문자 삭제
-		else if (newTextSize < oldTextSize)
-		{
-		}
-		else // newTextSize == oldTextSize
-		{
-		}
 
-		// 텍스트가 비었거나 공문자만 존재하면
+		// 새 값 반영
+		m_Text = msg;
+		m_SelStart = selStart;
+		m_SelEnd = selEnd;
+
+		// 빈 텍스트이거나 공문자만 존재
 		if (m_Text.Empty() || (m_Text.GetFirstValidPosition() == MKDEF_ARRAY_ERROR))
 		{
 			_DeleteTextRect();
 		}
-		// 유효문자가 존재하면
+		// 유효문자가 존재
 		else
 		{
+			MkStr textOut;
+			m_Text.GetSubStr(MkArraySection(m_CharStart, m_CharEnd - m_CharStart), textOut);
+
+			// 텍스트 출력
 			MkStr buffer;
 			if (m_SelStart == m_SelEnd)
 			{
-				MkDecoStr::Convert(_GetFontType(), _GetNormalFontState(), 0, m_Text, buffer);
+				MkDecoStr::Convert(_GetFontType(), _GetNormalFontState(), 0, textOut, buffer);
 			}
-			else // m_SelStart < m_SelEnd
+			else // m_SelStart < m_SelEnd. 선택 영역이 화면에 보이지 않는 경우(m_CharStart >= m_SelEnd)는 존재하지 않음
 			{
 				MkArray<MkHashStr> fontState(3);
-				fontState.PushBack(_GetNormalFontState());
-				fontState.PushBack(_GetSelectionFontState());
-				fontState.PushBack(_GetNormalFontState());
-
 				MkArray<unsigned int> statePos(3);
-				statePos.PushBack(0);
-				statePos.PushBack(static_cast<unsigned int>(m_SelStart));
-				statePos.PushBack(static_cast<unsigned int>(m_SelEnd));
 
-				MkDecoStr::Convert(_GetFontType(), fontState, statePos, 0, m_Text, buffer);
+				// 선택 영역이 온전히 출력 영역 안에 들어와 있는 경우
+				if ((m_CharStart <= m_SelStart) && (m_CharEnd >= m_SelEnd))
+				{
+					fontState.PushBack(_GetNormalFontState());
+					fontState.PushBack(_GetSelectionFontState());
+					fontState.PushBack(_GetNormalFontState());
+
+					statePos.PushBack(0);
+					statePos.PushBack(static_cast<unsigned int>(m_SelStart - m_CharStart));
+					statePos.PushBack(static_cast<unsigned int>(m_SelEnd - m_CharStart));
+				}
+				// 좌측 선택 영역이 잘려 있는 경우
+				else if ((m_CharStart > m_SelStart) && (m_CharEnd >= m_SelEnd))
+				{
+					fontState.PushBack(_GetSelectionFontState());
+					fontState.PushBack(_GetNormalFontState());
+
+					statePos.PushBack(0);
+					statePos.PushBack(static_cast<unsigned int>(m_SelEnd - m_CharStart));
+				}
+				// 우측 선택 영역이 잘려 있는 경우
+				else if ((m_CharStart <= m_SelStart) && (m_CharEnd < m_SelEnd))
+				{
+					fontState.PushBack(_GetNormalFontState());
+					fontState.PushBack(_GetSelectionFontState());
+
+					statePos.PushBack(0);
+					statePos.PushBack(static_cast<unsigned int>(m_SelStart - m_CharStart));
+				}
+
+				MkDecoStr::Convert(_GetFontType(), fontState, statePos, 0, textOut, buffer);
 			}
 
 			if (!buffer.Empty())
@@ -250,6 +412,8 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD setStart, DWORD set
 				textRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(MKDEF_TEXT_START_POSITION, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID);
 			}
 		}
+
+		MK_DEV_PANEL.MsgToLog(msg + L" (" + MkStr(static_cast<int>(selStart)) + L", " + MkStr(static_cast<int>(selEnd)) + L") : " + MkStr(static_cast<int>(m_CharStart)) + L", " + MkStr(static_cast<int>(m_CharEnd)));
 
 		_UpdateCursorAndSelection();
 	}
@@ -290,15 +454,52 @@ void MkEditBoxNode::_UpdateCursorAndSelection(void)
 	// 두 srect가 없으면 __BindingLost()에서 삭제된 상태임으로 아무 것도 하지 않음
 	if (ExistSRect(CURSOR_SRECT_NAME) && ExistSRect(SEL_SRECT_NAME))
 	{
+		MkStr textOut;
+		m_Text.GetSubStr(MkArraySection(m_CharStart, m_CharEnd - m_CharStart), textOut);
+
 		if (m_SelStart == m_SelEnd)
 		{
-			_UpdateNormalCursor(GetSRect(CURSOR_SRECT_NAME));
+			MkSRect* cursorRect = GetSRect(CURSOR_SRECT_NAME);
+			cursorRect->SetVisible(true);
+
+			const MkInt2& cs = cursorRect->GetDecoString().GetDrawingSize();
+			float offset = static_cast<float>(cs.x) / 2.f;
+			float position = MKDEF_TEXT_START_POSITION - offset + _GetTextWidth(0, m_SelEnd - m_CharStart, textOut);
+			cursorRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(position, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 2.f);
+
 			GetSRect(SEL_SRECT_NAME)->SetVisible(false);
 		}
 		else // m_SelStart < m_SelEnd
 		{
 			GetSRect(CURSOR_SRECT_NAME)->SetVisible(false);
-			_UpdateSelectionRegion(GetSRect(SEL_SRECT_NAME));
+
+			MkSRect* selRect = GetSRect(SEL_SRECT_NAME);
+			selRect->SetVisible(true);
+
+			float offset = MKDEF_TEXT_START_POSITION;
+			float beginPos, width;
+
+			// 선택 영역이 온전히 출력 영역 안에 들어와 있는 경우
+			if ((m_CharStart <= m_SelStart) && (m_CharEnd >= m_SelEnd))
+			{
+				beginPos = _GetTextWidth(0, m_SelStart - m_CharStart, textOut);
+				width = _GetTextWidth(m_SelStart - m_CharStart, m_SelEnd - m_CharStart, textOut);
+			}
+			// 좌측 선택 영역이 잘려 있는 경우
+			else if ((m_CharStart > m_SelStart) && (m_CharEnd >= m_SelEnd))
+			{
+				beginPos = 0.f;
+				width = _GetTextWidth(0, m_SelEnd - m_CharStart, textOut);
+			}
+			// 우측 선택 영역이 잘려 있는 경우
+			else if ((m_CharStart <= m_SelStart) && (m_CharEnd < m_SelEnd))
+			{
+				beginPos = _GetTextWidth(0, m_SelStart - m_CharStart, textOut);
+				width = _GetTextWidth(m_SelStart - m_CharStart, m_CharEnd - m_CharStart, textOut);
+			}
+			
+			selRect->SetLocalSize(MkFloat2(width, static_cast<float>(MK_FONT_MGR.GetFontHeight(_GetFontType()) + 2))); // 상하 1px씩 크게
+			selRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(offset + beginPos, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 0.5f);
 		}
 	}
 }
@@ -308,33 +509,6 @@ void MkEditBoxNode::_DeleteTextRect(void)
 	if (ExistSRect(TEXT_SRECT_NAME))
 	{
 		DeleteSRect(TEXT_SRECT_NAME);
-	}
-}
-
-void MkEditBoxNode::_UpdateNormalCursor(MkSRect* cursorRect)
-{
-	if (cursorRect != NULL)
-	{
-		cursorRect->SetVisible(true);
-
-		const MkInt2& cs = cursorRect->GetDecoString().GetDrawingSize();
-		float offset = static_cast<float>(cs.x) / 2.f;
-		float position = MKDEF_TEXT_START_POSITION - offset + _GetTextWidth(0, m_SelEnd);
-		cursorRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(position, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 2.f);
-	}
-}
-
-void MkEditBoxNode::_UpdateSelectionRegion(MkSRect* selRect)
-{
-	if (selRect != NULL)
-	{
-		selRect->SetVisible(true);
-
-		float offset = MKDEF_TEXT_START_POSITION;
-		float beginPos = _GetTextWidth(0, m_SelStart);
-		float width = _GetTextWidth(m_SelStart, m_SelEnd);
-		selRect->SetLocalSize(MkFloat2(width, static_cast<float>(MK_FONT_MGR.GetFontHeight(_GetFontType()) + 2))); // 상하 1px씩 크게
-		selRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(offset + beginPos, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 0.5f);
 	}
 }
 
