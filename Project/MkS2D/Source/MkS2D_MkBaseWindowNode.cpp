@@ -370,10 +370,14 @@ public:
 			const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(state);
 			MkSceneNode* stateNode = targetNode->ChildExist(stateKeyword) ? targetNode->GetChildNode(stateKeyword) : targetNode->CreateChildNode(stateKeyword);
 			MkFloat2 sizeOut;
+			bool defaultState = (state == static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin()));
 			if (__TSI_ImageSetToTargetNode::ApplyFreeImage(imagePath, subsetName, stateNode, sizeOut))
 			{
-				stateNode->SetVisible(true);
-				targetNode->__SetPresetComponentSize(sizeOut);
+				stateNode->SetVisible(defaultState);
+				if (defaultState)
+				{
+					targetNode->__SetPresetComponentSize(sizeOut);
+				}
 				return true;
 			}
 		}
@@ -943,6 +947,23 @@ bool MkBaseWindowNode::CreateFreeImageBaseBackgroundWindow(const MkPathName& ima
 	return false;
 }
 
+bool MkBaseWindowNode::CreateFreeImageBaseButtonWindow(const MkPathName& imagePath, const MkArray<MkHashStr>& subsetNames)
+{
+	if (m_PresetComponentName.Empty() && (subsetNames.GetSize() == static_cast<unsigned int>(eS2D_WS_MaxWindowState)))
+	{
+		m_PresetThemeName.Clear();
+		m_PresetComponentName = MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WPC_NormalButton);
+
+		for (int i=eS2D_WS_DefaultState; i<eS2D_WS_MaxWindowState; ++i)
+		{
+			if (!__TSI_ImageSetToStateNode<eS2D_WindowState>::ApplyFreeImageToState(static_cast<eS2D_WindowState>(i), imagePath, subsetNames[i], this))
+				return false;
+		}
+		return true;
+	}
+	return false;
+}
+
 void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 {
 	if ((!m_PresetThemeName.Empty()) && (themeName != m_PresetThemeName)) // 테마가 다르면
@@ -1458,6 +1479,33 @@ void MkBaseWindowNode::__ConsumeWindowEvent(void)
 
 		m_WindowEvents.Flush();
 	}
+}
+
+bool MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* targetNode) const
+{
+	const MkHashStr& nodeName = GetNodeName();
+	const MkVec3& wp = GetWorldPosition();
+	const MkVec3& lp = GetLocalPosition();
+
+	/*
+	eS2D_SNT_SceneNode = 0, // MkSceneNode
+	eS2D_SNT_BaseWindowNode, // MkBaseWindowNode
+	eS2D_SNT_SpreadButtonNode, // MkSpreadButtonNode
+	eS2D_SNT_CheckButtonNode, // MkCheckButtonNode
+	eS2D_SNT_ScrollBarNode, // MkScrollBarNode
+	eS2D_SNT_EditBoxNode // MkEditBoxNode
+	eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_BaseWindowNode; }
+	*/
+
+	/* component
+	bool m_RootWindow;
+	bool m_Enable;
+	MkHashStr m_PresetThemeName;
+	MkHashStr m_PresetComponentName;
+	MkFloat2 m_PresetComponentSize;
+	MkBitFieldDW m_Attribute;
+	*/
+	return false;
 }
 
 bool MkBaseWindowNode::_CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer)

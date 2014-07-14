@@ -30,6 +30,9 @@ public:
 	// 문자열 설정
 	void SetText(const MkStr& msg);
 
+	// 문자열 결정 이벤트 발생. history에 기록
+	void CommitText(void);
+
 	// 설정된 문자열 반환
 	inline const MkStr& GetText(void) const { return m_Text; }
 
@@ -42,14 +45,6 @@ public:
 
 	// MkDataNode로 출력
 	virtual void Save(MkDataNode& node);
-
-	//------------------------------------------------------------------------------------------------//
-	// event call
-	//------------------------------------------------------------------------------------------------//
-
-	//virtual bool CheckCursorHitCondition(const MkFloat2& position) const;
-
-	//virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -68,7 +63,7 @@ public:
 
 	bool __UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd);
 
-	void __TakeCurrentText(void);
+	void __ToggleCursorRect(void);
 
 	inline DWORD __GetSetStart(void) const { return m_SelStart; }
 	inline DWORD __GetSetEnd(void) const { return m_SelEnd; }
@@ -82,7 +77,6 @@ protected:
 	void _DeleteTextRect(void);
 
 	float _GetTextWidth(DWORD beginPos, DWORD endPos, const MkStr& text) const;
-	//inline float _GetTextWidth(DWORD beginPos, DWORD endPos) const { return _GetTextWidth(beginPos, endPos, m_Text); }
 
 	const MkHashStr& _GetFontType(void) const;
 	const MkHashStr& _GetNormalFontState(void) const;
@@ -104,4 +98,6 @@ protected:
 
 	DWORD m_CharStart;
 	DWORD m_CharEnd;
+
+	bool m_ShowCursorRect;
 };

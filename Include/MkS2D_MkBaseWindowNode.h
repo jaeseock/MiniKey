@@ -183,11 +183,18 @@ public:
 	// 이미 component가 적용되어 있으면 false 반환
 	bool CreateWindowPreset(const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& componentSize);
 
-	// CreateWindowPreset()에서 eS2D_WPC_BackgroundWindow만 해당되는 경우로 preset이 아닌 free image로 생성
+	// preset(theme)이 아닌 free image로 background 생성. component로 eS2D_WPC_BackgroundWindow가 적용 됨
 	// 이미 component가 적용되어 있으면 false 반환
 	// (NOTE) theme 기반이 아니기 때문에 SetPresetThemeName()의 적용을 받지 않음. 대신 SetFreeImageToBackgroundWindow()로 변경 가능
 	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentSize()의 적용을 받지 않음
 	bool CreateFreeImageBaseBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
+
+	// preset(theme)이 아닌 free image로 button 생성. component로 eS2D_WPC_NormalButton이 적용 됨
+	// 이미 component가 적용되어 있으면 false 반환
+	// subsetNames에는 eS2D_WS_MaxWindowState만큼 eS2D_WindowState 순서대로 subset name이 들어가 있어야 함
+	// (NOTE) theme 기반이 아니기 때문에 SetPresetThemeName()의 적용을 받지 않음
+	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentSize()의 적용을 받지 않음
+	bool CreateFreeImageBaseButtonWindow(const MkPathName& imagePath, const MkArray<MkHashStr>& subsetNames);
 
 	// 해당 윈도우 노드와 모든 자식 윈도우 노드에 window preset이 적용된 노드들이 있으면 모두 테마 변경
 	virtual void SetPresetThemeName(const MkHashStr& themeName);
@@ -284,6 +291,9 @@ public:
 	void __GetHitWindows(const MkFloat2& position, MkPairArray<float, MkBaseWindowNode*>& hitWindows); // all hits
 
 	void __ConsumeWindowEvent(void);
+
+	// debug
+	virtual bool __BuildInformationTree(MkBaseWindowNode* targetNode) const;
 
 protected:
 

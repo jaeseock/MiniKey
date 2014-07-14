@@ -1,6 +1,7 @@
 
 #include "MkCore_MkGlobalFunction.h"
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkTimeManager.h"
 
 #include "MkS2D_MkEditBoxNode.h"
 #include "MkS2D_MkHiddenEditBox.h"
@@ -9,6 +10,7 @@
 #define MKDEF_BOX_WIDTH 800
 #define MKDEF_MAX_INPUT_COUNT 512 // 인풋창에 최대 입력가능 글자 수
 #define MKDEF_HIDDEN_EDIT_BOX_ID 0xffff
+#define MKDEF_TOGGLE_CURSOR_TIME_COUNT 0.6f
 
 static WNDPROC gOldInputProc = NULL;
 
@@ -34,50 +36,52 @@ bool MkHiddenEditBox::SetUp(HWND parentHandle, HINSTANCE hInstance)
 
 void MkHiddenEditBox::BindControl(MkBaseWindowNode* control)
 {
-	MkEditBoxNode* ebNode = NULL;
-	if (control != NULL)
+	if (m_BindingControl != NULL)
 	{
-		ebNode = dynamic_cast<MkEditBoxNode*>(control);
+		m_BindingControl->__BindingLost();
 	}
 
-	if (ebNode == m_BindingControl)
+	if (control == NULL)
 	{
-		// 메인 윈도우 자체가 포커스를 잃을 경우 BindControl(NULL)을 호출해 주던가 아니면 이런 식으로 재활성화 시키면 됨
-		if ((ebNode != NULL) && (m_hWnd != NULL))
+		if (m_BindingControl != NULL)
 		{
-			SetFocus(m_hWnd);
+			m_BindingControl = NULL;
+			m_RootNodeNameOfBindingControl.Clear();
+			m_LastSelStart = 0;
+			m_LastSelEnd = 0;
+
+			if (m_hWnd != NULL)
+			{
+				SetWindowText(m_hWnd, L"");
+				SendMessage(m_hWnd, EM_SETSEL, 0, 0);
+				SetFocus(NULL);
+			}
 		}
 	}
 	else
 	{
-		if (m_BindingControl != NULL)
+		MkEditBoxNode* ebNode = dynamic_cast<MkEditBoxNode*>(control);
+		if (ebNode != NULL)
 		{
-			m_BindingControl->__BindingLost();
-		}
+			m_BindingControl = ebNode;
 
-		m_BindingControl = ebNode;
-
-		if (m_BindingControl == NULL)
-		{
-			m_RootNodeNameOfBindingControl.Clear();
-			m_LastSelStart = 0;
-			m_LastSelEnd = 0;
-		}
-		else
-		{
 			m_RootNodeNameOfBindingControl = m_BindingControl->GetRootWindow()->GetNodeName();
 			m_LastText = m_BindingControl->GetText();
 			m_LastSelStart = m_BindingControl->__GetSetStart();
 			m_LastSelEnd = m_BindingControl->__GetSetEnd();
 
 			m_BindingControl->__SetFocus();
-		}
 
-		if (m_hWnd != NULL)
-		{
-			SetWindowText(m_hWnd, m_LastText.GetPtr());
-			SendMessage(m_hWnd, EM_SETSEL, static_cast<WPARAM>(m_LastSelStart), static_cast<LPARAM>(m_LastSelEnd));
-			SetFocus((m_BindingControl == NULL) ? NULL : m_hWnd);
+			MkTimeState timeState;
+			MK_TIME_MGR.GetCurrentTimeState(timeState);
+			m_ToggleCursorCounter.SetUp(timeState, MKDEF_TOGGLE_CURSOR_TIME_COUNT);
+
+			if (m_hWnd != NULL)
+			{
+				SetWindowText(m_hWnd, m_LastText.GetPtr());
+				SendMessage(m_hWnd, EM_SETSEL, static_cast<WPARAM>(m_LastSelStart), static_cast<LPARAM>(m_LastSelEnd));
+				SetFocus(m_hWnd);
+			}
 		}
 	}
 }
@@ -86,7 +90,7 @@ void MkHiddenEditBox::ReturnHit(void)
 {
 	if (m_BindingControl != NULL)
 	{
-		m_BindingControl->__TakeCurrentText();
+		m_BindingControl->CommitText();
 	}
 }
 
@@ -108,18 +112,29 @@ void MkHiddenEditBox::StepForwardMsgHistory(void)
 
 void MkHiddenEditBox::Update(void)
 {
-	if (m_Modified && (m_hWnd != NULL) && (m_BindingControl != NULL))
+	if ((m_hWnd != NULL) && (m_BindingControl != NULL))
 	{
-		wchar_t buffer[MKDEF_MAX_INPUT_COUNT + 1] = {0, };
-		GetWindowText(m_hWnd, buffer, MKDEF_MAX_INPUT_COUNT + 1);
-		MkStr currText = buffer;
+		MkTimeState timeState;
+		MK_TIME_MGR.GetCurrentTimeState(timeState);
 
-		DWORD currSelStart, currSelEnd;
-		SendMessage(m_hWnd, EM_GETSEL, reinterpret_cast<WPARAM>(&currSelStart), reinterpret_cast<LPARAM>(&currSelEnd));
+		if (m_ToggleCursorCounter.OnTick(timeState))
+		{
+			m_BindingControl->__ToggleCursorRect();
+		}
 
-		m_BindingControl->__UpdateTextInfo(currText, currSelStart, currSelEnd);
+		if (m_Modified)
+		{
+			wchar_t buffer[MKDEF_MAX_INPUT_COUNT + 1] = {0, };
+			GetWindowText(m_hWnd, buffer, MKDEF_MAX_INPUT_COUNT + 1);
+			MkStr currText = buffer;
 
-		m_Modified = false;
+			DWORD currSelStart, currSelEnd;
+			SendMessage(m_hWnd, EM_GETSEL, reinterpret_cast<WPARAM>(&currSelStart), reinterpret_cast<LPARAM>(&currSelEnd));
+
+			m_BindingControl->__UpdateTextInfo(currText, currSelStart, currSelEnd);
+
+			m_Modified = false;
+		}
 	}
 }
 
@@ -168,6 +183,10 @@ LRESULT MkHiddenEditBox::__InputSubProc(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 				MK_EDIT_BOX.TextModified();
 			}
 		}
+		break;
+
+	case WM_KILLFOCUS:
+		MK_EDIT_BOX.BindControl(NULL);
 		break;
 	}
 

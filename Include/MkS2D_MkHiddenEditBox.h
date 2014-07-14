@@ -8,6 +8,7 @@
 #include <Windows.h>
 #include "MkCore_MkHashStr.h"
 #include "MkCore_MkSingletonPattern.h"
+#include "MkCore_MkTimeCounter.h"
 
 
 #define MK_EDIT_BOX MkHiddenEditBox::Instance()
@@ -51,4 +52,6 @@ protected:
 	MkStr m_LastText;
 	DWORD m_LastSelStart;
 	DWORD m_LastSelEnd;
+
+	MkTimeCounter m_ToggleCursorCounter;
 };

@@ -1,8 +1,7 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkDataNode.h"
-
-#include "MkCore_MkDevPanel.h"
+#include "MkCore_MkSlangFilter.h"
 
 #include "MkS2D_MkProjectDefinition.h"
 #include "MkS2D_MkWindowResourceManager.h"
@@ -46,6 +45,16 @@ void MkEditBoxNode::SetText(const MkStr& msg)
 {
 	DWORD selPos = static_cast<DWORD>(msg.GetSize());
 	__UpdateTextInfo(msg, selPos, selPos);
+}
+
+void MkEditBoxNode::CommitText(void)
+{
+	_PushWindowEvent(MkSceneNodeFamilyDefinition::eTextInput);
+
+	if (m_UseHistory && (!m_Text.Empty()))
+	{
+		m_MessageHistory.Record(m_Text);
+	}
 }
 
 void MkEditBoxNode::Load(const MkDataNode& node)
@@ -108,6 +117,8 @@ MkEditBoxNode::MkEditBoxNode(const MkHashStr& name) : MkBaseWindowNode(name)
 	m_SelEnd = 0;
 	m_CharStart = 0;
 	m_CharEnd = 0;
+
+	m_ShowCursorRect = false;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -195,6 +206,7 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 	{
 		// 텍스트 크기가 윈도우 크기보다 클 수 있으므로 일정 영역(m_CharStart ~ m_CharEnd)만큼만 보여주어야 함
 		// 영역의 이동은 유저의 인풋으로 인한 커서/선택영역 변화에 따름
+		MkStr safeMsg;
 		if (msg.Empty())
 		{
 			m_CharStart = 0;
@@ -202,10 +214,12 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 		}
 		else
 		{
+			// 비속어 판별
+			MK_SLANG_FILTER.CheckString(msg, safeMsg);
+
 			float availableWidth = GetPresetComponentSize().x - MKDEF_TEXT_START_POSITION * 2.f;
 			DWORD lookPos = 0xffffffff; // 기준 좌표 위치. 0xffffffff일 경우는 변화 없음을 의미
-			bool decreased = (msg.GetSize() < m_Text.GetSize()); // 삭제 여부
-
+			
 			// 커서 변화를 통한 기준 좌표 탐색
 			if (selStart == selEnd) // 일반 커서
 			{
@@ -246,7 +260,7 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 				{
 					while (true)
 					{
-						if (_GetTextWidth(m_CharStart, lookPos, msg) <= availableWidth)
+						if (_GetTextWidth(m_CharStart, lookPos, safeMsg) <= availableWidth)
 							break;
 
 						++m_CharStart;
@@ -256,29 +270,29 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 
 			// 삭제는 재정렬 필요 할 수 있음
 			bool updateCharEnd = true;
-			if (decreased)
+			if (safeMsg.GetSize() < m_Text.GetSize())
 			{
 				// 텍스트 크기가 작다면 리셋
-				if (_GetTextWidth(0, msg.GetSize(), msg) <= availableWidth)
+				if (_GetTextWidth(0, safeMsg.GetSize(), safeMsg) <= availableWidth)
 				{
 					m_CharStart = 0;
-					m_CharEnd = msg.GetSize();
+					m_CharEnd = safeMsg.GetSize();
 					updateCharEnd = false;
 				}
 				else
 				{
 					// 커서가 마지막 페이지 안에 있다면 이진탐색으로 출력 좌표 역산출
-					if (_GetTextWidth(selEnd, msg.GetSize(), msg) <= availableWidth)
+					if (_GetTextWidth(selEnd, safeMsg.GetSize(), safeMsg) <= availableWidth)
 					{
 						unsigned int beginPos = 0;
-						unsigned int endPos = msg.GetSize();
+						unsigned int endPos = safeMsg.GetSize();
 						while (true)
 						{
 							unsigned int currentPos = (beginPos + endPos) / 2;
 							if (beginPos == currentPos)
 								break;
 
-							float textWidth = _GetTextWidth(currentPos, msg.GetSize(), msg);
+							float textWidth = _GetTextWidth(currentPos, safeMsg.GetSize(), safeMsg);
 							if (textWidth > availableWidth)
 							{
 								beginPos = currentPos;
@@ -294,13 +308,13 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 							}
 						}
 
-						if (_GetTextWidth(beginPos, msg.GetSize(), msg) > availableWidth)
+						if (_GetTextWidth(beginPos, safeMsg.GetSize(), safeMsg) > availableWidth)
 						{
 							++beginPos;
 						}
 
 						m_CharStart = static_cast<DWORD>(beginPos);
-						m_CharEnd = msg.GetSize();
+						m_CharEnd = safeMsg.GetSize();
 						updateCharEnd = false;
 					}
 				}
@@ -309,18 +323,18 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 			// m_CharStart에 맞추어 m_CharEnd 결정
 			if (updateCharEnd)
 			{
-				if (_GetTextWidth(m_CharStart, msg.GetSize(), msg) > availableWidth)
+				if (_GetTextWidth(m_CharStart, safeMsg.GetSize(), safeMsg) > availableWidth)
 				{
 					// 출력 좌표로부터의 텍스트가 범위를 넘어갈 경우 이진탐색으로 범위 계산
 					unsigned int beginPos = m_CharStart;
-					unsigned int endPos = msg.GetSize();
+					unsigned int endPos = safeMsg.GetSize();
 					while (true)
 					{
 						unsigned int currentPos = (beginPos + endPos) / 2;
 						if (beginPos == currentPos)
 							break;
 
-						float textWidth = _GetTextWidth(m_CharStart, currentPos, msg);
+						float textWidth = _GetTextWidth(m_CharStart, currentPos, safeMsg);
 						if (textWidth > availableWidth)
 						{
 							endPos = currentPos;
@@ -340,13 +354,13 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 				}
 				else
 				{
-					m_CharEnd = msg.GetSize();
+					m_CharEnd = safeMsg.GetSize();
 				}
 			}
 		}
 
 		// 새 값 반영
-		m_Text = msg;
+		m_Text = safeMsg;
 		m_SelStart = selStart;
 		m_SelEnd = selEnd;
 
@@ -413,20 +427,20 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 			}
 		}
 
-		MK_DEV_PANEL.MsgToLog(msg + L" (" + MkStr(static_cast<int>(selStart)) + L", " + MkStr(static_cast<int>(selEnd)) + L") : " + MkStr(static_cast<int>(m_CharStart)) + L", " + MkStr(static_cast<int>(m_CharEnd)));
-
 		_UpdateCursorAndSelection();
 	}
 	return ok;
 }
 
-void MkEditBoxNode::__TakeCurrentText(void)
+void MkEditBoxNode::__ToggleCursorRect(void)
 {
-	_PushWindowEvent(MkSceneNodeFamilyDefinition::eTextInput);
-
-	if (m_UseHistory && (!m_Text.Empty()))
+	if (m_ShowCursorRect)
 	{
-		m_MessageHistory.Record(m_Text);
+		MkSRect* cursorRect = GetSRect(CURSOR_SRECT_NAME);
+		if (cursorRect != NULL)
+		{
+			cursorRect->SetVisible(!cursorRect->GetVisible());
+		}
 	}
 }
 
@@ -460,8 +474,9 @@ void MkEditBoxNode::_UpdateCursorAndSelection(void)
 		if (m_SelStart == m_SelEnd)
 		{
 			MkSRect* cursorRect = GetSRect(CURSOR_SRECT_NAME);
-			cursorRect->SetVisible(true);
 
+			m_ShowCursorRect = true;
+			
 			const MkInt2& cs = cursorRect->GetDecoString().GetDrawingSize();
 			float offset = static_cast<float>(cs.x) / 2.f;
 			float position = MKDEF_TEXT_START_POSITION - offset + _GetTextWidth(0, m_SelEnd - m_CharStart, textOut);
@@ -472,6 +487,7 @@ void MkEditBoxNode::_UpdateCursorAndSelection(void)
 		else // m_SelStart < m_SelEnd
 		{
 			GetSRect(CURSOR_SRECT_NAME)->SetVisible(false);
+			m_ShowCursorRect = false;
 
 			MkSRect* selRect = GetSRect(SEL_SRECT_NAME);
 			selRect->SetVisible(true);

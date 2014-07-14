@@ -22,7 +22,7 @@ public:
 	// capacity : 최대 저장 크기. 0:제한없음 <= capacity < 0xffffffff)
 	void SetUp(unsigned int capacity);
 
-	// 메세지 기록
+	// 마지막 기록과 다르면 메세지 기록
 	void Record(const MkStr& msg);
 
 	// 한칸 이전 기록으로 이동해 해당 메세지 반환

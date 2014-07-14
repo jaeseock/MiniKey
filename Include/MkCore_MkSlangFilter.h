@@ -9,6 +9,11 @@
 // thread-safe하지는 않지만 초기화시 일괄 등록(produce), 런타임중에는 사용(consume)만 하는
 // 형태이기 때문에 문제는 없음
 //
+// 영문자의 경우 소문자로 자동 변환되어 검색(대문자 등록시에 소문자로 변환되어 저장)
+//
+// 표준 단어를 대상으로 한 심플한 알고리즘. 보다 정확한 비속어 필터링이 필요하면 
+// http://galab-work.cs.pusan.ac.kr/TRBoard/datafile/REP0903VULGAR.pdf 참조해 추가 할 것
+//
 // ex>
 //	// 키워드 등록
 //	MK_SLANG_FILTER.RegisterKeyword(L"fuck");
@@ -89,6 +94,9 @@ protected:
 	};
 
 	//------------------------------------------------------------------------------------------------//
+
+	void _ConvertTextToLower(MkStr& msg, MkArray<bool>& converting) const;
+	void _ConvertTextToOriginal(MkStr& msg, const MkArray<bool>& converting) const;
 
 public:
 

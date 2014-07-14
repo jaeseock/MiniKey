@@ -247,8 +247,6 @@ void MkWindowEventManager::Update(void)
 	if ((m_DrawStep == NULL) || (m_RootNode == NULL))
 		return;
 
-	MK_EDIT_BOX.Update();
-
 	// normal mode <-> edit mode toggle
 	if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
 	{
@@ -610,6 +608,8 @@ void MkWindowEventManager::Update(void)
 	{
 		MK_EDIT_BOX.BindControl(NULL); // 활성화중인 윈도우가 없어도 입력모드 취소
 	}
+
+	MK_EDIT_BOX.Update();
 
 	if ((!cursorAvailable) || currentButtonReleased[0])
 	{

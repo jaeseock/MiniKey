@@ -8,17 +8,35 @@
 
 void MkSlangFilter::RegisterKeyword(const MkStr& keyword)
 {
-	m_RootNode.RegisterKeyword(keyword);
+	MkStr buffer = keyword;
+	buffer.ToLower(); // 영문자의 경우 소문자로 변환
+	m_RootNode.RegisterKeyword(buffer);
 }
 
 bool MkSlangFilter::CheckString(const MkStr& src) const
 {
-	return (m_RootNode.FindSlang(src, 0) > 0);
+	MkStr buffer = src;
+	buffer.ToLower(); // 영문자의 경우 소문자로 변환
+	return (m_RootNode.FindSlang(buffer, 0) > 0);
 }
 
 bool MkSlangFilter::CheckString(const MkStr& src, MkStr& dest) const
 {
-	return m_RootNode.CheckString(src, dest);
+	MkStr msg = src;
+	MkStr buffer;
+	MkArray<bool> converting;
+	_ConvertTextToLower(msg, converting); // 영문자의 경우 소문자로 변환
+	bool ok = m_RootNode.CheckString(msg, buffer);
+	if (ok)
+	{
+		_ConvertTextToOriginal(buffer, converting); // 변환된 소문자를 복구
+		dest = buffer;
+	}
+	else
+	{
+		dest = src;
+	}
+	return ok;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -181,5 +199,42 @@ bool MkSlangFilter::CNode::CheckString(const MkStr& src, MkStr& dest) const
 	}
 
 	return hasSlang;
+}
+
+void MkSlangFilter::_ConvertTextToLower(MkStr& msg, MkArray<bool>& converting) const
+{
+	if (!msg.Empty())
+	{
+		converting.Reserve(msg.GetSize());
+
+		MK_INDEXING_LOOP(msg, i)
+		{
+			wchar_t& c = msg[i];
+			if ((c >= L'A') && (c <= L'Z'))
+			{
+				c += 32;
+				converting.PushBack(true);
+			}
+			else
+			{
+				converting.PushBack(false);
+			}
+		}
+	}
+}
+
+void MkSlangFilter::_ConvertTextToOriginal(MkStr& msg, const MkArray<bool>& converting) const
+{
+	if (!converting.Empty())
+	{
+		MK_INDEXING_LOOP(converting, i)
+		{
+			wchar_t& c = msg[i];
+			if (converting[i] && (c != MKDEF_SLANG_REPLACEMENT_TAG))
+			{
+				c -= 32;
+			}
+		}
+	}
 }
 //------------------------------------------------------------------------------------------------//

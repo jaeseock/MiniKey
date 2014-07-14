@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.11 (19:11:52),
+//   - time stamp : 2014.07.14 (17:29:14),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
@@ -963,6 +963,7 @@ Node "<SceneNode>"
 
 					Node "EB" : "T_EditBoxNode"
 					{
+						bool Enable = No;
 						int2 PCompSize = (150, 20);
 						str PComponent = "RootButton";
 						str PThemeName = "Default";
@@ -974,6 +975,8 @@ Node "<SceneNode>"
 						{
 							Node "Default" : "T_SceneNode"
 							{
+								bool Visible = No;
+
 								Node "<SRect>"
 								{
 									Node "LB" : "T_SRect"
@@ -1069,8 +1072,6 @@ Node "<SceneNode>"
 
 							Node "Disable" : "T_SceneNode"
 							{
-								bool Visible = No;
-
 								Node "<SRect>"
 								{
 									Node "LB" : "T_SRect"
@@ -1354,6 +1355,82 @@ Node "<SceneNode>"
 											"Default\default_theme.png" /
 											"RBtnOCu_RT";
 										vec2 Size = (3.000, 3.000);
+									}
+								}
+							}
+						}
+					}
+
+					Node "FreeImageBtn" : "T_BaseWindowNode"
+					{
+						int2 PCompSize = (18, 18);
+						str PComponent = "NormalButton";
+						vec3 Position = (130.000, 130.000, -0.001);
+
+						Node "<SceneNode>"
+						{
+							Node "Default" : "T_SceneNode"
+							{
+								Node "<SRect>"
+								{
+									Node "SN" : "T_SRect"
+									{
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DirUDef";
+										vec2 Size = (18.000, 18.000);
+									}
+								}
+							}
+
+							Node "Disable" : "T_SceneNode"
+							{
+								bool Visible = No;
+
+								Node "<SRect>"
+								{
+									Node "SN" : "T_SRect"
+									{
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DirUDis";
+										vec2 Size = (18.000, 18.000);
+									}
+								}
+							}
+
+							Node "OnClick" : "T_SceneNode"
+							{
+								bool Visible = No;
+
+								Node "<SRect>"
+								{
+									Node "SN" : "T_SRect"
+									{
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DirUOCl";
+										vec2 Size = (18.000, 18.000);
+									}
+								}
+							}
+
+							Node "OnCursor" : "T_SceneNode"
+							{
+								bool Visible = No;
+
+								Node "<SRect>"
+								{
+									Node "SN" : "T_SRect"
+									{
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DirUOCu";
+										vec2 Size = (18.000, 18.000);
 									}
 								}
 							}

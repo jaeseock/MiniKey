@@ -10,6 +10,7 @@
 #include "MkCore_MkTimeState.h"
 #include "MkCore_MkWin32Application.h"
 #include "MkCore_MkProfilingManager.h"
+#include "MkCore_MkSlangFilter.h"
 
 #include "MkCore_MkDataNode.h"
 
@@ -50,6 +51,9 @@ public:
 		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s01.jpg");
 		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s02.jpg");
 		MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\s03.jpg");
+
+		MK_SLANG_FILTER.RegisterKeyword(L"빠큐");
+		MK_SLANG_FILTER.RegisterKeyword(L"뻐큐");
 
 		MkDrawQueue& drawQueue = MK_RENDERER.GetDrawQueue();
 		MkDrawStep* step00 = drawQueue.CreateStep(L"step_00", -1, MkRenderTarget::eTexture, 1, MkUInt2(800, 600), MkRenderToTexture::eRGBA);
@@ -146,7 +150,18 @@ public:
 		MkEditBoxNode* ebNode = new MkEditBoxNode(L"EB");
 		ebNode->CreateEditBox(L"Default", MkFloat2(150.f, 20.f), L"", L"", L"", L"", L"오이!!!", true);
 		ebNode->SetLocalPosition(MkVec3(10.f, 50.f, -0.001f));
+		ebNode->SetEnable(false);
 		formNode->AttachChildNode(ebNode);
+
+		MkBaseWindowNode* fiNode = new MkBaseWindowNode(L"FreeImageBtn");
+		MkArray<MkHashStr> fiSN(4);
+		fiSN.PushBack(L"DirUDef");
+		fiSN.PushBack(L"DirUOCu");
+		fiSN.PushBack(L"DirUOCl");
+		fiSN.PushBack(L"DirUDis");
+		fiNode->CreateFreeImageBaseButtonWindow(L"Default\\default_theme.png", fiSN);
+		fiNode->SetLocalPosition(MkVec3(130.f, 130.f, -0.001f));
+		formNode->AttachChildNode(fiNode);
 		
 
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
