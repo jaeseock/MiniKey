@@ -11,6 +11,7 @@
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkEditModeSettingWindow.h"
+#include "MkS2D_MkEditModeNodeSelectionWindow.h"
 #include "MkS2D_MkWindowEventManager.h"
 
 
@@ -25,6 +26,7 @@ const static MkHashStr REGION_RECT_NAME = L"Region";
 const static MkHashStr DEBUG_RECT_NAME = L"Debug";
 
 const static MkHashStr SETTING_WINDOW_NAME = L"__#Setting";
+const static MkHashStr NODE_SEL_WINDOW_NAME = L"__#NodeSel";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -93,20 +95,32 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 	// 설정 윈도우 생성
 	if (!m_WindowTable.Exist(SETTING_WINDOW_NAME))
 	{
-		MkEditModeSettingWindow* settingWindow = new MkEditModeSettingWindow(SETTING_WINDOW_NAME);
-		if (settingWindow != NULL)
+		MkEditModeSettingWindow* targetWindow = new MkEditModeSettingWindow(SETTING_WINDOW_NAME);
+		if (targetWindow != NULL)
 		{
-			if (settingWindow->SetUp(MK_WR_PRESET.GetDefaultThemeName()))
+			if (targetWindow->SetUp(MK_WR_PRESET.GetDefaultThemeName()))
 			{
-				RegisterWindow(settingWindow, false);
+				RegisterWindow(targetWindow, false);
 			}
 			else
 			{
-				MK_DELETE(settingWindow);
+				MK_DELETE(targetWindow);
 			}
 		}
 
-		MK_CHECK(settingWindow != NULL, L"edit mode용 setting window 생성 실패") {}
+		MK_CHECK(targetWindow != NULL, L"edit mode용 setting window 생성 실패") {}
+	}
+
+	// 노드 선택 윈도우 생성
+	if (!m_WindowTable.Exist(NODE_SEL_WINDOW_NAME))
+	{
+		MkEditModeNodeSelectionWindow* targetWindow = new MkEditModeNodeSelectionWindow(NODE_SEL_WINDOW_NAME);
+		if (targetWindow != NULL)
+		{
+			RegisterWindow(targetWindow, false);
+		}
+
+		MK_CHECK(targetWindow != NULL, L"edit mode용 node selection window 생성 실패") {}
 	}
 }
 
@@ -258,16 +272,40 @@ void MkWindowEventManager::Update(void)
 		}
 	}
 
-	// edit mode시 setting window toggle
-	if (m_EditMode && MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
+	if (m_EditMode)
 	{
-		if (MKDEF_ARRAY_EXIST(m_OnActivatingWindows, SETTING_WINDOW_NAME))
+		// setting window toggle
+		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
 		{
-			DeactivateWindow(SETTING_WINDOW_NAME);
+			if (MKDEF_ARRAY_EXIST(m_OnActivatingWindows, SETTING_WINDOW_NAME))
+			{
+				DeactivateWindow(SETTING_WINDOW_NAME);
+			}
+			else
+			{
+				ActivateWindow(SETTING_WINDOW_NAME, true);
+			}
 		}
-		else
+
+		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(NODE_SEL_WINDOW_NAME))
 		{
-			ActivateWindow(SETTING_WINDOW_NAME, true);
+			if (MKDEF_ARRAY_EXIST(m_OnActivatingWindows, NODE_SEL_WINDOW_NAME))
+			{
+				DeactivateWindow(NODE_SEL_WINDOW_NAME);
+			}
+			else
+			{
+				if (m_CurrentTargetWindowNode != NULL)
+				{
+					MkEditModeNodeSelectionWindow* targetWindow = dynamic_cast<MkEditModeNodeSelectionWindow*>(m_WindowTable[NODE_SEL_WINDOW_NAME]);
+					if (targetWindow != NULL)
+					{
+						targetWindow->SetUp(m_CurrentTargetWindowNode);
+					}
+					
+					ActivateWindow(NODE_SEL_WINDOW_NAME, true);
+				}
+			}
 		}
 	}
 
@@ -558,7 +596,7 @@ void MkWindowEventManager::Update(void)
 					// edit box 영역이 선택되었으면 알림. 다른 종류의 윈도우면 입력모드 취소
 					MK_EDIT_BOX.BindControl((frontHit->GetNodeType() == eS2D_SNT_EditBoxNode) ? frontHit : NULL);
 
-					if (m_EditMode && (onFocusWindowNode->GetNodeName() != SETTING_WINDOW_NAME))
+					if (m_EditMode && (onFocusWindowNode->GetNodeName() != SETTING_WINDOW_NAME) && (onFocusWindowNode->GetNodeName() != NODE_SEL_WINDOW_NAME))
 					{
 						m_CurrentTargetWindowNode = frontHit;
 

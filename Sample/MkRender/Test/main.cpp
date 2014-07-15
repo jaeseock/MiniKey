@@ -150,7 +150,6 @@ public:
 		MkEditBoxNode* ebNode = new MkEditBoxNode(L"EB");
 		ebNode->CreateEditBox(L"Default", MkFloat2(150.f, 20.f), L"", L"", L"", L"", L"¿ÀÀÌ!!!", true);
 		ebNode->SetLocalPosition(MkVec3(10.f, 50.f, -0.001f));
-		ebNode->SetEnable(false);
 		formNode->AttachChildNode(ebNode);
 
 		MkBaseWindowNode* fiNode = new MkBaseWindowNode(L"FreeImageBtn");

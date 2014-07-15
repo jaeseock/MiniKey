@@ -38,6 +38,7 @@ const MkColor MkColor::Yellow(1.f, 1.f, 0.f, 1.f);
 const MkColor MkColor::Cian(0.f, 1.f, 1.f, 1.f);
 const MkColor MkColor::Pink(1.f, 0.f, 1.f, 1.f);
 const MkColor MkColor::Violet(1.f, 0.4f, 0.8f, 1.f);
+const MkColor MkColor::Orange(1.f, 0.6f, 0.2f, 1.f);
 
 // quaternion
 const MkQuaternion MkQuaternion::Zero(0.f, 0.f, 0.f, 0.f);

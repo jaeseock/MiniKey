@@ -84,7 +84,7 @@ bool MkTitleBarHooker::CheckWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 				m_TargetWindow->WindowRestored();
 				m_Minimized = false;
 
-				MK_INPUT_MGR.UpdateTargetWindowClientSize();
+				MK_INPUT_MGR.UpdateTargetWindowClientSize(m_TargetWindow->GetWindowHandle());
 			}
 			break;
 		}
@@ -146,9 +146,11 @@ bool MkTitleBarHooker::_ToggleShowMode(void)
 	{
 	case SW_SHOWMAXIMIZED:
 		m_TargetWindow->SetShowCmd(SW_SHOWNORMAL);
+		MK_INPUT_MGR.UpdateTargetWindowClientSize(m_TargetWindow->GetWindowHandle());
 		return true;
 	case SW_SHOWNORMAL:
 		m_TargetWindow->SetShowCmd(SW_SHOWMAXIMIZED);
+		MK_INPUT_MGR.UpdateTargetWindowClientSize(m_TargetWindow->GetWindowHandle());
 		return true;
 	}
 	return false;

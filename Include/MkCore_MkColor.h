@@ -167,6 +167,7 @@ public:
 	static const MkColor Cian;
 	static const MkColor Pink;
 	static const MkColor Violet;
+	static const MkColor Orange;
 };
 
 //------------------------------------------------------------------------------------------------//

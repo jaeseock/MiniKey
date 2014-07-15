@@ -106,7 +106,7 @@ void MkDecoStr::SetUp(const MkStr& source)
 		// tag별 대상 문자열 추출
 		if (sectorInfos.Empty())
 		{
-			_SetSector(sectorInfos, 0, MK_FONT_MGR.DSF(), MK_FONT_MGR.DSF()); // DSF
+			_SetSector(sectorInfos, 0, MK_FONT_MGR.DSF(), MK_FONT_MGR.WhiteFS()); // DSF
 			sectorInfos[0].text = nativeBuffer;
 		}
 		else
@@ -121,12 +121,12 @@ void MkDecoStr::SetUp(const MkStr& source)
 				}
 				if (firstSector.state.Empty())
 				{
-					firstSector.state = MK_FONT_MGR.DSF();
+					firstSector.state = MK_FONT_MGR.WhiteFS();
 				}
 			}
 			else
 			{
-				_SetSector(sectorInfos, 0, MK_FONT_MGR.DSF(), MK_FONT_MGR.DSF()); // DSF
+				_SetSector(sectorInfos, 0, MK_FONT_MGR.DSF(), MK_FONT_MGR.WhiteFS()); // DSF
 			}
 
 			unsigned int lastPos = sectorInfos.GetLastKey();
@@ -444,7 +444,7 @@ bool MkDecoStr::Convert
 
 bool MkDecoStr::Convert(const MkStr& msg, MkStr& buffer)
 {
-	return Convert(MK_FONT_MGR.DSF(), MK_FONT_MGR.DSF(), 0, msg, buffer);
+	return Convert(MK_FONT_MGR.DSF(), MK_FONT_MGR.WhiteFS(), 0, msg, buffer);
 }
 
 //------------------------------------------------------------------------------------------------//

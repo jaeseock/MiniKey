@@ -125,12 +125,23 @@
 #define MKDEF_S2D_SND_CHILD_SNODE_NODE_NAME L"<SceneNode>"
 
 //------------------------------------------------------------------------------------------------//
+// window edit mode
+//------------------------------------------------------------------------------------------------//
 
 // normalmode <-> edit mode 전환 key. VK_CONTROL + VK_SHIFT + 
 #define MKDEF_S2D_TOGGLE_KEY_BETWEEN_NORMAL_AND_EDIT_MODE L'E'
 
-// edit mode시 설정창 토글 버튼
+// 설정창 토글 버튼
 #define MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY VK_ESCAPE
+
+// 선택창 토글 버튼
+#define MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY VK_TAB
+
+// 선택창에서 한 라인 크기
+#define MKDEF_S2D_NODE_SEL_LINE_SIZE MkFloat2(500.f, 16.f)
+
+// 선택창에서 상/하 공백 크기
+#define MKDEF_S2D_NODE_SEL_WINDOW_MARGIN 30
 
 //------------------------------------------------------------------------------------------------//
 // DEBUG

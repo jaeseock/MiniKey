@@ -44,8 +44,8 @@ public:
 	// targetWindowHandle는 입력 메시지가 발생되는 윈도우 핸들
 	void SetUp(HWND targetWindowHandle);
 
-	// SetUp()에서 설정된 targetWindow client 영역 크기 재계산 요청
-	void UpdateTargetWindowClientSize(void);
+	// targetHWND가 SetUp()에서 설정된 targetWindow일 경우 client 영역 크기 재계산 요청
+	void UpdateTargetWindowClientSize(HWND targetHWND);
 
 	// SetUp()에서 설정된 targetWindow client 영역 크기 반환
 	inline const MkInt2& GetTargetWindowClientSize(void) const { return m_TargetWindowClientSize; }

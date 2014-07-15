@@ -272,6 +272,16 @@ public:
 	virtual void LostFocus(void);
 
 	//------------------------------------------------------------------------------------------------//
+	// MkSceneNode
+	//------------------------------------------------------------------------------------------------//
+
+	virtual bool AttachChildNode(MkSceneNode* childNode);
+
+	virtual bool DetachChildNode(const MkHashStr& childNodeName);
+
+	virtual void Clear(void);
+
+	//------------------------------------------------------------------------------------------------//
 
 	MkBaseWindowNode(const MkHashStr& name);
 	virtual ~MkBaseWindowNode() {}
@@ -292,12 +302,12 @@ public:
 
 	void __ConsumeWindowEvent(void);
 
-	// debug
-	virtual bool __BuildInformationTree(MkBaseWindowNode* targetNode) const;
+	// for edit mode
+	void __BuildInformationTree(MkBaseWindowNode* targetParentNode, unsigned int offset);
+	unsigned int __CountTotalWindowBasedChildren(void) const;
 
 protected:
 
-	bool _CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer);
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
 
 	void _PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type);
@@ -316,6 +326,9 @@ protected:
 	
 	// attribute
 	MkBitFieldDW m_Attribute;
+
+	// child window
+	MkArray<MkBaseWindowNode*> m_ChildWindows;
 
 	// event
 	MkArray<WindowEvent> m_WindowEvents;

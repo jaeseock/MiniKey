@@ -23,7 +23,7 @@ void MkInputManager::SetUp(HWND targetWindowHandle)
 		return;
 
 	m_TargetWindowHandle = targetWindowHandle;
-	UpdateTargetWindowClientSize();
+	UpdateTargetWindowClientSize(targetWindowHandle);
 
 	MkArray<unsigned int> keyCodeList;
 	keyCodeList.Reserve(256);
@@ -91,9 +91,9 @@ void MkInputManager::SetUp(HWND targetWindowHandle)
 	}
 }
 
-void MkInputManager::UpdateTargetWindowClientSize(void)
+void MkInputManager::UpdateTargetWindowClientSize(HWND targetHWND)
 {
-	if (m_TargetWindowHandle != NULL)
+	if ((targetHWND != NULL) && (targetHWND == m_TargetWindowHandle))
 	{
 		RECT rect;
 		GetClientRect(m_TargetWindowHandle, &rect);

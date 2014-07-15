@@ -8,6 +8,9 @@ Node "GuideBox_" { int2 Position = (18, 0); int2 Size = (3, 3); int2 Table = (3,
 Node "TitleOF_" { int2 Position = (27, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
 Node "TitleLF_" { int2 Position = (36, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
 
+Node "Empty_" { int2 Position = (45, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "Select_" { int2 Position = (54, 0); int2 Size = (3, 3); int2 Table = (3, 3); }
+
 Node "NBtnDef_" { int2 Position = (0, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
 Node "NBtnOCu_" { int2 Position = (9, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
 Node "NBtnOCl_" { int2 Position = (18, 9); int2 Size = (3, 3); int2 Table = (3, 3); }

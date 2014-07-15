@@ -706,13 +706,9 @@ void MkBaseWindowNode::SetEnable(bool enable)
 			__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(windowState, this);
 		}
 
-		MkArray<MkBaseWindowNode*> buffer;
-		if (_CollectUpdatableWindowNodes(buffer))
+		MK_INDEXING_LOOP(m_ChildWindows, i)
 		{
-			MK_INDEXING_LOOP(buffer, i)
-			{
-				buffer[i]->SetEnable(enable);
-			}
+			m_ChildWindows[i]->SetEnable(enable);
 		}
 	}
 }
@@ -1006,13 +1002,9 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 		m_PresetThemeName = themeName;
 	}
 
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(buffer))
+	MK_INDEXING_LOOP(m_ChildWindows, i)
 	{
-		MK_INDEXING_LOOP(buffer, i)
-		{
-			buffer[i]->SetPresetThemeName(themeName);
-		}
+		m_ChildWindows[i]->SetPresetThemeName(themeName);
 	}
 }
 
@@ -1274,16 +1266,12 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 		__TSI_ImageSetToStateNode<eS2D_WindowState>::SetState(windowState, this);
 	}
 
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(buffer))
+	MK_INDEXING_LOOP(m_ChildWindows, i)
 	{
-		MK_INDEXING_LOOP(buffer, i)
+		MkBaseWindowNode* currNode = m_ChildWindows[i];
+		if (currNode->GetVisible() && currNode->GetEnable() && (!currNode->GetAttribute(eIgnoreInputEvent)))
 		{
-			MkBaseWindowNode* currNode = buffer[i];
-			if (currNode->GetVisible() && currNode->GetEnable() && (!currNode->GetAttribute(eIgnoreInputEvent)))
-			{
-				currNode->InputEventMouseMove(inside, btnPushing, position);
-			}
+			currNode->InputEventMouseMove(inside, btnPushing, position);
 		}
 	}
 }
@@ -1301,13 +1289,9 @@ void MkBaseWindowNode::OnFocus(void)
 		__TSI_ImageSetToStateNode<eS2D_TitleState>::SetState(eS2D_TS_OnFocusState, this);
 	}
 
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(buffer))
+	MK_INDEXING_LOOP(m_ChildWindows, i)
 	{
-		MK_INDEXING_LOOP(buffer, i)
-		{
-			buffer[i]->OnFocus();
-		}
+		m_ChildWindows[i]->OnFocus();
 	}
 }
 
@@ -1318,14 +1302,45 @@ void MkBaseWindowNode::LostFocus(void)
 		__TSI_ImageSetToStateNode<eS2D_TitleState>::SetState(eS2D_TS_LostFocusState, this);
 	}
 
-	MkArray<MkBaseWindowNode*> buffer;
-	if (_CollectUpdatableWindowNodes(buffer))
+	MK_INDEXING_LOOP(m_ChildWindows, i)
 	{
-		MK_INDEXING_LOOP(buffer, i)
+		m_ChildWindows[i]->LostFocus();
+	}
+}
+
+bool MkBaseWindowNode::AttachChildNode(MkSceneNode* childNode)
+{
+	bool ok = MkSceneNode::AttachChildNode(childNode);
+	if (ok && (childNode->GetNodeType() >= eS2D_SNT_BaseWindowNode))
+	{
+		MkBaseWindowNode* childWindow = dynamic_cast<MkBaseWindowNode*>(childNode);
+		if ((childWindow != NULL) && (m_ChildWindows.FindFirstInclusion(MkArraySection(0), childWindow) == MKDEF_ARRAY_ERROR))
 		{
-			buffer[i]->LostFocus();
+			m_ChildWindows.PushBack(childWindow);
 		}
 	}
+	return ok;
+}
+
+bool MkBaseWindowNode::DetachChildNode(const MkHashStr& childNodeName)
+{
+	if (m_ChildrenNode.Exist(childNodeName))
+	{
+		MkSceneNode* childNode = m_ChildrenNode[childNodeName];
+		if ((childNode != NULL) && (childNode->GetNodeType() >= eS2D_SNT_BaseWindowNode))
+		{
+			MkBaseWindowNode* childWindow = dynamic_cast<MkBaseWindowNode*>(childNode);
+			m_ChildWindows.EraseFirstInclusion(MkArraySection(0), childWindow);
+		}
+	}
+	
+	return MkSceneNode::DetachChildNode(childNodeName);
+}
+
+void MkBaseWindowNode::Clear(void)
+{
+	m_ChildWindows.Clear();
+	MkSceneNode::Clear();
 }
 
 MkBaseWindowNode::MkBaseWindowNode(const MkHashStr& name) : MkSceneNode(name)
@@ -1419,16 +1434,12 @@ void MkBaseWindowNode::__ConsumeWindowEvent(void)
 	if (!m_WindowEvents.Empty())
 	{
 		// leaf -> root
-		MkArray<MkBaseWindowNode*> buffer;
-		if (_CollectUpdatableWindowNodes(buffer))
+		MK_INDEXING_LOOP(m_ChildWindows, i)
 		{
-			MK_INDEXING_LOOP(buffer, i)
+			MkBaseWindowNode* currNode = m_ChildWindows[i];
+			if (currNode->GetVisible() && currNode->GetEnable())
 			{
-				MkBaseWindowNode* currNode = buffer[i];
-				if (currNode->GetVisible() && currNode->GetEnable())
-				{
-					currNode->__ConsumeWindowEvent();
-				}
+				currNode->__ConsumeWindowEvent();
 			}
 		}
 
@@ -1481,11 +1492,95 @@ void MkBaseWindowNode::__ConsumeWindowEvent(void)
 	}
 }
 
-bool MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* targetNode) const
+void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* targetParentNode, unsigned int offset)
 {
+	if (targetParentNode != NULL)
+	{
+		MkBaseWindowNode* targetNode = __CreateWindowPreset
+			(targetParentNode, GetNodeName(), MK_WR_PRESET.GetDefaultThemeName(), eS2D_WPC_SelectionButton, MKDEF_S2D_NODE_SEL_LINE_SIZE);
+
+		if (targetNode != NULL)
+		{
+			// fill info
+			MkStr windowType;
+			switch (GetNodeType())
+			{
+			case eS2D_SNT_SceneNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), L"[SceneNode]", windowType); break;
+			case eS2D_SNT_BaseWindowNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.YellowFS(), L"[BaseWindow]", windowType); break;
+			case eS2D_SNT_SpreadButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.CianFS(), L"[SpreadBtn]", windowType); break;
+			case eS2D_SNT_CheckButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.PinkFS(), L"[CheckBtn]", windowType); break;
+			case eS2D_SNT_ScrollBarNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.OrangeFS(), L"[ScrollBar]", windowType); break;
+			case eS2D_SNT_EditBoxNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), L"[EditBox]", windowType); break;
+			}
+
+			MkStr header;
+			MkDecoStr::InsertFontTypeTag(MK_FONT_MGR.DSF(), windowType, header);
+
+			MkStr compStr, compType;
+			compStr += L"[";
+			compStr += m_PresetComponentName.Empty() ? L"--" : m_PresetComponentName.GetString();
+			compStr += L"]";
+
+			eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
+			if (IsBackgroundStateType(component))
+			{
+				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), compStr, compType);
+			}
+			else if (IsTitleStateType(component))
+			{
+				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.RedFS(), compStr, compType);
+			}
+			else if (IsWindowStateType(component))
+			{
+				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), compStr, compType);
+			}
+			else
+			{
+				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.DarkGrayFS(), compStr, compType);
+			}
+
+			MkStr nameBuf;
+			MkDecoStr::InsertFontStateTag(MK_FONT_MGR.WhiteFS(), L" " + GetNodeName().GetString(), nameBuf);
+
+			MkStr text;
+			text.Reserve(header.GetSize() + compType.GetSize() + nameBuf.GetSize());
+			text += header;
+			text += compType;
+			text += nameBuf;
+
+			CaptionDesc captionDesc;
+			captionDesc.SetString(text);
+
+			targetNode->SetPresetComponentIcon(COMPONENT_HIGHLIGHT_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
+				MkHashStr::NullHash, captionDesc);
+
+			targetNode->SetPresetComponentIcon(COMPONENT_NORMAL_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
+				MkHashStr::NullHash, captionDesc);
+
+			if (!GetVisible())
+			{
+				targetNode->SetAlpha(0.5f);
+			}
+
+			targetNode->SetLocalPosition(MkFloat2(40.f, -targetNode->GetPresetComponentSize().y * static_cast<float>(offset)));
+
+			int totalChildCnt = 0;
+			MK_INDEXING_LOOP(m_ChildWindows, i)
+			{
+				if (i > 0)
+				{
+					totalChildCnt += m_ChildWindows[i-1]->__CountTotalWindowBasedChildren();
+				}
+
+				m_ChildWindows[i]->__BuildInformationTree(targetNode, i + 1 + totalChildCnt);
+			}
+		}
+	}
+	/*
 	const MkHashStr& nodeName = GetNodeName();
 	const MkVec3& wp = GetWorldPosition();
 	const MkVec3& lp = GetLocalPosition();
+	*/
 
 	/*
 	eS2D_SNT_SceneNode = 0, // MkSceneNode
@@ -1505,49 +1600,30 @@ bool MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* targetNode) cons
 	MkFloat2 m_PresetComponentSize;
 	MkBitFieldDW m_Attribute;
 	*/
-	return false;
 }
 
-bool MkBaseWindowNode::_CollectUpdatableWindowNodes(MkArray<MkBaseWindowNode*>& buffer)
+unsigned int MkBaseWindowNode::__CountTotalWindowBasedChildren(void) const
 {
-	if (!m_ChildrenNode.Empty())
+	unsigned int cnt = m_ChildWindows.GetSize();
+	MK_INDEXING_LOOP(m_ChildWindows, i)
 	{
-		buffer.Reserve(m_ChildrenNode.GetSize());
-
-		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
-		MK_STL_LOOP(looper)
-		{
-			MkSceneNode* node = looper.GetCurrentField();
-			if (node->GetNodeType() >= eS2D_SNT_BaseWindowNode)
-			{
-				MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(node);
-				if (winNode != NULL)
-				{
-					buffer.PushBack(winNode);
-				}
-			}
-		}
+		cnt += m_ChildWindows[i]->__CountTotalWindowBasedChildren();
 	}
-	return (!buffer.Empty());
+	return cnt;
 }
 
 bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer)
 {
-	if (!m_ChildrenNode.Empty())
+	if (!m_ChildWindows.Empty())
 	{
-		buffer.Reserve(m_ChildrenNode.GetSize());
+		buffer.Reserve(m_ChildWindows.GetSize());
 
-		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
-		MK_STL_LOOP(looper)
+		MK_INDEXING_LOOP(m_ChildWindows, i)
 		{
-			MkSceneNode* node = looper.GetCurrentField();
-			if (node->GetVisible() && (node->GetNodeType() >= eS2D_SNT_BaseWindowNode) && (node->GetWorldAABR().CheckGridIntersection(position)))
+			MkBaseWindowNode* winNode = m_ChildWindows[i];
+			if (winNode->GetVisible() && winNode->GetEnable() && winNode->GetWorldAABR().CheckGridIntersection(position))
 			{
-				MkBaseWindowNode* winNode = dynamic_cast<MkBaseWindowNode*>(node);
-				if ((winNode != NULL) && (winNode->GetEnable()))
-				{
-					buffer.PushBack(winNode);
-				}
+				buffer.PushBack(winNode);
 			}
 		}
 	}

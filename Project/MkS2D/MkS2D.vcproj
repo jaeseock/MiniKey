@@ -383,6 +383,14 @@
 				Name="Edit mode window"
 				>
 				<File
+					RelativePath=".\Source\MkS2D_MkEditModeNodeSelectionWindow.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkS2D_MkEditModeNodeSelectionWindow.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkS2D_MkEditModeSettingWindow.cpp"
 					>
 				</File>

@@ -161,7 +161,7 @@ void MkWindowPreset::Clear(void)
 const static MkHashStr sPresetKeywords[eS2D_WPC_MaxWindowPresetComponent] =
 	{ L"BackgroundWindow", L"StaticWindow", L"GuideBox", L"ArrowLeft", L"ArrowRight", L"ArrowUp", L"ArrowDown", L"VSlideBar", L"HSlideBar", // bg
 	L"TitleWindow", // title
-	L"NormalButton", L"OKButton", L"CancelButton", L"RootButton", L"ListButton", L"UncheckButton", L"CheckButton",
+	L"NormalButton", L"OKButton", L"CancelButton", L"SelectionButton", L"RootButton", L"ListButton", L"UncheckButton", L"CheckButton",
 	L"DirLeftButton", L"DirRightButton", L"DirUpButton", L"DirDownButton", L"VSlideButton", L"HSlideButton", L"CloseIcon" };
 
 eS2D_WindowPresetComponent MkWindowPreset::GetWindowPresetComponentEnum(const MkHashStr& keyword)

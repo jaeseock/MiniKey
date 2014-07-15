@@ -92,13 +92,6 @@ Node "FontResource"
 
 	Node "FontState"
 	{
-		Node "EditBoxSelection" : "T_FontState"
-		{
-			str textColor = "Cian";
-			int mode = 2;
-			str modeColor = "DarkGray";
-		}
-		
 		Node "EditBoxCursor" : "T_FontState"
 		{
 			str textColor = "Pink";
@@ -376,6 +369,36 @@ Node "WindowTypeImageSet"
 		str LB = "CBtnOCl_LB";
 		str MB = "CBtnOCl_MB";
 		str RB = "CBtnOCl_RB";
+	}
+	
+	Node "DefaultSBtnDefault"
+	{
+		int Type = 3;
+		str Image = "Default\default_theme.png";
+		str LT = "Empty_LT";
+		str MT = "Empty_MT";
+		str RT = "Empty_RT";
+		str LC = "Empty_LC";
+		str MC = "Empty_MC";
+		str RC = "Empty_RC";
+		str LB = "Empty_LB";
+		str MB = "Empty_MB";
+		str RB = "Empty_RB";
+	}
+	
+	Node "DefaultSBtnOnCursor"
+	{
+		int Type = 3;
+		str Image = "Default\default_theme.png";
+		str LT = "Select_LT";
+		str MT = "Select_MT";
+		str RT = "Select_RT";
+		str LC = "Select_LC";
+		str MC = "Select_MC";
+		str RC = "Select_RC";
+		str LB = "Select_LB";
+		str MB = "Select_MB";
+		str RB = "Select_RB";
 	}
 	
 	Node "DefaultBtnDisable"
@@ -796,8 +819,8 @@ Node "WindowPreset"
 	str WindowBackgroundSampleSubsetName = "SampleBG";
 	
 	str EditBoxFontType = "DSF";
-	str EditBoxNormalFontState = "DSF";
-	str EditBoxSelectionFontState = "EditBoxSelection";
+	str EditBoxNormalFontState = "WhiteFS";
+	str EditBoxSelectionFontState = "CianFS";
 	str EditBoxCursorFontState = "EditBoxCursor";
 	str EditBoxSelectionSubsetName = "EBSelection";
 	
@@ -816,6 +839,7 @@ Node "WindowPreset"
 		str NormalButton = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
 		str OKButton = "DefaultOBtnDefault" / "DefaultOBtnOnCursor" / "DefaultOBtnOnClick" / "DefaultBtnDisable";
 		str CancelButton = "DefaultCBtnDefault" / "DefaultCBtnOnCursor" / "DefaultCBtnOnClick" / "DefaultBtnDisable";
+		str SelectionButton = "DefaultSBtnDefault" / "DefaultSBtnOnCursor" / "DefaultSBtnOnCursor" / "DefaultSBtnDefault";
 		str RootButton = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
 		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
 		str UncheckButton = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnCursor" / "DefaultUncheckDefault";
@@ -828,7 +852,7 @@ Node "WindowPreset"
 		str HSlideButton = "DefaultHSlideBtnDefault" / "DefaultHSlideBtnOnCursor" / "DefaultHSlideBtnOnClick" / "DefaultHSlideBtnDisable";
 		str CloseIcon =  "DefaultCloseDefault" / "DefaultCloseOnCursor" / "DefaultCloseOnClick" / "DefaultCloseDisable";
 		
-		str FontState = "DHF" / "DSF";
+		str FontState = "YellowFS" / "WhiteFS";
 	}
 	
 	Node "SolidLB"

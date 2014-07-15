@@ -99,11 +99,22 @@ public:
 	// 해제
 	void Clear(void);
 
-	// default system font key 반환. type과 state에 사용
+	// default system font type key 반환
 	const MkHashStr& DSF(void) const;
 
-	// default highlight font key 반환. state에 사용
-	const MkHashStr& DHF(void) const;
+	// default system font state key 반환
+	const MkHashStr& BlackFS(void) const;
+	const MkHashStr& WhiteFS(void) const;
+	const MkHashStr& LightGrayFS(void) const;
+	const MkHashStr& DarkGrayFS(void) const;
+	const MkHashStr& RedFS(void) const;
+	const MkHashStr& GreenFS(void) const;
+	const MkHashStr& BlueFS(void) const;
+	const MkHashStr& YellowFS(void) const;
+	const MkHashStr& CianFS(void) const;
+	const MkHashStr& PinkFS(void) const;
+	const MkHashStr& VioletFS(void) const;
+	const MkHashStr& OrangeFS(void) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 텍스트 실제 사용

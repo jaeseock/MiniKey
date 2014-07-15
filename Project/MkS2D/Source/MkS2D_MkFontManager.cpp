@@ -23,7 +23,7 @@ bool MkFontManager::SetUp(LPDIRECT3DDEVICE9 device)
 	m_Device = device;
 
 	// 기본 font type 생성
-	if (!CreateFontType(DSF(), L"GulimChe", 12, eThin))
+	if (!CreateFontType(DSF(), L"맑은고딕", 12, eThin)) // GulimChe
 		return false;
 
 	// 기본 font state 생성
@@ -31,7 +31,29 @@ bool MkFontManager::SetUp(LPDIRECT3DDEVICE9 device)
 		return false;
 
 	// 기본 font state 생성
-	if (!CreateFontState(DHF(), MkColor::Yellow.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+	if (!CreateFontState(BlackFS(), MkColor::Black.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(WhiteFS(), MkColor::White.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(LightGrayFS(), MkColor::LightGray.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(DarkGrayFS(), MkColor::DarkGray.ConvertToD3DCOLOR(), eShadow, MkColor::Black.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(RedFS(), MkColor::Red.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(GreenFS(), MkColor::Green.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(BlueFS(), MkColor::Blue.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(YellowFS(), MkColor::Yellow.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(CianFS(), MkColor::Cian.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(PinkFS(), MkColor::Pink.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(VioletFS(), MkColor::Violet.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
+		return false;
+	if (!CreateFontState(OrangeFS(), MkColor::Orange.ConvertToD3DCOLOR(), eShadow, MkColor::DarkGray.ConvertToD3DCOLOR()))
 		return false;
 
 	return true;
@@ -226,10 +248,65 @@ const MkHashStr& MkFontManager::DSF(void) const
 	return defaultSystemFontKey;
 }
 
-const MkHashStr& MkFontManager::DHF(void) const
+const MkHashStr& MkFontManager::BlackFS(void) const
 {
-	const static MkHashStr defaultHighlightFontKey = L"DHF";
-	return defaultHighlightFontKey;
+	const static MkHashStr colorState = L"BlackFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::WhiteFS(void) const
+{
+	const static MkHashStr colorState = L"WhiteFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::LightGrayFS(void) const
+{
+	const static MkHashStr colorState = L"LightGrayFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::DarkGrayFS(void) const
+{
+	const static MkHashStr colorState = L"DarkGrayFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::RedFS(void) const
+{
+	const static MkHashStr colorState = L"RedFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::GreenFS(void) const
+{
+	const static MkHashStr colorState = L"GreenFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::BlueFS(void) const
+{
+	const static MkHashStr colorState = L"BlueFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::YellowFS(void) const
+{
+	const static MkHashStr colorState = L"YellowFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::CianFS(void) const
+{
+	const static MkHashStr colorState = L"CianFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::PinkFS(void) const
+{
+	const static MkHashStr colorState = L"PinkFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::VioletFS(void) const
+{
+	const static MkHashStr colorState = L"VioletFS";
+	return colorState;
+}
+const MkHashStr& MkFontManager::OrangeFS(void) const
+{
+	const static MkHashStr colorState = L"OrangeFS";
+	return colorState;
 }
 
 void MkFontManager::Clear(void)
@@ -395,7 +472,7 @@ bool MkFontManager::ConvertToPageUnderRestriction(const MkHashStr& fontType, con
 
 bool MkFontManager::DrawMessage(const MkInt2& position, const MkStr& msg)
 {
-	return DrawMessage(position, DSF(), DSF(), msg);
+	return DrawMessage(position, DSF(), WhiteFS(), msg);
 }
 
 bool MkFontManager::DrawMessage
