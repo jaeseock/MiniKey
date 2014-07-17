@@ -1,5 +1,6 @@
 
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkFloatOp.h"
 #include "MkCore_MkDataNode.h"
 
 #include "MkS2D_MkProjectDefinition.h"
@@ -108,7 +109,7 @@ void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize)
 	m_TotalPageSize = totalPageSize;
 
 	m_GridCount = 0;
-
+	
 	// [0 < m_SizePerGrid <= m_OnePageSize < m_TotalPageSize] 관계가 성립하면
 	if ((0 < m_SizePerGrid) && (m_SizePerGrid <= m_OnePageSize) && (m_OnePageSize < m_TotalPageSize))
 	{
@@ -125,12 +126,16 @@ void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize)
 
 void MkScrollBarNode::SetGridPosition(unsigned int gridPosition)
 {
-	if ((gridPosition < m_GridCount) && (gridPosition != m_CurrentGridPosition))
+	if (m_GridCount > 0)
 	{
-		m_CurrentGridPosition = gridPosition;
+		m_CurrentGridPosition = (gridPosition < m_GridCount) ? gridPosition : m_GridCount - 1;
 
 		_UpdateSlideTransform();
 		_PushWindowEvent(MkSceneNodeFamilyDefinition::eScrollPositionChanged);
+	}
+	else
+	{
+		m_CurrentGridPosition = 0;
 	}
 }
 
@@ -184,30 +189,110 @@ void MkScrollBarNode::Save(MkDataNode& node)
 	MkBaseWindowNode::Save(node);
 }
 
+bool MkScrollBarNode::HitEventMousePress(unsigned int button, const MkFloat2& position)
+{
+	if ((button == 0) && (m_SlideNode != NULL) && (m_GridCount > 0) && (m_TotalPageSize > m_OnePageSize))
+	{
+		// bar 안에서 hit가 발생했으면
+		MkSceneNode* barNode = GetChildNode(BAR_NODE_NAME);
+		if ((barNode != NULL) && (barNode->GetWorldAABR().CheckGridIntersection(position)))
+		{
+			int movementSize = static_cast<int>(m_OnePageSize / m_SizePerGrid);
+			if (m_BarDirection == eVertical)
+			{
+				// slide btn 아래 클릭
+				if (position.y < m_SlideNode->GetWorldAABR().position.y)
+				{
+					SetGridPosition(_AssignGridOffset(movementSize));
+				}
+				// slide btn 위 클릭
+				else if (position.y > (m_SlideNode->GetWorldAABR().position.y + m_SlideNode->GetWorldAABR().size.y))
+				{
+					SetGridPosition(_AssignGridOffset(-movementSize));
+				}
+			}
+			else
+			{
+				// slide btn 좌클릭
+				if (position.x < m_SlideNode->GetWorldAABR().position.x)
+				{
+					SetGridPosition(_AssignGridOffset(-movementSize));
+				}
+				// slide btn 우클릭
+				else if (position.x > (m_SlideNode->GetWorldAABR().position.x + m_SlideNode->GetWorldAABR().size.x))
+				{
+					SetGridPosition(_AssignGridOffset(movementSize));
+				}
+			}
+		}
+	}
+
+	return MkBaseWindowNode::HitEventMousePress(button, position);
+}
+
 bool MkScrollBarNode::HitEventMouseWheelMove(int delta, const MkFloat2& position)
 {
 	switch (delta) // 3배속까지만 인식
 	{
 	case 120:
-		SetGridPosition(_GetNewGridPosition(-m_GridsPerAction));
+		SetGridPosition(_AssignGridOffset(-m_GridsPerAction));
 		return true;
 	case 240:
-		SetGridPosition(_GetNewGridPosition(-m_GridsPerAction * 2));
+		SetGridPosition(_AssignGridOffset(-m_GridsPerAction * 2));
 		return true;
 	case 360:
-		SetGridPosition(_GetNewGridPosition(-m_GridsPerAction * 3));
+		SetGridPosition(_AssignGridOffset(-m_GridsPerAction * 3));
 		return true;
 	case -120:
-		SetGridPosition(_GetNewGridPosition(m_GridsPerAction));
+		SetGridPosition(_AssignGridOffset(m_GridsPerAction));
 		return true;
 	case -240:
-		SetGridPosition(_GetNewGridPosition(m_GridsPerAction * 2));
+		SetGridPosition(_AssignGridOffset(m_GridsPerAction * 2));
 		return true;
 	case -360:
-		SetGridPosition(_GetNewGridPosition(m_GridsPerAction * 3));
+		SetGridPosition(_AssignGridOffset(m_GridsPerAction * 3));
 		return true;
 	}
 	return false;
+}
+
+void MkScrollBarNode::StartDragMovement(MkBaseWindowNode* targetWindow)
+{
+	if (_CheckSlideButtonDragging(targetWindow))
+	{
+		m_GridPositionAtDragStart = static_cast<int>(m_CurrentGridPosition);
+		return;
+	}
+
+	MkBaseWindowNode::StartDragMovement(targetWindow);
+}
+
+bool MkScrollBarNode::ConfirmDragMovement(MkBaseWindowNode* targetWindow, MkFloat2& positionOffset)
+{
+	if (_CheckSlideButtonDragging(targetWindow))
+	{
+		float pixelMovement = (m_BarDirection == eVertical) ? -positionOffset.y : positionOffset.x;
+		float pixelSizePerGrid = m_MaxSlideSize / static_cast<float>(m_GridCount);
+		pixelMovement /= pixelSizePerGrid;
+		if (pixelMovement > 0.f)
+		{
+			pixelMovement = MkFloatOp::SnapToLowerBound(pixelMovement, 1.f);
+		}
+		else if (pixelMovement < 0.f)
+		{
+			pixelMovement = MkFloatOp::SnapToUpperBound(pixelMovement, 1.f);
+		}
+
+		int gridOffset = static_cast<int>(pixelMovement);
+		if (gridOffset != 0)
+		{
+			unsigned int newGridPos =  static_cast<unsigned int>(Clamp<int>(m_GridPositionAtDragStart + gridOffset, 0, static_cast<int>(m_GridCount) - 1));
+			SetGridPosition(newGridPos);
+		}
+		return false; // window manager의 drag를 허용하지 않고 탈출
+	}
+
+	return MkBaseWindowNode::ConfirmDragMovement(targetWindow, positionOffset);
 }
 
 void MkScrollBarNode::UseWindowEvent(WindowEvent& evt)
@@ -217,7 +302,7 @@ void MkScrollBarNode::UseWindowEvent(WindowEvent& evt)
 		switch (evt.type)
 		{
 		case MkSceneNodeFamilyDefinition::eCursorLeftRelease:
-			SetGridPosition(_GetNewGridPosition(-m_GridsPerAction));
+			SetGridPosition(_AssignGridOffset(-m_GridsPerAction));
 			break;
 		}
 	}
@@ -226,7 +311,7 @@ void MkScrollBarNode::UseWindowEvent(WindowEvent& evt)
 		switch (evt.type)
 		{
 		case MkSceneNodeFamilyDefinition::eCursorLeftRelease:
-			SetGridPosition(_GetNewGridPosition(m_GridsPerAction));
+			SetGridPosition(_AssignGridOffset(m_GridsPerAction));
 			break;
 		}
 	}
@@ -302,7 +387,7 @@ void MkScrollBarNode::_UpdateSlideTransform(void)
 	}
 }
 
-unsigned int MkScrollBarNode::_GetNewGridPosition(int offset) const
+unsigned int MkScrollBarNode::_AssignGridOffset(int offset) const
 {
 	if (m_GridCount > 0)
 	{
@@ -310,6 +395,16 @@ unsigned int MkScrollBarNode::_GetNewGridPosition(int offset) const
 		return static_cast<unsigned int>(pos);
 	}
 	return 0;
+}
+
+bool MkScrollBarNode::_CheckSlideButtonDragging(MkBaseWindowNode* targetWindow) const
+{
+	if ((m_SlideNode != NULL) && (targetWindow == m_SlideNode) && (m_GridCount > 0))
+	{
+		eS2D_WindowPresetComponent component = m_SlideNode->GetPresetComponentType();
+		return ((component == eS2D_WPC_VSlideButton) || (component == eS2D_WPC_HSlideButton));
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------//

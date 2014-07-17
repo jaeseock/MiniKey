@@ -27,3 +27,9 @@ Node "SampleIcon"
 	int2 Position = (0, 109);
 	int2 Size = (16, 16);
 }
+
+Node "SelIcon"
+{
+	int2 Position = (16, 109);
+	int2 Size = (16, 16);
+}

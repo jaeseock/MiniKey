@@ -49,21 +49,21 @@ enum eS2D_WindowPresetComponent
 	// eS2D_WindowState
 	eS2D_WPC_WindowStateTypeBegin,
 
-	eS2D_WPC_NormalButton = eS2D_WPC_WindowStateTypeBegin, // L"NormalButton"
-	eS2D_WPC_OKButton, // L"OKButton"
-	eS2D_WPC_CancelButton, // L"CancelButton"
-	eS2D_WPC_SelectionButton, // L"SelectionButton"
-	eS2D_WPC_RootButton, // L"RootButton"
-	eS2D_WPC_ListButton, // L"ListButton"
-	eS2D_WPC_UncheckButton, // L"UncheckButton"
-	eS2D_WPC_CheckButton, // L"CheckButton"
-	eS2D_WPC_DirLeftButton, // L"DirLeftButton"
-	eS2D_WPC_DirRightButton, // L"DirRightButton"
-	eS2D_WPC_DirUpButton, // L"DirUpButton"
-	eS2D_WPC_DirDownButton, // L"DirDownButton"
-	eS2D_WPC_VSlideButton, // L"VSlideButton"
-	eS2D_WPC_HSlideButton, // L"HSlideButton"
-	eS2D_WPC_CloseIcon, // L"CloseIcon"
+	eS2D_WPC_NormalButton = eS2D_WPC_WindowStateTypeBegin, // L"NormalBtn"
+	eS2D_WPC_OKButton, // L"OKBtn"
+	eS2D_WPC_CancelButton, // L"CancelBtn"
+	eS2D_WPC_SelectionButton, // L"SelectionBtn"
+	eS2D_WPC_RootButton, // L"RootBtn"
+	eS2D_WPC_ListButton, // L"ListBtn"
+	eS2D_WPC_UncheckButton, // L"UncheckBtn"
+	eS2D_WPC_CheckButton, // L"CheckBtn"
+	eS2D_WPC_DirLeftButton, // L"DirLeftBtn"
+	eS2D_WPC_DirRightButton, // L"DirRightBtn"
+	eS2D_WPC_DirUpButton, // L"DirUpBtn"
+	eS2D_WPC_DirDownButton, // L"DirDownBtn"
+	eS2D_WPC_VSlideButton, // L"VSlideBtn"
+	eS2D_WPC_HSlideButton, // L"HSlideBtn"
+	eS2D_WPC_CloseButton, // L"CloseBtn"
 
 	eS2D_WPC_WindowStateTypeEnd,
 

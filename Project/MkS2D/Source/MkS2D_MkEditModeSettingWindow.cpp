@@ -1,6 +1,7 @@
 
 #include "MkS2D_MkCheckButtonNode.h"
 
+#include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkEditModeSettingWindow.h"
 
@@ -8,13 +9,18 @@
 const static MkHashStr SHOW_TARGET_WIN_REGION_NAME = L"ShowTargetWinReg";
 const static MkHashStr ALLOW_DRAG_MOVEMENT_NAME = L"AllowDragMovement";
 
-#define MKDEF_EDIT_MODE_SETTING_WIN_SIDE_MARGIN MkFloat2(20.f, 20.f)
-#define MKDEF_EDIT_MODE_SETTING_WIN_CTRL_MARGIN 10.f
+#define MKDEF_SIDE_MARGIN MkFloat2(20.f, 20.f)
+#define MKDEF_CTRL_MARGIN 10.f
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkEditModeSettingWindow::SetUp(const MkHashStr& themeName)
+bool MkEditModeSettingWindow::SetUp(void)
 {
+	SetAttribute(eForEditMode, true);
+	SetAttribute(eAlignCenterPos, true);
+
+	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
+
 	BasicPresetWindowDesc winDesc;
 	winDesc.SetStandardDesc(themeName, true, MkFloat2(300, 400.f));
 	winDesc.titleCaption = L"에디트 모드 세팅";
@@ -33,7 +39,7 @@ bool MkEditModeSettingWindow::SetUp(const MkHashStr& themeName)
 	MkFloatRect clientRect = bgNode->GetPresetComponentSize();
 	clientRect.size.y -= GetPresetComponentSize().y; // body size - title size
 
-	MkFloat2 alignBorder = MKDEF_EDIT_MODE_SETTING_WIN_SIDE_MARGIN;
+	MkFloat2 alignBorder = MKDEF_SIDE_MARGIN;
 	MkBaseWindowNode::CaptionDesc captionDesc;
 
 	for (unsigned int i=0; i<2; ++i)
@@ -61,16 +67,11 @@ bool MkEditModeSettingWindow::SetUp(const MkHashStr& themeName)
 			cbNode->SetLocalDepth(-0.001f);
 			bgNode->AttachChildNode(cbNode);
 
-			alignBorder.y += cbNode->GetPresetComponentSize().y + MKDEF_EDIT_MODE_SETTING_WIN_CTRL_MARGIN;
+			alignBorder.y += cbNode->GetPresetComponentSize().y + MKDEF_CTRL_MARGIN;
 		}
 	}
 
 	return true;
-}
-
-void MkEditModeSettingWindow::Activate(void)
-{
-	AlignPosition(MK_WIN_EVENT_MGR.GetRegionRect(), eRAP_MiddleCenter, MkInt2(0, 0)); // 중앙 정렬
 }
 
 void MkEditModeSettingWindow::UseWindowEvent(WindowEvent& evt)

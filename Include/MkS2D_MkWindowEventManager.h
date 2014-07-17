@@ -62,6 +62,9 @@ public:
 	// 그리기 영역 반환
 	const MkFloatRect& GetRegionRect(void) const;
 
+	// 지정 윈도우 설정
+	void SetTargetWindowNode(MkBaseWindowNode* targetWindow);
+
 	// 해제
 	void Clear(void);
 
@@ -95,6 +98,8 @@ protected:
 	void _ShowRegionLayer(void);
 	void _UpdateRegionLayer(const MkFloatRect& rect, float depth);
 	bool _SetRegionLayerVisible(bool enable);
+
+	void _PassTargetWindow(bool ignoreActivationCheck = false);
 
 protected:
 

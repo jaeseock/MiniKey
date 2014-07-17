@@ -46,10 +46,10 @@ public:
 	void Clear(void);
 
 	// 지정된 렌더타겟의 크기 반환
-	MkUInt2 GetScreenSize(void);
+	MkUInt2 GetScreenSize(void) const;
 
 	// 영역 반환
-	inline const MkFloatRect& GetRegionRect(void) const { return m_RegionRect; }
+	const MkFloatRect& GetRegionRect(void);
 
 	// 텍스쳐 참조 반환
 	inline unsigned int GetTextureCount(void) const { return m_TargetTexture.GetSize(); }

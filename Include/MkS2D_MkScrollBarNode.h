@@ -42,6 +42,9 @@ public:
 	// 현재 위치 단위 설정
 	void SetGridPosition(unsigned int gridPosition);
 
+	// 총 논리적 길이 반환
+	inline unsigned int GetTotalPageSize(void) const { return m_TotalPageSize; }
+
 	// 총 위치 단위 수 반환
 	inline unsigned int GetGridCount(void) const { return m_GridCount; }
 
@@ -65,7 +68,14 @@ public:
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
+	virtual bool CheckCursorHitCondition(const MkFloat2& position) const { return true; } // 아무런 component도 없으므로 HitEventMousePress()를 받기 위해 통과
+
+	virtual bool HitEventMousePress(unsigned int button, const MkFloat2& position);
+
 	virtual bool HitEventMouseWheelMove(int delta, const MkFloat2& position);
+
+	virtual void StartDragMovement(MkBaseWindowNode* targetWindow);
+	virtual bool ConfirmDragMovement(MkBaseWindowNode* targetWindow, MkFloat2& positionOffset);
 
 	virtual void UseWindowEvent(WindowEvent& evt);
 
@@ -82,7 +92,9 @@ protected:
 
 	void _UpdateSlideTransform(void);
 
-	unsigned int _GetNewGridPosition(int offset) const;
+	unsigned int _AssignGridOffset(int offset) const;
+
+	bool _CheckSlideButtonDragging(MkBaseWindowNode* targetWindow) const;
 
 protected:
 
@@ -97,4 +109,6 @@ protected:
 	unsigned int m_GridCount;
 	unsigned int m_CurrentGridPosition;
 	unsigned int m_CurrentPagePosition;
+
+	int m_GridPositionAtDragStart;
 };

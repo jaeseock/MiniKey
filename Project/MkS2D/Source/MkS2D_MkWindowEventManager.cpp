@@ -11,7 +11,7 @@
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkEditModeSettingWindow.h"
-#include "MkS2D_MkEditModeNodeSelectionWindow.h"
+#include "MkS2D_MkEditModeTargetWindow.h"
 #include "MkS2D_MkWindowEventManager.h"
 
 
@@ -26,7 +26,7 @@ const static MkHashStr REGION_RECT_NAME = L"Region";
 const static MkHashStr DEBUG_RECT_NAME = L"Debug";
 
 const static MkHashStr SETTING_WINDOW_NAME = L"__#Setting";
-const static MkHashStr NODE_SEL_WINDOW_NAME = L"__#NodeSel";
+const static MkHashStr TARGET_WINDOW_NAME = L"__#Target";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -98,7 +98,7 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 		MkEditModeSettingWindow* targetWindow = new MkEditModeSettingWindow(SETTING_WINDOW_NAME);
 		if (targetWindow != NULL)
 		{
-			if (targetWindow->SetUp(MK_WR_PRESET.GetDefaultThemeName()))
+			if (targetWindow->SetUp())
 			{
 				RegisterWindow(targetWindow, false);
 			}
@@ -112,12 +112,19 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 	}
 
 	// 노드 선택 윈도우 생성
-	if (!m_WindowTable.Exist(NODE_SEL_WINDOW_NAME))
+	if (!m_WindowTable.Exist(TARGET_WINDOW_NAME))
 	{
-		MkEditModeNodeSelectionWindow* targetWindow = new MkEditModeNodeSelectionWindow(NODE_SEL_WINDOW_NAME);
+		MkEditModeTargetWindow* targetWindow = new MkEditModeTargetWindow(TARGET_WINDOW_NAME);
 		if (targetWindow != NULL)
 		{
-			RegisterWindow(targetWindow, false);
+			if (targetWindow->SetUp())
+			{
+				RegisterWindow(targetWindow, false);
+			}
+			else
+			{
+				MK_DELETE(targetWindow);
+			}
 		}
 
 		MK_CHECK(targetWindow != NULL, L"edit mode용 node selection window 생성 실패") {}
@@ -169,8 +176,6 @@ void MkWindowEventManager::RemoveWindow(const MkHashStr& windowName)
 		{
 			m_FocusLostByClick = true;
 			m_LastFocusWindow.Clear();
-			m_CurrentTargetWindowNode = NULL;
-			_SetRegionLayerVisible(false);
 		}
 
 		if ((m_FrontHitWindow != NULL) && (windowName == m_FrontHitWindow->GetRootWindow()->GetNodeName()))
@@ -191,7 +196,7 @@ void MkWindowEventManager::RemoveWindow(const MkHashStr& windowName)
 
 		if ((m_CurrentTargetWindowNode != NULL) && (windowName == m_CurrentTargetWindowNode->GetRootWindow()->GetNodeName()))
 		{
-			m_CurrentTargetWindowNode = NULL;
+			SetTargetWindowNode(NULL);
 		}
 
 		m_RootNode->DetachChildNode(windowName);
@@ -277,7 +282,7 @@ void MkWindowEventManager::Update(void)
 		// setting window toggle
 		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
 		{
-			if (MKDEF_ARRAY_EXIST(m_OnActivatingWindows, SETTING_WINDOW_NAME))
+			if (IsOnActivation(SETTING_WINDOW_NAME))
 			{
 				DeactivateWindow(SETTING_WINDOW_NAME);
 			}
@@ -287,24 +292,16 @@ void MkWindowEventManager::Update(void)
 			}
 		}
 
-		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(NODE_SEL_WINDOW_NAME))
+		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(TARGET_WINDOW_NAME))
 		{
-			if (MKDEF_ARRAY_EXIST(m_OnActivatingWindows, NODE_SEL_WINDOW_NAME))
+			if (IsOnActivation(TARGET_WINDOW_NAME))
 			{
-				DeactivateWindow(NODE_SEL_WINDOW_NAME);
+				DeactivateWindow(TARGET_WINDOW_NAME);
 			}
 			else
 			{
-				if (m_CurrentTargetWindowNode != NULL)
-				{
-					MkEditModeNodeSelectionWindow* targetWindow = dynamic_cast<MkEditModeNodeSelectionWindow*>(m_WindowTable[NODE_SEL_WINDOW_NAME]);
-					if (targetWindow != NULL)
-					{
-						targetWindow->SetUp(m_CurrentTargetWindowNode);
-					}
-					
-					ActivateWindow(NODE_SEL_WINDOW_NAME, true);
-				}
+				_PassTargetWindow(true);
+				ActivateWindow(TARGET_WINDOW_NAME, false);
 			}
 		}
 	}
@@ -443,8 +440,7 @@ void MkWindowEventManager::Update(void)
 					_LastWindowLostFocus();
 					m_LastFocusWindow.Clear();
 
-					m_CurrentTargetWindowNode = NULL;
-					_SetRegionLayerVisible(false);
+					SetTargetWindowNode(NULL);
 				}
 			}
 		}
@@ -565,18 +561,15 @@ void MkWindowEventManager::Update(void)
 			}
 		}
 
-		if (onFocusWindowNode != NULL)
-		{
-			onFocusWindowNode->__ConsumeWindowEvent();
-		}
-
 		if (cursorAvailable && (onFocusWindowNode != NULL))
 		{
 			// 타겟 윈도우, 드래그 윈도우 선택
 			if (currentButtonPressed[0] && onFocusWindowNode->GetWorldAABR().CheckIntersection(currentCursorPosition))
 			{
 				MkBaseWindowNode* frontHit = onFocusWindowNode->__GetFrontHitWindow(currentCursorPosition);
-				if (m_AllowDragMovement && (frontHit != NULL)) // 이동 모드일때만 slide bar를 타게팅 할 수 있게 변환
+
+				// 이동 모드일때만 slide bar를 타게팅 할 수 있게 변환
+				if (m_EditMode && m_AllowDragMovement && (frontHit != NULL) && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eForEditMode)))
 				{
 					switch (frontHit->GetPresetComponentType())
 					{
@@ -596,11 +589,9 @@ void MkWindowEventManager::Update(void)
 					// edit box 영역이 선택되었으면 알림. 다른 종류의 윈도우면 입력모드 취소
 					MK_EDIT_BOX.BindControl((frontHit->GetNodeType() == eS2D_SNT_EditBoxNode) ? frontHit : NULL);
 
-					if (m_EditMode && (onFocusWindowNode->GetNodeName() != SETTING_WINDOW_NAME) && (onFocusWindowNode->GetNodeName() != NODE_SEL_WINDOW_NAME))
+					if (m_EditMode && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eForEditMode)))
 					{
-						m_CurrentTargetWindowNode = frontHit;
-
-						_ShowRegionLayer();
+						SetTargetWindowNode(frontHit);
 					}
 					
 					if (m_FrontHitWindow == NULL)
@@ -609,6 +600,8 @@ void MkWindowEventManager::Update(void)
 						m_CursorStartPosition = currentCursorPosition;
 						m_WindowAABRBegin = m_FrontHitWindow->GetWorldAABR().position;
 						m_WindowOffsetToWorldPos = MkFloat2(m_FrontHitWindow->GetWorldPosition().x, m_FrontHitWindow->GetWorldPosition().y) - m_WindowAABRBegin;
+
+						m_FrontHitWindow->StartDragMovement(m_FrontHitWindow);
 
 						// 핸들링 시작
 						if (m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragToHandling))
@@ -626,13 +619,30 @@ void MkWindowEventManager::Update(void)
 				{
 				}
 				// 이동금지 속성이 없는 상태에서 에디트 모드거나 드래깅 윈도우가 이동 속성을 가지고 있을 경우 윈도우 이동
-				else if ((!m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eIgnoreMovement)) &&
-					((m_EditMode && m_AllowDragMovement) || m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragMovement)))
+				else if (!m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eIgnoreMovement))
 				{
-					MkFloat2 offset = currentCursorPosition - m_CursorStartPosition;
-					MkFloat2 newPosition = _ConfineMovement(m_FrontHitWindow, m_WindowAABRBegin, m_WindowOffsetToWorldPos, offset);
-					m_FrontHitWindow->SetLocalAsWorldPosition(newPosition, false);
+					bool onMove = (m_EditMode && m_AllowDragMovement && (!m_FrontHitWindow->GetRootWindow()->GetAttribute(MkBaseWindowNode::eForEditMode)));
+					if (!onMove)
+					{
+						onMove = m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragMovement);
+					}
+
+					if (onMove)
+					{
+						MkFloat2 offset = currentCursorPosition - m_CursorStartPosition;
+						if (m_FrontHitWindow->ConfirmDragMovement(m_FrontHitWindow, offset))
+						{
+							MkFloat2 newPosition = _ConfineMovement(m_FrontHitWindow, m_WindowAABRBegin, m_WindowOffsetToWorldPos, offset);
+							m_FrontHitWindow->SetLocalAsWorldPosition(newPosition, false);
+						}
+					}
 				}
+			}
+
+			// notify window event
+			if (onFocusWindowNode != NULL)
+			{
+				onFocusWindowNode->__ConsumeWindowEvent();
 			}
 		}
 
@@ -743,6 +753,22 @@ const MkFloatRect& MkWindowEventManager::GetRegionRect(void) const
 	return (m_DrawStep == NULL) ? nullRect : m_DrawStep->GetRegionRect();
 }
 
+void MkWindowEventManager::SetTargetWindowNode(MkBaseWindowNode* targetWindow)
+{
+	m_CurrentTargetWindowNode = targetWindow;
+
+	if (m_CurrentTargetWindowNode == NULL)
+	{
+		_SetRegionLayerVisible(false);
+	}
+	else
+	{
+		_ShowRegionLayer();
+	}
+
+	_PassTargetWindow();
+}
+
 void MkWindowEventManager::Clear(void)
 {
 	m_DrawStep = NULL;
@@ -772,7 +798,7 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 	m_FrontHitWindow = NULL;
 	m_CurrentTargetWindowNode = NULL;
 
-	m_ShowWindowSelection = false;
+	m_ShowWindowSelection = true;
 	m_AllowDragMovement = true;
 }
 
@@ -921,6 +947,18 @@ bool MkWindowEventManager::_SetRegionLayerVisible(bool enable)
 		}
 	}
 	return false;
+}
+
+void MkWindowEventManager::_PassTargetWindow(bool ignoreActivationCheck)
+{
+	if (ignoreActivationCheck || IsOnActivation(TARGET_WINDOW_NAME))
+	{
+		MkEditModeTargetWindow* targetWindow = dynamic_cast<MkEditModeTargetWindow*>(m_WindowTable[TARGET_WINDOW_NAME]);
+		if (targetWindow != NULL)
+		{
+			targetWindow->SetTargetNode(m_CurrentTargetWindowNode);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

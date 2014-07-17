@@ -135,13 +135,13 @@
 #define MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY VK_ESCAPE
 
 // 선택창 토글 버튼
-#define MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY VK_TAB
+#define MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY VK_F2
 
-// 선택창에서 한 라인 크기
-#define MKDEF_S2D_NODE_SEL_LINE_SIZE MkFloat2(500.f, 16.f)
+// 선택창에서 한 라인 height
+#define MKDEF_S2D_NODE_SEL_LINE_SIZE 16.f
 
-// 선택창에서 상/하 공백 크기
-#define MKDEF_S2D_NODE_SEL_WINDOW_MARGIN 30
+// 선택창에서 node depth당 들여쓰기 크기
+#define MKDEF_S2D_NODE_SEL_DEPTH_OFFSET 20.f
 
 //------------------------------------------------------------------------------------------------//
 // DEBUG

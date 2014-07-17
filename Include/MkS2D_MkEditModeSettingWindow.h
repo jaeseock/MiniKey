@@ -11,9 +11,7 @@ class MkEditModeSettingWindow : public MkBaseWindowNode
 {
 public:
 
-	bool SetUp(const MkHashStr& themeName);
-
-	virtual void Activate(void);
+	bool SetUp(void);
 
 	virtual void UseWindowEvent(WindowEvent& evt);
 

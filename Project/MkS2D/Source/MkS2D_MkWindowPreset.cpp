@@ -48,6 +48,11 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 		return false;
 	m_WindowBackgroundSampleSubsetName = windowBackgroundSampleSubsetName;
 
+	MkStr windowSelectIconSubsetName;
+	MK_CHECK(node.GetData(L"WindowSelectIconSubsetName", windowSelectIconSubsetName, 0) && (!windowSelectIconSubsetName.Empty()), L"window preset 노드에 WindowSelectIconSubsetName이 지정되어 있지 않음")
+		return false;
+	m_WindowSelectIconSubsetName = windowSelectIconSubsetName;
+
 	MkStr editBoxFontType;
 	MK_CHECK(node.GetData(L"EditBoxFontType", editBoxFontType, 0) && (!editBoxFontType.Empty()), L"window preset 노드에 EditBoxFontType이 지정되어 있지 않음")
 		return false;
@@ -161,8 +166,8 @@ void MkWindowPreset::Clear(void)
 const static MkHashStr sPresetKeywords[eS2D_WPC_MaxWindowPresetComponent] =
 	{ L"BackgroundWindow", L"StaticWindow", L"GuideBox", L"ArrowLeft", L"ArrowRight", L"ArrowUp", L"ArrowDown", L"VSlideBar", L"HSlideBar", // bg
 	L"TitleWindow", // title
-	L"NormalButton", L"OKButton", L"CancelButton", L"SelectionButton", L"RootButton", L"ListButton", L"UncheckButton", L"CheckButton",
-	L"DirLeftButton", L"DirRightButton", L"DirUpButton", L"DirDownButton", L"VSlideButton", L"HSlideButton", L"CloseIcon" };
+	L"NormalBtn", L"OKBtn", L"CancelBtn", L"SelectionBtn", L"RootBtn", L"ListBtn", L"UncheckBtn", L"CheckBtn",
+	L"DirLeftBtn", L"DirRightBtn", L"DirUpBtn", L"DirDownBtn", L"VSlideBtn", L"HSlideBtn", L"CloseBtn" };
 
 eS2D_WindowPresetComponent MkWindowPreset::GetWindowPresetComponentEnum(const MkHashStr& keyword)
 {

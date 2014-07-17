@@ -54,7 +54,8 @@ void MkHiddenEditBox::BindControl(MkBaseWindowNode* control)
 			{
 				SetWindowText(m_hWnd, L"");
 				SendMessage(m_hWnd, EM_SETSEL, 0, 0);
-				SetFocus(NULL);
+				HWND parentHandle = GetParent(m_hWnd);
+				SetFocus(parentHandle);
 			}
 		}
 	}

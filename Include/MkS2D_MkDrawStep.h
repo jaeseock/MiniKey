@@ -32,7 +32,7 @@ public:
 	inline MkOrthogonalCamera& GetCamera(void) { return m_Camera; }
 
 	// 렌더타겟 영역 반환
-	inline const MkFloatRect& GetRegionRect(void) const { return m_RenderTarget.GetRegionRect(); }
+	inline const MkFloatRect& GetRegionRect(void) { return m_RenderTarget.GetRegionRect(); }
 
 	// 보이기 설정/반환
 	inline void SetVisible(bool visible) { m_Visible = visible; }

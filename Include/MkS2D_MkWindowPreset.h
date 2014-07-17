@@ -40,6 +40,7 @@ public:
 	inline const MkHashStr& GetRegionLayerSubsetName(void) const { return m_RegionLayerSubsetName; }
 	inline const MkHashStr& GetWindowIconSampleSubsetName(void) const { return m_WindowIconSampleSubsetName; }
 	inline const MkHashStr& GetWindowBackgroundSampleSubsetName(void) const { return m_WindowBackgroundSampleSubsetName; }
+	inline const MkHashStr& GetWindowSelectIconSubsetName(void) const { return m_WindowSelectIconSubsetName; }
 
 	// edit box용 기본 폰트 정보 반환
 	inline const MkHashStr& GetEditBoxFontType(void) const { return m_EditBoxFontType; }
@@ -90,6 +91,7 @@ protected:
 	MkHashStr m_RegionLayerSubsetName;
 	MkHashStr m_WindowIconSampleSubsetName;
 	MkHashStr m_WindowBackgroundSampleSubsetName;
+	MkHashStr m_WindowSelectIconSubsetName;
 	MkHashStr m_EditBoxFontType;
 	MkHashStr m_EditBoxNormalFontState;
 	MkHashStr m_EditBoxSelectionFontState;

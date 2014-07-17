@@ -782,7 +782,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 			// close icon
 			if (d.hasCloseIcon)
 			{
-				MkBaseWindowNode* closeWindow = __CreateWindowPreset(titleWindow, L"CloseIcon", d.themeName, eS2D_WPC_CloseIcon, MkFloat2(0.f, 0.f));
+				MkBaseWindowNode* closeWindow = __CreateWindowPreset(titleWindow, L"CloseBtn", d.themeName, eS2D_WPC_CloseButton, MkFloat2(0.f, 0.f));
 				if (closeWindow != NULL)
 				{
 					MkFloat2 localPos =	MkFloatRect(titleWindow->GetPresetComponentSize()).GetSnapPosition
@@ -1161,7 +1161,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 
 		if (button == 0)
 		{
-			if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_CloseIcon))
+			if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName) == eS2D_WPC_CloseButton))
 			{
 				MK_WIN_EVENT_MGR.DeactivateWindow(GetRootWindow()->GetNodeName());
 				return true;
@@ -1280,6 +1280,64 @@ bool MkBaseWindowNode::CheckCursorHitCondition(const MkFloat2& position) const
 {
 	eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName);
 	return ((IsTitleStateType(component) || IsWindowStateType(component)) && GetWindowRect().CheckGridIntersection(position));
+}
+
+void MkBaseWindowNode::StartDragMovement(MkBaseWindowNode* targetWindow)
+{
+	if (!CheckRootWindow())
+	{
+		MkSceneNode* parentNode = m_ParentNodePtr;
+		while (true)
+		{
+			if (parentNode == NULL)
+				break;
+
+			if (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+			{
+				MkBaseWindowNode* targetNode = dynamic_cast<MkBaseWindowNode*>(parentNode);
+				if (targetNode != NULL)
+				{
+					targetNode->StartDragMovement(targetWindow);
+					return;
+				}
+			}
+
+			parentNode = parentNode->GetParentNode();
+		}
+	}
+}
+
+bool MkBaseWindowNode::ConfirmDragMovement(MkBaseWindowNode* targetWindow, MkFloat2& positionOffset)
+{
+	if (!CheckRootWindow())
+	{
+		MkSceneNode* parentNode = m_ParentNodePtr;
+		while (true)
+		{
+			if (parentNode == NULL)
+				break;
+
+			if (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+			{
+				MkBaseWindowNode* targetNode = dynamic_cast<MkBaseWindowNode*>(parentNode);
+				if (targetNode != NULL)
+				{
+					return targetNode->ConfirmDragMovement(targetWindow, positionOffset);
+				}
+			}
+
+			parentNode = parentNode->GetParentNode();
+		}
+	}
+	return true;
+}
+
+void MkBaseWindowNode::Activate(void)
+{
+	if (GetAttribute(eAlignCenterPos))
+	{
+		AlignPosition(MK_WIN_EVENT_MGR.GetRegionRect(), eRAP_MiddleCenter, MkInt2(0, 0)); // 중앙 정렬
+	}
 }
 
 void MkBaseWindowNode::OnFocus(void)
@@ -1492,25 +1550,29 @@ void MkBaseWindowNode::__ConsumeWindowEvent(void)
 	}
 }
 
-void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* targetParentNode, unsigned int offset)
+void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* parentNode, unsigned int depth, MkArray<MkBaseWindowNode*>& buffer)
 {
-	if (targetParentNode != NULL)
+	if (parentNode != NULL)
 	{
 		MkBaseWindowNode* targetNode = __CreateWindowPreset
-			(targetParentNode, GetNodeName(), MK_WR_PRESET.GetDefaultThemeName(), eS2D_WPC_SelectionButton, MKDEF_S2D_NODE_SEL_LINE_SIZE);
+			(parentNode, MkStr(buffer.GetSize()), MK_WR_PRESET.GetDefaultThemeName(), eS2D_WPC_SelectionButton, MkFloat2(100.f, MKDEF_S2D_NODE_SEL_LINE_SIZE));
 
 		if (targetNode != NULL)
 		{
+			buffer.PushBack(this);
+
+			targetNode->SetAttribute(eIgnoreMovement, true);
+
 			// fill info
 			MkStr windowType;
 			switch (GetNodeType())
 			{
-			case eS2D_SNT_SceneNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), L"[SceneNode]", windowType); break;
 			case eS2D_SNT_BaseWindowNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.YellowFS(), L"[BaseWindow]", windowType); break;
 			case eS2D_SNT_SpreadButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.CianFS(), L"[SpreadBtn]", windowType); break;
 			case eS2D_SNT_CheckButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.PinkFS(), L"[CheckBtn]", windowType); break;
 			case eS2D_SNT_ScrollBarNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.OrangeFS(), L"[ScrollBar]", windowType); break;
 			case eS2D_SNT_EditBoxNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), L"[EditBox]", windowType); break;
+			default: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), L"[SceneNode]", windowType); break;
 			}
 
 			MkStr header;
@@ -1562,17 +1624,19 @@ void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* targetParentNode
 				targetNode->SetAlpha(0.5f);
 			}
 
-			targetNode->SetLocalPosition(MkFloat2(40.f, -targetNode->GetPresetComponentSize().y * static_cast<float>(offset)));
+			targetNode->SetLocalPosition
+				(MkFloat2(MKDEF_S2D_NODE_SEL_DEPTH_OFFSET * static_cast<float>(depth), -targetNode->GetPresetComponentSize().y * static_cast<float>(buffer.GetSize() - 1)));
 
-			int totalChildCnt = 0;
+			// text에 맞게 component 크기 재조정
+			const MkInt2& strSize = targetNode->GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME)->GetDecoString().GetDrawingSize();
+			MkFloat2 newCompSize = MkFloat2(static_cast<float>(strSize.x) + MK_WR_PRESET.GetMargin() * 2.f, MKDEF_S2D_NODE_SEL_LINE_SIZE);
+			targetNode->SetPresetComponentSize(newCompSize);
+
+			// 하위 순회
+			unsigned int newDepth = depth + 1;
 			MK_INDEXING_LOOP(m_ChildWindows, i)
 			{
-				if (i > 0)
-				{
-					totalChildCnt += m_ChildWindows[i-1]->__CountTotalWindowBasedChildren();
-				}
-
-				m_ChildWindows[i]->__BuildInformationTree(targetNode, i + 1 + totalChildCnt);
+				m_ChildWindows[i]->__BuildInformationTree(parentNode, newDepth, buffer);
 			}
 		}
 	}

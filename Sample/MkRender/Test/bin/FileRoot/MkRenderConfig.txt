@@ -817,6 +817,7 @@ Node "WindowPreset"
 	str RegionLayerSubsetName = "Region";
 	str WindowIconSampleSubsetName = "SampleIcon";
 	str WindowBackgroundSampleSubsetName = "SampleBG";
+	str WindowSelectIconSubsetName = "SelIcon";
 	
 	str EditBoxFontType = "DSF";
 	str EditBoxNormalFontState = "WhiteFS";
@@ -836,21 +837,21 @@ Node "WindowPreset"
 		str VSlideBar = "DefaultVSlideBar";
 		str HSlideBar = "DefaultHSlideBar";
 		str TitleWindow = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
-		str NormalButton = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
-		str OKButton = "DefaultOBtnDefault" / "DefaultOBtnOnCursor" / "DefaultOBtnOnClick" / "DefaultBtnDisable";
-		str CancelButton = "DefaultCBtnDefault" / "DefaultCBtnOnCursor" / "DefaultCBtnOnClick" / "DefaultBtnDisable";
-		str SelectionButton = "DefaultSBtnDefault" / "DefaultSBtnOnCursor" / "DefaultSBtnOnCursor" / "DefaultSBtnDefault";
-		str RootButton = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
-		str ListButton = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
-		str UncheckButton = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnCursor" / "DefaultUncheckDefault";
-		str CheckButton = "DefaultCheckDefault" / "DefaultCheckOnCursor" / "DefaultCheckOnClick" / "DefaultCheckDisable";
-		str DirLeftButton = "DefaultDirLeftDefault" / "DefaultDirLeftOnCursor" / "DefaultDirLeftOnClick" / "DefaultDirLeftDisable";
-		str DirRightButton = "DefaultDirRightDefault" / "DefaultDirRightOnCursor" / "DefaultDirRightOnClick" / "DefaultDirRightDisable";
-		str DirUpButton = "DefaultDirUpDefault" / "DefaultDirUpOnCursor" / "DefaultDirUpOnClick" / "DefaultDirUpDisable";
-		str DirDownButton = "DefaultDirDownDefault" / "DefaultDirDownOnCursor" / "DefaultDirDownOnClick" / "DefaultDirDownDisable";
-		str VSlideButton = "DefaultVSlideBtnDefault" / "DefaultVSlideBtnOnCursor" / "DefaultVSlideBtnOnClick" / "DefaultVSlideBtnDisable";
-		str HSlideButton = "DefaultHSlideBtnDefault" / "DefaultHSlideBtnOnCursor" / "DefaultHSlideBtnOnClick" / "DefaultHSlideBtnDisable";
-		str CloseIcon =  "DefaultCloseDefault" / "DefaultCloseOnCursor" / "DefaultCloseOnClick" / "DefaultCloseDisable";
+		str NormalBtn = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
+		str OKBtn = "DefaultOBtnDefault" / "DefaultOBtnOnCursor" / "DefaultOBtnOnClick" / "DefaultBtnDisable";
+		str CancelBtn = "DefaultCBtnDefault" / "DefaultCBtnOnCursor" / "DefaultCBtnOnClick" / "DefaultBtnDisable";
+		str SelectionBtn = "DefaultSBtnDefault" / "DefaultSBtnOnCursor" / "DefaultSBtnOnCursor" / "DefaultSBtnDefault";
+		str RootBtn = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
+		str ListBtn = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
+		str UncheckBtn = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnCursor" / "DefaultUncheckDefault";
+		str CheckBtn = "DefaultCheckDefault" / "DefaultCheckOnCursor" / "DefaultCheckOnClick" / "DefaultCheckDisable";
+		str DirLeftBtn = "DefaultDirLeftDefault" / "DefaultDirLeftOnCursor" / "DefaultDirLeftOnClick" / "DefaultDirLeftDisable";
+		str DirRightBtn = "DefaultDirRightDefault" / "DefaultDirRightOnCursor" / "DefaultDirRightOnClick" / "DefaultDirRightDisable";
+		str DirUpBtn = "DefaultDirUpDefault" / "DefaultDirUpOnCursor" / "DefaultDirUpOnClick" / "DefaultDirUpDisable";
+		str DirDownBtn = "DefaultDirDownDefault" / "DefaultDirDownOnCursor" / "DefaultDirDownOnClick" / "DefaultDirDownDisable";
+		str VSlideBtn = "DefaultVSlideBtnDefault" / "DefaultVSlideBtnOnCursor" / "DefaultVSlideBtnOnClick" / "DefaultVSlideBtnDisable";
+		str HSlideBtn = "DefaultHSlideBtnDefault" / "DefaultHSlideBtnOnCursor" / "DefaultHSlideBtnOnClick" / "DefaultHSlideBtnDisable";
+		str CloseBtn =  "DefaultCloseDefault" / "DefaultCloseOnCursor" / "DefaultCloseOnClick" / "DefaultCloseDisable";
 		
 		str FontState = "YellowFS" / "WhiteFS";
 	}

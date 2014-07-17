@@ -27,7 +27,11 @@ public:
 		eConfinedToParent, // 이동시 부모의 AABR 영역으로 범위 제한(부모 window node가 없으면 스크린 영역)
 		eConfinedToScreen, // 이동시 스크린 영역으로 범위 제한. eConfinedToRect보다 우선순위 높음
 
-		eDragToHandling // 커서 드래그로 핸들링 허용. eDragMovement보다 우선순위 높음
+		eDragToHandling, // 커서 드래그로 핸들링 허용. eDragMovement보다 우선순위 높음
+
+		eForEditMode, // edit mode용 윈도우
+
+		eAlignCenterPos // activate시 중앙 정렬
 	};
 
 	//------------------------------------------------------------------------------------------------//
@@ -250,21 +254,27 @@ public:
 	virtual void InputEventMouseMove(bool inside, bool (&btnPushing)[3], const MkFloat2& position);
 
 	// InputEventMouse...() 순회중 해당 윈도우가 HitEvent...() 호출 될 조건(hit condition)
+	// 기본적으로 이미 AABR 체크는 만족한 상태
 	virtual bool CheckCursorHitCondition(const MkFloat2& position) const;
 	virtual bool CheckWheelMoveCondition(const MkFloat2& position) const { return true; }
 
-	// hit condition(CheckCursorHitCondition/CheckWheelMoveCondition)을 만족한 윈도우만 호출
-	// 자신의 input event는 여기서 처리
-	virtual bool HitEventMousePress(unsigned int button, const MkFloat2& position) { return false; }
-	virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position) { return false; }
-	virtual bool HitEventMouseDoubleClick(unsigned int button, const MkFloat2& position) { return false; }
-	virtual bool HitEventMouseWheelMove(int delta, const MkFloat2& position) { return false; }
+	// hit condition을 만족한 윈도우의 input event는 여기서 처리
+	virtual bool HitEventMousePress(unsigned int button, const MkFloat2& position) { return false; } // CheckCursorHitCondition
+	virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position) { return false; } // CheckCursorHitCondition
+	virtual bool HitEventMouseDoubleClick(unsigned int button, const MkFloat2& position) { return false; } // CheckCursorHitCondition
+	virtual bool HitEventMouseWheelMove(int delta, const MkFloat2& position) { return false; } // CheckWheelMoveCondition
+
+	// 마우스 드래그가 시작했을 경우 대상 윈도우(targetWindow)를 넣어 호출된 윈도우부터 root window까지 연쇄적으로 호출
+	virtual void StartDragMovement(MkBaseWindowNode* targetWindow);
+
+	// 마우스 드래그가 발생했을 경우 대상 윈도우(targetWindow)와 시작 지점부터의 이동벡터(offset)를 넣어 호출된 윈도우부터 root window까지 연쇄적으로 호출
+	virtual bool ConfirmDragMovement(MkBaseWindowNode* targetWindow, MkFloat2& positionOffset);
 
 	// 하위 윈도우들이 발생시킨 window event가 존재 할 경우 호출됨
 	virtual void UseWindowEvent(WindowEvent& evt) {}
 	
 	// activation
-	virtual void Activate(void) {}
+	virtual void Activate(void);
 	virtual void Deactivate(void) {}
 
 	// focus
@@ -303,8 +313,9 @@ public:
 	void __ConsumeWindowEvent(void);
 
 	// for edit mode
-	void __BuildInformationTree(MkBaseWindowNode* targetParentNode, unsigned int offset);
+	void __BuildInformationTree(MkBaseWindowNode* targetParentNode, unsigned int depth, MkArray<MkBaseWindowNode*>& buffer);
 	unsigned int __CountTotalWindowBasedChildren(void) const;
+	inline MkBaseWindowNode* __GetWindowBasedChild(unsigned int index) { return m_ChildWindows.IsValidIndex(index) ? m_ChildWindows[index] : NULL; }
 
 protected:
 

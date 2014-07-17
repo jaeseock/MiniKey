@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.15 (21:21:51),
+//   - time stamp : 2014.07.16 (16:44:04),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -160,7 +160,7 @@ Node "<SceneNode>"
 			{
 				uint Attribute = 8;
 				int2 PCompSize = (60, 18);
-				str PComponent = "CancelButton";
+				str PComponent = "CancelBtn";
 				str PThemeName = "Default";
 				vec3 Position = (180.000, 3.000, -0.025);
 
@@ -806,7 +806,7 @@ Node "<SceneNode>"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (12, 12);
-								str PComponent = "CheckButton";
+								str PComponent = "CheckBtn";
 								str PThemeName = "Default";
 								vec3 Position = (3.000, 3.000, -0.025);
 
@@ -884,7 +884,7 @@ Node "<SceneNode>"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (12, 12);
-								str PComponent = "UncheckButton";
+								str PComponent = "UncheckBtn";
 								str PThemeName = "Default";
 								vec3 Position = (3.000, 3.000, -0.025);
 								bool Visible = No;
@@ -964,7 +964,7 @@ Node "<SceneNode>"
 					Node "EB" : "T_EditBoxNode"
 					{
 						int2 PCompSize = (150, 20);
-						str PComponent = "RootButton";
+						str PComponent = "RootBtn";
 						str PThemeName = "Default";
 						vec3 Position = (10.000, 50.000, -0.001);
 						str Text = "오이!!!";
@@ -1363,7 +1363,7 @@ Node "<SceneNode>"
 					Node "FreeImageBtn" : "T_BaseWindowNode"
 					{
 						int2 PCompSize = (18, 18);
-						str PComponent = "NormalButton";
+						str PComponent = "NormalBtn";
 						vec3 Position = (130.000, 130.000, -0.001);
 
 						Node "<SceneNode>"
@@ -1495,7 +1495,7 @@ Node "<SceneNode>"
 									{
 										uint Attribute = 12;
 										int2 PCompSize = (12, 18);
-										str PComponent = "HSlideButton";
+										str PComponent = "HSlideBtn";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 0.000, -0.025);
 
@@ -1655,7 +1655,7 @@ Node "<SceneNode>"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);
-								str PComponent = "DirRightButton";
+								str PComponent = "DirRightBtn";
 								str PThemeName = "Default";
 								vec3 Position = (102.000, 0.000, 0.000);
 
@@ -1733,7 +1733,7 @@ Node "<SceneNode>"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);
-								str PComponent = "DirLeftButton";
+								str PComponent = "DirLeftBtn";
 								str PThemeName = "Default";
 
 								Node "<SceneNode>"
@@ -1820,7 +1820,7 @@ Node "<SceneNode>"
 							"3";
 						uint OpeningDir = 2;
 						int2 PCompSize = (100, 20);
-						str PComponent = "RootButton";
+						str PComponent = "RootBtn";
 						str PThemeName = "Default";
 						vec3 Position = (10.000, 130.000, -0.100);
 						str TargetButton = "1-1";
@@ -1871,7 +1871,7 @@ Node "<SceneNode>"
 								str IconPath = "Default\window_mgr.png";
 								str IconSubset = "SampleIcon";
 								int2 PCompSize = (100, 20);
-								str PComponent = "ListButton";
+								str PComponent = "ListBtn";
 								str PThemeName = "Default";
 								vec3 Position = (0.000, 0.000, 0.002);
 								bool Visible = No;
@@ -2314,7 +2314,7 @@ Node "<SceneNode>"
 									"1-1" /
 									"1-2";
 								int2 PCompSize = (100, 20);
-								str PComponent = "ListButton";
+								str PComponent = "ListBtn";
 								str PThemeName = "Default";
 								vec3 Position = (0.000, 0.000, 0.002);
 								bool Visible = No;
@@ -2365,7 +2365,7 @@ Node "<SceneNode>"
 										str IconPath = "Default\window_mgr.png";
 										str IconSubset = "SampleIcon";
 										int2 PCompSize = (100, 20);
-										str PComponent = "ListButton";
+										str PComponent = "ListBtn";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 0.000, 0.002);
 										bool Visible = No;
@@ -2804,7 +2804,7 @@ Node "<SceneNode>"
 										str IconPath = "Default\window_mgr.png";
 										str IconSubset = "SampleIcon";
 										int2 PCompSize = (100, 20);
-										str PComponent = "ListButton";
+										str PComponent = "ListBtn";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 0.000, 0.002);
 										bool Visible = No;
@@ -3243,7 +3243,7 @@ Node "<SceneNode>"
 										str IconPath = "Default\window_mgr.png";
 										str IconSubset = "SampleIcon";
 										int2 PCompSize = (100, 20);
-										str PComponent = "ListButton";
+										str PComponent = "ListBtn";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 0.000, 0.002);
 										bool Visible = No;
@@ -4097,7 +4097,7 @@ Node "<SceneNode>"
 								str IconPath = "Default\window_mgr.png";
 								str IconSubset = "SampleIcon";
 								int2 PCompSize = (100, 20);
-								str PComponent = "ListButton";
+								str PComponent = "ListBtn";
 								str PThemeName = "Default";
 								vec3 Position = (0.000, 0.000, 0.002);
 								bool Visible = No;
@@ -4539,7 +4539,7 @@ Node "<SceneNode>"
 									"3-0" /
 									"3-1";
 								int2 PCompSize = (100, 20);
-								str PComponent = "ListButton";
+								str PComponent = "ListBtn";
 								str PThemeName = "Default";
 								vec3 Position = (0.000, 0.000, 0.002);
 								bool Visible = No;
@@ -4590,7 +4590,7 @@ Node "<SceneNode>"
 										str IconPath = "Default\window_mgr.png";
 										str IconSubset = "SampleIcon";
 										int2 PCompSize = (100, 20);
-										str PComponent = "ListButton";
+										str PComponent = "ListBtn";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 0.000, 0.002);
 										bool Visible = No;
@@ -5030,7 +5030,7 @@ Node "<SceneNode>"
 										str IconSubset = "SampleIcon";
 										str ItemSeq = "3-1-0";
 										int2 PCompSize = (100, 20);
-										str PComponent = "ListButton";
+										str PComponent = "ListBtn";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 0.000, 0.002);
 										bool Visible = No;
@@ -5081,7 +5081,7 @@ Node "<SceneNode>"
 												str IconPath = "Default\window_mgr.png";
 												str IconSubset = "SampleIcon";
 												int2 PCompSize = (100, 20);
-												str PComponent = "ListButton";
+												str PComponent = "ListBtn";
 												str PThemeName = "Default";
 												vec3 Position = (0.000, 0.000, 0.002);
 												bool Visible = No;
@@ -6815,7 +6815,7 @@ Node "<SceneNode>"
 									{
 										uint Attribute = 12;
 										int2 PCompSize = (3, 12);
-										str PComponent = "VSlideButton";
+										str PComponent = "VSlideBtn";
 										str PThemeName = "Default";
 										vec3 Position = (0.000, 71.400, -0.025);
 
@@ -6975,7 +6975,7 @@ Node "<SceneNode>"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);
-								str PComponent = "DirDownButton";
+								str PComponent = "DirDownBtn";
 								str PThemeName = "Default";
 
 								Node "<SceneNode>"
@@ -7052,7 +7052,7 @@ Node "<SceneNode>"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);
-								str PComponent = "DirUpButton";
+								str PComponent = "DirUpBtn";
 								str PThemeName = "Default";
 								vec3 Position = (0.000, 102.000, 0.000);
 
@@ -7134,7 +7134,7 @@ Node "<SceneNode>"
 			{
 				uint Attribute = 8;
 				int2 PCompSize = (60, 18);
-				str PComponent = "OKButton";
+				str PComponent = "OKBtn";
 				str PThemeName = "Default";
 				vec3 Position = (60.000, 3.000, -0.025);
 
@@ -7555,11 +7555,11 @@ Node "<SceneNode>"
 		}
 	}
 
-	Node "CloseIcon" : "T_BaseWindowNode"
+	Node "CloseBtn" : "T_BaseWindowNode"
 	{
 		uint Attribute = 2;
 		int2 PCompSize = (14, 14);
-		str PComponent = "CloseIcon";
+		str PComponent = "CloseBtn";
 		str PThemeName = "Default";
 		vec3 Position = (277.000, 3.000, -0.025);
 
