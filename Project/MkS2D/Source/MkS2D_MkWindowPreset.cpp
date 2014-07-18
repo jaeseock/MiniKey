@@ -185,7 +185,7 @@ eS2D_WindowPresetComponent MkWindowPreset::GetWindowPresetComponentEnum(const Mk
 
 const MkHashStr& MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WindowPresetComponent component)
 {
-	return sPresetKeywords[component];
+	return (component == eS2D_WPC_None) ? MkHashStr::NullHash : sPresetKeywords[component];
 }
 
 const MkHashStr& MkWindowPreset::GetBackgroundStateKeyword(eS2D_BackgroundState state)

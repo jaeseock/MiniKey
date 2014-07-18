@@ -106,7 +106,7 @@ void MkCheckButtonNode::Save(MkDataNode& node)
 
 bool MkCheckButtonNode::CheckCursorHitCondition(const MkFloat2& position) const
 {
-	return (IsBackgroundStateType(MkWindowPreset::GetWindowPresetComponentEnum(m_PresetComponentName)) && GetWindowRect().CheckGridIntersection(position));
+	return (IsBackgroundStateType(m_PresetComponentType) && GetWindowRect().CheckGridIntersection(position));
 }
 
 bool MkCheckButtonNode::HitEventMouseRelease(unsigned int button, const MkFloat2& position)

@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.16 (16:44:04),
+//   - time stamp : 2014.07.18 (17:45:30),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -24,6 +24,7 @@ Node "<SRect>"
 			"odt" /
 			"타 이 틀";
 		vec2 Size = (44.000, 12.000);
+		bool Visible = No;
 	}
 
 	Node "NormalTag" : "T_SRect"
@@ -175,6 +176,7 @@ Node "<SceneNode>"
 							"odt" /
 							"취 소";
 						vec2 Size = (28.000, 12.000);
+						bool Visible = No;
 					}
 
 					Node "NormalTag" : "T_SRect"
@@ -1836,6 +1838,7 @@ Node "<SceneNode>"
 									"odt" /
 									"1-1";
 								vec2 Size = (18.000, 12.000);
+								bool Visible = No;
 							}
 
 							Node "ItemIcon" : "T_SRect"
@@ -1887,6 +1890,7 @@ Node "<SceneNode>"
 											"odt" /
 											"0";
 										vec2 Size = (6.000, 12.000);
+										bool Visible = No;
 									}
 
 									Node "ItemIcon" : "T_SRect"
@@ -2330,6 +2334,7 @@ Node "<SceneNode>"
 											"odt" /
 											"1";
 										vec2 Size = (6.000, 12.000);
+										bool Visible = No;
 									}
 
 									Node "ItemIcon" : "T_SRect"
@@ -2381,6 +2386,7 @@ Node "<SceneNode>"
 													"odt" /
 													"1-0";
 												vec2 Size = (18.000, 12.000);
+												bool Visible = No;
 											}
 
 											Node "ItemIcon" : "T_SRect"
@@ -2820,6 +2826,7 @@ Node "<SceneNode>"
 													"odt" /
 													"1-1";
 												vec2 Size = (18.000, 12.000);
+												bool Visible = No;
 											}
 
 											Node "ItemIcon" : "T_SRect"
@@ -3259,6 +3266,7 @@ Node "<SceneNode>"
 													"odt" /
 													"1-2";
 												vec2 Size = (18.000, 12.000);
+												bool Visible = No;
 											}
 
 											Node "ItemIcon" : "T_SRect"
@@ -4113,6 +4121,7 @@ Node "<SceneNode>"
 											"odt" /
 											"2";
 										vec2 Size = (6.000, 12.000);
+										bool Visible = No;
 									}
 
 									Node "ItemIcon" : "T_SRect"
@@ -4555,6 +4564,7 @@ Node "<SceneNode>"
 											"odt" /
 											"3";
 										vec2 Size = (6.000, 12.000);
+										bool Visible = No;
 									}
 
 									Node "ItemIcon" : "T_SRect"
@@ -4606,6 +4616,7 @@ Node "<SceneNode>"
 													"odt" /
 													"3-0";
 												vec2 Size = (18.000, 12.000);
+												bool Visible = No;
 											}
 
 											Node "ItemIcon" : "T_SRect"
@@ -5046,6 +5057,7 @@ Node "<SceneNode>"
 													"odt" /
 													"3-1";
 												vec2 Size = (18.000, 12.000);
+												bool Visible = No;
 											}
 
 											Node "ItemIcon" : "T_SRect"
@@ -5097,6 +5109,7 @@ Node "<SceneNode>"
 															"odt" /
 															"3-1-0";
 														vec2 Size = (30.000, 12.000);
+														bool Visible = No;
 													}
 
 													Node "ItemIcon" : "T_SRect"
@@ -7149,6 +7162,7 @@ Node "<SceneNode>"
 							"odt" /
 							"확 인";
 						vec2 Size = (28.000, 12.000);
+						bool Visible = No;
 					}
 
 					Node "NormalTag" : "T_SRect"

@@ -531,6 +531,7 @@ void MkWindowEventManager::Update(void)
 					bool inside = (evt.arg0 == 1);
 					if (m_ModalWindow.Empty())
 					{
+						// 전체순회시 최적화 여지는 있지만 반대급부로 attach/detach/clear가 복잡해진다
 						for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
 						{
 							MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];

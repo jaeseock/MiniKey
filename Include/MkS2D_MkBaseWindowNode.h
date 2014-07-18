@@ -211,11 +211,11 @@ public:
 	bool SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 일반 icon(SRect) 설정
-	// (NOTE) 각각의 설정 사항에 대해서는 MkSRect의 항목 참조
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkPathName& imagePath, const MkHashStr& subsetName);
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedState, const CaptionDesc& captionDesc);
 
 	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 highlight/normal icon(SRect) 설정
+	// highlight가 true면 기본적으로 invisible 상태로 초기화됨
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkPathName& imagePath, const MkHashStr& subsetName);
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const CaptionDesc& captionDesc);
 
@@ -226,8 +226,8 @@ public:
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 적용중인 component 반환
-	inline const MkHashStr& GetPresetComponentName(void) const { return m_PresetComponentName; }
-	eS2D_WindowPresetComponent GetPresetComponentType(void) const;
+	const MkHashStr& GetPresetComponentName(void) const;
+	inline eS2D_WindowPresetComponent GetPresetComponentType(void) const { return m_PresetComponentType; }
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 영역 크기 반환
 	inline const MkFloat2& GetPresetComponentSize(void) const { return m_PresetComponentSize; }
@@ -305,6 +305,8 @@ public:
 
 	inline void __SetPresetComponentSize(const MkFloat2& size) { m_PresetComponentSize = size; }
 
+	inline void __SetCurrentComponentState(int state) { m_CurrentComponentState = state; }
+
 	inline void __PushEvent(const WindowEvent& evt) { m_WindowEvents.PushBack(evt); }
 	
 	MkBaseWindowNode* __GetFrontHitWindow(const MkFloat2& position);
@@ -332,8 +334,10 @@ protected:
 
 	// window preset
 	MkHashStr m_PresetThemeName;
-	MkHashStr m_PresetComponentName;
+	eS2D_WindowPresetComponent m_PresetComponentType;
 	MkFloat2 m_PresetComponentSize;
+
+	int m_CurrentComponentState;
 	
 	// attribute
 	MkBitFieldDW m_Attribute;

@@ -127,6 +127,7 @@ template <> int MkWindowPresetStateInterface<eS2D_BackgroundState>::GetEnd(void)
 template <> int MkWindowPresetStateInterface<eS2D_TitleState>::GetEnd(void) { return eS2D_TS_MaxTitleState; }
 template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetEnd(void) { return eS2D_WS_MaxWindowState; }
 
+template <> int MkWindowPresetStateInterface<eS2D_BackgroundState>::GetHighlight(void) { return eS2D_BS_DefaultState; }
 template <> int MkWindowPresetStateInterface<eS2D_TitleState>::GetHighlight(void) { return eS2D_TS_OnFocusState; }
 template <> int MkWindowPresetStateInterface<eS2D_WindowState>::GetHighlight(void) { return eS2D_WS_OnCursorState; }
 
