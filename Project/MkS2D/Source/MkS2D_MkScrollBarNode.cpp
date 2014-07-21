@@ -9,10 +9,10 @@
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
 
-const static MkHashStr PREV_BTN_NODE_NAME = L"Prev";
-const static MkHashStr NEXT_BTN_NODE_NAME = L"Next";
-const static MkHashStr BAR_NODE_NAME = L"Bar";
-const static MkHashStr SLIDE_NODE_NAME = L"Slide";
+const static MkHashStr PREV_BTN_NODE_NAME = L"__#PrevBtn";
+const static MkHashStr NEXT_BTN_NODE_NAME = L"__#NextBtn";
+const static MkHashStr BAR_NODE_NAME = L"__#BarBG";
+const static MkHashStr SLIDE_NODE_NAME = L"__#SlideBtn";
 
 //------------------------------------------------------------------------------------------------//
 

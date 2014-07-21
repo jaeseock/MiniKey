@@ -23,9 +23,10 @@ bool MkEditModeSettingWindow::SetUp(void)
 
 	BasicPresetWindowDesc winDesc;
 	winDesc.SetStandardDesc(themeName, true, MkFloat2(300, 400.f));
+	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
 	winDesc.titleCaption = L"에디트 모드 세팅";
 	winDesc.hasIcon = false;
-	winDesc.hasCloseIcon = false;
+	winDesc.hasCloseButton = true;
 	winDesc.hasCancelButton = false;
 	winDesc.hasOKButton = false;
 

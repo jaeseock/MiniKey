@@ -495,55 +495,6 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
-void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, bool hasTitle)
-{
-	this->themeName = themeName;
-	dragMovement = true;
-
-	this->hasTitle = hasTitle;
-	if (hasTitle)
-	{
-		titleHeight = 20.f;
-		iconImageFilePath = MK_WR_PRESET.GetSystemImageFilePath();
-		iconImageSubsetName = MK_WR_PRESET.GetWindowIconSampleSubsetName();
-		iconImageHeightOffset = 0.f;
-		titleCaption = MKDEF_TITLE_BAR_SAMPLE_STRING;
-	}
-	hasCloseIcon = hasTitle;
-	
-	hasFreeImageBG = true;
-	bgImageFilePath = MK_WR_PRESET.GetSystemImageFilePath();
-	bgImageSubsetName = MK_WR_PRESET.GetWindowBackgroundSampleSubsetName();
-
-	hasOKButton = true;
-	hasCancelButton = true;
-}
-
-void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkFloat2& windowSize)
-{
-	SetStandardDesc(themeName, hasTitle);
-
-	hasFreeImageBG = false;
-	bgImageFilePath.Clear();
-	bgImageSubsetName.Clear();
-	this->windowSize = windowSize;
-}
-
-void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkPathName& bgFilePath, const MkHashStr& subsetName)
-{
-	SetStandardDesc(themeName, hasTitle);
-
-	bgImageFilePath = bgFilePath;
-	bgImageSubsetName = subsetName;
-}
-
-MkBaseWindowNode::BasicPresetWindowDesc::BasicPresetWindowDesc()
-{
-	SetStandardDesc(MK_WR_PRESET.GetDefaultThemeName(), true, MkFloat2(150.f, 100.f));
-}
-
-//------------------------------------------------------------------------------------------------//
-
 void MkBaseWindowNode::CaptionDesc::SetString(const MkStr& msg)
 {
 	if (msg != m_Str)
@@ -599,6 +550,59 @@ void MkBaseWindowNode::CaptionDesc::__Check(const MkStr& defaultMsg)
 	{
 		m_Str = defaultMsg;
 	}
+}
+
+//------------------------------------------------------------------------------------------------//
+
+void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, bool hasTitle)
+{
+	this->themeName = themeName;
+	dragMovement = true;
+
+	this->hasTitle = hasTitle;
+	if (hasTitle)
+	{
+		titleHeight = 20.f;
+		titleType = eS2D_WPC_NormalTitle;
+		iconImageFilePath = MK_WR_PRESET.GetSystemImageFilePath();
+		iconImageSubsetName = MK_WR_PRESET.GetWindowIconSampleSubsetName();
+		iconImageHeightOffset = 0.f;
+		titleCaption.SetString(MKDEF_TITLE_BAR_SAMPLE_STRING);
+	}
+	hasCloseButton = hasTitle;
+	
+	hasFreeImageBG = true;
+	bgImageFilePath = MK_WR_PRESET.GetSystemImageFilePath();
+	bgImageSubsetName = MK_WR_PRESET.GetWindowBackgroundSampleSubsetName();
+
+	hasOKButton = true;
+	okBtnCaption.SetString(MKDEF_OK_BTN_SAMPLE_STRING);
+
+	hasCancelButton = true;
+	cancelBtnCaption.SetString(MKDEF_CANCEL_BTN_SAMPLE_STRING);
+}
+
+void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkFloat2& windowSize)
+{
+	SetStandardDesc(themeName, hasTitle);
+
+	hasFreeImageBG = false;
+	bgImageFilePath.Clear();
+	bgImageSubsetName.Clear();
+	this->windowSize = windowSize;
+}
+
+void MkBaseWindowNode::BasicPresetWindowDesc::SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkPathName& bgFilePath, const MkHashStr& subsetName)
+{
+	SetStandardDesc(themeName, hasTitle);
+
+	bgImageFilePath = bgFilePath;
+	bgImageSubsetName = subsetName;
+}
+
+MkBaseWindowNode::BasicPresetWindowDesc::BasicPresetWindowDesc()
+{
+	SetStandardDesc(MK_WR_PRESET.GetDefaultThemeName(), true, MkFloat2(150.f, 100.f));
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -715,31 +719,31 @@ void MkBaseWindowNode::SetEnable(bool enable)
 {
 	if (enable != m_Enable)
 	{
-		eS2D_WindowState windowState = eS2D_WS_MaxWindowState;
+		
 		if (m_Enable) // on -> off
 		{
-			windowState = eS2D_WS_DisableState;
 			_PushWindowEvent(MkSceneNodeFamilyDefinition::eDisable);
 		}
 		else // off -> on
 		{
-			windowState = eS2D_WS_DefaultState;
 			_PushWindowEvent(MkSceneNodeFamilyDefinition::eEnable);
 		}
 
-		if (windowState != eS2D_WS_MaxWindowState)
+		if (IsWindowStateType(m_PresetComponentType))
 		{
-			m_Enable = enable;
-
-			if (IsWindowStateType(m_PresetComponentType))
+			if (_OnActiveWindowState())
 			{
-				__TSI_WindowNodeOp<eS2D_WindowState>::SetState(windowState, this);
+				__SetActiveWindowStateCounter(-1);
 			}
 
-			MK_INDEXING_LOOP(m_ChildWindows, i)
-			{
-				m_ChildWindows[i]->SetEnable(enable);
-			}
+			__TSI_WindowNodeOp<eS2D_WindowState>::SetState((enable) ? eS2D_WS_DisableState : eS2D_WS_DefaultState, this);
+		}
+
+		m_Enable = enable;
+
+		MK_INDEXING_LOOP(m_ChildWindows, i)
+		{
+			m_ChildWindows[i]->SetEnable(enable);
 		}
 	}
 }
@@ -786,16 +790,21 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 	MkBaseWindowNode* titleWindow = NULL;
 	if (d.hasTitle)
 	{
+		if (!IsTitleStateType(d.titleType))
+		{
+			d.titleType = eS2D_WPC_NormalTitle;
+		}
+
 		MkFloat2 titleCompSize(d.windowSize.x - MARGIN * 2.f, d.titleHeight);
 		if (targetWindow == NULL)
 		{
-			titleWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, eS2D_WPC_TitleWindow, titleCompSize);
+			titleWindow = __CreateWindowPreset(NULL, nodeName, d.themeName, d.titleType, titleCompSize);
 		}
-		else if (targetWindow->CreateWindowPreset(d.themeName, eS2D_WPC_TitleWindow, titleCompSize))
+		else if (targetWindow->CreateWindowPreset(d.themeName, d.titleType, titleCompSize))
 		{
 			titleWindow = targetWindow;
 		}
-		
+
 		if (titleWindow != NULL)
 		{
 			rootWindow = titleWindow;
@@ -810,7 +819,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 			}
 
 			// close icon
-			if (d.hasCloseIcon)
+			if (d.hasCloseButton)
 			{
 				MkBaseWindowNode* closeWindow = __CreateWindowPreset(titleWindow, L"CloseBtn", d.themeName, eS2D_WPC_CloseButton, MkFloat2(0.f, 0.f));
 				if (closeWindow != NULL)
@@ -823,7 +832,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 			}
 
 			// title caption
-			titleWindow->SetPresetComponentCaption(d.themeName, CaptionDesc(d.titleCaption));
+			titleWindow->SetPresetComponentCaption(d.themeName, d.titleCaption);
 		}
 	}
 
@@ -904,7 +913,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		{
 			okWindow = __CreateWindowPreset(backgroundWindow, L"OKButton", d.themeName, eS2D_WPC_OKButton, buttonCompSize);
 			okWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
-			okWindow->SetPresetComponentCaption(d.themeName, CaptionDesc(MKDEF_OK_BTN_SAMPLE_STRING));
+			okWindow->SetPresetComponentCaption(d.themeName, d.okBtnCaption);
 		}
 
 		// cancel button
@@ -913,7 +922,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		{
 			cancelWindow = __CreateWindowPreset(backgroundWindow, L"CancelButton", d.themeName, eS2D_WPC_CancelButton, buttonCompSize);
 			cancelWindow->SetAttribute(MkBaseWindowNode::eConfinedToParent, true);
-			cancelWindow->SetPresetComponentCaption(d.themeName, CaptionDesc(MKDEF_CANCEL_BTN_SAMPLE_STRING));
+			cancelWindow->SetPresetComponentCaption(d.themeName, d.cancelBtnCaption);
 		}
 
 		if ((okWindow != NULL) && (cancelWindow == NULL))
@@ -1202,7 +1211,8 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 
 		if (button == 0)
 		{
-			if ((!MK_WIN_EVENT_MGR.GetEditMode()) && (m_PresetComponentType == eS2D_WPC_CloseButton))
+			if ((m_PresetComponentType == eS2D_WPC_CloseButton) && // close button 클릭시 edit mode가 아니거나 system 윈도우가 아니면 윈도우 닫음
+				((!MK_WIN_EVENT_MGR.GetEditMode()) || GetRootWindow()->GetAttribute(eForEditMode))) // edit mode시 실수로 일반 윈도우가 닫히는 경우를 방지
 			{
 				MK_WIN_EVENT_MGR.DeactivateWindow(GetRootWindow()->GetNodeName());
 				return true;
@@ -1304,18 +1314,31 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 			windowState = (btnPushing[0] && (this == MK_WIN_EVENT_MGR.GetFrontHitWindow())) ? eS2D_WS_OnClickState : eS2D_WS_OnCursorState;
 		}
 
-		if (windowState != static_cast<eS2D_WindowState>(m_CurrentComponentState))
+		eS2D_WindowState lastState = static_cast<eS2D_WindowState>(m_CurrentComponentState);
+		if (windowState != lastState)
 		{
+			if ((lastState == eS2D_WS_DefaultState) && ((windowState == eS2D_WS_OnCursorState) || (windowState == eS2D_WS_OnClickState)))
+			{
+				__SetActiveWindowStateCounter(1); // def -> on cursor/click
+			}
+			else if (((lastState == eS2D_WS_OnCursorState) || (lastState == eS2D_WS_OnClickState)) && (windowState == eS2D_WS_DefaultState))
+			{
+				__SetActiveWindowStateCounter(-1); // on cursor/click -> def
+			}
+
 			__TSI_WindowNodeOp<eS2D_WindowState>::SetState(windowState, this);
 		}
 	}
 
-	MK_INDEXING_LOOP(m_ChildWindows, i)
+	if (inside || (m_ActiveWindowStateCounter > 0)) // 대다수의 윈도우가 (inside == false) && (m_ActiveWindowStateCounter == 0) 조합이기 때문에 여기서 걸러짐
 	{
-		MkBaseWindowNode* currNode = m_ChildWindows[i];
-		if (currNode->GetVisible() && currNode->GetEnable() && (!currNode->GetAttribute(eIgnoreInputEvent)))
+		MK_INDEXING_LOOP(m_ChildWindows, i)
 		{
-			currNode->InputEventMouseMove(inside, btnPushing, position);
+			MkBaseWindowNode* currNode = m_ChildWindows[i];
+			if (currNode->GetVisible() && currNode->GetEnable() && (!currNode->GetAttribute(eIgnoreInputEvent)))
+			{
+				currNode->InputEventMouseMove(inside, btnPushing, position);
+			}
 		}
 	}
 }
@@ -1385,7 +1408,7 @@ void MkBaseWindowNode::Activate(void)
 
 void MkBaseWindowNode::OnFocus(void)
 {
-	if (m_PresetComponentType == eS2D_WPC_TitleWindow)
+	if (IsTitleStateType(m_PresetComponentType))
 	{
 		__TSI_WindowNodeOp<eS2D_TitleState>::SetState(eS2D_TS_OnFocusState, this);
 	}
@@ -1398,7 +1421,7 @@ void MkBaseWindowNode::OnFocus(void)
 
 void MkBaseWindowNode::LostFocus(void)
 {
-	if (m_PresetComponentType == eS2D_WPC_TitleWindow)
+	if (IsTitleStateType(m_PresetComponentType))
 	{
 		__TSI_WindowNodeOp<eS2D_TitleState>::SetState(eS2D_TS_LostFocusState, this);
 	}
@@ -1418,6 +1441,13 @@ bool MkBaseWindowNode::AttachChildNode(MkSceneNode* childNode)
 		if ((childWindow != NULL) && (m_ChildWindows.FindFirstInclusion(MkArraySection(0), childWindow) == MKDEF_ARRAY_ERROR))
 		{
 			m_ChildWindows.PushBack(childWindow);
+
+			int notDefCnt = childWindow->__CountActiveWindowStateCounter();
+			if (notDefCnt > 0)
+			{
+				__AddActiveWindowStateCounter(notDefCnt);
+				__SetActiveWindowStateCounter(notDefCnt);
+			}
 		}
 	}
 	return ok;
@@ -1432,6 +1462,13 @@ bool MkBaseWindowNode::DetachChildNode(const MkHashStr& childNodeName)
 		{
 			MkBaseWindowNode* childWindow = dynamic_cast<MkBaseWindowNode*>(childNode);
 			m_ChildWindows.EraseFirstInclusion(MkArraySection(0), childWindow);
+
+			int notDefCnt = childWindow->__CountActiveWindowStateCounter();
+			if (notDefCnt > 0)
+			{
+				__AddActiveWindowStateCounter(-notDefCnt);
+				__SetActiveWindowStateCounter(-notDefCnt);
+			}
 		}
 	}
 	
@@ -1440,8 +1477,14 @@ bool MkBaseWindowNode::DetachChildNode(const MkHashStr& childNodeName)
 
 void MkBaseWindowNode::Clear(void)
 {
+	if (_OnActiveWindowState())
+	{
+		__SetActiveWindowStateCounter(-1);
+	}
+
 	m_CurrentComponentState = 0;
 	m_ChildWindows.Clear();
+
 	MkSceneNode::Clear();
 }
 
@@ -1451,6 +1494,7 @@ MkBaseWindowNode::MkBaseWindowNode(const MkHashStr& name) : MkSceneNode(name)
 	m_Enable = true;
 	m_PresetComponentType = eS2D_WPC_None;
 	m_CurrentComponentState = 0;
+	m_ActiveWindowStateCounter = 0;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -1496,6 +1540,31 @@ MkBaseWindowNode* MkBaseWindowNode::__CreateWindowPreset
 		return targetNode;
 	}
 	return NULL;
+}
+
+void MkBaseWindowNode::__SetActiveWindowStateCounter(int offset)
+{
+	if ((!CheckRootWindow()) && (m_ParentNodePtr != NULL) && (m_ParentNodePtr->GetNodeType() >= eS2D_SNT_BaseWindowNode))
+	{
+		MkBaseWindowNode* targetNode = dynamic_cast<MkBaseWindowNode*>(m_ParentNodePtr);
+		if (targetNode != NULL)
+		{
+			targetNode->__AddActiveWindowStateCounter(offset);
+			targetNode->__SetActiveWindowStateCounter(offset);
+		}
+	}
+}
+
+int MkBaseWindowNode::__CountActiveWindowStateCounter(void) const
+{
+	int cnt = _OnActiveWindowState() ? 1 : 0;
+
+	MK_INDEXING_LOOP(m_ChildWindows, i)
+	{
+		cnt += m_ChildWindows[i]->__CountActiveWindowStateCounter();
+	}
+
+	return cnt;
 }
 
 MkBaseWindowNode* MkBaseWindowNode::__GetFrontHitWindow(const MkFloat2& position)
@@ -1763,6 +1832,16 @@ void MkBaseWindowNode::_PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEven
 
 		parentNode = parentNode->GetParentNode();
 	}
+}
+
+bool MkBaseWindowNode::_OnActiveWindowState(void) const
+{
+	if (IsWindowStateType(m_PresetComponentType))
+	{
+		eS2D_WindowState currState = static_cast<eS2D_WindowState>(m_CurrentComponentState);
+		return ((currState == eS2D_WS_OnCursorState) || (currState == eS2D_WS_OnCursorState));
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------//

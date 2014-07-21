@@ -836,7 +836,9 @@ Node "WindowPreset"
 		str ArrowDown = "DefaultArrowDown";
 		str VSlideBar = "DefaultVSlideBar";
 		str HSlideBar = "DefaultHSlideBar";
-		str TitleWindow = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
+		str NormalTitle = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
+		str SystemMsgTitle = "DefaultOBtnDefault" / "DefaultOBtnOnCursor";
+		str SystemErrorTitle = "DefaultCBtnDefault" / "DefaultCBtnOnCursor";
 		str NormalBtn = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
 		str OKBtn = "DefaultOBtnDefault" / "DefaultOBtnOnCursor" / "DefaultOBtnOnClick" / "DefaultBtnDisable";
 		str CancelBtn = "DefaultCBtnDefault" / "DefaultCBtnOnCursor" / "DefaultCBtnOnClick" / "DefaultBtnDisable";

@@ -44,10 +44,16 @@ enum eS2D_WindowPresetComponent
 	eS2D_WPC_BackgroundStateTypeEnd,
 
 	// eS2D_TitleState
-	eS2D_WPC_TitleWindow = eS2D_WPC_BackgroundStateTypeEnd, // L"TitleWindow"
+	eS2D_WPC_TitleStateTypeBegin = eS2D_WPC_BackgroundStateTypeEnd,
+
+	eS2D_WPC_NormalTitle = eS2D_WPC_TitleStateTypeBegin, // L"TitleWindow"
+	eS2D_WPC_SystemMsgTitle,
+	eS2D_WPC_SystemErrorTitle,
+
+	eS2D_WPC_TitleStateTypeEnd,
 
 	// eS2D_WindowState
-	eS2D_WPC_WindowStateTypeBegin,
+	eS2D_WPC_WindowStateTypeBegin = eS2D_WPC_TitleStateTypeEnd,
 
 	eS2D_WPC_NormalButton = eS2D_WPC_WindowStateTypeBegin, // L"NormalBtn"
 	eS2D_WPC_OKButton, // L"OKBtn"
@@ -103,7 +109,7 @@ inline bool IsBackgroundStateType(eS2D_WindowPresetComponent component)
 
 inline bool IsTitleStateType(eS2D_WindowPresetComponent component)
 {
-	return (component == eS2D_WPC_TitleWindow);
+	return ((component >= eS2D_WPC_TitleStateTypeBegin) && (component < eS2D_WPC_TitleStateTypeEnd));
 }
 
 inline bool IsWindowStateType(eS2D_WindowPresetComponent component)

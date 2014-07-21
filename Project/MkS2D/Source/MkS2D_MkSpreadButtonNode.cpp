@@ -9,8 +9,8 @@
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
 
-const static MkHashStr ITEM_ICON_NAME = L"ItemIcon";
-const static MkHashStr ARROW_PRESET_NAME = L"Arrow";
+const static MkHashStr ITEM_ICON_NAME = L"__#ItemIcon";
+const static MkHashStr ARROW_PRESET_NAME = L"__#Arrow";
 
 //------------------------------------------------------------------------------------------------//
 

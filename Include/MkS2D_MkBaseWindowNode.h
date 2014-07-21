@@ -36,54 +36,6 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 
-	// 기본 윈도우 생성 정보 정의
-	class BasicPresetWindowDesc
-	{
-	public:
-
-		// 샘플 이미지를 background로 생성
-		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle);
-
-		// 테마 윈도우셋으로 생성
-		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkFloat2& windowSize);
-
-		// 주어진 이미지를 background로 생성
-		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkPathName& bgFilePath, const MkHashStr& subsetName);
-
-	public:
-
-		// theme
-		MkHashStr themeName; // preset theme 이름
-		bool dragMovement; // root window(title bar or body)드래깅으로 윈도우 이동 가능 여부
-
-		// title
-		bool hasTitle; // title 존재여부
-		float titleHeight; // title 높이
-		bool hasIcon; // title 아이콘. 기본적으로 왼쪽 중앙에 margin만큼 떨어져 정렬됨
-		MkPathName iconImageFilePath; // title 아이콘의 image file 경로
-		MkHashStr iconImageSubsetName; // title 아이콘의 subset name
-		float iconImageHeightOffset; // title 아이콘 정렬 후 추가 y축 위치 offset. 아이콘 크기가 작으면 문제될게 없지만 타이틀보다 클 수 있기 때문
-		MkStr titleCaption;
-		bool hasCloseIcon; // close icon 존재여부
-
-		// background
-		bool hasFreeImageBG; // bg를 preset이 아닌 free image로 구성할지 여부
-		MkPathName bgImageFilePath; // free BG image file 경로
-		MkHashStr bgImageSubsetName; // free BG image subset name
-		MkFloat2 windowSize; // 윈도우 크기. hasFreeImageBG가 true면 이미지 크기를 따르고 false면 반드시 지정 되어 있어야 함
-
-		// ok(possitive) button
-		bool hasOKButton;
-
-		// cancel(negative) button
-		bool hasCancelButton;
-
-		BasicPresetWindowDesc();
-		~BasicPresetWindowDesc() {}
-	};
-
-	//------------------------------------------------------------------------------------------------//
-
 	// caption 표시 정보 정의
 	// msg(MkStr) 혹은 deco text에 정의된 nodeNameAndKey 둘 중 하나를 표시
 	class CaptionDesc
@@ -110,6 +62,57 @@ public:
 	protected:
 		MkStr m_Str;
 		MkArray<MkHashStr> m_NameList;
+	};
+
+	//------------------------------------------------------------------------------------------------//
+
+	// 기본 윈도우 생성 정보 정의
+	class BasicPresetWindowDesc
+	{
+	public:
+
+		// 샘플 이미지를 background로 생성
+		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle);
+
+		// 테마 윈도우셋으로 생성
+		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkFloat2& windowSize);
+
+		// 주어진 이미지를 background로 생성
+		void SetStandardDesc(const MkHashStr& themeName, bool hasTitle, const MkPathName& bgFilePath, const MkHashStr& subsetName);
+
+	public:
+
+		// theme
+		MkHashStr themeName; // preset theme 이름
+		bool dragMovement; // root window(title bar or body)드래깅으로 윈도우 이동 가능 여부
+
+		// title
+		bool hasTitle; // title 존재여부
+		eS2D_WindowPresetComponent titleType; // title component type. default는 eS2D_WPC_NormalTitle
+		float titleHeight; // title 높이
+		bool hasIcon; // title 아이콘. 기본적으로 왼쪽 중앙에 margin만큼 떨어져 정렬됨
+		MkPathName iconImageFilePath; // title 아이콘의 image file 경로
+		MkHashStr iconImageSubsetName; // title 아이콘의 subset name
+		float iconImageHeightOffset; // title 아이콘 정렬 후 추가 y축 위치 offset. 아이콘 크기가 작으면 문제될게 없지만 타이틀보다 클 수 있기 때문
+		CaptionDesc titleCaption;
+		bool hasCloseButton; // close button 존재여부
+
+		// background
+		bool hasFreeImageBG; // bg를 preset이 아닌 free image로 구성할지 여부
+		MkPathName bgImageFilePath; // free BG image file 경로
+		MkHashStr bgImageSubsetName; // free BG image subset name
+		MkFloat2 windowSize; // 윈도우 크기. hasFreeImageBG가 true면 이미지 크기를 따르고 false면 반드시 지정 되어 있어야 함
+
+		// ok(possitive) button
+		bool hasOKButton;
+		CaptionDesc okBtnCaption;
+
+		// cancel(negative) button
+		bool hasCancelButton;
+		CaptionDesc cancelBtnCaption;
+
+		BasicPresetWindowDesc();
+		~BasicPresetWindowDesc() {}
 	};
 
 	//------------------------------------------------------------------------------------------------//
@@ -307,6 +310,10 @@ public:
 
 	inline void __SetCurrentComponentState(int state) { m_CurrentComponentState = state; }
 
+	inline void __AddActiveWindowStateCounter(int offset) { m_ActiveWindowStateCounter += offset; }
+	void __SetActiveWindowStateCounter(int offset);
+	int __CountActiveWindowStateCounter(void) const;
+
 	inline void __PushEvent(const WindowEvent& evt) { m_WindowEvents.PushBack(evt); }
 	
 	MkBaseWindowNode* __GetFrontHitWindow(const MkFloat2& position);
@@ -325,6 +332,8 @@ protected:
 
 	void _PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type);
 
+	bool _OnActiveWindowState(void) const;
+
 protected:
 
 	bool m_RootWindow;
@@ -337,10 +346,15 @@ protected:
 	eS2D_WindowPresetComponent m_PresetComponentType;
 	MkFloat2 m_PresetComponentSize;
 
-	int m_CurrentComponentState;
-	
 	// attribute
 	MkBitFieldDW m_Attribute;
+
+	// 현재 component의 state
+	int m_CurrentComponentState;
+
+	// 현재 on cursor/click중인 자손 window state component 갯수
+	// InputEventMouseMove() 최적화용 카운터
+	int m_ActiveWindowStateCounter;
 
 	// child window
 	MkArray<MkBaseWindowNode*> m_ChildWindows;

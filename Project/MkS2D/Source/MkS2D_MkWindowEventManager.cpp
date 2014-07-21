@@ -3,6 +3,7 @@
 #include "MkCore_MkInputManager.h"
 #include "MkCore_MkTimeManager.h"
 #include "MkCore_MkDevPanel.h"
+#include "MkCore_MkProfilingManager.h"
 
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkWindowResourceManager.h"
@@ -27,6 +28,8 @@ const static MkHashStr DEBUG_RECT_NAME = L"Debug";
 
 const static MkHashStr SETTING_WINDOW_NAME = L"__#Setting";
 const static MkHashStr TARGET_WINDOW_NAME = L"__#Target";
+
+static const MkHashStr PROF_KEY_UPDATE = L"MkWindowEventManager::Update";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -265,6 +268,8 @@ void MkWindowEventManager::Update(void)
 {
 	if ((m_DrawStep == NULL) || (m_RootNode == NULL))
 		return;
+
+	MkFocusProfiler focusProfiler(PROF_KEY_UPDATE);
 
 	// normal mode <-> edit mode toggle
 	if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
@@ -531,7 +536,6 @@ void MkWindowEventManager::Update(void)
 					bool inside = (evt.arg0 == 1);
 					if (m_ModalWindow.Empty())
 					{
-						// 전체순회시 최적화 여지는 있지만 반대급부로 attach/detach/clear가 복잡해진다
 						for (unsigned int i=onFocusIndex; i!=0xffffffff; --i)
 						{
 							MkBaseWindowNode* windowNode = m_WindowTable[m_OnActivatingWindows[i]];

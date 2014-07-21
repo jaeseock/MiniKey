@@ -28,9 +28,10 @@ bool MkEditModeTargetWindow::SetUp(void)
 
 	BasicPresetWindowDesc winDesc;
 	winDesc.SetStandardDesc(themeName, true, winSize);
+	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
 	winDesc.titleCaption = NONE_SEL_CAPTION;
 	winDesc.hasIcon = false;
-	winDesc.hasCloseIcon = false;
+	winDesc.hasCloseButton = true;
 	winDesc.hasCancelButton = false;
 	winDesc.hasOKButton = false;
 
@@ -102,48 +103,8 @@ void MkEditModeTargetWindow::SetTargetNode(MkBaseWindowNode* targetNode)
 		else
 		{
 			m_TargetNode = targetNode;
-			RebuildNodeTree();
+			_RebuildNodeTree();
 		}
-	}
-}
-
-void MkEditModeTargetWindow::RebuildNodeTree(void)
-{
-	if (m_NodeTreeRoot != NULL)
-	{
-		m_NodeTreeRoot->Clear();
-		m_NodeTreeSrc.Clear();
-		
-		MkBaseWindowNode* rootWindow = NULL;
-		if (m_TargetNode != NULL)
-		{
-			// root window부터 tree 구성
-			rootWindow = m_TargetNode->GetRootWindow();
-
-			m_NodeTreeSrc.Reserve(rootWindow->__CountTotalWindowBasedChildren() + 1);
-			rootWindow->__BuildInformationTree(m_NodeTreeRoot, 0, m_NodeTreeSrc);
-
-			// target node와 매칭되는 item에 선택 아이콘 추가
-			_SetSelectIcon(true);
-		}
-
-		// scroll bar에 item 세팅
-		if (m_NodeTreeScrollBar != NULL)
-		{
-			m_NodeTreeScrollBar->SetPageInfo(m_NodeTreeSrc.GetSize());
-
-			unsigned int targetIndex = m_NodeTreeSrc.FindFirstInclusion(MkArraySection(0), m_TargetNode);
-			if (targetIndex == MKDEF_ARRAY_ERROR)
-			{
-				targetIndex = 0;
-			}
-			m_NodeTreeScrollBar->SetGridPosition(targetIndex);
-			_SetNodeTreeItemPosition(m_NodeTreeScrollBar->GetCurrentPagePosition());
-		}
-
-		SetPresetComponentCaption(MK_WR_PRESET.GetDefaultThemeName(), CaptionDesc((m_TargetNode == NULL) ? NONE_SEL_CAPTION : m_TargetNode->GetNodeName().GetString()));
-
-		Update();
 	}
 }
 
@@ -201,6 +162,46 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseWi
 	m_NodeTreeRoot = NULL;
 	m_NodeTreeScrollBar = NULL;
 	m_TargetNode = NULL;
+}
+
+void MkEditModeTargetWindow::_RebuildNodeTree(void)
+{
+	if (m_NodeTreeRoot != NULL)
+	{
+		m_NodeTreeRoot->Clear();
+		m_NodeTreeSrc.Clear();
+		
+		MkBaseWindowNode* rootWindow = NULL;
+		if (m_TargetNode != NULL)
+		{
+			// root window부터 tree 구성
+			rootWindow = m_TargetNode->GetRootWindow();
+
+			m_NodeTreeSrc.Reserve(rootWindow->__CountTotalWindowBasedChildren() + 1);
+			rootWindow->__BuildInformationTree(m_NodeTreeRoot, 0, m_NodeTreeSrc);
+
+			// target node와 매칭되는 item에 선택 아이콘 추가
+			_SetSelectIcon(true);
+		}
+
+		// scroll bar에 item 세팅
+		if (m_NodeTreeScrollBar != NULL)
+		{
+			m_NodeTreeScrollBar->SetPageInfo(m_NodeTreeSrc.GetSize());
+
+			unsigned int targetIndex = m_NodeTreeSrc.FindFirstInclusion(MkArraySection(0), m_TargetNode);
+			if (targetIndex == MKDEF_ARRAY_ERROR)
+			{
+				targetIndex = 0;
+			}
+			m_NodeTreeScrollBar->SetGridPosition(targetIndex);
+			_SetNodeTreeItemPosition(m_NodeTreeScrollBar->GetCurrentPagePosition());
+		}
+
+		SetPresetComponentCaption(MK_WR_PRESET.GetDefaultThemeName(), CaptionDesc((m_TargetNode == NULL) ? NONE_SEL_CAPTION : m_TargetNode->GetNodeName().GetString()));
+
+		Update();
+	}
 }
 
 void MkEditModeTargetWindow::_SetSelectIcon(bool enable)

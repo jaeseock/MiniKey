@@ -12,11 +12,13 @@ class MkEditModeTargetWindow : public MkBaseWindowNode
 {
 public:
 
+	//------------------------------------------------------------------------------------------------//
+
 	bool SetUp(void);
 
 	void SetTargetNode(MkBaseWindowNode* targetNode);
 
-	void RebuildNodeTree(void);
+	//------------------------------------------------------------------------------------------------//
 
 	virtual void Activate(void);
 
@@ -24,11 +26,14 @@ public:
 
 	virtual void UseWindowEvent(WindowEvent& evt);
 
+	//------------------------------------------------------------------------------------------------//
+
 	MkEditModeTargetWindow(const MkHashStr& name);
 	virtual ~MkEditModeTargetWindow() {}
 
 protected:
 
+	void _RebuildNodeTree(void);
 	void _SetSelectIcon(bool enable);
 	void _SetNodeTreeItemPosition(unsigned int pagePos);
 

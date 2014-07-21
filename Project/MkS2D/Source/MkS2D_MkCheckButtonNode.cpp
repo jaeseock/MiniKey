@@ -8,9 +8,9 @@
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
 
-const static MkHashStr UNCHK_NODE_NAME = L"Uncheck";
-const static MkHashStr CHECK_NODE_NAME = L"Check";
-const static MkHashStr CAPTION_RECT_NAME = L"Caption";
+const static MkHashStr UNCHK_NODE_NAME = L"__#Uncheck";
+const static MkHashStr CHECK_NODE_NAME = L"__#Check";
+const static MkHashStr CAPTION_RECT_NAME = L"__#Caption";
 
 //------------------------------------------------------------------------------------------------//
 

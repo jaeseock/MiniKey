@@ -2,14 +2,14 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.18 (17:45:30),
+//   - time stamp : 2014.07.21 (18:31:13),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
 
 uint Attribute = 20;
 int2 PCompSize = (294, 20);
-str PComponent = "TitleWindow";
+str PComponent = "NormalTitle";
 str PThemeName = "Default";
 vec3 Position = (0.000, -20.000, 0.000);
 
@@ -696,7 +696,7 @@ Node "<SceneNode>"
 
 						Node "<SRect>"
 						{
-							Node "Caption" : "T_SRect"
+							Node "__#Caption" : "T_SRect"
 							{
 								float Depth = -0.025;
 								vec2 Position = (24.000, 3.000);
@@ -804,7 +804,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Check" : "T_BaseWindowNode"
+							Node "__#Check" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (12, 12);
@@ -882,7 +882,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Uncheck" : "T_BaseWindowNode"
+							Node "__#Uncheck" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (12, 12);
@@ -1448,7 +1448,7 @@ Node "<SceneNode>"
 
 						Node "<SceneNode>"
 						{
-							Node "Bar" : "T_BaseWindowNode"
+							Node "__#BarBG" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (84, 18);
@@ -1493,7 +1493,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Slide" : "T_BaseWindowNode"
+									Node "__#SlideBtn" : "T_BaseWindowNode"
 									{
 										uint Attribute = 12;
 										int2 PCompSize = (12, 18);
@@ -1653,7 +1653,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Next" : "T_BaseWindowNode"
+							Node "__#NextBtn" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);
@@ -1731,7 +1731,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Prev" : "T_BaseWindowNode"
+							Node "__#PrevBtn" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);
@@ -1841,17 +1841,6 @@ Node "<SceneNode>"
 								bool Visible = No;
 							}
 
-							Node "ItemIcon" : "T_SRect"
-							{
-								float Depth = -0.050;
-								vec2 Position = (3.000, 2.000);
-								str Resource = // [3]
-									"map" /
-									"Default\window_mgr.png" /
-									"SampleIcon";
-								vec2 Size = (16.000, 16.000);
-							}
-
 							Node "NormalTag" : "T_SRect"
 							{
 								float Depth = -0.050;
@@ -1861,6 +1850,17 @@ Node "<SceneNode>"
 									"odt" /
 									"1-1";
 								vec2 Size = (18.000, 12.000);
+							}
+
+							Node "__#ItemIcon" : "T_SRect"
+							{
+								float Depth = -0.050;
+								vec2 Position = (3.000, 2.000);
+								str Resource = // [3]
+									"map" /
+									"Default\window_mgr.png" /
+									"SampleIcon";
+								vec2 Size = (16.000, 16.000);
 							}
 						}
 
@@ -1893,17 +1893,6 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "ItemIcon" : "T_SRect"
-									{
-										float Depth = -0.025;
-										vec2 Position = (3.000, 2.000);
-										str Resource = // [3]
-											"map" /
-											"Default\window_mgr.png" /
-											"SampleIcon";
-										vec2 Size = (16.000, 16.000);
-									}
-
 									Node "NormalTag" : "T_SRect"
 									{
 										float Depth = -0.025;
@@ -1913,6 +1902,17 @@ Node "<SceneNode>"
 											"odt" /
 											"0";
 										vec2 Size = (6.000, 12.000);
+									}
+
+									Node "__#ItemIcon" : "T_SRect"
+									{
+										float Depth = -0.025;
+										vec2 Position = (3.000, 2.000);
+										str Resource = // [3]
+											"map" /
+											"Default\window_mgr.png" /
+											"SampleIcon";
+										vec2 Size = (16.000, 16.000);
 									}
 								}
 
@@ -2337,17 +2337,6 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "ItemIcon" : "T_SRect"
-									{
-										float Depth = -0.025;
-										vec2 Position = (3.000, 2.000);
-										str Resource = // [3]
-											"map" /
-											"Default\window_mgr.png" /
-											"SampleIcon";
-										vec2 Size = (16.000, 16.000);
-									}
-
 									Node "NormalTag" : "T_SRect"
 									{
 										float Depth = -0.025;
@@ -2357,6 +2346,17 @@ Node "<SceneNode>"
 											"odt" /
 											"1";
 										vec2 Size = (6.000, 12.000);
+									}
+
+									Node "__#ItemIcon" : "T_SRect"
+									{
+										float Depth = -0.025;
+										vec2 Position = (3.000, 2.000);
+										str Resource = // [3]
+											"map" /
+											"Default\window_mgr.png" /
+											"SampleIcon";
+										vec2 Size = (16.000, 16.000);
 									}
 								}
 
@@ -2389,17 +2389,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "ItemIcon" : "T_SRect"
-											{
-												float Depth = -0.025;
-												vec2 Position = (3.000, 2.000);
-												str Resource = // [3]
-													"map" /
-													"Default\window_mgr.png" /
-													"SampleIcon";
-												vec2 Size = (16.000, 16.000);
-											}
-
 											Node "NormalTag" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -2409,6 +2398,17 @@ Node "<SceneNode>"
 													"odt" /
 													"1-0";
 												vec2 Size = (18.000, 12.000);
+											}
+
+											Node "__#ItemIcon" : "T_SRect"
+											{
+												float Depth = -0.025;
+												vec2 Position = (3.000, 2.000);
+												str Resource = // [3]
+													"map" /
+													"Default\window_mgr.png" /
+													"SampleIcon";
+												vec2 Size = (16.000, 16.000);
 											}
 										}
 
@@ -2829,17 +2829,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "ItemIcon" : "T_SRect"
-											{
-												float Depth = -0.025;
-												vec2 Position = (3.000, 2.000);
-												str Resource = // [3]
-													"map" /
-													"Default\window_mgr.png" /
-													"SampleIcon";
-												vec2 Size = (16.000, 16.000);
-											}
-
 											Node "NormalTag" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -2849,6 +2838,17 @@ Node "<SceneNode>"
 													"odt" /
 													"1-1";
 												vec2 Size = (18.000, 12.000);
+											}
+
+											Node "__#ItemIcon" : "T_SRect"
+											{
+												float Depth = -0.025;
+												vec2 Position = (3.000, 2.000);
+												str Resource = // [3]
+													"map" /
+													"Default\window_mgr.png" /
+													"SampleIcon";
+												vec2 Size = (16.000, 16.000);
 											}
 										}
 
@@ -3269,17 +3269,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "ItemIcon" : "T_SRect"
-											{
-												float Depth = -0.025;
-												vec2 Position = (3.000, 2.000);
-												str Resource = // [3]
-													"map" /
-													"Default\window_mgr.png" /
-													"SampleIcon";
-												vec2 Size = (16.000, 16.000);
-											}
-
 											Node "NormalTag" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -3289,6 +3278,17 @@ Node "<SceneNode>"
 													"odt" /
 													"1-2";
 												vec2 Size = (18.000, 12.000);
+											}
+
+											Node "__#ItemIcon" : "T_SRect"
+											{
+												float Depth = -0.025;
+												vec2 Position = (3.000, 2.000);
+												str Resource = // [3]
+													"map" /
+													"Default\window_mgr.png" /
+													"SampleIcon";
+												vec2 Size = (16.000, 16.000);
 											}
 										}
 
@@ -3682,33 +3682,6 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Arrow" : "T_BaseWindowNode"
-									{
-										uint Attribute = 2;
-										int2 PCompSize = (8, 8);
-										str PComponent = "ArrowRight";
-										str PThemeName = "Default";
-										vec3 Position = (89.000, 6.000, -0.025);
-
-										Node "<SceneNode>"
-										{
-											Node "BG" : "T_SceneNode"
-											{
-												Node "<SRect>"
-												{
-													Node "SN" : "T_SRect"
-													{
-														str Resource = // [3]
-															"map" /
-															"Default\default_theme.png" /
-															"ArrowR";
-														vec2 Size = (8.000, 8.000);
-													}
-												}
-											}
-										}
-									}
-
 									Node "Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
@@ -4094,6 +4067,33 @@ Node "<SceneNode>"
 											}
 										}
 									}
+
+									Node "__#Arrow" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										int2 PCompSize = (8, 8);
+										str PComponent = "ArrowRight";
+										str PThemeName = "Default";
+										vec3 Position = (89.000, 6.000, -0.025);
+
+										Node "<SceneNode>"
+										{
+											Node "BG" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "SN" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"ArrowR";
+														vec2 Size = (8.000, 8.000);
+													}
+												}
+											}
+										}
+									}
 								}
 							}
 
@@ -4124,17 +4124,6 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "ItemIcon" : "T_SRect"
-									{
-										float Depth = -0.025;
-										vec2 Position = (3.000, 2.000);
-										str Resource = // [3]
-											"map" /
-											"Default\window_mgr.png" /
-											"SampleIcon";
-										vec2 Size = (16.000, 16.000);
-									}
-
 									Node "NormalTag" : "T_SRect"
 									{
 										float Depth = -0.025;
@@ -4144,6 +4133,17 @@ Node "<SceneNode>"
 											"odt" /
 											"2";
 										vec2 Size = (6.000, 12.000);
+									}
+
+									Node "__#ItemIcon" : "T_SRect"
+									{
+										float Depth = -0.025;
+										vec2 Position = (3.000, 2.000);
+										str Resource = // [3]
+											"map" /
+											"Default\window_mgr.png" /
+											"SampleIcon";
+										vec2 Size = (16.000, 16.000);
 									}
 								}
 
@@ -4567,17 +4567,6 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "ItemIcon" : "T_SRect"
-									{
-										float Depth = -0.025;
-										vec2 Position = (3.000, 2.000);
-										str Resource = // [3]
-											"map" /
-											"Default\window_mgr.png" /
-											"SampleIcon";
-										vec2 Size = (16.000, 16.000);
-									}
-
 									Node "NormalTag" : "T_SRect"
 									{
 										float Depth = -0.025;
@@ -4587,6 +4576,17 @@ Node "<SceneNode>"
 											"odt" /
 											"3";
 										vec2 Size = (6.000, 12.000);
+									}
+
+									Node "__#ItemIcon" : "T_SRect"
+									{
+										float Depth = -0.025;
+										vec2 Position = (3.000, 2.000);
+										str Resource = // [3]
+											"map" /
+											"Default\window_mgr.png" /
+											"SampleIcon";
+										vec2 Size = (16.000, 16.000);
 									}
 								}
 
@@ -4619,17 +4619,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "ItemIcon" : "T_SRect"
-											{
-												float Depth = -0.025;
-												vec2 Position = (3.000, 2.000);
-												str Resource = // [3]
-													"map" /
-													"Default\window_mgr.png" /
-													"SampleIcon";
-												vec2 Size = (16.000, 16.000);
-											}
-
 											Node "NormalTag" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -4639,6 +4628,17 @@ Node "<SceneNode>"
 													"odt" /
 													"3-0";
 												vec2 Size = (18.000, 12.000);
+											}
+
+											Node "__#ItemIcon" : "T_SRect"
+											{
+												float Depth = -0.025;
+												vec2 Position = (3.000, 2.000);
+												str Resource = // [3]
+													"map" /
+													"Default\window_mgr.png" /
+													"SampleIcon";
+												vec2 Size = (16.000, 16.000);
 											}
 										}
 
@@ -5060,17 +5060,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "ItemIcon" : "T_SRect"
-											{
-												float Depth = -0.025;
-												vec2 Position = (3.000, 2.000);
-												str Resource = // [3]
-													"map" /
-													"Default\window_mgr.png" /
-													"SampleIcon";
-												vec2 Size = (16.000, 16.000);
-											}
-
 											Node "NormalTag" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -5080,6 +5069,17 @@ Node "<SceneNode>"
 													"odt" /
 													"3-1";
 												vec2 Size = (18.000, 12.000);
+											}
+
+											Node "__#ItemIcon" : "T_SRect"
+											{
+												float Depth = -0.025;
+												vec2 Position = (3.000, 2.000);
+												str Resource = // [3]
+													"map" /
+													"Default\window_mgr.png" /
+													"SampleIcon";
+												vec2 Size = (16.000, 16.000);
 											}
 										}
 
@@ -5112,17 +5112,6 @@ Node "<SceneNode>"
 														bool Visible = No;
 													}
 
-													Node "ItemIcon" : "T_SRect"
-													{
-														float Depth = -0.025;
-														vec2 Position = (3.000, 2.000);
-														str Resource = // [3]
-															"map" /
-															"Default\window_mgr.png" /
-															"SampleIcon";
-														vec2 Size = (16.000, 16.000);
-													}
-
 													Node "NormalTag" : "T_SRect"
 													{
 														float Depth = -0.025;
@@ -5132,6 +5121,17 @@ Node "<SceneNode>"
 															"odt" /
 															"3-1-0";
 														vec2 Size = (30.000, 12.000);
+													}
+
+													Node "__#ItemIcon" : "T_SRect"
+													{
+														float Depth = -0.025;
+														vec2 Position = (3.000, 2.000);
+														str Resource = // [3]
+															"map" /
+															"Default\window_mgr.png" /
+															"SampleIcon";
+														vec2 Size = (16.000, 16.000);
 													}
 												}
 
@@ -5525,33 +5525,6 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Arrow" : "T_BaseWindowNode"
-											{
-												uint Attribute = 2;
-												int2 PCompSize = (8, 8);
-												str PComponent = "ArrowRight";
-												str PThemeName = "Default";
-												vec3 Position = (89.000, 6.000, -0.025);
-
-												Node "<SceneNode>"
-												{
-													Node "BG" : "T_SceneNode"
-													{
-														Node "<SRect>"
-														{
-															Node "SN" : "T_SRect"
-															{
-																str Resource = // [3]
-																	"map" /
-																	"Default\default_theme.png" /
-																	"ArrowR";
-																vec2 Size = (8.000, 8.000);
-															}
-														}
-													}
-												}
-											}
-
 											Node "Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
@@ -5937,30 +5910,30 @@ Node "<SceneNode>"
 													}
 												}
 											}
-										}
-									}
 
-									Node "Arrow" : "T_BaseWindowNode"
-									{
-										uint Attribute = 2;
-										int2 PCompSize = (8, 8);
-										str PComponent = "ArrowRight";
-										str PThemeName = "Default";
-										vec3 Position = (89.000, 6.000, -0.025);
-
-										Node "<SceneNode>"
-										{
-											Node "BG" : "T_SceneNode"
+											Node "__#Arrow" : "T_BaseWindowNode"
 											{
-												Node "<SRect>"
+												uint Attribute = 2;
+												int2 PCompSize = (8, 8);
+												str PComponent = "ArrowRight";
+												str PThemeName = "Default";
+												vec3 Position = (89.000, 6.000, -0.025);
+
+												Node "<SceneNode>"
 												{
-													Node "SN" : "T_SRect"
+													Node "BG" : "T_SceneNode"
 													{
-														str Resource = // [3]
-															"map" /
-															"Default\default_theme.png" /
-															"ArrowR";
-														vec2 Size = (8.000, 8.000);
+														Node "<SRect>"
+														{
+															Node "SN" : "T_SRect"
+															{
+																str Resource = // [3]
+																	"map" /
+																	"Default\default_theme.png" /
+																	"ArrowR";
+																vec2 Size = (8.000, 8.000);
+															}
+														}
 													}
 												}
 											}
@@ -6352,30 +6325,30 @@ Node "<SceneNode>"
 											}
 										}
 									}
-								}
-							}
 
-							Node "Arrow" : "T_BaseWindowNode"
-							{
-								uint Attribute = 2;
-								int2 PCompSize = (8, 8);
-								str PComponent = "ArrowDown";
-								str PThemeName = "Default";
-								vec3 Position = (89.000, 6.000, -0.025);
-
-								Node "<SceneNode>"
-								{
-									Node "BG" : "T_SceneNode"
+									Node "__#Arrow" : "T_BaseWindowNode"
 									{
-										Node "<SRect>"
+										uint Attribute = 2;
+										int2 PCompSize = (8, 8);
+										str PComponent = "ArrowRight";
+										str PThemeName = "Default";
+										vec3 Position = (89.000, 6.000, -0.025);
+
+										Node "<SceneNode>"
 										{
-											Node "SN" : "T_SRect"
+											Node "BG" : "T_SceneNode"
 											{
-												str Resource = // [3]
-													"map" /
-													"Default\default_theme.png" /
-													"ArrowD";
-												vec2 Size = (8.000, 8.000);
+												Node "<SRect>"
+												{
+													Node "SN" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"ArrowR";
+														vec2 Size = (8.000, 8.000);
+													}
+												}
 											}
 										}
 									}
@@ -6767,6 +6740,33 @@ Node "<SceneNode>"
 									}
 								}
 							}
+
+							Node "__#Arrow" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (8, 8);
+								str PComponent = "ArrowDown";
+								str PThemeName = "Default";
+								vec3 Position = (89.000, 6.000, -0.025);
+
+								Node "<SceneNode>"
+								{
+									Node "BG" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"ArrowD";
+												vec2 Size = (8.000, 8.000);
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 
@@ -6779,7 +6779,7 @@ Node "<SceneNode>"
 
 						Node "<SceneNode>"
 						{
-							Node "Bar" : "T_BaseWindowNode"
+							Node "__#BarBG" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (3, 84);
@@ -6824,7 +6824,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Slide" : "T_BaseWindowNode"
+									Node "__#SlideBtn" : "T_BaseWindowNode"
 									{
 										uint Attribute = 12;
 										int2 PCompSize = (3, 12);
@@ -6984,7 +6984,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Next" : "T_BaseWindowNode"
+							Node "__#NextBtn" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);
@@ -7061,7 +7061,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Prev" : "T_BaseWindowNode"
+							Node "__#PrevBtn" : "T_BaseWindowNode"
 							{
 								uint Attribute = 2;
 								int2 PCompSize = (18, 18);

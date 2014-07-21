@@ -14,9 +14,9 @@
 #define MKDEF_TEXT_START_POSITION (MK_WR_PRESET.GetMargin())
 #define MKDEF_CURSOR_CHAR L"¦¢"
 
-const static MkHashStr TEXT_SRECT_NAME = L"Text";
-const static MkHashStr CURSOR_SRECT_NAME = L"Cursor";
-const static MkHashStr SEL_SRECT_NAME = L"Selection";
+const static MkHashStr TEXT_SRECT_NAME = L"__#Text";
+const static MkHashStr CURSOR_SRECT_NAME = L"__#Cursor";
+const static MkHashStr SEL_SRECT_NAME = L"__#Selection";
 
 //------------------------------------------------------------------------------------------------//
 
