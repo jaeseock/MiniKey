@@ -4,17 +4,18 @@
 //------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------//
 
-#include "MkS2D_MkBaseWindowNode.h"
+#include "MkS2D_MkSystemWindows.h"
+
 
 class MkScrollBarNode;
 
-class MkEditModeTargetWindow : public MkBaseWindowNode
+class MkEditModeTargetWindow : public MkBaseSystemWindow
 {
 public:
 
 	//------------------------------------------------------------------------------------------------//
 
-	bool SetUp(void);
+	virtual bool Initialize(void);
 
 	void SetTargetNode(MkBaseWindowNode* targetNode);
 

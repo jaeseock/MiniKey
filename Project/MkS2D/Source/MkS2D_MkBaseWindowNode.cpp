@@ -719,7 +719,6 @@ void MkBaseWindowNode::SetEnable(bool enable)
 {
 	if (enable != m_Enable)
 	{
-		
 		if (m_Enable) // on -> off
 		{
 			_PushWindowEvent(MkSceneNodeFamilyDefinition::eDisable);
@@ -736,7 +735,7 @@ void MkBaseWindowNode::SetEnable(bool enable)
 				__SetActiveWindowStateCounter(-1);
 			}
 
-			__TSI_WindowNodeOp<eS2D_WindowState>::SetState((enable) ? eS2D_WS_DisableState : eS2D_WS_DefaultState, this);
+			__TSI_WindowNodeOp<eS2D_WindowState>::SetState((enable) ? eS2D_WS_DefaultState : eS2D_WS_DisableState, this);
 		}
 
 		m_Enable = enable;
@@ -905,7 +904,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 		backgroundWindow->SetLocalPosition(MkVec3(-MARGIN, heightOffset - backgroundWindow->GetPresetComponentSize().y + MARGIN, MKDEF_BASE_WINDOW_DEPTH_GRID));
 		backgroundWindow->SetAttribute(MkBaseWindowNode::eIgnoreMovement, true);
 
-		const MkFloat2 buttonCompSize(60.f, 18.f);
+		const MkFloat2 buttonCompSize(60.f, 20.f);
 
 		// ok button
 		MkBaseWindowNode* okWindow = NULL;
@@ -1212,7 +1211,7 @@ bool MkBaseWindowNode::InputEventMouseRelease(unsigned int button, const MkFloat
 		if (button == 0)
 		{
 			if ((m_PresetComponentType == eS2D_WPC_CloseButton) && // close button 클릭시 edit mode가 아니거나 system 윈도우가 아니면 윈도우 닫음
-				((!MK_WIN_EVENT_MGR.GetEditMode()) || GetRootWindow()->GetAttribute(eForEditMode))) // edit mode시 실수로 일반 윈도우가 닫히는 경우를 방지
+				((!MK_WIN_EVENT_MGR.GetEditMode()) || GetRootWindow()->GetAttribute(eSystemWindow))) // edit mode시 실수로 일반 윈도우가 닫히는 경우를 방지
 			{
 				MK_WIN_EVENT_MGR.DeactivateWindow(GetRootWindow()->GetNodeName());
 				return true;
@@ -1430,6 +1429,34 @@ void MkBaseWindowNode::LostFocus(void)
 	{
 		m_ChildWindows[i]->LostFocus();
 	}
+}
+
+bool MkBaseWindowNode::ChangeNodeName(const MkHashStr& newName)
+{
+	if (newName == GetNodeName())
+		return true;
+
+	MkHashStr oldName = GetNodeName();
+	bool ok = MkSceneNode::ChangeNodeName(newName);
+	if (ok && CheckRootWindow())
+	{
+		MK_WIN_EVENT_MGR.__RootWindowNameChanged(oldName, newName);
+	}
+	return ok;
+}
+
+bool MkBaseWindowNode::ChangeChildNodeName(const MkHashStr& oldName, const MkHashStr& newName)
+{
+	bool ok = MkSceneNode::ChangeChildNodeName(oldName, newName);
+	if (ok && (m_ChildrenNode[newName]->GetNodeType() >= eS2D_SNT_BaseWindowNode))
+	{
+		MkBaseWindowNode* targetNode = dynamic_cast<MkBaseWindowNode*>(m_ChildrenNode[newName]);
+		if ((targetNode != NULL) && targetNode->CheckRootWindow())
+		{
+			MK_WIN_EVENT_MGR.__RootWindowNameChanged(oldName, newName);
+		}
+	}
+	return ok;
 }
 
 bool MkBaseWindowNode::AttachChildNode(MkSceneNode* childNode)

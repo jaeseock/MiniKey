@@ -380,7 +380,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Edit mode window"
+				Name="system window"
 				>
 				<File
 					RelativePath=".\Source\MkS2D_MkEditModeSettingWindow.cpp"
@@ -396,6 +396,14 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkS2D_MkEditModeTargetWindow.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkS2D_MkSystemWindows.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkS2D_MkSystemWindows.h"
 					>
 				</File>
 			</Filter>

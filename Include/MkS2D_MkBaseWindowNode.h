@@ -29,7 +29,7 @@ public:
 
 		eDragToHandling, // 커서 드래그로 핸들링 허용. eDragMovement보다 우선순위 높음
 
-		eForEditMode, // edit mode용 윈도우
+		eSystemWindow, // 시스템 윈도우
 
 		eAlignCenterPos // activate시 중앙 정렬
 	};
@@ -287,6 +287,10 @@ public:
 	//------------------------------------------------------------------------------------------------//
 	// MkSceneNode
 	//------------------------------------------------------------------------------------------------//
+
+	virtual bool ChangeNodeName(const MkHashStr& newName);
+
+	virtual bool ChangeChildNodeName(const MkHashStr& oldName, const MkHashStr& newName);
 
 	virtual bool AttachChildNode(MkSceneNode* childNode);
 

@@ -4,14 +4,14 @@
 //------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------//
 
-#include "MkS2D_MkBaseWindowNode.h"
+#include "MkS2D_MkSystemWindows.h"
 
 
-class MkEditModeSettingWindow : public MkBaseWindowNode
+class MkEditModeSettingWindow : public MkBaseSystemWindow
 {
 public:
 
-	bool SetUp(void);
+	virtual bool Initialize(void);
 
 	virtual void UseWindowEvent(WindowEvent& evt);
 

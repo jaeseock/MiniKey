@@ -14,15 +14,14 @@ const static MkHashStr ALLOW_DRAG_MOVEMENT_NAME = L"AllowDragMovement";
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkEditModeSettingWindow::SetUp(void)
+bool MkEditModeSettingWindow::Initialize(void)
 {
-	SetAttribute(eForEditMode, true);
 	SetAttribute(eAlignCenterPos, true);
 
 	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
 
 	BasicPresetWindowDesc winDesc;
-	winDesc.SetStandardDesc(themeName, true, MkFloat2(300, 400.f));
+	winDesc.SetStandardDesc(themeName, true, MkFloat2(300.f, 400.f));
 	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
 	winDesc.titleCaption = L"에디트 모드 세팅";
 	winDesc.hasIcon = false;
@@ -95,7 +94,7 @@ void MkEditModeSettingWindow::UseWindowEvent(WindowEvent& evt)
 	}
 }
 
-MkEditModeSettingWindow::MkEditModeSettingWindow(const MkHashStr& name) : MkBaseWindowNode(name)
+MkEditModeSettingWindow::MkEditModeSettingWindow(const MkHashStr& name) : MkBaseSystemWindow(name)
 {
 	
 }

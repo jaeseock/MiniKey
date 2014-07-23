@@ -13,6 +13,7 @@
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkEditModeSettingWindow.h"
 #include "MkS2D_MkEditModeTargetWindow.h"
+#include "MkS2D_MkSystemWindows.h"
 #include "MkS2D_MkWindowEventManager.h"
 
 
@@ -28,6 +29,7 @@ const static MkHashStr DEBUG_RECT_NAME = L"Debug";
 
 const static MkHashStr SETTING_WINDOW_NAME = L"__#Setting";
 const static MkHashStr TARGET_WINDOW_NAME = L"__#Target";
+const static MkHashStr SW_NODENAMEINPUT_WINDOW_NAME = L"__#NNI";
 
 static const MkHashStr PROF_KEY_UPDATE = L"MkWindowEventManager::Update";
 
@@ -98,39 +100,19 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 	// 설정 윈도우 생성
 	if (!m_WindowTable.Exist(SETTING_WINDOW_NAME))
 	{
-		MkEditModeSettingWindow* targetWindow = new MkEditModeSettingWindow(SETTING_WINDOW_NAME);
-		if (targetWindow != NULL)
-		{
-			if (targetWindow->SetUp())
-			{
-				RegisterWindow(targetWindow, false);
-			}
-			else
-			{
-				MK_DELETE(targetWindow);
-			}
-		}
-
-		MK_CHECK(targetWindow != NULL, L"edit mode용 setting window 생성 실패") {}
+		_CreateSystemWindow(new MkEditModeSettingWindow(SETTING_WINDOW_NAME));
 	}
 
 	// 노드 선택 윈도우 생성
 	if (!m_WindowTable.Exist(TARGET_WINDOW_NAME))
 	{
-		MkEditModeTargetWindow* targetWindow = new MkEditModeTargetWindow(TARGET_WINDOW_NAME);
-		if (targetWindow != NULL)
-		{
-			if (targetWindow->SetUp())
-			{
-				RegisterWindow(targetWindow, false);
-			}
-			else
-			{
-				MK_DELETE(targetWindow);
-			}
-		}
+		_CreateSystemWindow(new MkEditModeTargetWindow(TARGET_WINDOW_NAME));
+	}
 
-		MK_CHECK(targetWindow != NULL, L"edit mode용 node selection window 생성 실패") {}
+	// 노드 이름 입력 윈도우 생ㅅㅇ
+	if (!m_WindowTable.Exist(SW_NODENAMEINPUT_WINDOW_NAME))
+	{
+		_CreateSystemWindow(new MkNodeNameInputSystemWindow(SW_NODENAMEINPUT_WINDOW_NAME));
 	}
 }
 
@@ -574,7 +556,7 @@ void MkWindowEventManager::Update(void)
 				MkBaseWindowNode* frontHit = onFocusWindowNode->__GetFrontHitWindow(currentCursorPosition);
 
 				// 이동 모드일때만 slide bar를 타게팅 할 수 있게 변환
-				if (m_EditMode && m_AllowDragMovement && (frontHit != NULL) && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eForEditMode)))
+				if (m_EditMode && m_AllowDragMovement && (frontHit != NULL) && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eSystemWindow)))
 				{
 					switch (frontHit->GetPresetComponentType())
 					{
@@ -594,7 +576,7 @@ void MkWindowEventManager::Update(void)
 					// edit box 영역이 선택되었으면 알림. 다른 종류의 윈도우면 입력모드 취소
 					MK_EDIT_BOX.BindControl((frontHit->GetNodeType() == eS2D_SNT_EditBoxNode) ? frontHit : NULL);
 
-					if (m_EditMode && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eForEditMode)))
+					if (m_EditMode && (!onFocusWindowNode->GetAttribute(MkBaseWindowNode::eSystemWindow)))
 					{
 						SetTargetWindowNode(frontHit);
 					}
@@ -626,7 +608,7 @@ void MkWindowEventManager::Update(void)
 				// 이동금지 속성이 없는 상태에서 에디트 모드거나 드래깅 윈도우가 이동 속성을 가지고 있을 경우 윈도우 이동
 				else if (!m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eIgnoreMovement))
 				{
-					bool onMove = (m_EditMode && m_AllowDragMovement && (!m_FrontHitWindow->GetRootWindow()->GetAttribute(MkBaseWindowNode::eForEditMode)));
+					bool onMove = (m_EditMode && m_AllowDragMovement && (!m_FrontHitWindow->GetRootWindow()->GetAttribute(MkBaseWindowNode::eSystemWindow)));
 					if (!onMove)
 					{
 						onMove = m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragMovement);
@@ -774,6 +756,18 @@ void MkWindowEventManager::SetTargetWindowNode(MkBaseWindowNode* targetWindow)
 	_PassTargetWindow();
 }
 
+void MkWindowEventManager::OpenNodeNameInputSystemWindow(MkSceneNode* targetNode)
+{
+	if (m_WindowTable.Exist(SW_NODENAMEINPUT_WINDOW_NAME) && m_ModalWindow.Empty())
+	{
+		MkNodeNameInputSystemWindow* sysWindow = dynamic_cast<MkNodeNameInputSystemWindow*>(m_WindowTable[SW_NODENAMEINPUT_WINDOW_NAME]);
+		if (sysWindow != NULL)
+		{
+			sysWindow->SetUp(targetNode);
+		}
+	}
+}
+
 void MkWindowEventManager::Clear(void)
 {
 	m_DrawStep = NULL;
@@ -861,6 +855,45 @@ void MkWindowEventManager::__HideDebugLayer(void)
 		if (srect != NULL)
 		{
 			srect->SetVisible(false);
+		}
+	}
+}
+
+void MkWindowEventManager::__RootWindowNameChanged(const MkHashStr& oldName, const MkHashStr& newName)
+{
+	if (m_WindowTable.Exist(oldName))
+	{
+		MkBaseWindowNode* targetWindow = m_WindowTable[oldName];
+		m_WindowTable.Erase(oldName);
+		m_WindowTable.Create(newName, targetWindow);
+
+		_ChangeWindowName(oldName, newName, m_OnActivatingWindows);
+		_ChangeWindowName(oldName, newName, m_WaitForActivatingWindows);
+		_ChangeWindowName(oldName, newName, m_WaitForDeactivatingWindows);
+
+		if (oldName == m_LastFocusWindow)
+		{
+			m_LastFocusWindow = newName;
+		}
+
+		if (oldName == m_ModalWindow)
+		{
+			m_ModalWindow = newName;
+		}
+	}
+}
+
+void MkWindowEventManager::_CreateSystemWindow(MkBaseSystemWindow* systemWindow)
+{
+	if (systemWindow != NULL)
+	{
+		if (systemWindow->Initialize())
+		{
+			RegisterWindow(systemWindow, false);
+		}
+		else
+		{
+			MK_DELETE(systemWindow);
 		}
 	}
 }
@@ -963,6 +996,15 @@ void MkWindowEventManager::_PassTargetWindow(bool ignoreActivationCheck)
 		{
 			targetWindow->SetTargetNode(m_CurrentTargetWindowNode);
 		}
+	}
+}
+
+void MkWindowEventManager::_ChangeWindowName(const MkHashStr& oldName, const MkHashStr& newName, MkArray<MkHashStr>& targetList)
+{
+	unsigned int pos = targetList.FindFirstInclusion(MkArraySection(0), oldName);
+	if (pos != MKDEF_ARRAY_ERROR)
+	{
+		targetList[pos] = newName;
 	}
 }
 

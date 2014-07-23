@@ -17,10 +17,8 @@ const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkEditModeTargetWindow::SetUp(void)
+bool MkEditModeTargetWindow::Initialize(void)
 {
-	SetAttribute(eForEditMode, true);
-
 	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
 
 	MkFloat2 winSize = MkFloat2(300.f, 768);
@@ -151,13 +149,16 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 			unsigned int index = evt.node->GetNodeName().GetString().ToUnsignedInteger();
 			if (m_NodeTreeSrc.IsValidIndex(index))
 			{
-				MK_WIN_EVENT_MGR.SetTargetWindowNode(m_NodeTreeSrc[index]);
+				MkBaseWindowNode* targetNode = m_NodeTreeSrc[index];
+				MK_WIN_EVENT_MGR.SetTargetWindowNode(targetNode);
+
+				MK_WIN_EVENT_MGR.OpenNodeNameInputSystemWindow(targetNode);
 			}
 		}
 	}
 }
 
-MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseWindowNode(name)
+MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSystemWindow(name)
 {
 	m_NodeTreeRoot = NULL;
 	m_NodeTreeScrollBar = NULL;

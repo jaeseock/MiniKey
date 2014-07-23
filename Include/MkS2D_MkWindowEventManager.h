@@ -17,6 +17,8 @@
 #define MK_WIN_EVENT_MGR MkWindowEventManager::Instance()
 
 
+class MkBaseSystemWindow;
+
 class MkDrawStep;
 class MkSceneNode;
 class MkBaseWindowNode;
@@ -65,6 +67,9 @@ public:
 	// 지정 윈도우 설정
 	void SetTargetWindowNode(MkBaseWindowNode* targetWindow);
 
+	// system window
+	void OpenNodeNameInputSystemWindow(MkSceneNode* targetNode);
+
 	// 해제
 	void Clear(void);
 
@@ -79,6 +84,8 @@ public:
 	void __ShowDebugLayer(const MkFloatRect& rect, float depth);
 	void __HideDebugLayer(void);
 
+	void __RootWindowNameChanged(const MkHashStr& oldName, const MkHashStr& newName);
+
 	// setting
 	inline void __SetShowWindowSelection(bool enable) { m_ShowWindowSelection = enable; }
 	inline bool __GetShowWindowSelection(void) { return m_ShowWindowSelection; }
@@ -86,6 +93,8 @@ public:
 	inline bool __GetAllowDragMovement(void) { return m_AllowDragMovement; }
 
 protected:
+
+	void _CreateSystemWindow(MkBaseSystemWindow* systemWindow);
 
 	void _LastWindowLostFocus(void);
 	void _SetFocusToWindowNode(MkBaseWindowNode* targetNode);
@@ -100,6 +109,8 @@ protected:
 	bool _SetRegionLayerVisible(bool enable);
 
 	void _PassTargetWindow(bool ignoreActivationCheck = false);
+
+	void _ChangeWindowName(const MkHashStr& oldName, const MkHashStr& newName, MkArray<MkHashStr>& targetList);
 
 protected:
 

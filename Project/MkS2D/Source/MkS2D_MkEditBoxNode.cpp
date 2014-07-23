@@ -49,8 +49,8 @@ void MkEditBoxNode::SetText(const MkStr& msg)
 
 void MkEditBoxNode::CommitText(void)
 {
-	_PushWindowEvent(MkSceneNodeFamilyDefinition::eTextInput);
-
+	_PushWindowEvent(MkSceneNodeFamilyDefinition::eCommitText);
+	
 	if (m_UseHistory && (!m_Text.Empty()))
 	{
 		m_MessageHistory.Record(m_Text);
@@ -201,7 +201,8 @@ void MkEditBoxNode::__SetFocus(void)
 
 bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd)
 {
-	bool ok = ((msg != m_Text) || (selStart != m_SelStart) || (selEnd != m_SelEnd));
+	bool newText = (msg != m_Text);
+	bool ok = (newText || (selStart != m_SelStart) || (selEnd != m_SelEnd));
 	if (ok)
 	{
 		// 텍스트 크기가 윈도우 크기보다 클 수 있으므로 일정 영역(m_CharStart ~ m_CharEnd)만큼만 보여주어야 함
@@ -428,6 +429,11 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 		}
 
 		_UpdateCursorAndSelection();
+
+		if (newText)
+		{
+			_PushWindowEvent(MkSceneNodeFamilyDefinition::eModifyText);
+		}
 	}
 	return ok;
 }

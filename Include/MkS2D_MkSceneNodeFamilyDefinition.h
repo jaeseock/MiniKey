@@ -41,7 +41,8 @@ public:
 		eScrollPositionChanged,
 
 		// MkEditBoxNode
-		eTextInput
+		eModifyText,
+		eCommitText
 	};
 
 	//------------------------------------------------------------------------------------------------//
