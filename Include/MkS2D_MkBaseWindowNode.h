@@ -327,15 +327,14 @@ public:
 
 	// for edit mode
 	void __BuildInformationTree(MkBaseWindowNode* targetParentNode, unsigned int depth, MkArray<MkBaseWindowNode*>& buffer);
+	void __SetWindowInformation(MkBaseWindowNode* targetNode) const;
 	unsigned int __CountTotalWindowBasedChildren(void) const;
 	inline MkBaseWindowNode* __GetWindowBasedChild(unsigned int index) { return m_ChildWindows.IsValidIndex(index) ? m_ChildWindows[index] : NULL; }
 
 protected:
 
 	bool _CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer); // + position check & enable
-
 	void _PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEvent type);
-
 	bool _OnActiveWindowState(void) const;
 
 protected:

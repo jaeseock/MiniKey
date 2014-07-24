@@ -1705,60 +1705,7 @@ void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* parentNode, unsi
 
 			targetNode->SetAttribute(eIgnoreMovement, true);
 
-			// fill info
-			MkStr windowType;
-			switch (GetNodeType())
-			{
-			case eS2D_SNT_BaseWindowNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.YellowFS(), L"[BaseWindow]", windowType); break;
-			case eS2D_SNT_SpreadButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.CianFS(), L"[SpreadBtn]", windowType); break;
-			case eS2D_SNT_CheckButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.PinkFS(), L"[CheckBtn]", windowType); break;
-			case eS2D_SNT_ScrollBarNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.OrangeFS(), L"[ScrollBar]", windowType); break;
-			case eS2D_SNT_EditBoxNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), L"[EditBox]", windowType); break;
-			default: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), L"[SceneNode]", windowType); break;
-			}
-
-			MkStr header;
-			MkDecoStr::InsertFontTypeTag(MK_FONT_MGR.DSF(), windowType, header);
-
-			MkStr compStr, compType;
-			compStr += L"[";
-			compStr += (m_PresetComponentType == eS2D_WPC_None) ? L"--" : GetPresetComponentName().GetString();
-			compStr += L"]";
-
-			if (IsBackgroundStateType(m_PresetComponentType))
-			{
-				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), compStr, compType);
-			}
-			else if (IsTitleStateType(m_PresetComponentType))
-			{
-				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.RedFS(), compStr, compType);
-			}
-			else if (IsWindowStateType(m_PresetComponentType))
-			{
-				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), compStr, compType);
-			}
-			else
-			{
-				MkDecoStr::InsertFontStateTag(MK_FONT_MGR.DarkGrayFS(), compStr, compType);
-			}
-
-			MkStr nameBuf;
-			MkDecoStr::InsertFontStateTag(MK_FONT_MGR.WhiteFS(), L" " + GetNodeName().GetString(), nameBuf);
-
-			MkStr text;
-			text.Reserve(header.GetSize() + compType.GetSize() + nameBuf.GetSize());
-			text += header;
-			text += compType;
-			text += nameBuf;
-
-			CaptionDesc captionDesc;
-			captionDesc.SetString(text);
-
-			targetNode->SetPresetComponentIcon(COMPONENT_HIGHLIGHT_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
-				MkHashStr::NullHash, captionDesc);
-
-			targetNode->SetPresetComponentIcon(COMPONENT_NORMAL_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
-				MkHashStr::NullHash, captionDesc);
+			__SetWindowInformation(targetNode);
 
 			if (!GetVisible())
 			{
@@ -1767,11 +1714,6 @@ void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* parentNode, unsi
 
 			targetNode->SetLocalPosition
 				(MkFloat2(MKDEF_S2D_NODE_SEL_DEPTH_OFFSET * static_cast<float>(depth), -targetNode->GetPresetComponentSize().y * static_cast<float>(buffer.GetSize() - 1)));
-
-			// text에 맞게 component 크기 재조정
-			const MkInt2& strSize = targetNode->GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME)->GetDecoString().GetDrawingSize();
-			MkFloat2 newCompSize = MkFloat2(static_cast<float>(strSize.x) + MK_WR_PRESET.GetMargin() * 2.f, MKDEF_S2D_NODE_SEL_LINE_SIZE);
-			targetNode->SetPresetComponentSize(newCompSize);
 
 			// 하위 순회
 			unsigned int newDepth = depth + 1;
@@ -1804,6 +1746,72 @@ void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* parentNode, unsi
 	MkFloat2 m_PresetComponentSize;
 	MkBitFieldDW m_Attribute;
 	*/
+}
+
+void MkBaseWindowNode::__SetWindowInformation(MkBaseWindowNode* targetNode) const
+{
+	if (targetNode != NULL)
+	{
+		// fill info
+		MkStr windowType;
+		switch (GetNodeType())
+		{
+		case eS2D_SNT_BaseWindowNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.YellowFS(), L"[BaseWindow]", windowType); break;
+		case eS2D_SNT_SpreadButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.CianFS(), L"[SpreadBtn]", windowType); break;
+		case eS2D_SNT_CheckButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.PinkFS(), L"[CheckBtn]", windowType); break;
+		case eS2D_SNT_ScrollBarNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.OrangeFS(), L"[ScrollBar]", windowType); break;
+		case eS2D_SNT_EditBoxNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), L"[EditBox]", windowType); break;
+		default: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), L"[SceneNode]", windowType); break;
+		}
+
+		MkStr header;
+		MkDecoStr::InsertFontTypeTag(MK_FONT_MGR.DSF(), windowType, header);
+
+		MkStr compStr, compType;
+		compStr += L"[";
+		compStr += (m_PresetComponentType == eS2D_WPC_None) ? L"--" : GetPresetComponentName().GetString();
+		compStr += L"]";
+
+		if (IsBackgroundStateType(m_PresetComponentType))
+		{
+			MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), compStr, compType);
+		}
+		else if (IsTitleStateType(m_PresetComponentType))
+		{
+			MkDecoStr::InsertFontStateTag(MK_FONT_MGR.RedFS(), compStr, compType);
+		}
+		else if (IsWindowStateType(m_PresetComponentType))
+		{
+			MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), compStr, compType);
+		}
+		else
+		{
+			MkDecoStr::InsertFontStateTag(MK_FONT_MGR.DarkGrayFS(), compStr, compType);
+		}
+
+		MkStr nameBuf;
+		MkDecoStr::InsertFontStateTag(MK_FONT_MGR.WhiteFS(), L" " + GetNodeName().GetString(), nameBuf);
+
+		MkStr text;
+		text.Reserve(header.GetSize() + compType.GetSize() + nameBuf.GetSize());
+		text += header;
+		text += compType;
+		text += nameBuf;
+
+		CaptionDesc captionDesc;
+		captionDesc.SetString(text);
+
+		targetNode->SetPresetComponentIcon(COMPONENT_HIGHLIGHT_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
+			MkHashStr::NullHash, captionDesc);
+
+		targetNode->SetPresetComponentIcon(COMPONENT_NORMAL_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
+			MkHashStr::NullHash, captionDesc);
+
+		// text에 맞게 component 크기 재조정
+		const MkInt2& strSize = targetNode->GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME)->GetDecoString().GetDrawingSize();
+		MkFloat2 newCompSize = MkFloat2(static_cast<float>(strSize.x) + MK_WR_PRESET.GetMargin() * 2.f, MKDEF_S2D_NODE_SEL_LINE_SIZE);
+		targetNode->SetPresetComponentSize(newCompSize);
+	}
 }
 
 unsigned int MkBaseWindowNode::__CountTotalWindowBasedChildren(void) const

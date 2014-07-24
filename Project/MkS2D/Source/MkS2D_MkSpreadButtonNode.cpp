@@ -342,7 +342,7 @@ bool MkSpreadButtonNode::CloseAllItems(void)
 			MkBaseWindowNode* rootWindow = GetRootWindow();
 			if (rootWindow != NULL)
 			{
-				rootWindow->Update();
+				rootWindow->UpdateAll();
 			}
 		}
 	}

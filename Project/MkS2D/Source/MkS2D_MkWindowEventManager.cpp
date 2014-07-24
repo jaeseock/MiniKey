@@ -68,7 +68,7 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 			debugLayer->SetVisible(false);
 		}
 
-		m_RootNode->Update();
+		m_RootNode->UpdateAll();
 	}
 
 	if (m_DrawStep == NULL)
@@ -133,8 +133,7 @@ bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool act
 
 	m_RootNode->AttachChildNode(windowNode);
 	windowNode->DeclareRootWindow();
-	windowNode->Update(); // ÃÊ±âÈ­
-
+	
 	m_WindowTable.Create(name, windowNode);
 
 	_LastWindowLostFocus();
@@ -678,7 +677,7 @@ void MkWindowEventManager::Update(void)
 	}
 
 	// scene graph update
-	m_RootNode->Update();
+	m_RootNode->UpdateAll();
 
 	// debug
 	{
@@ -756,14 +755,14 @@ void MkWindowEventManager::SetTargetWindowNode(MkBaseWindowNode* targetWindow)
 	_PassTargetWindow();
 }
 
-void MkWindowEventManager::OpenNodeNameInputSystemWindow(MkSceneNode* targetNode)
+void MkWindowEventManager::OpenNodeNameInputSystemWindow(MkSceneNode* targetNode, MkNodeNameInputListener* owner)
 {
 	if (m_WindowTable.Exist(SW_NODENAMEINPUT_WINDOW_NAME) && m_ModalWindow.Empty())
 	{
 		MkNodeNameInputSystemWindow* sysWindow = dynamic_cast<MkNodeNameInputSystemWindow*>(m_WindowTable[SW_NODENAMEINPUT_WINDOW_NAME]);
 		if (sysWindow != NULL)
 		{
-			sysWindow->SetUp(targetNode);
+			sysWindow->SetUp(targetNode, owner);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 
+#include "MkS2D_MkFontManager.h"
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkScrollBarNode.h"
@@ -9,69 +10,21 @@ const static MkHashStr SEL_ICON_NAME = L"__#SelIcon";
 const static MkHashStr NODE_TREE_ROOT_NAME = L"__#NodeTreeRoot";
 const static MkHashStr NODE_TREE_VSB_NAME = L"__#NodeTreeVSB";
 
-const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
+const static MkHashStr NODE_NAME_BTN_NAME = L"__#ChangeName";
 
-#define MKDEF_HEIGHT_MARGIN 10.f
+const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
+const static MkStr SEL_CAPTION_PREFIX = L"선택 윈도우 : ";
+
+#define MKDEF_WINDOW_SIZE MkFloat2(500.f, 768)
+#define MKDEF_CTRL_MARGIN 10.f
+#define MKDEF_DEF_CTRL_HEIGHT 20.f
+
 #define MKDEF_ONE_PAGE_NODE_ITEM_COUNT 20
 #define MKDEF_NODE_TREE_TXT_BEGIN_POS 45.f
 
+#define MKDEF_NODE_NAME_BTN_WIDTH 300.f
+
 //------------------------------------------------------------------------------------------------//
-
-bool MkEditModeTargetWindow::Initialize(void)
-{
-	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
-
-	MkFloat2 winSize = MkFloat2(300.f, 768);
-	winSize.x += MKDEF_S2D_NODE_SEL_DEPTH_OFFSET * 10.f;
-
-	BasicPresetWindowDesc winDesc;
-	winDesc.SetStandardDesc(themeName, true, winSize);
-	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
-	winDesc.titleCaption = NONE_SEL_CAPTION;
-	winDesc.hasIcon = false;
-	winDesc.hasCloseButton = true;
-	winDesc.hasCancelButton = false;
-	winDesc.hasOKButton = false;
-
-	if (CreateBasicWindow(this, MkHashStr::NullHash, winDesc) == NULL)
-		return false;
-
-	float nodeTreeScrollBarYPos = 0.f;
-
-	MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(GetChildNode(L"Background"));
-	if (bgNode != NULL)
-	{
-		m_ClientRect = bgNode->GetPresetComponentSize();
-		m_ClientRect.size.y -= GetPresetComponentSize().y; // body size - title size
-
-		m_NodeTreeScrollBar = new MkScrollBarNode(NODE_TREE_VSB_NAME);
-		if (m_NodeTreeScrollBar != NULL)
-		{
-			const float MARGIN = MK_WR_PRESET.GetMargin();
-
-			// vertical scroll bar
-			bgNode->AttachChildNode(m_NodeTreeScrollBar);
-			float sbHeight = static_cast<float>(MKDEF_ONE_PAGE_NODE_ITEM_COUNT) * MKDEF_S2D_NODE_SEL_LINE_SIZE;
-			nodeTreeScrollBarYPos = m_ClientRect.size.y - MKDEF_HEIGHT_MARGIN - sbHeight;
-			m_NodeTreeScrollBar->CreateScrollBar(themeName, MkScrollBarNode::eVertical, true, sbHeight);
-			m_NodeTreeScrollBar->SetLocalPosition(MkVec3(MARGIN, nodeTreeScrollBarYPos, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-			m_NodeTreeScrollBar->SetPageInfo(0, MKDEF_ONE_PAGE_NODE_ITEM_COUNT, 1, 1);
-
-			// window tree root
-			m_NodeTreeRoot = new MkBaseWindowNode(NODE_TREE_ROOT_NAME);
-			if (m_NodeTreeRoot != NULL)
-			{
-				bgNode->AttachChildNode(m_NodeTreeRoot);
-				_SetNodeTreeItemPosition(0);
-			}
-		}
-	}
-
-	if (m_NodeTreeRoot == NULL)
-		return false;
-
-	return true;
-}
 
 void MkEditModeTargetWindow::SetTargetNode(MkBaseWindowNode* targetNode)
 {
@@ -96,6 +49,8 @@ void MkEditModeTargetWindow::SetTargetNode(MkBaseWindowNode* targetNode)
 				m_NodeTreeScrollBar->SetGridPosition(targetIndex);
 				_SetNodeTreeItemPosition(m_NodeTreeScrollBar->GetCurrentPagePosition());
 			}
+
+			_SetWindowTitleByTargetNode();
 		}
 		// 다른 그룹의 윈도우 선택. 새로 구성
 		else
@@ -104,6 +59,105 @@ void MkEditModeTargetWindow::SetTargetNode(MkBaseWindowNode* targetNode)
 			_RebuildNodeTree();
 		}
 	}
+}
+
+bool MkEditModeTargetWindow::Initialize(void)
+{
+	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
+
+	BasicPresetWindowDesc winDesc;
+	winDesc.SetStandardDesc(themeName, true, MKDEF_WINDOW_SIZE);
+	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
+	winDesc.titleCaption = NONE_SEL_CAPTION;
+	winDesc.hasIcon = false;
+	winDesc.hasCloseButton = true;
+	winDesc.hasCancelButton = false;
+	winDesc.hasOKButton = false;
+
+	if (CreateBasicWindow(this, MkHashStr::NullHash, winDesc) == NULL)
+		return false;
+
+	MkFloat2 currentCtrlPos;
+	float ctrlToTextRectOffset = (MKDEF_DEF_CTRL_HEIGHT - MK_FONT_MGR.GetFontHeight(MK_FONT_MGR.DSF())) * 0.5f;
+
+	MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(GetChildNode(L"Background"));
+	if (bgNode != NULL)
+	{
+		const float MARGIN = MK_WR_PRESET.GetMargin();
+		currentCtrlPos.x = MARGIN;
+
+		m_ClientRect = bgNode->GetPresetComponentSize();
+		m_ClientRect.size.y -= GetPresetComponentSize().y; // body size - title size
+
+		// node tree
+		m_NodeTreeScrollBar = new MkScrollBarNode(NODE_TREE_VSB_NAME);
+		if (m_NodeTreeScrollBar != NULL)
+		{
+			// vertical scroll bar
+			bgNode->AttachChildNode(m_NodeTreeScrollBar);
+			float sbHeight = static_cast<float>(MKDEF_ONE_PAGE_NODE_ITEM_COUNT) * MKDEF_S2D_NODE_SEL_LINE_SIZE;
+			currentCtrlPos.y = m_ClientRect.size.y - MKDEF_CTRL_MARGIN - sbHeight;
+			m_NodeTreeScrollBar->CreateScrollBar(themeName, MkScrollBarNode::eVertical, true, sbHeight);
+			m_NodeTreeScrollBar->SetLocalPosition(currentCtrlPos);
+			m_NodeTreeScrollBar->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+			m_NodeTreeScrollBar->SetPageInfo(0, MKDEF_ONE_PAGE_NODE_ITEM_COUNT, 1, 1);
+
+			// list btn root
+			m_NodeTreeRoot = new MkBaseWindowNode(NODE_TREE_ROOT_NAME);
+			if (m_NodeTreeRoot != NULL)
+			{
+				bgNode->AttachChildNode(m_NodeTreeRoot);
+				_SetNodeTreeItemPosition(0);
+			}
+		}
+
+		currentCtrlPos.x = MKDEF_CTRL_MARGIN;
+		currentCtrlPos.y -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+
+		// node name
+		MkSRect* nodeNamePrefix = bgNode->CreateSRect(L"__#NodeNamePrefix");
+		if (nodeNamePrefix != NULL)
+		{
+			nodeNamePrefix->SetDecoString(L"이름 :");
+			nodeNamePrefix->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + ctrlToTextRectOffset));
+			nodeNamePrefix->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+
+			m_NodeNameBtn = __CreateWindowPreset(bgNode, NODE_NAME_BTN_NAME, themeName, eS2D_WPC_RootButton, MkFloat2(MKDEF_NODE_NAME_BTN_WIDTH, MKDEF_DEF_CTRL_HEIGHT));
+			if (m_NodeNameBtn != NULL)
+			{
+				currentCtrlPos.x += nodeNamePrefix->GetLocalSize().x + 6.f;
+
+				m_NodeNameBtn->SetLocalPosition(currentCtrlPos);
+				m_NodeNameBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+				m_NodeNameBtn->SetEnable(false);
+			}
+		}
+
+		// node pos
+		MkSRect* nodePosPrefix = bgNode->CreateSRect(L"__#NodePosPrefix");
+		if (nodePosPrefix != NULL)
+		{
+			currentCtrlPos.x += MKDEF_NODE_NAME_BTN_WIDTH + MKDEF_CTRL_MARGIN;
+
+			nodePosPrefix->SetDecoString(L"로컬 위치 :");
+			nodePosPrefix->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + ctrlToTextRectOffset));
+			nodePosPrefix->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+
+			m_NodePositionRect = bgNode->CreateSRect(L"__#NodePosition");
+			if (m_NodePositionRect != NULL)
+			{
+				currentCtrlPos.x += nodePosPrefix->GetLocalSize().x + 6.f;
+
+				m_NodePositionRect->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + ctrlToTextRectOffset));
+				m_NodePositionRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+			}
+		}
+	}
+
+	if (m_NodeTreeRoot == NULL)
+		return false;
+
+	return true;
 }
 
 void MkEditModeTargetWindow::Activate(void)
@@ -149,20 +203,64 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 			unsigned int index = evt.node->GetNodeName().GetString().ToUnsignedInteger();
 			if (m_NodeTreeSrc.IsValidIndex(index))
 			{
-				MkBaseWindowNode* targetNode = m_NodeTreeSrc[index];
-				MK_WIN_EVENT_MGR.SetTargetWindowNode(targetNode);
+				MK_WIN_EVENT_MGR.SetTargetWindowNode(m_NodeTreeSrc[index]);
+			}
+		}
+	}
+	else if (evt.node->GetNodeName() == NODE_NAME_BTN_NAME)
+	{
+		if ((evt.type == MkSceneNodeFamilyDefinition::eCursorLeftRelease) && (m_TargetNode != NULL))
+		{
+			MK_WIN_EVENT_MGR.OpenNodeNameInputSystemWindow(m_TargetNode, this);
+		}
+	}
+}
 
-				MK_WIN_EVENT_MGR.OpenNodeNameInputSystemWindow(targetNode);
+void MkEditModeTargetWindow::UpdateNode(void)
+{
+	if (GetVisible() && (m_NodePositionRect != NULL))
+	{
+		MkStr currNodePositionStr = (m_TargetNode == NULL) ?
+			L"(--, --)" : MkStr(MkInt2(static_cast<int>(m_TargetNode->GetLocalPosition().x), static_cast<int>(m_TargetNode->GetLocalPosition().y)));
+
+		if (currNodePositionStr != m_LastNodePositionStr)
+		{
+			m_NodePositionRect->SetDecoString(currNodePositionStr);
+			m_LastNodePositionStr = currNodePositionStr;
+		}
+	}
+
+	MkBaseSystemWindow::UpdateNode();
+}
+
+void MkEditModeTargetWindow::NodeNameChanged(const MkHashStr& oldName, const MkHashStr& newName, MkSceneNode* targetNode)
+{
+	if (targetNode != NULL)
+	{
+		MkBaseWindowNode* targetWindow = dynamic_cast<MkBaseWindowNode*>(targetNode);
+		if (targetWindow != NULL)
+		{
+			unsigned int targetIndex = m_NodeTreeSrc.FindFirstInclusion(MkArraySection(0), targetWindow);
+			if (targetIndex != MKDEF_ARRAY_ERROR)
+			{
+				MkBaseWindowNode* targetListBtn = m_NodeTreeRoot->__GetWindowBasedChild(targetIndex);
+				targetWindow->__SetWindowInformation(targetListBtn);
+
+				_SetWindowTitleByTargetNode();
 			}
 		}
 	}
 }
 
-MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSystemWindow(name)
+MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSystemWindow(name), MkNodeNameInputListener()
 {
+	m_TargetNode = NULL;
+
 	m_NodeTreeRoot = NULL;
 	m_NodeTreeScrollBar = NULL;
-	m_TargetNode = NULL;
+
+	m_NodeNameBtn = NULL;
+	m_NodePositionRect = NULL;
 }
 
 void MkEditModeTargetWindow::_RebuildNodeTree(void)
@@ -199,9 +297,7 @@ void MkEditModeTargetWindow::_RebuildNodeTree(void)
 			_SetNodeTreeItemPosition(m_NodeTreeScrollBar->GetCurrentPagePosition());
 		}
 
-		SetPresetComponentCaption(MK_WR_PRESET.GetDefaultThemeName(), CaptionDesc((m_TargetNode == NULL) ? NONE_SEL_CAPTION : m_TargetNode->GetNodeName().GetString()));
-
-		Update();
+		_SetWindowTitleByTargetNode();
 	}
 }
 
@@ -225,7 +321,7 @@ void MkEditModeTargetWindow::_SetSelectIcon(bool enable)
 
 void MkEditModeTargetWindow::_SetNodeTreeItemPosition(unsigned int pagePos)
 {
-	float pos = m_ClientRect.size.y - MKDEF_S2D_NODE_SEL_LINE_SIZE - MKDEF_HEIGHT_MARGIN + static_cast<float>(pagePos) * MKDEF_S2D_NODE_SEL_LINE_SIZE;
+	float pos = m_ClientRect.size.y - MKDEF_S2D_NODE_SEL_LINE_SIZE - MKDEF_CTRL_MARGIN + static_cast<float>(pagePos) * MKDEF_S2D_NODE_SEL_LINE_SIZE;
 	m_NodeTreeRoot->SetLocalPosition(MkVec3(MKDEF_NODE_TREE_TXT_BEGIN_POS, pos, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 
 	unsigned int itemCount = m_NodeTreeScrollBar->GetTotalPageSize();
@@ -234,6 +330,23 @@ void MkEditModeTargetWindow::_SetNodeTreeItemPosition(unsigned int pagePos)
 	{
 		m_NodeTreeRoot->__GetWindowBasedChild(i)->SetVisible((i >= pagePos) && (i < endLine));
 	}
+}
+
+void MkEditModeTargetWindow::_SetWindowTitleByTargetNode(void)
+{
+	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
+
+	CaptionDesc capDesc((m_TargetNode == NULL) ? NONE_SEL_CAPTION : (SEL_CAPTION_PREFIX + m_TargetNode->GetNodeName().GetString()));
+	SetPresetComponentCaption(themeName, capDesc);
+
+	if (m_NodeNameBtn != NULL)
+	{
+		CaptionDesc capDesc((m_TargetNode == NULL) ? MkStr::Null : m_TargetNode->GetNodeName().GetString());
+		m_NodeNameBtn->SetPresetComponentCaption(themeName, capDesc, eRAP_LeftCenter, MkFloat2(5.f, 0.f));
+		m_NodeNameBtn->SetEnable(m_TargetNode != NULL);
+	}
+
+	m_LastNodePositionStr.Clear();
 }
 
 //------------------------------------------------------------------------------------------------//

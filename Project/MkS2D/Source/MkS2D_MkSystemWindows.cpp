@@ -2,6 +2,7 @@
 //#include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkEditBoxNode.h"
 
+#include "MkS2D_MkHiddenEditBox.h"
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkSystemWindows.h"
@@ -60,11 +61,12 @@ bool MkNodeNameInputSystemWindow::Initialize(void)
 	return true;
 }
 
-void MkNodeNameInputSystemWindow::SetUp(MkSceneNode* targetNode)
+void MkNodeNameInputSystemWindow::SetUp(MkSceneNode* targetNode, MkNodeNameInputListener* owner)
 {
 	if ((m_EditBox != NULL) && (targetNode != NULL))
 	{
 		m_TargetNode = targetNode;
+		m_Owner = owner;
 		
 		m_OriginalName = m_TargetNode->GetNodeName();
 		m_EditBox->SetText(m_OriginalName.GetString());
@@ -72,6 +74,23 @@ void MkNodeNameInputSystemWindow::SetUp(MkSceneNode* targetNode)
 
 		MK_WIN_EVENT_MGR.ActivateWindow(GetNodeName(), true);
 	}
+}
+
+void MkNodeNameInputSystemWindow::Activate(void)
+{
+	MkBaseSystemWindow::Activate();
+
+	if (m_EditBox != NULL)
+	{
+		MK_EDIT_BOX.BindControl(m_EditBox);
+	}
+}
+
+void MkNodeNameInputSystemWindow::Deactivate(void)
+{
+	m_TargetNode = NULL;
+	m_OriginalName.Clear();
+	m_Owner = NULL;
 }
 
 void MkNodeNameInputSystemWindow::UseWindowEvent(WindowEvent& evt)
@@ -82,11 +101,11 @@ void MkNodeNameInputSystemWindow::UseWindowEvent(WindowEvent& evt)
 		{
 			if (evt.node->GetPresetComponentType() == eS2D_WPC_OKButton)
 			{
-				MkHashStr newName = m_EditBox->GetText();
-				if ((m_TargetNode != NULL) && (!newName.Empty()) && (newName != m_OriginalName))
+				if (m_TargetNode != NULL)
 				{
-					m_TargetNode->ChangeNodeName(newName);
+					_ApplyNodeName(m_EditBox->GetText());
 				}
+
 				MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
 			}
 			else if (evt.node->GetPresetComponentType() == eS2D_WPC_CancelButton)
@@ -116,13 +135,10 @@ void MkNodeNameInputSystemWindow::UseWindowEvent(WindowEvent& evt)
 
 	case MkSceneNodeFamilyDefinition::eCommitText:
 		{
-			MkHashStr newName = m_EditBox->GetText();
-			if ((m_TargetNode != NULL) && m_OkButton->GetEnable() && (!newName.Empty()))
+			if ((m_TargetNode != NULL) && m_OkButton->GetEnable())
 			{
-				if (newName != m_OriginalName)
-				{
-					m_TargetNode->ChangeNodeName(newName);
-				}
+				_ApplyNodeName(m_EditBox->GetText());
+
 				MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
 			}
 		}
@@ -134,7 +150,20 @@ MkNodeNameInputSystemWindow::MkNodeNameInputSystemWindow(const MkHashStr& name) 
 {
 	m_EditBox = NULL;
 	m_OkButton = NULL;
-	m_TargetNode = NULL;
+	Deactivate();
+}
+
+void MkNodeNameInputSystemWindow::_ApplyNodeName(const MkHashStr& newName)
+{
+	if (newName != m_OriginalName)
+	{
+		m_TargetNode->ChangeNodeName(newName);
+
+		if (m_Owner != NULL)
+		{
+			m_Owner->NodeNameChanged(m_OriginalName, newName, m_TargetNode);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

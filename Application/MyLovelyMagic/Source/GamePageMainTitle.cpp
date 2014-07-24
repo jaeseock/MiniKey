@@ -30,7 +30,7 @@ bool GamePageMainTitle::SetUp(MkDataNode& sharingNode)
 	{
 		m_SceneNode->Load(loadDN);
 
-		m_SceneNode->Update();
+		m_SceneNode->UpdateAll();
 
 		m_SceneNode->Save(saveDN);
 		saveDN.SaveToText(L"Scene\\test_scene_.txt");
@@ -46,7 +46,7 @@ bool GamePageMainTitle::SetUp(MkDataNode& sharingNode)
 void GamePageMainTitle::Update(const MkTimeState& timeState)
 {
 	//m_SceneNode->Update(MK_RENDERER.GetDrawQueue().GetStep(L"CS")->GetRegionRect());
-	m_SceneNode->Update();
+	m_SceneNode->UpdateAll();
 
 	switch (m_State)
 	{

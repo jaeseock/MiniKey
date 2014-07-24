@@ -73,7 +73,7 @@ bool GamePageClientStart::SetUp(MkDataNode& sharingNode)
 
 void GamePageClientStart::Update(const MkTimeState& timeState)
 {
-	m_SceneNode->Update();
+	m_SceneNode->UpdateAll();
 
 	switch (m_State)
 	{

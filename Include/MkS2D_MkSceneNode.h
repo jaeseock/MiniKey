@@ -110,7 +110,11 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// 자신과 모든 하위 노드 정보 갱신
-	void Update(void);
+	// (NOTE) 호출된 노드에서만 실행 됨
+	void UpdateAll(void);
+
+	// 자신 혹은 상위에서 UpdateAll() 호출시 자신과 모든 하위 노드에서 transform update 전 실행 됨
+	virtual void UpdateNode(void) {}
 
 	// 해제
 	virtual void Clear(void);

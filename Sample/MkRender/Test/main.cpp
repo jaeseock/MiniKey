@@ -276,8 +276,8 @@ public:
 			node->SetLocalScale(m_Scale);
 		}
 
-		m_RootNode->Update();
-		m_ScreenNode->Update();
+		m_RootNode->UpdateAll();
+		m_ScreenNode->UpdateAll();
 
 		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
 		{
@@ -449,7 +449,7 @@ public:
 		//testWin->SetPresetThemeName(L"SolidLB");
 		//m_WindowNode1->SetPresetComponentSize(MkFloat2(100.f, 100.f));
 
-		m_RootNode->Update();
+		m_RootNode->UpdateAll();
 		
 		return true;
 	}
@@ -468,7 +468,7 @@ public:
 		// window 이벤트 처리
 		MK_WIN_EVENT_MGR.Update();
 
-		m_RootNode->Update();
+		m_RootNode->UpdateAll();
 	}
 
 	virtual void Clear(void)

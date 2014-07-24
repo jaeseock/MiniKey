@@ -20,6 +20,13 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
+class MkNodeNameInputListener
+{
+public:
+	virtual void NodeNameChanged(const MkHashStr& oldName, const MkHashStr& newName, MkSceneNode* targetNode) {}
+	virtual ~MkNodeNameInputListener() {}
+};
+
 class MkEditBoxNode;
 
 class MkNodeNameInputSystemWindow : public MkBaseSystemWindow
@@ -28,7 +35,10 @@ public:
 
 	virtual bool Initialize(void);
 
-	void SetUp(MkSceneNode* targetNode);
+	void SetUp(MkSceneNode* targetNode, MkNodeNameInputListener* owner);
+
+	virtual void Activate(void);
+	virtual void Deactivate(void);
 
 	virtual void UseWindowEvent(WindowEvent& evt);
 
@@ -37,8 +47,13 @@ public:
 
 protected:
 
+	void _ApplyNodeName(const MkHashStr& newName);
+
+protected:
+
 	MkEditBoxNode* m_EditBox;
 	MkBaseWindowNode* m_OkButton;
 	MkSceneNode* m_TargetNode;
 	MkHashStr m_OriginalName;
+	MkNodeNameInputListener* m_Owner;
 };

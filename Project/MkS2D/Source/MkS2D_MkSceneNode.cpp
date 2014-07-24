@@ -154,7 +154,7 @@ void MkSceneNode::SetLocalAsWorldPosition(const MkFloat2& worldPosition, bool up
 
 		if (update)
 		{
-			Update();
+			UpdateAll();
 		}
 	}
 }
@@ -263,7 +263,7 @@ void MkSceneNode::AlignPosition(const MkSceneNode* anchorNode, eRectAlignmentPos
 	}
 }
 
-void MkSceneNode::Update(void)
+void MkSceneNode::UpdateAll(void)
 {
 	__UpdateTransform();
 	__UpdateWorldAABR();
@@ -314,6 +314,8 @@ void MkSceneNode::__GenerateBuildingTemplate(void)
 
 void MkSceneNode::__UpdateTransform(void)
 {
+	UpdateNode();
+
 	// node transform
 	if (m_ParentNodePtr == NULL)
 	{

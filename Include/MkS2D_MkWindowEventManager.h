@@ -18,6 +18,7 @@
 
 
 class MkBaseSystemWindow;
+class MkNodeNameInputListener;
 
 class MkDrawStep;
 class MkSceneNode;
@@ -68,7 +69,7 @@ public:
 	void SetTargetWindowNode(MkBaseWindowNode* targetWindow);
 
 	// system window
-	void OpenNodeNameInputSystemWindow(MkSceneNode* targetNode);
+	void OpenNodeNameInputSystemWindow(MkSceneNode* targetNode, MkNodeNameInputListener* owner = NULL);
 
 	// «ÿ¡¶
 	void Clear(void);

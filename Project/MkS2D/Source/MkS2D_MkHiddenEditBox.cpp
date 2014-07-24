@@ -36,15 +36,11 @@ bool MkHiddenEditBox::SetUp(HWND parentHandle, HINSTANCE hInstance)
 
 void MkHiddenEditBox::BindControl(MkBaseWindowNode* control)
 {
-	if (m_BindingControl != NULL)
-	{
-		m_BindingControl->__BindingLost();
-	}
-
 	if (control == NULL)
 	{
 		if (m_BindingControl != NULL)
 		{
+			m_BindingControl->__BindingLost();
 			m_BindingControl = NULL;
 			m_RootNodeNameOfBindingControl.Clear();
 			m_LastSelStart = 0;
@@ -64,24 +60,32 @@ void MkHiddenEditBox::BindControl(MkBaseWindowNode* control)
 		MkEditBoxNode* ebNode = dynamic_cast<MkEditBoxNode*>(control);
 		if (ebNode != NULL)
 		{
-			m_BindingControl = ebNode;
-
-			m_RootNodeNameOfBindingControl = m_BindingControl->GetRootWindow()->GetNodeName();
-			m_LastText = m_BindingControl->GetText();
-			m_LastSelStart = m_BindingControl->__GetSetStart();
-			m_LastSelEnd = m_BindingControl->__GetSetEnd();
-
-			m_BindingControl->__SetFocus();
-
-			MkTimeState timeState;
-			MK_TIME_MGR.GetCurrentTimeState(timeState);
-			m_ToggleCursorCounter.SetUp(timeState, MKDEF_TOGGLE_CURSOR_TIME_COUNT);
-
-			if (m_hWnd != NULL)
+			if ((m_BindingControl == NULL) || (ebNode != m_BindingControl))
 			{
-				SetWindowText(m_hWnd, m_LastText.GetPtr());
-				SendMessage(m_hWnd, EM_SETSEL, static_cast<WPARAM>(m_LastSelStart), static_cast<LPARAM>(m_LastSelEnd));
-				SetFocus(m_hWnd);
+				if (m_BindingControl != NULL)
+				{
+					m_BindingControl->__BindingLost();
+				}
+
+				m_BindingControl = ebNode;
+
+				m_RootNodeNameOfBindingControl = m_BindingControl->GetRootWindow()->GetNodeName();
+				m_LastText = m_BindingControl->GetText();
+				m_LastSelStart = m_BindingControl->__GetSetStart();
+				m_LastSelEnd = m_BindingControl->__GetSetEnd();
+
+				m_BindingControl->__SetFocus();
+
+				MkTimeState timeState;
+				MK_TIME_MGR.GetCurrentTimeState(timeState);
+				m_ToggleCursorCounter.SetUp(timeState, MKDEF_TOGGLE_CURSOR_TIME_COUNT);
+
+				if (m_hWnd != NULL)
+				{
+					SetWindowText(m_hWnd, m_LastText.GetPtr());
+					SendMessage(m_hWnd, EM_SETSEL, static_cast<WPARAM>(m_LastSelStart), static_cast<LPARAM>(m_LastSelEnd));
+					SetFocus(m_hWnd);
+				}
 			}
 		}
 	}
