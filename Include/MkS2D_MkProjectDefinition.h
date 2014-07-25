@@ -135,13 +135,17 @@
 #define MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY VK_ESCAPE
 
 // 선택창 토글 버튼
-#define MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY VK_F2
+#define MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY VK_TAB
 
 // 선택창에서 한 라인 height
 #define MKDEF_S2D_NODE_SEL_LINE_SIZE 16.f
 
 // 선택창에서 node depth당 들여쓰기 크기
 #define MKDEF_S2D_NODE_SEL_DEPTH_OFFSET 20.f
+
+// scene 파일 확장자
+#define MKDEF_S2D_SCENE_FILE_EXT_BINARY L"msd" // minikey scene data
+#define MKDEF_S2D_SCENE_FILE_EXT_TEXT L"txt"
 
 //------------------------------------------------------------------------------------------------//
 // DEBUG

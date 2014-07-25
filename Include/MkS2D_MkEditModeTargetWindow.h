@@ -60,6 +60,7 @@ protected:
 
 	// node name
 	MkBaseWindowNode* m_NodeNameBtn;
+	MkBaseWindowNode* m_SaveNodeBtn;
 	MkSRect* m_NodePositionRect;
 	MkStr m_LastNodePositionStr;
 };

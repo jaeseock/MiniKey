@@ -10,6 +10,8 @@ const static MkHashStr SEL_ICON_NAME = L"__#SelIcon";
 const static MkHashStr NODE_TREE_ROOT_NAME = L"__#NodeTreeRoot";
 const static MkHashStr NODE_TREE_VSB_NAME = L"__#NodeTreeVSB";
 
+const static MkHashStr SAVE_NODE_BTN_NAME = L"__#SaveNode";
+
 const static MkHashStr NODE_NAME_BTN_NAME = L"__#ChangeName";
 
 const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
@@ -22,6 +24,7 @@ const static MkStr SEL_CAPTION_PREFIX = L"선택 윈도우 : ";
 #define MKDEF_ONE_PAGE_NODE_ITEM_COUNT 20
 #define MKDEF_NODE_TREE_TXT_BEGIN_POS 45.f
 
+#define MKDEF_DEF_BTN_WIDTH 50.f
 #define MKDEF_NODE_NAME_BTN_WIDTH 300.f
 
 //------------------------------------------------------------------------------------------------//
@@ -118,27 +121,44 @@ bool MkEditModeTargetWindow::Initialize(void)
 		MkSRect* nodeNamePrefix = bgNode->CreateSRect(L"__#NodeNamePrefix");
 		if (nodeNamePrefix != NULL)
 		{
+			// prefix
 			nodeNamePrefix->SetDecoString(L"이름 :");
 			nodeNamePrefix->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + ctrlToTextRectOffset));
 			nodeNamePrefix->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 
-			m_NodeNameBtn = __CreateWindowPreset(bgNode, NODE_NAME_BTN_NAME, themeName, eS2D_WPC_RootButton, MkFloat2(MKDEF_NODE_NAME_BTN_WIDTH, MKDEF_DEF_CTRL_HEIGHT));
+			currentCtrlPos.x += nodeNamePrefix->GetLocalSize().x + 6.f;
+
+			// name btn
+			float nameBtnWidth = m_ClientRect.size.x - currentCtrlPos.x - MKDEF_DEF_BTN_WIDTH - MKDEF_CTRL_MARGIN * 2.f;
+			m_NodeNameBtn = __CreateWindowPreset(bgNode, NODE_NAME_BTN_NAME, themeName, eS2D_WPC_RootButton, MkFloat2(nameBtnWidth, MKDEF_DEF_CTRL_HEIGHT));
 			if (m_NodeNameBtn != NULL)
 			{
-				currentCtrlPos.x += nodeNamePrefix->GetLocalSize().x + 6.f;
-
 				m_NodeNameBtn->SetLocalPosition(currentCtrlPos);
 				m_NodeNameBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 				m_NodeNameBtn->SetEnable(false);
 			}
+
+			// save node
+			m_SaveNodeBtn =
+				__CreateWindowPreset(bgNode, SAVE_NODE_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(MKDEF_DEF_BTN_WIDTH, MKDEF_DEF_CTRL_HEIGHT));
+			if (m_SaveNodeBtn != NULL)
+			{
+				currentCtrlPos.x += nameBtnWidth + MKDEF_CTRL_MARGIN;
+
+				m_SaveNodeBtn->SetLocalPosition(currentCtrlPos);
+				m_SaveNodeBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+				m_SaveNodeBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"저 장"));
+				m_SaveNodeBtn->SetEnable(false);
+			}
 		}
 
 		// node pos
+		currentCtrlPos.x = MKDEF_CTRL_MARGIN;
+		currentCtrlPos.y -= MKDEF_DEF_CTRL_HEIGHT + MKDEF_CTRL_MARGIN;
+
 		MkSRect* nodePosPrefix = bgNode->CreateSRect(L"__#NodePosPrefix");
 		if (nodePosPrefix != NULL)
 		{
-			currentCtrlPos.x += MKDEF_NODE_NAME_BTN_WIDTH + MKDEF_CTRL_MARGIN;
-
 			nodePosPrefix->SetDecoString(L"로컬 위치 :");
 			nodePosPrefix->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + ctrlToTextRectOffset));
 			nodePosPrefix->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
@@ -184,35 +204,51 @@ bool MkEditModeTargetWindow::HitEventMouseWheelMove(int delta, const MkFloat2& p
 
 void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 {
-	if (evt.node->GetNodeName() == NODE_TREE_VSB_NAME)
+	switch (evt.type)
 	{
-		switch (evt.type)
+	case MkSceneNodeFamilyDefinition::eScrollPositionChanged:
 		{
-		case MkSceneNodeFamilyDefinition::eScrollPositionChanged:
+			if (evt.node->GetNodeName() == NODE_TREE_VSB_NAME)
 			{
 				unsigned int pp = m_NodeTreeScrollBar->GetCurrentPagePosition();
 				_SetNodeTreeItemPosition(pp);
 			}
-			break;
 		}
-	}
-	else if ((evt.node->GetParentNode()->GetNodeName() == NODE_TREE_ROOT_NAME) && evt.node->GetNodeName().GetString().IsDigit())
-	{
-		if (evt.type == MkSceneNodeFamilyDefinition::eCursorLeftRelease)
+		break;
+
+	case MkSceneNodeFamilyDefinition::eCursorLeftRelease:
 		{
-			unsigned int index = evt.node->GetNodeName().GetString().ToUnsignedInteger();
-			if (m_NodeTreeSrc.IsValidIndex(index))
+			if (evt.node->GetNodeName() == NODE_NAME_BTN_NAME)
 			{
-				MK_WIN_EVENT_MGR.SetTargetWindowNode(m_NodeTreeSrc[index]);
+				if (m_TargetNode != NULL)
+				{
+					MK_WIN_EVENT_MGR.OpenNodeNameInputSystemWindow(m_TargetNode, this);
+				}
+			}
+			else if (evt.node->GetParentNode()->GetNodeName() == NODE_TREE_ROOT_NAME)// && evt.node->GetNodeName().GetString().IsDigit()
+			{
+				unsigned int index = evt.node->GetNodeName().GetString().ToUnsignedInteger();
+				if (m_NodeTreeSrc.IsValidIndex(index))
+				{
+					MK_WIN_EVENT_MGR.SetTargetWindowNode(m_NodeTreeSrc[index]);
+				}
+			}
+			else if (evt.node->GetNodeName() == SAVE_NODE_BTN_NAME)
+			{
+				if (m_TargetNode != NULL)
+				{
+					MkPathName filePath;
+					MkArray<MkStr> exts(2);
+					exts.PushBack(MKDEF_S2D_SCENE_FILE_EXT_BINARY);
+					exts.PushBack(MKDEF_S2D_SCENE_FILE_EXT_TEXT);
+					if (filePath.GetSaveFilePathFromDialog(exts))
+					{
+						MK_WIN_EVENT_MGR.SaveCurrentTargetWindowNode(filePath); // UpdateAll() 호출 이후 저장이 정확하기 때문에 mgr에 위임
+					}
+				}
 			}
 		}
-	}
-	else if (evt.node->GetNodeName() == NODE_NAME_BTN_NAME)
-	{
-		if ((evt.type == MkSceneNodeFamilyDefinition::eCursorLeftRelease) && (m_TargetNode != NULL))
-		{
-			MK_WIN_EVENT_MGR.OpenNodeNameInputSystemWindow(m_TargetNode, this);
-		}
+		break;
 	}
 }
 
@@ -260,6 +296,7 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_NodeTreeScrollBar = NULL;
 
 	m_NodeNameBtn = NULL;
+	m_SaveNodeBtn = NULL;
 	m_NodePositionRect = NULL;
 }
 
@@ -344,6 +381,11 @@ void MkEditModeTargetWindow::_SetWindowTitleByTargetNode(void)
 		CaptionDesc capDesc((m_TargetNode == NULL) ? MkStr::Null : m_TargetNode->GetNodeName().GetString());
 		m_NodeNameBtn->SetPresetComponentCaption(themeName, capDesc, eRAP_LeftCenter, MkFloat2(5.f, 0.f));
 		m_NodeNameBtn->SetEnable(m_TargetNode != NULL);
+	}
+
+	if (m_SaveNodeBtn != NULL)
+	{
+		m_SaveNodeBtn->SetEnable(m_TargetNode != NULL);
 	}
 
 	m_LastNodePositionStr.Clear();

@@ -339,6 +339,15 @@ public:
 	static unsigned int GetMultipleFilePathFromDialog
 		(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner = NULL);
 
+	// 파일 저장 경로 반환 다이얼로그
+	// (in) extensionList : 필터링 확장자 목록. 비어 있으면 전체 대상(.*)
+	// (in) owner : 다이얼로그 소유 윈도우 핸들
+	// return : 저장 성공 여부
+	// (NOTE) 사용자가 존재하지 않는 파일을 직접 기입 할 수 있으므로 확장자가 존재하면 유효성 검사를 진행
+	bool GetSaveFilePathFromDialog(HWND owner = NULL); // 전체 확장자 대상(.*). 유효성 검사 하지 않음
+	bool GetSaveFilePathFromDialog(const MkStr& extension, HWND owner = NULL); // 단일 확장자 대상. 유효성 검사
+	bool GetSaveFilePathFromDialog(const MkArray<MkStr>& extensionList, HWND owner = NULL); // 유효성 검사
+
 	// 디렉토리 탐색 다이얼로그(SHBrowseForFolder)를 통한 유저 선택 경로 저장
 	// (in) msg : 다이얼로그에 출력될 메세지 문자열
 	// (in) owner : 다이얼로그 소유 윈도우 핸들
@@ -373,7 +382,7 @@ protected:
 	static int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM dwData);
 
 	static unsigned int _GetFilePathFromDialog
-		(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner, bool singleSelection);
+		(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner, bool singleSelection, bool forOpen);
 };
 
 #endif

@@ -3,6 +3,7 @@
 #include "MkCore_MkInputManager.h"
 #include "MkCore_MkTimeManager.h"
 #include "MkCore_MkDevPanel.h"
+#include "MkCore_MkDataNode.h"
 #include "MkCore_MkProfilingManager.h"
 
 #include "MkS2D_MkTexturePool.h"
@@ -259,6 +260,16 @@ void MkWindowEventManager::Update(void)
 		{
 			m_EditMode = !m_EditMode;
 
+			if (!m_EditMode)
+			{
+				DeactivateWindow(SETTING_WINDOW_NAME);
+				DeactivateWindow(TARGET_WINDOW_NAME);
+				DeactivateWindow(SW_NODENAMEINPUT_WINDOW_NAME);
+
+				__HideDebugLayer();
+				_SetRegionLayerVisible(false);
+			}
+
 			MK_DEV_PANEL.MsgToLog((m_EditMode) ? L"> Toggle to Edit mode" : L"> Toggle to Normal mode");
 		}
 	}
@@ -266,7 +277,8 @@ void MkWindowEventManager::Update(void)
 	if (m_EditMode)
 	{
 		// setting window toggle
-		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
+		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_SETTING_WINDOW_TOGGLE_KEY) &&
+			(m_ModalWindow.Empty() || (m_ModalWindow == SETTING_WINDOW_NAME)) && m_WindowTable.Exist(SETTING_WINDOW_NAME))
 		{
 			if (IsOnActivation(SETTING_WINDOW_NAME))
 			{
@@ -278,7 +290,7 @@ void MkWindowEventManager::Update(void)
 			}
 		}
 
-		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY) && m_WindowTable.Exist(TARGET_WINDOW_NAME))
+		if (MK_INPUT_MGR.GetKeyReleased(MKDEF_S2D_NODE_SEL_WINDOW_TOGGLE_KEY) && m_ModalWindow.Empty() && m_WindowTable.Exist(TARGET_WINDOW_NAME))
 		{
 			if (IsOnActivation(TARGET_WINDOW_NAME))
 			{
@@ -679,6 +691,27 @@ void MkWindowEventManager::Update(void)
 	// scene graph update
 	m_RootNode->UpdateAll();
 
+	// save current target node
+	if ((!m_SaveCurrentTargetWindowNodePath.Empty()) && (m_CurrentTargetWindowNode != NULL))
+	{
+		MkDataNode node;
+		m_CurrentTargetWindowNode->Save(node);
+
+		MkStr ext = m_SaveCurrentTargetWindowNodePath.GetFileExtension();
+		ext.ToLower();
+		
+		if (ext == MKDEF_S2D_SCENE_FILE_EXT_BINARY)
+		{
+			node.SaveToBinary(m_SaveCurrentTargetWindowNodePath);
+		}
+		else // MKDEF_S2D_SCENE_FILE_EXT_TEXT
+		{
+			node.SaveToText(m_SaveCurrentTargetWindowNodePath);
+		}
+		
+		m_SaveCurrentTargetWindowNodePath.Clear();
+	}
+
 	// debug
 	{
 		MK_DEV_PANEL.__MsgToDrawingBoard(5, (m_EditMode) ? L"[Edit mode]" : L"[Normal mode]");
@@ -781,6 +814,7 @@ void MkWindowEventManager::Clear(void)
 	m_ModalWindow.Clear();
 	m_OpeningSpreadButtons.Clear();
 	m_CurrentTargetWindowNode = NULL;
+	m_SaveCurrentTargetWindowNodePath.Clear();
 }
 
 MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventManager>()

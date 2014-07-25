@@ -68,6 +68,9 @@ public:
 	// 지정 윈도우 설정
 	void SetTargetWindowNode(MkBaseWindowNode* targetWindow);
 
+	// 지정 윈도우를 저장
+	inline void SaveCurrentTargetWindowNode(const MkPathName& filePath) { m_SaveCurrentTargetWindowNodePath = filePath; }
+
 	// system window
 	void OpenNodeNameInputSystemWindow(MkSceneNode* targetNode, MkNodeNameInputListener* owner = NULL);
 
@@ -153,4 +156,7 @@ protected:
 
 	// windows for edit mode
 	MkBaseWindowNode* m_CurrentTargetWindowNode;
+
+	// save target
+	MkPathName m_SaveCurrentTargetWindowNodePath;
 };

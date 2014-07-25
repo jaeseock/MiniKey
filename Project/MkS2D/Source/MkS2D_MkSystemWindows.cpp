@@ -57,6 +57,11 @@ bool MkNodeNameInputSystemWindow::Initialize(void)
 
 	// ok button
 	m_OkButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"OKButton"));
+	m_OkButton->SetLocalPosition(MkFloat2(m_OkButton->GetLocalPosition().x, MARGIN));
+
+	// cancel button
+	MkBaseWindowNode* cancelBtn = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"CancelButton"));
+	cancelBtn->SetLocalPosition(MkFloat2(cancelBtn->GetLocalPosition().x, MARGIN));
 
 	return true;
 }

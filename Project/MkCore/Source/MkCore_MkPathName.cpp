@@ -925,7 +925,7 @@ bool MkPathName::GetSingleFilePathFromDialog(const MkArray<MkStr>& extensionList
 {
 	MkPathName directoryPath;
 	MkArray<MkPathName> fileNameList;
-	bool ok = (_GetFilePathFromDialog(directoryPath, fileNameList, extensionList, owner, true) == 1);
+	bool ok = (_GetFilePathFromDialog(directoryPath, fileNameList, extensionList, owner, true, true) == 1);
 	if (ok)
 	{
 		*this = directoryPath;
@@ -949,7 +949,32 @@ unsigned int MkPathName::GetMultipleFilePathFromDialog
 
 unsigned int MkPathName::GetMultipleFilePathFromDialog(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner)
 {
-	return _GetFilePathFromDialog(directoryPath, fileNameList, extensionList, owner, false);
+	return _GetFilePathFromDialog(directoryPath, fileNameList, extensionList, owner, false, true);
+}
+
+bool MkPathName::GetSaveFilePathFromDialog(HWND owner)
+{
+	MkArray<MkStr> extensionList;
+	return GetSaveFilePathFromDialog(extensionList, owner);
+}
+
+bool MkPathName::GetSaveFilePathFromDialog(const MkStr& extension, HWND owner)
+{
+	MkArray<MkStr> extensionList(1);
+	extensionList.PushBack(extension);
+	return GetSaveFilePathFromDialog(extensionList, owner);
+}
+
+bool MkPathName::GetSaveFilePathFromDialog(const MkArray<MkStr>& extensionList, HWND owner)
+{
+	MkPathName directoryPath;
+	MkArray<MkPathName> fileNameList;
+	bool ok = (_GetFilePathFromDialog(directoryPath, fileNameList, extensionList, owner, true, false) == 1);
+	if (ok)
+	{
+		*this = directoryPath;
+	}
+	return ok;
 }
 
 bool MkPathName::GetDirectoryPathFromDialog(const MkStr& msg, HWND owner, const MkPathName& initialPath)
@@ -1210,9 +1235,9 @@ int CALLBACK MkPathName::BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam,
 }
 
 unsigned int MkPathName::_GetFilePathFromDialog
-(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner, bool singleSelection)
+(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner, bool singleSelection, bool forOpen)
 {
-	unsigned int allocSize = (singleSelection) ? MAX_PATH : (1024 * 32);
+	unsigned int allocSize = (singleSelection || (!forOpen)) ? MAX_PATH : (1024 * 32);
 	wchar_t* pathBuf = new wchar_t[allocSize];
 	ZeroMemory(pathBuf, sizeof(wchar_t) * allocSize);
 	wchar_t* tmpFilter = NULL;
@@ -1222,7 +1247,14 @@ unsigned int MkPathName::_GetFilePathFromDialog
 	OFN.lStructSize = sizeof(OPENFILENAME);
 	OFN.hwndOwner = owner;
 	OFN.lpstrFile = pathBuf;
-	OFN.Flags = (singleSelection) ? 0 : (OFN_EXPLORER | OFN_ALLOWMULTISELECT);
+	if (forOpen)
+	{
+		OFN.Flags = (singleSelection) ? 0 : (OFN_EXPLORER | OFN_ALLOWMULTISELECT);
+	}
+	else
+	{
+		OFN.Flags = (OFN_CREATEPROMPT | OFN_OVERWRITEPROMPT);
+	}
 	OFN.nMaxFile = 2048;
 
 	if (extensionList.Empty())
@@ -1231,27 +1263,42 @@ unsigned int MkPathName::_GetFilePathFromDialog
 	}
 	else
 	{
-		MkStr extFilter = L"Files (";
-		MK_INDEXING_LOOP(extensionList, i)
+		MkStr extFilter;
+		extFilter.Reserve(extensionList.GetSize() * 128); // ext 하나당 128이면 충분
+		if (forOpen)
 		{
-			if (i > 0)
+			extFilter += L"Files (";
+			MK_INDEXING_LOOP(extensionList, i)
 			{
-				extFilter += L", ";
+				if (i > 0)
+				{
+					extFilter += L", ";
+				}
+				extFilter += extensionList[i];
 			}
-			extFilter += extensionList[i];
-		}
-		extFilter += L")|";
+			extFilter += L")|";
 
-		MK_INDEXING_LOOP(extensionList, i)
-		{
-			if (i > 0)
+			MK_INDEXING_LOOP(extensionList, i)
 			{
-				extFilter += L";";
+				if (i > 0)
+				{
+					extFilter += L";";
+				}
+				extFilter += L"*.";
+				extFilter += extensionList[i];
 			}
-			extFilter += L"*.";
-			extFilter += extensionList[i];
+			extFilter += L"|";
 		}
-		extFilter += L"|";
+		else
+		{
+			MK_INDEXING_LOOP(extensionList, i)
+			{
+				extFilter += extensionList[i];
+				extFilter += L" Files|*.";
+				extFilter += extensionList[i];
+				extFilter += L"|";
+			}
+		}
 
 		unsigned int bufSize = extFilter.GetSize() + 1;
 		tmpFilter = new wchar_t[bufSize];
@@ -1269,12 +1316,46 @@ unsigned int MkPathName::_GetFilePathFromDialog
 	}
 
 	unsigned int fileCount = 0;
-	if (GetOpenFileName(&OFN) != 0)
+	if (((forOpen) ? GetOpenFileName(&OFN) : GetSaveFileName(&OFN)) != 0)
 	{
-		if (singleSelection)
+		if (singleSelection || (!forOpen))
 		{
-			directoryPath = pathBuf;
-			fileCount = 1;
+			MkPathName resultPath = pathBuf;
+			unsigned int resultCount = 1;
+
+			// 저장 모드이고 확장자가 존재하는 경우 유효성 검사
+			if ((!forOpen) && (!extensionList.Empty()))
+			{
+				if (resultPath.IsDirectoryPath()) // ex> L"C:\abc\filename"
+				{
+					resultPath += L".";
+					resultPath += extensionList[OFN.nFilterIndex - 1];
+				}
+				else
+				{
+					MkStr ext = resultPath.GetFileExtension();
+					if (ext.Empty())
+					{
+						resultCount = 0;
+					}
+					else
+					{
+						ext.ToLower();
+
+						const MkStr& targetExt = extensionList[OFN.nFilterIndex - 1];
+						MkStr targetLower = targetExt;
+						targetLower.ToLower();
+						
+						if (ext != targetLower)
+						{
+							resultPath.ChangeFileExtension(targetExt);
+						}
+					}
+				}
+			}
+
+			directoryPath = resultPath;
+			fileCount = resultCount;
 		}
 		else
 		{
