@@ -10,9 +10,10 @@ const static MkHashStr SEL_ICON_NAME = L"__#SelIcon";
 const static MkHashStr NODE_TREE_ROOT_NAME = L"__#NodeTreeRoot";
 const static MkHashStr NODE_TREE_VSB_NAME = L"__#NodeTreeVSB";
 
-const static MkHashStr SAVE_NODE_BTN_NAME = L"__#SaveNode";
-
 const static MkHashStr NODE_NAME_BTN_NAME = L"__#ChangeName";
+const static MkHashStr TOPARENT_BTN_NAME = L"__#ToParent";
+const static MkHashStr SAVE_NODE_BTN_NAME = L"__#SaveNode";
+const static MkHashStr DEL_NODE_BTN_NAME = L"__#DelNode";
 
 const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
 const static MkStr SEL_CAPTION_PREFIX = L"선택 윈도우 : ";
@@ -129,7 +130,7 @@ bool MkEditModeTargetWindow::Initialize(void)
 			currentCtrlPos.x += nodeNamePrefix->GetLocalSize().x + 6.f;
 
 			// name btn
-			float nameBtnWidth = m_ClientRect.size.x - currentCtrlPos.x - MKDEF_DEF_BTN_WIDTH - MKDEF_CTRL_MARGIN * 2.f;
+			float nameBtnWidth = m_ClientRect.size.x - currentCtrlPos.x - MKDEF_DEF_BTN_WIDTH * 3.f - MKDEF_CTRL_MARGIN * 4.f;
 			m_NodeNameBtn = __CreateWindowPreset(bgNode, NODE_NAME_BTN_NAME, themeName, eS2D_WPC_RootButton, MkFloat2(nameBtnWidth, MKDEF_DEF_CTRL_HEIGHT));
 			if (m_NodeNameBtn != NULL)
 			{
@@ -138,17 +139,42 @@ bool MkEditModeTargetWindow::Initialize(void)
 				m_NodeNameBtn->SetEnable(false);
 			}
 
+			// to parent
+			m_ToParentNodeBtn = __CreateWindowPreset(bgNode, TOPARENT_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(MKDEF_DEF_BTN_WIDTH, MKDEF_DEF_CTRL_HEIGHT));
+			if (m_ToParentNodeBtn != NULL)
+			{
+				currentCtrlPos.x += nameBtnWidth + MKDEF_CTRL_MARGIN;
+
+				m_ToParentNodeBtn->SetLocalPosition(currentCtrlPos);
+				m_ToParentNodeBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+				m_ToParentNodeBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"└ 위로"));
+				m_ToParentNodeBtn->SetEnable(false);
+			}
+
 			// save node
 			m_SaveNodeBtn =
 				__CreateWindowPreset(bgNode, SAVE_NODE_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(MKDEF_DEF_BTN_WIDTH, MKDEF_DEF_CTRL_HEIGHT));
 			if (m_SaveNodeBtn != NULL)
 			{
-				currentCtrlPos.x += nameBtnWidth + MKDEF_CTRL_MARGIN;
+				currentCtrlPos.x += MKDEF_DEF_BTN_WIDTH + MKDEF_CTRL_MARGIN;
 
 				m_SaveNodeBtn->SetLocalPosition(currentCtrlPos);
 				m_SaveNodeBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 				m_SaveNodeBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"저 장"));
 				m_SaveNodeBtn->SetEnable(false);
+			}
+
+			// delete node
+			m_DeleteNodeBtn =
+				__CreateWindowPreset(bgNode, DEL_NODE_BTN_NAME, themeName, eS2D_WPC_CancelButton, MkFloat2(MKDEF_DEF_BTN_WIDTH, MKDEF_DEF_CTRL_HEIGHT));
+			if (m_SaveNodeBtn != NULL)
+			{
+				currentCtrlPos.x += MKDEF_DEF_BTN_WIDTH + MKDEF_CTRL_MARGIN;
+
+				m_DeleteNodeBtn->SetLocalPosition(currentCtrlPos);
+				m_DeleteNodeBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+				m_DeleteNodeBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"삭 제"));
+				m_DeleteNodeBtn->SetEnable(false);
 			}
 		}
 
@@ -233,6 +259,13 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 					MK_WIN_EVENT_MGR.SetTargetWindowNode(m_NodeTreeSrc[index]);
 				}
 			}
+			else if (evt.node->GetNodeName() == TOPARENT_BTN_NAME)
+			{
+				if (m_TargetNode != NULL) // TOPARENT_BTN_NAME 버튼이 enable 되었다는 것 자체가 부모 윈도우가 존재함을 증명
+				{
+					MK_WIN_EVENT_MGR.SetTargetWindowNode(dynamic_cast<MkBaseWindowNode*>(m_TargetNode->GetParentNode()));
+				}
+			}
 			else if (evt.node->GetNodeName() == SAVE_NODE_BTN_NAME)
 			{
 				if (m_TargetNode != NULL)
@@ -244,6 +277,38 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 					if (filePath.GetSaveFilePathFromDialog(exts))
 					{
 						MK_WIN_EVENT_MGR.SaveCurrentTargetWindowNode(filePath); // UpdateAll() 호출 이후 저장이 정확하기 때문에 mgr에 위임
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == DEL_NODE_BTN_NAME)
+			{
+				if (m_TargetNode != NULL)
+				{
+					if (m_TargetNode->CheckRootWindow())
+					{
+						MkHashStr nodeName = m_TargetNode->GetNodeName();
+						MK_WIN_EVENT_MGR.RemoveWindow(nodeName); // 여기서 모든 후속사항을 다 처리
+					}
+					else
+					{
+						MkSceneNode* parentNode = m_TargetNode->GetParentNode();
+						MkBaseWindowNode* parentWindow = NULL;
+						if (parentNode != NULL)
+						{
+							parentNode->DetachChildNode(m_TargetNode->GetNodeName());
+							if (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+							{
+								parentWindow = dynamic_cast<MkBaseWindowNode*>(parentNode);
+							}
+						}
+
+						delete m_TargetNode;
+						MK_WIN_EVENT_MGR.SetTargetWindowNode(NULL);
+
+						if (parentWindow != NULL)
+						{
+							MK_WIN_EVENT_MGR.SetTargetWindowNode(parentWindow);
+						}
 					}
 				}
 			}
@@ -295,8 +360,10 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_NodeTreeRoot = NULL;
 	m_NodeTreeScrollBar = NULL;
 
+	m_ToParentNodeBtn = NULL;
 	m_NodeNameBtn = NULL;
 	m_SaveNodeBtn = NULL;
+	m_DeleteNodeBtn = NULL;
 	m_NodePositionRect = NULL;
 }
 
@@ -373,19 +440,43 @@ void MkEditModeTargetWindow::_SetWindowTitleByTargetNode(void)
 {
 	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
 
-	CaptionDesc capDesc((m_TargetNode == NULL) ? NONE_SEL_CAPTION : (SEL_CAPTION_PREFIX + m_TargetNode->GetNodeName().GetString()));
+	bool nodeEnable = (m_TargetNode != NULL);
+
+	CaptionDesc capDesc((nodeEnable) ? (SEL_CAPTION_PREFIX + m_TargetNode->GetNodeName().GetString()) : NONE_SEL_CAPTION);
 	SetPresetComponentCaption(themeName, capDesc);
 
 	if (m_NodeNameBtn != NULL)
 	{
-		CaptionDesc capDesc((m_TargetNode == NULL) ? MkStr::Null : m_TargetNode->GetNodeName().GetString());
+		CaptionDesc capDesc((nodeEnable) ? m_TargetNode->GetNodeName().GetString() : MkStr::Null);
 		m_NodeNameBtn->SetPresetComponentCaption(themeName, capDesc, eRAP_LeftCenter, MkFloat2(5.f, 0.f));
-		m_NodeNameBtn->SetEnable(m_TargetNode != NULL);
+		m_NodeNameBtn->SetEnable(nodeEnable);
+	}
+
+	if (m_ToParentNodeBtn != NULL)
+	{
+		bool parentExist = false;
+		if (nodeEnable)
+		{
+			if (!m_TargetNode->CheckRootWindow())
+			{
+				MkSceneNode* parentNode = m_TargetNode->GetParentNode();
+				if ((parentNode != NULL) && (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode))
+				{
+					MkBaseWindowNode* parentWindow = dynamic_cast<MkBaseWindowNode*>(parentNode);
+					parentExist = (parentWindow != NULL);
+				}
+			}
+		}
+		m_ToParentNodeBtn->SetEnable(parentExist);
 	}
 
 	if (m_SaveNodeBtn != NULL)
 	{
-		m_SaveNodeBtn->SetEnable(m_TargetNode != NULL);
+		m_SaveNodeBtn->SetEnable(nodeEnable);
+	}
+	if (m_DeleteNodeBtn != NULL)
+	{
+		m_DeleteNodeBtn->SetEnable(nodeEnable);
 	}
 
 	m_LastNodePositionStr.Clear();

@@ -136,6 +136,7 @@ void MkScrollBarNode::SetGridPosition(unsigned int gridPosition)
 	else
 	{
 		m_CurrentGridPosition = 0;
+		m_CurrentPagePosition = 0;
 	}
 }
 

@@ -59,8 +59,10 @@ protected:
 	MkScrollBarNode* m_NodeTreeScrollBar;
 
 	// node name
+	MkBaseWindowNode* m_ToParentNodeBtn;
 	MkBaseWindowNode* m_NodeNameBtn;
 	MkBaseWindowNode* m_SaveNodeBtn;
+	MkBaseWindowNode* m_DeleteNodeBtn;
 	MkSRect* m_NodePositionRect;
 	MkStr m_LastNodePositionStr;
 };
