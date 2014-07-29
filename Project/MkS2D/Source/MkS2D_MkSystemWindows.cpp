@@ -1,5 +1,5 @@
 
-//#include "MkS2D_MkCheckButtonNode.h"
+#include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkEditBoxNode.h"
 
 #include "MkS2D_MkHiddenEditBox.h"
@@ -7,8 +7,6 @@
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkSystemWindows.h"
 
-
-//const static MkHashStr SHOW_TARGET_WIN_REGION_NAME = L"ShowTargetWinReg";
 
 //------------------------------------------------------------------------------------------------//
 
@@ -169,6 +167,131 @@ void MkNodeNameInputSystemWindow::_ApplyNodeName(const MkHashStr& newName)
 			m_Owner->NodeNameChanged(m_OriginalName, newName, m_TargetNode);
 		}
 	}
+}
+
+//------------------------------------------------------------------------------------------------//
+
+static const MkHashStr sWinAttrDesc[MkBaseWindowNode::eMaxAttribute] = {
+	L"입력 무시", L"이동 금지", L"드래그 이동 허용", L"이동시 부모의 영역으로 제한", L"이동시 스크린 영역으로 제한",
+	L"드래그&드롭 허용", L"시스템 윈도우", L"Active시 중앙 정렬" };
+
+bool MkWindowAttributeSystemWindow::Initialize(void)
+{
+	SetAttribute(eAlignCenterPos, true);
+
+	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
+
+	const float margin = 10.f;
+	MkFloat2 unitSize(300.f, 30.f);
+
+	BasicPresetWindowDesc winDesc;
+	winDesc.SetStandardDesc(themeName, true, MkFloat2(unitSize.x * 2.f + margin * 2.f, unitSize.y * 10.f + margin * 2.f + 30.f));
+	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
+	winDesc.titleCaption = L"Window Attribute";
+	winDesc.hasIcon = false;
+	winDesc.hasCloseButton = true;
+	winDesc.hasCancelButton = false;
+	winDesc.hasOKButton = true;
+
+	if (CreateBasicWindow(this, MkHashStr::NullHash, winDesc) == NULL)
+		return false;
+
+	MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(GetChildNode(L"Background"));
+	if (bgNode == NULL)
+		return false;
+
+	MkFloat2 clientSize = bgNode->GetPresetComponentSize();
+	clientSize.y -= GetPresetComponentSize().y; // body size - title size
+
+	MkBaseWindowNode* okButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"OKButton"));
+	okButton->SetLocalPosition(MkFloat2(okButton->GetLocalPosition().x, margin));
+
+	m_CheckButtons.Reserve(eMaxAttribute);
+
+	for (unsigned int i=0; i<eMaxAttribute; ++i)
+	{
+		MkCheckButtonNode* cbNode = new MkCheckButtonNode(sWinAttrDesc[i]);
+		if (cbNode != NULL)
+		{
+			cbNode->CreateCheckButton(themeName, CaptionDesc(sWinAttrDesc[i]), false);
+			MkFloat2 position(margin + (((i % 2) == 0) ? 0.f : unitSize.x), clientSize.y - static_cast<float>(i / 2 + 1) * unitSize.y);
+			cbNode->SetLocalPosition(position);
+			cbNode->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+			bgNode->AttachChildNode(cbNode);
+		}
+		m_CheckButtons.PushBack(cbNode);
+	}
+
+	return true;
+}
+
+void MkWindowAttributeSystemWindow::SetUp(MkBaseWindowNode* targetWindow)
+{
+	if (targetWindow != NULL)
+	{
+		m_TargetWindow = targetWindow;
+
+		for (unsigned int i=0; i<eMaxAttribute; ++i)
+		{
+			if (m_CheckButtons.IsValidIndex(i))
+			{
+				bool enable = m_TargetWindow->GetAttribute(static_cast<eAttribute>(i));
+				m_CheckButtons[i]->SetCheck(enable);
+			}
+		}
+
+		MK_WIN_EVENT_MGR.ActivateWindow(GetNodeName(), true);
+	}
+}
+
+void MkWindowAttributeSystemWindow::UseWindowEvent(WindowEvent& evt)
+{
+	switch (evt.type)
+	{
+	case MkSceneNodeFamilyDefinition::eCheckOn:
+		{
+			if (m_TargetWindow != NULL)
+			{
+				for (unsigned int i=0; i<eMaxAttribute; ++i)
+				{
+					if (evt.node->GetNodeName() == sWinAttrDesc[i])
+					{
+						m_TargetWindow->SetAttribute(static_cast<eAttribute>(i), true);
+					}
+				}
+			}
+		}
+		break;
+
+	case MkSceneNodeFamilyDefinition::eCheckOff:
+		{
+			if (m_TargetWindow != NULL)
+			{
+				for (unsigned int i=0; i<eMaxAttribute; ++i)
+				{
+					if (evt.node->GetNodeName() == sWinAttrDesc[i])
+					{
+						m_TargetWindow->SetAttribute(static_cast<eAttribute>(i), false);
+					}
+				}
+			}
+		}
+		break;
+
+	case MkSceneNodeFamilyDefinition::eCursorLeftRelease:
+		{
+			if (evt.node->GetPresetComponentType() == eS2D_WPC_OKButton)
+			{
+				MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
+			}
+		}
+		break;
+	}
+}
+
+MkWindowAttributeSystemWindow::MkWindowAttributeSystemWindow(const MkHashStr& name) : MkBaseSystemWindow(name)
+{
+	m_TargetWindow = NULL;
 }
 
 //------------------------------------------------------------------------------------------------//

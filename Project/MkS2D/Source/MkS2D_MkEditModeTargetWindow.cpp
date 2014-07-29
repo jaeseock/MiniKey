@@ -3,6 +3,7 @@
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkScrollBarNode.h"
+#include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkEditModeTargetWindow.h"
 
 
@@ -14,6 +15,8 @@ const static MkHashStr NODE_NAME_BTN_NAME = L"__#ChangeName";
 const static MkHashStr TOPARENT_BTN_NAME = L"__#ToParent";
 const static MkHashStr SAVE_NODE_BTN_NAME = L"__#SaveNode";
 const static MkHashStr DEL_NODE_BTN_NAME = L"__#DelNode";
+const static MkHashStr ENABLE_NODE_CB_NAME = L"__#EnableCB";
+const static MkHashStr WIN_ATTR_BTN_NAME = L"__#WinAttr";
 
 const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
 const static MkStr SEL_CAPTION_PREFIX = L"선택 윈도우 : ";
@@ -198,6 +201,48 @@ bool MkEditModeTargetWindow::Initialize(void)
 				m_NodePositionRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 			}
 		}
+
+		currentCtrlPos.x += 70.f;
+		MkSRect* nodeAABRPrefix = bgNode->CreateSRect(L"__#NodeWSizePrefix");
+		if (nodeAABRPrefix != NULL)
+		{
+			nodeAABRPrefix->SetDecoString(L"월드 크기 :");
+			nodeAABRPrefix->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + ctrlToTextRectOffset));
+			nodeAABRPrefix->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+
+			m_NodeWSizeRect = bgNode->CreateSRect(L"__#NodeWSize");
+			if (m_NodeWSizeRect != NULL)
+			{
+				currentCtrlPos.x += nodeAABRPrefix->GetLocalSize().x + 6.f;
+
+				m_NodeWSizeRect->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + ctrlToTextRectOffset));
+				m_NodeWSizeRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+			}
+		}
+
+		currentCtrlPos.x += 70.f;
+		m_EnableCB = new MkCheckButtonNode(ENABLE_NODE_CB_NAME);
+		if (m_EnableCB != NULL)
+		{
+			m_EnableCB->CreateCheckButton(themeName, CaptionDesc(L"활성화"), false);
+			m_EnableCB->SetLocalPosition(currentCtrlPos);
+			m_EnableCB->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+			m_EnableCB->SetEnable(false);
+			bgNode->AttachChildNode(m_EnableCB);
+		}
+
+		float attrBtnWidth = MKDEF_DEF_BTN_WIDTH * 2.f + MKDEF_CTRL_MARGIN;
+		m_WinAttrBtn = __CreateWindowPreset(bgNode, WIN_ATTR_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(attrBtnWidth, MKDEF_DEF_CTRL_HEIGHT));
+		if (m_WinAttrBtn != NULL)
+		{
+			currentCtrlPos.x = m_ClientRect.size.x - MKDEF_CTRL_MARGIN - attrBtnWidth;
+
+			m_WinAttrBtn->SetLocalPosition(currentCtrlPos);
+			m_WinAttrBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+			m_WinAttrBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"Window Attribute"));
+			m_WinAttrBtn->SetEnable(false);
+		}
+		
 	}
 
 	if (m_NodeTreeRoot == NULL)
@@ -312,6 +357,30 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 					}
 				}
 			}
+			else if (evt.node->GetNodeName() == WIN_ATTR_BTN_NAME)
+			{
+				if (m_TargetNode != NULL)
+				{
+					MK_WIN_EVENT_MGR.OpenWindowAttributeSystemWindow(m_TargetNode);
+				}
+			}
+		}
+		break;
+
+	case MkSceneNodeFamilyDefinition::eCheckOn:
+		{
+			if ((evt.node->GetNodeName() == ENABLE_NODE_CB_NAME) && (m_TargetNode != NULL))
+			{
+				m_TargetNode->SetEnable(true);
+			}
+		}
+		break;
+	case MkSceneNodeFamilyDefinition::eCheckOff:
+		{
+			if ((evt.node->GetNodeName() == ENABLE_NODE_CB_NAME) && (m_TargetNode != NULL))
+			{
+				m_TargetNode->SetEnable(false);
+			}
 		}
 		break;
 	}
@@ -319,15 +388,30 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 
 void MkEditModeTargetWindow::UpdateNode(void)
 {
-	if (GetVisible() && (m_NodePositionRect != NULL))
+	if (GetVisible())
 	{
-		MkStr currNodePositionStr = (m_TargetNode == NULL) ?
-			L"(--, --)" : MkStr(MkInt2(static_cast<int>(m_TargetNode->GetLocalPosition().x), static_cast<int>(m_TargetNode->GetLocalPosition().y)));
-
-		if (currNodePositionStr != m_LastNodePositionStr)
+		if (m_NodePositionRect != NULL)
 		{
-			m_NodePositionRect->SetDecoString(currNodePositionStr);
-			m_LastNodePositionStr = currNodePositionStr;
+			MkStr msg = (m_TargetNode == NULL) ?
+				L"(--, --)" : MkStr(MkInt2(static_cast<int>(m_TargetNode->GetLocalPosition().x), static_cast<int>(m_TargetNode->GetLocalPosition().y)));
+
+			if (msg != m_LastNodePositionStr)
+			{
+				m_NodePositionRect->SetDecoString(msg);
+				m_LastNodePositionStr = msg;
+			}
+		}
+
+		if (m_NodeWSizeRect != NULL)
+		{
+			MkStr msg = (m_TargetNode == NULL) ?
+				L"(--, --)" : MkStr(MkInt2(static_cast<int>(m_TargetNode->GetWorldAABR().size.x), static_cast<int>(m_TargetNode->GetWorldAABR().size.y)));
+
+			if (msg != m_LastNodeWSizeStr)
+			{
+				m_NodeWSizeRect->SetDecoString(msg);
+				m_LastNodeWSizeStr = msg;
+			}
 		}
 	}
 
@@ -365,6 +449,9 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_SaveNodeBtn = NULL;
 	m_DeleteNodeBtn = NULL;
 	m_NodePositionRect = NULL;
+	m_NodeWSizeRect = NULL;
+	m_EnableCB = NULL;
+	m_WinAttrBtn = NULL;
 }
 
 void MkEditModeTargetWindow::_RebuildNodeTree(void)
@@ -478,8 +565,18 @@ void MkEditModeTargetWindow::_SetWindowTitleByTargetNode(void)
 	{
 		m_DeleteNodeBtn->SetEnable(nodeEnable);
 	}
+	if (m_EnableCB != NULL)
+	{
+		m_EnableCB->SetCheck((nodeEnable) ? m_TargetNode->GetEnable() : false);
+		m_EnableCB->SetEnable(nodeEnable);
+	}
+	if (m_WinAttrBtn != NULL)
+	{
+		m_WinAttrBtn->SetEnable(nodeEnable);
+	}
 
 	m_LastNodePositionStr.Clear();
+	m_LastNodeWSizeStr.Clear();
 }
 
 //------------------------------------------------------------------------------------------------//

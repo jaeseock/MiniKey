@@ -8,6 +8,7 @@
 
 
 class MkScrollBarNode;
+class MkCheckButtonNode;
 
 class MkEditModeTargetWindow : public MkBaseSystemWindow, public MkNodeNameInputListener
 {
@@ -63,6 +64,12 @@ protected:
 	MkBaseWindowNode* m_NodeNameBtn;
 	MkBaseWindowNode* m_SaveNodeBtn;
 	MkBaseWindowNode* m_DeleteNodeBtn;
+	MkBaseWindowNode* m_WinAttrBtn;
+
 	MkSRect* m_NodePositionRect;
 	MkStr m_LastNodePositionStr;
+	MkSRect* m_NodeWSizeRect;
+	MkStr m_LastNodeWSizeStr;
+
+	MkCheckButtonNode* m_EnableCB;
 };

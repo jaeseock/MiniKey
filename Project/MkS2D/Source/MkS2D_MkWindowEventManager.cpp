@@ -31,6 +31,7 @@ const static MkHashStr DEBUG_RECT_NAME = L"Debug";
 const static MkHashStr SETTING_WINDOW_NAME = L"__#Setting";
 const static MkHashStr TARGET_WINDOW_NAME = L"__#Target";
 const static MkHashStr SW_NODENAMEINPUT_WINDOW_NAME = L"__#NNI";
+const static MkHashStr SW_WIN_ATTR_WINDOW_NAME = L"__#WinAttr";
 
 static const MkHashStr PROF_KEY_UPDATE = L"MkWindowEventManager::Update";
 
@@ -110,10 +111,16 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 		_CreateSystemWindow(new MkEditModeTargetWindow(TARGET_WINDOW_NAME));
 	}
 
-	// 노드 이름 입력 윈도우 생ㅅㅇ
+	// 노드 이름 입력 윈도우 생성
 	if (!m_WindowTable.Exist(SW_NODENAMEINPUT_WINDOW_NAME))
 	{
 		_CreateSystemWindow(new MkNodeNameInputSystemWindow(SW_NODENAMEINPUT_WINDOW_NAME));
+	}
+
+	// 윈도우 attribute 입력 윈도우 생성
+	if (!m_WindowTable.Exist(SW_WIN_ATTR_WINDOW_NAME))
+	{
+		_CreateSystemWindow(new MkWindowAttributeSystemWindow(SW_WIN_ATTR_WINDOW_NAME));
 	}
 }
 
@@ -265,6 +272,7 @@ void MkWindowEventManager::Update(void)
 				DeactivateWindow(SETTING_WINDOW_NAME);
 				DeactivateWindow(TARGET_WINDOW_NAME);
 				DeactivateWindow(SW_NODENAMEINPUT_WINDOW_NAME);
+				DeactivateWindow(SW_WIN_ATTR_WINDOW_NAME);
 
 				__HideDebugLayer();
 				_SetRegionLayerVisible(false);
@@ -796,6 +804,18 @@ void MkWindowEventManager::OpenNodeNameInputSystemWindow(MkSceneNode* targetNode
 		if (sysWindow != NULL)
 		{
 			sysWindow->SetUp(targetNode, owner);
+		}
+	}
+}
+
+void MkWindowEventManager::OpenWindowAttributeSystemWindow(MkBaseWindowNode* targetWindow)
+{
+	if (m_WindowTable.Exist(SW_WIN_ATTR_WINDOW_NAME) && m_ModalWindow.Empty())
+	{
+		MkWindowAttributeSystemWindow* sysWindow = dynamic_cast<MkWindowAttributeSystemWindow*>(m_WindowTable[SW_WIN_ATTR_WINDOW_NAME]);
+		if (sysWindow != NULL)
+		{
+			sysWindow->SetUp(targetWindow);
 		}
 	}
 }

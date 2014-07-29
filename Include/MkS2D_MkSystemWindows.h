@@ -57,3 +57,26 @@ protected:
 	MkHashStr m_OriginalName;
 	MkNodeNameInputListener* m_Owner;
 };
+
+//------------------------------------------------------------------------------------------------//
+
+class MkCheckButtonNode;
+
+class MkWindowAttributeSystemWindow : public MkBaseSystemWindow
+{
+public:
+
+	virtual bool Initialize(void);
+
+	void SetUp(MkBaseWindowNode* targetWindow);
+
+	virtual void UseWindowEvent(WindowEvent& evt);
+
+	MkWindowAttributeSystemWindow(const MkHashStr& name);
+	virtual ~MkWindowAttributeSystemWindow() {}
+
+protected:
+
+	MkBaseWindowNode* m_TargetWindow;
+	MkArray<MkCheckButtonNode*> m_CheckButtons;
+};

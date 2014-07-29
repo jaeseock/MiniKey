@@ -31,7 +31,9 @@ public:
 
 		eSystemWindow, // 시스템 윈도우
 
-		eAlignCenterPos // activate시 중앙 정렬
+		eAlignCenterPos, // activate시 중앙 정렬
+
+		eMaxAttribute
 	};
 
 	//------------------------------------------------------------------------------------------------//

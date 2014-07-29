@@ -73,6 +73,7 @@ public:
 
 	// system window
 	void OpenNodeNameInputSystemWindow(MkSceneNode* targetNode, MkNodeNameInputListener* owner = NULL);
+	void OpenWindowAttributeSystemWindow(MkBaseWindowNode* targetWindow);
 
 	// «ÿ¡¶
 	void Clear(void);
