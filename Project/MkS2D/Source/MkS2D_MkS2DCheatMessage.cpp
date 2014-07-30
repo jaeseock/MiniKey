@@ -1,6 +1,6 @@
 
 #include "MkCore_MkStr.h"
-//#include "MkRender_MkRenderer.h"
+#include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkS2DCheatMessage.h"
 
 
@@ -17,7 +17,7 @@ bool MkS2DCheatMessage::ExcuteMsg(const MkStr& command, const MkArray<MkStr>& ar
 		MkStr buffer = argument[2];
 		buffer.ToLower();
 		bool fullScreen = ((buffer == L"f") || (buffer == L"full"));
-		//MK_RENDERER.ChangeDisplayMode(size, fullScreen);
+		MK_RENDERER.ChangeDisplayMode(size, fullScreen);
 		return true;
 	}
 

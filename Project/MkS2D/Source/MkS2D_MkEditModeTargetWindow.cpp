@@ -224,8 +224,8 @@ bool MkEditModeTargetWindow::Initialize(void)
 		m_EnableCB = new MkCheckButtonNode(ENABLE_NODE_CB_NAME);
 		if (m_EnableCB != NULL)
 		{
-			m_EnableCB->CreateCheckButton(themeName, CaptionDesc(L"활성화"), false);
-			m_EnableCB->SetLocalPosition(currentCtrlPos);
+			m_EnableCB->CreateCheckButton(themeName, CaptionDesc(L"활성화 여부"), false);
+			m_EnableCB->SetLocalPosition(MkFloat2(currentCtrlPos.x, currentCtrlPos.y + 1));
 			m_EnableCB->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 			m_EnableCB->SetEnable(false);
 			bgNode->AttachChildNode(m_EnableCB);
@@ -239,7 +239,7 @@ bool MkEditModeTargetWindow::Initialize(void)
 
 			m_WinAttrBtn->SetLocalPosition(currentCtrlPos);
 			m_WinAttrBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
-			m_WinAttrBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"Window Attribute"));
+			m_WinAttrBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"윈도우 속성"));
 			m_WinAttrBtn->SetEnable(false);
 		}
 		

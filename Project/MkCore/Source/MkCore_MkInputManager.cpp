@@ -93,12 +93,19 @@ void MkInputManager::SetUp(HWND targetWindowHandle)
 
 void MkInputManager::UpdateTargetWindowClientSize(HWND targetHWND)
 {
-	if ((targetHWND != NULL) && (targetHWND == m_TargetWindowHandle))
+	if (targetHWND == NULL)
+	{
+		targetHWND = m_TargetWindowHandle;
+	}
+
+	if ((m_TargetWindowHandle != NULL) && (targetHWND == m_TargetWindowHandle))
 	{
 		RECT rect;
 		GetClientRect(m_TargetWindowHandle, &rect);
 		m_TargetWindowClientSize.x = static_cast<int>(rect.right);
 		m_TargetWindowClientSize.y = static_cast<int>(rect.bottom);
+
+		MK_DEV_PANEL.MsgToLog(L"m_TargetWindowClientSize : " + MkStr(m_TargetWindowClientSize));
 	}
 }
 

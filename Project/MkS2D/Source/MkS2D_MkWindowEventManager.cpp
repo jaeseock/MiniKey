@@ -610,7 +610,7 @@ void MkWindowEventManager::Update(void)
 						m_FrontHitWindow->StartDragMovement(m_FrontHitWindow);
 
 						// 핸들링 시작
-						if (m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragToHandling))
+						if (m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eAllowItemDrag))
 						{
 							
 						}
@@ -621,7 +621,7 @@ void MkWindowEventManager::Update(void)
 			if (m_FrontHitWindow != NULL)
 			{
 				// 핸들링 이동
-				if (m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eDragToHandling))
+				if (m_FrontHitWindow->GetAttribute(MkBaseWindowNode::eAllowItemDrag))
 				{
 				}
 				// 이동금지 속성이 없는 상태에서 에디트 모드거나 드래깅 윈도우가 이동 속성을 가지고 있을 경우 윈도우 이동

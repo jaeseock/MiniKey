@@ -333,6 +333,16 @@ LRESULT CALLBACK MkBaseFramework::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LP
 
 	switch (msg)
 	{
+	case WM_SETCURSOR:
+		{
+			if (LOWORD(lParam) == HTCLIENT)
+			{
+				//SetCursor(hNowCursor);
+				//return TRUE;
+			}
+		}
+		break;
+
 	case WM_DROPFILES:
 		{
 			HDROP hDrop = reinterpret_cast<HDROP>(wParam);
