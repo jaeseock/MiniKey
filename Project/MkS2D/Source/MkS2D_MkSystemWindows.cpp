@@ -174,7 +174,7 @@ void MkNodeNameInputSystemWindow::_ApplyNodeName(const MkHashStr& newName)
 static const MkHashStr sWinAttrDesc[MkBaseWindowNode::eMaxAttribute] = {
 	L"입력 무시", L"이동 금지", L"시스템 윈도우", L"드래그 이동 허용",
 	L"이동시 부모의 영역으로 제한", L"이동시 스크린 영역으로 제한", L"아이템 드래그 허용", L"아이템 드롭 허용",
-	L"Active시 중앙 정렬" };
+	L"Active시 중앙 정렬", L"커서 위치시 ActionCursor 지정" };
 
 bool MkWindowAttributeSystemWindow::Initialize(void)
 {

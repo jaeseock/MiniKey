@@ -50,6 +50,8 @@ bool MkScrollBarNode::CreateScrollBar(const MkHashStr& themeName, eBarDirection 
 	MK_CHECK(barNode != NULL, GetNodeName().GetString() + L" MkScrollBarNode에서 bar 생성 실패")
 		return false;
 
+	barNode->SetAttribute(eShowActionCursor, true); // bg이지만 클릭 가능하므로 속성 부여
+
 	m_SlideNode = __CreateWindowPreset(barNode, SLIDE_NODE_NAME, themeName, (isVertical) ? eS2D_WPC_VSlideButton : eS2D_WPC_HSlideButton, barSize);
 	MK_CHECK(m_SlideNode != NULL, GetNodeName().GetString() + L" MkScrollBarNode에서 slide 생성 실패")
 		return false;

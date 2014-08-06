@@ -33,6 +33,9 @@ static MkTitleBarHooker gMainWindowTitleBarHooker;
 // dragged file path list
 MkArray<MkPathName> gDraggedFilePathList;
 
+// set cursor msg
+bool gRecieveCursorMsg = false;
+
 
 //------------------------------------------------------------------------------------------------//
 
@@ -220,7 +223,14 @@ void MkBaseFramework::__Run(void)
 					// 입력 갱신
 					MK_INPUT_MGR.__Update();
 
-					// page 갱신은 logic thread에서 처리 
+					// page 갱신은 logic thread에서 처리
+
+					// cursor 처리
+					if (gRecieveCursorMsg)
+					{
+						ConsumeSetCursorMsg();
+						gRecieveCursorMsg = false;
+					}
 
 					// 확장 갱신
 					Update();
@@ -249,6 +259,13 @@ void MkBaseFramework::__Run(void)
 
 				// 입력 갱신
 				MK_INPUT_MGR.__Update();
+
+				// cursor 처리
+				if (gRecieveCursorMsg)
+				{
+					ConsumeSetCursorMsg();
+					gRecieveCursorMsg = false;
+				}
 
 				// page 갱신
 				MK_PAGE_MGR.__Update();
@@ -337,8 +354,8 @@ LRESULT CALLBACK MkBaseFramework::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LP
 		{
 			if (LOWORD(lParam) == HTCLIENT)
 			{
-				//SetCursor(hNowCursor);
-				//return TRUE;
+				gRecieveCursorMsg = true;
+				return TRUE;
 			}
 		}
 		break;

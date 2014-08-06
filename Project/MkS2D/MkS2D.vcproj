@@ -299,6 +299,14 @@
 				Name="Singleton"
 				>
 				<File
+					RelativePath=".\Source\MkS2D_MkCursorManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkS2D_MkCursorManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkS2D_MkDisplayManager.cpp"
 					>
 				</File>

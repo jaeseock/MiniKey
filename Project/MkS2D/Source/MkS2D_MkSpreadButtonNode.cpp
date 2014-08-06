@@ -9,7 +9,6 @@
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
 
-const static MkHashStr ITEM_ICON_NAME = L"__#ItemIcon";
 const static MkHashStr ARROW_PRESET_NAME = L"__#Arrow";
 
 //------------------------------------------------------------------------------------------------//
@@ -239,28 +238,9 @@ bool MkSpreadButtonNode::RemoveItem(const MkHashStr& uniqueKey)
 bool MkSpreadButtonNode::SetItemTag(const ItemTagInfo& tagInfo)
 {
 	m_ItemTagInfo = tagInfo;
-
-	const float MARGIN = MK_WR_PRESET.GetMargin();
-
-	bool iconOK = true;
-	float captionBorderX = MARGIN;
-	if (m_ItemTagInfo.iconPath.Empty())
-	{
-		if (ExistSRect(ITEM_ICON_NAME))
-		{
-			DeleteSRect(ITEM_ICON_NAME);
-		}
-	}
-	else
-	{
-		iconOK = SetPresetComponentIcon(ITEM_ICON_NAME, eRAP_LeftCenter, MkFloat2(MARGIN, 0.f), 0.f, m_ItemTagInfo.iconPath, m_ItemTagInfo.iconSubset);
-		captionBorderX += GetSRect(ITEM_ICON_NAME)->GetLocalSize().x;
-		captionBorderX += MARGIN;
-	}
-
 	m_ItemTagInfo.captionDesc.__Check(GetNodeName().GetString());
-	bool captionOK = SetPresetComponentCaption(m_PresetThemeName, m_ItemTagInfo.captionDesc, eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f));
-	return (iconOK && captionOK);
+
+	return SetPresetComponentItemTag(m_ItemTagInfo);
 }
 
 void MkSpreadButtonNode::OpenAllItems(void)

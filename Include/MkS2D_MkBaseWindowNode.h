@@ -34,6 +34,8 @@ public:
 
 		eAlignCenterPos, // activate시 중앙 정렬
 
+		eShowActionCursor, // cursor over시 action cursor 표시 여부
+
 		eMaxAttribute
 	};
 
@@ -46,6 +48,8 @@ public:
 	public:
 		void SetString(const MkStr& msg); // SetNameList()와 배타적
 		void SetNameList(const MkArray<MkHashStr>& nameList); // SetString()과 배타적
+
+		inline bool GetEnable(void) const { return ((!m_Str.Empty()) || (!m_NameList.Empty())); }
 
 		inline CaptionDesc& operator = (const MkStr& msg) { SetString(msg); return *this; }
 		inline CaptionDesc& operator = (const MkArray<MkHashStr>& nameList) { SetNameList(nameList); return *this; }
@@ -66,6 +70,16 @@ public:
 		MkStr m_Str;
 		MkArray<MkHashStr> m_NameList;
 	};
+
+	//------------------------------------------------------------------------------------------------//
+
+	typedef struct _ItemTagInfo
+	{
+		MkPathName iconPath;
+		MkHashStr iconSubset;
+		CaptionDesc captionDesc;
+	}
+	ItemTagInfo;
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -220,13 +234,20 @@ public:
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkPathName& imagePath, const MkHashStr& subsetName);
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkHashStr& forcedState, const CaptionDesc& captionDesc);
 
-	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 highlight/normal icon(SRect) 설정
-	// highlight가 true면 기본적으로 invisible 상태로 초기화됨
+	// 해당 윈도우 노드에 highlight/normal icon(SRect) 설정
+	// highlight가 true면 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드일 경우만 가능, false면 모든 component 노드 가능
+	// highlight는 기본적으로 invisible 상태로 초기화됨
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const MkPathName& imagePath, const MkHashStr& subsetName);
 	bool SetPresetComponentIcon(bool highlight, eRectAlignmentPosition alignment, const MkFloat2& border, const CaptionDesc& captionDesc);
 
-	// 해당 윈도우 노드가 eS2D_TitleState, eS2D_WindowState 기반 window preset이 적용된 component 노드면 highlight/normal caption 설정, captionDesc가 비었으면 삭제
+	// 해당 윈도우 노드에 highlight/normal caption 설정, captionDesc가 비었으면 삭제
+	// 생성 규칙은 SetPresetComponentIcon()와 동일
 	bool SetPresetComponentCaption(const MkHashStr& themeName, const CaptionDesc& captionDesc, eRectAlignmentPosition alignment = eRAP_MiddleCenter, const MkFloat2& border = MkFloat2(0.f, 0.f));
+
+	// 해당 윈도우 노드에 ItemTagInfo 반영
+	// - icon, 혹은 caption만 존재 : 중앙 정렬
+	// - icon, caption 모두 존재 : 좌측 정렬
+	bool SetPresetComponentItemTag(const ItemTagInfo& tagInfo);
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 테마명 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }

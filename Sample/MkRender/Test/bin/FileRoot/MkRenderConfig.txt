@@ -865,3 +865,34 @@ Node "WindowPreset"
 		str FontState = "ป๙วร02" / "ClientStartMsg";
 	}
 }
+
+Node "CursorList"
+{
+	str NormalCursor = "ArrowDef";
+	str ActionCursor = "ArrowBlue";
+	str DisableCursor = "ArrowRed";
+	
+	Node "ArrowDef"
+	{
+		str FilePath = "Default\cursor_arrow_def.png";
+		int2 Hotspot = (0, 0);
+	}
+	
+	Node "ArrowRed"
+	{
+		str FilePath = "Default\cursor_arrow_r.png";
+		int2 Hotspot = (0, 0);
+	}
+	
+	Node "ArrowGreen"
+	{
+		str FilePath = "Default\cursor_arrow_g.png";
+		int2 Hotspot = (0, 0);
+	}
+	
+	Node "ArrowBlue"
+	{
+		str FilePath = "Default\cursor_arrow_b.png";
+		int2 Hotspot = (0, 0);
+	}
+}

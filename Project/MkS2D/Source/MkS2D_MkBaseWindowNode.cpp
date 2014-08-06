@@ -7,13 +7,15 @@
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkTexturePool.h"
 #include "MkS2D_MkFontManager.h"
+#include "MkS2D_MkCursorManager.h"
 #include "MkS2D_MkBaseWindowNode.h"
 
 #include "MkS2D_MkWindowEventManager.h"
 
 
-const static MkHashStr COMPONENT_HIGHLIGHT_TAG_NAME = L"HighlightTag";
-const static MkHashStr COMPONENT_NORMAL_TAG_NAME = L"NormalTag";
+const static MkHashStr COMPONENT_HIGHLIGHT_TAG_NAME = L"__#HTag";
+const static MkHashStr COMPONENT_NORMAL_TAG_NAME = L"__#NTag";
+const static MkHashStr COMPONENT_ITEM_ICON_NAME = L"__#ItemIcon";
 
 #define MKDEF_TITLE_BAR_SAMPLE_STRING L"타 이 틀"
 #define MKDEF_OK_BTN_SAMPLE_STRING L"확 인"
@@ -448,10 +450,12 @@ public:
 		}
 		else if (IsTitleStateType(component))
 		{
+			targetNode->SetAttribute(MkBaseWindowNode::eShowActionCursor, true);
 			return __TSI_WindowNodeOp<eS2D_TitleState>::ApplyImageSetAndSize(imageSets, targetNode);
 		}
 		else if (IsWindowStateType(component))
 		{
+			targetNode->SetAttribute(MkBaseWindowNode::eShowActionCursor, true);
 			return __TSI_WindowNodeOp<eS2D_WindowState>::ApplyImageSetAndSize(imageSets, targetNode);
 		}
 		return false;
@@ -993,6 +997,8 @@ bool MkBaseWindowNode::CreateFreeImageBaseButtonWindow(const MkPathName& imagePa
 			if (!__TSI_WindowNodeOp<eS2D_WindowState>::ApplyFreeImageToState(static_cast<eS2D_WindowState>(i), imagePath, subsetNames[i], this))
 				return false;
 		}
+		
+		SetAttribute(eShowActionCursor, true);
 		return true;
 	}
 	return false;
@@ -1120,7 +1126,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 {
 	if (m_PresetComponentType != eS2D_WPC_None)
 	{
-		if (IsTitleStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType))
+		if ((highlight) ? (IsTitleStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType)) : true)
 		{
 			if (SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f, imagePath, subsetName))
 			{
@@ -1139,7 +1145,7 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 {
 	if (m_PresetComponentType != eS2D_WPC_None)
 	{
-		if (IsTitleStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType))
+		if ((highlight) ? (IsTitleStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType)) : true)
 		{
 			if (SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f,
 				(highlight) ? MK_WR_PRESET.GetHighlightThemeFontState(m_PresetThemeName) : MK_WR_PRESET.GetNormalThemeFontState(m_PresetThemeName), captionDesc))
@@ -1157,9 +1163,36 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 
 bool MkBaseWindowNode::SetPresetComponentCaption(const MkHashStr& themeName, const CaptionDesc& captionDesc, eRectAlignmentPosition alignment, const MkFloat2& border)
 {
-	bool hOK = SetPresetComponentIcon(true, alignment, border, captionDesc);
+	bool hOK = (SetPresetComponentIcon(true, alignment, border, captionDesc) || IsBackgroundStateType(m_PresetComponentType));
 	bool nOK = SetPresetComponentIcon(false, alignment, border, captionDesc);
 	return (hOK && nOK);
+}
+
+bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo)
+{
+	const float MARGIN = MK_WR_PRESET.GetMargin();
+
+	bool iconOK = true;
+	bool captionEnable = tagInfo.captionDesc.GetEnable();
+	float captionBorderX = MARGIN;
+	if (tagInfo.iconPath.Empty())
+	{
+		if (ExistSRect(COMPONENT_ITEM_ICON_NAME))
+		{
+			DeleteSRect(COMPONENT_ITEM_ICON_NAME);
+		}
+	}
+	else
+	{
+		iconOK = SetPresetComponentIcon(COMPONENT_ITEM_ICON_NAME, (captionEnable) ? eRAP_LeftCenter : eRAP_MiddleCenter, MkFloat2(MARGIN, 0.f), 0.f, tagInfo.iconPath, tagInfo.iconSubset);
+		captionBorderX += GetSRect(COMPONENT_ITEM_ICON_NAME)->GetLocalSize().x;
+		captionBorderX += MARGIN;
+	}
+
+	bool captionOK = (captionEnable) ?
+		SetPresetComponentCaption(m_PresetThemeName, tagInfo.captionDesc, (captionBorderX == MARGIN) ? eRAP_MiddleCenter : eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f)) : true;
+
+	return (iconOK && captionOK);
 }
 
 const MkHashStr& MkBaseWindowNode::GetPresetComponentName(void) const
@@ -1304,16 +1337,16 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 		inside = GetWorldAABR().CheckGridIntersection(position);
 	}
 
+	bool cursorOver = (inside && GetWindowRect().CheckGridIntersection(position));
+
 	// eS2D_WindowState가 적용된 노드면 eS2D_WS_DefaultState, eS2D_WS_OnClickState, eS2D_WS_OnCursorState 중 하나를 지정
 	if (IsWindowStateType(m_PresetComponentType))
 	{
-		eS2D_WindowState windowState = eS2D_WS_DefaultState;
-		if (inside && GetWindowRect().CheckGridIntersection(position))
-		{
-			windowState = (btnPushing[0] && (this == MK_WIN_EVENT_MGR.GetFrontHitWindow())) ? eS2D_WS_OnClickState : eS2D_WS_OnCursorState;
-		}
+		eS2D_WindowState windowState = (cursorOver) ?
+			((btnPushing[0] && (this == MK_WIN_EVENT_MGR.GetFrontHitWindow())) ? eS2D_WS_OnClickState : eS2D_WS_OnCursorState) : eS2D_WS_DefaultState;
 
 		eS2D_WindowState lastState = static_cast<eS2D_WindowState>(m_CurrentComponentState);
+
 		if (windowState != lastState)
 		{
 			if ((lastState == eS2D_WS_DefaultState) && ((windowState == eS2D_WS_OnCursorState) || (windowState == eS2D_WS_OnClickState)))
@@ -1327,6 +1360,11 @@ void MkBaseWindowNode::InputEventMouseMove(bool inside, bool (&btnPushing)[3], c
 
 			__TSI_WindowNodeOp<eS2D_WindowState>::SetState(windowState, this);
 		}
+	}
+
+	if (cursorOver && GetAttribute(eShowActionCursor))
+	{
+		MK_CURSOR_MGR.SetActionCursor();
 	}
 
 	if (inside || (m_ActiveWindowStateCounter > 0)) // 대다수의 윈도우가 (inside == false) && (m_ActiveWindowStateCounter == 0) 조합이기 때문에 여기서 걸러짐

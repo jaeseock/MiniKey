@@ -7,6 +7,7 @@
 #include "MkCore_MkProfilingManager.h"
 
 #include "MkS2D_MkTexturePool.h"
+#include "MkS2D_MkCursorManager.h"
 #include "MkS2D_MkWindowResourceManager.h"
 #include "MkS2D_MkHiddenEditBox.h"
 #include "MkS2D_MkRenderer.h"
@@ -505,9 +506,10 @@ void MkWindowEventManager::Update(void)
 			}
 		}
 
-		// 모달 상태면 darken layer 깊이 조정
+		// 모달 상태면
 		if (!m_ModalWindow.Empty())
 		{
+			// darken layer 깊이 조정
 			float darkenLayerDepth = m_MaxDepthBandwidth;
 			if (nextWindowNode != NULL)
 			{
@@ -518,6 +520,12 @@ void MkWindowEventManager::Update(void)
 			if (srect != NULL)
 			{
 				srect->SetLocalDepth(darkenLayerDepth);
+			}
+
+			// 커서가 윈도우 안에 없으면
+			if ((onFocusWindowNode != NULL) && (!onFocusWindowNode->GetWorldAABR().CheckGridIntersection(currentCursorPosition)))
+			{
+				MK_CURSOR_MGR.SetDisableCursor();
 			}
 		}
 
@@ -663,6 +671,10 @@ void MkWindowEventManager::Update(void)
 		MK_EDIT_BOX.BindControl(NULL); // 활성화중인 윈도우가 없어도 입력모드 취소
 	}
 
+	// cursor
+	MK_CURSOR_MGR.CommitCurrentCursor();
+
+	// edit box
 	MK_EDIT_BOX.Update();
 
 	if ((!cursorAvailable) || currentButtonReleased[0])

@@ -6,6 +6,7 @@
 #include "MkS2D_MkDisplayManager.h"
 #include "MkS2D_MkFontManager.h"
 #include "MkS2D_MkTexturePool.h"
+#include "MkS2D_MkCursorManager.h"
 #include "MkS2D_MkRenderStateSetter.h"
 #include "MkS2D_MkS2DCheatMessage.h"
 #include "MkS2D_MkDrawingMonitor.h"
@@ -25,7 +26,7 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 		return false;
 
 	// ∑ª¥ı∑Ø ΩÃ±€≈Ê ª˝º∫
-	m_InstanceDeallocator.Expand(10);
+	m_InstanceDeallocator.Expand(11);
 
 	// 0.
 	m_InstanceDeallocator.RegisterInstance(new MkHiddenEditBox());
@@ -50,12 +51,16 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 	m_InstanceDeallocator.RegisterInstance(new MkTexturePool());
 
 	// 7.
-	m_InstanceDeallocator.RegisterInstance(new MkRenderStateSetter());
+	m_InstanceDeallocator.RegisterInstance(new MkCursorManager());
+	MK_RESETABLE_RESPOOL.RegisterResource(MkCursorManager::InstancePtr());
 
 	// 8.
-	m_InstanceDeallocator.RegisterInstance(new MkDrawingMonitor());
+	m_InstanceDeallocator.RegisterInstance(new MkRenderStateSetter());
 
 	// 9.
+	m_InstanceDeallocator.RegisterInstance(new MkDrawingMonitor());
+
+	// 10.
 	m_InstanceDeallocator.RegisterInstance(new MkRenderer());
 
 	// ∑ª¥ı∑Ø √ ±‚»≠
@@ -63,6 +68,11 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 		return false;
 
 	return true;
+}
+
+void MkRenderFramework::ConsumeSetCursorMsg(void)
+{
+	MK_CURSOR_MGR.__ConsumeSetCursorMsg();
 }
 
 void MkRenderFramework::Update(void)

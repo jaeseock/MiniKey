@@ -122,6 +122,9 @@ public:
 	// 드래그 파일 처리 확장 갱신
 	virtual void ConsumeDraggedFiles(MkArray<MkPathName>& draggedFilePathList) { draggedFilePathList.Clear(); }
 
+	// WM_SETCURSOR message 처리
+	virtual void ConsumeSetCursorMsg(void) {}
+
 	// 확장 해제
 	virtual void Clear(void) {}
 

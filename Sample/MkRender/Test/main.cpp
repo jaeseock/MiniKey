@@ -104,7 +104,7 @@ public:
 
 		MkSpreadButtonNode* lbNode = new MkSpreadButtonNode(L"SB");
 		lbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(100.f, 20.f), MkSpreadButtonNode::eDownward);
-		MkSpreadButtonNode::ItemTagInfo tagInfo;
+		MkBaseWindowNode::ItemTagInfo tagInfo;
 		tagInfo.iconPath = L"Default\\window_mgr.png";
 		tagInfo.iconSubset = L"SampleIcon";
 		lbNode->SetItemTag(tagInfo);
@@ -334,7 +334,7 @@ public:
 		MK_DELETE(m_ScreenNode);
 		
 		MK_RENDERER.GetDrawQueue().Clear();
-		MK_TEXTURE_POOL.UnloadGroup(0);
+		//MK_TEXTURE_POOL.UnloadGroup(0);
 	}
 
 	TestPage(const MkHashStr& name) : MkBasePage(name)
@@ -477,7 +477,7 @@ public:
 		MK_DELETE(m_RootNode);
 		
 		MK_RENDERER.GetDrawQueue().Clear();
-		MK_TEXTURE_POOL.UnloadGroup(0);
+		//MK_TEXTURE_POOL.UnloadGroup(0);
 	}
 
 	RestorePage(const MkHashStr& name) : MkBasePage(name)

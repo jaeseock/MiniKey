@@ -2,12 +2,12 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.07.30 (18:57:15),
+//   - time stamp : 2014.08.06 (20:11:17),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
 
-uint Attribute = 40;
+uint Attribute = 552;
 int2 PCompSize = (294, 20);
 str PComponent = "NormalTitle";
 str PThemeName = "Default";
@@ -15,7 +15,18 @@ vec3 Position = (0.000, -20.000, 0.000);
 
 Node "<SRect>"
 {
-	Node "HighlightTag" : "T_SRect"
+	Node "WindowIcon" : "T_SRect"
+	{
+		float Depth = -0.025;
+		vec2 Position = (3.000, 2.000);
+		str Resource = // [3]
+			"map" /
+			"Default\window_mgr.png" /
+			"SampleIcon";
+		vec2 Size = (16.000, 16.000);
+	}
+
+	Node "__#HTag" : "T_SRect"
 	{
 		float Depth = -0.025;
 		str FontState = "YellowFS";
@@ -27,7 +38,7 @@ Node "<SRect>"
 		bool Visible = No;
 	}
 
-	Node "NormalTag" : "T_SRect"
+	Node "__#NTag" : "T_SRect"
 	{
 		float Depth = -0.025;
 		str FontState = "WhiteFS";
@@ -36,17 +47,6 @@ Node "<SRect>"
 			"odt" /
 			"타 이 틀";
 		vec2 Size = (44.000, 12.000);
-	}
-
-	Node "WindowIcon" : "T_SRect"
-	{
-		float Depth = -0.025;
-		vec2 Position = (3.000, 2.000);
-		str Resource = // [3]
-			"map" /
-			"Default\window_mgr.png" /
-			"SampleIcon";
-		vec2 Size = (16.000, 16.000);
 	}
 }
 
@@ -159,7 +159,7 @@ Node "<SceneNode>"
 
 			Node "CancelButton" : "T_BaseWindowNode"
 			{
-				uint Attribute = 16;
+				uint Attribute = 528;
 				int2 PCompSize = (60, 20);
 				str PComponent = "CancelBtn";
 				str PThemeName = "Default";
@@ -167,7 +167,7 @@ Node "<SceneNode>"
 
 				Node "<SRect>"
 				{
-					Node "HighlightTag" : "T_SRect"
+					Node "__#HTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "YellowFS";
@@ -179,7 +179,7 @@ Node "<SceneNode>"
 						bool Visible = No;
 					}
 
-					Node "NormalTag" : "T_SRect"
+					Node "__#NTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "WhiteFS";
@@ -806,7 +806,7 @@ Node "<SceneNode>"
 
 							Node "__#Check" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (12, 12);
 								str PComponent = "CheckBtn";
 								str PThemeName = "Default";
@@ -884,7 +884,7 @@ Node "<SceneNode>"
 
 							Node "__#Uncheck" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (12, 12);
 								str PComponent = "UncheckBtn";
 								str PThemeName = "Default";
@@ -965,6 +965,7 @@ Node "<SceneNode>"
 
 					Node "EB" : "T_EditBoxNode"
 					{
+						uint Attribute = 512;
 						int2 PCompSize = (150, 20);
 						str PComponent = "RootBtn";
 						str PThemeName = "Default";
@@ -1364,6 +1365,7 @@ Node "<SceneNode>"
 
 					Node "FreeImageBtn" : "T_BaseWindowNode"
 					{
+						uint Attribute = 512;
 						int2 PCompSize = (18, 18);
 						str PComponent = "NormalBtn";
 						vec3 Position = (130.000, 130.000, -0.001);
@@ -1450,7 +1452,7 @@ Node "<SceneNode>"
 						{
 							Node "__#BarBG" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (84, 18);
 								str PComponent = "HSlideBar";
 								str PThemeName = "Default";
@@ -1495,7 +1497,7 @@ Node "<SceneNode>"
 
 									Node "__#SlideBtn" : "T_BaseWindowNode"
 									{
-										uint Attribute = 24;
+										uint Attribute = 536;
 										int2 PCompSize = (12, 18);
 										str PComponent = "HSlideBtn";
 										str PThemeName = "Default";
@@ -1655,7 +1657,7 @@ Node "<SceneNode>"
 
 							Node "__#NextBtn" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (18, 18);
 								str PComponent = "DirRightBtn";
 								str PThemeName = "Default";
@@ -1733,7 +1735,7 @@ Node "<SceneNode>"
 
 							Node "__#PrevBtn" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (18, 18);
 								str PComponent = "DirLeftBtn";
 								str PThemeName = "Default";
@@ -1812,6 +1814,7 @@ Node "<SceneNode>"
 
 					Node "SB" : "T_SpreadButtonNode"
 					{
+						uint Attribute = 512;
 						str Caption = "1-1";
 						str IconPath = "Default\window_mgr.png";
 						str IconSubset = "SampleIcon";
@@ -1829,7 +1832,7 @@ Node "<SceneNode>"
 
 						Node "<SRect>"
 						{
-							Node "HighlightTag" : "T_SRect"
+							Node "__#HTag" : "T_SRect"
 							{
 								float Depth = -0.050;
 								str FontState = "YellowFS";
@@ -1839,17 +1842,6 @@ Node "<SceneNode>"
 									"1-1";
 								vec2 Size = (18.000, 12.000);
 								bool Visible = No;
-							}
-
-							Node "NormalTag" : "T_SRect"
-							{
-								float Depth = -0.050;
-								str FontState = "WhiteFS";
-								vec2 Position = (22.000, 4.000);
-								str Resource = // [2]
-									"odt" /
-									"1-1";
-								vec2 Size = (18.000, 12.000);
 							}
 
 							Node "__#ItemIcon" : "T_SRect"
@@ -1862,13 +1854,24 @@ Node "<SceneNode>"
 									"SampleIcon";
 								vec2 Size = (16.000, 16.000);
 							}
+
+							Node "__#NTag" : "T_SRect"
+							{
+								float Depth = -0.050;
+								str FontState = "WhiteFS";
+								vec2 Position = (22.000, 4.000);
+								str Resource = // [2]
+									"odt" /
+									"1-1";
+								vec2 Size = (18.000, 12.000);
+							}
 						}
 
 						Node "<SceneNode>"
 						{
 							Node "0" : "T_SpreadButtonNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								uint ButtonType = 255;
 								str Caption = "0";
 								str IconPath = "Default\window_mgr.png";
@@ -1881,7 +1884,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "HighlightTag" : "T_SRect"
+									Node "__#HTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -1893,17 +1896,6 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "NormalTag" : "T_SRect"
-									{
-										float Depth = -0.025;
-										str FontState = "WhiteFS";
-										vec2 Position = (22.000, 4.000);
-										str Resource = // [2]
-											"odt" /
-											"0";
-										vec2 Size = (6.000, 12.000);
-									}
-
 									Node "__#ItemIcon" : "T_SRect"
 									{
 										float Depth = -0.025;
@@ -1913,6 +1905,17 @@ Node "<SceneNode>"
 											"Default\window_mgr.png" /
 											"SampleIcon";
 										vec2 Size = (16.000, 16.000);
+									}
+
+									Node "__#NTag" : "T_SRect"
+									{
+										float Depth = -0.025;
+										str FontState = "WhiteFS";
+										vec2 Position = (22.000, 4.000);
+										str Resource = // [2]
+											"odt" /
+											"0";
+										vec2 Size = (6.000, 12.000);
 									}
 								}
 
@@ -2308,7 +2311,7 @@ Node "<SceneNode>"
 
 							Node "1" : "T_SpreadButtonNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								uint ButtonType = 255;
 								str Caption = "1";
 								str IconPath = "Default\window_mgr.png";
@@ -2325,7 +2328,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "HighlightTag" : "T_SRect"
+									Node "__#HTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -2335,17 +2338,6 @@ Node "<SceneNode>"
 											"1";
 										vec2 Size = (6.000, 12.000);
 										bool Visible = No;
-									}
-
-									Node "NormalTag" : "T_SRect"
-									{
-										float Depth = -0.025;
-										str FontState = "WhiteFS";
-										vec2 Position = (22.000, 4.000);
-										str Resource = // [2]
-											"odt" /
-											"1";
-										vec2 Size = (6.000, 12.000);
 									}
 
 									Node "__#ItemIcon" : "T_SRect"
@@ -2358,13 +2350,24 @@ Node "<SceneNode>"
 											"SampleIcon";
 										vec2 Size = (16.000, 16.000);
 									}
+
+									Node "__#NTag" : "T_SRect"
+									{
+										float Depth = -0.025;
+										str FontState = "WhiteFS";
+										vec2 Position = (22.000, 4.000);
+										str Resource = // [2]
+											"odt" /
+											"1";
+										vec2 Size = (6.000, 12.000);
+									}
 								}
 
 								Node "<SceneNode>"
 								{
 									Node "1-0" : "T_SpreadButtonNode"
 									{
-										uint Attribute = 2;
+										uint Attribute = 514;
 										uint ButtonType = 255;
 										str Caption = "1-0";
 										str IconPath = "Default\window_mgr.png";
@@ -2377,7 +2380,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "HighlightTag" : "T_SRect"
+											Node "__#HTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -2389,17 +2392,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "NormalTag" : "T_SRect"
-											{
-												float Depth = -0.025;
-												str FontState = "WhiteFS";
-												vec2 Position = (22.000, 4.000);
-												str Resource = // [2]
-													"odt" /
-													"1-0";
-												vec2 Size = (18.000, 12.000);
-											}
-
 											Node "__#ItemIcon" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -2409,6 +2401,17 @@ Node "<SceneNode>"
 													"Default\window_mgr.png" /
 													"SampleIcon";
 												vec2 Size = (16.000, 16.000);
+											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (22.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"1-0";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -2804,7 +2807,7 @@ Node "<SceneNode>"
 
 									Node "1-1" : "T_SpreadButtonNode"
 									{
-										uint Attribute = 2;
+										uint Attribute = 514;
 										uint ButtonType = 255;
 										str Caption = "1-1";
 										str IconPath = "Default\window_mgr.png";
@@ -2817,7 +2820,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "HighlightTag" : "T_SRect"
+											Node "__#HTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -2829,17 +2832,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "NormalTag" : "T_SRect"
-											{
-												float Depth = -0.025;
-												str FontState = "WhiteFS";
-												vec2 Position = (22.000, 4.000);
-												str Resource = // [2]
-													"odt" /
-													"1-1";
-												vec2 Size = (18.000, 12.000);
-											}
-
 											Node "__#ItemIcon" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -2849,6 +2841,17 @@ Node "<SceneNode>"
 													"Default\window_mgr.png" /
 													"SampleIcon";
 												vec2 Size = (16.000, 16.000);
+											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (22.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"1-1";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -3244,7 +3247,7 @@ Node "<SceneNode>"
 
 									Node "1-2" : "T_SpreadButtonNode"
 									{
-										uint Attribute = 2;
+										uint Attribute = 514;
 										uint ButtonType = 255;
 										str Caption = "1-2";
 										str IconPath = "Default\window_mgr.png";
@@ -3257,7 +3260,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "HighlightTag" : "T_SRect"
+											Node "__#HTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -3269,17 +3272,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "NormalTag" : "T_SRect"
-											{
-												float Depth = -0.025;
-												str FontState = "WhiteFS";
-												vec2 Position = (22.000, 4.000);
-												str Resource = // [2]
-													"odt" /
-													"1-2";
-												vec2 Size = (18.000, 12.000);
-											}
-
 											Node "__#ItemIcon" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -3289,6 +3281,17 @@ Node "<SceneNode>"
 													"Default\window_mgr.png" /
 													"SampleIcon";
 												vec2 Size = (16.000, 16.000);
+											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (22.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"1-2";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -4099,7 +4102,7 @@ Node "<SceneNode>"
 
 							Node "2" : "T_SpreadButtonNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								uint ButtonType = 255;
 								str Caption = "2";
 								str IconPath = "Default\window_mgr.png";
@@ -4112,7 +4115,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "HighlightTag" : "T_SRect"
+									Node "__#HTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -4124,17 +4127,6 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "NormalTag" : "T_SRect"
-									{
-										float Depth = -0.025;
-										str FontState = "WhiteFS";
-										vec2 Position = (22.000, 4.000);
-										str Resource = // [2]
-											"odt" /
-											"2";
-										vec2 Size = (6.000, 12.000);
-									}
-
 									Node "__#ItemIcon" : "T_SRect"
 									{
 										float Depth = -0.025;
@@ -4144,6 +4136,17 @@ Node "<SceneNode>"
 											"Default\window_mgr.png" /
 											"SampleIcon";
 										vec2 Size = (16.000, 16.000);
+									}
+
+									Node "__#NTag" : "T_SRect"
+									{
+										float Depth = -0.025;
+										str FontState = "WhiteFS";
+										vec2 Position = (22.000, 4.000);
+										str Resource = // [2]
+											"odt" /
+											"2";
+										vec2 Size = (6.000, 12.000);
 									}
 								}
 
@@ -4539,7 +4542,7 @@ Node "<SceneNode>"
 
 							Node "3" : "T_SpreadButtonNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								uint ButtonType = 255;
 								str Caption = "3";
 								str IconPath = "Default\window_mgr.png";
@@ -4555,7 +4558,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "HighlightTag" : "T_SRect"
+									Node "__#HTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -4565,17 +4568,6 @@ Node "<SceneNode>"
 											"3";
 										vec2 Size = (6.000, 12.000);
 										bool Visible = No;
-									}
-
-									Node "NormalTag" : "T_SRect"
-									{
-										float Depth = -0.025;
-										str FontState = "WhiteFS";
-										vec2 Position = (22.000, 4.000);
-										str Resource = // [2]
-											"odt" /
-											"3";
-										vec2 Size = (6.000, 12.000);
 									}
 
 									Node "__#ItemIcon" : "T_SRect"
@@ -4588,13 +4580,24 @@ Node "<SceneNode>"
 											"SampleIcon";
 										vec2 Size = (16.000, 16.000);
 									}
+
+									Node "__#NTag" : "T_SRect"
+									{
+										float Depth = -0.025;
+										str FontState = "WhiteFS";
+										vec2 Position = (22.000, 4.000);
+										str Resource = // [2]
+											"odt" /
+											"3";
+										vec2 Size = (6.000, 12.000);
+									}
 								}
 
 								Node "<SceneNode>"
 								{
 									Node "3-0" : "T_SpreadButtonNode"
 									{
-										uint Attribute = 2;
+										uint Attribute = 514;
 										uint ButtonType = 255;
 										str Caption = "3-0";
 										str IconPath = "Default\window_mgr.png";
@@ -4607,7 +4610,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "HighlightTag" : "T_SRect"
+											Node "__#HTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -4619,17 +4622,6 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "NormalTag" : "T_SRect"
-											{
-												float Depth = -0.025;
-												str FontState = "WhiteFS";
-												vec2 Position = (22.000, 4.000);
-												str Resource = // [2]
-													"odt" /
-													"3-0";
-												vec2 Size = (18.000, 12.000);
-											}
-
 											Node "__#ItemIcon" : "T_SRect"
 											{
 												float Depth = -0.025;
@@ -4639,6 +4631,17 @@ Node "<SceneNode>"
 													"Default\window_mgr.png" /
 													"SampleIcon";
 												vec2 Size = (16.000, 16.000);
+											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (22.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"3-0";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -5034,7 +5037,7 @@ Node "<SceneNode>"
 
 									Node "3-1" : "T_SpreadButtonNode"
 									{
-										uint Attribute = 2;
+										uint Attribute = 514;
 										uint ButtonType = 255;
 										str Caption = "3-1";
 										str IconPath = "Default\window_mgr.png";
@@ -5048,7 +5051,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "HighlightTag" : "T_SRect"
+											Node "__#HTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -5058,17 +5061,6 @@ Node "<SceneNode>"
 													"3-1";
 												vec2 Size = (18.000, 12.000);
 												bool Visible = No;
-											}
-
-											Node "NormalTag" : "T_SRect"
-											{
-												float Depth = -0.025;
-												str FontState = "WhiteFS";
-												vec2 Position = (22.000, 4.000);
-												str Resource = // [2]
-													"odt" /
-													"3-1";
-												vec2 Size = (18.000, 12.000);
 											}
 
 											Node "__#ItemIcon" : "T_SRect"
@@ -5081,13 +5073,24 @@ Node "<SceneNode>"
 													"SampleIcon";
 												vec2 Size = (16.000, 16.000);
 											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (22.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"3-1";
+												vec2 Size = (18.000, 12.000);
+											}
 										}
 
 										Node "<SceneNode>"
 										{
 											Node "3-1-0" : "T_SpreadButtonNode"
 											{
-												uint Attribute = 2;
+												uint Attribute = 514;
 												uint ButtonType = 255;
 												str Caption = "3-1-0";
 												str IconPath = "Default\window_mgr.png";
@@ -5100,7 +5103,7 @@ Node "<SceneNode>"
 
 												Node "<SRect>"
 												{
-													Node "HighlightTag" : "T_SRect"
+													Node "__#HTag" : "T_SRect"
 													{
 														float Depth = -0.025;
 														str FontState = "YellowFS";
@@ -5112,17 +5115,6 @@ Node "<SceneNode>"
 														bool Visible = No;
 													}
 
-													Node "NormalTag" : "T_SRect"
-													{
-														float Depth = -0.025;
-														str FontState = "WhiteFS";
-														vec2 Position = (22.000, 4.000);
-														str Resource = // [2]
-															"odt" /
-															"3-1-0";
-														vec2 Size = (30.000, 12.000);
-													}
-
 													Node "__#ItemIcon" : "T_SRect"
 													{
 														float Depth = -0.025;
@@ -5132,6 +5124,17 @@ Node "<SceneNode>"
 															"Default\window_mgr.png" /
 															"SampleIcon";
 														vec2 Size = (16.000, 16.000);
+													}
+
+													Node "__#NTag" : "T_SRect"
+													{
+														float Depth = -0.025;
+														str FontState = "WhiteFS";
+														vec2 Position = (22.000, 4.000);
+														str Resource = // [2]
+															"odt" /
+															"3-1-0";
+														vec2 Size = (30.000, 12.000);
 													}
 												}
 
@@ -6781,7 +6784,7 @@ Node "<SceneNode>"
 						{
 							Node "__#BarBG" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (3, 84);
 								str PComponent = "VSlideBar";
 								str PThemeName = "Default";
@@ -6826,7 +6829,7 @@ Node "<SceneNode>"
 
 									Node "__#SlideBtn" : "T_BaseWindowNode"
 									{
-										uint Attribute = 24;
+										uint Attribute = 536;
 										int2 PCompSize = (3, 12);
 										str PComponent = "VSlideBtn";
 										str PThemeName = "Default";
@@ -6986,7 +6989,7 @@ Node "<SceneNode>"
 
 							Node "__#NextBtn" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (18, 18);
 								str PComponent = "DirDownBtn";
 								str PThemeName = "Default";
@@ -7063,7 +7066,7 @@ Node "<SceneNode>"
 
 							Node "__#PrevBtn" : "T_BaseWindowNode"
 							{
-								uint Attribute = 2;
+								uint Attribute = 514;
 								int2 PCompSize = (18, 18);
 								str PComponent = "DirUpBtn";
 								str PThemeName = "Default";
@@ -7145,7 +7148,7 @@ Node "<SceneNode>"
 
 			Node "OKButton" : "T_BaseWindowNode"
 			{
-				uint Attribute = 16;
+				uint Attribute = 528;
 				int2 PCompSize = (60, 20);
 				str PComponent = "OKBtn";
 				str PThemeName = "Default";
@@ -7153,7 +7156,7 @@ Node "<SceneNode>"
 
 				Node "<SRect>"
 				{
-					Node "HighlightTag" : "T_SRect"
+					Node "__#HTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "YellowFS";
@@ -7165,7 +7168,7 @@ Node "<SceneNode>"
 						bool Visible = No;
 					}
 
-					Node "NormalTag" : "T_SRect"
+					Node "__#NTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "WhiteFS";
@@ -7571,7 +7574,7 @@ Node "<SceneNode>"
 
 	Node "CloseBtn" : "T_BaseWindowNode"
 	{
-		uint Attribute = 2;
+		uint Attribute = 514;
 		int2 PCompSize = (14, 14);
 		str PComponent = "CloseBtn";
 		str PThemeName = "Default";

@@ -139,7 +139,7 @@ protected:
 	MkHashStr m_LastFocusWindow;
 	bool m_FocusLostByClick;
 
-	// cursor
+	// front window
 	MkBaseWindowNode* m_FrontHitWindow;
 	MkFloat2 m_CursorStartPosition;
 	MkFloat2 m_WindowAABRBegin;

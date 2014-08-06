@@ -35,6 +35,9 @@
 // render config 파일에서 window preset 노드명
 #define MKDEF_S2D_WINDOW_PRESET_NODE_NAME L"WindowPreset"
 
+// render config 파일에서 cursor list 노드명
+#define MKDEF_S2D_CURSOR_LIST_NODE_NAME L"CursorList"
+
 //------------------------------------------------------------------------------------------------//
 
 // MkDecoStr에서 tag block 구분자

@@ -26,7 +26,7 @@
 //	MkSpreadButtonNode* rbNode = new MkSpreadButtonNode(L"SB");
 //	bgNode->AttachChildNode(rbNode);
 //	rbNode->CreateSelectionRootTypeButton(L"Default", MkFloat2(100.f, 20.f), MkSpreadButtonNode::eDownward);
-//	MkSpreadButtonNode::ItemTagInfo tagInfo;
+//	MkBaseWindowNode::ItemTagInfo tagInfo;
 //	tagInfo.iconPath = L"Default\\window_mgr.png";
 //	tagInfo.iconSubset = L"SampleIcon";
 //	rbNode->SetItemTag(tagInfo);
@@ -72,14 +72,6 @@ public:
 		eUpward, // 상향 전개
 		eDownward // 하향 전개
 	};
-
-	typedef struct _ItemTagInfo
-	{
-		MkPathName iconPath;
-		MkHashStr iconSubset;
-		CaptionDesc captionDesc;
-	}
-	ItemTagInfo;
 
 	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_SpreadButtonNode; }
 
