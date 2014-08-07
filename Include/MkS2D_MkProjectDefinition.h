@@ -121,6 +121,9 @@
 // MkEditBoxNode 템플릿 이름
 #define MKDEF_S2D_BT_EDITBOX_TEMPLATE_NAME L"T_EditBoxNode"
 
+// MkTabWindowNode 템플릿 이름
+#define MKDEF_S2D_BT_TABWINDOW_TEMPLATE_NAME L"T_TabWindowNode"
+
 // MkSceneNode data에서 자식 SRect 노드명
 #define MKDEF_S2D_SND_CHILD_SRECT_NODE_NAME L"<SRect>"
 

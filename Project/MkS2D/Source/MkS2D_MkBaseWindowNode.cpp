@@ -723,15 +723,6 @@ void MkBaseWindowNode::SetEnable(bool enable)
 {
 	if (enable != m_Enable)
 	{
-		if (m_Enable) // on -> off
-		{
-			_PushWindowEvent(MkSceneNodeFamilyDefinition::eDisable);
-		}
-		else // off -> on
-		{
-			_PushWindowEvent(MkSceneNodeFamilyDefinition::eEnable);
-		}
-
 		if (IsWindowStateType(m_PresetComponentType))
 		{
 			if (_OnActiveWindowState())
@@ -1699,8 +1690,6 @@ void MkBaseWindowNode::__ConsumeWindowEvent(void)
 				switch (evt.type)
 				{
 				// MkBaseWindowNode
-				case MkSceneNodeFamilyDefinition::eEnable: MK_DEV_PANEL.MsgToLog(L"   eEnable : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eDisable: MK_DEV_PANEL.MsgToLog(L"   eDisable : " + evt.node->GetNodeName().GetString()); break;
 				case MkSceneNodeFamilyDefinition::eCursorLeftPress: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftPress : " + evt.node->GetNodeName().GetString()); break;
 				case MkSceneNodeFamilyDefinition::eCursorMiddlePress: MK_DEV_PANEL.MsgToLog(L"   eCursorMiddlePress : " + evt.node->GetNodeName().GetString()); break;
 				case MkSceneNodeFamilyDefinition::eCursorRightPress: MK_DEV_PANEL.MsgToLog(L"   eCursorRightPress : " + evt.node->GetNodeName().GetString()); break;
@@ -1747,7 +1736,7 @@ void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* parentNode, unsi
 
 			if (!GetVisible())
 			{
-				targetNode->SetAlpha(0.5f);
+				targetNode->SetAlpha(0.4f);
 			}
 
 			targetNode->SetLocalPosition
@@ -1761,29 +1750,6 @@ void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* parentNode, unsi
 			}
 		}
 	}
-	/*
-	const MkHashStr& nodeName = GetNodeName();
-	const MkVec3& wp = GetWorldPosition();
-	const MkVec3& lp = GetLocalPosition();
-	*/
-
-	/*
-	eS2D_SNT_SceneNode = 0, // MkSceneNode
-	eS2D_SNT_BaseWindowNode, // MkBaseWindowNode
-	eS2D_SNT_SpreadButtonNode, // MkSpreadButtonNode
-	eS2D_SNT_CheckButtonNode, // MkCheckButtonNode
-	eS2D_SNT_ScrollBarNode, // MkScrollBarNode
-	eS2D_SNT_EditBoxNode // MkEditBoxNode
-	eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_BaseWindowNode; }
-	*/
-
-	/* component
-	bool m_RootWindow;
-	bool m_Enable;
-	MkHashStr m_PresetThemeName;
-	MkFloat2 m_PresetComponentSize;
-	MkBitFieldDW m_Attribute;
-	*/
 }
 
 void MkBaseWindowNode::__SetWindowInformation(MkBaseWindowNode* targetNode) const
@@ -1799,6 +1765,7 @@ void MkBaseWindowNode::__SetWindowInformation(MkBaseWindowNode* targetNode) cons
 		case eS2D_SNT_CheckButtonNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.PinkFS(), L"[CheckBtn]", windowType); break;
 		case eS2D_SNT_ScrollBarNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.OrangeFS(), L"[ScrollBar]", windowType); break;
 		case eS2D_SNT_EditBoxNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.GreenFS(), L"[EditBox]", windowType); break;
+		case eS2D_SNT_TabWindowNode: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.VioletFS(), L"[TabWindow]", windowType); break;
 		default: MkDecoStr::InsertFontStateTag(MK_FONT_MGR.LightGrayFS(), L"[SceneNode]", windowType); break;
 		}
 

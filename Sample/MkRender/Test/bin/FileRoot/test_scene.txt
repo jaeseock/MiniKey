@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.08.06 (20:11:17),
+//   - time stamp : 2014.08.07 (20:38:41),
 //   - exporter   : ¿ÀÀç¼® (Test)
 //--------------------------------------------------------------------//
 
@@ -687,7 +687,6 @@ Node "<SceneNode>"
 
 					Node "CB" : "T_CheckButtonNode"
 					{
-						str Caption = "Å×½ºÆ®Ä¸¼õ";
 						bool OnCheck = Yes;
 						int2 PCompSize = (18, 18);
 						str PComponent = "BackgroundWindow";
@@ -1368,7 +1367,7 @@ Node "<SceneNode>"
 						uint Attribute = 512;
 						int2 PCompSize = (18, 18);
 						str PComponent = "NormalBtn";
-						vec3 Position = (130.000, 130.000, -0.001);
+						vec3 Position = (100.000, 100.000, -0.001);
 
 						Node "<SceneNode>"
 						{
@@ -6767,6 +6766,1835 @@ Node "<SceneNode>"
 												vec2 Size = (8.000, 8.000);
 											}
 										}
+									}
+								}
+							}
+						}
+					}
+
+					Node "TW" : "T_TabWindowNode"
+					{
+						int2 PCompSize = (130, 40);
+						str PComponent = "BackgroundWindow";
+						str PThemeName = "Default";
+						vec3 Position = (125.000, 85.000, -0.001);
+						int TabAlighment = 1;
+						vec2 TabBodySize = (130.000, 40.000);
+						vec2 TabButtonSize = (35.000, 20.000);
+						str TabList = // [3]
+							"1ÅÇ" /
+							"2ÅÇ" /
+							"3ÅÇ";
+
+						Node "<SceneNode>"
+						{
+							Node "1ÅÇ" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+
+								Node "<SceneNode>"
+								{
+									Node "__#Body" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+
+										Node "<SRect>"
+										{
+											Node "1" : "T_SRect"
+											{
+												float Depth = -0.001;
+												str Resource = // [2]
+													"odt" /
+													"¿ì~";
+												vec2 Size = (21.000, 12.000);
+											}
+										}
+									}
+
+									Node "__#Front" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										int2 PCompSize = (35, 20);
+										str PComponent = "StaticWindow";
+										str PThemeName = "Default";
+										vec3 Position = (95.000, 40.000, -0.025);
+
+										Node "<SRect>"
+										{
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (7.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"¿ì~";
+												vec2 Size = (21.000, 12.000);
+											}
+										}
+
+										Node "<SceneNode>"
+										{
+											Node "BG" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+										}
+									}
+
+									Node "__#Rear" : "T_BaseWindowNode"
+									{
+										uint Attribute = 514;
+										int2 PCompSize = (35, 20);
+										str PComponent = "NormalBtn";
+										str PThemeName = "Default";
+										vec3 Position = (95.000, 40.000, -0.025);
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "__#HTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "YellowFS";
+												vec2 Position = (7.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"¿ì~";
+												vec2 Size = (21.000, 12.000);
+												bool Visible = No;
+											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (7.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"¿ì~";
+												vec2 Size = (21.000, 12.000);
+											}
+										}
+
+										Node "<SceneNode>"
+										{
+											Node "Default" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "Disable" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnClick" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnCursor" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+
+							Node "2ÅÇ" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+
+								Node "<SceneNode>"
+								{
+									Node "__#Body" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "1" : "T_SRect"
+											{
+												float Depth = -0.001;
+												str Resource = // [2]
+													"odt" /
+													"Yo";
+												vec2 Size = (15.000, 12.000);
+											}
+										}
+									}
+
+									Node "__#Front" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										int2 PCompSize = (35, 20);
+										str PComponent = "StaticWindow";
+										str PThemeName = "Default";
+										vec3 Position = (57.000, 40.000, -0.025);
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (10.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"Yo";
+												vec2 Size = (15.000, 12.000);
+											}
+										}
+
+										Node "<SceneNode>"
+										{
+											Node "BG" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+										}
+									}
+
+									Node "__#Rear" : "T_BaseWindowNode"
+									{
+										uint Attribute = 514;
+										bool Enable = No;
+										int2 PCompSize = (35, 20);
+										str PComponent = "NormalBtn";
+										str PThemeName = "Default";
+										vec3 Position = (57.000, 40.000, -0.025);
+
+										Node "<SRect>"
+										{
+											Node "__#HTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "YellowFS";
+												vec2 Position = (10.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"Yo";
+												vec2 Size = (15.000, 12.000);
+												bool Visible = No;
+											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (10.000, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"Yo";
+												vec2 Size = (15.000, 12.000);
+											}
+										}
+
+										Node "<SceneNode>"
+										{
+											Node "Default" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "Disable" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnClick" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnCursor" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+
+							Node "3ÅÇ" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+
+								Node "<SceneNode>"
+								{
+									Node "__#Body" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "1" : "T_SRect"
+											{
+												float Depth = -0.001;
+												str Resource = // [2]
+													"odt" /
+													"(-_-)";
+												vec2 Size = (28.000, 12.000);
+											}
+										}
+									}
+
+									Node "__#Front" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										int2 PCompSize = (35, 20);
+										str PComponent = "StaticWindow";
+										str PThemeName = "Default";
+										vec3 Position = (19.000, 40.000, -0.025);
+										bool Visible = No;
+
+										Node "<SRect>"
+										{
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (3.500, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"(-_-)";
+												vec2 Size = (28.000, 12.000);
+											}
+										}
+
+										Node "<SceneNode>"
+										{
+											Node "BG" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"StaticBG_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+										}
+									}
+
+									Node "__#Rear" : "T_BaseWindowNode"
+									{
+										uint Attribute = 514;
+										int2 PCompSize = (35, 20);
+										str PComponent = "NormalBtn";
+										str PThemeName = "Default";
+										vec3 Position = (19.000, 40.000, -0.025);
+
+										Node "<SRect>"
+										{
+											Node "__#HTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "YellowFS";
+												vec2 Position = (3.500, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"(-_-)";
+												vec2 Size = (28.000, 12.000);
+												bool Visible = No;
+											}
+
+											Node "__#NTag" : "T_SRect"
+											{
+												float Depth = -0.025;
+												str FontState = "WhiteFS";
+												vec2 Position = (3.500, 4.000);
+												str Resource = // [2]
+													"odt" /
+													"(-_-)";
+												vec2 Size = (28.000, 12.000);
+											}
+										}
+
+										Node "<SceneNode>"
+										{
+											Node "Default" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnDef_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "Disable" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"BtnDis_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnClick" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCl_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+
+											Node "OnCursor" : "T_SceneNode"
+											{
+												bool Visible = No;
+
+												Node "<SRect>"
+												{
+													Node "LB" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "LC" : "T_SRect"
+													{
+														vec2 Position = (0.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "LT" : "T_SRect"
+													{
+														vec2 Position = (0.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_LT";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "MB" : "T_SRect"
+													{
+														vec2 Position = (3.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MB";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "MC" : "T_SRect"
+													{
+														vec2 Position = (3.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MC";
+														vec2 Size = (29.000, 14.000);
+													}
+
+													Node "MT" : "T_SRect"
+													{
+														vec2 Position = (3.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_MT";
+														vec2 Size = (29.000, 3.000);
+													}
+
+													Node "RB" : "T_SRect"
+													{
+														vec2 Position = (32.000, 0.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RB";
+														vec2 Size = (3.000, 3.000);
+													}
+
+													Node "RC" : "T_SRect"
+													{
+														vec2 Position = (32.000, 3.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RC";
+														vec2 Size = (3.000, 14.000);
+													}
+
+													Node "RT" : "T_SRect"
+													{
+														vec2 Position = (32.000, 17.000);
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"NBtnOCu_RT";
+														vec2 Size = (3.000, 3.000);
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+
+							Node "BG" : "T_SceneNode"
+							{
+								Node "<SRect>"
+								{
+									Node "LB" : "T_SRect"
+									{
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_LB";
+										vec2 Size = (3.000, 3.000);
+									}
+
+									Node "LC" : "T_SRect"
+									{
+										vec2 Position = (0.000, 3.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_LC";
+										vec2 Size = (3.000, 34.000);
+									}
+
+									Node "LT" : "T_SRect"
+									{
+										vec2 Position = (0.000, 37.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_LT";
+										vec2 Size = (3.000, 3.000);
+									}
+
+									Node "MB" : "T_SRect"
+									{
+										vec2 Position = (3.000, 0.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_MB";
+										vec2 Size = (124.000, 3.000);
+									}
+
+									Node "MC" : "T_SRect"
+									{
+										vec2 Position = (3.000, 3.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_MC";
+										vec2 Size = (124.000, 34.000);
+									}
+
+									Node "MT" : "T_SRect"
+									{
+										vec2 Position = (3.000, 37.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_MT";
+										vec2 Size = (124.000, 3.000);
+									}
+
+									Node "RB" : "T_SRect"
+									{
+										vec2 Position = (127.000, 0.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_RB";
+										vec2 Size = (3.000, 3.000);
+									}
+
+									Node "RC" : "T_SRect"
+									{
+										vec2 Position = (127.000, 3.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_RC";
+										vec2 Size = (3.000, 34.000);
+									}
+
+									Node "RT" : "T_SRect"
+									{
+										vec2 Position = (127.000, 37.000);
+										str Resource = // [3]
+											"map" /
+											"Default\default_theme.png" /
+											"DefBG_RT";
+										vec2 Size = (3.000, 3.000);
 									}
 								}
 							}

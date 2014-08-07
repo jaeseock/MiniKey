@@ -37,10 +37,10 @@ bool MkCheckButtonNode::CreateCheckButton(const MkHashStr& themeName, const Capt
 		MkFloat2 boxSize = checkNode->GetPresetComponentSize() + MkFloat2(MARGIN * 2.f, MARGIN * 2.f); // icon size에서 MARGIN만큼 상하좌우 확장
 		if (CreateWindowPreset(themeName, eS2D_WPC_BackgroundWindow, boxSize))
 		{
-			m_CaptionDesc = captionDesc;
-			m_CaptionDesc.__Check(GetNodeName().GetString());
+			CaptionDesc tmpCD = captionDesc;
+			tmpCD.__Check(GetNodeName().GetString());
 			float captionPos = GetPresetComponentSize().x + MARGIN * 2.f; // blank size
-			return SetPresetComponentIcon(CAPTION_RECT_NAME, eRAP_LeftCenter, MkFloat2(captionPos, 0.f), 0.f, MkHashStr::NullHash, m_CaptionDesc);
+			return SetPresetComponentIcon(CAPTION_RECT_NAME, eRAP_LeftCenter, MkFloat2(captionPos, 0.f), 0.f, MkHashStr::NullHash, tmpCD);
 		}
 	}
 
@@ -79,10 +79,6 @@ void MkCheckButtonNode::SetCheck(bool enable)
 
 void MkCheckButtonNode::Load(const MkDataNode& node)
 {
-	MkArray<MkStr> captions;
-	node.GetData(MkSceneNodeFamilyDefinition::CheckButton::CaptionKey, captions);
-	m_CaptionDesc.__Load(GetNodeName().GetString(), captions);
-
 	node.GetData(MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey, m_OnCheck, 0);
 
 	// MkBaseWindowNode
@@ -93,10 +89,6 @@ void MkCheckButtonNode::Save(MkDataNode& node)
 {
 	// 기존 템플릿이 없으면 템플릿 적용
 	_ApplyBuildingTemplateToSave(node, MkSceneNodeFamilyDefinition::CheckButton::TemplateName);
-
-	MkArray<MkStr> captions;
-	m_CaptionDesc.__Save(captions);
-	node.SetData(MkSceneNodeFamilyDefinition::CheckButton::CaptionKey, captions);
 
 	node.SetData(MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey, m_OnCheck, 0);
 
@@ -136,7 +128,6 @@ void MkCheckButtonNode::__GenerateBuildingTemplate(void)
 
 	tNode->ApplyTemplate(MkSceneNodeFamilyDefinition::BaseWindow::TemplateName); // MkBaseWindowNode의 template 적용
 
-	tNode->CreateUnit(MkSceneNodeFamilyDefinition::CheckButton::CaptionKey, MkStr::Null);
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey, false);
 
 	tNode->DeclareToTemplate(true);

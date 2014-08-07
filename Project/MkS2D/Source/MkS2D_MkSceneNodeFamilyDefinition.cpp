@@ -9,6 +9,7 @@
 #include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkScrollBarNode.h"
 #include "MkS2D_MkEditBoxNode.h"
+#include "MkS2D_MkTabWindowNode.h"
 
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
@@ -38,7 +39,6 @@ const MkHashStr MkSceneNodeFamilyDefinition::SpreadButton::ItemSeqKey(L"ItemSeq"
 const MkHashStr MkSceneNodeFamilyDefinition::SpreadButton::TargetButtonKey(L"TargetButton");
 
 const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::TemplateName(MKDEF_S2D_BT_CHECKBUTTON_TEMPLATE_NAME);
-const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::CaptionKey(L"Caption");
 const MkHashStr MkSceneNodeFamilyDefinition::CheckButton::OnCheckKey(L"OnCheck");
 
 const MkHashStr MkSceneNodeFamilyDefinition::ScrollBar::TemplateName(MKDEF_S2D_BT_SCROLLBAR_TEMPLATE_NAME);
@@ -56,6 +56,11 @@ const MkHashStr MkSceneNodeFamilyDefinition::EditBox::NormalFontStateKey(L"NorFo
 const MkHashStr MkSceneNodeFamilyDefinition::EditBox::SelectionFontStateKey(L"SelFontState");
 const MkHashStr MkSceneNodeFamilyDefinition::EditBox::CursorFontStateKey(L"CurFontState");
 
+const MkHashStr MkSceneNodeFamilyDefinition::TabWindow::TemplateName(MKDEF_S2D_BT_TABWINDOW_TEMPLATE_NAME);
+const MkHashStr MkSceneNodeFamilyDefinition::TabWindow::TabAlighmentKey(L"TabAlighment");
+const MkHashStr MkSceneNodeFamilyDefinition::TabWindow::TabButtonSizeKey(L"TabButtonSize");
+const MkHashStr MkSceneNodeFamilyDefinition::TabWindow::TabBodySizeKey(L"TabBodySize");
+const MkHashStr MkSceneNodeFamilyDefinition::TabWindow::TabListKey(L"TabList");
 
 void MkSceneNodeFamilyDefinition::GenerateBuildingTemplate(void)
 {
@@ -65,6 +70,7 @@ void MkSceneNodeFamilyDefinition::GenerateBuildingTemplate(void)
 	MkCheckButtonNode::__GenerateBuildingTemplate();
 	MkScrollBarNode::__GenerateBuildingTemplate();
 	MkEditBoxNode::__GenerateBuildingTemplate();
+	MkTabWindowNode::__GenerateBuildingTemplate();
 }
 
 MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, const MkHashStr& nodeName)
@@ -94,6 +100,10 @@ MkSceneNode* MkSceneNodeFamilyDefinition::Alloc(const MkHashStr& templateName, c
 	else if (templateName == EditBox::TemplateName)
 	{
 		instance = new MkEditBoxNode(nodeName);
+	}
+	else if (templateName == TabWindow::TemplateName)
+	{
+		instance = new MkTabWindowNode(nodeName);
 	}
 	
 	MK_CHECK(instance != NULL, templateName.GetString() + L" 템플릿을 사용하는 " + nodeName.GetString() + L" 노드 alloc 실패") {}

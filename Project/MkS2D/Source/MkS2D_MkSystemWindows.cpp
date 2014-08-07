@@ -188,7 +188,7 @@ bool MkWindowAttributeSystemWindow::Initialize(void)
 	BasicPresetWindowDesc winDesc;
 	winDesc.SetStandardDesc(themeName, true, MkFloat2(unitSize.x * 2.f + margin * 2.f, unitSize.y * 10.f + margin * 2.f + 30.f));
 	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
-	winDesc.titleCaption = L"Window Attribute";
+	winDesc.titleCaption = L"윈도우 속성 설정";
 	winDesc.hasIcon = false;
 	winDesc.hasCloseButton = true;
 	winDesc.hasCancelButton = false;

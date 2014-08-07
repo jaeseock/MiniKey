@@ -553,6 +553,14 @@
 						RelativePath="..\..\Include\MkS2D_MkSpreadButtonNode.h"
 						>
 					</File>
+					<File
+						RelativePath=".\Source\MkS2D_MkTabWindowNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkS2D_MkTabWindowNode.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 		</Filter>

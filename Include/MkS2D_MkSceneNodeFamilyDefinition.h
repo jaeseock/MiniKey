@@ -14,9 +14,7 @@ public:
 	enum eWindowEvent
 	{
 		// MkBaseWindowNode
-		eEnable = 0,
-		eDisable,
-		eCursorLeftPress,
+		eCursorLeftPress = 0,
 		eCursorMiddlePress,
 		eCursorRightPress,
 		eCursorLeftRelease,
@@ -42,7 +40,10 @@ public:
 
 		// MkEditBoxNode
 		eModifyText,
-		eCommitText
+		eCommitText,
+
+		// MkTabWindowNode
+		eTabSelection
 	};
 
 	//------------------------------------------------------------------------------------------------//
@@ -91,7 +92,6 @@ public:
 	{
 	public:
 		static const MkHashStr TemplateName;
-		static const MkHashStr CaptionKey; // MkArray<MkStr>
 		static const MkHashStr OnCheckKey; // bool
 	};
 
@@ -118,6 +118,17 @@ public:
 		static const MkHashStr NormalFontStateKey; // MkStr
 		static const MkHashStr SelectionFontStateKey; // MkStr
 		static const MkHashStr CursorFontStateKey; // MkStr
+	};
+
+	// MkTabWindowNode
+	class TabWindow
+	{
+	public:
+		static const MkHashStr TemplateName;
+		static const MkHashStr TabAlighmentKey; // int
+		static const MkHashStr TabButtonSizeKey; // MkVec2
+		static const MkHashStr TabBodySizeKey; // MkVec2
+		static const MkHashStr TabListKey; // MkStr
 	};
 
 	//------------------------------------------------------------------------------------------------//

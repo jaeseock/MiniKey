@@ -2,30 +2,42 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// check button node : MkBaseWindowNode
+// tab window node : MkBaseWindowNode
 //------------------------------------------------------------------------------------------------//
 
 #include "MkS2D_MkBaseWindowNode.h"
 
 
-class MkCheckButtonNode : public MkBaseWindowNode
+class MkTabWindowNode : public MkBaseWindowNode
 {
 public:
 
-	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_CheckButtonNode; }
+	enum eTabAlignment
+	{
+		eLeftToRight = 0,
+		eRightToLeft
+	};
+
+	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_TabWindowNode; }
 
 	//------------------------------------------------------------------------------------------------//
 	// button control
 	//------------------------------------------------------------------------------------------------//
 
-	// 버튼 생성
-	bool CreateCheckButton(const MkHashStr& themeName, const CaptionDesc& captionDesc, bool onCheck = false);
+	// root 생성
+	bool CreateTabRoot(const MkHashStr& themeName, eTabAlignment tabAlighment, const MkFloat2& tabButtonSize, const MkFloat2& tabBodySize);
 
-	// 체크 상태 on/off
-	void SetCheck(bool enable);
+	// tab 추가. 반환값은 해당 tab의 윈도우 영역
+	MkBaseWindowNode* AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo);
 
-	// 체크 여부 반환
-	inline bool GetCheck(void) const { return m_OnCheck; }
+	// 해당 tab의 윈도우 영역 반환
+	MkBaseWindowNode* GetWindowNodeOfTab(const MkHashStr& tabName);
+
+	// 해당 tab 선택
+	bool SelectTab(const MkHashStr& tabName);
+
+	// 해당 tab 사용 가능 여부 설정
+	bool SetTabEnable(const MkHashStr& tabName, bool enable);
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성
@@ -41,14 +53,14 @@ public:
 	// event call
 	//------------------------------------------------------------------------------------------------//
 
-	virtual bool CheckCursorHitCondition(const MkFloat2& position) const;
-
-	virtual bool HitEventMouseRelease(unsigned int button, const MkFloat2& position);
+	virtual void UseWindowEvent(WindowEvent& evt);
 
 	//------------------------------------------------------------------------------------------------//
 
-	MkCheckButtonNode(const MkHashStr& name);
-	virtual ~MkCheckButtonNode() {}
+	virtual void Clear(void);
+
+	MkTabWindowNode(const MkHashStr& name);
+	virtual ~MkTabWindowNode() {}
 
 public:
 
@@ -56,5 +68,17 @@ public:
 
 protected:
 
-	bool m_OnCheck;
+	void _SetTabState(const MkHashStr& tabName, bool front);
+	void _MoveTargetTabToFront(const MkHashStr& tabName);
+
+protected:
+
+	eTabAlignment m_TabAlighment;
+	MkFloat2 m_TabButtonSize;
+	MkFloat2 m_TabBodySize;
+	MkArray<MkHashStr> m_TabList;
+
+	unsigned int m_TabCapacity;
+	MkHashMap<MkHashStr, MkBaseWindowNode*> m_Tabs;
+	MkHashStr m_CurrentFrontTab;
 };

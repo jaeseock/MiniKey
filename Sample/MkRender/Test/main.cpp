@@ -31,6 +31,7 @@
 #include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkScrollBarNode.h"
 #include "MkS2D_MkEditBoxNode.h"
+#include "MkS2D_MkTabWindowNode.h"
 
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkWindowEventManager.h"
@@ -159,8 +160,28 @@ public:
 		fiSN.PushBack(L"DirUOCl");
 		fiSN.PushBack(L"DirUDis");
 		fiNode->CreateFreeImageBaseButtonWindow(L"Default\\default_theme.png", fiSN);
-		fiNode->SetLocalPosition(MkVec3(130.f, 130.f, -0.001f));
+		fiNode->SetLocalPosition(MkVec3(100.f, 100.f, -0.001f));
 		formNode->AttachChildNode(fiNode);
+
+		MkTabWindowNode* twNode = new MkTabWindowNode(L"TW");
+		twNode->CreateTabRoot(L"Default", MkTabWindowNode::eRightToLeft, MkFloat2(35.f, 20.f), MkFloat2(130.f, 40.f));
+		tagInfo.iconPath.Clear();
+		tagInfo.iconSubset.Clear();
+		tagInfo.captionDesc.SetString(L"©Л~");
+		MkSRect* tmpr1 = twNode->AddTab(L"1ег", tagInfo)->CreateSRect(L"1");
+		tmpr1->SetDecoString(L"©Л~");
+		tmpr1->SetLocalDepth(-0.001f);
+		tagInfo.captionDesc.SetString(L"Yo");
+		MkSRect* tmpr2 = twNode->AddTab(L"2ег", tagInfo)->CreateSRect(L"1");
+		tmpr2->SetDecoString(L"Yo");
+		tmpr2->SetLocalDepth(-0.001f);
+		tagInfo.captionDesc.SetString(L"(-_-)");
+		MkSRect* tmpr3 = twNode->AddTab(L"3ег", tagInfo)->CreateSRect(L"1");
+		tmpr3->SetDecoString(L"(-_-)");
+		tmpr3->SetLocalDepth(-0.001f);
+		twNode->SetLocalPosition(MkVec3(125.f, 85.f, -0.001f));
+		formNode->AttachChildNode(twNode);
+		twNode->SetTabEnable(L"2ег", false);
 		
 
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
