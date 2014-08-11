@@ -25,6 +25,13 @@ Node "CBtnOCl_" { int2 Position = (72, 9); int2 Size = (3, 3); int2 Table = (3, 
 
 Node "BtnDis_" { int2 Position = (81, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
 
+Node "TabF_" { int2 Position = (90, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+
+Node "TabRDef_" { int2 Position = (99, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "TabROCu_" { int2 Position = (108, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "TabROCl_" { int2 Position = (117, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+Node "TabRDis_" { int2 Position = (126, 9); int2 Size = (3, 3); int2 Table = (3, 3); }
+
 Node "RBtnDef_" { int2 Position = (0, 18); int2 Size = (3, 3); int2 Table = (3, 3); }
 Node "RBtnOCu_" { int2 Position = (9, 18); int2 Size = (3, 3); int2 Table = (3, 3); }
 Node "RBtnDis_" { int2 Position = (18, 18); int2 Size = (3, 3); int2 Table = (3, 3); }

@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.08.07 (20:38:41),
+//   - time stamp : 2014.08.11 (16:07:34),
 //   - exporter   : ©ююГ╪╝ (Test)
 //--------------------------------------------------------------------//
 
@@ -6805,8 +6805,8 @@ Node "<SceneNode>"
 												float Depth = -0.001;
 												str Resource = // [2]
 													"odt" /
-													"©Л~";
-												vec2 Size = (21.000, 12.000);
+													"1ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 									}
@@ -6815,9 +6815,9 @@ Node "<SceneNode>"
 									{
 										uint Attribute = 2;
 										int2 PCompSize = (35, 20);
-										str PComponent = "StaticWindow";
+										str PComponent = "TabFront";
 										str PThemeName = "Default";
-										vec3 Position = (95.000, 40.000, -0.025);
+										vec3 Position = (19.000, 40.000, -0.025);
 
 										Node "<SRect>"
 										{
@@ -6825,11 +6825,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
-												vec2 Position = (7.000, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"©Л~";
-												vec2 Size = (21.000, 12.000);
+													"1ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -6844,7 +6844,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LB";
+															"TabF_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -6854,7 +6854,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LC";
+															"TabF_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -6864,7 +6864,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LT";
+															"TabF_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -6874,7 +6874,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MB";
+															"TabF_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -6884,7 +6884,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MC";
+															"TabF_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -6894,7 +6894,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MT";
+															"TabF_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -6904,7 +6904,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RB";
+															"TabF_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -6914,7 +6914,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RC";
+															"TabF_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -6924,7 +6924,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RT";
+															"TabF_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -6936,9 +6936,9 @@ Node "<SceneNode>"
 									{
 										uint Attribute = 514;
 										int2 PCompSize = (35, 20);
-										str PComponent = "NormalBtn";
+										str PComponent = "TabRearBtn";
 										str PThemeName = "Default";
-										vec3 Position = (95.000, 40.000, -0.025);
+										vec3 Position = (19.000, 40.000, -0.025);
 										bool Visible = No;
 
 										Node "<SRect>"
@@ -6947,11 +6947,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
-												vec2 Position = (7.000, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"©Л~";
-												vec2 Size = (21.000, 12.000);
+													"1ег";
+												vec2 Size = (18.000, 12.000);
 												bool Visible = No;
 											}
 
@@ -6959,11 +6959,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
-												vec2 Position = (7.000, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"©Л~";
-												vec2 Size = (21.000, 12.000);
+													"1ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -6978,7 +6978,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LB";
+															"TabRDef_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -6988,7 +6988,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LC";
+															"TabRDef_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -6998,7 +6998,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LT";
+															"TabRDef_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7008,7 +7008,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MB";
+															"TabRDef_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7018,7 +7018,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MC";
+															"TabRDef_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7028,7 +7028,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MT";
+															"TabRDef_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7038,7 +7038,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RB";
+															"TabRDef_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7048,7 +7048,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RC";
+															"TabRDef_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7058,7 +7058,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RT";
+															"TabRDef_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7075,7 +7075,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LB";
+															"TabRDis_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7085,7 +7085,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LC";
+															"TabRDis_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7095,7 +7095,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LT";
+															"TabRDis_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7105,7 +7105,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MB";
+															"TabRDis_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7115,7 +7115,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MC";
+															"TabRDis_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7125,7 +7125,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MT";
+															"TabRDis_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7135,7 +7135,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RB";
+															"TabRDis_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7145,7 +7145,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RC";
+															"TabRDis_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7155,7 +7155,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RT";
+															"TabRDis_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7172,7 +7172,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LB";
+															"TabROCl_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7182,7 +7182,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LC";
+															"TabROCl_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7192,7 +7192,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LT";
+															"TabROCl_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7202,7 +7202,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MB";
+															"TabROCl_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7212,7 +7212,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MC";
+															"TabROCl_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7222,7 +7222,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MT";
+															"TabROCl_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7232,7 +7232,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RB";
+															"TabROCl_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7242,7 +7242,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RC";
+															"TabROCl_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7252,7 +7252,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RT";
+															"TabROCl_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7269,7 +7269,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LB";
+															"TabROCu_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7279,7 +7279,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LC";
+															"TabROCu_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7289,7 +7289,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LT";
+															"TabROCu_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7299,7 +7299,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MB";
+															"TabROCu_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7309,7 +7309,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MC";
+															"TabROCu_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7319,7 +7319,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MT";
+															"TabROCu_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7329,7 +7329,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RB";
+															"TabROCu_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7339,7 +7339,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RC";
+															"TabROCu_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7349,7 +7349,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RT";
+															"TabROCu_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7377,8 +7377,8 @@ Node "<SceneNode>"
 												float Depth = -0.001;
 												str Resource = // [2]
 													"odt" /
-													"Yo";
-												vec2 Size = (15.000, 12.000);
+													"2ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 									}
@@ -7387,7 +7387,7 @@ Node "<SceneNode>"
 									{
 										uint Attribute = 2;
 										int2 PCompSize = (35, 20);
-										str PComponent = "StaticWindow";
+										str PComponent = "TabFront";
 										str PThemeName = "Default";
 										vec3 Position = (57.000, 40.000, -0.025);
 										bool Visible = No;
@@ -7398,11 +7398,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
-												vec2 Position = (10.000, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"Yo";
-												vec2 Size = (15.000, 12.000);
+													"2ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -7417,7 +7417,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LB";
+															"TabF_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7427,7 +7427,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LC";
+															"TabF_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7437,7 +7437,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LT";
+															"TabF_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7447,7 +7447,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MB";
+															"TabF_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7457,7 +7457,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MC";
+															"TabF_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7467,7 +7467,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MT";
+															"TabF_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7477,7 +7477,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RB";
+															"TabF_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7487,7 +7487,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RC";
+															"TabF_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7497,7 +7497,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RT";
+															"TabF_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7510,7 +7510,7 @@ Node "<SceneNode>"
 										uint Attribute = 514;
 										bool Enable = No;
 										int2 PCompSize = (35, 20);
-										str PComponent = "NormalBtn";
+										str PComponent = "TabRearBtn";
 										str PThemeName = "Default";
 										vec3 Position = (57.000, 40.000, -0.025);
 
@@ -7520,11 +7520,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
-												vec2 Position = (10.000, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"Yo";
-												vec2 Size = (15.000, 12.000);
+													"2ег";
+												vec2 Size = (18.000, 12.000);
 												bool Visible = No;
 											}
 
@@ -7532,11 +7532,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
-												vec2 Position = (10.000, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"Yo";
-												vec2 Size = (15.000, 12.000);
+													"2ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -7553,7 +7553,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LB";
+															"TabRDef_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7563,7 +7563,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LC";
+															"TabRDef_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7573,7 +7573,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LT";
+															"TabRDef_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7583,7 +7583,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MB";
+															"TabRDef_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7593,7 +7593,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MC";
+															"TabRDef_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7603,7 +7603,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MT";
+															"TabRDef_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7613,7 +7613,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RB";
+															"TabRDef_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7623,7 +7623,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RC";
+															"TabRDef_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7633,7 +7633,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RT";
+															"TabRDef_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7648,7 +7648,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LB";
+															"TabRDis_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7658,7 +7658,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LC";
+															"TabRDis_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7668,7 +7668,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LT";
+															"TabRDis_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7678,7 +7678,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MB";
+															"TabRDis_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7688,7 +7688,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MC";
+															"TabRDis_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7698,7 +7698,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MT";
+															"TabRDis_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7708,7 +7708,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RB";
+															"TabRDis_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7718,7 +7718,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RC";
+															"TabRDis_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7728,7 +7728,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RT";
+															"TabRDis_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7745,7 +7745,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LB";
+															"TabROCl_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7755,7 +7755,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LC";
+															"TabROCl_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7765,7 +7765,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LT";
+															"TabROCl_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7775,7 +7775,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MB";
+															"TabROCl_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7785,7 +7785,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MC";
+															"TabROCl_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7795,7 +7795,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MT";
+															"TabROCl_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7805,7 +7805,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RB";
+															"TabROCl_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7815,7 +7815,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RC";
+															"TabROCl_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7825,7 +7825,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RT";
+															"TabROCl_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7842,7 +7842,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LB";
+															"TabROCu_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7852,7 +7852,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LC";
+															"TabROCu_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7862,7 +7862,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LT";
+															"TabROCu_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7872,7 +7872,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MB";
+															"TabROCu_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7882,7 +7882,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MC";
+															"TabROCu_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -7892,7 +7892,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MT";
+															"TabROCu_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -7902,7 +7902,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RB";
+															"TabROCu_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -7912,7 +7912,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RC";
+															"TabROCu_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -7922,7 +7922,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RT";
+															"TabROCu_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -7950,8 +7950,8 @@ Node "<SceneNode>"
 												float Depth = -0.001;
 												str Resource = // [2]
 													"odt" /
-													"(-_-)";
-												vec2 Size = (28.000, 12.000);
+													"3ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 									}
@@ -7960,9 +7960,9 @@ Node "<SceneNode>"
 									{
 										uint Attribute = 2;
 										int2 PCompSize = (35, 20);
-										str PComponent = "StaticWindow";
+										str PComponent = "TabFront";
 										str PThemeName = "Default";
-										vec3 Position = (19.000, 40.000, -0.025);
+										vec3 Position = (95.000, 40.000, -0.025);
 										bool Visible = No;
 
 										Node "<SRect>"
@@ -7971,11 +7971,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
-												vec2 Position = (3.500, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"(-_-)";
-												vec2 Size = (28.000, 12.000);
+													"3ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -7990,7 +7990,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LB";
+															"TabF_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8000,7 +8000,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LC";
+															"TabF_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8010,7 +8010,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_LT";
+															"TabF_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8020,7 +8020,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MB";
+															"TabF_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8030,7 +8030,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MC";
+															"TabF_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -8040,7 +8040,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_MT";
+															"TabF_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8050,7 +8050,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RB";
+															"TabF_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8060,7 +8060,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RC";
+															"TabF_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8070,7 +8070,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"StaticBG_RT";
+															"TabF_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -8082,9 +8082,9 @@ Node "<SceneNode>"
 									{
 										uint Attribute = 514;
 										int2 PCompSize = (35, 20);
-										str PComponent = "NormalBtn";
+										str PComponent = "TabRearBtn";
 										str PThemeName = "Default";
-										vec3 Position = (19.000, 40.000, -0.025);
+										vec3 Position = (95.000, 40.000, -0.025);
 
 										Node "<SRect>"
 										{
@@ -8092,11 +8092,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
-												vec2 Position = (3.500, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"(-_-)";
-												vec2 Size = (28.000, 12.000);
+													"3ег";
+												vec2 Size = (18.000, 12.000);
 												bool Visible = No;
 											}
 
@@ -8104,11 +8104,11 @@ Node "<SceneNode>"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
-												vec2 Position = (3.500, 4.000);
+												vec2 Position = (8.500, 4.000);
 												str Resource = // [2]
 													"odt" /
-													"(-_-)";
-												vec2 Size = (28.000, 12.000);
+													"3ег";
+												vec2 Size = (18.000, 12.000);
 											}
 										}
 
@@ -8123,7 +8123,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LB";
+															"TabRDef_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8133,7 +8133,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LC";
+															"TabRDef_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8143,7 +8143,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_LT";
+															"TabRDef_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8153,7 +8153,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MB";
+															"TabRDef_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8163,7 +8163,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MC";
+															"TabRDef_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -8173,7 +8173,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_MT";
+															"TabRDef_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8183,7 +8183,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RB";
+															"TabRDef_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8193,7 +8193,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RC";
+															"TabRDef_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8203,7 +8203,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnDef_RT";
+															"TabRDef_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -8220,7 +8220,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LB";
+															"TabRDis_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8230,7 +8230,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LC";
+															"TabRDis_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8240,7 +8240,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_LT";
+															"TabRDis_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8250,7 +8250,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MB";
+															"TabRDis_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8260,7 +8260,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MC";
+															"TabRDis_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -8270,7 +8270,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_MT";
+															"TabRDis_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8280,7 +8280,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RB";
+															"TabRDis_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8290,7 +8290,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RC";
+															"TabRDis_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8300,7 +8300,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"BtnDis_RT";
+															"TabRDis_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -8317,7 +8317,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LB";
+															"TabROCl_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8327,7 +8327,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LC";
+															"TabROCl_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8337,7 +8337,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_LT";
+															"TabROCl_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8347,7 +8347,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MB";
+															"TabROCl_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8357,7 +8357,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MC";
+															"TabROCl_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -8367,7 +8367,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_MT";
+															"TabROCl_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8377,7 +8377,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RB";
+															"TabROCl_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8387,7 +8387,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RC";
+															"TabROCl_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8397,7 +8397,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCl_RT";
+															"TabROCl_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}
@@ -8414,7 +8414,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LB";
+															"TabROCu_LB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8424,7 +8424,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LC";
+															"TabROCu_LC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8434,7 +8434,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_LT";
+															"TabROCu_LT";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8444,7 +8444,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MB";
+															"TabROCu_MB";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8454,7 +8454,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MC";
+															"TabROCu_MC";
 														vec2 Size = (29.000, 14.000);
 													}
 
@@ -8464,7 +8464,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_MT";
+															"TabROCu_MT";
 														vec2 Size = (29.000, 3.000);
 													}
 
@@ -8474,7 +8474,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RB";
+															"TabROCu_RB";
 														vec2 Size = (3.000, 3.000);
 													}
 
@@ -8484,7 +8484,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RC";
+															"TabROCu_RC";
 														vec2 Size = (3.000, 14.000);
 													}
 
@@ -8494,7 +8494,7 @@ Node "<SceneNode>"
 														str Resource = // [3]
 															"map" /
 															"Default\default_theme.png" /
-															"NBtnOCu_RT";
+															"TabROCu_RT";
 														vec2 Size = (3.000, 3.000);
 													}
 												}

@@ -15,7 +15,7 @@
 
 const static MkHashStr COMPONENT_HIGHLIGHT_TAG_NAME = L"__#HTag";
 const static MkHashStr COMPONENT_NORMAL_TAG_NAME = L"__#NTag";
-const static MkHashStr COMPONENT_ITEM_ICON_NAME = L"__#ItemIcon";
+const static MkHashStr COMPONENT_ICON_TAG_NAME = L"__#ITag";
 
 #define MKDEF_TITLE_BAR_SAMPLE_STRING L"타 이 틀"
 #define MKDEF_OK_BTN_SAMPLE_STRING L"확 인"
@@ -809,7 +809,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 			if (d.hasIcon)
 			{
 				titleWindow->SetPresetComponentIcon
-					(L"WindowIcon", eRAP_LeftCenter, MkFloat2(MARGIN, 0.f), d.iconImageHeightOffset, d.iconImageFilePath, d.iconImageSubsetName);
+					(COMPONENT_ICON_TAG_NAME, eRAP_LeftCenter, MkFloat2(MARGIN, 0.f), d.iconImageHeightOffset, d.iconImageFilePath, d.iconImageSubsetName);
 			}
 
 			// close icon
@@ -1168,15 +1168,15 @@ bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo)
 	float captionBorderX = MARGIN;
 	if (tagInfo.iconPath.Empty())
 	{
-		if (ExistSRect(COMPONENT_ITEM_ICON_NAME))
+		if (ExistSRect(COMPONENT_ICON_TAG_NAME))
 		{
-			DeleteSRect(COMPONENT_ITEM_ICON_NAME);
+			DeleteSRect(COMPONENT_ICON_TAG_NAME);
 		}
 	}
 	else
 	{
-		iconOK = SetPresetComponentIcon(COMPONENT_ITEM_ICON_NAME, (captionEnable) ? eRAP_LeftCenter : eRAP_MiddleCenter, MkFloat2(MARGIN, 0.f), 0.f, tagInfo.iconPath, tagInfo.iconSubset);
-		captionBorderX += GetSRect(COMPONENT_ITEM_ICON_NAME)->GetLocalSize().x;
+		iconOK = SetPresetComponentIcon(COMPONENT_ICON_TAG_NAME, (captionEnable) ? eRAP_LeftCenter : eRAP_MiddleCenter, MkFloat2(MARGIN, 0.f), 0.f, tagInfo.iconPath, tagInfo.iconSubset);
+		captionBorderX += GetSRect(COMPONENT_ICON_TAG_NAME)->GetLocalSize().x;
 		captionBorderX += MARGIN;
 	}
 

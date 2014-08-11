@@ -36,6 +36,71 @@ bool MkTabWindowNode::CreateTabRoot(const MkHashStr& themeName, eTabAlignment ta
 	return CreateWindowPreset(themeName, eS2D_WPC_BackgroundWindow, m_TabBodySize);
 }
 
+bool MkTabWindowNode::SetTabButtonSize(const MkFloat2& tabButtonSize)
+{
+	MK_CHECK(m_TabCapacity > 0, L"초기화되지 않은 " + GetNodeName().GetString() + L" MkTabWindowNode에 SetTabButtonSize() 시도")
+		return false;
+
+	const float MARGIN = MK_WR_PRESET.GetMargin();
+	const float DMARGIN = MARGIN * 2.f;
+
+	MkFloat2 tmpSize;
+	tmpSize.x = GetMax<float>(tabButtonSize.x, DMARGIN);
+	tmpSize.y = GetMax<float>(tabButtonSize.y, DMARGIN);
+
+	unsigned int tabCapacity = static_cast<unsigned int>(floor(m_TabBodySize.x / (tmpSize.x + MARGIN)));
+	bool ok = ((tabCapacity > 0) && (tabCapacity >= m_TabList.GetSize()));
+	if (ok)
+	{
+		m_TabButtonSize = tmpSize;
+		m_TabCapacity = tabCapacity;
+
+		MK_INDEXING_LOOP(m_TabList, i)
+		{
+			MkSceneNode* tabNode = GetChildNode(m_TabList[i]);
+			if (tabNode != NULL)
+			{
+				MkBaseWindowNode* frontBtn = dynamic_cast<MkBaseWindowNode*>(tabNode->GetChildNode(FRONT_BTN_NAME));
+				MkBaseWindowNode* rearBtn = dynamic_cast<MkBaseWindowNode*>(tabNode->GetChildNode(REAR_BTN_NAME));
+				if ((frontBtn != NULL) && (rearBtn != NULL))
+				{
+					frontBtn->SetPresetComponentSize(m_TabButtonSize);
+					rearBtn->SetPresetComponentSize(m_TabButtonSize);
+				}
+			}
+		}
+
+		_RepositionTabs(0);
+	}
+	return ok;
+}
+
+bool MkTabWindowNode::SetTabBodySize(const MkFloat2& tabBodySize)
+{
+	MK_CHECK(m_TabCapacity > 0, L"초기화되지 않은 " + GetNodeName().GetString() + L" MkTabWindowNode에 SetTabBodySize() 시도")
+		return false;
+
+	const float MARGIN = MK_WR_PRESET.GetMargin();
+	const float DMARGIN = MARGIN * 2.f;
+
+	MkFloat2 tmpSize;
+	tmpSize.x = GetMax<float>(tabBodySize.x, DMARGIN);
+	tmpSize.y = GetMax<float>(tabBodySize.y, DMARGIN);
+
+	unsigned int tabCapacity = static_cast<unsigned int>(floor(tmpSize.x / (m_TabButtonSize.x + MARGIN)));
+	bool ok = ((tabCapacity > 0) && (tabCapacity >= m_TabList.GetSize()));
+	if (ok)
+	{
+		m_TabBodySize = tmpSize;
+		m_TabCapacity = tabCapacity;
+
+		SetPresetComponentSize(m_TabBodySize);
+
+		_RepositionTabs(0);
+	}
+	return ok;
+}
+
 MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo)
 {
 	MK_CHECK(m_TabCapacity > 0, L"초기화되지 않은 " + GetNodeName().GetString() + L" MkTabWindowNode에 tab 생성 시도 : " + tabName.GetString())
@@ -55,34 +120,19 @@ MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTa
 	MK_CHECK(targetNode != NULL, GetNodeName().GetString() + L" MkTabWindowNode에서 tab alloc 실패 : " + tabName.GetString())
 		return NULL;
 
-	MkFloat2 btnPosition;
-	float xFromStart = m_CurrentFrontTab.Empty() ? 0.f : (static_cast<float>(tabIndex) * (m_TabButtonSize.x + MK_WR_PRESET.GetMargin()));
-	switch (m_TabAlighment)
-	{
-	case eLeftToRight:
-		btnPosition.x = xFromStart;
-		break;
-	case eRightToLeft:
-		btnPosition.x = m_TabBodySize.x - xFromStart - m_TabButtonSize.x;
-		break;
-	}
-	btnPosition.y = m_TabBodySize.y;
-
-	MkBaseWindowNode* frontBtn = __CreateWindowPreset(targetNode, FRONT_BTN_NAME, m_PresetThemeName, eS2D_WPC_StaticWindow, m_TabButtonSize);
+	MkBaseWindowNode* frontBtn = __CreateWindowPreset(targetNode, FRONT_BTN_NAME, m_PresetThemeName, eS2D_WPC_TabFront, m_TabButtonSize);
 	if (frontBtn != NULL)
 	{
 		frontBtn->SetPresetComponentItemTag(tagInfo);
-		frontBtn->SetLocalPosition(btnPosition);
 		frontBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 		frontBtn->SetAttribute(eIgnoreMovement, true);
 		frontBtn->SetVisible(m_CurrentFrontTab.Empty());
 	}
 
-	MkBaseWindowNode* rearBtn = __CreateWindowPreset(targetNode, REAR_BTN_NAME, m_PresetThemeName, eS2D_WPC_NormalButton, m_TabButtonSize);
+	MkBaseWindowNode* rearBtn = __CreateWindowPreset(targetNode, REAR_BTN_NAME, m_PresetThemeName, eS2D_WPC_TabRearButton, m_TabButtonSize);
 	if (rearBtn != NULL)
 	{
 		rearBtn->SetPresetComponentItemTag(tagInfo);
-		rearBtn->SetLocalPosition(btnPosition);
 		rearBtn->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 		rearBtn->SetAttribute(eIgnoreMovement, true);
 		rearBtn->SetVisible(!m_CurrentFrontTab.Empty());
@@ -103,19 +153,34 @@ MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTa
 		return NULL;
 	}
 
-	if (m_CurrentFrontTab.Empty())
-	{
-		m_CurrentFrontTab = tabName;
-
-		_PushWindowEvent(MkSceneNodeFamilyDefinition::eTabSelection);
-	}
-
 	targetNode->SetAttribute(eIgnoreMovement, true);
 
 	m_TabList.PushBack(tabName);
 	
 	AttachChildNode(targetNode);
 	m_Tabs.Create(tabName, targetNode);
+
+	switch (m_TabAlighment)
+	{
+	case eLeftside:
+		{
+			MkFloat2 btnPosition(static_cast<float>(tabIndex) * (m_TabButtonSize.x + MK_WR_PRESET.GetMargin()), m_TabBodySize.y);
+			frontBtn->SetLocalPosition(btnPosition);
+			rearBtn->SetLocalPosition(btnPosition);
+		}
+		break;
+
+	case eRightside:
+		_RepositionTabs(0);
+		break;
+	}
+
+	if (m_CurrentFrontTab.Empty())
+	{
+		m_CurrentFrontTab = tabName;
+
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eTabSelection);
+	}
 
 	return bodyWin;
 }
@@ -217,9 +282,55 @@ bool MkTabWindowNode::SetTabEnable(const MkHashStr& tabName, bool enable)
 	return false;
 }
 
+unsigned int MkTabWindowNode::GetTabSequence(const MkHashStr& tabName) const
+{
+	return m_TabList.FindFirstInclusion(MkArraySection(0), tabName);
+}
+
+bool MkTabWindowNode::SetTabSequence(const MkHashStr& tabName, unsigned int position)
+{
+	if (position < m_TabList.GetSize())
+	{
+		unsigned int lastPos = m_TabList.FindFirstInclusion(MkArraySection(0), tabName);
+		if (lastPos != MKDEF_ARRAY_ERROR)
+		{
+			if (position != lastPos)
+			{
+				m_TabList.Erase(MkArraySection(lastPos, 1));
+				m_TabList.Insert(position, tabName);
+
+				_RepositionTabs(GetMin<unsigned int>(lastPos, position));
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+bool MkTabWindowNode::MoveTabToOneStepForward(const MkHashStr& tabName)
+{
+	unsigned int pos = m_TabList.FindFirstInclusion(MkArraySection(0), tabName);
+	if (pos != MKDEF_ARRAY_ERROR)
+	{
+		return (pos == 0) ? true : SetTabSequence(tabName, pos - 1);
+	}
+	return false;
+}
+
+bool MkTabWindowNode::MoveTabToOneStepBackword(const MkHashStr& tabName)
+{
+	unsigned int pos = m_TabList.FindFirstInclusion(MkArraySection(0), tabName);
+	if (pos != MKDEF_ARRAY_ERROR)
+	{
+		++pos;
+		return (pos == m_TabList.GetSize()) ? true : SetTabSequence(tabName, pos);
+	}
+	return false;
+}
+
 void MkTabWindowNode::Load(const MkDataNode& node)
 {
-	int tabAlighment = static_cast<int>(eLeftToRight);
+	int tabAlighment = static_cast<int>(eLeftside);
 	node.GetData(MkSceneNodeFamilyDefinition::TabWindow::TabAlighmentKey, tabAlighment, 0);
 	m_TabAlighment = static_cast<eTabAlignment>(tabAlighment);
 
@@ -316,7 +427,7 @@ void MkTabWindowNode::Clear(void)
 
 MkTabWindowNode::MkTabWindowNode(const MkHashStr& name) : MkBaseWindowNode(name)
 {
-	m_TabAlighment = eLeftToRight;
+	m_TabAlighment = eLeftside;
 	m_TabCapacity = 0;
 }
 
@@ -331,7 +442,7 @@ void MkTabWindowNode::__GenerateBuildingTemplate(void)
 
 	tNode->ApplyTemplate(MkSceneNodeFamilyDefinition::BaseWindow::TemplateName); // MkBaseWindowNode의 template 적용
 
-	tNode->CreateUnit(MkSceneNodeFamilyDefinition::TabWindow::TabAlighmentKey, static_cast<int>(eLeftToRight));
+	tNode->CreateUnit(MkSceneNodeFamilyDefinition::TabWindow::TabAlighmentKey, static_cast<int>(eLeftside));
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::TabWindow::TabButtonSizeKey, MkVec2::Zero);
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::TabWindow::TabBodySizeKey, MkVec2::Zero);
 	tNode->CreateUnit(MkSceneNodeFamilyDefinition::TabWindow::TabListKey, MkStr::Null);
@@ -340,6 +451,39 @@ void MkTabWindowNode::__GenerateBuildingTemplate(void)
 }
 
 //------------------------------------------------------------------------------------------------//
+
+void MkTabWindowNode::_RepositionTabs(unsigned int startPos)
+{
+	if (startPos < m_TabList.GetSize())
+	{
+		MkFloat2 btnPosition;
+		btnPosition.y = m_TabBodySize.y;
+		const float MARGIN = MK_WR_PRESET.GetMargin();
+
+		float offset = 0.f;
+		if (m_TabAlighment == eRightside)
+		{
+			float totalBtnListSize = static_cast<float>(m_TabList.GetSize()) * m_TabButtonSize.x + static_cast<float>(m_TabList.GetSize() - 1) * MARGIN;
+			offset = m_TabBodySize.x - totalBtnListSize;
+		}
+
+		for (unsigned int cnt = m_TabList.GetSize(), i = startPos; i < cnt; ++i)
+		{
+			MkSceneNode* tabNode = GetChildNode(m_TabList[i]);
+			if (tabNode != NULL)
+			{
+				MkSceneNode* frontBtn = tabNode->GetChildNode(FRONT_BTN_NAME);
+				MkSceneNode* rearBtn = tabNode->GetChildNode(REAR_BTN_NAME);
+				if ((frontBtn != NULL) && (rearBtn != NULL))
+				{
+					btnPosition.x = offset + static_cast<float>(i) * (m_TabButtonSize.x + MARGIN);
+					frontBtn->SetLocalPosition(btnPosition);
+					rearBtn->SetLocalPosition(btnPosition);
+				}
+			}
+		}
+	}
+}
 
 void MkTabWindowNode::_SetTabState(const MkHashStr& tabName, bool front)
 {

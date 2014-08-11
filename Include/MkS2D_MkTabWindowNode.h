@@ -14,8 +14,8 @@ public:
 
 	enum eTabAlignment
 	{
-		eLeftToRight = 0,
-		eRightToLeft
+		eLeftside = 0,
+		eRightside
 	};
 
 	virtual eS2D_SceneNodeType GetNodeType(void) const { return eS2D_SNT_TabWindowNode; }
@@ -26,6 +26,18 @@ public:
 
 	// root 생성
 	bool CreateTabRoot(const MkHashStr& themeName, eTabAlignment tabAlighment, const MkFloat2& tabButtonSize, const MkFloat2& tabBodySize);
+
+	// tab button size 수정
+	bool SetTabButtonSize(const MkFloat2& tabButtonSize);
+
+	// tab button size 반환
+	const MkFloat2& GetTabButtonSize(void) const { return m_TabButtonSize; }
+
+	// tab body size 수정
+	bool SetTabBodySize(const MkFloat2& tabBodySize);
+
+	// tab body size 반환
+	const MkFloat2& GetTabBodySize(void) const { return m_TabBodySize; }
 
 	// tab 추가. 반환값은 해당 tab의 윈도우 영역
 	MkBaseWindowNode* AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo);
@@ -38,6 +50,16 @@ public:
 
 	// 해당 tab 사용 가능 여부 설정
 	bool SetTabEnable(const MkHashStr& tabName, bool enable);
+
+	// 해당 tab의 순서 반환. 존재하지 않는 tab이라면 MKDEF_ARRAY_ERROR 반환
+	unsigned int GetTabSequence(const MkHashStr& tabName) const;
+
+	// 해당 tab의 순서 변경
+	bool SetTabSequence(const MkHashStr& tabName, unsigned int position);
+
+	// 해당 tab 순서를 하나 앞/뒤로 이동
+	bool MoveTabToOneStepForward(const MkHashStr& tabName);
+	bool MoveTabToOneStepBackword(const MkHashStr& tabName);
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성
@@ -68,6 +90,7 @@ public:
 
 protected:
 
+	void _RepositionTabs(unsigned int startPos);
 	void _SetTabState(const MkHashStr& tabName, bool front);
 	void _MoveTargetTabToFront(const MkHashStr& tabName);
 

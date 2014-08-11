@@ -163,21 +163,21 @@ public:
 		fiNode->SetLocalPosition(MkVec3(100.f, 100.f, -0.001f));
 		formNode->AttachChildNode(fiNode);
 
-		MkTabWindowNode* twNode = new MkTabWindowNode(L"TW");
-		twNode->CreateTabRoot(L"Default", MkTabWindowNode::eRightToLeft, MkFloat2(35.f, 20.f), MkFloat2(130.f, 40.f));
+		twNode = new MkTabWindowNode(L"TW");
+		twNode->CreateTabRoot(L"Default", MkTabWindowNode::eRightside, MkFloat2(35.f, 20.f), MkFloat2(130.f, 40.f));
 		tagInfo.iconPath.Clear();
 		tagInfo.iconSubset.Clear();
-		tagInfo.captionDesc.SetString(L"©Л~");
+		tagInfo.captionDesc.SetString(L"1ег");
 		MkSRect* tmpr1 = twNode->AddTab(L"1ег", tagInfo)->CreateSRect(L"1");
-		tmpr1->SetDecoString(L"©Л~");
+		tmpr1->SetDecoString(L"1ег");
 		tmpr1->SetLocalDepth(-0.001f);
-		tagInfo.captionDesc.SetString(L"Yo");
+		tagInfo.captionDesc.SetString(L"2ег");
 		MkSRect* tmpr2 = twNode->AddTab(L"2ег", tagInfo)->CreateSRect(L"1");
-		tmpr2->SetDecoString(L"Yo");
+		tmpr2->SetDecoString(L"2ег");
 		tmpr2->SetLocalDepth(-0.001f);
-		tagInfo.captionDesc.SetString(L"(-_-)");
+		tagInfo.captionDesc.SetString(L"3ег");
 		MkSRect* tmpr3 = twNode->AddTab(L"3ег", tagInfo)->CreateSRect(L"1");
-		tmpr3->SetDecoString(L"(-_-)");
+		tmpr3->SetDecoString(L"3ег");
 		tmpr3->SetLocalDepth(-0.001f);
 		twNode->SetLocalPosition(MkVec3(125.f, 85.f, -0.001f));
 		formNode->AttachChildNode(twNode);
@@ -248,21 +248,27 @@ public:
 			_SetTargetNode(2);
 		}
 
-		if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
+		if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT))
 		{
-			m_Offset.x -= timeState.elapsed * 300.f;
+			MkFloat2 ss = twNode->GetTabButtonSize();
+			twNode->SetTabButtonSize(MkFloat2(ss.x - 1, ss.y - 1));
+			//m_Offset.x -= timeState.elapsed * 300.f;
 		}
-		if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
+		if (MK_INPUT_MGR.GetKeyReleased(VK_RIGHT))
 		{
-			m_Offset.x += timeState.elapsed * 300.f;
+			MkFloat2 ss = twNode->GetTabButtonSize();
+			twNode->SetTabButtonSize(MkFloat2(ss.x + 1, ss.y + 1));
+			//m_Offset.x += timeState.elapsed * 300.f;
 		}
-		if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
+		if (MK_INPUT_MGR.GetKeyReleased(VK_UP))
 		{
-			m_Offset.y += timeState.elapsed * 300.f;
+			MkFloat2 ss = twNode->GetTabBodySize();
+			twNode->SetTabBodySize(MkFloat2(ss.x + 1, ss.y + 1));
 		}
-		if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
+		if (MK_INPUT_MGR.GetKeyReleased(VK_DOWN))
 		{
-			m_Offset.y -= timeState.elapsed * 300.f;
+			MkFloat2 ss = twNode->GetTabBodySize();
+			twNode->SetTabBodySize(MkFloat2(ss.x - 1, ss.y - 1));
 		}
 		if (MK_INPUT_MGR.GetKeyPushing('U'))
 		{
@@ -399,6 +405,8 @@ protected:
 	MkSceneNode* m_Node02;
 
 	MkSceneNode* m_ScreenNode;
+
+	MkTabWindowNode* twNode;
 
 	int m_TargetNode;
 

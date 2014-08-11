@@ -41,6 +41,7 @@ enum eS2D_WindowPresetComponent
 	eS2D_WPC_ArrowDown, // L"ArrowDown"
 	eS2D_WPC_VSlideBar, // L"VSlideBar"
 	eS2D_WPC_HSlideBar, // L"HSlideBar"
+	eS2D_WPC_TabFront, // L"TabFront"
 
 	eS2D_WPC_BackgroundStateTypeEnd,
 
@@ -60,6 +61,7 @@ enum eS2D_WindowPresetComponent
 	eS2D_WPC_OKButton, // L"OKBtn"
 	eS2D_WPC_CancelButton, // L"CancelBtn"
 	eS2D_WPC_SelectionButton, // L"SelectionBtn"
+	eS2D_WPC_TabRearButton, // L"TabRearButton"
 	eS2D_WPC_RootButton, // L"RootBtn"
 	eS2D_WPC_ListButton, // L"ListBtn"
 	eS2D_WPC_UncheckButton, // L"UncheckBtn"

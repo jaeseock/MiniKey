@@ -805,6 +805,81 @@ Node "WindowTypeImageSet"
 		str M = "HSBtnDis_M";
 		str R = "HSBtnDis_R";
 	}
+	
+	Node "DefaultTabFront"
+	{
+		int Type = 3;
+		str Image = "Default\default_theme.png";
+		str LT = "TabF_LT";
+		str MT = "TabF_MT";
+		str RT = "TabF_RT";
+		str LC = "TabF_LC";
+		str MC = "TabF_MC";
+		str RC = "TabF_RC";
+		str LB = "TabF_LB";
+		str MB = "TabF_MB";
+		str RB = "TabF_RB";
+	}
+	
+	Node "DefaultTabRearDefault"
+	{
+		int Type = 3;
+		str Image = "Default\default_theme.png";
+		str LT = "TabRDef_LT";
+		str MT = "TabRDef_MT";
+		str RT = "TabRDef_RT";
+		str LC = "TabRDef_LC";
+		str MC = "TabRDef_MC";
+		str RC = "TabRDef_RC";
+		str LB = "TabRDef_LB";
+		str MB = "TabRDef_MB";
+		str RB = "TabRDef_RB";
+	}
+	
+	Node "DefaultTabRearOnCursor"
+	{
+		int Type = 3;
+		str Image = "Default\default_theme.png";
+		str LT = "TabROCu_LT";
+		str MT = "TabROCu_MT";
+		str RT = "TabROCu_RT";
+		str LC = "TabROCu_LC";
+		str MC = "TabROCu_MC";
+		str RC = "TabROCu_RC";
+		str LB = "TabROCu_LB";
+		str MB = "TabROCu_MB";
+		str RB = "TabROCu_RB";
+	}
+	
+	Node "DefaultTabRearOnClick"
+	{
+		int Type = 3;
+		str Image = "Default\default_theme.png";
+		str LT = "TabROCl_LT";
+		str MT = "TabROCl_MT";
+		str RT = "TabROCl_RT";
+		str LC = "TabROCl_LC";
+		str MC = "TabROCl_MC";
+		str RC = "TabROCl_RC";
+		str LB = "TabROCl_LB";
+		str MB = "TabROCl_MB";
+		str RB = "TabROCl_RB";
+	}
+	
+	Node "DefaultTabRearDisable"
+	{
+		int Type = 3;
+		str Image = "Default\default_theme.png";
+		str LT = "TabRDis_LT";
+		str MT = "TabRDis_MT";
+		str RT = "TabRDis_RT";
+		str LC = "TabRDis_LC";
+		str MC = "TabRDis_MC";
+		str RC = "TabRDis_RC";
+		str LB = "TabRDis_LB";
+		str MB = "TabRDis_MB";
+		str RB = "TabRDis_RB";
+	}
 }
 
 Node "WindowPreset"
@@ -836,12 +911,14 @@ Node "WindowPreset"
 		str ArrowDown = "DefaultArrowDown";
 		str VSlideBar = "DefaultVSlideBar";
 		str HSlideBar = "DefaultHSlideBar";
+		str TabFront = "DefaultTabFront";
 		str NormalTitle = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
 		str SystemMsgTitle = "DefaultOBtnDefault" / "DefaultOBtnOnCursor";
 		str SystemErrorTitle = "DefaultCBtnDefault" / "DefaultCBtnOnCursor";
 		str NormalBtn = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
 		str OKBtn = "DefaultOBtnDefault" / "DefaultOBtnOnCursor" / "DefaultOBtnOnClick" / "DefaultBtnDisable";
 		str CancelBtn = "DefaultCBtnDefault" / "DefaultCBtnOnCursor" / "DefaultCBtnOnClick" / "DefaultBtnDisable";
+		str TabRearBtn = "DefaultTabRearDefault" / "DefaultTabRearOnCursor" / "DefaultTabRearOnClick" / "DefaultTabRearDisable";
 		str SelectionBtn = "DefaultSBtnDefault" / "DefaultSBtnOnCursor" / "DefaultSBtnOnCursor" / "DefaultSBtnDefault";
 		str RootBtn = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
 		str ListBtn = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
