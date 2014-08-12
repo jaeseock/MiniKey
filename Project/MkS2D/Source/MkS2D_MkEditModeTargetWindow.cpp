@@ -4,6 +4,7 @@
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkScrollBarNode.h"
 #include "MkS2D_MkCheckButtonNode.h"
+#include "MkS2D_MkTabWindowNode.h"
 #include "MkS2D_MkEditModeTargetWindow.h"
 
 
@@ -17,6 +18,10 @@ const static MkHashStr SAVE_NODE_BTN_NAME = L"__#SaveNode";
 const static MkHashStr DEL_NODE_BTN_NAME = L"__#DelNode";
 const static MkHashStr ENABLE_NODE_CB_NAME = L"__#EnableCB";
 const static MkHashStr WIN_ATTR_BTN_NAME = L"__#WinAttr";
+
+const static MkHashStr TAB_WINDOW_NAME = L"__#Window";
+const static MkHashStr TAB_COMPONENT_NAME = L"__#Component";
+const static MkHashStr TAB_TAGS_NAME = L"__#Tags";
 
 const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
 const static MkStr SEL_CAPTION_PREFIX = L"선택 윈도우 : ";
@@ -57,7 +62,7 @@ void MkEditModeTargetWindow::SetTargetNode(MkBaseWindowNode* targetNode)
 				_SetNodeTreeItemPosition(m_NodeTreeScrollBar->GetCurrentPagePosition());
 			}
 
-			_SetWindowTitleByTargetNode();
+			_UpdateControlsByTargetNode();
 		}
 		// 다른 그룹의 윈도우 선택. 새로 구성
 		else
@@ -242,7 +247,57 @@ bool MkEditModeTargetWindow::Initialize(void)
 			m_WinAttrBtn->SetPresetComponentCaption(themeName, CaptionDesc(L"윈도우 속성"));
 			m_WinAttrBtn->SetEnable(false);
 		}
-		
+
+		m_TabWindow = new MkTabWindowNode(L"__#TabWnd");
+		if (m_TabWindow != NULL)
+		{
+			MkFloat2 tabBodySize(m_ClientRect.size.x - MKDEF_CTRL_MARGIN * 2.f, 300.f);
+			m_TabWindow->CreateTabRoot(themeName, MkTabWindowNode::eLeftside, MkFloat2(100.f, 20.f), tabBodySize);
+			m_TabWindow->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, MARGIN));
+			m_TabWindow->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+
+			ItemTagInfo ti;
+			ti.captionDesc.SetString(L"윈도우");
+			m_TabWindow->AddTab(TAB_WINDOW_NAME, ti);
+
+			ti.captionDesc.SetString(L"컴포넌트");
+			m_TabWindow->AddTab(TAB_COMPONENT_NAME, ti);
+
+			ti.captionDesc.SetString(L"태 그");
+			MkBaseWindowNode* tagWin = m_TabWindow->AddTab(TAB_TAGS_NAME, ti);
+			if (tagWin != NULL)
+			{
+				/*
+				MkFloat2 tagRectBtnSize(100.f, MKDEF_DEF_CTRL_HEIGHT);
+
+				MkBaseWindowNode* iconTag = __CreateWindowPreset(tagWin, MKDEF_S2D_BASE_WND_ICON_TAG_NAME, themeName, eS2D_WPC_NormalButton, tagRectBtnSize);
+				if (iconTag != NULL)
+				{
+					iconTag->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, tabBodySize.y - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT));
+					iconTag->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+					iconTag->SetPresetComponentCaption(themeName, CaptionDesc(L"아이콘"));
+				}
+
+				MkBaseWindowNode* hCapTag = __CreateWindowPreset(tagWin, MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, themeName, eS2D_WPC_NormalButton, tagRectBtnSize);
+				if (hCapTag != NULL)
+				{
+					hCapTag->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, tabBodySize.y - (MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT) * 2.f));
+					hCapTag->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+					hCapTag->SetPresetComponentCaption(themeName, CaptionDesc(L"하이라이트 캡션"));
+				}
+
+				MkBaseWindowNode* nCapTag = __CreateWindowPreset(tagWin, MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, themeName, eS2D_WPC_NormalButton, tagRectBtnSize);
+				if (nCapTag != NULL)
+				{
+					nCapTag->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, tabBodySize.y - (MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT) * 3.f));
+					nCapTag->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+					nCapTag->SetPresetComponentCaption(themeName, CaptionDesc(L"일반 캡션"));
+				}
+				*/
+			}
+
+			bgNode->AttachChildNode(m_TabWindow);
+		}
 	}
 
 	if (m_NodeTreeRoot == NULL)
@@ -383,6 +438,12 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 			}
 		}
 		break;
+
+	//case MkSceneNodeFamilyDefinition::eTabSelection:
+	//	{
+	//		const MkHashStr& currTab = m_TabWindow->GetCurrentFrontTab();
+	//	}
+	//	break;
 	}
 }
 
@@ -431,7 +492,7 @@ void MkEditModeTargetWindow::NodeNameChanged(const MkHashStr& oldName, const MkH
 				MkBaseWindowNode* targetListBtn = m_NodeTreeRoot->__GetWindowBasedChild(targetIndex);
 				targetWindow->__SetWindowInformation(targetListBtn);
 
-				_SetWindowTitleByTargetNode();
+				_UpdateControlsByTargetNode();
 			}
 		}
 	}
@@ -452,6 +513,7 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_NodeWSizeRect = NULL;
 	m_EnableCB = NULL;
 	m_WinAttrBtn = NULL;
+	m_TabWindow = NULL;
 }
 
 void MkEditModeTargetWindow::_RebuildNodeTree(void)
@@ -488,7 +550,7 @@ void MkEditModeTargetWindow::_RebuildNodeTree(void)
 			_SetNodeTreeItemPosition(m_NodeTreeScrollBar->GetCurrentPagePosition());
 		}
 
-		_SetWindowTitleByTargetNode();
+		_UpdateControlsByTargetNode();
 	}
 }
 
@@ -523,7 +585,7 @@ void MkEditModeTargetWindow::_SetNodeTreeItemPosition(unsigned int pagePos)
 	}
 }
 
-void MkEditModeTargetWindow::_SetWindowTitleByTargetNode(void)
+void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 {
 	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
 
@@ -577,6 +639,10 @@ void MkEditModeTargetWindow::_SetWindowTitleByTargetNode(void)
 
 	m_LastNodePositionStr.Clear();
 	m_LastNodeWSizeStr.Clear();
+
+	if (m_TabWindow != NULL)
+	{
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

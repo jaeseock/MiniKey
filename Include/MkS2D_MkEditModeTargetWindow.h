@@ -9,6 +9,7 @@
 
 class MkScrollBarNode;
 class MkCheckButtonNode;
+class MkTabWindowNode;
 
 class MkEditModeTargetWindow : public MkBaseSystemWindow, public MkNodeNameInputListener
 {
@@ -46,7 +47,7 @@ protected:
 	void _RebuildNodeTree(void);
 	void _SetSelectIcon(bool enable);
 	void _SetNodeTreeItemPosition(unsigned int pagePos);
-	void _SetWindowTitleByTargetNode(void);
+	void _UpdateControlsByTargetNode(void);
 
 protected:
 
@@ -72,4 +73,7 @@ protected:
 	MkStr m_LastNodeWSizeStr;
 
 	MkCheckButtonNode* m_EnableCB;
+
+	// tab
+	MkTabWindowNode* m_TabWindow;
 };

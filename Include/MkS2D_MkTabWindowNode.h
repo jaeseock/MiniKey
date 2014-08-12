@@ -40,7 +40,8 @@ public:
 	const MkFloat2& GetTabBodySize(void) const { return m_TabBodySize; }
 
 	// tab 추가. 반환값은 해당 tab의 윈도우 영역
-	MkBaseWindowNode* AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo);
+	// customWindow에 전용 객체를 대신 넣을 수 있으며 이 경우 반환값과 동일(NULL일경우 MkBaseWindowNode*를 생성해 반환)
+	MkBaseWindowNode* AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo, MkBaseWindowNode* customWindow = NULL);
 
 	// 해당 tab의 윈도우 영역 반환
 	MkBaseWindowNode* GetWindowNodeOfTab(const MkHashStr& tabName);
@@ -50,6 +51,9 @@ public:
 
 	// 해당 tab 사용 가능 여부 설정
 	bool SetTabEnable(const MkHashStr& tabName, bool enable);
+
+	// 현재 선택중인 tab 반환
+	const MkHashStr& GetCurrentFrontTab(void) const { return m_CurrentFrontTab; }
 
 	// 해당 tab의 순서 반환. 존재하지 않는 tab이라면 MKDEF_ARRAY_ERROR 반환
 	unsigned int GetTabSequence(const MkHashStr& tabName) const;

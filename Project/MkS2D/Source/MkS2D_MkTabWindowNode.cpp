@@ -101,7 +101,7 @@ bool MkTabWindowNode::SetTabBodySize(const MkFloat2& tabBodySize)
 	return ok;
 }
 
-MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo)
+MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo, MkBaseWindowNode* customWindow)
 {
 	MK_CHECK(m_TabCapacity > 0, L"초기화되지 않은 " + GetNodeName().GetString() + L" MkTabWindowNode에 tab 생성 시도 : " + tabName.GetString())
 		return NULL;
@@ -138,7 +138,16 @@ MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTa
 		rearBtn->SetVisible(!m_CurrentFrontTab.Empty());
 	}
 
-	MkBaseWindowNode* bodyWin = new MkBaseWindowNode(BODY_WIN_NAME);
+	MkBaseWindowNode* bodyWin = NULL;
+	if (customWindow == NULL)
+	{
+		bodyWin = new MkBaseWindowNode(BODY_WIN_NAME);
+	}
+	else
+	{
+		customWindow->ChangeNodeName(BODY_WIN_NAME);
+		bodyWin = customWindow;
+	}
 	if (bodyWin != NULL)
 	{
 		bodyWin->SetAttribute(eIgnoreMovement, true);
@@ -499,6 +508,15 @@ void MkTabWindowNode::_SetTabState(const MkHashStr& tabName, bool front)
 		if (rearBtn != NULL)
 		{
 			rearBtn->SetVisible(!front);
+
+			if (rearBtn->GetVisible())
+			{
+				MkBaseWindowNode* rb = dynamic_cast<MkBaseWindowNode*>(rearBtn);
+				if (rb != NULL)
+				{
+					rb->SetPresetComponentWindowStateToDefault();
+				}
+			}
 		}
 		MkSceneNode* bodyWin = targetTab->GetChildNode(BODY_WIN_NAME);
 		if (bodyWin != NULL)

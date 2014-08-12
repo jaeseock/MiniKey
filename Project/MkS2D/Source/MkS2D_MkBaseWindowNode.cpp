@@ -13,10 +13,6 @@
 #include "MkS2D_MkWindowEventManager.h"
 
 
-const static MkHashStr COMPONENT_HIGHLIGHT_TAG_NAME = L"__#HTag";
-const static MkHashStr COMPONENT_NORMAL_TAG_NAME = L"__#NTag";
-const static MkHashStr COMPONENT_ICON_TAG_NAME = L"__#ITag";
-
 #define MKDEF_TITLE_BAR_SAMPLE_STRING L"타 이 틀"
 #define MKDEF_OK_BTN_SAMPLE_STRING L"확 인"
 #define MKDEF_CANCEL_BTN_SAMPLE_STRING L"취 소"
@@ -316,14 +312,17 @@ protected:
 	{
 		if (targetNode != NULL)
 		{
+			const MkHashStr hTag = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+			const MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
 			bool onHighlight = (state == static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetHighlight()));
-			if (targetNode->ExistSRect(COMPONENT_HIGHLIGHT_TAG_NAME))
+
+			if (targetNode->ExistSRect(hTag))
 			{
-				targetNode->GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME)->SetVisible(onHighlight);
+				targetNode->GetSRect(hTag)->SetVisible(onHighlight);
 			}
-			if (targetNode->ExistSRect(COMPONENT_NORMAL_TAG_NAME))
+			if (targetNode->ExistSRect(nTag))
 			{
-				targetNode->GetSRect(COMPONENT_NORMAL_TAG_NAME)->SetVisible(!onHighlight);
+				targetNode->GetSRect(nTag)->SetVisible(!onHighlight);
 			}
 		}
 	}
@@ -809,7 +808,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 			if (d.hasIcon)
 			{
 				titleWindow->SetPresetComponentIcon
-					(COMPONENT_ICON_TAG_NAME, eRAP_LeftCenter, MkFloat2(MARGIN, 0.f), d.iconImageHeightOffset, d.iconImageFilePath, d.iconImageSubsetName);
+					(MKDEF_S2D_BASE_WND_ICON_TAG_NAME, eRAP_LeftCenter, MkFloat2(MARGIN, 0.f), d.iconImageHeightOffset, d.iconImageFilePath, d.iconImageSubsetName);
 			}
 
 			// close icon
@@ -1016,17 +1015,20 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 		}
 
 		// caption
-		if (ExistSRect(COMPONENT_HIGHLIGHT_TAG_NAME))
+		const MkHashStr hTag = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+		const MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+
+		if (ExistSRect(hTag))
 		{
-			MkSRect* srect = GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME);
+			MkSRect* srect = GetSRect(hTag);
 			if (srect->CheckFocedFontTypeAndState())
 			{
 				srect->SetFocedFontState(MK_WR_PRESET.GetHighlightThemeFontState(themeName));
 			}
 		}
-		if (ExistSRect(COMPONENT_NORMAL_TAG_NAME))
+		if (ExistSRect(nTag))
 		{
-			MkSRect* srect = GetSRect(COMPONENT_NORMAL_TAG_NAME);
+			MkSRect* srect = GetSRect(nTag);
 			if (srect->CheckFocedFontTypeAndState())
 			{
 				srect->SetFocedFontState(MK_WR_PRESET.GetNormalThemeFontState(themeName));
@@ -1119,11 +1121,13 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 	{
 		if ((highlight) ? (IsTitleStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType)) : true)
 		{
-			if (SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f, imagePath, subsetName))
+			const MkHashStr hTag = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+			const MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+			if (SetPresetComponentIcon((highlight) ? hTag : nTag, alignment, border, 0.f, imagePath, subsetName))
 			{
 				if (highlight)
 				{
-					GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME)->SetVisible(false);
+					GetSRect(hTag)->SetVisible(false);
 				}
 				return true;
 			}
@@ -1138,12 +1142,14 @@ bool MkBaseWindowNode::SetPresetComponentIcon(bool highlight, eRectAlignmentPosi
 	{
 		if ((highlight) ? (IsTitleStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType)) : true)
 		{
-			if (SetPresetComponentIcon((highlight) ? COMPONENT_HIGHLIGHT_TAG_NAME : COMPONENT_NORMAL_TAG_NAME, alignment, border, 0.f,
+			const MkHashStr hTag = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+			const MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+			if (SetPresetComponentIcon((highlight) ? hTag : nTag, alignment, border, 0.f,
 				(highlight) ? MK_WR_PRESET.GetHighlightThemeFontState(m_PresetThemeName) : MK_WR_PRESET.GetNormalThemeFontState(m_PresetThemeName), captionDesc))
 			{
 				if (highlight)
 				{
-					GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME)->SetVisible(false);
+					GetSRect(hTag)->SetVisible(false);
 				}
 				return true;
 			}
@@ -1166,17 +1172,18 @@ bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo)
 	bool iconOK = true;
 	bool captionEnable = tagInfo.captionDesc.GetEnable();
 	float captionBorderX = MARGIN;
+	const MkHashStr iconTagName = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
 	if (tagInfo.iconPath.Empty())
 	{
-		if (ExistSRect(COMPONENT_ICON_TAG_NAME))
+		if (ExistSRect(iconTagName))
 		{
-			DeleteSRect(COMPONENT_ICON_TAG_NAME);
+			DeleteSRect(iconTagName);
 		}
 	}
 	else
 	{
-		iconOK = SetPresetComponentIcon(COMPONENT_ICON_TAG_NAME, (captionEnable) ? eRAP_LeftCenter : eRAP_MiddleCenter, MkFloat2(MARGIN, 0.f), 0.f, tagInfo.iconPath, tagInfo.iconSubset);
-		captionBorderX += GetSRect(COMPONENT_ICON_TAG_NAME)->GetLocalSize().x;
+		iconOK = SetPresetComponentIcon(iconTagName, (captionEnable) ? eRAP_LeftCenter : eRAP_MiddleCenter, MkFloat2(MARGIN, 0.f), 0.f, tagInfo.iconPath, tagInfo.iconSubset);
+		captionBorderX += GetSRect(iconTagName)->GetLocalSize().x;
 		captionBorderX += MARGIN;
 	}
 
@@ -1189,6 +1196,18 @@ bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo)
 const MkHashStr& MkBaseWindowNode::GetPresetComponentName(void) const
 {
 	return MkWindowPreset::GetWindowPresetComponentKeyword(m_PresetComponentType);
+}
+
+void MkBaseWindowNode::SetPresetComponentWindowStateToDefault(void)
+{
+	if (m_Enable && IsWindowStateType(m_PresetComponentType))
+	{
+		if (_OnActiveWindowState())
+		{
+			__SetActiveWindowStateCounter(-1);
+			__TSI_WindowNodeOp<eS2D_WindowState>::SetState(eS2D_WS_DefaultState, this);
+		}
+	}
 }
 
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
@@ -1677,44 +1696,6 @@ void MkBaseWindowNode::__ConsumeWindowEvent(void)
 			UseWindowEvent(m_WindowEvents[i]);
 		}
 
-#ifdef MKDEF_S2D_DEBUG_SHOW_WINDOW_EVENT
-		if (CheckRootWindow())
-		{
-			if (!m_WindowEvents.Empty())
-			{
-				MK_DEV_PANEL.MsgToLog(L"> WindowEvent > " + GetNodeName().GetString());
-			}
-			MK_INDEXING_LOOP(m_WindowEvents, i)
-			{
-				WindowEvent& evt = m_WindowEvents[i];
-				switch (evt.type)
-				{
-				// MkBaseWindowNode
-				case MkSceneNodeFamilyDefinition::eCursorLeftPress: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftPress : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorMiddlePress: MK_DEV_PANEL.MsgToLog(L"   eCursorMiddlePress : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorRightPress: MK_DEV_PANEL.MsgToLog(L"   eCursorRightPress : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorLeftRelease: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftRelease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorMiddleRelease: MK_DEV_PANEL.MsgToLog(L"   eCursorMiddleRelease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorRightRelease: MK_DEV_PANEL.MsgToLog(L"   eCursorRightRelease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorLeftClick: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorLeftDoubleClick: MK_DEV_PANEL.MsgToLog(L"   eCursorLeftDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorMiddleDoubleClick: MK_DEV_PANEL.MsgToLog(L"   eCursorMiddleDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorRightDoubleClick: MK_DEV_PANEL.MsgToLog(L"   eCursorRightDoubleClick : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorWheelDecrease: MK_DEV_PANEL.MsgToLog(L"   eCursorWheelDecrease : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCursorWheelIncrease: MK_DEV_PANEL.MsgToLog(L"   eCursorWheelIncrease : " + evt.node->GetNodeName().GetString()); break;
-
-				// MkSpreadButtonNode
-				case MkSceneNodeFamilyDefinition::eOpenList: MK_DEV_PANEL.MsgToLog(L"   eOpenList : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eSetTargetItem: MK_DEV_PANEL.MsgToLog(L"   eSetTargetItem : " + evt.node->GetNodeName().GetString()); break;
-
-				// MkCheckButtonNode
-				case MkSceneNodeFamilyDefinition::eCheckOn: MK_DEV_PANEL.MsgToLog(L"   eCheckOn : " + evt.node->GetNodeName().GetString()); break;
-				case MkSceneNodeFamilyDefinition::eCheckOff: MK_DEV_PANEL.MsgToLog(L"   eCheckOff : " + evt.node->GetNodeName().GetString()); break;
-				}
-			}
-		}
-#endif
-
 		m_WindowEvents.Flush();
 	}
 }
@@ -1806,14 +1787,16 @@ void MkBaseWindowNode::__SetWindowInformation(MkBaseWindowNode* targetNode) cons
 		CaptionDesc captionDesc;
 		captionDesc.SetString(text);
 
-		targetNode->SetPresetComponentIcon(COMPONENT_HIGHLIGHT_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
+		const MkHashStr hTag = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+		targetNode->SetPresetComponentIcon(hTag, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
 			MkHashStr::NullHash, captionDesc);
 
-		targetNode->SetPresetComponentIcon(COMPONENT_NORMAL_TAG_NAME, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
+		const MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+		targetNode->SetPresetComponentIcon(nTag, eRAP_LeftCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f,
 			MkHashStr::NullHash, captionDesc);
 
 		// text에 맞게 component 크기 재조정
-		const MkInt2& strSize = targetNode->GetSRect(COMPONENT_HIGHLIGHT_TAG_NAME)->GetDecoString().GetDrawingSize();
+		const MkInt2& strSize = targetNode->GetSRect(hTag)->GetDecoString().GetDrawingSize();
 		MkFloat2 newCompSize = MkFloat2(static_cast<float>(strSize.x) + MK_WR_PRESET.GetMargin() * 2.f, MKDEF_S2D_NODE_SEL_LINE_SIZE);
 		targetNode->SetPresetComponentSize(newCompSize);
 	}
@@ -1879,7 +1862,7 @@ bool MkBaseWindowNode::_OnActiveWindowState(void) const
 	if (IsWindowStateType(m_PresetComponentType))
 	{
 		eS2D_WindowState currState = static_cast<eS2D_WindowState>(m_CurrentComponentState);
-		return ((currState == eS2D_WS_OnCursorState) || (currState == eS2D_WS_OnCursorState));
+		return ((currState == eS2D_WS_OnCursorState) || (currState == eS2D_WS_OnClickState));
 	}
 	return false;
 }

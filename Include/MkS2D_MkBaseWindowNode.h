@@ -259,6 +259,9 @@ public:
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 영역 크기 반환
 	inline const MkFloat2& GetPresetComponentSize(void) const { return m_PresetComponentSize; }
 
+	// 해당 윈도우 노드가 enable 상태인 window state 기반 preset이 적용된 component 노드면 eS2D_WS_DefaultState로 전환
+	void SetPresetComponentWindowStateToDefault(void);
+
 	//------------------------------------------------------------------------------------------------//
 	// attribute
 	//------------------------------------------------------------------------------------------------//

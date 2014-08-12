@@ -131,6 +131,14 @@
 #define MKDEF_S2D_SND_CHILD_SNODE_NODE_NAME L"<SceneNode>"
 
 //------------------------------------------------------------------------------------------------//
+// MkBaseWindowNode
+//------------------------------------------------------------------------------------------------//
+
+#define MKDEF_S2D_BASE_WND_ICON_TAG_NAME L"__#IconTag"
+#define MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME L"__#HCapTag"
+#define MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME L"__#NCapTag"
+
+//------------------------------------------------------------------------------------------------//
 // window edit mode
 //------------------------------------------------------------------------------------------------//
 
@@ -159,6 +167,3 @@
 
 // SRect를 그릴 때 소팅되고 분류된 최종 결과인 그룹 정보 출력 여부
 //#define MKDEF_S2D_DEBUG_SHOW_SRECT_SET_INFO
-
-// 윈도우 이벤트 출력 여부
-//#define MKDEF_S2D_DEBUG_SHOW_WINDOW_EVENT

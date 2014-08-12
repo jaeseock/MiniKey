@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.08.11 (16:07:34),
+//   - time stamp : 2014.08.12 (14:22:02),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -15,17 +15,6 @@ vec3 Position = (0.000, -20.000, 0.000);
 
 Node "<SRect>"
 {
-	Node "WindowIcon" : "T_SRect"
-	{
-		float Depth = -0.025;
-		vec2 Position = (3.000, 2.000);
-		str Resource = // [3]
-			"map" /
-			"Default\window_mgr.png" /
-			"SampleIcon";
-		vec2 Size = (16.000, 16.000);
-	}
-
 	Node "__#HTag" : "T_SRect"
 	{
 		float Depth = -0.025;
@@ -36,6 +25,17 @@ Node "<SRect>"
 			"타 이 틀";
 		vec2 Size = (44.000, 12.000);
 		bool Visible = No;
+	}
+
+	Node "__#ITag" : "T_SRect"
+	{
+		float Depth = -0.025;
+		vec2 Position = (3.000, 2.000);
+		str Resource = // [3]
+			"map" /
+			"Default\window_mgr.png" /
+			"SampleIcon";
+		vec2 Size = (16.000, 16.000);
 	}
 
 	Node "__#NTag" : "T_SRect"
@@ -1843,7 +1843,7 @@ Node "<SceneNode>"
 								bool Visible = No;
 							}
 
-							Node "__#ItemIcon" : "T_SRect"
+							Node "__#ITag" : "T_SRect"
 							{
 								float Depth = -0.050;
 								vec2 Position = (3.000, 2.000);
@@ -1895,7 +1895,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ItemIcon" : "T_SRect"
+									Node "__#ITag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -2339,7 +2339,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ItemIcon" : "T_SRect"
+									Node "__#ITag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -2391,7 +2391,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ItemIcon" : "T_SRect"
+											Node "__#ITag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -2831,7 +2831,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ItemIcon" : "T_SRect"
+											Node "__#ITag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -3271,7 +3271,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ItemIcon" : "T_SRect"
+											Node "__#ITag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -4126,7 +4126,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ItemIcon" : "T_SRect"
+									Node "__#ITag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -4569,7 +4569,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ItemIcon" : "T_SRect"
+									Node "__#ITag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -4621,7 +4621,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ItemIcon" : "T_SRect"
+											Node "__#ITag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -5062,7 +5062,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ItemIcon" : "T_SRect"
+											Node "__#ITag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -5114,7 +5114,7 @@ Node "<SceneNode>"
 														bool Visible = No;
 													}
 
-													Node "__#ItemIcon" : "T_SRect"
+													Node "__#ITag" : "T_SRect"
 													{
 														float Depth = -0.025;
 														vec2 Position = (3.000, 2.000);
