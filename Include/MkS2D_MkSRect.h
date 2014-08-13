@@ -51,6 +51,15 @@ public:
 		DWORD m_ObjectAlpha;
 	};
 
+	enum eSrcType
+	{
+		eNone = 0,
+		eStaticImage,
+		eRenderToTexture,
+		eCustomDecoStr,
+		eSceneDecoStr
+	};
+
 public:
 
 	// MkDataNode로 구성. 기존 설정값이 존재하면 덮어씀
@@ -133,7 +142,7 @@ public:
 	bool CheckValidation(const MkFloatRect& cameraAABR) const;
 
 	// 정렬
-	void AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, float depthOffset);
+	void AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset);
 
 	// 해제
 	void Clear(void);
@@ -151,6 +160,8 @@ public:
 	void __FillVertexData(MkArray<VertexData>& buffer) const;
 
 	void __AffectTexture(void) const;
+
+	eSrcType __GetSrcType(void) const;
 
 	MkSRect();
 	virtual ~MkSRect() { Clear(); }

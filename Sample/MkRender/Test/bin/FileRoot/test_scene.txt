@@ -2,7 +2,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : test_scene.txt
-//   - time stamp : 2014.08.12 (14:22:02),
+//   - time stamp : 2014.08.13 (19:50:54),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@ vec3 Position = (0.000, -20.000, 0.000);
 
 Node "<SRect>"
 {
-	Node "__#HTag" : "T_SRect"
+	Node "__#HCapTag" : "T_SRect"
 	{
 		float Depth = -0.025;
 		str FontState = "YellowFS";
@@ -27,7 +27,7 @@ Node "<SRect>"
 		bool Visible = No;
 	}
 
-	Node "__#ITag" : "T_SRect"
+	Node "__#IconTag" : "T_SRect"
 	{
 		float Depth = -0.025;
 		vec2 Position = (3.000, 2.000);
@@ -38,7 +38,7 @@ Node "<SRect>"
 		vec2 Size = (16.000, 16.000);
 	}
 
-	Node "__#NTag" : "T_SRect"
+	Node "__#NCapTag" : "T_SRect"
 	{
 		float Depth = -0.025;
 		str FontState = "WhiteFS";
@@ -167,7 +167,7 @@ Node "<SceneNode>"
 
 				Node "<SRect>"
 				{
-					Node "__#HTag" : "T_SRect"
+					Node "__#HCapTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "YellowFS";
@@ -179,7 +179,7 @@ Node "<SceneNode>"
 						bool Visible = No;
 					}
 
-					Node "__#NTag" : "T_SRect"
+					Node "__#NCapTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "WhiteFS";
@@ -1831,7 +1831,7 @@ Node "<SceneNode>"
 
 						Node "<SRect>"
 						{
-							Node "__#HTag" : "T_SRect"
+							Node "__#HCapTag" : "T_SRect"
 							{
 								float Depth = -0.050;
 								str FontState = "YellowFS";
@@ -1843,7 +1843,7 @@ Node "<SceneNode>"
 								bool Visible = No;
 							}
 
-							Node "__#ITag" : "T_SRect"
+							Node "__#IconTag" : "T_SRect"
 							{
 								float Depth = -0.050;
 								vec2 Position = (3.000, 2.000);
@@ -1854,7 +1854,7 @@ Node "<SceneNode>"
 								vec2 Size = (16.000, 16.000);
 							}
 
-							Node "__#NTag" : "T_SRect"
+							Node "__#NCapTag" : "T_SRect"
 							{
 								float Depth = -0.050;
 								str FontState = "WhiteFS";
@@ -1883,7 +1883,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "__#HTag" : "T_SRect"
+									Node "__#HCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -1895,7 +1895,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ITag" : "T_SRect"
+									Node "__#IconTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -1906,7 +1906,7 @@ Node "<SceneNode>"
 										vec2 Size = (16.000, 16.000);
 									}
 
-									Node "__#NTag" : "T_SRect"
+									Node "__#NCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "WhiteFS";
@@ -2327,7 +2327,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "__#HTag" : "T_SRect"
+									Node "__#HCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -2339,7 +2339,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ITag" : "T_SRect"
+									Node "__#IconTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -2350,7 +2350,7 @@ Node "<SceneNode>"
 										vec2 Size = (16.000, 16.000);
 									}
 
-									Node "__#NTag" : "T_SRect"
+									Node "__#NCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "WhiteFS";
@@ -2379,7 +2379,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -2391,7 +2391,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ITag" : "T_SRect"
+											Node "__#IconTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -2402,7 +2402,7 @@ Node "<SceneNode>"
 												vec2 Size = (16.000, 16.000);
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -2819,7 +2819,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -2831,7 +2831,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ITag" : "T_SRect"
+											Node "__#IconTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -2842,7 +2842,7 @@ Node "<SceneNode>"
 												vec2 Size = (16.000, 16.000);
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -3259,7 +3259,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -3271,7 +3271,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ITag" : "T_SRect"
+											Node "__#IconTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -3282,7 +3282,7 @@ Node "<SceneNode>"
 												vec2 Size = (16.000, 16.000);
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -4114,7 +4114,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "__#HTag" : "T_SRect"
+									Node "__#HCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -4126,7 +4126,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ITag" : "T_SRect"
+									Node "__#IconTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -4137,7 +4137,7 @@ Node "<SceneNode>"
 										vec2 Size = (16.000, 16.000);
 									}
 
-									Node "__#NTag" : "T_SRect"
+									Node "__#NCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "WhiteFS";
@@ -4557,7 +4557,7 @@ Node "<SceneNode>"
 
 								Node "<SRect>"
 								{
-									Node "__#HTag" : "T_SRect"
+									Node "__#HCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
@@ -4569,7 +4569,7 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#ITag" : "T_SRect"
+									Node "__#IconTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										vec2 Position = (3.000, 2.000);
@@ -4580,7 +4580,7 @@ Node "<SceneNode>"
 										vec2 Size = (16.000, 16.000);
 									}
 
-									Node "__#NTag" : "T_SRect"
+									Node "__#NCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "WhiteFS";
@@ -4609,7 +4609,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -4621,7 +4621,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ITag" : "T_SRect"
+											Node "__#IconTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -4632,7 +4632,7 @@ Node "<SceneNode>"
 												vec2 Size = (16.000, 16.000);
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -5050,7 +5050,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -5062,7 +5062,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#ITag" : "T_SRect"
+											Node "__#IconTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												vec2 Position = (3.000, 2.000);
@@ -5073,7 +5073,7 @@ Node "<SceneNode>"
 												vec2 Size = (16.000, 16.000);
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -5102,7 +5102,7 @@ Node "<SceneNode>"
 
 												Node "<SRect>"
 												{
-													Node "__#HTag" : "T_SRect"
+													Node "__#HCapTag" : "T_SRect"
 													{
 														float Depth = -0.025;
 														str FontState = "YellowFS";
@@ -5114,7 +5114,7 @@ Node "<SceneNode>"
 														bool Visible = No;
 													}
 
-													Node "__#ITag" : "T_SRect"
+													Node "__#IconTag" : "T_SRect"
 													{
 														float Depth = -0.025;
 														vec2 Position = (3.000, 2.000);
@@ -5125,7 +5125,7 @@ Node "<SceneNode>"
 														vec2 Size = (16.000, 16.000);
 													}
 
-													Node "__#NTag" : "T_SRect"
+													Node "__#NCapTag" : "T_SRect"
 													{
 														float Depth = -0.025;
 														str FontState = "WhiteFS";
@@ -6821,7 +6821,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -6943,7 +6943,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -6955,7 +6955,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -7394,7 +7394,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -7516,7 +7516,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -7528,7 +7528,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -7967,7 +7967,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -8088,7 +8088,7 @@ Node "<SceneNode>"
 
 										Node "<SRect>"
 										{
-											Node "__#HTag" : "T_SRect"
+											Node "__#HCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "YellowFS";
@@ -8100,7 +8100,7 @@ Node "<SceneNode>"
 												bool Visible = No;
 											}
 
-											Node "__#NTag" : "T_SRect"
+											Node "__#NCapTag" : "T_SRect"
 											{
 												float Depth = -0.025;
 												str FontState = "WhiteFS";
@@ -8984,7 +8984,7 @@ Node "<SceneNode>"
 
 				Node "<SRect>"
 				{
-					Node "__#HTag" : "T_SRect"
+					Node "__#HCapTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "YellowFS";
@@ -8996,7 +8996,7 @@ Node "<SceneNode>"
 						bool Visible = No;
 					}
 
-					Node "__#NTag" : "T_SRect"
+					Node "__#NCapTag" : "T_SRect"
 					{
 						float Depth = -0.025;
 						str FontState = "WhiteFS";

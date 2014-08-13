@@ -158,6 +158,8 @@ public:
 
 	void __UpdateItemRegion(void);
 
+	inline void __ClearIconPartOfItemTag(void) { m_ItemTagInfo.iconPath.Clear(); m_ItemTagInfo.iconSubset.Clear(); }
+
 protected:
 
 	bool _CreateTypeButton(const MkHashStr& themeName, const MkFloat2& windowSize, eSpreadButtonType buttonType, eOpeningDirection openingDirection);

@@ -1073,7 +1073,8 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 		{
 			iconRect->SetFocedFontState(MkHashStr::NullHash);
 			iconRect->SetTexture(imagePath, subsetName);
-			iconRect->AlignRect(GetPresetComponentSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
+			iconRect->AlignRect(GetPresetComponentSize(), alignment, border, heightOffset);
+			iconRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 			return true;
 		}
 	}
@@ -1102,7 +1103,8 @@ bool MkBaseWindowNode::SetPresetComponentIcon
 
 			if (ok)
 			{
-				iconRect->AlignRect(GetPresetComponentSize(), alignment, border, heightOffset, -MKDEF_BASE_WINDOW_DEPTH_GRID);
+				iconRect->AlignRect(GetPresetComponentSize(), alignment, border, heightOffset);
+				iconRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 			}
 			else
 			{

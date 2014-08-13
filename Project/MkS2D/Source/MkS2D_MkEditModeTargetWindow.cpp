@@ -4,6 +4,7 @@
 #include "MkS2D_MkWindowEventManager.h"
 #include "MkS2D_MkScrollBarNode.h"
 #include "MkS2D_MkCheckButtonNode.h"
+#include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkTabWindowNode.h"
 #include "MkS2D_MkEditModeTargetWindow.h"
 
@@ -22,6 +23,23 @@ const static MkHashStr WIN_ATTR_BTN_NAME = L"__#WinAttr";
 const static MkHashStr TAB_WINDOW_NAME = L"__#Window";
 const static MkHashStr TAB_COMPONENT_NAME = L"__#Component";
 const static MkHashStr TAB_TAGS_NAME = L"__#Tags";
+
+const static MkHashStr TAG_SPREAD_BTN_NAME = L"__#TargetTag";
+const static MkHashStr TAG_ICON_UK = L"__#IconUK";
+const static MkHashStr TAG_CAPTION_UK = L"__#CapUK";
+const static MkHashStr SET_TAG_BTN_NAME = L"__#SetTag";
+const static MkHashStr DEL_TAG_BTN_NAME = L"__#DelTag";
+const static MkHashStr TAG_ALIGN_LEFT_BTN_NAME = L"__#TagAlignLeft";
+const static MkHashStr TAG_ALIGN_CENTER_BTN_NAME = L"__#TagAlignCenter";
+const static MkHashStr TAG_ALIGN_RIGHT_BTN_NAME = L"__#TagAlignRight";
+const static MkHashStr TAG_PX_MOVE_LL_BTN_NAME = L"__#TagPxMoveLL";
+const static MkHashStr TAG_PX_MOVE_LH_BTN_NAME = L"__#TagPxMoveLH";
+const static MkHashStr TAG_PX_MOVE_RL_BTN_NAME = L"__#TagPxMoveRL";
+const static MkHashStr TAG_PX_MOVE_RH_BTN_NAME = L"__#TagPxMoveRH";
+const static MkHashStr TAG_PX_MOVE_UL_BTN_NAME = L"__#TagPxMoveUL";
+const static MkHashStr TAG_PX_MOVE_UH_BTN_NAME = L"__#TagPxMoveUH";
+const static MkHashStr TAG_PX_MOVE_DL_BTN_NAME = L"__#TagPxMoveDL";
+const static MkHashStr TAG_PX_MOVE_DH_BTN_NAME = L"__#TagPxMoveDH";
 
 const static MkStr NONE_SEL_CAPTION = L"현재 선택중인 윈도우 없음";
 const static MkStr SEL_CAPTION_PREFIX = L"선택 윈도우 : ";
@@ -267,36 +285,90 @@ bool MkEditModeTargetWindow::Initialize(void)
 			MkBaseWindowNode* tagWin = m_TabWindow->AddTab(TAB_TAGS_NAME, ti);
 			if (tagWin != NULL)
 			{
-				/*
-				MkFloat2 tagRectBtnSize(100.f, MKDEF_DEF_CTRL_HEIGHT);
+				m_TabTag_EnableWindows.Reserve(12);
+				const float btnWidth = 100.f;
+				float btnPosY = tabBodySize.y - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT;
 
-				MkBaseWindowNode* iconTag = __CreateWindowPreset(tagWin, MKDEF_S2D_BASE_WND_ICON_TAG_NAME, themeName, eS2D_WPC_NormalButton, tagRectBtnSize);
-				if (iconTag != NULL)
-				{
-					iconTag->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, tabBodySize.y - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT));
-					iconTag->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
-					iconTag->SetPresetComponentCaption(themeName, CaptionDesc(L"아이콘"));
-				}
+				m_TabTag_Desc = tagWin->CreateSRect(L"__#Desc");
+				m_TabTag_Desc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, btnPosY));
+				m_TabTag_Desc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 
-				MkBaseWindowNode* hCapTag = __CreateWindowPreset(tagWin, MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, themeName, eS2D_WPC_NormalButton, tagRectBtnSize);
-				if (hCapTag != NULL)
-				{
-					hCapTag->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, tabBodySize.y - (MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT) * 2.f));
-					hCapTag->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
-					hCapTag->SetPresetComponentCaption(themeName, CaptionDesc(L"하이라이트 캡션"));
-				}
+				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
 
-				MkBaseWindowNode* nCapTag = __CreateWindowPreset(tagWin, MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, themeName, eS2D_WPC_NormalButton, tagRectBtnSize);
-				if (nCapTag != NULL)
-				{
-					nCapTag->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, tabBodySize.y - (MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT) * 3.f));
-					nCapTag->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
-					nCapTag->SetPresetComponentCaption(themeName, CaptionDesc(L"일반 캡션"));
-				}
-				*/
+				m_TabTag_TargetSelection = new MkSpreadButtonNode(TAG_SPREAD_BTN_NAME);
+				m_TabTag_TargetSelection->CreateSelectionRootTypeButton(themeName, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
+				m_TabTag_TargetSelection->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				tagWin->AttachChildNode(m_TabTag_TargetSelection);
+
+				ti.captionDesc.SetString(L"아이콘");
+				m_TabTag_TargetSelection->AddItem(TAG_ICON_UK, ti);
+				ti.captionDesc.SetString(L"캡션");
+				m_TabTag_TargetSelection->AddItem(TAG_CAPTION_UK, ti);
+				m_TabTag_TargetSelection->SetTargetItem(TAG_ICON_UK);
+
+				MkBaseWindowNode* setTag = __CreateWindowPreset(tagWin, SET_TAG_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				setTag->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + btnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				setTag->SetPresetComponentCaption(themeName, CaptionDesc(L"태그 설정"));
+
+				MkBaseWindowNode* delTag = __CreateWindowPreset(tagWin, DEL_TAG_BTN_NAME, themeName, eS2D_WPC_CancelButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				delTag->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 3.f + btnWidth * 2.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				delTag->SetPresetComponentCaption(themeName, CaptionDesc(L"태그 삭제"));
+				m_TabTag_EnableWindows.PushBack(delTag);
+
+				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+
+				MkBaseWindowNode* alignLeft = __CreateWindowPreset(tagWin, TAG_ALIGN_LEFT_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				alignLeft->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + btnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				alignLeft->SetPresetComponentCaption(themeName, CaptionDesc(L"좌측 정렬"));
+				m_TabTag_EnableWindows.PushBack(alignLeft);
+
+				MkBaseWindowNode* alignCenter = __CreateWindowPreset(tagWin, TAG_ALIGN_CENTER_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				alignCenter->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 3.f + btnWidth * 2.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				alignCenter->SetPresetComponentCaption(themeName, CaptionDesc(L"중앙 정렬"));
+				m_TabTag_EnableWindows.PushBack(alignCenter);
+
+				MkBaseWindowNode* alignRight = __CreateWindowPreset(tagWin, TAG_ALIGN_RIGHT_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				alignRight->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 4.f + btnWidth * 3.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				alignRight->SetPresetComponentCaption(themeName, CaptionDesc(L"우측 정렬"));
+				m_TabTag_EnableWindows.PushBack(alignRight);
+
+				MkFloat2 pivot(MKDEF_CTRL_MARGIN * 2.f + btnWidth + 42.f, 140.f);
+
+				MkBaseWindowNode* moveLL = __CreateWindowPreset(tagWin, TAG_PX_MOVE_LL_BTN_NAME, themeName, eS2D_WPC_DirLeftButton, MkFloat2(0.f, 0.f));
+				const MkFloat2& btnSize = moveLL->GetPresetComponentSize();
+				moveLL->SetLocalPosition(MkVec3(pivot.x - btnSize.x - MARGIN, pivot.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveLL);
+				MkBaseWindowNode* moveLH = __CreateWindowPreset(tagWin, TAG_PX_MOVE_LH_BTN_NAME, themeName, eS2D_WPC_DirLeftButton, MkFloat2(0.f, 0.f));
+				moveLH->SetLocalPosition(MkVec3(pivot.x - btnSize.x * 2.f - MARGIN * 2.f, pivot.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveLH);
+
+				MkBaseWindowNode* moveRL = __CreateWindowPreset(tagWin, TAG_PX_MOVE_RL_BTN_NAME, themeName, eS2D_WPC_DirRightButton, MkFloat2(0.f, 0.f));
+				moveRL->SetLocalPosition(MkVec3(pivot.x + btnSize.x + MARGIN, pivot.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveRL);
+				MkBaseWindowNode* moveRH = __CreateWindowPreset(tagWin, TAG_PX_MOVE_RH_BTN_NAME, themeName, eS2D_WPC_DirRightButton, MkFloat2(0.f, 0.f));
+				moveRH->SetLocalPosition(MkVec3(pivot.x + btnSize.x * 2.f + MARGIN * 2.f, pivot.y, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveRH);
+
+				MkBaseWindowNode* moveUL = __CreateWindowPreset(tagWin, TAG_PX_MOVE_UL_BTN_NAME, themeName, eS2D_WPC_DirUpButton, MkFloat2(0.f, 0.f));
+				moveUL->SetLocalPosition(MkVec3(pivot.x, pivot.y + btnSize.y + MARGIN, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveUL);
+				MkBaseWindowNode* moveUH = __CreateWindowPreset(tagWin, TAG_PX_MOVE_UH_BTN_NAME, themeName, eS2D_WPC_DirUpButton, MkFloat2(0.f, 0.f));
+				moveUH->SetLocalPosition(MkVec3(pivot.x, pivot.y + btnSize.y * 2.f + MARGIN * 2.f, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveUH);
+
+				MkBaseWindowNode* moveDL = __CreateWindowPreset(tagWin, TAG_PX_MOVE_DL_BTN_NAME, themeName, eS2D_WPC_DirDownButton, MkFloat2(0.f, 0.f));
+				moveDL->SetLocalPosition(MkVec3(pivot.x, pivot.y - btnSize.y - MARGIN, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveDL);
+				MkBaseWindowNode* moveDH = __CreateWindowPreset(tagWin, TAG_PX_MOVE_DH_BTN_NAME, themeName, eS2D_WPC_DirDownButton, MkFloat2(0.f, 0.f));
+				moveDH->SetLocalPosition(MkVec3(pivot.x, pivot.y - btnSize.y * 2.f - MARGIN * 2.f, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabTag_EnableWindows.PushBack(moveDH);
 			}
 
 			bgNode->AttachChildNode(m_TabWindow);
+
+			m_TabWindow->SetTabEnable(TAB_WINDOW_NAME, false);
+			m_TabWindow->SetTabEnable(TAB_COMPONENT_NAME, false);
+			m_TabWindow->SetTabEnable(TAB_TAGS_NAME, false);
 		}
 	}
 
@@ -419,6 +491,137 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 					MK_WIN_EVENT_MGR.OpenWindowAttributeSystemWindow(m_TargetNode);
 				}
 			}
+			else if (evt.node->GetNodeName() == SET_TAG_BTN_NAME)
+			{
+				const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
+				if (targetKey == TAG_ICON_UK)
+				{
+					
+				}
+				else if (targetKey == TAG_CAPTION_UK)
+				{
+				}
+			}
+			else if (evt.node->GetNodeName() == DEL_TAG_BTN_NAME)
+			{
+				const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
+				if (targetKey == TAG_ICON_UK)
+				{
+					MkHashStr tagName = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
+					if (m_TargetNode->ExistSRect(tagName))
+					{
+						m_TargetNode->DeleteSRect(tagName);
+						_UpdateTabTagDesc();
+						_UpdateTabTagControlEnable(false);
+
+						if (m_TargetNode->GetNodeType() == eS2D_SNT_SpreadButtonNode)
+						{
+							MkSpreadButtonNode* spBtn = dynamic_cast<MkSpreadButtonNode*>(m_TargetNode);
+							if (spBtn != NULL)
+							{
+								spBtn->__ClearIconPartOfItemTag();
+							}
+						}
+					}
+				}
+				else if ((targetKey == TAG_CAPTION_UK) && (m_TargetNode->GetNodeType() != eS2D_SNT_SpreadButtonNode))
+				{
+					MkHashStr tagName = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+					if (m_TargetNode->ExistSRect(tagName))
+					{
+						m_TargetNode->DeleteSRect(tagName);
+					}
+
+					tagName = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+					if (m_TargetNode->ExistSRect(tagName))
+					{
+						m_TargetNode->DeleteSRect(tagName);
+						_UpdateTabTagDesc();
+						_UpdateTabTagControlEnable(false);
+					}
+				}
+			}
+			else if ((m_TargetNode != NULL) && (m_TargetNode->GetPresetComponentType() != eS2D_WPC_None) &&
+				((evt.node->GetNodeName() == TAG_ALIGN_LEFT_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_ALIGN_CENTER_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_ALIGN_RIGHT_BTN_NAME)))
+			{
+				eRectAlignmentPosition alignment = eRAP_MiddleCenter;
+				if (evt.node->GetNodeName() == TAG_ALIGN_LEFT_BTN_NAME)
+				{
+					alignment = eRAP_LeftCenter;
+				}
+				else if (evt.node->GetNodeName() == TAG_ALIGN_RIGHT_BTN_NAME)
+				{
+					alignment = eRAP_RightCenter;
+				}
+
+				const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
+				if (targetKey == TAG_ICON_UK)
+				{
+					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_ICON_TAG_NAME, alignment);
+				}
+				else if ((targetKey == TAG_CAPTION_UK) && (m_TargetNode->GetNodeType() != eS2D_SNT_SpreadButtonNode))
+				{
+					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, alignment);
+					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, alignment);
+				}
+			}
+			else if ((m_TargetNode != NULL) &&
+				((evt.node->GetNodeName() == TAG_PX_MOVE_LL_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_PX_MOVE_LH_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_PX_MOVE_RL_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_PX_MOVE_RH_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_PX_MOVE_UL_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_PX_MOVE_UH_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_PX_MOVE_DL_BTN_NAME) ||
+				(evt.node->GetNodeName() == TAG_PX_MOVE_DH_BTN_NAME)))
+			{
+				MkFloat2 offset;
+				if (evt.node->GetNodeName() == TAG_PX_MOVE_LL_BTN_NAME)
+				{
+					offset.x -= 1.f;
+				}
+				else if (evt.node->GetNodeName() == TAG_PX_MOVE_LH_BTN_NAME)
+				{
+					offset.x -= MK_WR_PRESET.GetMargin() * 3.f;
+				}
+				else if (evt.node->GetNodeName() == TAG_PX_MOVE_RL_BTN_NAME)
+				{
+					offset.x += 1.f;
+				}
+				else if (evt.node->GetNodeName() == TAG_PX_MOVE_RH_BTN_NAME)
+				{
+					offset.x += MK_WR_PRESET.GetMargin() * 3.f;
+				}
+				else if (evt.node->GetNodeName() == TAG_PX_MOVE_UL_BTN_NAME)
+				{
+					offset.y += 1.f;
+				}
+				else if (evt.node->GetNodeName() == TAG_PX_MOVE_UH_BTN_NAME)
+				{
+					offset.y += MK_WR_PRESET.GetMargin() * 3.f;
+				}
+				else if (evt.node->GetNodeName() == TAG_PX_MOVE_DL_BTN_NAME)
+				{
+					offset.y -= 1.f;
+				}
+				else if (evt.node->GetNodeName() == TAG_PX_MOVE_DH_BTN_NAME)
+				{
+					offset.y -= MK_WR_PRESET.GetMargin() * 3.f;
+				}
+
+				const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
+				if (targetKey == TAG_ICON_UK)
+				{
+					_MoveTargetTagRect(MKDEF_S2D_BASE_WND_ICON_TAG_NAME, offset);
+				}
+				else if (targetKey == TAG_CAPTION_UK)
+				{
+					_MoveTargetTagRect(MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, offset);
+					_MoveTargetTagRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, offset);
+				}
+			}
 		}
 		break;
 
@@ -435,6 +638,15 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 			if ((evt.node->GetNodeName() == ENABLE_NODE_CB_NAME) && (m_TargetNode != NULL))
 			{
 				m_TargetNode->SetEnable(false);
+			}
+		}
+		break;
+
+	case MkSceneNodeFamilyDefinition::eSetTargetItem:
+		{
+			if (evt.node->GetNodeName() == TAG_SPREAD_BTN_NAME)
+			{
+				_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
 			}
 		}
 		break;
@@ -514,6 +726,8 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_EnableCB = NULL;
 	m_WinAttrBtn = NULL;
 	m_TabWindow = NULL;
+	m_TabTag_Desc = NULL;
+	m_TabTag_TargetSelection = NULL;
 }
 
 void MkEditModeTargetWindow::_RebuildNodeTree(void)
@@ -642,6 +856,79 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 
 	if (m_TabWindow != NULL)
 	{
+		m_TabWindow->SetTabEnable(TAB_WINDOW_NAME, nodeEnable && (m_TargetNode->GetNodeType() > eS2D_SNT_BaseWindowNode));
+		m_TabWindow->SetTabEnable(TAB_COMPONENT_NAME, nodeEnable);
+		m_TabWindow->SetTabEnable(TAB_TAGS_NAME, nodeEnable);
+
+		if (nodeEnable)
+		{
+			_UpdateTabTagDesc();
+			_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
+		}
+	}
+}
+
+void MkEditModeTargetWindow::_UpdateTabTagDesc(void)
+{
+	if ((m_TargetNode != NULL) && (m_TabTag_Desc != NULL))
+	{
+		MkStr msg;
+		msg.Reserve(128);
+		msg += L"아이콘 : ";
+		msg += m_TargetNode->ExistSRect(MKDEF_S2D_BASE_WND_ICON_TAG_NAME) ? L"O" : L"X";
+		msg += L" , 캡션 : ";
+		msg += m_TargetNode->ExistSRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME) ? L"O" : L"X";
+		m_TabTag_Desc->SetDecoString(msg);
+	}
+}
+
+void MkEditModeTargetWindow::_GetTargetComponentTagNameByTargetTab(MkHashStr& buffer)
+{
+	if ((m_TargetNode != NULL) && (m_TabTag_TargetSelection != NULL))
+	{
+		const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
+		if (targetKey == TAG_ICON_UK)
+		{
+			buffer = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
+		}
+		else if (targetKey == TAG_CAPTION_UK)
+		{
+			buffer = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+		}
+	}
+}
+
+bool MkEditModeTargetWindow::_GetTargetComponentTagExistByTargetTab(void)
+{
+	MkHashStr tagName;
+	_GetTargetComponentTagNameByTargetTab(tagName);
+	return ((!tagName.Empty()) && m_TargetNode->ExistSRect(tagName));
+}
+
+void MkEditModeTargetWindow::_UpdateTabTagControlEnable(bool enable)
+{
+	MK_INDEXING_LOOP(m_TabTag_EnableWindows, i)
+	{
+		m_TabTag_EnableWindows[i]->SetEnable(enable);
+	}
+}
+
+void MkEditModeTargetWindow::_AlignTargetTagRect(const MkHashStr& tagName, eRectAlignmentPosition alignment)
+{
+	if (m_TargetNode->ExistSRect(tagName))
+	{
+		MkSRect* rect = m_TargetNode->GetSRect(tagName);
+		rect->AlignRect(m_TargetNode->GetPresetComponentSize(), alignment, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f), 0.f);
+	}
+}
+
+void MkEditModeTargetWindow::_MoveTargetTagRect(const MkHashStr& tagName, const MkFloat2& offset)
+{
+	if (m_TargetNode->ExistSRect(tagName))
+	{
+		MkSRect* rect = m_TargetNode->GetSRect(tagName);
+		MkFloat2 newPos = rect->GetLocalPosition() + offset;
+		rect->SetLocalPosition(newPos);
 	}
 }
 

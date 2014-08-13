@@ -10,6 +10,7 @@
 class MkScrollBarNode;
 class MkCheckButtonNode;
 class MkTabWindowNode;
+class MkSpreadButtonNode;
 
 class MkEditModeTargetWindow : public MkBaseSystemWindow, public MkNodeNameInputListener
 {
@@ -49,6 +50,13 @@ protected:
 	void _SetNodeTreeItemPosition(unsigned int pagePos);
 	void _UpdateControlsByTargetNode(void);
 
+	void _UpdateTabTagDesc(void);
+	void _GetTargetComponentTagNameByTargetTab(MkHashStr& buffer);
+	bool _GetTargetComponentTagExistByTargetTab(void);
+	void _UpdateTabTagControlEnable(bool enable);
+	void _AlignTargetTagRect(const MkHashStr& tagName, eRectAlignmentPosition alignment);
+	void _MoveTargetTagRect(const MkHashStr& tagName, const MkFloat2& offset);
+
 protected:
 
 	// public:
@@ -74,6 +82,11 @@ protected:
 
 	MkCheckButtonNode* m_EnableCB;
 
-	// tab
+	// tab root
 	MkTabWindowNode* m_TabWindow;
+
+	// tab : tag
+	MkSRect* m_TabTag_Desc;
+	MkSpreadButtonNode* m_TabTag_TargetSelection;
+	MkArray<MkBaseWindowNode*> m_TabTag_EnableWindows;
 };

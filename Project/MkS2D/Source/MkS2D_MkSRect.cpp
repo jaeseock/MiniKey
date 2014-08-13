@@ -291,7 +291,7 @@ bool MkSRect::CheckValidation(const MkFloatRect& cameraAABR) const
 		m_AABR.CheckIntersection(cameraAABR)); // 프러스텀 체크도 통과하면 true
 }
 
-void MkSRect::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, float depthOffset)
+void MkSRect::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset)
 {
 	if (!anchorSize.IsZero() && m_LocalRect.SizeIsNotZero() && (alignment != eRAP_NonePosition))
 	{
@@ -299,7 +299,6 @@ void MkSRect::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition align
 		localPos.y += heightOffset;
 		SetLocalPosition(localPos);
 	}
-	SetLocalDepth(m_LocalDepth + depthOffset);
 }
 
 void MkSRect::Clear(void)
@@ -389,6 +388,31 @@ void MkSRect::__AffectTexture(void) const
 	{
 		m_Texture->UpdateRenderState(m_MaterialKey.m_ObjectAlpha);
 	}
+}
+
+MkSRect::eSrcType MkSRect::__GetSrcType(void) const
+{
+	if (m_Texture != NULL)
+	{
+		const MkHashStr& imgPath = m_Texture->GetPoolKey();
+
+		// deco str
+		if (imgPath.Empty())
+		{
+			if (!m_OriginalDecoStr.Empty())
+			{
+				return eCustomDecoStr;
+			}
+			else if (!m_SceneDecoTextNodeNameAndKey.Empty())
+			{
+				return eSceneDecoStr;
+			}
+			else
+				return eRenderToTexture;
+		}
+		return eStaticImage;
+	}
+	return eNone;
 }
 
 MkSRect::MkSRect()

@@ -424,7 +424,8 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 			{
 				MkSRect* textRect = ExistSRect(TEXT_SRECT_NAME) ? GetSRect(TEXT_SRECT_NAME) : CreateSRect(TEXT_SRECT_NAME);
 				textRect->SetDecoString(buffer);
-				textRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(MKDEF_TEXT_START_POSITION, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID);
+				textRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(MKDEF_TEXT_START_POSITION, 0.f), 0.f);
+				textRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 			}
 		}
 
@@ -486,7 +487,8 @@ void MkEditBoxNode::_UpdateCursorAndSelection(void)
 			const MkInt2& cs = cursorRect->GetDecoString().GetDrawingSize();
 			float offset = static_cast<float>(cs.x) / 2.f;
 			float position = MKDEF_TEXT_START_POSITION - offset + _GetTextWidth(0, m_SelEnd - m_CharStart, textOut);
-			cursorRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(position, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 2.f);
+			cursorRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(position, 0.f), 0.f);
+			cursorRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID * 2.f);
 
 			GetSRect(SEL_SRECT_NAME)->SetVisible(false);
 		}
@@ -521,7 +523,8 @@ void MkEditBoxNode::_UpdateCursorAndSelection(void)
 			}
 			
 			selRect->SetLocalSize(MkFloat2(width, static_cast<float>(MK_FONT_MGR.GetFontHeight(_GetFontType()) + 2))); // 상하 1px씩 크게
-			selRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(offset + beginPos, 0.f), 0.f, -MKDEF_BASE_WINDOW_DEPTH_GRID * 0.5f);
+			selRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(offset + beginPos, 0.f), 0.f);
+			selRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID * 0.5f);
 		}
 	}
 }
