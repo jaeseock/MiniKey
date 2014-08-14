@@ -80,3 +80,40 @@ protected:
 	MkBaseWindowNode* m_TargetWindow;
 	MkArray<MkCheckButtonNode*> m_CheckButtons;
 };
+
+//------------------------------------------------------------------------------------------------//
+
+class MkSRectInfoListener
+{
+public:
+	virtual void SRectInfoUpdated(MkSceneNode* targetNode, const MkHashStr& rectName, MkSRect::eSrcType srcType, MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) {}
+	virtual ~MkSRectInfoListener() {}
+};
+
+class MkSRectSetterSystemWindow : public MkBaseSystemWindow
+{
+public:
+
+	virtual bool Initialize(void);
+
+	void SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName);
+
+	virtual void UseWindowEvent(WindowEvent& evt);
+
+	virtual void Deactivate(void);
+
+	MkSRectSetterSystemWindow(const MkHashStr& name);
+	virtual ~MkSRectSetterSystemWindow() {}
+
+protected:
+
+	MkSRectInfoListener* m_Owner;
+	MkSceneNode* m_TargetNode;
+	MkHashStr m_RectName;
+
+	MkPathName m_ImagePath;
+	MkHashStr m_SubsetName;
+	MkStr m_DecoStr;
+	MkArray<MkHashStr> m_NodeNameAndKey;
+	MkSRect::eSrcType m_SrcType;
+};

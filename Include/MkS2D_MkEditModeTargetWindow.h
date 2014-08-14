@@ -12,7 +12,7 @@ class MkCheckButtonNode;
 class MkTabWindowNode;
 class MkSpreadButtonNode;
 
-class MkEditModeTargetWindow : public MkBaseSystemWindow, public MkNodeNameInputListener
+class MkEditModeTargetWindow : public MkBaseSystemWindow, public MkNodeNameInputListener, public MkSRectInfoListener
 {
 public:
 
@@ -37,6 +37,11 @@ public:
 	// MkNodeNameInputListener
 
 	virtual void NodeNameChanged(const MkHashStr& oldName, const MkHashStr& newName, MkSceneNode* targetNode);
+
+	//------------------------------------------------------------------------------------------------//
+	// MkSRectInfoListener
+
+	virtual void SRectInfoUpdated(MkSceneNode* targetNode, const MkHashStr& rectName, MkSRect::eSrcType srcType, MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey);
 
 	//------------------------------------------------------------------------------------------------//
 

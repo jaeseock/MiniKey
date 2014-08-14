@@ -1,6 +1,7 @@
 
 #include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkEditBoxNode.h"
+#include "MkS2D_MkSpreadButtonNode.h"
 
 #include "MkS2D_MkHiddenEditBox.h"
 #include "MkS2D_MkWindowResourceManager.h"
@@ -293,6 +294,185 @@ void MkWindowAttributeSystemWindow::UseWindowEvent(WindowEvent& evt)
 MkWindowAttributeSystemWindow::MkWindowAttributeSystemWindow(const MkHashStr& name) : MkBaseSystemWindow(name)
 {
 	m_TargetWindow = NULL;
+}
+
+//------------------------------------------------------------------------------------------------//
+
+const static MkHashStr SRC_TYPE_ROOT_BTN_NAME = L"ST_Root";
+const static MkHashStr SRC_TYPE_IMG_BTN_NAME = L"ST_Img";
+const static MkHashStr SRC_TYPE_CSTR_BTN_NAME = L"ST_CStr";
+const static MkHashStr SRC_TYPE_SSTR_BTN_NAME = L"ST_SStr";
+
+bool MkSRectSetterSystemWindow::Initialize(void)
+{
+	SetAttribute(eAlignCenterPos, true);
+
+	const MkHashStr& themeName = MK_WR_PRESET.GetDefaultThemeName();
+
+	const float margin = 10.f;
+	MkFloat2 winSize(780.f, 580.f);
+
+	BasicPresetWindowDesc winDesc;
+	winDesc.SetStandardDesc(themeName, true, winSize);
+	winDesc.titleType = eS2D_WPC_SystemMsgTitle;
+	winDesc.titleCaption = L"SRect 설정";
+	winDesc.hasIcon = false;
+	winDesc.hasCloseButton = true;
+	winDesc.hasCancelButton = true;
+	winDesc.hasOKButton = true;
+
+	if (CreateBasicWindow(this, MkHashStr::NullHash, winDesc) == NULL)
+		return false;
+
+	MkBaseWindowNode* bgNode = dynamic_cast<MkBaseWindowNode*>(GetChildNode(L"Background"));
+	if (bgNode == NULL)
+		return false;
+
+	MkFloat2 clientSize = bgNode->GetPresetComponentSize();
+	clientSize.y -= GetPresetComponentSize().y; // body size - title size
+
+	MkBaseWindowNode* okButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"OKButton"));
+	MkBaseWindowNode* cancelButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"CancelButton"));
+	okButton->SetLocalPosition(MkFloat2(clientSize.x - okButton->GetPresetComponentSize().x - cancelButton->GetPresetComponentSize().x - margin * 2.f, margin));
+	cancelButton->SetLocalPosition(MkFloat2(clientSize.x - cancelButton->GetPresetComponentSize().x - margin, margin));
+
+	MkSpreadButtonNode* srcTypeBtn = new MkSpreadButtonNode(SRC_TYPE_ROOT_BTN_NAME);
+	srcTypeBtn->CreateSelectionRootTypeButton(themeName, MkFloat2(100.f, 20.f), MkSpreadButtonNode::eDownward);
+	bgNode->AttachChildNode(srcTypeBtn);
+
+	float posX = margin;
+	const float posY = clientSize.y - margin - srcTypeBtn->GetPresetComponentSize().y;
+	srcTypeBtn->SetLocalPosition(MkVec3(posX, posY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+
+	ItemTagInfo ti;
+	ti.captionDesc.SetString(L"이미지");
+	srcTypeBtn->AddItem(SRC_TYPE_IMG_BTN_NAME, ti);
+	ti.captionDesc.SetString(L"전용 문자열");
+	srcTypeBtn->AddItem(SRC_TYPE_CSTR_BTN_NAME, ti);
+	ti.captionDesc.SetString(L"선언 문자열");
+	srcTypeBtn->AddItem(SRC_TYPE_SSTR_BTN_NAME, ti);
+
+	return true;
+}
+
+void MkSRectSetterSystemWindow::SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName)
+{
+	if ((owner != NULL) && (targetNode != NULL) && (!rectName.Empty()))
+	{
+		m_Owner = owner;
+		m_TargetNode = targetNode;
+		m_RectName = rectName;
+
+		if (m_TargetNode->ExistSRect(m_RectName))
+		{
+			m_SrcType = m_TargetNode->GetSRect(m_RectName)->__GetSrcInfo(m_ImagePath, m_SubsetName, m_DecoStr, m_NodeNameAndKey);
+		}
+
+		MK_WIN_EVENT_MGR.ActivateWindow(GetNodeName(), true);
+	}
+}
+
+void MkSRectSetterSystemWindow::UseWindowEvent(WindowEvent& evt)
+{
+	switch (evt.type)
+	{
+		/*
+	case MkSceneNodeFamilyDefinition::eCheckOn:
+		{
+			if (m_TargetWindow != NULL)
+			{
+				for (unsigned int i=0; i<eMaxAttribute; ++i)
+				{
+					if (evt.node->GetNodeName() == sWinAttrDesc[i])
+					{
+						m_TargetWindow->SetAttribute(static_cast<eAttribute>(i), true);
+					}
+				}
+			}
+		}
+		break;
+
+	case MkSceneNodeFamilyDefinition::eCheckOff:
+		{
+			if (m_TargetWindow != NULL)
+			{
+				for (unsigned int i=0; i<eMaxAttribute; ++i)
+				{
+					if (evt.node->GetNodeName() == sWinAttrDesc[i])
+					{
+						m_TargetWindow->SetAttribute(static_cast<eAttribute>(i), false);
+					}
+				}
+			}
+		}
+		break;
+		*/
+
+	case MkSceneNodeFamilyDefinition::eCursorLeftRelease:
+		{
+			if (evt.node->GetPresetComponentType() == eS2D_WPC_OKButton)
+			{
+				if (m_Owner != NULL)
+				{
+					bool ok = false;
+					switch (m_SrcType)
+					{
+					case MkSRect::eStaticImage:
+						m_DecoStr.Clear();
+						m_NodeNameAndKey.Clear();
+						ok = !m_ImagePath.Empty();
+						break;
+					case MkSRect::eCustomDecoStr:
+						m_ImagePath.Clear();
+						m_SubsetName.Clear();
+						m_NodeNameAndKey.Clear();
+						ok = !m_DecoStr.Empty();
+						break;
+					case MkSRect::eSceneDecoStr:
+						m_ImagePath.Clear();
+						m_SubsetName.Clear();
+						m_DecoStr.Clear();
+						ok = !m_NodeNameAndKey.Empty();
+						break;
+					}
+
+					if (ok)
+					{
+						m_Owner->SRectInfoUpdated(m_TargetNode, m_RectName, m_SrcType, m_ImagePath, m_SubsetName, m_DecoStr, m_NodeNameAndKey);
+					}
+
+					MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
+				}
+			}
+			else if (evt.node->GetPresetComponentType() == eS2D_WPC_CancelButton)
+			{
+				MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
+			}
+		}
+		break;
+	}
+}
+
+void MkSRectSetterSystemWindow::Deactivate(void)
+{
+	m_Owner = NULL;
+	m_TargetNode = NULL;
+	m_RectName.Clear();
+
+	m_ImagePath.Clear();
+	m_SubsetName.Clear();
+	m_DecoStr.Clear();
+	m_NodeNameAndKey.Clear();
+	m_SrcType = MkSRect::eNone;
+
+	MkBaseSystemWindow::Deactivate();
+}
+
+MkSRectSetterSystemWindow::MkSRectSetterSystemWindow(const MkHashStr& name) : MkBaseSystemWindow(name)
+{
+	m_Owner = NULL;
+	m_TargetNode = NULL;
+	m_SrcType = MkSRect::eNone;
 }
 
 //------------------------------------------------------------------------------------------------//

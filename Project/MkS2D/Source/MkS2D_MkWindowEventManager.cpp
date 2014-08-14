@@ -33,6 +33,7 @@ const static MkHashStr SETTING_WINDOW_NAME = L"__#Setting";
 const static MkHashStr TARGET_WINDOW_NAME = L"__#Target";
 const static MkHashStr SW_NODENAMEINPUT_WINDOW_NAME = L"__#NNI";
 const static MkHashStr SW_WIN_ATTR_WINDOW_NAME = L"__#WinAttr";
+const static MkHashStr SW_SRECT_SETTER_WINDOW_NAME = L"__#SRectSetter";
 
 static const MkHashStr PROF_KEY_UPDATE = L"MkWindowEventManager::Update";
 
@@ -122,6 +123,12 @@ void MkWindowEventManager::SetUp(const MkBaseTexturePtr& sceneTexture)
 	if (!m_WindowTable.Exist(SW_WIN_ATTR_WINDOW_NAME))
 	{
 		_CreateSystemWindow(new MkWindowAttributeSystemWindow(SW_WIN_ATTR_WINDOW_NAME));
+	}
+
+	// SRect setter 윈도우 생성
+	if (!m_WindowTable.Exist(SW_SRECT_SETTER_WINDOW_NAME))
+	{
+		_CreateSystemWindow(new MkSRectSetterSystemWindow(SW_SRECT_SETTER_WINDOW_NAME));
 	}
 }
 
@@ -274,6 +281,7 @@ void MkWindowEventManager::Update(void)
 				DeactivateWindow(TARGET_WINDOW_NAME);
 				DeactivateWindow(SW_NODENAMEINPUT_WINDOW_NAME);
 				DeactivateWindow(SW_WIN_ATTR_WINDOW_NAME);
+				DeactivateWindow(SW_SRECT_SETTER_WINDOW_NAME);
 
 				__HideDebugLayer();
 				_SetRegionLayerVisible(false);
@@ -828,6 +836,18 @@ void MkWindowEventManager::OpenWindowAttributeSystemWindow(MkBaseWindowNode* tar
 		if (sysWindow != NULL)
 		{
 			sysWindow->SetUp(targetWindow);
+		}
+	}
+}
+
+void MkWindowEventManager::OpenSRectSetterSystemWindow(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName)
+{
+	if (m_WindowTable.Exist(SW_SRECT_SETTER_WINDOW_NAME) && m_ModalWindow.Empty())
+	{
+		MkSRectSetterSystemWindow* sysWindow = dynamic_cast<MkSRectSetterSystemWindow*>(m_WindowTable[SW_SRECT_SETTER_WINDOW_NAME]);
+		if (sysWindow != NULL)
+		{
+			sysWindow->SetUp(owner, targetNode, rectName);
 		}
 	}
 }

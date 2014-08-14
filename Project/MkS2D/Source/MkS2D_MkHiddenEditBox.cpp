@@ -8,7 +8,7 @@
 
 
 #define MKDEF_BOX_WIDTH 800
-#define MKDEF_MAX_INPUT_COUNT 512 // 인풋창에 최대 입력가능 글자 수
+#define MKDEF_MAX_INPUT_COUNT 0 // 인풋창에 최대 입력가능 글자 수. 0이면 시스템에 의해 0x7FFFFFFE가 설정 됨
 #define MKDEF_HIDDEN_EDIT_BOX_ID 0xffff
 #define MKDEF_TOGGLE_CURSOR_TIME_COUNT 0.6f
 
@@ -139,6 +139,29 @@ void MkHiddenEditBox::Update(void)
 			m_BindingControl->__UpdateTextInfo(currText, currSelStart, currSelEnd);
 
 			m_Modified = false;
+		}
+
+		// 포커싱중인 콘트롤이 disable 되면 자동 해제
+		if (!m_BindingControl->GetEnable())
+		{
+			BindControl(NULL);
+		}
+		// 포커싱중인 콘트롤이 그려지지 않으면 자동 해제
+		else
+		{
+			MkSceneNode* targetNode = m_BindingControl;
+			while (targetNode != NULL)
+			{
+				if (targetNode->GetVisible())
+				{
+					targetNode = targetNode->GetParentNode();
+				}
+				else
+				{
+					BindControl(NULL);
+					break;
+				}
+			}
 		}
 	}
 }

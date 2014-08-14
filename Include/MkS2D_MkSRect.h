@@ -161,7 +161,7 @@ public:
 
 	void __AffectTexture(void) const;
 
-	eSrcType __GetSrcType(void) const;
+	eSrcType __GetSrcInfo(MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) const;
 
 	MkSRect();
 	virtual ~MkSRect() { Clear(); }

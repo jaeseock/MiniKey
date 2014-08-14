@@ -390,7 +390,7 @@ void MkSRect::__AffectTexture(void) const
 	}
 }
 
-MkSRect::eSrcType MkSRect::__GetSrcType(void) const
+MkSRect::eSrcType MkSRect::__GetSrcInfo(MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) const
 {
 	if (m_Texture != NULL)
 	{
@@ -401,15 +401,20 @@ MkSRect::eSrcType MkSRect::__GetSrcType(void) const
 		{
 			if (!m_OriginalDecoStr.Empty())
 			{
+				decoStr = m_OriginalDecoStr;
 				return eCustomDecoStr;
 			}
 			else if (!m_SceneDecoTextNodeNameAndKey.Empty())
 			{
+				nodeNameAndKey = m_SceneDecoTextNodeNameAndKey;
 				return eSceneDecoStr;
 			}
 			else
 				return eRenderToTexture;
 		}
+
+		imagePath = imgPath.GetString();
+		subsetName = m_CurrentSubsetName;
 		return eStaticImage;
 	}
 	return eNone;

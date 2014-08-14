@@ -496,10 +496,11 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 				const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
 				if (targetKey == TAG_ICON_UK)
 				{
-					
+					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, MKDEF_S2D_BASE_WND_ICON_TAG_NAME);
 				}
 				else if (targetKey == TAG_CAPTION_UK)
 				{
+					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME);
 				}
 			}
 			else if (evt.node->GetNodeName() == DEL_TAG_BTN_NAME)
@@ -707,6 +708,19 @@ void MkEditModeTargetWindow::NodeNameChanged(const MkHashStr& oldName, const MkH
 				_UpdateControlsByTargetNode();
 			}
 		}
+	}
+}
+
+void MkEditModeTargetWindow::SRectInfoUpdated
+(MkSceneNode* targetNode, const MkHashStr& rectName, MkSRect::eSrcType srcType, MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey)
+{
+	MkHashStr iTag = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
+	MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+	if (rectName == iTag)
+	{
+	}
+	else if (rectName == nTag)
+	{
 	}
 }
 

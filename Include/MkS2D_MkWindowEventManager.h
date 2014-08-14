@@ -17,8 +17,10 @@
 #define MK_WIN_EVENT_MGR MkWindowEventManager::Instance()
 
 
+class MkSceneNode;
 class MkBaseSystemWindow;
 class MkNodeNameInputListener;
+class MkSRectInfoListener;
 
 class MkDrawStep;
 class MkSceneNode;
@@ -74,6 +76,7 @@ public:
 	// system window
 	void OpenNodeNameInputSystemWindow(MkSceneNode* targetNode, MkNodeNameInputListener* owner = NULL);
 	void OpenWindowAttributeSystemWindow(MkBaseWindowNode* targetWindow);
+	void OpenSRectSetterSystemWindow(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName);
 
 	// «ÿ¡¶
 	void Clear(void);
