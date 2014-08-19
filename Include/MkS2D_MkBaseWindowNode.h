@@ -247,7 +247,7 @@ public:
 	// 해당 윈도우 노드에 ItemTagInfo 반영
 	// - icon, 혹은 caption만 존재 : 중앙 정렬
 	// - icon, caption 모두 존재 : 좌측 정렬
-	bool SetPresetComponentItemTag(const ItemTagInfo& tagInfo);
+	virtual bool SetPresetComponentItemTag(const ItemTagInfo& tagInfo, bool deleteIconIfEmpty = true, bool deleteCaptionIfEmpty = true);
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 테마명 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }

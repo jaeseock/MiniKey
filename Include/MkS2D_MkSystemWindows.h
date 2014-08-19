@@ -86,17 +86,28 @@ protected:
 class MkSRectInfoListener
 {
 public:
-	virtual void SRectInfoUpdated(MkSceneNode* targetNode, const MkHashStr& rectName, MkSRect::eSrcType srcType, MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) {}
+	virtual void SRectInfoUpdated
+		(MkSceneNode* targetNode, const MkHashStr& rectName, bool flipHorizontal, bool flipVertical, float alpha,
+		MkSRect::eSrcType srcType, const MkPathName& imagePath, const MkHashStr& subsetName, const MkStr& decoStr, const MkArray<MkHashStr>& nodeNameAndKey) {}
 	virtual ~MkSRectInfoListener() {}
 };
+
+class MkSpreadButtonNode;
 
 class MkSRectSetterSystemWindow : public MkBaseSystemWindow
 {
 public:
 
+	enum eInputType
+	{
+		eOneOfSelection = 0, // image, custom str, scene str 중 하나. flip horizontal/vertical, alpha 설정 가능
+		eImageOnly, // image만. flip horizontal/vertical, alpha 설정 불가
+		eStringOnly // custom str, scene str 중 하나만. flip horizontal/vertical, alpha 설정 불가
+	};
+
 	virtual bool Initialize(void);
 
-	void SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName);
+	void SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName, eInputType inputType);
 
 	virtual void UseWindowEvent(WindowEvent& evt);
 
@@ -107,13 +118,33 @@ public:
 
 protected:
 
+	void _UpdataSubControl(void);
+	void _UpdateSamplePosition(void);
+	void _ConvertNodeNameAndKeyToStr(const MkArray<MkHashStr>& nodeNameAndKey, MkStr& msg);
+	void _ConvertStrToNodeNameAndKey(const MkStr& msg, MkArray<MkHashStr>& nodeNameAndKey);
+
+protected:
+
 	MkSRectInfoListener* m_Owner;
 	MkSceneNode* m_TargetNode;
 	MkHashStr m_RectName;
+	eInputType m_InputType;
+	MkFloat2 m_RectBGSize;
 
 	MkPathName m_ImagePath;
 	MkHashStr m_SubsetName;
 	MkStr m_DecoStr;
 	MkArray<MkHashStr> m_NodeNameAndKey;
 	MkSRect::eSrcType m_SrcType;
+
+	MkSRect* m_SampleRect;
+
+	MkCheckButtonNode* m_FlipHorizontalBtn;
+	MkCheckButtonNode* m_FlipVerticalBtn;
+	MkSpreadButtonNode* m_AlphaBtn;
+	MkSpreadButtonNode* m_SrcTypeBtn;
+	MkBaseWindowNode* m_ImageLoadBtn;
+	MkEditBoxNode* m_ImageSubsetEB;
+	MkEditBoxNode* m_CustomStringEB;
+	MkEditBoxNode* m_SceneStringEB;
 };

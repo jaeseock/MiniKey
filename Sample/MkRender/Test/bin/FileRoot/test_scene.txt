@@ -1,8 +1,8 @@
 
 //--------------------------------------------------------------------//
 // MiniKey data node text source
-//   - file path  : test_scene.txt
-//   - time stamp : 2014.08.13 (19:50:54),
+//   - file path  : d:\Solutions\MiniKey\Sample\MkRender\Test\bin\FileRoot\test_scene.txt
+//   - time stamp : 2014.08.19 (21:27:47),
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -11,7 +11,7 @@ uint Attribute = 552;
 int2 PCompSize = (294, 20);
 str PComponent = "NormalTitle";
 str PThemeName = "Default";
-vec3 Position = (0.000, -20.000, 0.000);
+vec3 Position = (217.000, 590.000, 366.667);
 
 Node "<SRect>"
 {
@@ -19,34 +19,23 @@ Node "<SRect>"
 	{
 		float Depth = -0.025;
 		str FontState = "YellowFS";
-		vec2 Position = (125.000, 4.000);
+		vec2 Position = (140.000, 4.000);
 		str Resource = // [2]
 			"odt" /
-			"타 이 틀";
-		vec2 Size = (44.000, 12.000);
+			"sd";
+		vec2 Size = (14.000, 12.000);
 		bool Visible = No;
-	}
-
-	Node "__#IconTag" : "T_SRect"
-	{
-		float Depth = -0.025;
-		vec2 Position = (3.000, 2.000);
-		str Resource = // [3]
-			"map" /
-			"Default\window_mgr.png" /
-			"SampleIcon";
-		vec2 Size = (16.000, 16.000);
 	}
 
 	Node "__#NCapTag" : "T_SRect"
 	{
 		float Depth = -0.025;
 		str FontState = "WhiteFS";
-		vec2 Position = (125.000, 4.000);
+		vec2 Position = (140.000, 4.000);
 		str Resource = // [2]
 			"odt" /
-			"타 이 틀";
-		vec2 Size = (44.000, 12.000);
+			"sd";
+		vec2 Size = (14.000, 12.000);
 	}
 }
 
@@ -1814,9 +1803,7 @@ Node "<SceneNode>"
 					Node "SB" : "T_SpreadButtonNode"
 					{
 						uint Attribute = 512;
-						str Caption = "1-1";
-						str IconPath = "Default\window_mgr.png";
-						str IconSubset = "SampleIcon";
+						str Caption = "0";
 						str ItemSeq = // [4]
 							"0" /
 							"1" /
@@ -1827,42 +1814,31 @@ Node "<SceneNode>"
 						str PComponent = "RootBtn";
 						str PThemeName = "Default";
 						vec3 Position = (10.000, 130.000, -0.100);
-						str TargetButton = "1-1";
+						str TargetButton = "0";
 
 						Node "<SRect>"
 						{
 							Node "__#HCapTag" : "T_SRect"
 							{
-								float Depth = -0.050;
+								float Depth = -0.025;
 								str FontState = "YellowFS";
-								vec2 Position = (22.000, 4.000);
+								vec2 Position = (47.000, 4.000);
 								str Resource = // [2]
 									"odt" /
-									"1-1";
-								vec2 Size = (18.000, 12.000);
+									"0";
+								vec2 Size = (6.000, 12.000);
 								bool Visible = No;
-							}
-
-							Node "__#IconTag" : "T_SRect"
-							{
-								float Depth = -0.050;
-								vec2 Position = (3.000, 2.000);
-								str Resource = // [3]
-									"map" /
-									"Default\window_mgr.png" /
-									"SampleIcon";
-								vec2 Size = (16.000, 16.000);
 							}
 
 							Node "__#NCapTag" : "T_SRect"
 							{
-								float Depth = -0.050;
+								float Depth = -0.025;
 								str FontState = "WhiteFS";
-								vec2 Position = (22.000, 4.000);
+								vec2 Position = (47.000, 4.000);
 								str Resource = // [2]
 									"odt" /
-									"1-1";
-								vec2 Size = (18.000, 12.000);
+									"0";
+								vec2 Size = (6.000, 12.000);
 							}
 						}
 
@@ -1873,8 +1849,6 @@ Node "<SceneNode>"
 								uint Attribute = 514;
 								uint ButtonType = 255;
 								str Caption = "0";
-								str IconPath = "Default\window_mgr.png";
-								str IconSubset = "SampleIcon";
 								int2 PCompSize = (100, 20);
 								str PComponent = "ListBtn";
 								str PThemeName = "Default";
@@ -1887,7 +1861,7 @@ Node "<SceneNode>"
 									{
 										float Depth = -0.025;
 										str FontState = "YellowFS";
-										vec2 Position = (22.000, 4.000);
+										vec2 Position = (47.000, 4.000);
 										str Resource = // [2]
 											"odt" /
 											"0";
@@ -1895,22 +1869,11 @@ Node "<SceneNode>"
 										bool Visible = No;
 									}
 
-									Node "__#IconTag" : "T_SRect"
-									{
-										float Depth = -0.025;
-										vec2 Position = (3.000, 2.000);
-										str Resource = // [3]
-											"map" /
-											"Default\window_mgr.png" /
-											"SampleIcon";
-										vec2 Size = (16.000, 16.000);
-									}
-
 									Node "__#NCapTag" : "T_SRect"
 									{
 										float Depth = -0.025;
 										str FontState = "WhiteFS";
-										vec2 Position = (22.000, 4.000);
+										vec2 Position = (47.000, 4.000);
 										str Resource = // [2]
 											"odt" /
 											"0";
@@ -8982,32 +8945,6 @@ Node "<SceneNode>"
 				str PThemeName = "Default";
 				vec3 Position = (60.000, 3.000, -0.025);
 
-				Node "<SRect>"
-				{
-					Node "__#HCapTag" : "T_SRect"
-					{
-						float Depth = -0.025;
-						str FontState = "YellowFS";
-						vec2 Position = (16.000, 4.000);
-						str Resource = // [2]
-							"odt" /
-							"확 인";
-						vec2 Size = (28.000, 12.000);
-						bool Visible = No;
-					}
-
-					Node "__#NCapTag" : "T_SRect"
-					{
-						float Depth = -0.025;
-						str FontState = "WhiteFS";
-						vec2 Position = (16.000, 4.000);
-						str Resource = // [2]
-							"odt" /
-							"확 인";
-						vec2 Size = (28.000, 12.000);
-					}
-				}
-
 				Node "<SceneNode>"
 				{
 					Node "Default" : "T_SceneNode"
@@ -9480,8 +9417,6 @@ Node "<SceneNode>"
 
 	Node "LostFocus" : "T_SceneNode"
 	{
-		bool Visible = No;
-
 		Node "<SRect>"
 		{
 			Node "LB" : "T_SRect"
@@ -9577,6 +9512,8 @@ Node "<SceneNode>"
 
 	Node "OnFocus" : "T_SceneNode"
 	{
+		bool Visible = No;
+
 		Node "<SRect>"
 		{
 			Node "LB" : "T_SRect"

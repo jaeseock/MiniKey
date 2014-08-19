@@ -76,7 +76,7 @@ public:
 	// system window
 	void OpenNodeNameInputSystemWindow(MkSceneNode* targetNode, MkNodeNameInputListener* owner = NULL);
 	void OpenWindowAttributeSystemWindow(MkBaseWindowNode* targetWindow);
-	void OpenSRectSetterSystemWindow(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName);
+	void OpenSRectSetterSystemWindow(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName, int inputType);
 
 	// «ÿ¡¶
 	void Clear(void);

@@ -122,7 +122,10 @@ public:
 	// 배열의 position 부터의 구간과 주어진 블록의 동일여부 반환
 	inline bool Equals(unsigned int position, const MkMemoryBlockDescriptor<DataType>& desc) const
 	{
-		if ((!desc.IsValid()) || (!GetAvailableSection(MkArraySection(position, desc.GetSize()))))
+		if (!desc.IsValid())
+			return Empty();
+
+		if (!GetAvailableSection(MkArraySection(position, desc.GetSize())))
 			return false;
 
 		return _EqualData(m_Element, position, desc, 0, desc.GetSize());

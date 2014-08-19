@@ -41,10 +41,10 @@ bool MkEditBoxNode::CreateEditBox
 	return ok;
 }
 
-void MkEditBoxNode::SetText(const MkStr& msg)
+void MkEditBoxNode::SetText(const MkStr& msg, bool pushEvent)
 {
 	DWORD selPos = static_cast<DWORD>(msg.GetSize());
-	__UpdateTextInfo(msg, selPos, selPos);
+	__UpdateTextInfo(msg, selPos, selPos, pushEvent);
 }
 
 void MkEditBoxNode::CommitText(void)
@@ -199,7 +199,7 @@ void MkEditBoxNode::__SetFocus(void)
 	_UpdateCursorAndSelection();
 }
 
-bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd)
+bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd, bool pushEvent)
 {
 	bool newText = (msg != m_Text);
 	bool ok = (newText || (selStart != m_SelStart) || (selEnd != m_SelEnd));
@@ -431,7 +431,7 @@ bool MkEditBoxNode::__UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD sel
 
 		_UpdateCursorAndSelection();
 
-		if (newText)
+		if (newText && pushEvent)
 		{
 			_PushWindowEvent(MkSceneNodeFamilyDefinition::eModifyText);
 		}

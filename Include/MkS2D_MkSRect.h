@@ -133,6 +133,7 @@ public:
 	// image subset
 	void SetSubset(const MkHashStr& name);
 	inline const MkHashStr& GetSubset(void) const { return m_CurrentSubsetName; }
+	unsigned int GetSubsetList(MkArray<MkHashStr>& keyList) const;
 
 	// set & get visible
 	inline void SetVisible(bool visible) { m_Visible = visible; }

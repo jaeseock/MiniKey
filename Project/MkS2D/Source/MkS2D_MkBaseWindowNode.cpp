@@ -1167,7 +1167,7 @@ bool MkBaseWindowNode::SetPresetComponentCaption(const MkHashStr& themeName, con
 	return (hOK && nOK);
 }
 
-bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo)
+bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo, bool deleteIconIfEmpty, bool deleteCaptionIfEmpty)
 {
 	const float MARGIN = MK_WR_PRESET.GetMargin();
 
@@ -1177,7 +1177,7 @@ bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo)
 	const MkHashStr iconTagName = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
 	if (tagInfo.iconPath.Empty())
 	{
-		if (ExistSRect(iconTagName))
+		if (deleteIconIfEmpty && ExistSRect(iconTagName))
 		{
 			DeleteSRect(iconTagName);
 		}
@@ -1189,8 +1189,25 @@ bool MkBaseWindowNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo)
 		captionBorderX += MARGIN;
 	}
 
-	bool captionOK = (captionEnable) ?
-		SetPresetComponentCaption(m_PresetThemeName, tagInfo.captionDesc, (captionBorderX == MARGIN) ? eRAP_MiddleCenter : eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f)) : true;
+	bool captionOK = true;
+	if (captionEnable)
+	{
+		captionOK = SetPresetComponentCaption
+			(m_PresetThemeName, tagInfo.captionDesc, (captionBorderX == MARGIN) ? eRAP_MiddleCenter : eRAP_LeftCenter, MkFloat2(captionBorderX, 0.f));
+	}
+	else if (deleteCaptionIfEmpty)
+	{
+		const MkHashStr hTag = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+		if (ExistSRect(hTag))
+		{
+			DeleteSRect(hTag);
+		}
+		const MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+		if (ExistSRect(nTag))
+		{
+			DeleteSRect(nTag);
+		}
+	}
 
 	return (iconOK && captionOK);
 }

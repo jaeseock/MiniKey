@@ -29,7 +29,7 @@
 //	MkBaseWindowNode::ItemTagInfo tagInfo;
 //	tagInfo.iconPath = L"Default\\window_mgr.png";
 //	tagInfo.iconSubset = L"SampleIcon";
-//	rbNode->SetItemTag(tagInfo);
+//	rbNode->SetPresetComponentItemTag(tagInfo);
 //	rbNode->SetLocalPosition(MkVec3(10.f, 30.f, -0.1f));
 //
 //	rbNode->AddItem(L"0", tagInfo);
@@ -107,7 +107,7 @@ public:
 	bool RemoveItem(const MkHashStr& uniqueKey);
 
 	// item tag 반영
-	bool SetItemTag(const ItemTagInfo& tagInfo);
+	virtual bool SetPresetComponentItemTag(const ItemTagInfo& tagInfo, bool deleteIconIfEmpty = true, bool deleteCaptionIfEmpty = true);
 
 	// item tag 반환
 	inline const ItemTagInfo& GetItemTagInfo(void) const { return m_ItemTagInfo; }
@@ -157,8 +157,6 @@ public:
 	bool __CheckUniqueKey(const MkHashStr& uniqueKey);
 
 	void __UpdateItemRegion(void);
-
-	inline void __ClearIconPartOfItemTag(void) { m_ItemTagInfo.iconPath.Clear(); m_ItemTagInfo.iconSubset.Clear(); }
 
 protected:
 

@@ -840,14 +840,14 @@ void MkWindowEventManager::OpenWindowAttributeSystemWindow(MkBaseWindowNode* tar
 	}
 }
 
-void MkWindowEventManager::OpenSRectSetterSystemWindow(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName)
+void MkWindowEventManager::OpenSRectSetterSystemWindow(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName, int inputType)
 {
 	if (m_WindowTable.Exist(SW_SRECT_SETTER_WINDOW_NAME) && m_ModalWindow.Empty())
 	{
 		MkSRectSetterSystemWindow* sysWindow = dynamic_cast<MkSRectSetterSystemWindow*>(m_WindowTable[SW_SRECT_SETTER_WINDOW_NAME]);
 		if (sysWindow != NULL)
 		{
-			sysWindow->SetUp(owner, targetNode, rectName);
+			sysWindow->SetUp(owner, targetNode, rectName, static_cast<MkSRectSetterSystemWindow::eInputType>(inputType));
 		}
 	}
 }

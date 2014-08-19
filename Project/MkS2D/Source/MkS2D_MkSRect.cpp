@@ -280,6 +280,12 @@ void MkSRect::SetSubset(const MkHashStr& name)
 	}
 }
 
+unsigned int MkSRect::GetSubsetList(MkArray<MkHashStr>& keyList) const
+{
+	keyList.Clear();
+	return (m_Texture == NULL) ? 0 : m_Texture->GetSubsetList(keyList);
+}
+
 bool MkSRect::CheckValidation(const MkFloatRect& cameraAABR) const
 {
 	return

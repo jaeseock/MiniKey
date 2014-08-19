@@ -1354,12 +1354,14 @@ unsigned int MkPathName::_GetFilePathFromDialog
 				}
 			}
 
+			resultPath.ToLower(0); // 드라이브명 대문자->소문자
 			directoryPath = resultPath;
 			fileCount = resultCount;
 		}
 		else
 		{
 			MkPathName path = pathBuf;
+			path.ToLower(0); // 드라이브명 대문자->소문자
 			unsigned int offset = path.GetSize() + 1;
 
 			while ((offset < allocSize) && (pathBuf[offset] != NULL))

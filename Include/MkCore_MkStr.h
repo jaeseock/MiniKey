@@ -491,9 +491,11 @@ public:
 
 	// 대문자로 변환
 	MkStr& ToUpper(void);
+	MkStr& ToUpper(unsigned int position);
 
 	// 소문자로 변환
 	MkStr& ToLower(void);
+	MkStr& ToLower(unsigned int position);
 
 	// bool형으로 변환
 	// 대소문자 상관 없이 "true"거나 "yes"일 경우 참, 아니면 거짓

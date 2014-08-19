@@ -157,6 +157,10 @@
 // 선택창에서 node depth당 들여쓰기 크기
 #define MKDEF_S2D_NODE_SEL_DEPTH_OFFSET 20.f
 
+// image 파일 확장자
+#define MKDEF_S2D_IMAGE_FILE_EXT_00 L"png"
+#define MKDEF_S2D_IMAGE_FILE_EXT_01 L"dds"
+
 // scene 파일 확장자
 #define MKDEF_S2D_SCENE_FILE_EXT_BINARY L"msd" // minikey scene data
 #define MKDEF_S2D_SCENE_FILE_EXT_TEXT L"txt"

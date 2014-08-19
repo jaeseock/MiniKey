@@ -1080,11 +1080,37 @@ MkStr& MkStr::ToUpper(void)
 	return *this;
 }
 
+MkStr& MkStr::ToUpper(unsigned int position)
+{
+	if (m_Str.IsValidIndex(position))
+	{
+		wchar_t& c = m_Str[position];
+		if ((c >= L'a') && (c <= L'z'))
+		{
+			c -= 32;
+		}
+	}
+	return *this;
+}
+
 MkStr& MkStr::ToLower(void)
 {
 	MK_INDEXING_LOOP(m_Str, i)
 	{
 		wchar_t& c = m_Str[i];
+		if ((c >= L'A') && (c <= L'Z'))
+		{
+			c += 32;
+		}
+	}
+	return *this;
+}
+
+MkStr& MkStr::ToLower(unsigned int position)
+{
+	if (m_Str.IsValidIndex(position))
+	{
+		wchar_t& c = m_Str[position];
 		if ((c >= L'A') && (c <= L'Z'))
 		{
 			c += 32;

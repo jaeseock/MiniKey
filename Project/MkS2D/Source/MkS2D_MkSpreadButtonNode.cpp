@@ -56,7 +56,7 @@ bool MkSpreadButtonNode::CreateStaticRootTypeButton(const MkHashStr& themeName, 
 	bool ok = _CreateTypeButton(themeName, windowSize, eStaticRoot, openingDirection);
 	if (ok)
 	{
-		ok = SetItemTag(tagInfo);
+		ok = SetPresetComponentItemTag(tagInfo);
 	}
 	return ok;
 }
@@ -76,7 +76,7 @@ MkSpreadButtonNode* MkSpreadButtonNode::AddItem(const MkHashStr& uniqueKey, cons
 			const MkFloat2& btnSize = rootButton->GetPresetComponentSize();
 			if (lbNode->__CreateListTypeButton(rootButton->GetPresetThemeName(), btnSize, eRightside))
 			{
-				lbNode->SetItemTag(tagInfo);
+				lbNode->SetPresetComponentItemTag(tagInfo);
 				lbNode->SetVisible(false);
 				lbNode->SetAttribute(eIgnoreMovement, true);
 				lbNode->SetLocalDepth(MKDEF_LIST_BUTTON_DEPTH_GRID); // 부모 버튼보다 아주 살짝 깊게 함. 부모와 자식이 겹쳐 있으면 선택이 힘듬
@@ -152,7 +152,7 @@ bool MkSpreadButtonNode::SetTargetItem(const MkHashStr& uniqueKey)
 				MK_CHECK(button != NULL, GetNodeName().GetString() + L" selection root button의 타겟으로 존재하지 않는 " + uniqueKey.GetString() + L" 버튼이 지정 되었음")
 					return false;
 
-				SetItemTag(button->GetItemTagInfo());
+				SetPresetComponentItemTag(button->GetItemTagInfo());
 			}
 		}
 	}
@@ -175,7 +175,7 @@ bool MkSpreadButtonNode::SetTargetItem(const MkSpreadButtonNode* targetNode)
 
 			if (m_ButtonType == eSeletionRoot)
 			{
-				SetItemTag(targetNode->GetItemTagInfo());
+				SetPresetComponentItemTag(targetNode->GetItemTagInfo());
 			}
 
 			// window event
@@ -195,7 +195,7 @@ bool MkSpreadButtonNode::ClearTargetItem(void)
 		if (m_ButtonType == eSeletionRoot)
 		{
 			ItemTagInfo nullTag;
-			SetItemTag(nullTag);
+			SetPresetComponentItemTag(nullTag);
 		}
 	}
 	return ok;
@@ -235,12 +235,21 @@ bool MkSpreadButtonNode::RemoveItem(const MkHashStr& uniqueKey)
 	return false;
 }
 
-bool MkSpreadButtonNode::SetItemTag(const ItemTagInfo& tagInfo)
+bool MkSpreadButtonNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo, bool deleteIconIfEmpty, bool deleteCaptionIfEmpty)
 {
-	m_ItemTagInfo = tagInfo;
+	if ((!tagInfo.iconPath.Empty()) || deleteIconIfEmpty)
+	{
+		m_ItemTagInfo.iconPath = tagInfo.iconPath;
+		m_ItemTagInfo.iconSubset = tagInfo.iconSubset;
+	}
+	if (tagInfo.captionDesc.GetEnable() || deleteCaptionIfEmpty)
+	{
+		m_ItemTagInfo.captionDesc = tagInfo.captionDesc;
+	}
+	
 	m_ItemTagInfo.captionDesc.__Check(GetNodeName().GetString());
 
-	return SetPresetComponentItemTag(m_ItemTagInfo);
+	return MkBaseWindowNode::SetPresetComponentItemTag(m_ItemTagInfo, deleteIconIfEmpty, deleteCaptionIfEmpty);
 }
 
 void MkSpreadButtonNode::OpenAllItems(void)
@@ -260,7 +269,7 @@ void MkSpreadButtonNode::OpenAllItems(void)
 				if (targetNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
 				{
 					MkBaseWindowNode* windowNode = dynamic_cast<MkBaseWindowNode*>(targetNode);
-					if (windowNode != NULL)
+					if ((windowNode != NULL) && windowNode->GetEnable())
 					{
 						windowNode->InputEventMouseMove(false, btnPushing, MkFloat2(0.f, 0.f));
 					}
@@ -376,7 +385,7 @@ void MkSpreadButtonNode::Load(const MkDataNode& node)
 		MK_CHECK(button != NULL, GetNodeName().GetString() + L" selection root button의 타겟으로 존재하지 않는 " + m_TargetUniqueKey.GetString() + L" 버튼이 지정 되었음")
 			return;
 
-		SetItemTag(button->GetItemTagInfo());
+		SetPresetComponentItemTag(button->GetItemTagInfo());
 	}
 }
 

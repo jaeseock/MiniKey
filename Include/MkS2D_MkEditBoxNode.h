@@ -27,8 +27,8 @@ public:
 		const MkHashStr& selectionFontState = MkHashStr::NullHash, const MkHashStr& cursorFontState = MkHashStr::NullHash,
 		const MkStr& initMsg = MkStr::Null, bool useHistory = false);
 
-	// 문자열 설정
-	void SetText(const MkStr& msg);
+	// 문자열 설정. pushEvent는 MkSceneNodeFamilyDefinition::eModifyText 발생 여부
+	void SetText(const MkStr& msg, bool pushEvent = true);
 
 	// 문자열 결정 이벤트 발생. history에 기록
 	void CommitText(void);
@@ -61,7 +61,7 @@ public:
 	void __BindingLost(void);
 	void __SetFocus(void);
 
-	bool __UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd);
+	bool __UpdateTextInfo(const MkStr& msg, DWORD selStart, DWORD selEnd, bool pushEvent);
 
 	void __ToggleCursorRect(void);
 

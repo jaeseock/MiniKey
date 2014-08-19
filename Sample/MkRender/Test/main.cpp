@@ -108,7 +108,7 @@ public:
 		MkBaseWindowNode::ItemTagInfo tagInfo;
 		tagInfo.iconPath = L"Default\\window_mgr.png";
 		tagInfo.iconSubset = L"SampleIcon";
-		lbNode->SetItemTag(tagInfo);
+		lbNode->SetPresetComponentItemTag(tagInfo);
 		lbNode->SetLocalPosition(MkVec3(10.f, 130.f, -0.1f));
 
 		lbNode->AddItem(L"0", tagInfo);

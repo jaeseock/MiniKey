@@ -86,6 +86,7 @@ public:
 	// image subset
 	const MkFloat2& GetSubsetSize(const MkHashStr& name) const { return m_Subset.GetSubsetSize(name); }
 	inline void GetSubsetInfo(const MkHashStr& name, MkFloat2& localSize, MkFloat2 (&uv)[MkFloatRect::eMaxPointName]) const { m_Subset.GetSubsetInfo(name, localSize, uv); }
+	inline unsigned int GetSubsetList(MkArray<MkHashStr>& keyList) const { return m_Subset.GetSubsetList(keyList); }
 
 	// bitmap group
 	inline unsigned int GetBitmapGroup(void) const { return m_Subset.GetGroup(); }

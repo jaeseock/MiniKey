@@ -57,6 +57,8 @@ public:
 
 	void GetSubsetInfo(const MkHashStr& name, MkFloat2& localSize, MkFloat2 (&uv)[MkFloatRect::eMaxPointName]) const;
 
+	inline unsigned int GetSubsetList(MkArray<MkHashStr>& keyList) const { return m_Subsets.GetKeyList(keyList); }
+
 	inline unsigned int GetGroup(void) const { return m_Group; }
 
 	void Clear(void);
