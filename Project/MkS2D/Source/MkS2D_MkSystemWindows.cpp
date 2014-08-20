@@ -463,7 +463,11 @@ void MkSRectSetterSystemWindow::SetUp(MkSRectInfoListener* owner, MkSceneNode* t
 				break;
 			case MkSRect::eCustomDecoStr:
 				m_SampleRect->SetDecoString(m_DecoStr);
-				m_CustomStringEB->SetText(m_DecoStr);
+				{
+					MkStr tmpDS = m_DecoStr;
+					tmpDS.ReplaceCRtoTag();
+					m_CustomStringEB->SetText(tmpDS);
+				}
 				break;
 			case MkSRect::eSceneDecoStr:
 				m_SampleRect->SetDecoString(m_NodeNameAndKey);
@@ -716,6 +720,7 @@ void MkSRectSetterSystemWindow::UseWindowEvent(WindowEvent& evt)
 				else
 				{
 					m_DecoStr = cstr;
+					m_DecoStr.ReplaceTagtoCR();
 					m_SampleRect->SetDecoString(m_DecoStr);
 				}
 
@@ -732,7 +737,7 @@ void MkSRectSetterSystemWindow::UseWindowEvent(WindowEvent& evt)
 				else
 				{
 					MkArray<MkHashStr> nodeNameAndKey;
-					_ConvertStrToNodeNameAndKey(sstr, m_NodeNameAndKey);
+					_ConvertStrToNodeNameAndKey(sstr, nodeNameAndKey);
 
 					const MkDecoStr& decoStr = MK_WR_DECO_TEXT.GetDecoText(nodeNameAndKey);
 					if (!decoStr.Empty())
@@ -872,11 +877,12 @@ void MkSRectSetterSystemWindow::_ConvertNodeNameAndKeyToStr(const MkArray<MkHash
 
 		MK_INDEXING_LOOP(nodeNameAndKey, i)
 		{
-			msg += nodeNameAndKey[i].GetString();
 			if (i > 0)
 			{
 				msg += token;
 			}
+
+			msg += nodeNameAndKey[i].GetString();
 		}
 	}
 }

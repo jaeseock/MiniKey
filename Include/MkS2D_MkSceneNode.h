@@ -87,6 +87,9 @@ public:
 	// SRect 반환
 	MkSRect* GetSRect(const MkHashStr& name);
 
+	// SRect 이름 리스트 반환
+	inline unsigned int GetSRectNameList(MkArray<MkHashStr>& buffer) const { return m_SRects.GetKeyList(buffer); }
+
 	// SRect 삭제
 	bool DeleteSRect(const MkHashStr& name);
 	void DeleteAllSRects(void);

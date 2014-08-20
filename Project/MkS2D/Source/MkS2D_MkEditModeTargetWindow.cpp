@@ -286,7 +286,6 @@ bool MkEditModeTargetWindow::Initialize(void)
 			if (tagWin != NULL)
 			{
 				m_TabTag_EnableWindows.Reserve(12);
-				const float btnWidth = 100.f;
 				float btnPosY = tabBodySize.y - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT;
 
 				m_TabTag_Desc = tagWin->CreateSRect(L"__#Desc");
@@ -296,43 +295,45 @@ bool MkEditModeTargetWindow::Initialize(void)
 				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
 
 				m_TabTag_TargetSelection = new MkSpreadButtonNode(TAG_SPREAD_BTN_NAME);
-				m_TabTag_TargetSelection->CreateSelectionRootTypeButton(themeName, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
+				m_TabTag_TargetSelection->CreateSelectionRootTypeButton(themeName, MkFloat2(160.f, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
 				m_TabTag_TargetSelection->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				tagWin->AttachChildNode(m_TabTag_TargetSelection);
 
-				ti.captionDesc.SetString(L"아이콘");
+				ti.captionDesc.SetString(L"[ 아이콘 ]");
 				m_TabTag_TargetSelection->AddItem(TAG_ICON_UK, ti);
-				ti.captionDesc.SetString(L"캡션");
+				ti.captionDesc.SetString(L"[ 캡션 ]");
 				m_TabTag_TargetSelection->AddItem(TAG_CAPTION_UK, ti);
 				m_TabTag_TargetSelection->SetTargetItem(TAG_ICON_UK);
 
+				const float selectionBtnWidth = m_TabTag_TargetSelection->GetPresetComponentSize().x;
+				const float btnWidth = 80.f;
 				MkBaseWindowNode* setTag = __CreateWindowPreset(tagWin, SET_TAG_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				setTag->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + btnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				setTag->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				setTag->SetPresetComponentCaption(themeName, CaptionDesc(L"태그 설정"));
 
 				MkBaseWindowNode* delTag = __CreateWindowPreset(tagWin, DEL_TAG_BTN_NAME, themeName, eS2D_WPC_CancelButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				delTag->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 3.f + btnWidth * 2.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				delTag->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 3.f + selectionBtnWidth + btnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				delTag->SetPresetComponentCaption(themeName, CaptionDesc(L"태그 삭제"));
 				m_TabTag_EnableWindows.PushBack(delTag);
 
 				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
 
 				MkBaseWindowNode* alignLeft = __CreateWindowPreset(tagWin, TAG_ALIGN_LEFT_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				alignLeft->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + btnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				alignLeft->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				alignLeft->SetPresetComponentCaption(themeName, CaptionDesc(L"좌측 정렬"));
 				m_TabTag_EnableWindows.PushBack(alignLeft);
 
 				MkBaseWindowNode* alignCenter = __CreateWindowPreset(tagWin, TAG_ALIGN_CENTER_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				alignCenter->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 3.f + btnWidth * 2.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				alignCenter->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 3.f + selectionBtnWidth + btnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				alignCenter->SetPresetComponentCaption(themeName, CaptionDesc(L"중앙 정렬"));
 				m_TabTag_EnableWindows.PushBack(alignCenter);
 
 				MkBaseWindowNode* alignRight = __CreateWindowPreset(tagWin, TAG_ALIGN_RIGHT_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				alignRight->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 4.f + btnWidth * 3.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				alignRight->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 4.f + selectionBtnWidth + btnWidth * 2.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				alignRight->SetPresetComponentCaption(themeName, CaptionDesc(L"우측 정렬"));
 				m_TabTag_EnableWindows.PushBack(alignRight);
 
-				MkFloat2 pivot(MKDEF_CTRL_MARGIN * 2.f + btnWidth + 42.f, 140.f);
+				MkFloat2 pivot(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth + 42.f, 140.f);
 
 				MkBaseWindowNode* moveLL = __CreateWindowPreset(tagWin, TAG_PX_MOVE_LL_BTN_NAME, themeName, eS2D_WPC_DirLeftButton, MkFloat2(0.f, 0.f));
 				const MkFloat2& btnSize = moveLL->GetPresetComponentSize();
@@ -502,6 +503,10 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 				{
 					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, MkSRectSetterSystemWindow::eStringOnly);
 				}
+				else
+				{
+					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, targetKey, MkSRectSetterSystemWindow::eOneOfSelection);
+				}
 			}
 			else if (evt.node->GetNodeName() == DEL_TAG_BTN_NAME)
 			{
@@ -515,12 +520,22 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 						_UpdateTabTagControlEnable(false);
 					}
 				}
-				else if ((targetKey == TAG_CAPTION_UK) && (m_TargetNode->GetNodeType() != eS2D_SNT_SpreadButtonNode))
+				else if (targetKey == TAG_CAPTION_UK)
 				{
-					if (m_TargetNode->SetPresetComponentItemTag(tagInfo, false, true))
+					if ((m_TargetNode->GetNodeType() != eS2D_SNT_SpreadButtonNode) && m_TargetNode->SetPresetComponentItemTag(tagInfo, false, true))
 					{
 						_UpdateTabTagDesc();
 						_UpdateTabTagControlEnable(false);
+					}
+				}
+				else
+				{
+					if (m_TargetNode->DeleteSRect(targetKey))
+					{
+						m_TabTag_TargetSelection->RemoveItem(targetKey);
+						m_TabTag_TargetSelection->SetTargetItem(TAG_ICON_UK);
+						_UpdateTabTagDesc();
+						_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
 					}
 				}
 			}
@@ -544,10 +559,17 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 				{
 					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_ICON_TAG_NAME, alignment);
 				}
-				else if ((targetKey == TAG_CAPTION_UK) && (m_TargetNode->GetNodeType() != eS2D_SNT_SpreadButtonNode))
+				else if (targetKey == TAG_CAPTION_UK)
 				{
-					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, alignment);
-					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, alignment);
+					if (m_TargetNode->GetNodeType() != eS2D_SNT_SpreadButtonNode)
+					{
+						_AlignTargetTagRect(MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, alignment);
+						_AlignTargetTagRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, alignment);
+					}
+				}
+				else
+				{
+					_AlignTargetTagRect(targetKey, alignment);
 				}
 			}
 			else if ((m_TargetNode != NULL) &&
@@ -603,6 +625,10 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 				{
 					_MoveTargetTagRect(MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, offset);
 					_MoveTargetTagRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, offset);
+				}
+				else
+				{
+					_MoveTargetTagRect(targetKey, offset);
 				}
 			}
 		}
@@ -699,28 +725,58 @@ void MkEditModeTargetWindow::SRectInfoUpdated
 {
 	if ((srcType == MkSRect::eStaticImage) || (srcType == MkSRect::eCustomDecoStr) || (srcType == MkSRect::eSceneDecoStr))
 	{
-		ItemTagInfo tagInfo;
-		switch (srcType)
+		// icon & caption
+		MkHashStr iTag = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
+		MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+		if ((rectName == iTag) || (rectName == nTag))
 		{
-		case MkSRect::eStaticImage:
-			tagInfo.iconPath = imagePath;
-			tagInfo.iconSubset = subsetName;
-			break;
-		case MkSRect::eCustomDecoStr:
-			tagInfo.captionDesc.SetString(decoStr);
-			break;
-		case MkSRect::eSceneDecoStr:
-			tagInfo.captionDesc.SetNameList(nodeNameAndKey);
-			break;
-		}
-		
-		MkBaseWindowNode* targetWindow = dynamic_cast<MkBaseWindowNode*>(targetNode);
-		if (targetWindow != NULL)
-		{
-			targetWindow->SetPresetComponentItemTag(tagInfo, false, false);
+			MkBaseWindowNode* targetWindow = dynamic_cast<MkBaseWindowNode*>(targetNode);
+			if (targetWindow != NULL)
+			{
+				ItemTagInfo tagInfo;
+				switch (srcType)
+				{
+				case MkSRect::eStaticImage:
+					tagInfo.iconPath = imagePath;
+					tagInfo.iconSubset = subsetName;
+					break;
+				case MkSRect::eCustomDecoStr:
+					tagInfo.captionDesc.SetString(decoStr);
+					break;
+				case MkSRect::eSceneDecoStr:
+					tagInfo.captionDesc.SetNameList(nodeNameAndKey);
+					break;
+				}
 
-			_UpdateTabTagDesc();
-			_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
+				targetWindow->SetPresetComponentItemTag(tagInfo, false, false);
+
+				_UpdateTabTagDesc();
+				_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
+			}
+		}
+		// normal SRect
+		else
+		{
+			MkSRect* targetRect = targetNode->GetSRect(rectName);
+			if (targetRect != NULL)
+			{
+				targetRect->SetHorizontalReflection(flipHorizontal);
+				targetRect->SetVerticalReflection(flipVertical);
+				targetRect->SetObjectAlpha(alpha);
+
+				switch (srcType)
+				{
+				case MkSRect::eStaticImage:
+					targetRect->SetTexture(imagePath, subsetName);
+					break;
+				case MkSRect::eCustomDecoStr:
+					targetRect->SetDecoString(decoStr);
+					break;
+				case MkSRect::eSceneDecoStr:
+					targetRect->SetDecoString(nodeNameAndKey);
+					break;
+				}
+			}
 		}
 	}
 }
@@ -875,8 +931,36 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 		m_TabWindow->SetTabEnable(TAB_COMPONENT_NAME, nodeEnable);
 		m_TabWindow->SetTabEnable(TAB_TAGS_NAME, nodeEnable);
 
+		if (m_TabTag_TargetSelection != NULL)
+		{
+			// 아이콘, 태그 외의 리스트 삭제
+			const MkArray<MkHashStr>& itemSeq = m_TabTag_TargetSelection->GetItemSequence();
+			if (itemSeq.GetSize() > 2)
+			{
+				for (unsigned int i=2; i<itemSeq.GetSize(); ++i)
+				{
+					m_TabTag_TargetSelection->RemoveItem(itemSeq[i]);
+				}
+				m_TabTag_TargetSelection->SetTargetItem(itemSeq[0]);
+			}
+		}
+
 		if (nodeEnable)
 		{
+			if (m_TabTag_TargetSelection != NULL)
+			{
+				MkArray<MkHashStr> rectList;
+				if (_GetNormalSRectList(rectList))
+				{
+					ItemTagInfo ti;
+					MK_INDEXING_LOOP(rectList, i)
+					{
+						ti.captionDesc.SetString(rectList[i].GetString());
+						m_TabTag_TargetSelection->AddItem(rectList[i], ti);
+					}
+				}
+			}
+
 			_UpdateTabTagDesc();
 			_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
 		}
@@ -893,30 +977,37 @@ void MkEditModeTargetWindow::_UpdateTabTagDesc(void)
 		msg += m_TargetNode->ExistSRect(MKDEF_S2D_BASE_WND_ICON_TAG_NAME) ? L"O" : L"X";
 		msg += L" , 캡션 : ";
 		msg += m_TargetNode->ExistSRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME) ? L"O" : L"X";
-		m_TabTag_Desc->SetDecoString(msg);
-	}
-}
 
-void MkEditModeTargetWindow::_GetTargetComponentTagNameByTargetTab(MkHashStr& buffer)
-{
-	if ((m_TargetNode != NULL) && (m_TabTag_TargetSelection != NULL))
-	{
-		const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
-		if (targetKey == TAG_ICON_UK)
+		MkArray<MkHashStr> rectList;
+		if (_GetNormalSRectList(rectList))
 		{
-			buffer = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
+			msg += L" , 전용 태그 : ";
+			msg += rectList.GetSize();
+			msg += L" 개";
 		}
-		else if (targetKey == TAG_CAPTION_UK)
-		{
-			buffer = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
-		}
+		m_TabTag_Desc->SetDecoString(msg);
 	}
 }
 
 bool MkEditModeTargetWindow::_GetTargetComponentTagExistByTargetTab(void)
 {
 	MkHashStr tagName;
-	_GetTargetComponentTagNameByTargetTab(tagName);
+	if ((m_TargetNode != NULL) && (m_TabTag_TargetSelection != NULL))
+	{
+		const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
+		if (targetKey == TAG_ICON_UK)
+		{
+			tagName = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
+		}
+		else if (targetKey == TAG_CAPTION_UK)
+		{
+			tagName = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+		}
+		else
+		{
+			tagName = targetKey;
+		}
+	}
 	return ((!tagName.Empty()) && m_TargetNode->ExistSRect(tagName));
 }
 
@@ -945,6 +1036,17 @@ void MkEditModeTargetWindow::_MoveTargetTagRect(const MkHashStr& tagName, const 
 		MkFloat2 newPos = rect->GetLocalPosition() + offset;
 		rect->SetLocalPosition(newPos);
 	}
+}
+
+bool MkEditModeTargetWindow::_GetNormalSRectList(MkArray<MkHashStr>& rectList) const
+{
+	if ((m_TargetNode != NULL) && (m_TargetNode->GetSRectNameList(rectList) > 0))
+	{
+		rectList.EraseFirstInclusion(MkArraySection(0), MKDEF_S2D_BASE_WND_ICON_TAG_NAME);
+		rectList.EraseFirstInclusion(MkArraySection(0), MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME);
+		rectList.EraseFirstInclusion(MkArraySection(0), MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME);
+	}
+	return !rectList.Empty();
 }
 
 //------------------------------------------------------------------------------------------------//

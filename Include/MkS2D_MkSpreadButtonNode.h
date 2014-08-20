@@ -94,6 +94,9 @@ public:
 	// 모든 하위를 대상으로 item을 찾아 반환
 	MkSpreadButtonNode* GetItem(const MkHashStr& uniqueKey);
 
+	// 직계 하위에 존재하는 item 이름 리스트 반환
+	inline const MkArray<MkHashStr>& GetItemSequence(void) const { return m_ItemSequence; }
+
 	// root button에만 해당되는 기능으로 대상 unique key를 지정
 	// (NOTE) eSeletionRoot의 경우 해당 item이 존재하고 있어야 함
 	bool SetTargetItem(const MkHashStr& uniqueKey);

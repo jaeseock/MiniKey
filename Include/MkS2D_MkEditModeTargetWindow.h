@@ -59,11 +59,11 @@ protected:
 	void _UpdateControlsByTargetNode(void);
 
 	void _UpdateTabTagDesc(void);
-	void _GetTargetComponentTagNameByTargetTab(MkHashStr& buffer);
 	bool _GetTargetComponentTagExistByTargetTab(void);
 	void _UpdateTabTagControlEnable(bool enable);
 	void _AlignTargetTagRect(const MkHashStr& tagName, eRectAlignmentPosition alignment);
 	void _MoveTargetTagRect(const MkHashStr& tagName, const MkFloat2& offset);
+	bool _GetNormalSRectList(MkArray<MkHashStr>& rectList) const;
 
 protected:
 

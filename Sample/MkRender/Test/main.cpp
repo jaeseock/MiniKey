@@ -182,6 +182,11 @@ public:
 		twNode->SetLocalPosition(MkVec3(125.f, 85.f, -0.001f));
 		formNode->AttachChildNode(twNode);
 		twNode->SetTabEnable(L"2ÅÇ", false);
+
+		MkSRect* testRect = formNode->CreateSRect(L"_Sample");
+		testRect->SetDecoString(L"¿ï¶ö¶ó" + MkStr::CR + L"¼¼¼õ");
+		testRect->SetLocalPosition(MkFloat2(160.f, 60.f));
+		testRect->SetLocalDepth(-0.001f);
 		
 
 		m_Node01->SetLocalPosition(MkVec3(400.f, 300.f, -910.f));
