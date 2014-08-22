@@ -31,6 +31,9 @@ public:
 	// 기본 테마명 반환
 	inline const MkHashStr& GetDefaultThemeName(void) const { return (m_DefaultThemeEnable) ? m_DefaultThemeName : MkHashStr::NullHash; }
 
+	// 모든 테마명 반환
+	inline unsigned int GetAllThemeName(MkArray<MkHashStr>& nameList) const { return m_ThemeImageSubsets.GetKeyList(nameList); }
+
 	// margin 값 반환
 	inline float GetMargin(void) const { return m_Margin; }
 

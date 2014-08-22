@@ -190,11 +190,11 @@ const MkHashStr& MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WindowPres
 
 const MkHashStr& MkWindowPreset::GetBackgroundStateKeyword(eS2D_BackgroundState state)
 {
-	const static MkHashStr sKeywords[eS2D_BS_MaxBackgroundState] = { L"BG" };
+	const static MkHashStr sKeywords[eS2D_BS_MaxBackgroundState] = { L"__#BG" };
 	return sKeywords[state];
 }
 
-const static MkHashStr sTitleKeywords[eS2D_TS_MaxTitleState] = { L"OnFocus", L"LostFocus" };
+const static MkHashStr sTitleKeywords[eS2D_TS_MaxTitleState] = { L"__#OnFocus", L"__#LostFocus" };
 
 const MkHashStr& MkWindowPreset::GetTitleStateKeyword(eS2D_TitleState state)
 {
@@ -214,7 +214,7 @@ const MkArray<MkHashStr>& MkWindowPreset::GetTitleStateKeywordList(void)
 	return sKeyList;
 }
 
-const static MkHashStr sWindowKeywords[eS2D_WS_MaxWindowState] = { L"Default", L"OnCursor", L"OnClick", L"Disable" };
+const static MkHashStr sWindowKeywords[eS2D_WS_MaxWindowState] = { L"__#Default", L"__#OnCursor", L"__#OnClick", L"__#Disable" };
 
 const MkHashStr& MkWindowPreset::GetWindowStateKeyword(eS2D_WindowState state)
 {

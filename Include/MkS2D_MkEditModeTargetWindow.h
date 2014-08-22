@@ -11,6 +11,7 @@ class MkScrollBarNode;
 class MkCheckButtonNode;
 class MkTabWindowNode;
 class MkSpreadButtonNode;
+class MkEditBoxNode;
 
 class MkEditModeTargetWindow : public MkBaseSystemWindow, public MkNodeNameInputListener, public MkSRectInfoListener
 {
@@ -92,6 +93,17 @@ protected:
 
 	// tab root
 	MkTabWindowNode* m_TabWindow;
+
+	// tab : component
+	MkSRect* m_TabComp_Desc;
+	MkSpreadButtonNode* m_TabComp_ThemeSelection;
+	MkBaseWindowNode* m_TabComp_DeleteTheme;
+	MkEditBoxNode* m_TabComp_SizeX;
+	MkEditBoxNode* m_TabComp_SizeY;
+	MkCheckButtonNode* m_TabComp_EnableCloseBtn;
+	MkSpreadButtonNode* m_TabComp_BackgroundState;
+	MkSpreadButtonNode* m_TabComp_WindowState;
+	MkBaseWindowNode* m_TabComp_SetStateRes;
 
 	// tab : tag
 	MkSRect* m_TabTag_Desc;

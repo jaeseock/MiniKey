@@ -6,6 +6,7 @@
 #include "MkS2D_MkCheckButtonNode.h"
 #include "MkS2D_MkSpreadButtonNode.h"
 #include "MkS2D_MkTabWindowNode.h"
+#include "MkS2D_MkEditBoxNode.h"
 #include "MkS2D_MkEditModeTargetWindow.h"
 
 
@@ -23,6 +24,15 @@ const static MkHashStr WIN_ATTR_BTN_NAME = L"__#WinAttr";
 const static MkHashStr TAB_WINDOW_NAME = L"__#Window";
 const static MkHashStr TAB_COMPONENT_NAME = L"__#Component";
 const static MkHashStr TAB_TAGS_NAME = L"__#Tags";
+
+const static MkHashStr THEME_SPREAD_BTN_NAME = L"__#Themes";
+const static MkHashStr THEME_DELETE_BTN_NAME = L"__#DelTheme";
+const static MkHashStr PRESET_SIZE_X_EB_NAME = L"__#SizeX";
+const static MkHashStr PRESET_SIZE_Y_EB_NAME = L"__#SizeY";
+const static MkHashStr ENABLE_CLOSE_BTN_NAME = L"__#EnClose";
+const static MkHashStr BG_S_SPREAD_BTN_NAME = L"__#BGState";
+const static MkHashStr WIN_S_SPREAD_BTN_NAME = L"__#WinState";
+const static MkHashStr SET_STATE_RES_BTN_NAME = L"__#StateRes";
 
 const static MkHashStr TAG_SPREAD_BTN_NAME = L"__#TargetTag";
 const static MkHashStr TAG_ICON_UK = L"__#IconUK";
@@ -279,7 +289,80 @@ bool MkEditModeTargetWindow::Initialize(void)
 			m_TabWindow->AddTab(TAB_WINDOW_NAME, ti);
 
 			ti.captionDesc.SetString(L"컴포넌트");
-			m_TabWindow->AddTab(TAB_COMPONENT_NAME, ti);
+			MkBaseWindowNode* compWin = m_TabWindow->AddTab(TAB_COMPONENT_NAME, ti);
+			if (compWin != NULL)
+			{
+				//MkSpreadButtonNode* m_TabComp_ThemeSelection;
+				//MkBaseWindowNode* m_TabComp_DeleteTheme;
+				//MkEditBoxNode* m_TabComp_SizeX;
+				//MkEditBoxNode* m_TabComp_SizeY;
+				//MkCheckButtonNode* m_TabComp_EnableCloseBtn;
+				//MkSpreadButtonNode* m_TabComp_BackgroundState;
+				//MkSpreadButtonNode* m_TabComp_WindowState;
+				//MkBaseWindowNode* m_TabComp_SetStateRes;
+				//const static MkHashStr THEME_SPREAD_BTN_NAME = L"__#Themes";
+				//const static MkHashStr THEME_DELETE_BTN_NAME = L"__#DelTheme";
+				//const static MkHashStr PRESET_SIZE_X_EB_NAME = L"__#SizeX";
+				//const static MkHashStr PRESET_SIZE_Y_EB_NAME = L"__#SizeY";
+				//const static MkHashStr ENABLE_CLOSE_BTN_NAME = L"__#FlipCancel";
+				//const static MkHashStr BG_S_SPREAD_BTN_NAME = L"__#BGState";
+				//const static MkHashStr WIN_S_SPREAD_BTN_NAME = L"__#WinState";
+				//const static MkHashStr SET_STATE_RES_BTN_NAME = L"__#StateRes";
+				float btnPosY = tabBodySize.y - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT;
+
+				m_TabComp_Desc = compWin->CreateSRect(L"__#Desc");
+				m_TabComp_Desc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, btnPosY));
+				m_TabComp_Desc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+
+				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+
+				m_TabComp_ThemeSelection = new MkSpreadButtonNode(THEME_SPREAD_BTN_NAME);
+				m_TabComp_ThemeSelection->CreateSelectionRootTypeButton(themeName, MkFloat2(160.f, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
+				m_TabComp_ThemeSelection->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				compWin->AttachChildNode(m_TabComp_ThemeSelection);
+
+				MkArray<MkHashStr> themeList;
+				if (MK_WR_PRESET.GetAllThemeName(themeList) > 0)
+				{
+					MK_INDEXING_LOOP(themeList, i)
+					{
+						const MkHashStr& currName = themeList[i];
+						ti.captionDesc.SetString(currName.GetString());
+						m_TabComp_ThemeSelection->AddItem(currName, ti);
+					}
+
+					m_TabComp_ThemeSelection->SetTargetItem(themeName);
+				}
+
+				const float selectionBtnWidth = m_TabComp_ThemeSelection->GetPresetComponentSize().x;
+				const float btnWidth = 100.f;
+
+				m_TabComp_DeleteTheme = __CreateWindowPreset(compWin, THEME_DELETE_BTN_NAME, themeName, eS2D_WPC_CancelButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				m_TabComp_DeleteTheme->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabComp_DeleteTheme->SetPresetComponentCaption(themeName, CaptionDesc(L"테마 삭제"));
+
+				float tmpX = MKDEF_CTRL_MARGIN * 3.f + selectionBtnWidth + btnWidth;
+				MkSRect* sizeDesc = compWin->CreateSRect(L"__#SizeDesc");
+				sizeDesc->SetLocalPosition(MkFloat2(tmpX, btnPosY + 3));
+				sizeDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+				sizeDesc->SetDecoString(L"크기(X,Y) :");
+
+				tmpX += sizeDesc->GetLocalSize().x + 6.f;
+				m_TabComp_SizeX = new MkEditBoxNode(PRESET_SIZE_X_EB_NAME);
+				m_TabComp_SizeX->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+				m_TabComp_SizeX->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				compWin->AttachChildNode(m_TabComp_SizeX);
+
+				m_TabComp_SizeY = new MkEditBoxNode(PRESET_SIZE_Y_EB_NAME);
+				m_TabComp_SizeY->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+				m_TabComp_SizeY->SetLocalPosition(MkVec3(tmpX + m_TabComp_SizeX->GetPresetComponentSize().x + 6.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				compWin->AttachChildNode(m_TabComp_SizeY);
+
+				m_TabComp_EnableCloseBtn = new MkCheckButtonNode(ENABLE_CLOSE_BTN_NAME);
+				m_TabComp_EnableCloseBtn->CreateCheckButton(themeName, CaptionDesc(L"닫기 버튼 사용"), false);
+				m_TabComp_EnableCloseBtn->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				compWin->AttachChildNode(m_TabComp_EnableCloseBtn);
+			}
 
 			ti.captionDesc.SetString(L"태 그");
 			MkBaseWindowNode* tagWin = m_TabWindow->AddTab(TAB_TAGS_NAME, ti);
@@ -797,6 +880,15 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_EnableCB = NULL;
 	m_WinAttrBtn = NULL;
 	m_TabWindow = NULL;
+	m_TabComp_Desc = NULL;
+	m_TabComp_ThemeSelection = NULL;
+	m_TabComp_DeleteTheme = NULL;
+	m_TabComp_SizeX = NULL;
+	m_TabComp_SizeY = NULL;
+	m_TabComp_EnableCloseBtn = NULL;
+	m_TabComp_BackgroundState = NULL;
+	m_TabComp_WindowState = NULL;
+	m_TabComp_SetStateRes = NULL;
 	m_TabTag_Desc = NULL;
 	m_TabTag_TargetSelection = NULL;
 }

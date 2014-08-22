@@ -1,8 +1,8 @@
 
 //--------------------------------------------------------------------//
 // MiniKey data node text source
-//   - file path  : d:\Solutions\MiniKey\Sample\MkRender\Test\bin\FileRoot\test_scene.txt
-//   - time stamp : 2014.08.20 (18:44:54),
+//   - file path  : test_scene.txt
+//   - time stamp : 2014.08.21 (17:22:10),
 //   - exporter   : ¿ÀÀç¼® (Test)
 //--------------------------------------------------------------------//
 
@@ -11,7 +11,7 @@ uint Attribute = 552;
 int2 PCompSize = (294, 20);
 str PComponent = "NormalTitle";
 str PThemeName = "Default";
-vec3 Position = (235.000, 572.000, 366.667);
+vec3 Position = (0.000, -20.000, 0.000);
 
 Node "<SRect>"
 {
@@ -62,101 +62,6 @@ Node "<SceneNode>"
 
 		Node "<SceneNode>"
 		{
-			Node "BG" : "T_SceneNode"
-			{
-				Node "<SRect>"
-				{
-					Node "LB" : "T_SRect"
-					{
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_LB";
-						vec2 Size = (3.000, 3.000);
-					}
-
-					Node "LC" : "T_SRect"
-					{
-						vec2 Position = (0.000, 3.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_LC";
-						vec2 Size = (3.000, 194.000);
-					}
-
-					Node "LT" : "T_SRect"
-					{
-						vec2 Position = (0.000, 197.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_LT";
-						vec2 Size = (3.000, 3.000);
-					}
-
-					Node "MB" : "T_SRect"
-					{
-						vec2 Position = (3.000, 0.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_MB";
-						vec2 Size = (294.000, 3.000);
-					}
-
-					Node "MC" : "T_SRect"
-					{
-						vec2 Position = (3.000, 3.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_MC";
-						vec2 Size = (294.000, 194.000);
-					}
-
-					Node "MT" : "T_SRect"
-					{
-						vec2 Position = (3.000, 197.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_MT";
-						vec2 Size = (294.000, 3.000);
-					}
-
-					Node "RB" : "T_SRect"
-					{
-						vec2 Position = (297.000, 0.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_RB";
-						vec2 Size = (3.000, 3.000);
-					}
-
-					Node "RC" : "T_SRect"
-					{
-						vec2 Position = (297.000, 3.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_RC";
-						vec2 Size = (3.000, 194.000);
-					}
-
-					Node "RT" : "T_SRect"
-					{
-						vec2 Position = (297.000, 197.000);
-						str Resource = // [3]
-							"map" /
-							"Default\default_theme.png" /
-							"DefBG_RT";
-						vec2 Size = (3.000, 3.000);
-					}
-				}
-			}
-
 			Node "CancelButton" : "T_BaseWindowNode"
 			{
 				uint Attribute = 528;
@@ -193,7 +98,7 @@ Node "<SceneNode>"
 
 				Node "<SceneNode>"
 				{
-					Node "Default" : "T_SceneNode"
+					Node "__#Default" : "T_SceneNode"
 					{
 						Node "<SRect>"
 						{
@@ -288,7 +193,7 @@ Node "<SceneNode>"
 						}
 					}
 
-					Node "Disable" : "T_SceneNode"
+					Node "__#Disable" : "T_SceneNode"
 					{
 						bool Visible = No;
 
@@ -385,7 +290,7 @@ Node "<SceneNode>"
 						}
 					}
 
-					Node "OnClick" : "T_SceneNode"
+					Node "__#OnClick" : "T_SceneNode"
 					{
 						bool Visible = No;
 
@@ -482,7 +387,7 @@ Node "<SceneNode>"
 						}
 					}
 
-					Node "OnCursor" : "T_SceneNode"
+					Node "__#OnCursor" : "T_SceneNode"
 					{
 						bool Visible = No;
 
@@ -593,113 +498,16 @@ Node "<SceneNode>"
 					Node "_Sample" : "T_SRect"
 					{
 						float Depth = -0.001;
-						vec2 Position = (142.000, 60.000);
-						str Resource = // [4]
-							"sdt" /
-							"SampleCategory" /
-							"ErrorMsg" /
-							"SampleMsg";
-						vec2 Size = (133.000, 20.000);
+						vec2 Position = (160.000, 60.000);
+						str Resource = // [2]
+							"odt" /
+							"¿ï¶ö¶ó\r\n¼¼¼õ";
+						vec2 Size = (36.000, 24.000);
 					}
 				}
 
 				Node "<SceneNode>"
 				{
-					Node "BG" : "T_SceneNode"
-					{
-						Node "<SRect>"
-						{
-							Node "LB" : "T_SRect"
-							{
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_LB";
-								vec2 Size = (3.000, 3.000);
-							}
-
-							Node "LC" : "T_SRect"
-							{
-								vec2 Position = (0.000, 3.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_LC";
-								vec2 Size = (3.000, 154.000);
-							}
-
-							Node "LT" : "T_SRect"
-							{
-								vec2 Position = (0.000, 157.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_LT";
-								vec2 Size = (3.000, 3.000);
-							}
-
-							Node "MB" : "T_SRect"
-							{
-								vec2 Position = (3.000, 0.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_MB";
-								vec2 Size = (274.000, 3.000);
-							}
-
-							Node "MC" : "T_SRect"
-							{
-								vec2 Position = (3.000, 3.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_MC";
-								vec2 Size = (274.000, 154.000);
-							}
-
-							Node "MT" : "T_SRect"
-							{
-								vec2 Position = (3.000, 157.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_MT";
-								vec2 Size = (274.000, 3.000);
-							}
-
-							Node "RB" : "T_SRect"
-							{
-								vec2 Position = (277.000, 0.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_RB";
-								vec2 Size = (3.000, 3.000);
-							}
-
-							Node "RC" : "T_SRect"
-							{
-								vec2 Position = (277.000, 3.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_RC";
-								vec2 Size = (3.000, 154.000);
-							}
-
-							Node "RT" : "T_SRect"
-							{
-								vec2 Position = (277.000, 157.000);
-								str Resource = // [3]
-									"map" /
-									"Default\default_theme.png" /
-									"GuideBox_RT";
-								vec2 Size = (3.000, 3.000);
-							}
-						}
-					}
-
 					Node "CB" : "T_CheckButtonNode"
 					{
 						bool OnCheck = Yes;
@@ -723,7 +531,7 @@ Node "<SceneNode>"
 
 						Node "<SceneNode>"
 						{
-							Node "BG" : "T_SceneNode"
+							Node "__#BG" : "T_SceneNode"
 							{
 								Node "<SRect>"
 								{
@@ -828,7 +636,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -843,7 +651,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -860,7 +668,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -877,7 +685,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -907,7 +715,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -922,7 +730,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -939,7 +747,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -956,7 +764,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -989,7 +797,7 @@ Node "<SceneNode>"
 
 						Node "<SceneNode>"
 						{
-							Node "Default" : "T_SceneNode"
+							Node "__#Default" : "T_SceneNode"
 							{
 								Node "<SRect>"
 								{
@@ -1084,7 +892,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Disable" : "T_SceneNode"
+							Node "__#Disable" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -1181,7 +989,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "OnClick" : "T_SceneNode"
+							Node "__#OnClick" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -1278,7 +1086,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "OnCursor" : "T_SceneNode"
+							Node "__#OnCursor" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -1386,7 +1194,7 @@ Node "<SceneNode>"
 
 						Node "<SceneNode>"
 						{
-							Node "Default" : "T_SceneNode"
+							Node "__#Default" : "T_SceneNode"
 							{
 								Node "<SRect>"
 								{
@@ -1401,7 +1209,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Disable" : "T_SceneNode"
+							Node "__#Disable" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -1418,7 +1226,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "OnClick" : "T_SceneNode"
+							Node "__#OnClick" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -1435,7 +1243,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "OnCursor" : "T_SceneNode"
+							Node "__#OnCursor" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -1474,7 +1282,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "BG" : "T_SceneNode"
+									Node "__#BG" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -1519,7 +1327,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -1554,7 +1362,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -1591,7 +1399,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -1628,7 +1436,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -1679,7 +1487,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -1694,7 +1502,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -1711,7 +1519,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -1728,7 +1536,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -1756,7 +1564,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -1771,7 +1579,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -1788,7 +1596,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -1805,7 +1613,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -1935,7 +1743,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -2030,7 +1838,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -2127,7 +1935,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -2224,7 +2032,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -2431,7 +2239,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -2526,7 +2334,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -2623,7 +2431,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -2720,7 +2528,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -2871,7 +2679,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -2966,7 +2774,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -3063,7 +2871,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -3160,7 +2968,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -3311,7 +3119,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -3406,7 +3214,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -3503,7 +3311,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -3600,7 +3408,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -3699,7 +3507,34 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Default" : "T_SceneNode"
+									Node "__#Arrow" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										int2 PCompSize = (8, 8);
+										str PComponent = "ArrowRight";
+										str PThemeName = "Default";
+										vec3 Position = (89.000, 6.000, -0.025);
+
+										Node "<SceneNode>"
+										{
+											Node "__#BG" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "SN" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"ArrowR";
+														vec2 Size = (8.000, 8.000);
+													}
+												}
+											}
+										}
+									}
+
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -3794,7 +3629,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -3891,7 +3726,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -3988,7 +3823,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -4081,33 +3916,6 @@ Node "<SceneNode>"
 													"Default\default_theme.png" /
 													"LBtnOCu_RT";
 												vec2 Size = (3.000, 3.000);
-											}
-										}
-									}
-
-									Node "__#Arrow" : "T_BaseWindowNode"
-									{
-										uint Attribute = 2;
-										int2 PCompSize = (8, 8);
-										str PComponent = "ArrowRight";
-										str PThemeName = "Default";
-										vec3 Position = (89.000, 6.000, -0.025);
-
-										Node "<SceneNode>"
-										{
-											Node "BG" : "T_SceneNode"
-											{
-												Node "<SRect>"
-												{
-													Node "SN" : "T_SRect"
-													{
-														str Resource = // [3]
-															"map" /
-															"Default\default_theme.png" /
-															"ArrowR";
-														vec2 Size = (8.000, 8.000);
-													}
-												}
 											}
 										}
 									}
@@ -4166,7 +3974,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -4261,7 +4069,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -4358,7 +4166,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -4455,7 +4263,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -4661,7 +4469,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -4756,7 +4564,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -4853,7 +4661,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -4950,7 +4758,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -5154,7 +4962,7 @@ Node "<SceneNode>"
 
 												Node "<SceneNode>"
 												{
-													Node "Default" : "T_SceneNode"
+													Node "__#Default" : "T_SceneNode"
 													{
 														Node "<SRect>"
 														{
@@ -5249,7 +5057,7 @@ Node "<SceneNode>"
 														}
 													}
 
-													Node "Disable" : "T_SceneNode"
+													Node "__#Disable" : "T_SceneNode"
 													{
 														bool Visible = No;
 
@@ -5346,7 +5154,7 @@ Node "<SceneNode>"
 														}
 													}
 
-													Node "OnClick" : "T_SceneNode"
+													Node "__#OnClick" : "T_SceneNode"
 													{
 														bool Visible = No;
 
@@ -5443,7 +5251,7 @@ Node "<SceneNode>"
 														}
 													}
 
-													Node "OnCursor" : "T_SceneNode"
+													Node "__#OnCursor" : "T_SceneNode"
 													{
 														bool Visible = No;
 
@@ -5542,7 +5350,34 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Default" : "T_SceneNode"
+											Node "__#Arrow" : "T_BaseWindowNode"
+											{
+												uint Attribute = 2;
+												int2 PCompSize = (8, 8);
+												str PComponent = "ArrowRight";
+												str PThemeName = "Default";
+												vec3 Position = (89.000, 6.000, -0.025);
+
+												Node "<SceneNode>"
+												{
+													Node "__#BG" : "T_SceneNode"
+													{
+														Node "<SRect>"
+														{
+															Node "SN" : "T_SRect"
+															{
+																str Resource = // [3]
+																	"map" /
+																	"Default\default_theme.png" /
+																	"ArrowR";
+																vec2 Size = (8.000, 8.000);
+															}
+														}
+													}
+												}
+											}
+
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -5637,7 +5472,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -5734,7 +5569,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -5831,7 +5666,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -5924,40 +5759,40 @@ Node "<SceneNode>"
 															"Default\default_theme.png" /
 															"LBtnOCu_RT";
 														vec2 Size = (3.000, 3.000);
-													}
-												}
-											}
-
-											Node "__#Arrow" : "T_BaseWindowNode"
-											{
-												uint Attribute = 2;
-												int2 PCompSize = (8, 8);
-												str PComponent = "ArrowRight";
-												str PThemeName = "Default";
-												vec3 Position = (89.000, 6.000, -0.025);
-
-												Node "<SceneNode>"
-												{
-													Node "BG" : "T_SceneNode"
-													{
-														Node "<SRect>"
-														{
-															Node "SN" : "T_SRect"
-															{
-																str Resource = // [3]
-																	"map" /
-																	"Default\default_theme.png" /
-																	"ArrowR";
-																vec2 Size = (8.000, 8.000);
-															}
-														}
 													}
 												}
 											}
 										}
 									}
 
-									Node "Default" : "T_SceneNode"
+									Node "__#Arrow" : "T_BaseWindowNode"
+									{
+										uint Attribute = 2;
+										int2 PCompSize = (8, 8);
+										str PComponent = "ArrowRight";
+										str PThemeName = "Default";
+										vec3 Position = (89.000, 6.000, -0.025);
+
+										Node "<SceneNode>"
+										{
+											Node "__#BG" : "T_SceneNode"
+											{
+												Node "<SRect>"
+												{
+													Node "SN" : "T_SRect"
+													{
+														str Resource = // [3]
+															"map" /
+															"Default\default_theme.png" /
+															"ArrowR";
+														vec2 Size = (8.000, 8.000);
+													}
+												}
+											}
+										}
+									}
+
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -6052,7 +5887,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -6149,7 +5984,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -6246,7 +6081,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -6339,40 +6174,40 @@ Node "<SceneNode>"
 													"Default\default_theme.png" /
 													"LBtnOCu_RT";
 												vec2 Size = (3.000, 3.000);
-											}
-										}
-									}
-
-									Node "__#Arrow" : "T_BaseWindowNode"
-									{
-										uint Attribute = 2;
-										int2 PCompSize = (8, 8);
-										str PComponent = "ArrowRight";
-										str PThemeName = "Default";
-										vec3 Position = (89.000, 6.000, -0.025);
-
-										Node "<SceneNode>"
-										{
-											Node "BG" : "T_SceneNode"
-											{
-												Node "<SRect>"
-												{
-													Node "SN" : "T_SRect"
-													{
-														str Resource = // [3]
-															"map" /
-															"Default\default_theme.png" /
-															"ArrowR";
-														vec2 Size = (8.000, 8.000);
-													}
-												}
 											}
 										}
 									}
 								}
 							}
 
-							Node "Default" : "T_SceneNode"
+							Node "__#Arrow" : "T_BaseWindowNode"
+							{
+								uint Attribute = 2;
+								int2 PCompSize = (8, 8);
+								str PComponent = "ArrowDown";
+								str PThemeName = "Default";
+								vec3 Position = (89.000, 6.000, -0.025);
+
+								Node "<SceneNode>"
+								{
+									Node "__#BG" : "T_SceneNode"
+									{
+										Node "<SRect>"
+										{
+											Node "SN" : "T_SRect"
+											{
+												str Resource = // [3]
+													"map" /
+													"Default\default_theme.png" /
+													"ArrowD";
+												vec2 Size = (8.000, 8.000);
+											}
+										}
+									}
+								}
+							}
+
+							Node "__#Default" : "T_SceneNode"
 							{
 								Node "<SRect>"
 								{
@@ -6467,7 +6302,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "Disable" : "T_SceneNode"
+							Node "__#Disable" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -6564,7 +6399,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "OnClick" : "T_SceneNode"
+							Node "__#OnClick" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -6661,7 +6496,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "OnCursor" : "T_SceneNode"
+							Node "__#OnCursor" : "T_SceneNode"
 							{
 								bool Visible = No;
 
@@ -6754,33 +6589,6 @@ Node "<SceneNode>"
 											"Default\default_theme.png" /
 											"RBtnOCu_RT";
 										vec2 Size = (3.000, 3.000);
-									}
-								}
-							}
-
-							Node "__#Arrow" : "T_BaseWindowNode"
-							{
-								uint Attribute = 2;
-								int2 PCompSize = (8, 8);
-								str PComponent = "ArrowDown";
-								str PThemeName = "Default";
-								vec3 Position = (89.000, 6.000, -0.025);
-
-								Node "<SceneNode>"
-								{
-									Node "BG" : "T_SceneNode"
-									{
-										Node "<SRect>"
-										{
-											Node "SN" : "T_SRect"
-											{
-												str Resource = // [3]
-													"map" /
-													"Default\default_theme.png" /
-													"ArrowD";
-												vec2 Size = (8.000, 8.000);
-											}
-										}
 									}
 								}
 							}
@@ -6850,7 +6658,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "BG" : "T_SceneNode"
+											Node "__#BG" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -6984,7 +6792,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -7079,7 +6887,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -7176,7 +6984,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -7273,7 +7081,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -7423,7 +7231,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "BG" : "T_SceneNode"
+											Node "__#BG" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -7557,7 +7365,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -7654,7 +7462,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -7749,7 +7557,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -7846,7 +7654,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -7996,7 +7804,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "BG" : "T_SceneNode"
+											Node "__#BG" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -8129,7 +7937,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -8224,7 +8032,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -8321,7 +8129,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -8418,7 +8226,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -8519,7 +8327,7 @@ Node "<SceneNode>"
 								}
 							}
 
-							Node "BG" : "T_SceneNode"
+							Node "__#BG" : "T_SceneNode"
 							{
 								Node "<SRect>"
 								{
@@ -8635,7 +8443,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "BG" : "T_SceneNode"
+									Node "__#BG" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -8680,7 +8488,7 @@ Node "<SceneNode>"
 
 										Node "<SceneNode>"
 										{
-											Node "Default" : "T_SceneNode"
+											Node "__#Default" : "T_SceneNode"
 											{
 												Node "<SRect>"
 												{
@@ -8715,7 +8523,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "Disable" : "T_SceneNode"
+											Node "__#Disable" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -8752,7 +8560,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnClick" : "T_SceneNode"
+											Node "__#OnClick" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -8789,7 +8597,7 @@ Node "<SceneNode>"
 												}
 											}
 
-											Node "OnCursor" : "T_SceneNode"
+											Node "__#OnCursor" : "T_SceneNode"
 											{
 												bool Visible = No;
 
@@ -8839,7 +8647,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -8854,7 +8662,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -8871,7 +8679,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -8888,7 +8696,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -8917,7 +8725,7 @@ Node "<SceneNode>"
 
 								Node "<SceneNode>"
 								{
-									Node "Default" : "T_SceneNode"
+									Node "__#Default" : "T_SceneNode"
 									{
 										Node "<SRect>"
 										{
@@ -8932,7 +8740,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "Disable" : "T_SceneNode"
+									Node "__#Disable" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -8949,7 +8757,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnClick" : "T_SceneNode"
+									Node "__#OnClick" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -8966,7 +8774,7 @@ Node "<SceneNode>"
 										}
 									}
 
-									Node "OnCursor" : "T_SceneNode"
+									Node "__#OnCursor" : "T_SceneNode"
 									{
 										bool Visible = No;
 
@@ -8983,6 +8791,101 @@ Node "<SceneNode>"
 										}
 									}
 								}
+							}
+						}
+					}
+
+					Node "__#BG" : "T_SceneNode"
+					{
+						Node "<SRect>"
+						{
+							Node "LB" : "T_SRect"
+							{
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_LB";
+								vec2 Size = (3.000, 3.000);
+							}
+
+							Node "LC" : "T_SRect"
+							{
+								vec2 Position = (0.000, 3.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_LC";
+								vec2 Size = (3.000, 154.000);
+							}
+
+							Node "LT" : "T_SRect"
+							{
+								vec2 Position = (0.000, 157.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_LT";
+								vec2 Size = (3.000, 3.000);
+							}
+
+							Node "MB" : "T_SRect"
+							{
+								vec2 Position = (3.000, 0.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_MB";
+								vec2 Size = (274.000, 3.000);
+							}
+
+							Node "MC" : "T_SRect"
+							{
+								vec2 Position = (3.000, 3.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_MC";
+								vec2 Size = (274.000, 154.000);
+							}
+
+							Node "MT" : "T_SRect"
+							{
+								vec2 Position = (3.000, 157.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_MT";
+								vec2 Size = (274.000, 3.000);
+							}
+
+							Node "RB" : "T_SRect"
+							{
+								vec2 Position = (277.000, 0.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_RB";
+								vec2 Size = (3.000, 3.000);
+							}
+
+							Node "RC" : "T_SRect"
+							{
+								vec2 Position = (277.000, 3.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_RC";
+								vec2 Size = (3.000, 154.000);
+							}
+
+							Node "RT" : "T_SRect"
+							{
+								vec2 Position = (277.000, 157.000);
+								str Resource = // [3]
+									"map" /
+									"Default\default_theme.png" /
+									"GuideBox_RT";
+								vec2 Size = (3.000, 3.000);
 							}
 						}
 					}
@@ -9025,7 +8928,7 @@ Node "<SceneNode>"
 
 				Node "<SceneNode>"
 				{
-					Node "Default" : "T_SceneNode"
+					Node "__#Default" : "T_SceneNode"
 					{
 						Node "<SRect>"
 						{
@@ -9120,7 +9023,7 @@ Node "<SceneNode>"
 						}
 					}
 
-					Node "Disable" : "T_SceneNode"
+					Node "__#Disable" : "T_SceneNode"
 					{
 						bool Visible = No;
 
@@ -9217,7 +9120,7 @@ Node "<SceneNode>"
 						}
 					}
 
-					Node "OnClick" : "T_SceneNode"
+					Node "__#OnClick" : "T_SceneNode"
 					{
 						bool Visible = No;
 
@@ -9314,7 +9217,7 @@ Node "<SceneNode>"
 						}
 					}
 
-					Node "OnCursor" : "T_SceneNode"
+					Node "__#OnCursor" : "T_SceneNode"
 					{
 						bool Visible = No;
 
@@ -9412,6 +9315,101 @@ Node "<SceneNode>"
 					}
 				}
 			}
+
+			Node "__#BG" : "T_SceneNode"
+			{
+				Node "<SRect>"
+				{
+					Node "LB" : "T_SRect"
+					{
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_LB";
+						vec2 Size = (3.000, 3.000);
+					}
+
+					Node "LC" : "T_SRect"
+					{
+						vec2 Position = (0.000, 3.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_LC";
+						vec2 Size = (3.000, 194.000);
+					}
+
+					Node "LT" : "T_SRect"
+					{
+						vec2 Position = (0.000, 197.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_LT";
+						vec2 Size = (3.000, 3.000);
+					}
+
+					Node "MB" : "T_SRect"
+					{
+						vec2 Position = (3.000, 0.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_MB";
+						vec2 Size = (294.000, 3.000);
+					}
+
+					Node "MC" : "T_SRect"
+					{
+						vec2 Position = (3.000, 3.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_MC";
+						vec2 Size = (294.000, 194.000);
+					}
+
+					Node "MT" : "T_SRect"
+					{
+						vec2 Position = (3.000, 197.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_MT";
+						vec2 Size = (294.000, 3.000);
+					}
+
+					Node "RB" : "T_SRect"
+					{
+						vec2 Position = (297.000, 0.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_RB";
+						vec2 Size = (3.000, 3.000);
+					}
+
+					Node "RC" : "T_SRect"
+					{
+						vec2 Position = (297.000, 3.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_RC";
+						vec2 Size = (3.000, 194.000);
+					}
+
+					Node "RT" : "T_SRect"
+					{
+						vec2 Position = (297.000, 197.000);
+						str Resource = // [3]
+							"map" /
+							"Default\default_theme.png" /
+							"DefBG_RT";
+						vec2 Size = (3.000, 3.000);
+					}
+				}
+			}
 		}
 	}
 
@@ -9425,7 +9423,7 @@ Node "<SceneNode>"
 
 		Node "<SceneNode>"
 		{
-			Node "Default" : "T_SceneNode"
+			Node "__#Default" : "T_SceneNode"
 			{
 				Node "<SRect>"
 				{
@@ -9440,7 +9438,7 @@ Node "<SceneNode>"
 				}
 			}
 
-			Node "Disable" : "T_SceneNode"
+			Node "__#Disable" : "T_SceneNode"
 			{
 				bool Visible = No;
 
@@ -9457,7 +9455,7 @@ Node "<SceneNode>"
 				}
 			}
 
-			Node "OnClick" : "T_SceneNode"
+			Node "__#OnClick" : "T_SceneNode"
 			{
 				bool Visible = No;
 
@@ -9474,7 +9472,7 @@ Node "<SceneNode>"
 				}
 			}
 
-			Node "OnCursor" : "T_SceneNode"
+			Node "__#OnCursor" : "T_SceneNode"
 			{
 				bool Visible = No;
 
@@ -9493,8 +9491,10 @@ Node "<SceneNode>"
 		}
 	}
 
-	Node "LostFocus" : "T_SceneNode"
+	Node "__#LostFocus" : "T_SceneNode"
 	{
+		bool Visible = No;
+
 		Node "<SRect>"
 		{
 			Node "LB" : "T_SRect"
@@ -9588,10 +9588,8 @@ Node "<SceneNode>"
 		}
 	}
 
-	Node "OnFocus" : "T_SceneNode"
+	Node "__#OnFocus" : "T_SceneNode"
 	{
-		bool Visible = No;
-
 		Node "<SRect>"
 		{
 			Node "LB" : "T_SRect"
