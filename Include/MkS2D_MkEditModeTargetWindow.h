@@ -59,6 +59,10 @@ protected:
 	void _SetNodeTreeItemPosition(unsigned int pagePos);
 	void _UpdateControlsByTargetNode(void);
 
+	void _UpdateTabComponentDesc(void);
+	void _UpdateTabComponentControlEnable(void);
+	bool _CheckTitleHasCloseButton(MkBaseWindowNode* targetNode) const;
+
 	void _UpdateTabTagDesc(void);
 	bool _GetTargetComponentTagExistByTargetTab(void);
 	void _UpdateTabTagControlEnable(bool enable);
@@ -103,6 +107,7 @@ protected:
 	MkCheckButtonNode* m_TabComp_EnableCloseBtn;
 	MkSpreadButtonNode* m_TabComp_BackgroundState;
 	MkSpreadButtonNode* m_TabComp_WindowState;
+	MkBaseWindowNode* m_TabComp_AddDefaultTheme;
 	MkBaseWindowNode* m_TabComp_SetStateRes;
 
 	// tab : tag

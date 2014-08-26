@@ -223,8 +223,18 @@ public:
 	// 해당 윈도우 노드와 모든 자식 윈도우 노드에 window preset이 적용된 노드들이 있으면 모두 테마 변경
 	virtual void SetPresetThemeName(const MkHashStr& themeName);
 
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 테마명 반환
+	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
+
+	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경 가능여부 반환
+	// MkWindowTypeImageSet::eNull, eSingleType : false, false (모두 불가능)
+	// MkWindowTypeImageSet::e3And1Type : true, false (가로만 가능)
+	// MkWindowTypeImageSet::e1And3Type : false, true (세로만 가능)
+	// MkWindowTypeImageSet::e3And3Type : true, true (모두 가능)
+	void CheckPresetComponentSizeAvailable(bool& width, bool& height) const;
+
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경
-	// (NOTE) MkWindowTypeImageSet::eSingleType image set 기반으로 생성된 component면 적용을 받지 않음(image 크기로 고정)
+	// (NOTE) componentSize의 x, y 요소 적용은 CheckPresetComponentSizeAvailable()의 규칙을 따름
 	void SetPresetComponentSize(const MkFloat2& componentSize);
 
 	// 해당 윈도우 노드가 CreateFreeImageBaseBackgroundWindow()으로 생성된 윈도우일 경우 이미지 변경
@@ -248,9 +258,6 @@ public:
 	// - icon, 혹은 caption만 존재 : 중앙 정렬
 	// - icon, caption 모두 존재 : 좌측 정렬
 	virtual bool SetPresetComponentItemTag(const ItemTagInfo& tagInfo, bool deleteIconIfEmpty = true, bool deleteCaptionIfEmpty = true);
-
-	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 테마명 반환
-	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 적용중인 component 반환
 	const MkHashStr& GetPresetComponentName(void) const;
@@ -357,6 +364,8 @@ public:
 	void __SetWindowInformation(MkBaseWindowNode* targetNode) const;
 	unsigned int __CountTotalWindowBasedChildren(void) const;
 	inline MkBaseWindowNode* __GetWindowBasedChild(unsigned int index) { return m_ChildWindows.IsValidIndex(index) ? m_ChildWindows[index] : NULL; }
+	void __ClearCurrentTheme(void);
+	void __ApplyDefaultTheme(void);
 
 protected:
 

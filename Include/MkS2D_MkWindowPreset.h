@@ -63,6 +63,7 @@ public:
 
 	// state에 해당하는 keyword 반환
 	static const MkHashStr& GetBackgroundStateKeyword(eS2D_BackgroundState state);
+	static const MkArray<MkHashStr>& GetBackgroundStateKeywordList(void);
 
 	// state에 해당하는 keyword 반환
 	static const MkHashStr& GetTitleStateKeyword(eS2D_TitleState state);
@@ -138,6 +139,7 @@ template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_BackgroundState>:
 template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_TitleState>::GetKeyword(eS2D_TitleState state) { return MkWindowPreset::GetTitleStateKeyword(state); }
 template <> const MkHashStr& MkWindowPresetStateInterface<eS2D_WindowState>::GetKeyword(eS2D_WindowState state) { return MkWindowPreset::GetWindowStateKeyword(state); }
 
+template <> const MkArray<MkHashStr>& MkWindowPresetStateInterface<eS2D_BackgroundState>::GetKeywordList(void) { return MkWindowPreset::GetBackgroundStateKeywordList(); }
 template <> const MkArray<MkHashStr>& MkWindowPresetStateInterface<eS2D_TitleState>::GetKeywordList(void) { return MkWindowPreset::GetTitleStateKeywordList(); }
 template <> const MkArray<MkHashStr>& MkWindowPresetStateInterface<eS2D_WindowState>::GetKeywordList(void) { return MkWindowPreset::GetWindowStateKeywordList(); }
 

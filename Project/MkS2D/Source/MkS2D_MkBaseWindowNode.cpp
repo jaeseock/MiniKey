@@ -111,6 +111,12 @@ protected:
 		}
 	}
 
+	static bool _CheckMatchingSRect(const MkSceneNode* targetNode, MkWindowTypeImageSet::eSetType setType, MkWindowTypeImageSet::eTypeIndex typeIndex)
+	{
+		const MkHashStr& key = MkWindowTypeImageSet::GetImageSetKeyword(setType, typeIndex);
+		return targetNode->ExistSRect(key);
+	}
+
 	static bool _GetMatchingSRect
 		(MkSceneNode* targetNode, MkWindowTypeImageSet::eSetType setType, MkWindowTypeImageSet::eTypeIndex typeIndex, MkArray<MkSRect*>& srects)
 	{
@@ -268,6 +274,43 @@ public:
 				_LineUpSRects(MkWindowTypeImageSet::e3And3Type, srects, sizeIn, sizeOut);
 			}
 		}
+	}
+
+	static MkWindowTypeImageSet::eSetType GetTypeOfImageSet(const MkSceneNode* targetNode)
+	{
+		MkWindowTypeImageSet::eSetType rlt = MkWindowTypeImageSet::eNull;
+		if (targetNode != NULL)
+		{
+			if (_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::eSingleType, MkWindowTypeImageSet::eL))
+			{
+				rlt = MkWindowTypeImageSet::eSingleType;
+			}
+			else if (_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eL) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eM) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And1Type, MkWindowTypeImageSet::eR))
+			{
+				rlt = MkWindowTypeImageSet::e3And1Type;
+			}
+			else if (_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eT) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eC) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e1And3Type, MkWindowTypeImageSet::eB))
+			{
+				rlt = MkWindowTypeImageSet::e1And3Type;
+			}
+			else if (_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eLT) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMT) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRT) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eLC) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMC) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRC) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eLB) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eMB) &&
+				_CheckMatchingSRect(targetNode, MkWindowTypeImageSet::e3And3Type, MkWindowTypeImageSet::eRB))
+			{
+				rlt = MkWindowTypeImageSet::e3And3Type;
+			}
+		}
+		return rlt;
 	}
 };
 
@@ -435,6 +478,17 @@ public:
 		}
 		return NULL;
 	}
+
+	static MkWindowTypeImageSet::eSetType GetTypeOfImageSet(const MkBaseWindowNode* targetNode)
+	{
+		if (targetNode != NULL)
+		{
+			DataType destState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin());
+			const MkHashStr& destKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(destState);
+			return __TSI_SceneNodeOp::GetTypeOfImageSet(targetNode->GetChildNode(destKeyword));
+		}
+		return MkWindowTypeImageSet::eNull;
+	}
 };
 
 class __TSI_ComponentNodeOp
@@ -493,6 +547,24 @@ public:
 			return __TSI_WindowNodeOp<eS2D_WindowState>::GetWorldAABR(targetNode);
 		}
 		return NULL;
+	}
+
+	static MkWindowTypeImageSet::eSetType GetTypeOfImageSet(const MkBaseWindowNode* targetNode)
+	{
+		eS2D_WindowPresetComponent component = targetNode->GetPresetComponentType();
+		if (IsBackgroundStateType(component))
+		{
+			return __TSI_WindowNodeOp<eS2D_BackgroundState>::GetTypeOfImageSet(targetNode);
+		}
+		else if (IsTitleStateType(component))
+		{
+			return __TSI_WindowNodeOp<eS2D_TitleState>::GetTypeOfImageSet(targetNode);
+		}
+		else if (IsWindowStateType(component))
+		{
+			return __TSI_WindowNodeOp<eS2D_WindowState>::GetTypeOfImageSet(targetNode);
+		}
+		return MkWindowTypeImageSet::eNull;
 	}
 };
 
@@ -814,7 +886,7 @@ MkBaseWindowNode* MkBaseWindowNode::CreateBasicWindow(MkBaseWindowNode* targetWi
 			// close icon
 			if (d.hasCloseButton)
 			{
-				MkBaseWindowNode* closeWindow = __CreateWindowPreset(titleWindow, L"CloseBtn", d.themeName, eS2D_WPC_CloseButton, MkFloat2(0.f, 0.f));
+				MkBaseWindowNode* closeWindow = __CreateWindowPreset(titleWindow, MKDEF_S2D_BASE_WND_CLOSE_BTN_NAME, d.themeName, eS2D_WPC_CloseButton, MkFloat2(0.f, 0.f));
 				if (closeWindow != NULL)
 				{
 					MkFloat2 localPos =	MkFloatRect(titleWindow->GetPresetComponentSize()).GetSnapPosition
@@ -1041,6 +1113,38 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 	MK_INDEXING_LOOP(m_ChildWindows, i)
 	{
 		m_ChildWindows[i]->SetPresetThemeName(themeName);
+	}
+}
+
+void MkBaseWindowNode::CheckPresetComponentSizeAvailable(bool& width, bool& height) const
+{
+	if (m_PresetComponentType == eS2D_WPC_None)
+	{
+		width = false;
+		height = false;
+	}
+	else
+	{
+		switch (__TSI_ComponentNodeOp::GetTypeOfImageSet(this))
+		{
+		case MkWindowTypeImageSet::eNull:
+		case MkWindowTypeImageSet::eSingleType:
+			width = false;
+			height = false;
+			break;
+		case MkWindowTypeImageSet::e3And1Type:
+			width = true;
+			height = false;
+			break;
+		case MkWindowTypeImageSet::e1And3Type:
+			width = false;
+			height = true;
+			break;
+		case MkWindowTypeImageSet::e3And3Type:
+			width = true;
+			height = true;
+			break;
+		}
 	}
 }
 
@@ -1829,6 +1933,54 @@ unsigned int MkBaseWindowNode::__CountTotalWindowBasedChildren(void) const
 		cnt += m_ChildWindows[i]->__CountTotalWindowBasedChildren();
 	}
 	return cnt;
+}
+
+void MkBaseWindowNode::__ClearCurrentTheme(void)
+{
+	if ((!m_PresetThemeName.Empty()) && (IsBackgroundStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType)))
+	{
+		m_PresetThemeName.Clear();
+	}
+}
+
+void MkBaseWindowNode::__ApplyDefaultTheme(void)
+{
+	if (m_PresetThemeName.Empty())
+	{
+		m_PresetThemeName = MK_WR_PRESET.GetDefaultThemeName();
+
+		if (m_PresetComponentType != eS2D_WPC_None)
+		{
+			const MkArray<MkHashStr>& newImageSets = MK_WR_PRESET.GetWindowTypeImageSet(m_PresetThemeName, m_PresetComponentType);
+			if (__TSI_ComponentNodeOp::ApplyImageSetAndSize(newImageSets, this))
+			{
+				if ((!m_Enable) && IsWindowStateType(m_PresetComponentType))
+				{
+					__TSI_WindowNodeOp<eS2D_WindowState>::SetState(eS2D_WS_DisableState, this);
+				}
+			}
+		}
+
+		const MkHashStr hTag = MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME;
+		const MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
+
+		if (ExistSRect(hTag))
+		{
+			MkSRect* srect = GetSRect(hTag);
+			if (srect->CheckFocedFontTypeAndState())
+			{
+				srect->SetFocedFontState(MK_WR_PRESET.GetHighlightThemeFontState(m_PresetThemeName));
+			}
+		}
+		if (ExistSRect(nTag))
+		{
+			MkSRect* srect = GetSRect(nTag);
+			if (srect->CheckFocedFontTypeAndState())
+			{
+				srect->SetFocedFontState(MK_WR_PRESET.GetNormalThemeFontState(m_PresetThemeName));
+			}
+		}
+	}
 }
 
 bool MkBaseWindowNode::_CollectUpdatableWindowNodes(const MkFloat2& position, MkArray<MkBaseWindowNode*>& buffer)

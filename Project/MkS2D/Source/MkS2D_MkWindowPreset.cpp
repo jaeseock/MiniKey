@@ -188,10 +188,24 @@ const MkHashStr& MkWindowPreset::GetWindowPresetComponentKeyword(eS2D_WindowPres
 	return (component == eS2D_WPC_None) ? MkHashStr::NullHash : sPresetKeywords[component];
 }
 
+const static MkHashStr sBackgroundKeywords[eS2D_BS_MaxBackgroundState] = { L"__#BG" };
+
 const MkHashStr& MkWindowPreset::GetBackgroundStateKeyword(eS2D_BackgroundState state)
 {
-	const static MkHashStr sKeywords[eS2D_BS_MaxBackgroundState] = { L"__#BG" };
-	return sKeywords[state];
+	return sBackgroundKeywords[state];
+}
+
+const MkArray<MkHashStr>& MkWindowPreset::GetBackgroundStateKeywordList(void)
+{
+	static MkArray<MkHashStr> sKeyList(eS2D_BS_MaxBackgroundState);
+	if (sKeyList.Empty())
+	{
+		for (int i=eS2D_BS_DefaultState; i<eS2D_BS_MaxBackgroundState; ++i)
+		{
+			sKeyList.PushBack(sBackgroundKeywords[i]);
+		}
+	}
+	return sKeyList;
 }
 
 const static MkHashStr sTitleKeywords[eS2D_TS_MaxTitleState] = { L"__#OnFocus", L"__#LostFocus" };

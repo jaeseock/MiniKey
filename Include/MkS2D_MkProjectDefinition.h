@@ -138,6 +138,8 @@
 #define MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME L"__#HCapTag"
 #define MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME L"__#NCapTag"
 
+#define MKDEF_S2D_BASE_WND_CLOSE_BTN_NAME L"__#CloseBtn"
+
 //------------------------------------------------------------------------------------------------//
 // window edit mode
 //------------------------------------------------------------------------------------------------//

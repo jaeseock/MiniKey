@@ -81,25 +81,25 @@ enum eS2D_WindowPresetComponent
 
 enum eS2D_BackgroundState
 {
-	eS2D_BS_DefaultState = 0, // L"BG"
+	eS2D_BS_DefaultState = 0, // L"__#BG"
 
 	eS2D_BS_MaxBackgroundState
 };
 
 enum eS2D_TitleState
 {
-	eS2D_TS_OnFocusState = 0, // L"OnFocus"
-	eS2D_TS_LostFocusState, // L"LostFocus"
+	eS2D_TS_OnFocusState = 0, // L"__#OnFocus"
+	eS2D_TS_LostFocusState, // L"__#LostFocus"
 
 	eS2D_TS_MaxTitleState
 };
 
 enum eS2D_WindowState
 {
-	eS2D_WS_DefaultState = 0, // L"Default"
-	eS2D_WS_OnCursorState, // L"OnCursor"
-	eS2D_WS_OnClickState, // L"OnClick"
-	eS2D_WS_DisableState, // L"Disable"
+	eS2D_WS_DefaultState = 0, // L"__#Default"
+	eS2D_WS_OnCursorState, // L"__#OnCursor"
+	eS2D_WS_OnClickState, // L"__#OnClick"
+	eS2D_WS_DisableState, // L"__#Disable"
 
 	eS2D_WS_MaxWindowState
 };
