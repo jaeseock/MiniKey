@@ -27,6 +27,12 @@ public:
 		const MkHashStr& selectionFontState = MkHashStr::NullHash, const MkHashStr& cursorFontState = MkHashStr::NullHash,
 		const MkStr& initMsg = MkStr::Null, bool useHistory = false);
 
+	// history 사용 여부 설정
+	void SetHistoryUsage(bool enable);
+
+	// 폰트 정보 설정
+	void SetFontInfo(const MkHashStr& fontType, const MkHashStr& normalFontState, const MkHashStr& selectionFontState, const MkHashStr& cursorFontState);
+
 	// 문자열 설정. pushEvent는 MkSceneNodeFamilyDefinition::eModifyText 발생 여부
 	void SetText(const MkStr& msg, bool pushEvent = true);
 
@@ -69,8 +75,6 @@ public:
 	inline DWORD __GetSetEnd(void) const { return m_SelEnd; }
 
 protected:
-
-	void _SetFontInfo(const MkHashStr& fontType, const MkHashStr& normalFontState, const MkHashStr& selectionFontState, const MkHashStr& cursorFontState);
 
 	void _UpdateCursorAndSelection(void);
 

@@ -10,7 +10,7 @@
 #include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
 
-#define MKDEF_MAX_HISTORY_RECORD 100
+#define MKDEF_MAX_HISTORY_RECORD 64
 #define MKDEF_TEXT_START_POSITION (MK_WR_PRESET.GetMargin())
 #define MKDEF_CURSOR_CHAR L"│"
 
@@ -28,17 +28,43 @@ bool MkEditBoxNode::CreateEditBox
 	bool ok = CreateWindowPreset(themeName, eS2D_WPC_RootButton, windowSize);
 	if (ok)
 	{
-		m_UseHistory = useHistory;
-		if (m_UseHistory)
-		{
-			m_MessageHistory.SetUp(MKDEF_MAX_HISTORY_RECORD);
-		}
-
-		_SetFontInfo(fontType, normalFontState, selectionFontState, cursorFontState);
-		
+		SetHistoryUsage(useHistory);
+		SetFontInfo(fontType, normalFontState, selectionFontState, cursorFontState);
 		SetText(initMsg);
 	}
 	return ok;
+}
+
+void MkEditBoxNode::SetHistoryUsage(bool enable)
+{
+	if (enable && (!m_UseHistory)) // off -> on
+	{
+		m_MessageHistory.SetUp(MKDEF_MAX_HISTORY_RECORD);
+	}
+	else if ((!enable) && m_UseHistory) // on -> off
+	{
+		m_MessageHistory.Clear();
+	}
+	m_UseHistory = enable;
+}
+
+void MkEditBoxNode::SetFontInfo(const MkHashStr& fontType, const MkHashStr& normalFontState, const MkHashStr& selectionFontState, const MkHashStr& cursorFontState)
+{
+	m_FontType = fontType;
+	MK_CHECK(m_FontType.Empty() || MK_FONT_MGR.CheckAvailableFontType(m_FontType), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font type 지정 : " + m_FontType.GetString())
+		m_FontType.Clear();
+
+	m_NormalFontState = normalFontState;
+	MK_CHECK(m_NormalFontState.Empty() || MK_FONT_MGR.CheckAvailableFontState(m_NormalFontState), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font state 지정 : " + m_NormalFontState.GetString())
+		m_NormalFontState.Clear();
+
+	m_SelectionFontState = selectionFontState;
+	MK_CHECK(m_SelectionFontState.Empty() || MK_FONT_MGR.CheckAvailableFontState(m_SelectionFontState), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font state 지정 : " + m_SelectionFontState.GetString())
+		m_SelectionFontState.Clear();
+
+	m_CursorFontState = cursorFontState;
+	MK_CHECK(m_CursorFontState.Empty() || MK_FONT_MGR.CheckAvailableFontState(m_CursorFontState), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font state 지정 : " + m_CursorFontState.GetString())
+		m_CursorFontState.Clear();
 }
 
 void MkEditBoxNode::SetText(const MkStr& msg, bool pushEvent)
@@ -62,8 +88,9 @@ void MkEditBoxNode::Load(const MkDataNode& node)
 	MkStr text;
 	node.GetData(MkSceneNodeFamilyDefinition::EditBox::TextKey, text, 0);
 
-	m_UseHistory = false;
-	node.GetData(MkSceneNodeFamilyDefinition::EditBox::UseHistoryKey, m_UseHistory, 0);
+	bool useHistory = false;
+	node.GetData(MkSceneNodeFamilyDefinition::EditBox::UseHistoryKey, useHistory, 0);
+	SetHistoryUsage(useHistory);
 
 	MkStr fontType;
 	node.GetData(MkSceneNodeFamilyDefinition::EditBox::FontTypeKey, fontType, 0);
@@ -77,7 +104,7 @@ void MkEditBoxNode::Load(const MkDataNode& node)
 	MkStr cursorFontState;
 	node.GetData(MkSceneNodeFamilyDefinition::EditBox::CursorFontStateKey, cursorFontState, 0);
 
-	_SetFontInfo(fontType, normalFontState, selectionFontState, cursorFontState);
+	SetFontInfo(fontType, normalFontState, selectionFontState, cursorFontState);
 
 	// MkBaseWindowNode
 	MkBaseWindowNode::Load(node);
@@ -449,25 +476,6 @@ void MkEditBoxNode::__ToggleCursorRect(void)
 			cursorRect->SetVisible(!cursorRect->GetVisible());
 		}
 	}
-}
-
-void MkEditBoxNode::_SetFontInfo(const MkHashStr& fontType, const MkHashStr& normalFontState, const MkHashStr& selectionFontState, const MkHashStr& cursorFontState)
-{
-	m_FontType = fontType;
-	MK_CHECK(m_FontType.Empty() || MK_FONT_MGR.CheckAvailableFontType(m_FontType), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font type 지정 : " + m_FontType.GetString())
-		m_FontType.Clear();
-
-	m_NormalFontState = normalFontState;
-	MK_CHECK(m_NormalFontState.Empty() || MK_FONT_MGR.CheckAvailableFontState(m_NormalFontState), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font state 지정 : " + m_NormalFontState.GetString())
-		m_NormalFontState.Clear();
-
-	m_SelectionFontState = selectionFontState;
-	MK_CHECK(m_SelectionFontState.Empty() || MK_FONT_MGR.CheckAvailableFontState(m_SelectionFontState), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font state 지정 : " + m_SelectionFontState.GetString())
-		m_SelectionFontState.Clear();
-
-	m_CursorFontState = cursorFontState;
-	MK_CHECK(m_CursorFontState.Empty() || MK_FONT_MGR.CheckAvailableFontState(m_CursorFontState), GetNodeName().GetString() + L" MkEditBoxNode에 잘못된 font state 지정 : " + m_CursorFontState.GetString())
-		m_CursorFontState.Clear();
 }
 
 void MkEditBoxNode::_UpdateCursorAndSelection(void)

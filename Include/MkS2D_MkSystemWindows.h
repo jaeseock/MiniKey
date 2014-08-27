@@ -87,7 +87,7 @@ class MkSRectInfoListener
 {
 public:
 	virtual void SRectInfoUpdated
-		(MkSceneNode* targetNode, const MkHashStr& rectName, bool flipHorizontal, bool flipVertical, float alpha,
+		(MkSceneNode* targetNode, const MkHashStr& rectName, const MkStr& comment, bool flipHorizontal, bool flipVertical, float alpha,
 		MkSRect::eSrcType srcType, const MkPathName& imagePath, const MkHashStr& subsetName, const MkStr& decoStr, const MkArray<MkHashStr>& nodeNameAndKey) {}
 	virtual ~MkSRectInfoListener() {}
 };
@@ -107,7 +107,7 @@ public:
 
 	virtual bool Initialize(void);
 
-	void SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName, eInputType inputType);
+	void SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName, eInputType inputType, const MkStr& comment);
 
 	virtual void UseWindowEvent(WindowEvent& evt);
 
@@ -129,6 +129,7 @@ protected:
 	MkSceneNode* m_TargetNode;
 	MkHashStr m_RectName;
 	eInputType m_InputType;
+	MkStr m_Comment;
 	MkFloat2 m_RectBGSize;
 
 	MkPathName m_ImagePath;

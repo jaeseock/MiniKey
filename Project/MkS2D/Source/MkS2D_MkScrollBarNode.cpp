@@ -35,10 +35,9 @@ bool MkScrollBarNode::CreateScrollBar(const MkHashStr& themeName, eBarDirection 
 			return false;
 	}
 
+	const float MARGIN = MK_WR_PRESET.GetMargin();
 	float prevBtnLength = (prevNode == NULL) ? 0.f : ((isVertical) ? prevNode->GetPresetComponentSize().y : prevNode->GetPresetComponentSize().x);
 	float nextBtnLength = (nextNode == NULL) ? 0.f : ((isVertical) ? nextNode->GetPresetComponentSize().y : nextNode->GetPresetComponentSize().x);
-
-	const float MARGIN = MK_WR_PRESET.GetMargin();
 	float minLength = prevBtnLength + nextBtnLength + MARGIN * 2.f;
 	float totalLength = GetMax<float>(minLength, length); // 길이 결정
 	float bodyLength = totalLength - prevBtnLength - nextBtnLength;
@@ -82,6 +81,62 @@ bool MkScrollBarNode::CreateScrollBar(const MkHashStr& themeName, eBarDirection 
 	m_SlideNode->SetAttribute(eConfinedToParent, true);
 
 	return true;
+}
+
+bool MkScrollBarNode::SetScrollBarLength(float length)
+{
+	MkBaseWindowNode* barNode = ChildExist(BAR_NODE_NAME) ? dynamic_cast<MkBaseWindowNode*>(GetChildNode(BAR_NODE_NAME)) : NULL;
+	if ((m_SlideNode != NULL) && (barNode != NULL))
+	{
+		MkBaseWindowNode* prevNode = ChildExist(PREV_BTN_NODE_NAME) ? dynamic_cast<MkBaseWindowNode*>(GetChildNode(PREV_BTN_NODE_NAME)) : NULL;
+		MkBaseWindowNode* nextNode = ChildExist(NEXT_BTN_NODE_NAME) ? dynamic_cast<MkBaseWindowNode*>(GetChildNode(NEXT_BTN_NODE_NAME)) : NULL;
+
+		bool isVertical = (m_BarDirection == eVertical);
+		const float MARGIN = MK_WR_PRESET.GetMargin();
+		float prevBtnLength = (prevNode == NULL) ? 0.f : ((isVertical) ? prevNode->GetPresetComponentSize().y : prevNode->GetPresetComponentSize().x);
+		float nextBtnLength = (nextNode == NULL) ? 0.f : ((isVertical) ? nextNode->GetPresetComponentSize().y : nextNode->GetPresetComponentSize().x);
+		float minLength = prevBtnLength + nextBtnLength + MARGIN * 2.f;
+		float totalLength = GetMax<float>(minLength, length); // 길이 결정
+		float bodyLength = totalLength - prevBtnLength - nextBtnLength;
+
+		MkFloat2 barSize = MkFloat2(bodyLength, bodyLength);
+		barNode->SetPresetComponentSize(barSize);
+		m_MaxSlideSize = (isVertical) ? barNode->GetPresetComponentSize().y : barNode->GetPresetComponentSize().x;
+
+		if ((prevNode != NULL) && (nextNode != NULL))
+		{
+			if (isVertical)
+			{
+				barNode->SetLocalPosition(MkFloat2(0.f, nextNode->GetPresetComponentSize().y));
+				prevNode->SetLocalPosition(MkFloat2(0.f, nextNode->GetPresetComponentSize().y + m_MaxSlideSize));
+			}
+			else
+			{
+				barNode->SetLocalPosition(MkFloat2(prevNode->GetPresetComponentSize().x, 0.f));
+				nextNode->SetLocalPosition(MkFloat2(prevNode->GetPresetComponentSize().x + m_MaxSlideSize, 0.f));
+			}
+		}
+
+		_UpdateSlideTransform();
+		return true;
+	}
+	return false;
+}
+
+float MkScrollBarNode::GetScrollBarLength(void) const
+{
+	float length = 0.f;
+	if (m_SlideNode != NULL)
+	{
+		const MkBaseWindowNode* prevNode = ChildExist(PREV_BTN_NODE_NAME) ? dynamic_cast<const MkBaseWindowNode*>(GetChildNode(PREV_BTN_NODE_NAME)) : NULL;
+		const MkBaseWindowNode* nextNode = ChildExist(NEXT_BTN_NODE_NAME) ? dynamic_cast<const MkBaseWindowNode*>(GetChildNode(NEXT_BTN_NODE_NAME)) : NULL;
+
+		bool isVertical = (m_BarDirection == eVertical);
+		length += (prevNode == NULL) ? 0.f : ((isVertical) ? prevNode->GetPresetComponentSize().y : prevNode->GetPresetComponentSize().x);
+		length += (nextNode == NULL) ? 0.f : ((isVertical) ? nextNode->GetPresetComponentSize().y : nextNode->GetPresetComponentSize().x);
+		length += m_MaxSlideSize;
+	}
+	return length;
 }
 
 void MkScrollBarNode::SetPageInfo(unsigned int totalPageSize, unsigned int onePageSize, unsigned int sizePerGrid, unsigned int gridsPerAction)

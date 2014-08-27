@@ -298,9 +298,44 @@ bool MkEditModeTargetWindow::Initialize(void)
 				m_TabComp_Desc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 
 				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+				const float btnWidth = 100.f;
+
+				m_TabComp_DeleteTheme = __CreateWindowPreset(compWin, THEME_DELETE_BTN_NAME, themeName, eS2D_WPC_CancelButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				m_TabComp_DeleteTheme->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabComp_DeleteTheme->SetPresetComponentCaption(themeName, CaptionDesc(L"테마 삭제"));
+
+				m_TabComp_EnableCloseBtn = new MkCheckButtonNode(ENABLE_CLOSE_BTN_NAME);
+				m_TabComp_EnableCloseBtn->CreateCheckButton(themeName, CaptionDesc(L"닫기 버튼 사용"), false);
+				m_TabComp_EnableCloseBtn->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				compWin->AttachChildNode(m_TabComp_EnableCloseBtn);
+
+				m_TabComp_AddDefaultTheme = __CreateWindowPreset(compWin, ADD_DEF_THEME_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
+				m_TabComp_AddDefaultTheme->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabComp_AddDefaultTheme->SetPresetComponentCaption(themeName, CaptionDesc(L"기본 테마 적용"));
+
+				float tmpX = MKDEF_CTRL_MARGIN * 2.f + btnWidth + 10.f;
+				MkSRect* sizeDesc = compWin->CreateSRect(L"__#SizeDesc");
+				sizeDesc->SetLocalPosition(MkFloat2(tmpX, btnPosY + 3));
+				sizeDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+				sizeDesc->SetDecoString(L"크기(X,Y) :");
+
+				tmpX += sizeDesc->GetLocalSize().x + 6.f;
+				m_TabComp_SizeX = new MkEditBoxNode(PRESET_SIZE_X_EB_NAME);
+				m_TabComp_SizeX->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+				m_TabComp_SizeX->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				compWin->AttachChildNode(m_TabComp_SizeX);
+
+				tmpX += m_TabComp_SizeX->GetPresetComponentSize().x + 6.f;
+				m_TabComp_SizeY = new MkEditBoxNode(PRESET_SIZE_Y_EB_NAME);
+				m_TabComp_SizeY->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+				m_TabComp_SizeY->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				compWin->AttachChildNode(m_TabComp_SizeY);
+
+				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+				const float selectionBtnWidth = 160.f;
 
 				m_TabComp_ThemeSelection = new MkSpreadButtonNode(THEME_SPREAD_BTN_NAME);
-				m_TabComp_ThemeSelection->CreateSelectionRootTypeButton(themeName, MkFloat2(160.f, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
+				m_TabComp_ThemeSelection->CreateSelectionRootTypeButton(themeName, MkFloat2(selectionBtnWidth, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
 				m_TabComp_ThemeSelection->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				compWin->AttachChildNode(m_TabComp_ThemeSelection);
 
@@ -317,37 +352,8 @@ bool MkEditModeTargetWindow::Initialize(void)
 					m_TabComp_ThemeSelection->SetTargetItem(themeName);
 				}
 
-				const float selectionBtnWidth = m_TabComp_ThemeSelection->GetPresetComponentSize().x;
-				const float btnWidth = 100.f;
-
-				m_TabComp_DeleteTheme = __CreateWindowPreset(compWin, THEME_DELETE_BTN_NAME, themeName, eS2D_WPC_CancelButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				m_TabComp_DeleteTheme->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-				m_TabComp_DeleteTheme->SetPresetComponentCaption(themeName, CaptionDesc(L"테마 삭제"));
-
-				float tmpX = MKDEF_CTRL_MARGIN * 3.f + selectionBtnWidth + btnWidth + 10.f;
-				MkSRect* sizeDesc = compWin->CreateSRect(L"__#SizeDesc");
-				sizeDesc->SetLocalPosition(MkFloat2(tmpX, btnPosY + 3));
-				sizeDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
-				sizeDesc->SetDecoString(L"크기(X,Y) :");
-
-				tmpX += sizeDesc->GetLocalSize().x + 6.f;
-				m_TabComp_SizeX = new MkEditBoxNode(PRESET_SIZE_X_EB_NAME);
-				m_TabComp_SizeX->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
-				m_TabComp_SizeX->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-				compWin->AttachChildNode(m_TabComp_SizeX);
-
-				m_TabComp_SizeY = new MkEditBoxNode(PRESET_SIZE_Y_EB_NAME);
-				m_TabComp_SizeY->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
-				m_TabComp_SizeY->SetLocalPosition(MkVec3(tmpX + m_TabComp_SizeX->GetPresetComponentSize().x + 6.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-				compWin->AttachChildNode(m_TabComp_SizeY);
-
-				m_TabComp_EnableCloseBtn = new MkCheckButtonNode(ENABLE_CLOSE_BTN_NAME);
-				m_TabComp_EnableCloseBtn->CreateCheckButton(themeName, CaptionDesc(L"닫기 버튼 사용"), false);
-				m_TabComp_EnableCloseBtn->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-				compWin->AttachChildNode(m_TabComp_EnableCloseBtn);
-
 				m_TabComp_BackgroundState = new MkSpreadButtonNode(L"__#BGState");
-				m_TabComp_BackgroundState->CreateSelectionRootTypeButton(themeName, MkFloat2(160.f, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
+				m_TabComp_BackgroundState->CreateSelectionRootTypeButton(themeName, MkFloat2(selectionBtnWidth, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
 				m_TabComp_BackgroundState->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				compWin->AttachChildNode(m_TabComp_BackgroundState);
 
@@ -356,16 +362,17 @@ bool MkEditModeTargetWindow::Initialize(void)
 					MkStr currState = MkWindowPreset::GetBackgroundStateKeyword(static_cast<eS2D_BackgroundState>(i)).GetString();
 					currState.PopFront(3); // L"__#" 제거
 					ti.captionDesc.SetString(currState);
-					m_TabComp_BackgroundState->AddItem(currState, ti);
+					MkStr indexStr(i);
+					m_TabComp_BackgroundState->AddItem(indexStr, ti);
 
 					if (i == 0)
 					{
-						m_TabComp_BackgroundState->SetTargetItem(currState);
+						m_TabComp_BackgroundState->SetTargetItem(indexStr);
 					}
 				}
 
 				m_TabComp_WindowState = new MkSpreadButtonNode(L"__#WinState");
-				m_TabComp_WindowState->CreateSelectionRootTypeButton(themeName, MkFloat2(160.f, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
+				m_TabComp_WindowState->CreateSelectionRootTypeButton(themeName, MkFloat2(selectionBtnWidth, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
 				m_TabComp_WindowState->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				compWin->AttachChildNode(m_TabComp_WindowState);
 
@@ -374,20 +381,17 @@ bool MkEditModeTargetWindow::Initialize(void)
 					MkStr currState = MkWindowPreset::GetWindowStateKeyword(static_cast<eS2D_WindowState>(i)).GetString();
 					currState.PopFront(3); // L"__#" 제거
 					ti.captionDesc.SetString(currState);
-					m_TabComp_WindowState->AddItem(currState, ti);
+					MkStr indexStr(i);
+					m_TabComp_WindowState->AddItem(indexStr, ti);
 
 					if (i == 0)
 					{
-						m_TabComp_WindowState->SetTargetItem(currState);
+						m_TabComp_WindowState->SetTargetItem(indexStr);
 					}
 				}
 
-				m_TabComp_AddDefaultTheme = __CreateWindowPreset(compWin, ADD_DEF_THEME_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				m_TabComp_AddDefaultTheme->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
-				m_TabComp_AddDefaultTheme->SetPresetComponentCaption(themeName, CaptionDesc(L"기본 테마 적용"));
-
 				m_TabComp_SetStateRes = __CreateWindowPreset(compWin, SET_STATE_RES_BTN_NAME, themeName, eS2D_WPC_NormalButton, MkFloat2(btnWidth, MKDEF_DEF_CTRL_HEIGHT));
-				m_TabComp_SetStateRes->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+				m_TabComp_SetStateRes->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				m_TabComp_SetStateRes->SetPresetComponentCaption(themeName, CaptionDesc(L"이미지 설정"));
 			}
 
@@ -624,21 +628,28 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 			{
 				if (m_TargetNode != NULL)
 				{
-					/*
-					MkStr targetKey = L"__#";
+					const MkHashStr& snKey = MkWindowTypeImageSet::GetImageSetKeyword(MkWindowTypeImageSet::eSingleType, MkWindowTypeImageSet::eL);
+					MkSceneNode* stateNode = NULL;
 					eS2D_WindowPresetComponent component = m_TargetNode->GetPresetComponentType();
 					if (IsBackgroundStateType(component))
 					{
-						targetKey += m_TabComp_BackgroundState->GetTargetItemKey().GetString();
-						eS2D_BackgroundState state = static_cast<eS2D_BackgroundState>(MkWindowPreset::GetBackgroundStateKeywordList().FindFirstInclusion(MkArraySection(0), targetKey));
+						eS2D_BackgroundState state = static_cast<eS2D_BackgroundState>(m_TabComp_BackgroundState->GetTargetItemKey().GetString().ToInteger());
+						stateNode = m_TargetNode->GetComponentStateNode(state);
+						if (stateNode != NULL)
+						{
+							MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, stateNode, snKey, MkSRectSetterSystemWindow::eImageOnly, L"BG");
+						}
 					}
 					else if (IsWindowStateType(component))
 					{
-						targetKey += m_TabComp_WindowState->GetTargetItemKey().GetString();
+						const MkStr sKey = m_TabComp_WindowState->GetTargetItemKey().GetString();
+						eS2D_WindowState state = static_cast<eS2D_WindowState>(sKey.ToInteger());
+						stateNode = m_TargetNode->GetComponentStateNode(state);
+						if (stateNode != NULL)
+						{
+							MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, stateNode, snKey, MkSRectSetterSystemWindow::eImageOnly, sKey);
+						}
 					}
-					MkSpreadButtonNode* m_TabComp_BackgroundState;
-					MkSpreadButtonNode* m_TabComp_WindowState;
-					*/
 				}
 			}
 			else if (evt.node->GetNodeName() == SET_TAG_BTN_NAME)
@@ -646,15 +657,15 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 				const MkHashStr& targetKey = m_TabTag_TargetSelection->GetTargetItemKey();
 				if (targetKey == TAG_ICON_UK)
 				{
-					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, MKDEF_S2D_BASE_WND_ICON_TAG_NAME, MkSRectSetterSystemWindow::eImageOnly);
+					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, MKDEF_S2D_BASE_WND_ICON_TAG_NAME, MkSRectSetterSystemWindow::eImageOnly, MKDEF_S2D_BASE_WND_ICON_TAG_NAME);
 				}
 				else if (targetKey == TAG_CAPTION_UK)
 				{
-					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, MkSRectSetterSystemWindow::eStringOnly);
+					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, MkSRectSetterSystemWindow::eStringOnly, MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME);
 				}
 				else
 				{
-					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, targetKey, MkSRectSetterSystemWindow::eOneOfSelection);
+					MK_WIN_EVENT_MGR.OpenSRectSetterSystemWindow(this, m_TargetNode, targetKey, MkSRectSetterSystemWindow::eOneOfSelection, MkStr::Null);
 				}
 			}
 			else if (evt.node->GetNodeName() == DEL_TAG_BTN_NAME)
@@ -937,15 +948,37 @@ void MkEditModeTargetWindow::NodeNameChanged(const MkHashStr& oldName, const MkH
 }
 
 void MkEditModeTargetWindow::SRectInfoUpdated
-(MkSceneNode* targetNode, const MkHashStr& rectName, bool flipHorizontal, bool flipVertical, float alpha,
+(MkSceneNode* targetNode, const MkHashStr& rectName, const MkStr& comment, bool flipHorizontal, bool flipVertical, float alpha,
  MkSRect::eSrcType srcType, const MkPathName& imagePath, const MkHashStr& subsetName, const MkStr& decoStr, const MkArray<MkHashStr>& nodeNameAndKey)
 {
 	if ((srcType == MkSRect::eStaticImage) || (srcType == MkSRect::eCustomDecoStr) || (srcType == MkSRect::eSceneDecoStr))
 	{
+		// normal SRect
+		if (comment.Empty())
+		{
+			MkSRect* targetRect = targetNode->GetSRect(rectName);
+			if (targetRect != NULL)
+			{
+				targetRect->SetHorizontalReflection(flipHorizontal);
+				targetRect->SetVerticalReflection(flipVertical);
+				targetRect->SetObjectAlpha(alpha);
+
+				switch (srcType)
+				{
+				case MkSRect::eStaticImage:
+					targetRect->SetTexture(imagePath, subsetName);
+					break;
+				case MkSRect::eCustomDecoStr:
+					targetRect->SetDecoString(decoStr);
+					break;
+				case MkSRect::eSceneDecoStr:
+					targetRect->SetDecoString(nodeNameAndKey);
+					break;
+				}
+			}
+		}
 		// icon & caption
-		MkHashStr iTag = MKDEF_S2D_BASE_WND_ICON_TAG_NAME;
-		MkHashStr nTag = MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME;
-		if ((rectName == iTag) || (rectName == nTag))
+		else if ((comment == MKDEF_S2D_BASE_WND_ICON_TAG_NAME) || (comment == MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME))
 		{
 			MkBaseWindowNode* targetWindow = dynamic_cast<MkBaseWindowNode*>(targetNode);
 			if (targetWindow != NULL)
@@ -971,27 +1004,23 @@ void MkEditModeTargetWindow::SRectInfoUpdated
 				_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
 			}
 		}
-		// normal SRect
-		else
+		// component bg image
+		else if (comment == L"BG")
 		{
-			MkSRect* targetRect = targetNode->GetSRect(rectName);
-			if (targetRect != NULL)
+			if ((m_TargetNode != NULL) && m_TargetNode->SetFreeImageToBackgroundWindow(imagePath, subsetName, false))
 			{
-				targetRect->SetHorizontalReflection(flipHorizontal);
-				targetRect->SetVerticalReflection(flipVertical);
-				targetRect->SetObjectAlpha(alpha);
-
-				switch (srcType)
+				_UpdateTabComponentControlEnable();
+			}
+		}
+		// component btn image
+		else if (comment.IsDigit())
+		{
+			if (m_TargetNode != NULL)
+			{
+				eS2D_WindowState state = static_cast<eS2D_WindowState>(comment.ToInteger());
+				if (m_TargetNode->SetFreeImageBaseButtonWindow(imagePath, state, subsetName, false))
 				{
-				case MkSRect::eStaticImage:
-					targetRect->SetTexture(imagePath, subsetName);
-					break;
-				case MkSRect::eCustomDecoStr:
-					targetRect->SetDecoString(decoStr);
-					break;
-				case MkSRect::eSceneDecoStr:
-					targetRect->SetDecoString(nodeNameAndKey);
-					break;
+					_UpdateTabComponentControlEnable();
 				}
 			}
 		}

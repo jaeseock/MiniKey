@@ -52,6 +52,8 @@ public:
 	inline const MkHashStr& GetEditBoxCursorFontState(void) const { return m_EditBoxCursorFontState; }
 	inline const MkHashStr& GetEditBoxSelectionSubsetName(void) const { return m_EditBoxSelectionSubsetName; }
 
+	inline const MkArray<MkHashStr>& GetNoticeButtonSubsetName(void) const { return m_NoticeButtonSubsetName; }
+
 	// «ÿ¡¶
 	void Clear(void);
 
@@ -101,6 +103,7 @@ protected:
 	MkHashStr m_EditBoxSelectionFontState;
 	MkHashStr m_EditBoxCursorFontState;
 	MkHashStr m_EditBoxSelectionSubsetName;
+	MkArray<MkHashStr> m_NoticeButtonSubsetName;
 
 	MkHashMap<MkHashStr, MkMap<eS2D_WindowPresetComponent, MkArray<MkHashStr> > > m_ThemeImageSubsets;
 	MkHashMap<MkHashStr, MkArray<MkHashStr> > m_ThemeFonts;

@@ -428,7 +428,7 @@ bool MkSRectSetterSystemWindow::Initialize(void)
 	return true;
 }
 
-void MkSRectSetterSystemWindow::SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName, eInputType inputType)
+void MkSRectSetterSystemWindow::SetUp(MkSRectInfoListener* owner, MkSceneNode* targetNode, const MkHashStr& rectName, eInputType inputType, const MkStr& comment)
 {
 	if ((owner != NULL) && (targetNode != NULL) && (!rectName.Empty()))
 	{
@@ -436,6 +436,7 @@ void MkSRectSetterSystemWindow::SetUp(MkSRectInfoListener* owner, MkSceneNode* t
 		m_TargetNode = targetNode;
 		m_RectName = rectName;
 		m_InputType = inputType;
+		m_Comment = comment;
 
 		m_SrcType = MkSRect::eStaticImage;
 
@@ -654,7 +655,7 @@ void MkSRectSetterSystemWindow::UseWindowEvent(WindowEvent& evt)
 					if (ok)
 					{
 						m_Owner->SRectInfoUpdated
-							(m_TargetNode, m_RectName, m_FlipHorizontalBtn->GetCheck(), m_FlipVerticalBtn->GetCheck(),
+							(m_TargetNode, m_RectName, m_Comment, m_FlipHorizontalBtn->GetCheck(), m_FlipVerticalBtn->GetCheck(),
 							m_AlphaBtn->GetTargetItemKey().GetString().ToFloat() / 100.f,
 							m_SrcType, m_ImagePath, m_SubsetName, m_DecoStr, m_NodeNameAndKey);
 					}
@@ -787,6 +788,7 @@ void MkSRectSetterSystemWindow::Deactivate(void)
 		break;
 	}
 
+	m_Comment.Clear();
 	m_ImagePath.Clear();
 	m_SubsetName.Clear();
 	m_DecoStr.Clear();

@@ -213,12 +213,19 @@ public:
 	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentSize()의 적용을 받지 않음
 	bool CreateFreeImageBaseBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
 
+	// 해당 윈도우 노드가 CreateFreeImageBaseBackgroundWindow()으로 생성된 윈도우일 경우 이미지 변경
+	bool SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName, bool keepSize = false);
+
 	// preset(theme)이 아닌 free image로 button 생성. component로 eS2D_WPC_NormalButton이 적용 됨
 	// 이미 component가 적용되어 있으면 false 반환
 	// subsetNames에는 eS2D_WS_MaxWindowState만큼 eS2D_WindowState 순서대로 subset name이 들어가 있어야 함
 	// (NOTE) theme 기반이 아니기 때문에 SetPresetThemeName()의 적용을 받지 않음
 	// (NOTE) MkWindowTypeImageSet::eSingleType 형태로 생성되므로 크기가 image 크기로 고정 되고 SetPresetComponentSize()의 적용을 받지 않음
 	bool CreateFreeImageBaseButtonWindow(const MkPathName& imagePath, const MkArray<MkHashStr>& subsetNames);
+
+	// 해당 윈도우 노드가 CreateFreeImageBaseButtonWindow()으로 생성된 윈도우일 경우 이미지 변경
+	bool SetFreeImageBaseButtonWindow(const MkPathName& imagePath, const MkArray<MkHashStr>& subsetNames, bool keepSize = false);
+	bool SetFreeImageBaseButtonWindow(const MkPathName& imagePath, eS2D_WindowState state, const MkHashStr& subsetName, bool keepSize = false);
 
 	// 해당 윈도우 노드와 모든 자식 윈도우 노드에 window preset이 적용된 노드들이 있으면 모두 테마 변경
 	virtual void SetPresetThemeName(const MkHashStr& themeName);
@@ -236,9 +243,6 @@ public:
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경
 	// (NOTE) componentSize의 x, y 요소 적용은 CheckPresetComponentSizeAvailable()의 규칙을 따름
 	void SetPresetComponentSize(const MkFloat2& componentSize);
-
-	// 해당 윈도우 노드가 CreateFreeImageBaseBackgroundWindow()으로 생성된 윈도우일 경우 이미지 변경
-	bool SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName);
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 일반 icon(SRect) 설정
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkPathName& imagePath, const MkHashStr& subsetName);
@@ -268,6 +272,10 @@ public:
 
 	// 해당 윈도우 노드가 enable 상태인 window state 기반 preset이 적용된 component 노드면 eS2D_WS_DefaultState로 전환
 	void SetPresetComponentWindowStateToDefault(void);
+
+	// 해당 윈도우 노드의 component state에 해당하는 노드 반환
+	MkSceneNode* GetComponentStateNode(eS2D_BackgroundState state);
+	MkSceneNode* GetComponentStateNode(eS2D_WindowState state);
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute

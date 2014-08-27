@@ -43,7 +43,7 @@ public:
 	// MkSRectInfoListener
 
 	virtual void SRectInfoUpdated
-		(MkSceneNode* targetNode, const MkHashStr& rectName,
+		(MkSceneNode* targetNode, const MkHashStr& rectName, const MkStr& comment,
 		bool flipHorizontal, bool flipVertical, float alpha,
 		MkSRect::eSrcType srcType, const MkPathName& imagePath, const MkHashStr& subsetName, const MkStr& decoStr, const MkArray<MkHashStr>& nodeNameAndKey);
 

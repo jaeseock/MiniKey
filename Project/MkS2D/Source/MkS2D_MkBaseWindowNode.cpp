@@ -206,7 +206,7 @@ public:
 		return false;
 	}
 
-	static bool ApplyFreeImage(const MkPathName& imagePath, const MkHashStr& subsetName, MkSceneNode* targetNode, MkFloat2& sizeOut)
+	static bool ApplyFreeImage(const MkPathName& imagePath, const MkHashStr& subsetName, MkSceneNode* targetNode, MkFloat2& sizeOut, bool keepSize)
 	{
 		if (targetNode != NULL)
 		{
@@ -214,6 +214,8 @@ public:
 			MK_TEXTURE_POOL.GetBitmapTexture(imagePath, texture);
 			if (texture != NULL)
 			{
+				MkFloat2 lastSize = targetNode->GetWorldAABR().size;
+
 				// 기존 SRect 삭제
 				targetNode->DeleteAllSRects();
 
@@ -222,6 +224,11 @@ public:
 				MkSRect* srect = _SetSRect(rectName, texture, subsetName, targetNode);
 				if (srect != NULL)
 				{
+					if (keepSize)
+					{
+						srect->SetLocalSize(lastSize);
+					}
+
 					sizeOut = srect->GetLocalSize();
 					return true;
 				}
@@ -371,6 +378,12 @@ protected:
 	}
 
 public:
+
+	static MkSceneNode* GetStateNode(DataType state, MkBaseWindowNode* targetNode)
+	{
+		return (targetNode == NULL) ? NULL : targetNode->GetChildNode(MkWindowPresetStateInterface<DataType>::GetKeyword(state));
+	}
+
 	static bool ApplyImageSetAndSize(const MkArray<MkHashStr>& imageSets, MkBaseWindowNode* targetNode)
 	{
 		if (targetNode != NULL)
@@ -407,7 +420,7 @@ public:
 		return false;
 	}
 
-	static bool ApplyFreeImageToState(DataType state, const MkPathName& imagePath, const MkHashStr& subsetName, MkBaseWindowNode* targetNode)
+	static bool ApplyFreeImageToState(DataType state, const MkPathName& imagePath, const MkHashStr& subsetName, MkBaseWindowNode* targetNode, bool keepSize)
 	{
 		if (targetNode != NULL)
 		{
@@ -415,7 +428,7 @@ public:
 			MkSceneNode* stateNode = targetNode->ChildExist(stateKeyword) ? targetNode->GetChildNode(stateKeyword) : targetNode->CreateChildNode(stateKeyword);
 			MkFloat2 sizeOut;
 			bool defaultState = (state == static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin()));
-			if (__TSI_SceneNodeOp::ApplyFreeImage(imagePath, subsetName, stateNode, sizeOut))
+			if (__TSI_SceneNodeOp::ApplyFreeImage(imagePath, subsetName, stateNode, sizeOut, keepSize))
 			{
 				stateNode->SetVisible(defaultState);
 				if (defaultState)
@@ -439,10 +452,8 @@ public:
 			DataType currState = beginState;
 			while (currState < endState)
 			{
-				const MkHashStr& stateKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(currState);
-
 				MkFloat2 sizeOut;
-				__TSI_SceneNodeOp::ApplySize(sizeIn, targetNode->GetChildNode(stateKeyword), sizeOut);
+				__TSI_SceneNodeOp::ApplySize(sizeIn, GetStateNode(currState, targetNode), sizeOut);
 				if (currState == beginState)
 				{
 					targetNode->__SetPresetComponentSize(sizeOut);
@@ -469,8 +480,7 @@ public:
 		if (targetNode != NULL)
 		{
 			DataType destState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin());
-			const MkHashStr& destKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(destState);
-			const MkSceneNode* destNode = targetNode->GetChildNode(destKeyword);
+			const MkSceneNode* destNode = targetNode->GetChildNode(MkWindowPresetStateInterface<DataType>::GetKeyword(destState));
 			if (destNode != NULL)
 			{
 				return &destNode->GetWorldAABR();
@@ -484,8 +494,7 @@ public:
 		if (targetNode != NULL)
 		{
 			DataType destState = static_cast<DataType>(MkWindowPresetStateInterface<DataType>::GetBegin());
-			const MkHashStr& destKeyword = MkWindowPresetStateInterface<DataType>::GetKeyword(destState);
-			return __TSI_SceneNodeOp::GetTypeOfImageSet(targetNode->GetChildNode(destKeyword));
+			return __TSI_SceneNodeOp::GetTypeOfImageSet(targetNode->GetChildNode(MkWindowPresetStateInterface<DataType>::GetKeyword(destState)));
 		}
 		return MkWindowTypeImageSet::eNull;
 	}
@@ -1042,7 +1051,16 @@ bool MkBaseWindowNode::CreateFreeImageBaseBackgroundWindow(const MkPathName& ima
 		m_PresetThemeName.Clear();
 		m_PresetComponentType = eS2D_WPC_BackgroundWindow;
 
-		return __TSI_WindowNodeOp<eS2D_BackgroundState>::ApplyFreeImageToState(eS2D_BS_DefaultState, imagePath, subsetName, this);
+		return __TSI_WindowNodeOp<eS2D_BackgroundState>::ApplyFreeImageToState(eS2D_BS_DefaultState, imagePath, subsetName, this, false);
+	}
+	return false;
+}
+
+bool MkBaseWindowNode::SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName, bool keepSize)
+{
+	if (m_PresetThemeName.Empty() && IsBackgroundStateType(m_PresetComponentType))
+	{
+		return __TSI_WindowNodeOp<eS2D_BackgroundState>::ApplyFreeImageToState(eS2D_BS_DefaultState, imagePath, subsetName, this, keepSize);
 	}
 	return false;
 }
@@ -1056,12 +1074,35 @@ bool MkBaseWindowNode::CreateFreeImageBaseButtonWindow(const MkPathName& imagePa
 
 		for (int i=eS2D_WS_DefaultState; i<eS2D_WS_MaxWindowState; ++i)
 		{
-			if (!__TSI_WindowNodeOp<eS2D_WindowState>::ApplyFreeImageToState(static_cast<eS2D_WindowState>(i), imagePath, subsetNames[i], this))
+			if (!__TSI_WindowNodeOp<eS2D_WindowState>::ApplyFreeImageToState(static_cast<eS2D_WindowState>(i), imagePath, subsetNames[i], this, false))
 				return false;
 		}
 		
 		SetAttribute(eShowActionCursor, true);
 		return true;
+	}
+	return false;
+}
+
+bool MkBaseWindowNode::SetFreeImageBaseButtonWindow(const MkPathName& imagePath, const MkArray<MkHashStr>& subsetNames, bool keepSize)
+{
+	if (m_PresetThemeName.Empty() && IsWindowStateType(m_PresetComponentType) && (subsetNames.GetSize() == static_cast<unsigned int>(eS2D_WS_MaxWindowState)))
+	{
+		for (int i=eS2D_WS_DefaultState; i<eS2D_WS_MaxWindowState; ++i)
+		{
+			if (!__TSI_WindowNodeOp<eS2D_WindowState>::ApplyFreeImageToState(static_cast<eS2D_WindowState>(i), imagePath, subsetNames[i], this, keepSize))
+				return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+bool MkBaseWindowNode::SetFreeImageBaseButtonWindow(const MkPathName& imagePath, eS2D_WindowState state, const MkHashStr& subsetName, bool keepSize)
+{
+	if (m_PresetThemeName.Empty() && IsWindowStateType(m_PresetComponentType))
+	{
+		return __TSI_WindowNodeOp<eS2D_WindowState>::ApplyFreeImageToState(state, imagePath, subsetName, this, keepSize);
 	}
 	return false;
 }
@@ -1155,16 +1196,6 @@ void MkBaseWindowNode::SetPresetComponentSize(const MkFloat2& componentSize)
 		m_PresetComponentSize = componentSize;
 		__TSI_ComponentNodeOp::ApplySize(this);
 	}
-}
-
-bool MkBaseWindowNode::SetFreeImageToBackgroundWindow(const MkPathName& imagePath, const MkHashStr& subsetName)
-{
-	// 테마가 없고 component가 eS2D_WPC_BackgroundWindow 타입이면
-	if (m_PresetThemeName.Empty() && (m_PresetComponentType == eS2D_WPC_BackgroundWindow))
-	{
-		return __TSI_WindowNodeOp<eS2D_BackgroundState>::ApplyFreeImageToState(eS2D_BS_DefaultState, imagePath, subsetName, this);
-	}
-	return false;
 }
 
 bool MkBaseWindowNode::SetPresetComponentIcon
@@ -1331,6 +1362,15 @@ void MkBaseWindowNode::SetPresetComponentWindowStateToDefault(void)
 			__TSI_WindowNodeOp<eS2D_WindowState>::SetState(eS2D_WS_DefaultState, this);
 		}
 	}
+}
+
+MkSceneNode* MkBaseWindowNode::GetComponentStateNode(eS2D_BackgroundState state)
+{
+	return IsBackgroundStateType(m_PresetComponentType) ? __TSI_WindowNodeOp<eS2D_BackgroundState>::GetStateNode(state, this) : NULL;
+}
+MkSceneNode* MkBaseWindowNode::GetComponentStateNode(eS2D_WindowState state)
+{
+	return IsWindowStateType(m_PresetComponentType) ? __TSI_WindowNodeOp<eS2D_WindowState>::GetStateNode(state, this) : NULL;
 }
 
 bool MkBaseWindowNode::InputEventMousePress(unsigned int button, const MkFloat2& position)
@@ -1937,9 +1977,24 @@ unsigned int MkBaseWindowNode::__CountTotalWindowBasedChildren(void) const
 
 void MkBaseWindowNode::__ClearCurrentTheme(void)
 {
-	if ((!m_PresetThemeName.Empty()) && (IsBackgroundStateType(m_PresetComponentType) || IsWindowStateType(m_PresetComponentType)))
+	if (!m_PresetThemeName.Empty())
 	{
-		m_PresetThemeName.Clear();
+		bool isBG = IsBackgroundStateType(m_PresetComponentType);
+		bool isWnd = IsWindowStateType(m_PresetComponentType);
+
+		if (isBG || isWnd)
+		{
+			m_PresetThemeName.Clear();
+
+			if (isBG)
+			{
+				SetFreeImageToBackgroundWindow(MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetWindowBackgroundSampleSubsetName(), true);
+			}
+			else if (isWnd)
+			{
+				SetFreeImageBaseButtonWindow(MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetNoticeButtonSubsetName(), true);
+			}
+		}
 	}
 }
 

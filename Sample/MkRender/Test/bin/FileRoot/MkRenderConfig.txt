@@ -900,6 +900,8 @@ Node "WindowPreset"
 	str EditBoxCursorFontState = "EditBoxCursor";
 	str EditBoxSelectionSubsetName = "EBSelection";
 	
+	str NoticeButtonSubsetName = "NoticeDef" / "NoticeOCu" / "NoticeOCl" / "NoticeDis";
+	
 	Node "Default"
 	{
 		str BackgroundWindow = "DefaultBackground";

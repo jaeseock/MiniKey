@@ -29,6 +29,14 @@ public:
 	// length : 버튼과 스크롤 바를 포함한 전체 길이
 	bool CreateScrollBar(const MkHashStr& themeName, eBarDirection direction, bool hasDirBtn, float length);
 
+	// 길이 설정
+	// (NOTE) 호출 전 초기화가 이루어진 상태이어야 함
+	bool SetScrollBarLength(float length);
+
+	// 길이 반환
+	// (NOTE) 호출 전 초기화가 이루어진 상태이어야 함
+	float GetScrollBarLength(void) const;
+
 	// 정보 입력
 	// totalPageSize : 전체에 해당하는 논리적 길이
 	// onePageSize : 한 페이지에 해당하는 논리적 길이(최소 1 이상)

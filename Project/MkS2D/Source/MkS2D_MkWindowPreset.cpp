@@ -78,6 +78,17 @@ bool MkWindowPreset::SetUp(const MkDataNode& node)
 		return false;
 	m_EditBoxSelectionSubsetName = editBoxSelectionSubsetName;
 
+	MkArray<MkStr> noticeButtonSubsetName;
+	MK_CHECK(node.GetData(L"NoticeButtonSubsetName", noticeButtonSubsetName) && (!noticeButtonSubsetName.Empty()), L"window preset 노드에 NoticeButtonSubsetName이 지정되어 있지 않음")
+		return false;
+
+	m_NoticeButtonSubsetName.Flush();
+	m_NoticeButtonSubsetName.Reserve(noticeButtonSubsetName.GetSize());
+	MK_INDEXING_LOOP(noticeButtonSubsetName, i)
+	{
+		m_NoticeButtonSubsetName.PushBack(noticeButtonSubsetName[i]);
+	}
+
 	MkArray<MkHashStr> themeNames;
 	node.GetChildNodeList(themeNames);
 	MK_INDEXING_LOOP(themeNames, i)
