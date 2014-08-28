@@ -25,6 +25,22 @@ const static MkHashStr TAB_WINDOW_NAME = L"__#Window";
 const static MkHashStr TAB_COMPONENT_NAME = L"__#Component";
 const static MkHashStr TAB_TAGS_NAME = L"__#Tags";
 
+const static MkHashStr EB_HISTORY_USAGE_CB_BTN_NAME = L"__#HistoryUsage";
+const static MkHashStr SCROLL_BAR_LENGTH_EB_NAME = L"__#SBarLength";
+const static MkHashStr SPREAD_BTN_NEW_KEY_EB_NAME = L"__#SBtnNewKey";
+const static MkHashStr SPREAD_BTN_CREATE_NEW_BTN_NAME = L"__#SBCreateNewBtn";
+const static MkHashStr TAB_WND_NEW_TAB_EB_NAME = L"__#TWNewTabEB";
+const static MkHashStr TAB_WND_CREATE_NEW_BTN_NAME = L"__#TWNewTabBtn";
+const static MkHashStr TAB_WND_TAB_SIZE_X_EB_NAME = L"__#TWTabSizeX";
+const static MkHashStr TAB_WND_TAB_SIZE_Y_EB_NAME = L"__#TWTabSizeY";
+const static MkHashStr TAB_WND_REG_SIZE_X_EB_NAME = L"__#TWRegSizeX";
+const static MkHashStr TAB_WND_REG_SIZE_Y_EB_NAME = L"__#TWRegSizeY";
+const static MkHashStr TAB_WND_TARGET_TAB_SB_NAME = L"__#TWTargetTab";
+const static MkHashStr TAB_WND_USAGE_CB_BTN_NAME = L"__#TWUsage";
+const static MkHashStr TAB_WND_DEL_TAB_BTN_NAME = L"__#TWDelTab";
+const static MkHashStr TAB_WND_MOVE_TAB_TO_PREV_BTN_NAME = L"__#TWMovePrev";
+const static MkHashStr TAB_WND_MOVE_TAB_TO_NEXT_BTN_NAME = L"__#TWMoveNext";
+
 const static MkHashStr THEME_SPREAD_BTN_NAME = L"__#Themes";
 const static MkHashStr THEME_DELETE_BTN_NAME = L"__#DelTheme";
 const static MkHashStr PRESET_SIZE_X_EB_NAME = L"__#SizeX";
@@ -285,7 +301,149 @@ bool MkEditModeTargetWindow::Initialize(void)
 
 			ItemTagInfo ti;
 			ti.captionDesc.SetString(L"윈도우");
-			m_TabWindow->AddTab(TAB_WINDOW_NAME, ti);
+			MkBaseWindowNode* wndWin = m_TabWindow->AddTab(TAB_WINDOW_NAME, ti);
+			if (wndWin != NULL)
+			{
+				float startY = tabBodySize.y - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT;
+				m_TabWnd_Desc = wndWin->CreateSRect(L"__#Desc");
+				m_TabWnd_Desc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, startY));
+				m_TabWnd_Desc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+
+				for (int i=eS2D_SNT_ControlWindowNodeBegin; i<eS2D_SNT_ControlWindowNodeEnd; ++i)
+				{
+					eS2D_SceneNodeType snType = static_cast<eS2D_SceneNodeType>(i);
+
+					MkBaseWindowNode* wndRegion = new MkBaseWindowNode(MkStr(i));
+					wndWin->AttachChildNode(wndRegion);
+					m_TabWnd_RegionTable.Create(snType, wndRegion);
+
+					float btnPosY = startY;
+
+					switch (snType)
+					{
+					case eS2D_SNT_SpreadButtonNode:
+						{
+							m_TabWnd_SpreadBtn_UniqueKey = new MkEditBoxNode(SPREAD_BTN_NEW_KEY_EB_NAME);
+							m_TabWnd_SpreadBtn_UniqueKey->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_SpreadBtn_UniqueKey->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_SpreadBtn_UniqueKey);
+
+							MkBaseWindowNode* btnWin = __CreateWindowPreset(wndRegion, SPREAD_BTN_CREATE_NEW_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT));
+							btnWin->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + m_TabWnd_SpreadBtn_UniqueKey->GetPresetComponentSize().x, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							btnWin->SetPresetComponentCaption(themeName, CaptionDesc(L"-> 이름으로 하위 버튼 생성"));
+						}
+						break;
+
+					case eS2D_SNT_CheckButtonNode: break;
+
+					case eS2D_SNT_ScrollBarNode:
+						{
+							MkSRect* sizeDesc = wndRegion->CreateSRect(L"__#SizeDesc");
+							sizeDesc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, btnPosY + 3));
+							sizeDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sizeDesc->SetDecoString(L"길이 :");
+
+							m_TabWnd_ScrollBar_Length = new MkEditBoxNode(SCROLL_BAR_LENGTH_EB_NAME);
+							m_TabWnd_ScrollBar_Length->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_ScrollBar_Length->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN + sizeDesc->GetLocalSize().x + 6.f, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_ScrollBar_Length);
+						}
+						break;
+
+					case eS2D_SNT_EditBoxNode:
+						{
+							m_TabWnd_EditBox_HistoryUsage = new MkCheckButtonNode(EB_HISTORY_USAGE_CB_BTN_NAME);
+							m_TabWnd_EditBox_HistoryUsage->CreateCheckButton(themeName, CaptionDesc(L"입력 히스토리 기능 사용"), false);
+							m_TabWnd_EditBox_HistoryUsage->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_EditBox_HistoryUsage);
+						}
+						break;
+
+					case eS2D_SNT_TabWindowNode:
+						{
+							m_TabWnd_TabWnd_TabName = new MkEditBoxNode(TAB_WND_NEW_TAB_EB_NAME);
+							m_TabWnd_TabWnd_TabName->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_TabWnd_TabName->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_TabWnd_TabName);
+
+							MkBaseWindowNode* btnWin = __CreateWindowPreset(wndRegion, TAB_WND_CREATE_NEW_BTN_NAME, themeName, eS2D_WPC_OKButton, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT));
+							btnWin->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN * 2.f + m_TabWnd_TabWnd_TabName->GetPresetComponentSize().x, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							btnWin->SetPresetComponentCaption(themeName, CaptionDesc(L"-> 이름으로 하위 탭 생성"));
+
+							btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							float tmpX = MKDEF_CTRL_MARGIN;
+
+							MkSRect* sizeDesc = wndRegion->CreateSRect(L"__#TabSD");
+							sizeDesc->SetLocalPosition(MkFloat2(tmpX, btnPosY + 3));
+							sizeDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sizeDesc->SetDecoString(L"탭 버튼 크기 :");
+
+							tmpX += sizeDesc->GetLocalSize().x + 6.f;
+							m_TabWnd_TabWnd_BtnSizeX = new MkEditBoxNode(TAB_WND_TAB_SIZE_X_EB_NAME);
+							m_TabWnd_TabWnd_BtnSizeX->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_TabWnd_BtnSizeX->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_TabWnd_BtnSizeX);
+
+							tmpX += m_TabWnd_TabWnd_BtnSizeX->GetPresetComponentSize().x + 6.f;
+							m_TabWnd_TabWnd_BtnSizeY = new MkEditBoxNode(TAB_WND_TAB_SIZE_Y_EB_NAME);
+							m_TabWnd_TabWnd_BtnSizeY->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_TabWnd_BtnSizeY->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_TabWnd_BtnSizeY);
+
+							tmpX += m_TabWnd_TabWnd_BtnSizeY->GetPresetComponentSize().x + MKDEF_CTRL_MARGIN;
+							sizeDesc = wndRegion->CreateSRect(L"__#RegSD");
+							sizeDesc->SetLocalPosition(MkFloat2(tmpX, btnPosY + 3));
+							sizeDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sizeDesc->SetDecoString(L"영역 크기 :");
+
+							tmpX += sizeDesc->GetLocalSize().x + 6.f;
+							m_TabWnd_TabWnd_BodySizeX = new MkEditBoxNode(TAB_WND_REG_SIZE_X_EB_NAME);
+							m_TabWnd_TabWnd_BodySizeX->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_TabWnd_BodySizeX->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_TabWnd_BodySizeX);
+
+							tmpX += m_TabWnd_TabWnd_BodySizeX->GetPresetComponentSize().x + 6.f;
+							m_TabWnd_TabWnd_BodySizeY = new MkEditBoxNode(TAB_WND_REG_SIZE_Y_EB_NAME);
+							m_TabWnd_TabWnd_BodySizeY->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_TabWnd_BodySizeY->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_TabWnd_BodySizeY);
+
+							btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+
+							m_TabWnd_TabWnd_TargetTab = new MkSpreadButtonNode(TAB_WND_TARGET_TAB_SB_NAME);
+							m_TabWnd_TabWnd_TargetTab->CreateSelectionRootTypeButton(themeName, MkFloat2(m_TabWnd_TabWnd_TabName->GetPresetComponentSize().x, MKDEF_DEF_CTRL_HEIGHT), MkSpreadButtonNode::eDownward);
+							m_TabWnd_TabWnd_TargetTab->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_TabWnd_TargetTab);
+
+							tmpX = MKDEF_CTRL_MARGIN * 2.f + m_TabWnd_TabWnd_TargetTab->GetPresetComponentSize().x;
+							m_TabWnd_TabWnd_Usage = new MkCheckButtonNode(TAB_WND_USAGE_CB_BTN_NAME);
+							m_TabWnd_TabWnd_Usage->CreateCheckButton(themeName, CaptionDesc(L"사용여부"), false);
+							m_TabWnd_TabWnd_Usage->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_TabWnd_Usage);
+
+							btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							btnWin = __CreateWindowPreset(wndRegion, TAB_WND_DEL_TAB_BTN_NAME, themeName, eS2D_WPC_CancelButton, MkFloat2(100.f, MKDEF_DEF_CTRL_HEIGHT));
+							btnWin->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							btnWin->SetPresetComponentCaption(themeName, CaptionDesc(L"탭 삭제"));
+
+							btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							btnWin = __CreateWindowPreset(wndRegion, TAB_WND_MOVE_TAB_TO_PREV_BTN_NAME, themeName, eS2D_WPC_DirLeftButton, MkFloat2(0.f, 0.f));
+							btnWin->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+
+							tmpX += btnWin->GetPresetComponentSize().x + MKDEF_CTRL_MARGIN;
+							sizeDesc = wndRegion->CreateSRect(L"__#TabMoveD");
+							sizeDesc->SetLocalPosition(MkFloat2(tmpX, btnPosY + 3));
+							sizeDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sizeDesc->SetDecoString(L"탭 순서 변경");
+
+							tmpX += sizeDesc->GetLocalSize().x + MKDEF_CTRL_MARGIN;
+							btnWin = __CreateWindowPreset(wndRegion, TAB_WND_MOVE_TAB_TO_NEXT_BTN_NAME, themeName, eS2D_WPC_DirRightButton, MkFloat2(0.f, 0.f));
+							btnWin->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+						}
+						break;
+					}
+				}
+			}
 
 			ti.captionDesc.SetString(L"컴포넌트");
 			MkBaseWindowNode* compWin = m_TabWindow->AddTab(TAB_COMPONENT_NAME, ti);
@@ -321,13 +479,13 @@ bool MkEditModeTargetWindow::Initialize(void)
 
 				tmpX += sizeDesc->GetLocalSize().x + 6.f;
 				m_TabComp_SizeX = new MkEditBoxNode(PRESET_SIZE_X_EB_NAME);
-				m_TabComp_SizeX->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+				m_TabComp_SizeX->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
 				m_TabComp_SizeX->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				compWin->AttachChildNode(m_TabComp_SizeX);
 
 				tmpX += m_TabComp_SizeX->GetPresetComponentSize().x + 6.f;
 				m_TabComp_SizeY = new MkEditBoxNode(PRESET_SIZE_Y_EB_NAME);
-				m_TabComp_SizeY->CreateEditBox(themeName, MkFloat2(40.f, 20.f), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+				m_TabComp_SizeY->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
 				m_TabComp_SizeY->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				compWin->AttachChildNode(m_TabComp_SizeY);
 
@@ -721,11 +879,8 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 				}
 				else if (targetKey == TAG_CAPTION_UK)
 				{
-					if (m_TargetNode->GetNodeType() != eS2D_SNT_SpreadButtonNode)
-					{
-						_AlignTargetTagRect(MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, alignment);
-						_AlignTargetTagRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, alignment);
-					}
+					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_HIGHLIGHT_CAP_TAG_NAME, alignment);
+					_AlignTargetTagRect(MKDEF_S2D_BASE_WND_NORMAL_CAP_TAG_NAME, alignment);
 				}
 				else
 				{
@@ -1043,6 +1198,17 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_EnableCB = NULL;
 	m_WinAttrBtn = NULL;
 	m_TabWindow = NULL;
+	m_TabWnd_Desc = NULL;
+	m_TabWnd_EditBox_HistoryUsage = NULL;
+	m_TabWnd_ScrollBar_Length = NULL;
+	m_TabWnd_SpreadBtn_UniqueKey = NULL;
+	m_TabWnd_TabWnd_TabName = NULL;
+	m_TabWnd_TabWnd_BtnSizeX = NULL;
+	m_TabWnd_TabWnd_BtnSizeY = NULL;
+	m_TabWnd_TabWnd_BodySizeX = NULL;
+	m_TabWnd_TabWnd_BodySizeY = NULL;
+	m_TabWnd_TabWnd_TargetTab = NULL;
+	m_TabWnd_TabWnd_Usage = NULL;
 	m_TabComp_Desc = NULL;
 	m_TabComp_ThemeSelection = NULL;
 	m_TabComp_DeleteTheme = NULL;
@@ -1182,10 +1348,73 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 
 	if (m_TabWindow != NULL)
 	{
-		m_TabWindow->SetTabEnable(TAB_WINDOW_NAME, nodeEnable && (m_TargetNode->GetNodeType() > eS2D_SNT_BaseWindowNode));
+		bool tabWndEnable = nodeEnable && (m_TargetNode->GetNodeType() >= eS2D_SNT_ControlWindowNodeBegin);
+		m_TabWindow->SetTabEnable(TAB_WINDOW_NAME, tabWndEnable);
 		m_TabWindow->SetTabEnable(TAB_COMPONENT_NAME, nodeEnable);
 		m_TabWindow->SetTabEnable(TAB_TAGS_NAME, nodeEnable);
 
+		if (tabWndEnable)
+		{
+			for (int i=eS2D_SNT_ControlWindowNodeBegin; i<eS2D_SNT_ControlWindowNodeEnd; ++i)
+			{
+				eS2D_SceneNodeType snType = static_cast<eS2D_SceneNodeType>(i);
+				if (m_TabWnd_RegionTable.Exist(snType))
+				{
+					bool selected = (snType == m_TargetNode->GetNodeType());
+					m_TabWnd_RegionTable[snType]->SetVisible(selected);
+
+					if (selected)
+					{
+						switch (snType)
+						{
+						case eS2D_SNT_SpreadButtonNode:
+						case eS2D_SNT_CheckButtonNode: break;
+
+						case eS2D_SNT_ScrollBarNode:
+							{
+								MkScrollBarNode* targetNode = dynamic_cast<MkScrollBarNode*>(m_TargetNode);
+								if (targetNode != NULL)
+								{
+									int length = static_cast<int>(targetNode->GetScrollBarLength());
+									m_TabWnd_ScrollBar_Length->SetText(MkStr(length), false);
+								}
+							}
+							break;
+
+						case eS2D_SNT_EditBoxNode:
+							{
+								MkEditBoxNode* targetNode = dynamic_cast<MkEditBoxNode*>(m_TargetNode);
+								if (targetNode != NULL)
+								{
+									m_TabWnd_EditBox_HistoryUsage->SetCheck(targetNode->SetHistoryUsage());
+								}
+							}
+							break;
+
+						case eS2D_SNT_TabWindowNode:
+							{
+								MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+								if (targetNode != NULL)
+								{
+									m_TabWnd_TabWnd_BtnSizeX->SetText(MkStr(static_cast<int>(targetNode->GetTabButtonSize().x)), false);
+									m_TabWnd_TabWnd_BtnSizeY->SetText(MkStr(static_cast<int>(targetNode->GetTabButtonSize().y)), false);
+
+									m_TabWnd_TabWnd_BodySizeX->SetText(MkStr(static_cast<int>(targetNode->GetTabBodySize().x)), false);
+									m_TabWnd_TabWnd_BodySizeY->SetText(MkStr(static_cast<int>(targetNode->GetTabBodySize().y)), false);
+
+									//m_TabWnd_TabWnd_TargetTab->RemoveItem
+								}
+								
+								//MkSpreadButtonNode* m_TabWnd_TabWnd_TargetTab;
+								//MkCheckButtonNode* m_TabWnd_TabWnd_Usage;
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		
 		if (m_TabTag_TargetSelection != NULL)
 		{
 			// 아이콘, 태그 외의 리스트 삭제

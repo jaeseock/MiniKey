@@ -242,7 +242,7 @@ public:
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경
 	// (NOTE) componentSize의 x, y 요소 적용은 CheckPresetComponentSizeAvailable()의 규칙을 따름
-	void SetPresetComponentSize(const MkFloat2& componentSize);
+	virtual void SetPresetComponentSize(const MkFloat2& componentSize);
 
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 일반 icon(SRect) 설정
 	bool SetPresetComponentIcon(const MkHashStr& iconName, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset, const MkPathName& imagePath, const MkHashStr& subsetName);

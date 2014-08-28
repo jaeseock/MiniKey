@@ -98,6 +98,20 @@ protected:
 	// tab root
 	MkTabWindowNode* m_TabWindow;
 
+	// tab : window
+	MkSRect* m_TabWnd_Desc;
+	MkHashMap<eS2D_SceneNodeType, MkBaseWindowNode*> m_TabWnd_RegionTable;
+	MkCheckButtonNode* m_TabWnd_EditBox_HistoryUsage;
+	MkEditBoxNode* m_TabWnd_ScrollBar_Length;
+	MkEditBoxNode* m_TabWnd_SpreadBtn_UniqueKey;
+	MkEditBoxNode* m_TabWnd_TabWnd_TabName;
+	MkEditBoxNode* m_TabWnd_TabWnd_BtnSizeX;
+	MkEditBoxNode* m_TabWnd_TabWnd_BtnSizeY;
+	MkEditBoxNode* m_TabWnd_TabWnd_BodySizeX;
+	MkEditBoxNode* m_TabWnd_TabWnd_BodySizeY;
+	MkSpreadButtonNode* m_TabWnd_TabWnd_TargetTab;
+	MkCheckButtonNode* m_TabWnd_TabWnd_Usage;
+
 	// tab : component
 	MkSRect* m_TabComp_Desc;
 	MkSpreadButtonNode* m_TabComp_ThemeSelection;

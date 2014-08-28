@@ -17,11 +17,16 @@ enum eS2D_SceneNodeType
 {
 	eS2D_SNT_SceneNode = 0, // MkSceneNode
 	eS2D_SNT_BaseWindowNode, // MkBaseWindowNode
-	eS2D_SNT_SpreadButtonNode, // MkSpreadButtonNode
+
+	eS2D_SNT_ControlWindowNodeBegin,
+
+	eS2D_SNT_SpreadButtonNode = eS2D_SNT_ControlWindowNodeBegin, // MkSpreadButtonNode
 	eS2D_SNT_CheckButtonNode, // MkCheckButtonNode
 	eS2D_SNT_ScrollBarNode, // MkScrollBarNode
 	eS2D_SNT_EditBoxNode, // MkEditBoxNode
-	eS2D_SNT_TabWindowNode // MkTabWindowNode
+	eS2D_SNT_TabWindowNode, // MkTabWindowNode
+
+	eS2D_SNT_ControlWindowNodeEnd
 };
 
 // window preset component

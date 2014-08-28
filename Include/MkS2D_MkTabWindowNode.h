@@ -43,6 +43,9 @@ public:
 	// customWindow에 전용 객체를 대신 넣을 수 있으며 이 경우 반환값과 동일(NULL일경우 MkBaseWindowNode*를 생성해 반환)
 	MkBaseWindowNode* AddTab(const MkHashStr& tabName, const ItemTagInfo& tagInfo, MkBaseWindowNode* customWindow = NULL);
 
+	// tab 삭제
+	bool RemoveTab(const MkHashStr& tabName);
+
 	// 해당 tab의 윈도우 영역 반환
 	MkBaseWindowNode* GetWindowNodeOfTab(const MkHashStr& tabName);
 
@@ -97,6 +100,7 @@ protected:
 	void _RepositionTabs(unsigned int startPos);
 	void _SetTabState(const MkHashStr& tabName, bool front);
 	void _MoveTargetTabToFront(const MkHashStr& tabName);
+	void _TurnOffCurrentFrontTab(void);
 
 protected:
 

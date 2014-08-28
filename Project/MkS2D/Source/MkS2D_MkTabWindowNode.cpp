@@ -194,6 +194,36 @@ MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTa
 	return bodyWin;
 }
 
+bool MkTabWindowNode::RemoveTab(const MkHashStr& tabName)
+{
+	if (m_Tabs.Exist(tabName))
+	{
+		MkSceneNode* targetNode = GetChildNode(tabName);
+		if (targetNode != NULL)
+		{
+			unsigned int pos = m_TabList.FindFirstInclusion(MkArraySection(0), tabName);
+			m_TabList.Erase(MkArraySection(pos, 1));
+			m_Tabs.Erase(tabName);
+
+			DetachChildNode(tabName);
+			delete targetNode;
+
+			switch (m_TabAlighment)
+			{
+			case eLeftside: _RepositionTabs(pos); break;
+			case eRightside: _RepositionTabs(0); break;
+			}
+
+			if (tabName == m_CurrentFrontTab)
+			{
+				_TurnOffCurrentFrontTab();
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
 MkBaseWindowNode* MkTabWindowNode::GetWindowNodeOfTab(const MkHashStr& tabName)
 {
 	if (m_Tabs.Exist(tabName))
@@ -252,36 +282,7 @@ bool MkTabWindowNode::SetTabEnable(const MkHashStr& tabName, bool enable)
 					// disable 대상이 front tab이면 가장 앞에 있는 활성화된 tab을 front로 지정
 					if (tabName == m_CurrentFrontTab)
 					{
-						MK_INDEXING_LOOP(m_TabList, i)
-						{
-							const MkHashStr& currTabName = m_TabList[i];
-							if (tabName != currTabName)
-							{
-								MkSceneNode* currTab = GetChildNode(currTabName);
-								if (currTab != NULL)
-								{
-									MkBaseWindowNode* currRearBtn = dynamic_cast<MkBaseWindowNode*>(currTab->GetChildNode(REAR_BTN_NAME));
-									if ((currRearBtn != NULL) && currRearBtn->GetEnable())
-									{
-										m_CurrentFrontTab = currTabName;
-										break;
-									}
-								}
-							}
-						}
-
-						// 모든 tab이 비활성화 상태. front tab 없음
-						if (tabName == m_CurrentFrontTab)
-						{
-							m_CurrentFrontTab.Clear();
-						}
-						// 해당 tab을 front로 지정
-						else
-						{
-							_SetTabState(m_CurrentFrontTab, true);
-
-							_PushWindowEvent(MkSceneNodeFamilyDefinition::eTabSelection);
-						}
+						_TurnOffCurrentFrontTab();
 					}
 				}
 				return true;
@@ -537,6 +538,42 @@ void MkTabWindowNode::_MoveTargetTabToFront(const MkHashStr& tabName)
 	_SetTabState(m_CurrentFrontTab, true);
 
 	_PushWindowEvent(MkSceneNodeFamilyDefinition::eTabSelection);
+}
+
+void MkTabWindowNode::_TurnOffCurrentFrontTab(void)
+{
+	MkHashStr tabName = m_CurrentFrontTab;
+
+	MK_INDEXING_LOOP(m_TabList, i)
+	{
+		const MkHashStr& currTabName = m_TabList[i];
+		if (tabName != currTabName)
+		{
+			MkSceneNode* currTab = GetChildNode(currTabName);
+			if (currTab != NULL)
+			{
+				MkBaseWindowNode* currRearBtn = dynamic_cast<MkBaseWindowNode*>(currTab->GetChildNode(REAR_BTN_NAME));
+				if ((currRearBtn != NULL) && currRearBtn->GetEnable())
+				{
+					m_CurrentFrontTab = currTabName;
+					break;
+				}
+			}
+		}
+	}
+
+	// 모든 tab이 비활성화 상태. front tab 없음
+	if (tabName == m_CurrentFrontTab)
+	{
+		m_CurrentFrontTab.Clear();
+	}
+	// 해당 tab을 front로 지정
+	else
+	{
+		_SetTabState(m_CurrentFrontTab, true);
+
+		_PushWindowEvent(MkSceneNodeFamilyDefinition::eTabSelection);
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

@@ -165,11 +165,7 @@ bool MkSpreadButtonNode::SetTargetItem(const MkSpreadButtonNode* targetNode)
 	if (ok)
 	{
 		const MkHashStr& uniqueKey = targetNode->GetNodeName();
-
-		MK_CHECK(this == targetNode->GetRootListButton(), GetNodeName().GetString() + L" root button의 타겟으로 하위가 아닌 " + uniqueKey.GetString() + L" 버튼이 지정 되었음")
-			return false;
-		
-		if (uniqueKey != m_TargetUniqueKey)
+		if ((uniqueKey != GetNodeName()) && (uniqueKey != m_TargetUniqueKey))
 		{
 			m_TargetUniqueKey = uniqueKey;
 
@@ -211,7 +207,6 @@ bool MkSpreadButtonNode::RemoveItem(const MkHashStr& uniqueKey)
 			if ((targetNode != NULL) && DetachChildNode(uniqueKey))
 			{
 				delete targetNode;
-				m_ItemSequence.EraseFirstInclusion(MkArraySection(0), uniqueKey);
 
 				MkSpreadButtonNode* rootButton = GetRootListButton();
 				if ((rootButton != NULL) && (rootButton->GetTargetItemKey() == uniqueKey))
@@ -451,6 +446,41 @@ bool MkSpreadButtonNode::HitEventMousePress(unsigned int button, const MkFloat2&
 	}
 
 	return MkBaseWindowNode::HitEventMousePress(button, position);
+}
+
+void MkSpreadButtonNode::SetPresetComponentSize(const MkFloat2& componentSize)
+{
+	MkBaseWindowNode::SetPresetComponentSize(componentSize);
+
+	MK_INDEXING_LOOP(m_ItemSequence, i)
+	{
+		MkSpreadButtonNode* childBtn = dynamic_cast<MkSpreadButtonNode*>(GetChildNode(m_ItemSequence[i]));
+		if (childBtn != NULL)
+		{
+			childBtn->SetPresetComponentSize(componentSize);
+		}
+	}
+
+	if (ChildExist(ARROW_PRESET_NAME))
+	{
+		MkBaseWindowNode* arrowNode = dynamic_cast<MkBaseWindowNode*>(GetChildNode(ARROW_PRESET_NAME));
+		if (arrowNode != NULL)
+		{
+			MkFloat2 localPos = MkFloatRect(GetPresetComponentSize()).GetSnapPosition
+				(MkFloatRect(arrowNode->GetPresetComponentSize()), eRAP_RightCenter, MkFloat2(MK_WR_PRESET.GetMargin(), 0.f));
+			arrowNode->SetLocalPosition(localPos);
+		}
+	}
+}
+
+bool MkSpreadButtonNode::DetachChildNode(const MkHashStr& childNodeName)
+{
+	bool ok = MkBaseWindowNode::DetachChildNode(childNodeName);
+	if (ok)
+	{
+		m_ItemSequence.EraseFirstInclusion(MkArraySection(0), childNodeName);
+	}
+	return ok;
 }
 
 MkSpreadButtonNode::MkSpreadButtonNode(const MkHashStr& name) : MkBaseWindowNode(name)

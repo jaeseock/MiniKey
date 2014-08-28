@@ -30,6 +30,9 @@ public:
 	// history 사용 여부 설정
 	void SetHistoryUsage(bool enable);
 
+	// history 사용 여부 반환
+	inline bool SetHistoryUsage(void) const { return m_UseHistory; }
+
 	// 폰트 정보 설정
 	void SetFontInfo(const MkHashStr& fontType, const MkHashStr& normalFontState, const MkHashStr& selectionFontState, const MkHashStr& cursorFontState);
 
