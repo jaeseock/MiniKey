@@ -26,10 +26,12 @@ const static MkHashStr TAB_COMPONENT_NAME = L"__#Component";
 const static MkHashStr TAB_TAGS_NAME = L"__#Tags";
 
 const static MkHashStr EB_HISTORY_USAGE_CB_BTN_NAME = L"__#HistoryUsage";
+const static MkHashStr EB_FONT_TYPE_EB_NAME = L"__#FType";
+const static MkHashStr EB_NORMAL_FONT_STATE_EB_NAME = L"__#FStateN";
+const static MkHashStr EB_SELECTION_FONT_STATE_EB_NAME = L"__#FStateS";
+const static MkHashStr EB_CURSOR_FONT_STATE_EB_NAME = L"__#FStateC";
 const static MkHashStr SCROLL_BAR_LENGTH_EB_NAME = L"__#SBarLength";
-const static MkHashStr SPREAD_BTN_NEW_KEY_EB_NAME = L"__#SBtnNewKey";
 const static MkHashStr SPREAD_BTN_CREATE_NEW_BTN_NAME = L"__#SBCreateNewBtn";
-const static MkHashStr TAB_WND_NEW_TAB_EB_NAME = L"__#TWNewTabEB";
 const static MkHashStr TAB_WND_CREATE_NEW_BTN_NAME = L"__#TWNewTabBtn";
 const static MkHashStr TAB_WND_TAB_SIZE_X_EB_NAME = L"__#TWTabSizeX";
 const static MkHashStr TAB_WND_TAB_SIZE_Y_EB_NAME = L"__#TWTabSizeY";
@@ -323,7 +325,7 @@ bool MkEditModeTargetWindow::Initialize(void)
 					{
 					case eS2D_SNT_SpreadButtonNode:
 						{
-							m_TabWnd_SpreadBtn_UniqueKey = new MkEditBoxNode(SPREAD_BTN_NEW_KEY_EB_NAME);
+							m_TabWnd_SpreadBtn_UniqueKey = new MkEditBoxNode(L"__#SBtnNewKey");
 							m_TabWnd_SpreadBtn_UniqueKey->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
 							m_TabWnd_SpreadBtn_UniqueKey->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 							wndRegion->AttachChildNode(m_TabWnd_SpreadBtn_UniqueKey);
@@ -356,12 +358,66 @@ bool MkEditModeTargetWindow::Initialize(void)
 							m_TabWnd_EditBox_HistoryUsage->CreateCheckButton(themeName, CaptionDesc(L"입력 히스토리 기능 사용"), false);
 							m_TabWnd_EditBox_HistoryUsage->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 							wndRegion->AttachChildNode(m_TabWnd_EditBox_HistoryUsage);
+
+							float ebYPos = btnPosY - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT;
+							MkSRect* sDesc = wndRegion->CreateSRect(L"__#FTDesc");
+							sDesc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, ebYPos + 3));
+							sDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sDesc->SetDecoString(L"폰트 종류(" + MK_WR_PRESET.GetEditBoxFontType().GetString() + L")");
+							float ebXPos = sDesc->GetLocalSize().x;
+
+							ebYPos -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							sDesc = wndRegion->CreateSRect(L"__#FSNDesc");
+							sDesc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, ebYPos + 3));
+							sDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sDesc->SetDecoString(L"일반 폰트 형태(" + MK_WR_PRESET.GetEditBoxNormalFontState().GetString() + L")");
+							ebXPos = GetMax<float>(sDesc->GetLocalSize().x, ebXPos);
+
+							ebYPos -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							sDesc = wndRegion->CreateSRect(L"__#FSSDesc");
+							sDesc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, ebYPos + 3));
+							sDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sDesc->SetDecoString(L"선택 폰트 형태(" + MK_WR_PRESET.GetEditBoxSelectionFontState().GetString() + L")");
+							ebXPos = GetMax<float>(sDesc->GetLocalSize().x, ebXPos);
+
+							ebYPos -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							sDesc = wndRegion->CreateSRect(L"__#FSCDesc");
+							sDesc->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, ebYPos + 3));
+							sDesc->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+							sDesc->SetDecoString(L"커서 폰트 형태(" + MK_WR_PRESET.GetEditBoxCursorFontState().GetString() + L")");
+							ebXPos = GetMax<float>(sDesc->GetLocalSize().x, ebXPos);
+
+							ebXPos += MKDEF_CTRL_MARGIN * 2.f;
+
+							ebYPos = btnPosY - MKDEF_CTRL_MARGIN - MKDEF_DEF_CTRL_HEIGHT;
+							m_TabWnd_EditBox_FontType = new MkEditBoxNode(EB_FONT_TYPE_EB_NAME);
+							m_TabWnd_EditBox_FontType->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_EditBox_FontType->SetLocalPosition(MkVec3(ebXPos, ebYPos, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_EditBox_FontType);
+
+							ebYPos -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							m_TabWnd_EditBox_NormalFontState = new MkEditBoxNode(EB_NORMAL_FONT_STATE_EB_NAME);
+							m_TabWnd_EditBox_NormalFontState->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_EditBox_NormalFontState->SetLocalPosition(MkVec3(ebXPos, ebYPos, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_EditBox_NormalFontState);
+
+							ebYPos -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							m_TabWnd_EditBox_SelectionFontState = new MkEditBoxNode(EB_SELECTION_FONT_STATE_EB_NAME);
+							m_TabWnd_EditBox_SelectionFontState->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_EditBox_SelectionFontState->SetLocalPosition(MkVec3(ebXPos, ebYPos, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_EditBox_SelectionFontState);
+
+							ebYPos -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+							m_TabWnd_EditBox_CursorFontState = new MkEditBoxNode(EB_CURSOR_FONT_STATE_EB_NAME);
+							m_TabWnd_EditBox_CursorFontState->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+							m_TabWnd_EditBox_CursorFontState->SetLocalPosition(MkVec3(ebXPos, ebYPos, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+							wndRegion->AttachChildNode(m_TabWnd_EditBox_CursorFontState);
 						}
 						break;
 
 					case eS2D_SNT_TabWindowNode:
 						{
-							m_TabWnd_TabWnd_TabName = new MkEditBoxNode(TAB_WND_NEW_TAB_EB_NAME);
+							m_TabWnd_TabWnd_TabName = new MkEditBoxNode(L"__#TWNewTabEB");
 							m_TabWnd_TabWnd_TabName->CreateEditBox(themeName, MkFloat2(200.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
 							m_TabWnd_TabWnd_TabName->SetLocalPosition(MkVec3(MKDEF_CTRL_MARGIN, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 							wndRegion->AttachChildNode(m_TabWnd_TabWnd_TabName);
@@ -737,18 +793,30 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 					else
 					{
 						MkSceneNode* parentNode = m_TargetNode->GetParentNode();
-						MkBaseWindowNode* parentWindow = NULL;
-						if (parentNode != NULL)
+						
+						if ((m_TargetNode->GetNodeType() == eS2D_SNT_SpreadButtonNode) &&
+							(parentNode != NULL) && (parentNode->GetNodeType() == eS2D_SNT_SpreadButtonNode))
 						{
-							parentNode->DetachChildNode(m_TargetNode->GetNodeName());
-							if (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+							MkSpreadButtonNode* parentBtn = dynamic_cast<MkSpreadButtonNode*>(parentNode);
+							if (parentBtn != NULL)
 							{
-								parentWindow = dynamic_cast<MkBaseWindowNode*>(parentNode);
+								MkHashStr nodeName = m_TargetNode->GetNodeName();
+								parentBtn->RemoveItem(nodeName);
 							}
 						}
+						else
+						{
+							if (parentNode != NULL)
+							{
+								parentNode->DetachChildNode(m_TargetNode->GetNodeName());
+							}
+							delete m_TargetNode;
+						}
 
-						delete m_TargetNode;
 						MK_WIN_EVENT_MGR.SetTargetWindowNode(NULL);
+
+						MkBaseWindowNode* parentWindow = ((parentNode != NULL) && (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)) ? 
+							dynamic_cast<MkBaseWindowNode*>(parentNode) : NULL;
 
 						if (parentWindow != NULL)
 						{
@@ -762,6 +830,92 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 				if (m_TargetNode != NULL)
 				{
 					MK_WIN_EVENT_MGR.OpenWindowAttributeSystemWindow(m_TargetNode);
+				}
+			}
+			else if (evt.node->GetNodeName() == SPREAD_BTN_CREATE_NEW_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_SpreadButtonNode))
+				{
+					MkSpreadButtonNode* targetBtn = dynamic_cast<MkSpreadButtonNode*>(m_TargetNode);
+					if (targetBtn != NULL)
+					{
+						const MkStr uniqueStr = m_TabWnd_SpreadBtn_UniqueKey->GetText();
+						if (!uniqueStr.Empty())
+						{
+							MkHashStr uniqueKey = uniqueStr;
+							ItemTagInfo ti;
+							ti.captionDesc.SetString(uniqueStr);
+							if (targetBtn->AddItem(uniqueKey, ti) != NULL)
+							{
+								MkBaseWindowNode* targetNode = m_TargetNode;
+								MK_WIN_EVENT_MGR.SetTargetWindowNode(NULL);
+								MK_WIN_EVENT_MGR.SetTargetWindowNode(targetNode);
+							}
+						}
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_CREATE_NEW_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetWnd = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetWnd != NULL)
+					{
+						const MkStr tabName = m_TabWnd_TabWnd_TabName->GetText();
+						if (!tabName.Empty())
+						{
+							ItemTagInfo ti;
+							ti.captionDesc.SetString(tabName);
+							if (targetWnd->AddTab(tabName, ti, NULL) != NULL)
+							{
+								MkBaseWindowNode* targetNode = m_TargetNode;
+								MK_WIN_EVENT_MGR.SetTargetWindowNode(NULL);
+								MK_WIN_EVENT_MGR.SetTargetWindowNode(targetNode);
+							}
+						}
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_DEL_TAB_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetWnd = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetWnd != NULL)
+					{
+						const MkHashStr& tabName = m_TabWnd_TabWnd_TargetTab->GetTargetItemKey();
+						if (targetWnd->RemoveTab(tabName))
+						{
+							MkBaseWindowNode* targetNode = m_TargetNode;
+							MK_WIN_EVENT_MGR.SetTargetWindowNode(NULL);
+							MK_WIN_EVENT_MGR.SetTargetWindowNode(targetNode);
+						}
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_MOVE_TAB_TO_PREV_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetWnd = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetWnd != NULL)
+					{
+						const MkHashStr& tabName = m_TabWnd_TabWnd_TargetTab->GetTargetItemKey();
+						targetWnd->MoveTabToOneStepForward(tabName);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_MOVE_TAB_TO_NEXT_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetWnd = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetWnd != NULL)
+					{
+						const MkHashStr& tabName = m_TabWnd_TabWnd_TargetTab->GetTargetItemKey();
+						targetWnd->MoveTabToOneStepBackword(tabName);
+					}
 				}
 			}
 			else if (evt.node->GetNodeName() == THEME_DELETE_BTN_NAME)
@@ -958,6 +1112,29 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 					m_TargetNode->SetEnable(true);
 				}
 			}
+			else if (evt.node->GetNodeName() == EB_HISTORY_USAGE_CB_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_EditBoxNode))
+				{
+					MkEditBoxNode* targetNode = dynamic_cast<MkEditBoxNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						targetNode->SetHistoryUsage(true);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_USAGE_CB_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						const MkHashStr& tabName = m_TabWnd_TabWnd_TargetTab->GetTargetItemKey();
+						targetNode->SetTabEnable(tabName, true);
+					}
+				}
+			}
 			else if (evt.node->GetNodeName() == ENABLE_CLOSE_BTN_NAME)
 			{
 				if ((m_TargetNode != NULL) && IsTitleStateType(m_TargetNode->GetPresetComponentType()) && (!_CheckTitleHasCloseButton(m_TargetNode)))
@@ -984,6 +1161,29 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 			{
 				m_TargetNode->SetEnable(false);
 			}
+			else if (evt.node->GetNodeName() == EB_HISTORY_USAGE_CB_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_EditBoxNode))
+				{
+					MkEditBoxNode* targetNode = dynamic_cast<MkEditBoxNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						targetNode->SetHistoryUsage(false);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_USAGE_CB_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						const MkHashStr& tabName = m_TabWnd_TabWnd_TargetTab->GetTargetItemKey();
+						targetNode->SetTabEnable(tabName, false);
+					}
+				}
+			}
 			else if (evt.node->GetNodeName() == ENABLE_CLOSE_BTN_NAME)
 			{
 				if ((m_TargetNode != NULL) && IsTitleStateType(m_TargetNode->GetPresetComponentType()) && _CheckTitleHasCloseButton(m_TargetNode))
@@ -1006,7 +1206,19 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 
 	case MkSceneNodeFamilyDefinition::eSetTargetItem:
 		{
-			if (evt.node->GetNodeName() == THEME_SPREAD_BTN_NAME)
+			if (evt.node->GetNodeName() == TAB_WND_TARGET_TAB_SB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						const MkHashStr& tabName = m_TabWnd_TabWnd_TargetTab->GetTargetItemKey();
+						m_TabWnd_TabWnd_Usage->SetCheck(targetNode->GetTabEnable(tabName));
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == THEME_SPREAD_BTN_NAME)
 			{
 				if (m_TargetNode != NULL)
 				{
@@ -1022,7 +1234,115 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 
 	case MkSceneNodeFamilyDefinition::eCommitText:
 		{
-			if (evt.node->GetNodeName() == PRESET_SIZE_X_EB_NAME)
+			if (evt.node->GetNodeName() == EB_FONT_TYPE_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_EditBoxNode))
+				{
+					MkEditBoxNode* targetNode = dynamic_cast<MkEditBoxNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						targetNode->SetFontType(m_TabWnd_EditBox_FontType->GetText());
+						m_TabWnd_EditBox_FontType->SetText(targetNode->GetFontType().GetString(), false);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == EB_NORMAL_FONT_STATE_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_EditBoxNode))
+				{
+					MkEditBoxNode* targetNode = dynamic_cast<MkEditBoxNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						targetNode->SetNormalFontState(m_TabWnd_EditBox_NormalFontState->GetText());
+						m_TabWnd_EditBox_NormalFontState->SetText(targetNode->GetNormalFontState().GetString(), false);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == EB_SELECTION_FONT_STATE_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_EditBoxNode))
+				{
+					MkEditBoxNode* targetNode = dynamic_cast<MkEditBoxNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						targetNode->SetSelectionFontState(m_TabWnd_EditBox_SelectionFontState->GetText());
+						m_TabWnd_EditBox_SelectionFontState->SetText(targetNode->GetSelectionFontState().GetString(), false);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == EB_CURSOR_FONT_STATE_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_EditBoxNode))
+				{
+					MkEditBoxNode* targetNode = dynamic_cast<MkEditBoxNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						targetNode->SetCursorFontState(m_TabWnd_EditBox_CursorFontState->GetText());
+						m_TabWnd_EditBox_CursorFontState->SetText(targetNode->GetCursorFontState().GetString(), false);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == SCROLL_BAR_LENGTH_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_ScrollBarNode))
+				{
+					MkScrollBarNode* targetNode = dynamic_cast<MkScrollBarNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						float length = m_TabWnd_ScrollBar_Length->GetText().ToFloat();
+						targetNode->SetScrollBarLength(length);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_TAB_SIZE_X_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						MkFloat2 size(m_TabWnd_TabWnd_BtnSizeX->GetText().ToFloat(), targetNode->GetTabButtonSize().y);
+						targetNode->SetTabButtonSize(size);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_TAB_SIZE_Y_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						MkFloat2 size(targetNode->GetTabButtonSize().x, m_TabWnd_TabWnd_BtnSizeY->GetText().ToFloat());
+						targetNode->SetTabButtonSize(size);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_REG_SIZE_X_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						MkFloat2 size(m_TabWnd_TabWnd_BodySizeX->GetText().ToFloat(), targetNode->GetTabBodySize().y);
+						targetNode->SetTabBodySize(size);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == TAB_WND_REG_SIZE_Y_EB_NAME)
+			{
+				if ((m_TargetNode != NULL) && (m_TargetNode->GetNodeType() == eS2D_SNT_TabWindowNode))
+				{
+					MkTabWindowNode* targetNode = dynamic_cast<MkTabWindowNode*>(m_TargetNode);
+					if (targetNode != NULL)
+					{
+						MkFloat2 size(targetNode->GetTabBodySize().x, m_TabWnd_TabWnd_BodySizeY->GetText().ToFloat());
+						targetNode->SetTabBodySize(size);
+					}
+				}
+			}
+			else if (evt.node->GetNodeName() == PRESET_SIZE_X_EB_NAME)
 			{
 				if ((m_TargetNode != NULL) && m_TabComp_SizeX->GetText().IsDigit())
 				{
@@ -1200,6 +1520,10 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_TabWindow = NULL;
 	m_TabWnd_Desc = NULL;
 	m_TabWnd_EditBox_HistoryUsage = NULL;
+	m_TabWnd_EditBox_FontType = NULL;
+	m_TabWnd_EditBox_NormalFontState = NULL;
+	m_TabWnd_EditBox_SelectionFontState = NULL;
+	m_TabWnd_EditBox_CursorFontState = NULL;
 	m_TabWnd_ScrollBar_Length = NULL;
 	m_TabWnd_SpreadBtn_UniqueKey = NULL;
 	m_TabWnd_TabWnd_TabName = NULL;
@@ -1348,10 +1672,22 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 
 	if (m_TabWindow != NULL)
 	{
-		bool tabWndEnable = nodeEnable && (m_TargetNode->GetNodeType() >= eS2D_SNT_ControlWindowNodeBegin);
+		bool tabWndEnable = nodeEnable &&
+			(m_TargetNode->GetNodeType() >= eS2D_SNT_ControlWindowNodeBegin) &&
+			(m_TargetNode->GetNodeType() != eS2D_SNT_CheckButtonNode);
+
 		m_TabWindow->SetTabEnable(TAB_WINDOW_NAME, tabWndEnable);
 		m_TabWindow->SetTabEnable(TAB_COMPONENT_NAME, nodeEnable);
 		m_TabWindow->SetTabEnable(TAB_TAGS_NAME, nodeEnable);
+
+		if (tabWndEnable)
+		{
+			m_TabWindow->SelectTab(TAB_WINDOW_NAME);
+		}
+		else if (nodeEnable)
+		{
+			m_TabWindow->SelectTab((m_TargetNode->GetPresetComponentType() == eS2D_WPC_None) ? TAB_TAGS_NAME : TAB_COMPONENT_NAME);
+		}
 
 		if (tabWndEnable)
 		{
@@ -1387,6 +1723,10 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 								if (targetNode != NULL)
 								{
 									m_TabWnd_EditBox_HistoryUsage->SetCheck(targetNode->SetHistoryUsage());
+									m_TabWnd_EditBox_FontType->SetText(targetNode->GetFontType().GetString(), false);
+									m_TabWnd_EditBox_NormalFontState->SetText(targetNode->GetNormalFontState().GetString(), false);
+									m_TabWnd_EditBox_SelectionFontState->SetText(targetNode->GetSelectionFontState().GetString(), false);
+									m_TabWnd_EditBox_CursorFontState->SetText(targetNode->GetCursorFontState().GetString(), false);
 								}
 							}
 							break;
@@ -1402,11 +1742,23 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 									m_TabWnd_TabWnd_BodySizeX->SetText(MkStr(static_cast<int>(targetNode->GetTabBodySize().x)), false);
 									m_TabWnd_TabWnd_BodySizeY->SetText(MkStr(static_cast<int>(targetNode->GetTabBodySize().y)), false);
 
-									//m_TabWnd_TabWnd_TargetTab->RemoveItem
+									m_TabWnd_TabWnd_TargetTab->RemoveAllItems();
+
+									const MkArray<MkHashStr>& tabList = targetNode->GetTabList();
+									ItemTagInfo ti;
+									MK_INDEXING_LOOP(tabList, j)
+									{
+										const MkHashStr& tabName = tabList[j];
+										ti.captionDesc.SetString(tabName.GetString());
+										m_TabWnd_TabWnd_TargetTab->AddItem(tabName, ti);
+
+										if (j == 0)
+										{
+											m_TabWnd_TabWnd_TargetTab->SetTargetItem(tabName);
+											m_TabWnd_TabWnd_Usage->SetCheck(targetNode->GetTabEnable(tabName));
+										}
+									}
 								}
-								
-								//MkSpreadButtonNode* m_TabWnd_TabWnd_TargetTab;
-								//MkCheckButtonNode* m_TabWnd_TabWnd_Usage;
 							}
 							break;
 						}

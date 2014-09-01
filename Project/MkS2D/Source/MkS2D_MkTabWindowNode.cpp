@@ -113,7 +113,7 @@ MkBaseWindowNode* MkTabWindowNode::AddTab(const MkHashStr& tabName, const ItemTa
 		return NULL;
 
 	unsigned int tabIndex = m_TabList.GetSize();
-	MK_CHECK(tabIndex < m_TabCapacity, L"tab이 다 찬 " + GetNodeName().GetString() + L" MkTabWindowNode에 tab 생성 시도 : " + tabName.GetString())
+	if (tabIndex >= m_TabCapacity)
 		return NULL;
 
 	MkBaseWindowNode* targetNode = new MkBaseWindowNode(tabName);
@@ -286,6 +286,23 @@ bool MkTabWindowNode::SetTabEnable(const MkHashStr& tabName, bool enable)
 					}
 				}
 				return true;
+			}
+		}
+	}
+	return false;
+}
+
+bool MkTabWindowNode::GetTabEnable(const MkHashStr& tabName) const
+{
+	if (m_Tabs.Exist(tabName))
+	{
+		const MkSceneNode* targetTab = GetChildNode(tabName);
+		if (targetTab != NULL)
+		{
+			const MkBaseWindowNode* targetRearBtn = dynamic_cast<const MkBaseWindowNode*>(targetTab->GetChildNode(REAR_BTN_NAME));
+			if (targetRearBtn != NULL)
+			{
+				return targetRearBtn->GetEnable();
 			}
 		}
 	}

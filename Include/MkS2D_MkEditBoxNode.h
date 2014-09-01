@@ -33,8 +33,18 @@ public:
 	// history 사용 여부 반환
 	inline bool SetHistoryUsage(void) const { return m_UseHistory; }
 
-	// 폰트 정보 설정
-	void SetFontInfo(const MkHashStr& fontType, const MkHashStr& normalFontState, const MkHashStr& selectionFontState, const MkHashStr& cursorFontState);
+	// 폰트 정보 설정/반환
+	void SetFontType(const MkHashStr& fontType);
+	inline const MkHashStr& GetFontType(void) const { return m_FontType; }
+
+	void SetNormalFontState(const MkHashStr& fontState);
+	inline const MkHashStr& GetNormalFontState(void) const { return m_NormalFontState; }
+
+	void SetSelectionFontState(const MkHashStr& fontState);
+	inline const MkHashStr& GetSelectionFontState(void) const { return m_SelectionFontState; }
+
+	void SetCursorFontState(const MkHashStr& fontState);
+	inline const MkHashStr& GetCursorFontState(void) const { return m_CursorFontState; }
 
 	// 문자열 설정. pushEvent는 MkSceneNodeFamilyDefinition::eModifyText 발생 여부
 	void SetText(const MkStr& msg, bool pushEvent = true);

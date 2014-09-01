@@ -203,17 +203,41 @@ bool MkSpreadButtonNode::RemoveItem(const MkHashStr& uniqueKey)
 	{
 		if (m_ItemSequence.Exist(MkArraySection(0), uniqueKey))
 		{
+			CloseAllItems();
+
 			MkSceneNode* targetNode = GetChildNode(uniqueKey);
+
+			MkSpreadButtonNode* rootButton = GetRootListButton();
+			if (rootButton != NULL)
+			{
+				const MkHashStr& targetKey = rootButton->GetTargetItemKey();
+				if (!targetKey.Empty())
+				{
+					if (uniqueKey == targetKey)
+					{
+						rootButton->ClearTargetItem();
+					}
+					else
+					{
+						MkSpreadButtonNode* targetBtn = dynamic_cast<MkSpreadButtonNode*>(targetNode);
+						if ((targetBtn != NULL) && (!targetBtn->__CheckUniqueKey(targetKey)))
+						{
+							rootButton->ClearTargetItem();
+						}
+					}
+				}
+			}
+
 			if ((targetNode != NULL) && DetachChildNode(uniqueKey))
 			{
 				delete targetNode;
-
-				MkSpreadButtonNode* rootButton = GetRootListButton();
-				if ((rootButton != NULL) && (rootButton->GetTargetItemKey() == uniqueKey))
-				{
-					rootButton->ClearTargetItem();
-				}
 			}
+
+			if (m_ItemSequence.Empty())
+			{
+				RemoveChildNode(ARROW_PRESET_NAME);
+			}
+
 			return true;
 		}
 
@@ -228,6 +252,32 @@ bool MkSpreadButtonNode::RemoveItem(const MkHashStr& uniqueKey)
 		}
 	}
 	return false;
+}
+
+void MkSpreadButtonNode::RemoveAllItems(void)
+{
+	if (!m_ItemSequence.Empty())
+	{
+		CloseAllItems();
+
+		MkSpreadButtonNode* rootButton = GetRootListButton();
+		if (rootButton != NULL)
+		{
+			const MkHashStr& targetKey = rootButton->GetTargetItemKey();
+			if ((!targetKey.Empty()) && (!__CheckUniqueKey(targetKey)))
+			{
+				rootButton->ClearTargetItem();
+			}
+		}
+
+		MkArray<MkHashStr> itemSequence = m_ItemSequence;
+		MK_INDEXING_LOOP(itemSequence, i)
+		{
+			RemoveChildNode(itemSequence[i]);
+		}
+
+		RemoveChildNode(ARROW_PRESET_NAME);
+	}
 }
 
 bool MkSpreadButtonNode::SetPresetComponentItemTag(const ItemTagInfo& tagInfo, bool deleteIconIfEmpty, bool deleteCaptionIfEmpty)
@@ -446,6 +496,22 @@ bool MkSpreadButtonNode::HitEventMousePress(unsigned int button, const MkFloat2&
 	}
 
 	return MkBaseWindowNode::HitEventMousePress(button, position);
+}
+
+void MkSpreadButtonNode::Clear(void)
+{
+	CloseAllItems();
+
+	MkBaseWindowNode::Clear();
+
+	m_ItemTagInfo.iconPath.Clear();
+	m_ItemTagInfo.iconSubset.Clear();
+	m_ItemTagInfo.captionDesc.Clear();
+
+	m_ItemSequence.Clear();
+	m_TargetUniqueKey.Clear();
+	m_ItemWorldAABR.Clear();
+	m_ItemsAreOpened = false;
 }
 
 void MkSpreadButtonNode::SetPresetComponentSize(const MkFloat2& componentSize)

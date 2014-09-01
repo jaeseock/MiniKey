@@ -61,6 +61,8 @@ public:
 		inline const MkStr& GetString(void) const { return m_Str; }
 		inline const MkArray<MkHashStr>& GetNameList(void) const { return m_NameList; }
 
+		inline void Clear(void) { m_Str.Clear(); m_NameList.Clear(); }
+
 		CaptionDesc() {}
 		CaptionDesc(const MkStr& msg) { SetString(msg); }
 		CaptionDesc(const MkArray<MkHashStr>& nameList) { SetNameList(nameList); }

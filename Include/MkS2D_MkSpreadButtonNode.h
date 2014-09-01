@@ -109,6 +109,9 @@ public:
 	// 만약 root button에 타겟으로 지정되어 있는 버튼이라면 지정 해제
 	bool RemoveItem(const MkHashStr& uniqueKey);
 
+	// 모든 하위 item 제거
+	void RemoveAllItems(void);
+
 	// item tag 반영
 	virtual bool SetPresetComponentItemTag(const ItemTagInfo& tagInfo, bool deleteIconIfEmpty = true, bool deleteCaptionIfEmpty = true);
 
@@ -147,6 +150,8 @@ public:
 	virtual bool HitEventMousePress(unsigned int button, const MkFloat2& position);
 
 	//------------------------------------------------------------------------------------------------//
+
+	virtual void Clear(void);
 
 	virtual void SetPresetComponentSize(const MkFloat2& componentSize);
 

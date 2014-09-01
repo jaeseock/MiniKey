@@ -143,6 +143,22 @@ public:
 		return childNode;
 	}
 
+	// childNodeName을 가진 직계 자식 노드를 삭제
+	// return : 삭제 성공 여부
+	inline bool RemoveChildNode(const MkHashStr& childNodeName)
+	{
+		if (!GetReadOnly())
+		{
+			TargetClass* childNode = GetChildNode(childNodeName);
+			if ((childNode != NULL) && DetachChildNode(childNodeName))
+			{
+				delete childNode;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	// 하위 모든 자식 노드 삭제
 	virtual void Clear(void)
 	{

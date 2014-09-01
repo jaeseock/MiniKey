@@ -67,13 +67,7 @@ void MkSceneNode::Load(const MkDataNode& node)
 		{
 			const MkHashStr& currName = keys[i];
 
-			// 이미 존재하는 자식 노드면 삭제
-			if (m_ChildrenNode.Exist(currName))
-			{
-				MkSceneNode* removeTarget = m_ChildrenNode[currName];
-				DetachChildNode(currName);
-				delete removeTarget;
-			}
+			RemoveChildNode(currName); // 이미 존재하는 자식 노드면 삭제
 
 			const MkDataNode* targetDataNode = childrenNode->GetChildNode(currName);
 

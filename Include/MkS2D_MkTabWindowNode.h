@@ -55,6 +55,9 @@ public:
 	// 해당 tab 사용 가능 여부 설정
 	bool SetTabEnable(const MkHashStr& tabName, bool enable);
 
+	// 해당 tab 사용 가능 여부 반환
+	bool GetTabEnable(const MkHashStr& tabName) const;
+
 	// 현재 선택중인 tab 반환
 	const MkHashStr& GetCurrentFrontTab(void) const { return m_CurrentFrontTab; }
 
@@ -67,6 +70,9 @@ public:
 	// 해당 tab 순서를 하나 앞/뒤로 이동
 	bool MoveTabToOneStepForward(const MkHashStr& tabName);
 	bool MoveTabToOneStepBackword(const MkHashStr& tabName);
+
+	// 탭 리스트 반환
+	inline const MkArray<MkHashStr>& GetTabList(void) const { return m_TabList; }
 
 	//------------------------------------------------------------------------------------------------//
 	// 구성

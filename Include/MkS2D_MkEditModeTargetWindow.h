@@ -102,6 +102,10 @@ protected:
 	MkSRect* m_TabWnd_Desc;
 	MkHashMap<eS2D_SceneNodeType, MkBaseWindowNode*> m_TabWnd_RegionTable;
 	MkCheckButtonNode* m_TabWnd_EditBox_HistoryUsage;
+	MkEditBoxNode* m_TabWnd_EditBox_FontType;
+	MkEditBoxNode* m_TabWnd_EditBox_NormalFontState;
+	MkEditBoxNode* m_TabWnd_EditBox_SelectionFontState;
+	MkEditBoxNode* m_TabWnd_EditBox_CursorFontState;
 	MkEditBoxNode* m_TabWnd_ScrollBar_Length;
 	MkEditBoxNode* m_TabWnd_SpreadBtn_UniqueKey;
 	MkEditBoxNode* m_TabWnd_TabWnd_TabName;
