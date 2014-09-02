@@ -453,7 +453,7 @@ public:
 			diceY.SetSeed(5678);
 
 			const MkHashStr pkey = L"load";
-			const unsigned int count = 3;
+			const unsigned int count = 1;
 			for (unsigned int i=0; i<count; ++i)
 			{
 				MK_PROF_MGR.Begin(pkey);

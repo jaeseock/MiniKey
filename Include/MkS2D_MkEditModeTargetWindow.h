@@ -69,6 +69,12 @@ protected:
 	void _AlignTargetTagRect(const MkHashStr& tagName, eRectAlignmentPosition alignment);
 	void _MoveTargetTagRect(const MkHashStr& tagName, const MkFloat2& offset);
 	bool _GetNormalSRectList(MkArray<MkHashStr>& rectList) const;
+	void _SetCreationMethodSB(void);
+	void _SetCreationDetailSB(void);
+
+	void _SetSpreadBtnItemTo(MkSpreadButtonNode* btn, const MkStr& tag, const MkHashStr& key, bool target);
+	MkHashStr _GenerateNewWindowName(void);
+	MkBaseWindowNode* _LoadBaseWindowFromFile(void);
 
 protected:
 
@@ -94,6 +100,10 @@ protected:
 	MkStr m_LastNodeWSizeStr;
 
 	MkCheckButtonNode* m_EnableCB;
+
+	MkSpreadButtonNode* m_CreateWindowTypeSB;
+	MkSpreadButtonNode* m_CreateMethodSB;
+	MkSpreadButtonNode* m_CreateDetailSB;
 
 	// tab root
 	MkTabWindowNode* m_TabWindow;

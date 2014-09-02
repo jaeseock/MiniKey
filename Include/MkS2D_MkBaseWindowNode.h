@@ -235,6 +235,10 @@ public:
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 테마명 반환
 	inline const MkHashStr& GetPresetThemeName(void) const { return m_PresetThemeName; }
 
+	// 해당 윈도우 노드의 조상 노드가 마지막으로 가지고 있는 테마명 반환
+	// (NOTE) 존재하지 않을 경우 기본 테마명 반환
+	const MkHashStr& GetAncestorThemeName(void) const;
+
 	// 해당 윈도우 노드가 window preset이 적용된 component 노드면 크기 변경 가능여부 반환
 	// MkWindowTypeImageSet::eNull, eSingleType : false, false (모두 불가능)
 	// MkWindowTypeImageSet::e3And1Type : true, false (가로만 가능)
@@ -375,7 +379,7 @@ public:
 	unsigned int __CountTotalWindowBasedChildren(void) const;
 	inline MkBaseWindowNode* __GetWindowBasedChild(unsigned int index) { return m_ChildWindows.IsValidIndex(index) ? m_ChildWindows[index] : NULL; }
 	void __ClearCurrentTheme(void);
-	void __ApplyDefaultTheme(void);
+	void __ApplyAncestorTheme(void);
 
 protected:
 

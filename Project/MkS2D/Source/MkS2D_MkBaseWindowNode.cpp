@@ -1157,6 +1157,29 @@ void MkBaseWindowNode::SetPresetThemeName(const MkHashStr& themeName)
 	}
 }
 
+const MkHashStr& MkBaseWindowNode::GetAncestorThemeName(void) const
+{
+	MkSceneNode* parentNode = m_ParentNodePtr;
+	while (true)
+	{
+		if (parentNode == NULL)
+			return MK_WR_PRESET.GetDefaultThemeName();
+
+		if (parentNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+		{
+			MkBaseWindowNode* targetNode = dynamic_cast<MkBaseWindowNode*>(parentNode);
+			if (targetNode != NULL)
+			{
+				const MkHashStr& themeName = targetNode->GetPresetThemeName();
+				if (!themeName.Empty())
+					return themeName;
+			}
+		}
+
+		parentNode = parentNode->GetParentNode();
+	}
+}
+
 void MkBaseWindowNode::CheckPresetComponentSizeAvailable(bool& width, bool& height) const
 {
 	if (m_PresetComponentType == eS2D_WPC_None)
@@ -1998,11 +2021,11 @@ void MkBaseWindowNode::__ClearCurrentTheme(void)
 	}
 }
 
-void MkBaseWindowNode::__ApplyDefaultTheme(void)
+void MkBaseWindowNode::__ApplyAncestorTheme(void)
 {
 	if (m_PresetThemeName.Empty())
 	{
-		m_PresetThemeName = MK_WR_PRESET.GetDefaultThemeName();
+		m_PresetThemeName = GetAncestorThemeName();
 
 		if (m_PresetComponentType != eS2D_WPC_None)
 		{
