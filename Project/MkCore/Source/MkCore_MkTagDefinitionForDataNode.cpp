@@ -5,7 +5,8 @@
 
 #define MKDEF_NODE_BEGIN_INDEX 100
 #define MKDEF_TEMPLATE_BEGIN_INDEX 101
-#define MKDEF_BLOCK_END_INDEX 102
+#define MkDEF_PUSHING_TEMPLATE_INDEX 102
+#define MKDEF_BLOCK_END_INDEX 103
 
 //------------------------------------------------------------------------------------------------//
 
@@ -14,6 +15,9 @@ const int MkTagDefinitionForDataNode::IndexMarkForNodeBegin(MKDEF_NODE_BEGIN_IND
 
 const MkStr MkTagDefinitionForDataNode::TagForTemplate(L"Template");
 const int MkTagDefinitionForDataNode::IndexMarkForTemplateBegin(MKDEF_TEMPLATE_BEGIN_INDEX);
+
+const MkStr MkTagDefinitionForDataNode::TagForPushingTemplate(L"PushTemplate");
+const int MkTagDefinitionForDataNode::IndexMarkForPushingTemplate(MkDEF_PUSHING_TEMPLATE_INDEX);
 
 const int MkTagDefinitionForDataNode::IndexMarkForNodeBlockEnd(MKDEF_BLOCK_END_INDEX);
 

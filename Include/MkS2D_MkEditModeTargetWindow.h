@@ -60,6 +60,7 @@ protected:
 	void _UpdateControlsByTargetNode(void);
 
 	void _UpdateTabComponentDesc(void);
+	void _UpdateTabComponentDepth(void);
 	void _UpdateTabComponentControlEnable(void);
 	bool _CheckTitleHasCloseButton(MkBaseWindowNode* targetNode) const;
 
@@ -132,6 +133,7 @@ protected:
 	MkBaseWindowNode* m_TabComp_DeleteTheme;
 	MkEditBoxNode* m_TabComp_SizeX;
 	MkEditBoxNode* m_TabComp_SizeY;
+	MkSRect* m_TabComp_Depth;
 	MkCheckButtonNode* m_TabComp_EnableCloseBtn;
 	MkSpreadButtonNode* m_TabComp_BackgroundState;
 	MkSpreadButtonNode* m_TabComp_WindowState;

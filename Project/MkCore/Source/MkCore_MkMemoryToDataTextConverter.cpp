@@ -180,6 +180,17 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 		}
 		strBuffer += MkTagDefinitionForDataNode::TagForBlockEnd;
 	}
+	// ÅÛÇÃ¸´ ¹Ð¾î³Ö±â
+	else if (blockType == MkTagDefinitionForDataNode::IndexMarkForPushingTemplate)
+	{
+		strBuffer += anchor;
+		strBuffer += MkTagDefinitionForDataNode::TagForPushingTemplate;
+		strBuffer += MKDEF_M_TO_T_BLANK_TYPE;
+		strBuffer += L"\"";
+		strBuffer += blockName;
+		strBuffer += L"\"";
+		strBuffer += MkTagDefinitionForDataNode::TagForUnitEnd;
+	}
 	// À¯´Ö
 	else
 	{

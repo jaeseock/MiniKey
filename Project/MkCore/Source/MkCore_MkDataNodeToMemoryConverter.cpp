@@ -32,6 +32,17 @@ bool MkDataNodeToMemoryConverter::Convert(const MkDataNode& source, MkByteArray&
 	MkInterfaceForDataWriting dwInterface;
 	MkHelperForDataNodeConverter::ReserveInterface(source, dwInterface);
 
+	// 출력 시작 노드가 template이 적용된 노드라면 template pushing 선언
+	if (source.GetTemplateLink() != NULL)
+	{
+		MkHashStr templateName;
+		MK_CHECK(source.GetAppliedTemplateName(templateName), source.GetNodeName().GetString() + L" 노드는 root가 아닌 template이 적용된 노드여서 출력 불가")
+			return false;
+
+		dwInterface.Write(MkTagDefinitionForDataNode::IndexMarkForPushingTemplate);
+		dwInterface.Write(source.GetTemplateLink()->GetNodeName().GetString());
+	}
+
 	if (source.__IsValidNode())
 	{
 		_ConvertUnits(source, dwInterface);

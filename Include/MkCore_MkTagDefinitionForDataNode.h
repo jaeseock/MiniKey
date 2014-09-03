@@ -26,6 +26,9 @@ public:
 	static const MkStr TagForTemplate; // L"Template"
 	static const int IndexMarkForTemplateBegin; // MkDEF_TEMPLATE_BEGIN_INDEX
 
+	static const MkStr TagForPushingTemplate; // L"PushTemplate"
+	static const int IndexMarkForPushingTemplate; // MkDEF_PUSHING_TEMPLATE_INDEX
+
 	static const int IndexMarkForNodeBlockEnd; // MkDEF_BLOCK_END_INDEX
 
 	static const MkStr TagForDQM; // L"\\\"" <-> L"__#DQM"

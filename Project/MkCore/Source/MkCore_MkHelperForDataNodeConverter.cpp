@@ -110,6 +110,10 @@ void MkHelperForDataNodeConverter::ReserveInterface
 	inputCount[ePDT_Str] += templateCount; // template name
 	inputCount[ePDT_Int] += nodeCount; // end of node tag
 
+	// for template pushing
+	++inputCount[ePDT_Int]; // tag
+	++inputCount[ePDT_Str]; // template name
+
 	// for unit
 	inputCount[ePDT_Int] += unitCount; // unit type
 	inputCount[ePDT_Str] += unitCount; // unit name

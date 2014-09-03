@@ -443,46 +443,6 @@ public:
 		sceneStep->GetTargetTexture(0, sceneTexture);
 		MK_WIN_EVENT_MGR.SetUp(sceneTexture);
 
-		MkDataNode node;
-		if (node.Load(L"test_scene.txt"))
-		{
-			MkUniformDice diceX, diceY;
-			diceX.SetMinMax(0, 800);
-			diceX.SetSeed(1234);
-			diceY.SetMinMax(200, 700);
-			diceY.SetSeed(5678);
-
-			const MkHashStr pkey = L"load";
-			const unsigned int count = 1;
-			for (unsigned int i=0; i<count; ++i)
-			{
-				MK_PROF_MGR.Begin(pkey);
-
-				MkBaseWindowNode* winNode = new MkBaseWindowNode(MkStr(i));
-				winNode->Load(node);
-				
-				MK_PROF_MGR.End(pkey, i == (count-1));
-
-				winNode->SetLocalPosition(MkFloat2(static_cast<float>(diceX.GenerateRandomNumber()), static_cast<float>(diceY.GenerateRandomNumber())));
-				
-				//MkSRect* nameTag = winNode->CreateSRect(L"Name");
-				//nameTag->SetDecoString(winNode->GetNodeName().GetString());
-				//nameTag->SetLocalPosition(MkFloat2(6.f, 2.f));
-				//nameTag->SetLocalDepth(-0.002f);
-
-				//winNode->SetPresetThemeName(L"Default");
-
-				MK_WIN_EVENT_MGR.RegisterWindow(winNode, true);
-			}
-
-			MkStr sbuf;
-			MK_PROF_MGR.GetEverageTimeStr(pkey, sbuf);
-			MK_DEV_PANEL.MsgToLog(sbuf);
-		}
-		
-		//testWin->SetPresetThemeName(L"SolidLB");
-		//m_WindowNode1->SetPresetComponentSize(MkFloat2(100.f, 100.f));
-
 		m_RootNode->UpdateAll();
 		
 		return true;

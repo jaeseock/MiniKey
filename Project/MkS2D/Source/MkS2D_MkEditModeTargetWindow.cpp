@@ -27,8 +27,8 @@ const static MkHashStr CREATE_WND_TYPE_SB_NAME = L"__#CreateWndType";
 const static MkHashStr CREATE_METHOD_SB_NAME = L"__#CreateMethod";
 const static MkHashStr CREATE_WINDOW_BTN_NAME = L"__#CreateWindow";
 
-const static MkHashStr CM_KEY_FROM_FILE = L"__#CM_FromFile";
-const static MkHashStr CM_KEY_FROM_DEF = L"__#CM_FromDef";
+const static MkHashStr CT_KEY_FROM_FILE = L"__#CT_FromFile";
+
 const static MkHashStr CM_KEY_TITLE_OK = L"__#CM_TitleOK";
 const static MkHashStr CM_KEY_TITLE_NO = L"__#CM_TitleNO";
 const static MkHashStr CM_KEY_BG_TYPE = L"__#CM_BGType";
@@ -76,6 +76,8 @@ const static MkHashStr THEME_SPREAD_BTN_NAME = L"__#Themes";
 const static MkHashStr THEME_DELETE_BTN_NAME = L"__#DelTheme";
 const static MkHashStr PRESET_SIZE_X_EB_NAME = L"__#SizeX";
 const static MkHashStr PRESET_SIZE_Y_EB_NAME = L"__#SizeY";
+const static MkHashStr FAR_DEPTH_BTN_NAME = L"__#FarDepth";
+const static MkHashStr NEAR_DEPTH_BTN_NAME = L"__#NearDepth";
 const static MkHashStr ENABLE_CLOSE_BTN_NAME = L"__#EnClose";
 const static MkHashStr ADD_THEME_BTN_NAME = L"__#AddTheme";
 const static MkHashStr SET_STATE_RES_BTN_NAME = L"__#StateRes";
@@ -330,9 +332,13 @@ bool MkEditModeTargetWindow::Initialize(void)
 		m_CreateWindowTypeSB->SetLocalPosition(MkVec3(currentCtrlPos.x, currentCtrlPos.y, -MKDEF_BASE_WINDOW_DEPTH_GRID * 4.f));
 		bgNode->AttachChildNode(m_CreateWindowTypeSB);
 
+		ItemTagInfo ti;
+		ti.captionDesc.SetString(L"파일로부터");
+		m_CreateWindowTypeSB->AddItem(CT_KEY_FROM_FILE, ti);
+		m_CreateWindowTypeSB->SetTargetItem(CT_KEY_FROM_FILE);
+
 		for (int i=eS2D_SNT_SceneNode; i<eS2D_SNT_ControlWindowNodeEnd; ++i)
 		{
-			ItemTagInfo ti;
 			switch (i)
 			{
 			case eS2D_SNT_SceneNode: ti.captionDesc.SetString(L"샘플 세트"); break;
@@ -345,11 +351,6 @@ bool MkEditModeTargetWindow::Initialize(void)
 			}
 			MkHashStr key = MkStr(i);
 			m_CreateWindowTypeSB->AddItem(key, ti);
-
-			if (i == eS2D_SNT_SceneNode)
-			{
-				m_CreateWindowTypeSB->SetTargetItem(key);
-			}
 		}
 
 		currentCtrlPos.x += m_CreateWindowTypeSB->GetPresetComponentSize().x + MKDEF_CTRL_MARGIN;
@@ -380,7 +381,6 @@ bool MkEditModeTargetWindow::Initialize(void)
 			m_TabWindow->SetLocalPosition(MkFloat2(MKDEF_CTRL_MARGIN, MARGIN));
 			m_TabWindow->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 
-			ItemTagInfo ti;
 			ti.captionDesc.SetString(L"윈도우");
 			MkBaseWindowNode* wndWin = m_TabWindow->AddTab(TAB_WINDOW_NAME, ti);
 			if (wndWin != NULL)
@@ -623,6 +623,20 @@ bool MkEditModeTargetWindow::Initialize(void)
 				m_TabComp_SizeY->CreateEditBox(themeName, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
 				m_TabComp_SizeY->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 				compWin->AttachChildNode(m_TabComp_SizeY);
+
+				tmpX += m_TabComp_SizeY->GetPresetComponentSize().x + MKDEF_CTRL_MARGIN * 2.f;
+				m_TabComp_Depth = compWin->CreateSRect(L"__#DepthDesc");
+				m_TabComp_Depth->SetLocalPosition(MkFloat2(tmpX, btnPosY + 3.f));
+				m_TabComp_Depth->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+				m_TabComp_Depth->SetDecoString(L"깊이(Z) : 앞(-.---)");
+
+				tmpX += m_TabComp_Depth->GetLocalSize().x + MKDEF_CTRL_MARGIN;
+				MkBaseWindowNode* farBtn = __CreateWindowPreset(compWin, FAR_DEPTH_BTN_NAME, themeName, eS2D_WPC_DirUpButton, MkFloat2(0.f, 0.f));
+				farBtn->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+
+				tmpX += farBtn->GetPresetComponentSize().x + MKDEF_CTRL_MARGIN;
+				MkBaseWindowNode* nearBtn = __CreateWindowPreset(compWin, NEAR_DEPTH_BTN_NAME, themeName, eS2D_WPC_DirDownButton, MkFloat2(0.f, 0.f));
+				nearBtn->SetLocalPosition(MkVec3(tmpX, btnPosY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 
 				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
 				const float selectionBtnWidth = 160.f;
@@ -913,72 +927,50 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 			}
 			else if (evt.node->GetNodeName() == CREATE_WINDOW_BTN_NAME)
 			{
-	/*
-	const static MkHashStr CM_KEY_FROM_FILE = L"__#CM_FromFile";
-	const static MkHashStr CM_KEY_FROM_DEF = L"__#CM_FromDef";
-	const static MkHashStr CM_KEY_TITLE_OK = L"__#CM_TitleOK";
-	const static MkHashStr CM_KEY_TITLE_NO = L"__#CM_TitleNO";
-	const static MkHashStr CM_KEY_BG_TYPE = L"__#CM_BGType";
-	const static MkHashStr CM_KEY_TITLE_TYPE = L"__#CM_TitleType";
-	const static MkHashStr CM_KEY_BTN_TYPE = L"__#CM_BtnType";
-	const static MkHashStr CM_KEY_SELECTION_SB = L"__#CM_SelectionSB";
-	const static MkHashStr CM_KEY_STATIC_SB = L"__#CM_StaticSB";
-	const static MkHashStr CM_KEY_BTN_OK_SB = L"__#CM_BtnOkSB";
-	const static MkHashStr CM_KEY_BTN_NO_SB = L"__#CM_BtnNoSB";
-	const static MkHashStr CM_KEY_LEFT_AL_TW = L"__#CM_LeftAlignTW";
-	const static MkHashStr CM_KEY_RIGHT_AL_TW = L"__#CM_RightAlignTW";
-
-	const static MkHashStr CD_KEY_NONE = L"__#CD_None";
-	const static MkHashStr CD_KEY_THEME_BG = L"__#CD_ThemeBG";
-	const static MkHashStr CD_KEY_IMAGE_BG = L"__#CD_ImageBG";
-	const static MkHashStr CD_KEY_SPREAD_TO_DOWN = L"__#CD_SpreadD";
-	const static MkHashStr CD_KEY_SPREAD_TO_RIGHT = L"__#CD_SpreadR";
-	const static MkHashStr CD_KEY_SPREAD_TO_UP = L"__#CD_SpreadD";
-	const static MkHashStr CD_KEY_VERTICAL_SB = L"__#CD_VerSB";
-	const static MkHashStr CD_KEY_HORIZONTAL_SB = L"__#CD_HorSB";
-	*/
 				MkBaseWindowNode* newWin = NULL;
+
 				const MkHashStr& wtKey = m_CreateWindowTypeSB->GetTargetItemKey();
 				if (!wtKey.Empty())
 				{
-					const MkHashStr& mKey = m_CreateMethodSB->GetTargetItemKey();
-					const MkHashStr& dKey = m_CreateDetailSB->GetTargetItemKey();
-
-					const MkHashStr& themeName = (m_TargetNode == NULL) ? MK_WR_PRESET.GetDefaultThemeName() : m_TargetNode->GetAncestorThemeName();
-
-					eS2D_SceneNodeType nodeType = static_cast<eS2D_SceneNodeType>(wtKey.GetString().ToInteger());
-					switch (nodeType)
+					if (wtKey == CT_KEY_FROM_FILE)
 					{
-					case eS2D_SNT_SceneNode:
+						newWin = _LoadBaseWindowFromFile();
+					}
+					else
+					{
+						const MkHashStr& mKey = m_CreateMethodSB->GetTargetItemKey();
+						const MkHashStr& dKey = m_CreateDetailSB->GetTargetItemKey();
+
+						const MkHashStr& themeName = (m_TargetNode == NULL) ? MK_WR_PRESET.GetDefaultThemeName() : m_TargetNode->GetAncestorThemeName();
+
+						eS2D_SceneNodeType nodeType = static_cast<eS2D_SceneNodeType>(wtKey.GetString().ToInteger());
+						switch (nodeType)
 						{
-							BasicPresetWindowDesc winDesc;
-							bool hasTitle = true;
-							if (mKey == CM_KEY_TITLE_OK)
+						case eS2D_SNT_SceneNode:
 							{
-								hasTitle = true;
+								BasicPresetWindowDesc winDesc;
+								bool hasTitle = true;
+								if (mKey == CM_KEY_TITLE_OK)
+								{
+									hasTitle = true;
+								}
+								else if (mKey == CM_KEY_TITLE_NO)
+								{
+									hasTitle = false;
+								}
+								if (dKey == CD_KEY_THEME_BG)
+								{
+									winDesc.SetStandardDesc(themeName, hasTitle, MkFloat2(300.f, 200.f));
+								}
+								else if (dKey == CD_KEY_IMAGE_BG)
+								{
+									winDesc.SetStandardDesc(themeName, hasTitle, MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetWindowBackgroundSampleSubsetName());
+								}
+								newWin = MkBaseWindowNode::CreateBasicWindow(NULL, _GenerateNewWindowName(), winDesc);
 							}
-							else if (mKey == CM_KEY_TITLE_NO)
-							{
-								hasTitle = false;
-							}
-							if (dKey == CD_KEY_THEME_BG)
-							{
-								winDesc.SetStandardDesc(themeName, hasTitle, MkFloat2(300.f, 200.f));
-							}
-							else if (dKey == CD_KEY_IMAGE_BG)
-							{
-								winDesc.SetStandardDesc(themeName, hasTitle, MK_WR_PRESET.GetSystemImageFilePath(), MK_WR_PRESET.GetWindowBackgroundSampleSubsetName());
-							}
-							newWin = MkBaseWindowNode::CreateBasicWindow(NULL, _GenerateNewWindowName(), winDesc);
-						}
-						break;
-					case eS2D_SNT_BaseWindowNode:
-						{
-							if (mKey == CM_KEY_FROM_FILE)
-							{
-								newWin = _LoadBaseWindowFromFile();
-							}
-							else
+							break;
+
+						case eS2D_SNT_BaseWindowNode:
 							{
 								eS2D_WindowPresetComponent component = MkWindowPreset::GetWindowPresetComponentEnum(dKey);
 								if (component != eS2D_WPC_None)
@@ -1001,28 +993,108 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 									newWin = __CreateWindowPreset(NULL, _GenerateNewWindowName(), themeName, component, compSize);
 								}
 							}
+							break;
+
+						case eS2D_SNT_SpreadButtonNode:
+							{
+								MkSpreadButtonNode::eOpeningDirection opDir = MkSpreadButtonNode::eDownward;
+								if (dKey == CD_KEY_SPREAD_TO_DOWN)
+								{
+									opDir = MkSpreadButtonNode::eDownward;
+								}
+								else if (dKey == CD_KEY_SPREAD_TO_RIGHT)
+								{
+									opDir = MkSpreadButtonNode::eRightside;
+								}
+								else if (dKey == CD_KEY_SPREAD_TO_UP)
+								{
+									opDir = MkSpreadButtonNode::eUpward;
+								}
+
+								MkSpreadButtonNode* newCtrl = new MkSpreadButtonNode(_GenerateNewWindowName());
+								if (mKey == CM_KEY_SELECTION_SB)
+								{
+									newCtrl->CreateSelectionRootTypeButton(themeName, MkFloat2(100.f, MKDEF_DEF_CTRL_HEIGHT), opDir);
+								}
+								else if (mKey == CM_KEY_STATIC_SB)
+								{
+									ItemTagInfo ti;
+									ti.iconPath = MK_WR_PRESET.GetSystemImageFilePath();
+									ti.iconSubset = MK_WR_PRESET.GetWindowIconSampleSubsetName();
+									ti.captionDesc.SetString(L"시작 버튼");
+									newCtrl->CreateStaticRootTypeButton(themeName, MkFloat2(100.f, MKDEF_DEF_CTRL_HEIGHT), opDir, ti);
+								}
+								newWin = newCtrl;
+							}
+							break;
+
+						case eS2D_SNT_CheckButtonNode:
+							{
+								MkCheckButtonNode* newCtrl = new MkCheckButtonNode(_GenerateNewWindowName());
+								newCtrl->CreateCheckButton(themeName, CaptionDesc(L"체크 버튼"), false);
+								newWin = newCtrl;
+							}
+							break;
+
+						case eS2D_SNT_ScrollBarNode:
+							{
+								bool hasDirBtn = true;
+								if (mKey == CM_KEY_BTN_OK_SB)
+								{
+									hasDirBtn = true;
+								}
+								else if (mKey == CM_KEY_BTN_NO_SB)
+								{
+									hasDirBtn = false;
+								}
+
+								MkScrollBarNode::eBarDirection barDir = MkScrollBarNode::eVertical;
+								if (dKey == CD_KEY_VERTICAL_SB)
+								{
+									barDir = MkScrollBarNode::eVertical;
+								}
+								else if (dKey == CD_KEY_HORIZONTAL_SB)
+								{
+									barDir = MkScrollBarNode::eHorizontal;
+								}
+
+								MkScrollBarNode* newCtrl = new MkScrollBarNode(_GenerateNewWindowName());
+								newCtrl->CreateScrollBar(themeName, barDir, hasDirBtn, 100.f);
+								newWin = newCtrl;
+							}
+							break;
+
+						case eS2D_SNT_EditBoxNode:
+							{
+								MkEditBoxNode* newCtrl = new MkEditBoxNode(_GenerateNewWindowName());
+								newCtrl->CreateEditBox(themeName, MkFloat2(100.f, MKDEF_DEF_CTRL_HEIGHT), MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+								newCtrl->SetText(L"에디트 박스", false);
+								newWin = newCtrl;
+							}
+							break;
+
+						case eS2D_SNT_TabWindowNode:
+							{
+								MkTabWindowNode::eTabAlignment align = MkTabWindowNode::eLeftside;
+								if (mKey == CM_KEY_LEFT_AL_TW)
+								{
+									align = MkTabWindowNode::eLeftside;
+								}
+								else if (mKey == CM_KEY_RIGHT_AL_TW)
+								{
+									align = MkTabWindowNode::eRightside;
+								}
+
+								MkTabWindowNode* newCtrl = new MkTabWindowNode(_GenerateNewWindowName());
+								newCtrl->CreateTabRoot(themeName, align, MkFloat2(40.f, MKDEF_DEF_CTRL_HEIGHT), MkFloat2(130.f, 80.f));
+
+								ItemTagInfo ti;
+								ti.captionDesc.SetString(L"탭");
+								newCtrl->AddTab(L"tab", ti);
+								newWin = newCtrl;
+							}
+							break;
 						}
-						break;
-					case eS2D_SNT_SpreadButtonNode:
-						{
-						}
-						break;
-					case eS2D_SNT_CheckButtonNode:
-						{
-						}
-						break;
-					case eS2D_SNT_ScrollBarNode:
-						{
-						}
-						break;
-					case eS2D_SNT_EditBoxNode:
-						{
-						}
-						break;
-					case eS2D_SNT_TabWindowNode:
-						{
-						}
-						break;
 					}
 				}
 
@@ -1042,8 +1114,12 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 
 					newWin->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
 					newWin->UpdateAll();
-					newWin->AlignPosition(anchorRect, eRAP_MiddleCenter, MkInt2(0, 0));
 
+					if (wtKey != CT_KEY_FROM_FILE)
+					{
+						newWin->AlignPosition(anchorRect, eRAP_MiddleCenter, MkInt2(0, 0));
+					}
+					
 					MK_WIN_EVENT_MGR.SetTargetWindowNode(NULL);
 					MK_WIN_EVENT_MGR.SetTargetWindowNode(newWin);
 				}
@@ -1132,6 +1208,22 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 						const MkHashStr& tabName = m_TabWnd_TabWnd_TargetTab->GetTargetItemKey();
 						targetWnd->MoveTabToOneStepBackword(tabName);
 					}
+				}
+			}
+			else if (evt.node->GetNodeName() == FAR_DEPTH_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (!m_TargetNode->CheckRootWindow()))
+				{
+					m_TargetNode->SetLocalDepth(m_TargetNode->GetLocalDepth() + MKDEF_BASE_WINDOW_DEPTH_GRID);
+					_UpdateTabComponentDepth();
+				}
+			}
+			else if (evt.node->GetNodeName() == NEAR_DEPTH_BTN_NAME)
+			{
+				if ((m_TargetNode != NULL) && (!m_TargetNode->CheckRootWindow()))
+				{
+					m_TargetNode->SetLocalDepth(m_TargetNode->GetLocalDepth() - MKDEF_BASE_WINDOW_DEPTH_GRID);
+					_UpdateTabComponentDepth();
 				}
 			}
 			else if (evt.node->GetNodeName() == THEME_DELETE_BTN_NAME)
@@ -1788,6 +1880,7 @@ MkEditModeTargetWindow::MkEditModeTargetWindow(const MkHashStr& name) : MkBaseSy
 	m_TabComp_DeleteTheme = NULL;
 	m_TabComp_SizeX = NULL;
 	m_TabComp_SizeY = NULL;
+	m_TabComp_Depth = NULL;
 	m_TabComp_EnableCloseBtn = NULL;
 	m_TabComp_BackgroundState = NULL;
 	m_TabComp_WindowState = NULL;
@@ -1922,10 +2015,8 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 
 	if (m_CreateWindowTypeSB != NULL)
 	{
-		MkHashStr sampleKey = MkStr(eS2D_SNT_SceneNode);
-		MkHashStr defKey = MkStr(eS2D_SNT_BaseWindowNode);
-		m_CreateWindowTypeSB->GetItem(sampleKey)->SetEnable(!nodeEnable);
-		m_CreateWindowTypeSB->SetTargetItem((nodeEnable) ? defKey : sampleKey);
+		m_CreateWindowTypeSB->GetItem(MkStr(eS2D_SNT_SceneNode))->SetEnable(!nodeEnable);
+		m_CreateWindowTypeSB->SetTargetItem(CT_KEY_FROM_FILE);
 
 		_SetCreationMethodSB();
 		_SetCreationDetailSB();
@@ -2045,6 +2136,7 @@ void MkEditModeTargetWindow::_UpdateControlsByTargetNode(void)
 		if (nodeEnable)
 		{
 			_UpdateTabComponentDesc();
+			_UpdateTabComponentDepth();
 			_UpdateTabComponentControlEnable();
 
 			if (m_TabTag_TargetSelection != NULL)
@@ -2107,6 +2199,41 @@ void MkEditModeTargetWindow::_UpdateTabComponentDesc(void)
 			msg += m_TargetNode->GetPresetComponentName().GetString();
 		}
 		m_TabComp_Desc->SetDecoString(msg);
+	}
+}
+
+void MkEditModeTargetWindow::_UpdateTabComponentDepth(void)
+{
+	if ((m_TargetNode != NULL) && (m_TabComp_Depth != NULL))
+	{
+		MkStr msg;
+		msg.Reserve(128);
+		msg += L"깊이(Z) : ";
+		if (m_TargetNode->CheckRootWindow())
+		{
+			msg += L"기준(0)";
+		}
+		else
+		{
+			float depth = m_TargetNode->GetLocalDepth();
+			if (depth < 0.f)
+			{
+				msg += L"앞(";
+				msg += depth;
+				msg += L")";
+			}
+			else if (depth > 0.f)
+			{
+				msg += L"뒤(";
+				msg += depth;
+				msg += L")";
+			}
+			else // depth == 0.f
+			{
+				msg += L"평행(0)";
+			}
+		}
+		m_TabComp_Depth->SetDecoString(msg);
 	}
 }
 
@@ -2295,48 +2422,49 @@ void MkEditModeTargetWindow::_SetCreationMethodSB(void)
 		ItemTagInfo ti;
 		m_CreateMethodSB->RemoveAllItems();
 
-		eS2D_SceneNodeType nodeType = static_cast<eS2D_SceneNodeType>(wtKey.GetString().ToInteger());
-		switch (nodeType)
+		if (wtKey == CT_KEY_FROM_FILE)
 		{
-		case eS2D_SNT_SceneNode:
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"타이틀 O", CM_KEY_TITLE_OK, true);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"타이틀 X", CM_KEY_TITLE_NO, false);
-			break;
+			_SetSpreadBtnItemTo(m_CreateMethodSB, L"--", CD_KEY_NONE, true);
+		}
+		else
+		{
+			eS2D_SceneNodeType nodeType = static_cast<eS2D_SceneNodeType>(wtKey.GetString().ToInteger());
+			switch (nodeType)
+			{
+			case eS2D_SNT_SceneNode:
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"타이틀 O", CM_KEY_TITLE_OK, true);
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"타이틀 X", CM_KEY_TITLE_NO, false);
+				break;
 
-		case eS2D_SNT_BaseWindowNode:
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"파일로부터", CM_KEY_FROM_FILE, true);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"배경 속성", CM_KEY_BG_TYPE, false);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"타이틀 속성", CM_KEY_TITLE_TYPE, false);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"버튼 속성", CM_KEY_BTN_TYPE, false);
-			break;
+			case eS2D_SNT_BaseWindowNode:
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"배경 속성", CM_KEY_BG_TYPE, true);
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"타이틀 속성", CM_KEY_TITLE_TYPE, false);
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"버튼 속성", CM_KEY_BTN_TYPE, false);
+				break;
 
-		case eS2D_SNT_SpreadButtonNode:
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"파일로부터", CM_KEY_FROM_FILE, true);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"선택형", CM_KEY_SELECTION_SB, false);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"고정형", CM_KEY_STATIC_SB, false);
-			break;
+			case eS2D_SNT_SpreadButtonNode:
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"선택형", CM_KEY_SELECTION_SB, true);
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"고정형", CM_KEY_STATIC_SB, false);
+				break;
 
-		case eS2D_SNT_CheckButtonNode:
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"파일로부터", CM_KEY_FROM_FILE, true);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"기본형", CM_KEY_FROM_DEF, false);
-			break;
+			case eS2D_SNT_CheckButtonNode:
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"--", CD_KEY_NONE, true);
+				break;
 
-		case eS2D_SNT_ScrollBarNode:
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"파일로부터", CM_KEY_FROM_FILE, true);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"이동 버튼 O", CM_KEY_BTN_OK_SB, false);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"이동 버튼 X", CM_KEY_BTN_NO_SB, false);
-			break;
+			case eS2D_SNT_ScrollBarNode:
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"이동 버튼 O", CM_KEY_BTN_OK_SB, true);
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"이동 버튼 X", CM_KEY_BTN_NO_SB, false);
+				break;
 
-		case eS2D_SNT_EditBoxNode:
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"파일로부터", CM_KEY_FROM_FILE, true);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"기본형", CM_KEY_FROM_DEF, false);
-			break;
+			case eS2D_SNT_EditBoxNode:
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"--", CD_KEY_NONE, true);
+				break;
 
-		case eS2D_SNT_TabWindowNode:
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"파일로부터", CM_KEY_FROM_FILE, true);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"좌측 정렬형", CM_KEY_LEFT_AL_TW, false);
-			_SetSpreadBtnItemTo(m_CreateMethodSB, L"우측 정렬형", CM_KEY_RIGHT_AL_TW, false);
-			break;
+			case eS2D_SNT_TabWindowNode:
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"좌측 정렬형", CM_KEY_LEFT_AL_TW, true);
+				_SetSpreadBtnItemTo(m_CreateMethodSB, L"우측 정렬형", CM_KEY_RIGHT_AL_TW, false);
+				break;
+			}
 		}
 	}
 }
@@ -2349,83 +2477,68 @@ void MkEditModeTargetWindow::_SetCreationDetailSB(void)
 		ItemTagInfo ti;
 		m_CreateDetailSB->RemoveAllItems();
 
-		eS2D_SceneNodeType nodeType = static_cast<eS2D_SceneNodeType>(wtKey.GetString().ToInteger());
-		switch (nodeType)
+		if (wtKey == CT_KEY_FROM_FILE)
 		{
-		case eS2D_SNT_SceneNode:
-			_SetSpreadBtnItemTo(m_CreateDetailSB, L"테마 배경", CD_KEY_THEME_BG, true);
-			_SetSpreadBtnItemTo(m_CreateDetailSB, L"이미지 배경", CD_KEY_IMAGE_BG, false);
-			break;
-
-		case eS2D_SNT_BaseWindowNode:
+			_SetSpreadBtnItemTo(m_CreateDetailSB, L"--", CD_KEY_NONE, true);
+		}
+		else
+		{
+			eS2D_SceneNodeType nodeType = static_cast<eS2D_SceneNodeType>(wtKey.GetString().ToInteger());
+			switch (nodeType)
 			{
-				const MkHashStr& mKey = m_CreateMethodSB->GetTargetItemKey();
-				eS2D_WindowPresetComponent beginComp = eS2D_WPC_None, endComp = eS2D_WPC_None;
-				if (mKey == CM_KEY_BG_TYPE)
-				{
-					beginComp = eS2D_WPC_BackgroundStateTypeBegin;
-					endComp = eS2D_WPC_BackgroundStateTypeEnd;
-				}
-				else if (mKey == CM_KEY_TITLE_TYPE)
-				{
-					beginComp = eS2D_WPC_TitleStateTypeBegin;
-					endComp = eS2D_WPC_TitleStateTypeEnd;
-				}
-				else if (mKey == CM_KEY_BTN_TYPE)
-				{
-					beginComp = eS2D_WPC_WindowStateTypeBegin;
-					endComp = eS2D_WPC_WindowStateTypeEnd;
-				}
+			case eS2D_SNT_SceneNode:
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"테마 배경", CD_KEY_THEME_BG, true);
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"이미지 배경", CD_KEY_IMAGE_BG, false);
+				break;
 
-				if (beginComp == eS2D_WPC_None)
+			case eS2D_SNT_BaseWindowNode:
 				{
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"--", CD_KEY_NONE, true);
-				}
-				else
-				{
-					for (int i=beginComp; i<endComp; ++i)
+					const MkHashStr& mKey = m_CreateMethodSB->GetTargetItemKey();
+					eS2D_WindowPresetComponent beginComp = eS2D_WPC_None, endComp = eS2D_WPC_None;
+					if (mKey == CM_KEY_BG_TYPE)
 					{
-						const MkHashStr compName = MkWindowPreset::GetWindowPresetComponentKeyword(static_cast<eS2D_WindowPresetComponent>(i));
-						_SetSpreadBtnItemTo(m_CreateDetailSB, compName.GetString(), compName, i == beginComp);
+						beginComp = eS2D_WPC_BackgroundStateTypeBegin;
+						endComp = eS2D_WPC_BackgroundStateTypeEnd;
+					}
+					else if (mKey == CM_KEY_TITLE_TYPE)
+					{
+						beginComp = eS2D_WPC_TitleStateTypeBegin;
+						endComp = eS2D_WPC_TitleStateTypeEnd;
+					}
+					else if (mKey == CM_KEY_BTN_TYPE)
+					{
+						beginComp = eS2D_WPC_WindowStateTypeBegin;
+						endComp = eS2D_WPC_WindowStateTypeEnd;
+					}
+
+					if (beginComp != eS2D_WPC_None)
+					{
+						for (int i=beginComp; i<endComp; ++i)
+						{
+							const MkHashStr compName = MkWindowPreset::GetWindowPresetComponentKeyword(static_cast<eS2D_WindowPresetComponent>(i));
+							_SetSpreadBtnItemTo(m_CreateDetailSB, compName.GetString(), compName, i == beginComp);
+						}
 					}
 				}
-			}
-			break;
+				break;
 
-		case eS2D_SNT_SpreadButtonNode:
-			{
-				if (m_CreateMethodSB->GetTargetItemKey() == CM_KEY_FROM_FILE)
-				{
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"--", CD_KEY_NONE, true);
-				}
-				else
-				{
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"전개방향 ▽", CD_KEY_SPREAD_TO_DOWN, true);
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"전개방향 ▷", CD_KEY_SPREAD_TO_RIGHT, false);
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"전개방향 △", CD_KEY_SPREAD_TO_UP, false);
-				}
-			}
-			break;
+			case eS2D_SNT_SpreadButtonNode:
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"전개방향 ▽", CD_KEY_SPREAD_TO_DOWN, true);
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"전개방향 ▷", CD_KEY_SPREAD_TO_RIGHT, false);
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"전개방향 △", CD_KEY_SPREAD_TO_UP, false);
+				break;
 
-		case eS2D_SNT_ScrollBarNode:
-			{
-				if (m_CreateMethodSB->GetTargetItemKey() == CM_KEY_FROM_FILE)
-				{
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"--", CD_KEY_NONE, true);
-				}
-				else
-				{
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"수평형 ↔", CD_KEY_VERTICAL_SB, true);
-					_SetSpreadBtnItemTo(m_CreateDetailSB, L"수직형 ↕", CD_KEY_HORIZONTAL_SB, false);
-				}
-			}
-			break;
+			case eS2D_SNT_ScrollBarNode:
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"수직형 ↕", CD_KEY_VERTICAL_SB, true);
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"수평형 ↔", CD_KEY_HORIZONTAL_SB, false);
+				break;
 
-		case eS2D_SNT_CheckButtonNode:
-		case eS2D_SNT_EditBoxNode:
-		case eS2D_SNT_TabWindowNode:
-			_SetSpreadBtnItemTo(m_CreateDetailSB, L"--", CD_KEY_NONE, true);
-			break;
+			case eS2D_SNT_CheckButtonNode:
+			case eS2D_SNT_EditBoxNode:
+			case eS2D_SNT_TabWindowNode:
+				_SetSpreadBtnItemTo(m_CreateDetailSB, L"--", CD_KEY_NONE, true);
+				break;
+			}
 		}
 	}
 }
@@ -2465,9 +2578,21 @@ MkBaseWindowNode* MkEditModeTargetWindow::_LoadBaseWindowFromFile(void)
 		MkDataNode dataNode;
 		if (dataNode.Load(filePath))
 		{
-			MkBaseWindowNode* newWin = new MkBaseWindowNode(_GenerateNewWindowName());
-			newWin->Load(dataNode);
-			return newWin;
+			// node type에 따라 생성이 다름
+			MkHashStr templateName;
+			if (dataNode.GetAppliedTemplateName(templateName))
+			{
+				MkSceneNode* newNode = MkSceneNodeFamilyDefinition::Alloc(templateName, _GenerateNewWindowName());
+				if (newNode->GetNodeType() >= eS2D_SNT_BaseWindowNode)
+				{
+					MkBaseWindowNode* newWin = dynamic_cast<MkBaseWindowNode*>(newNode);
+					if (newWin != NULL)
+					{
+						newWin->Load(dataNode);
+						return newWin;
+					}
+				}
+			}
 		}
 	}
 	return NULL;

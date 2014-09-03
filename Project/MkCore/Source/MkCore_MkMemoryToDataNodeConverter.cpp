@@ -157,6 +157,15 @@ unsigned int MkMemoryToDataNodeConverter::_BuildBlock(MkInterfaceForDataReading&
 				return MKDEF_DNC_MSG_ERROR;
 		}
 	}
+	// 템플릿 밀어넣기
+	else if (blockType == MkTagDefinitionForDataNode::IndexMarkForPushingTemplate)
+	{
+		MK_CHECK(targetNode.GetTemplateLink() == NULL, targetNode.GetNodeName().GetString() + L" 노드는 이미 " + targetNode.GetTemplateLink()->GetNodeName().GetString() + L" 템플릿이 적용된 상태여서 " + blockName + L" 템플릿을 적용 할 수 없음")
+			return MKDEF_DNC_MSG_ERROR;
+			
+		MK_CHECK(targetNode.ApplyTemplate(blockName), targetNode.GetNodeName().GetString() + L" 노드에 " + blockName + L" 템플릿 노드를 적용 할 수 없음")
+			return MKDEF_DNC_MSG_ERROR;
+	}
 	// 유닛
 	else
 	{

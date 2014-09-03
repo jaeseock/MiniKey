@@ -70,6 +70,10 @@ unsigned int MkDataTextToMemoryConverter::_SplitBlock
 	{
 		blockType = MkTagDefinitionForDataNode::IndexMarkForTemplateBegin;
 	}
+	else if (typeKeyword == MkTagDefinitionForDataNode::TagForPushingTemplate) // pushing template?
+	{
+		blockType = MkTagDefinitionForDataNode::IndexMarkForPushingTemplate;
+	}
 	else
 	{
 		ePrimitiveDataType unitType = MkPrimitiveDataType::GetEnum(typeKeyword); // or unit?
@@ -121,6 +125,21 @@ unsigned int MkDataTextToMemoryConverter::_SplitBlock
 		MK_CHECK(currentPosition != MKDEF_ARRAY_ERROR, m_TargetFilePath + L" 파일의 " + blockName + L"블록은 닫혀있지 않음")
 			return MKDEF_DNC_MSG_ERROR;
 	}
+	// 템플릿 밀어넣기
+	else if (blockType == MkTagDefinitionForDataNode::IndexMarkForPushingTemplate)
+	{
+		MkStr nameKeyword;
+		currentPosition = source.GetFirstBlock(currentPosition, MkTagDefinitionForDataNode::TagForUnitEnd, nameKeyword);
+		MK_CHECK(currentPosition != MKDEF_ARRAY_ERROR, m_TargetFilePath + L" 파일에 종료자가 없는 템플릿 밀어넣기 태그 존재")
+			return MKDEF_DNC_MSG_ERROR;
+
+		nameKeyword.RemoveBlank();
+		MK_CHECK(!nameKeyword.Empty(), m_TargetFilePath + L" 파일에 이름이 비어 있는 템플릿 밀어넣기 태그 존재")
+			return MKDEF_DNC_MSG_ERROR;
+
+		blockName = m_StringTable.GetString(nameKeyword);
+	}
+	// 유닛
 	else
 	{
 		MkStr nameKeyword;
@@ -188,6 +207,11 @@ unsigned int MkDataTextToMemoryConverter::_ParseBlock(const MkStr& source, MkInt
 			return MKDEF_DNC_MSG_ERROR;
 
 		dwInterface.Write(MkTagDefinitionForDataNode::IndexMarkForNodeBlockEnd); // end of node
+	}
+	// 템플릿 밀어넣기의 경우 위에서 이미 정보를 기록했으므로 넘어감
+	else if (blockType == MkTagDefinitionForDataNode::IndexMarkForPushingTemplate)
+	{
+		// do nothing
 	}
 	// 유닛의 경우 값 정보를 기록
 	else

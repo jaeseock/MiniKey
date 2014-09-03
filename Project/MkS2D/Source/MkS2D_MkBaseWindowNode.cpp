@@ -1901,11 +1901,6 @@ void MkBaseWindowNode::__BuildInformationTree(MkBaseWindowNode* parentNode, unsi
 
 			__SetWindowInformation(targetNode);
 
-			if (!GetVisible())
-			{
-				targetNode->SetAlpha(0.4f);
-			}
-
 			targetNode->SetLocalPosition
 				(MkFloat2(MKDEF_S2D_NODE_SEL_DEPTH_OFFSET * static_cast<float>(depth), -targetNode->GetPresetComponentSize().y * static_cast<float>(buffer.GetSize() - 1)));
 

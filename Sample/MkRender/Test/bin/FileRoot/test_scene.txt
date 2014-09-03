@@ -1,17 +1,18 @@
 
 //--------------------------------------------------------------------//
 // MiniKey data node text source
-//   - file path  : test_scene.txt
-//   - time stamp : 2014.08.27 (15:06:58),
+//   - file path  : d:\Solutions\MiniKey\Sample\MkRender\Test\bin\FileRoot\test_scene.txt
+//   - time stamp : 2014.09.03 (21:08:32),
 //   - exporter   : ø¿¿ÁºÆ (Test)
 //--------------------------------------------------------------------//
 
 
+PushTemplate "T_BaseWindowNode";
 uint Attribute = 552;
 int2 PCompSize = (294, 20);
 str PComponent = "NormalTitle";
 str PThemeName = "Default";
-vec3 Position = (0.000, -20.000, 0.000);
+vec3 Position = (97.000, 419.000, 900.000);
 
 Node "<SRect>"
 {
@@ -9493,8 +9494,6 @@ Node "<SceneNode>"
 
 	Node "__#LostFocus" : "T_SceneNode"
 	{
-		bool Visible = No;
-
 		Node "<SRect>"
 		{
 			Node "LB" : "T_SRect"
@@ -9590,6 +9589,8 @@ Node "<SceneNode>"
 
 	Node "__#OnFocus" : "T_SceneNode"
 	{
+		bool Visible = No;
+
 		Node "<SRect>"
 		{
 			Node "LB" : "T_SRect"
