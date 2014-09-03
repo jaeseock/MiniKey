@@ -99,6 +99,10 @@ public:
 	inline bool __GetShowWindowSelection(void) { return m_ShowWindowSelection; }
 	inline void __SetAllowDragMovement(bool enable) { m_AllowDragMovement = enable; }
 	inline bool __GetAllowDragMovement(void) { return m_AllowDragMovement; }
+	inline void __SetKeyMovementOffset(int offset) { m_KeyMovementOffset = offset; }
+	inline int __GetKeyMovementOffset(void) { return m_KeyMovementOffset; }
+	inline void __SetKeyMovementFactor(int factor) { m_KeyMovementFactor = factor; }
+	inline int __GetKeyMovementFactor(void) { return m_KeyMovementFactor; }
 
 protected:
 
@@ -157,6 +161,8 @@ protected:
 	// setting
 	bool m_ShowWindowSelection;
 	bool m_AllowDragMovement;
+	int m_KeyMovementOffset;
+	int m_KeyMovementFactor;
 
 	// windows for edit mode
 	MkBaseWindowNode* m_CurrentTargetWindowNode;

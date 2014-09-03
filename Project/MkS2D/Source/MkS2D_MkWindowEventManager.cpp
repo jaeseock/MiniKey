@@ -697,14 +697,21 @@ void MkWindowEventManager::Update(void)
 			// movement by arrow key
 			if (!m_CurrentTargetWindowNode->GetAttribute(MkBaseWindowNode::eIgnoreMovement))
 			{
-				MkFloat2 offset;
-				if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT)) offset.x = -1.f;
-				if (MK_INPUT_MGR.GetKeyReleased(VK_RIGHT)) offset.x = 1.f;
-				if (MK_INPUT_MGR.GetKeyReleased(VK_UP)) offset.y = 1.f;
-				if (MK_INPUT_MGR.GetKeyReleased(VK_DOWN)) offset.y = -1.f;
+				MkInt2 movement;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_LEFT)) movement.x = -m_KeyMovementOffset;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_RIGHT)) movement.x = m_KeyMovementOffset;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_UP)) movement.y = m_KeyMovementOffset;
+				if (MK_INPUT_MGR.GetKeyReleased(VK_DOWN)) movement.y = -m_KeyMovementOffset;
 
-				if (!offset.IsZero())
+				if (MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
 				{
+					movement.x *= m_KeyMovementFactor;
+					movement.y *= m_KeyMovementFactor;
+				}
+
+				if (!movement.IsZero())
+				{
+					MkFloat2 offset(static_cast<float>(movement.x), static_cast<float>(movement.y));
 					const MkFloat2& worldAABRBegin = m_CurrentTargetWindowNode->GetWorldAABR().position;
 					MkFloat2 oldPosition = MkFloat2(m_CurrentTargetWindowNode->GetWorldPosition().x, m_CurrentTargetWindowNode->GetWorldPosition().y);
 					MkFloat2 newPosition = _ConfineMovement(m_CurrentTargetWindowNode, worldAABRBegin, oldPosition - worldAABRBegin, offset);
@@ -884,6 +891,8 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 
 	m_ShowWindowSelection = true;
 	m_AllowDragMovement = true;
+	m_KeyMovementOffset = 1;
+	m_KeyMovementFactor = 10;
 }
 
 void MkWindowEventManager::__SpreadButtonOpened(int index, MkSpreadButtonNode* button)
