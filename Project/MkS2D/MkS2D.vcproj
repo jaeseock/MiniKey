@@ -494,6 +494,14 @@
 					RelativePath="..\..\Include\MkS2D_MkSceneNodeFamilyDefinition.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Source\MkS2D_MkWindowOpHelper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkS2D_MkWindowOpHelper.h"
+					>
+				</File>
 				<Filter
 					Name="0. Scene node"
 					>

@@ -171,7 +171,7 @@ void MkWindowEventManager::RemoveWindow(const MkHashStr& windowName)
 		MKDEF_ARRAY_ERASE(m_OnActivatingWindows, windowName);
 		MKDEF_ARRAY_ERASE(m_WaitForActivatingWindows, windowName);
 		MKDEF_ARRAY_ERASE(m_WaitForDeactivatingWindows, windowName);
-
+		
 		if (windowName == m_LastFocusWindow)
 		{
 			m_FocusLostByClick = true;

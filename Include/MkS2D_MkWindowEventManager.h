@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkSingletonPattern.h"
+#include "MkCore_MkDeque.h"
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
 #include "MkCore_MkRect.h"
@@ -142,7 +143,7 @@ protected:
 	MkArray<MkHashStr> m_OnActivatingWindows;
 	MkArray<MkHashStr> m_WaitForActivatingWindows;
 	MkArray<MkHashStr> m_WaitForDeactivatingWindows;
-
+	
 	MkHashStr m_LastFocusWindow;
 	bool m_FocusLostByClick;
 
