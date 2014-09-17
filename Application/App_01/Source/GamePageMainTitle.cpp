@@ -1,24 +1,77 @@
 
-#include "MkCore_MkPathName.h"
 #include "MkCore_MkPageManager.h"
+#include "MkCore_MkInputManager.h"
 
-#include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkRenderer.h"
+#include "MkS2D_MkBaseWindowNode.h"
+#include "MkS2D_MkWindowEventManager.h"
+
+
+#include "MkS2D_MkWindowOpHelper.h"
 
 #include "GamePageMainTitle.h"
 
-//------------------------------------------------------------------------------------------------//
-
 const MkHashStr GamePageMainTitle::Name(L"MainTitle");
 
+//------------------------------------------------------------------------------------------------//
+
+class GP_MainTitleWindow : public MkBaseWindowNode
+{
+protected:
+
+	MkHashStr m_NewBtnName;
+	MkHashStr m_LoadBtnName;
+	MkHashStr m_ExitBtnName;
+
+public:
+
+	virtual void UseWindowEvent(WindowEvent& evt)
+	{
+		if (evt.type == MkSceneNodeFamilyDefinition::eCursorLeftRelease)
+		{
+			if (evt.node->GetNodeName() == m_NewBtnName)
+			{
+				//MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
+			}
+			else if (evt.node->GetNodeName() == m_LoadBtnName)
+			{
+				//MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
+			}
+			else if (evt.node->GetNodeName() == m_ExitBtnName)
+			{
+				DestroyWindow(MK_INPUT_MGR.__GetTargetWindowHandle());
+			}
+		}
+	}
+
+	GP_MainTitleWindow(void) : MkBaseWindowNode(GamePageMainTitle::Name)
+	{
+		const float btnWidth = 200.f;
+		MkDrawStep* drawStep = MK_RENDERER.GetDrawQueue().GetStep(L"MainDS");
+		float xPos = (drawStep->GetRegionRect().size.x - btnWidth) / 2.f;
+		SetLocalPosition(MkFloat2(xPos, 150.f));
+
+		const MkFloat2 btnSize(btnWidth, 40.f);
+
+		m_NewBtnName = L"NewBtn";
+		m_LoadBtnName = L"LoadBtn";
+		m_ExitBtnName = L"ExitBtn";
+		
+		MkWindowOpHelper::CreateWindowPreset(this, m_NewBtnName, MkHashStr::NullHash, eS2D_WPC_OKButton, btnSize, L"새 게임 시작", MkFloat2(0.f, 160.f));
+		MkWindowOpHelper::CreateWindowPreset(this, m_LoadBtnName, MkHashStr::NullHash, eS2D_WPC_OKButton, btnSize, L"이전 게임 이어하기", MkFloat2(0.f, 80.f));
+		MkWindowOpHelper::CreateWindowPreset(this, m_ExitBtnName, MkHashStr::NullHash, eS2D_WPC_CancelButton, btnSize, L"종료", MkFloat2(0.f, 0.f));
+	}
+
+	virtual ~GP_MainTitleWindow() {}
+};
+
+//------------------------------------------------------------------------------------------------//
 
 bool GamePageMainTitle::SetUp(MkDataNode& sharingNode)
 {
-	// 백버퍼에 바로 출력하는 render step 구성
-	MkDrawQueue& drawQueue = MK_RENDERER.GetDrawQueue();
-	MkDrawStep* drawStep = drawQueue.CreateStep(L"CS", -1);
-	drawStep->SetBackgroundColor(MkColor::Black);
+	// draw step
+	MkDrawStep* drawStep = MK_RENDERER.GetDrawQueue().GetStep(L"MainDS");
 
 	// 기본 scene 구성
 	m_SceneNode = new MkSceneNode(L"Scene");
@@ -32,18 +85,21 @@ bool GamePageMainTitle::SetUp(MkDataNode& sharingNode)
 	MkSRect* textRect = m_SceneNode->CreateSRect(L"Title");
 
 	MkStr msg;
-	MkDecoStr::Convert(L"고딕40", L"RedFS", 0, L"App 00", msg);
+	MkDecoStr::Convert(L"고딕40", L"RedFS", 0, L"제목은 미정이지만 하여간 게임 어플", msg);
 	textRect->SetDecoString(msg);
-	textRect->AlignRect(drawStep->GetRegionRect().size, eRAP_MiddleTop, MkFloat2(0.f, 100.f), 0.f);
+	textRect->AlignRect(drawStep->GetRegionRect().size, eRAP_MiddleTop, MkFloat2(0.f, 200.f), 0.f);
 	textRect->SetLocalDepth(-1.f);
+
+	m_SceneNode->UpdateAll();
+
+	// window
+	MK_WIN_EVENT_MGR.RegisterWindow(new GP_MainTitleWindow(), true);
 
 	return true;
 }
 
 void GamePageMainTitle::Update(const MkTimeState& timeState)
 {
-	m_SceneNode->UpdateAll();
-
 	// 한 번 출력만이 목적이므로 아무것도 하지않고 바로 다음 페이지로 이동
 	//MK_PAGE_MGR.SetMoveMessage(L"ToNextPage");
 }
@@ -52,7 +108,13 @@ void GamePageMainTitle::Clear(void)
 {
 	MK_DELETE(m_SceneNode);
 
-	MK_RENDERER.GetDrawQueue().Clear();
+	MkDrawStep* drawStep = MK_RENDERER.GetDrawQueue().GetStep(L"MainDS");
+	if (drawStep != NULL)
+	{
+		drawStep->ClearAllSceneNodes();
+	}
+
+	MK_WIN_EVENT_MGR.RemoveWindow(GamePageMainTitle::Name);
 }
 
 GamePageMainTitle::GamePageMainTitle() : MkBasePage(Name)

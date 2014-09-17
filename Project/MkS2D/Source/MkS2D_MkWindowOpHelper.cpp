@@ -1,4 +1,6 @@
 
+#include "MkS2D_MkWindowResourceManager.h"
+
 #include "MkS2D_MkSceneNode.h"
 #include "MkS2D_MkBaseWindowNode.h"
 #include "MkS2D_MkSpreadButtonNode.h"
@@ -13,7 +15,9 @@ MkBaseWindowNode* MkWindowOpHelper::CreateWindowPreset
 (MkSceneNode* parentNode, const MkHashStr& nodeName, const MkHashStr& themeName, eS2D_WindowPresetComponent component, const MkFloat2& componentSize,
  const MkStr& caption, const MkFloat2& localPos, float localDepth, bool enable)
 {
-	MkBaseWindowNode* winNode = MkBaseWindowNode::__CreateWindowPreset(parentNode, nodeName, themeName, component, componentSize);
+	const MkHashStr& tName = themeName.Empty() ? MK_WR_PRESET.GetDefaultThemeName() : themeName;
+
+	MkBaseWindowNode* winNode = MkBaseWindowNode::__CreateWindowPreset(parentNode, nodeName, tName, component, componentSize);
 	if (winNode != NULL)
 	{
 		winNode->SetLocalPosition(localPos);
@@ -21,7 +25,7 @@ MkBaseWindowNode* MkWindowOpHelper::CreateWindowPreset
 
 		if (!caption.Empty())
 		{
-			winNode->SetPresetComponentCaption(themeName, MkBaseWindowNode::CaptionDesc(caption));
+			winNode->SetPresetComponentCaption(tName, MkBaseWindowNode::CaptionDesc(caption));
 		}
 
 		winNode->SetEnable(enable);
@@ -35,7 +39,8 @@ MkSpreadButtonNode* MkWindowOpHelper::CreateDownwardSelectionSpreadButton
 	MkSpreadButtonNode* winNode = new MkSpreadButtonNode(nodeName);
 	if (winNode != NULL)
 	{
-		winNode->CreateSelectionRootTypeButton(themeName, size, MkSpreadButtonNode::eDownward);
+		const MkHashStr& tName = themeName.Empty() ? MK_WR_PRESET.GetDefaultThemeName() : themeName;
+		winNode->CreateSelectionRootTypeButton(tName, size, MkSpreadButtonNode::eDownward);
 		_SetWindowInfo(winNode, parentNode, localPos, localDepth, enable);
 	}
 	return winNode;
@@ -79,7 +84,8 @@ MkCheckButtonNode* MkWindowOpHelper::CreateCheckButton
 	MkCheckButtonNode* winNode = new MkCheckButtonNode(nodeName);
 	if (winNode != NULL)
 	{
-		winNode->CreateCheckButton(themeName, MkBaseWindowNode::CaptionDesc(caption), checked);
+		const MkHashStr& tName = themeName.Empty() ? MK_WR_PRESET.GetDefaultThemeName() : themeName;
+		winNode->CreateCheckButton(tName, MkBaseWindowNode::CaptionDesc(caption), checked);
 		_SetWindowInfo(winNode, parentNode, localPos, localDepth, enable);
 	}
 	return winNode;
@@ -92,7 +98,8 @@ MkEditBoxNode* MkWindowOpHelper::CreateEditBox
 	MkEditBoxNode* winNode = new MkEditBoxNode(nodeName);
 	if (winNode != NULL)
 	{
-		winNode->CreateEditBox(themeName, size, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
+		const MkHashStr& tName = themeName.Empty() ? MK_WR_PRESET.GetDefaultThemeName() : themeName;
+		winNode->CreateEditBox(tName, size, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkHashStr::NullHash, MkStr::Null, false);
 		_SetWindowInfo(winNode, parentNode, localPos, localDepth, enable);
 
 		if (!initMsg.Empty())

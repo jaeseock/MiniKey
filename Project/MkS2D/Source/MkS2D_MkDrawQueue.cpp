@@ -48,14 +48,15 @@ MkDrawStep* MkDrawQueue::GetStep(const MkHashStr& stepName)
 
 bool MkDrawQueue::RemoveStep(const MkHashStr& stepName)
 {
-	MK_CHECK(m_NameTable.Exist(stepName), L"DrawQueue에서 존재하지 않는 " + stepName.GetString() + L" DrawStep 삭제 시도")
-		return false;
-
-	int priority = m_NameTable[stepName];
-	delete m_Steps[priority];
-	m_Steps.Erase(priority);
-	m_NameTable.Erase(stepName);
-	return true;
+	bool ok = m_NameTable.Exist(stepName);
+	if (ok)
+	{
+		int priority = m_NameTable[stepName];
+		delete m_Steps[priority];
+		m_Steps.Erase(priority);
+		m_NameTable.Erase(stepName);
+	}
+	return ok;
 }
 
 bool MkDrawQueue::Draw(void)

@@ -16,9 +16,7 @@ const MkHashStr GamePageClientStart::Name(L"ClientStart");
 bool GamePageClientStart::SetUp(MkDataNode& sharingNode)
 {
 	// 백버퍼에 바로 출력하는 render step 구성
-	MkDrawQueue& drawQueue = MK_RENDERER.GetDrawQueue();
-	MkDrawStep* drawStep = drawQueue.CreateStep(L"CS", -1);
-	drawStep->SetBackgroundColor(MkColor::Black);
+	MkDrawStep* drawStep = MK_RENDERER.GetDrawQueue().CreateStep(L"TmpDS", 0);
 
 	// 기본 scene 구성
 	m_SceneNode = new MkSceneNode(L"Scene");
@@ -37,13 +35,13 @@ bool GamePageClientStart::SetUp(MkDataNode& sharingNode)
 	textRect->AlignRect(drawStep->GetRegionRect().size, eRAP_LeftTop, MkFloat2(100.f, 100.f), 0.f);
 	textRect->SetLocalDepth(-1.f);
 
+	m_SceneNode->UpdateAll();
+
 	return true;
 }
 
 void GamePageClientStart::Update(const MkTimeState& timeState)
 {
-	m_SceneNode->UpdateAll();
-
 	// 한 번 출력만이 목적이므로 아무것도 하지않고 바로 다음 페이지로 이동
 	MK_PAGE_MGR.SetMoveMessage(L"ToNextPage");
 }
@@ -52,7 +50,7 @@ void GamePageClientStart::Clear(void)
 {
 	MK_DELETE(m_SceneNode);
 
-	MK_RENDERER.GetDrawQueue().Clear();
+	MK_RENDERER.GetDrawQueue().RemoveStep(L"TmpDS");
 }
 
 GamePageClientStart::GamePageClientStart() : MkBasePage(Name)

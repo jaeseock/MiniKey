@@ -264,30 +264,42 @@
 				RelativePath=".\Source\GamePageAppRoot.h"
 				>
 			</File>
-			<File
-				RelativePath=".\Source\GamePageClientStart.cpp"
+			<Filter
+				Name="0. ClientStart"
 				>
-			</File>
-			<File
-				RelativePath=".\Source\GamePageClientStart.h"
+				<File
+					RelativePath=".\Source\GamePageClientStart.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\GamePageClientStart.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="1. GameRoot"
 				>
-			</File>
-			<File
-				RelativePath=".\Source\GamePageGameRoot.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\GamePageGameRoot.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\GamePageMainTitle.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Source\GamePageMainTitle.h"
-				>
-			</File>
+				<File
+					RelativePath=".\Source\GamePageGameRoot.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\GamePageGameRoot.h"
+					>
+				</File>
+				<Filter
+					Name="1.0. MainTitle"
+					>
+					<File
+						RelativePath=".\Source\GamePageMainTitle.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\GamePageMainTitle.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\Source\main.cpp"

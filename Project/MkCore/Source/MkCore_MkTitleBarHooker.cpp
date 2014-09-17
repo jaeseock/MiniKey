@@ -48,8 +48,8 @@ bool MkTitleBarHooker::CheckWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 			m_WindowStartPosition = m_TargetWindow->GetPosition();
 			return true;
 
-		case HTMAXBUTTON: // 노멀 -> 최대화, 최대 -> 노멀화
-			if (_ToggleShowMode())
+		case HTMAXBUTTON: // maximize가 허용될 경우 노멀 -> 최대화, 최대 -> 노멀화
+			if (m_MaximizeEnable && _ToggleShowMode())
 				return true;
 			break;
 
