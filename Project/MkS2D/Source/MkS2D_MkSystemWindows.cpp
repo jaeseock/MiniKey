@@ -344,14 +344,14 @@ bool MkSRectSetterSystemWindow::Initialize(void)
 	MkFloat2 clientSize = bgNode->GetPresetComponentSize();
 	clientSize.y -= GetPresetComponentSize().y; // body size - title size
 
-	MkBaseWindowNode* okButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"OKButton"));
-	MkBaseWindowNode* cancelButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"CancelButton"));
-	okButton->SetLocalPosition(MkFloat2(clientSize.x - okButton->GetPresetComponentSize().x - cancelButton->GetPresetComponentSize().x - margin * 2.f, margin));
-	cancelButton->SetLocalPosition(MkFloat2(clientSize.x - cancelButton->GetPresetComponentSize().x - margin, margin));
-
 	float posX = margin;
 	float posY = clientSize.y - margin - 20.f;
 
+	MkBaseWindowNode* okButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"OKButton"));
+	MkBaseWindowNode* cancelButton = dynamic_cast<MkBaseWindowNode*>(bgNode->GetChildNode(L"CancelButton"));
+	okButton->SetLocalPosition(MkFloat2(clientSize.x - okButton->GetPresetComponentSize().x - cancelButton->GetPresetComponentSize().x - margin * 2.f, posY));
+	cancelButton->SetLocalPosition(MkFloat2(clientSize.x - cancelButton->GetPresetComponentSize().x - margin, posY));
+	
 	m_FlipHorizontalBtn = new MkCheckButtonNode(FLIP_H_BTN_NAME);
 	m_FlipHorizontalBtn->CreateCheckButton(themeName, CaptionDesc(L"수평 반전"), false);
 	m_FlipHorizontalBtn->SetLocalPosition(MkVec3(posX, posY, -MKDEF_BASE_WINDOW_DEPTH_GRID));
@@ -485,7 +485,7 @@ void MkSRectSetterSystemWindow::SetUp(MkSRectInfoListener* owner, MkSceneNode* t
 			_UpdateSamplePosition();
 		}
 
-		m_SampleRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+		m_SampleRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID * 0.5f);
 
 		m_FlipHorizontalBtn->SetCheck(fh);
 		if (m_InputType != eOneOfSelection)
@@ -860,7 +860,7 @@ void MkSRectSetterSystemWindow::_UpdateSamplePosition(void)
 		m_SampleRect->SetLocalSize(MkFloat2(ls.x * rate, ls.y * rate));
 	}
 
-	m_SampleRect->AlignRect(m_RectBGSize, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), 0.f);
+	m_SampleRect->AlignRect(m_RectBGSize, eRAP_MiddleCenter, MkFloat2(0.f, 0.f), 15.f);
 }
 
 void MkSRectSetterSystemWindow::_ConvertNodeNameAndKeyToStr(const MkArray<MkHashStr>& nodeNameAndKey, MkStr& msg)

@@ -10,9 +10,8 @@
 
 #include "MkS2D_MkWindowOpHelper.h"
 
+#include "GameGlobalDefinition.h"
 #include "GamePageMainTitle.h"
-
-const MkHashStr GamePageMainTitle::Name(L"MainTitle");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -32,7 +31,7 @@ public:
 		{
 			if (evt.node->GetNodeName() == m_NewBtnName)
 			{
-				//MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
+				MK_PAGE_MGR.ChangePageDirectly(GamePageName::IslandAgora);
 			}
 			else if (evt.node->GetNodeName() == m_LoadBtnName)
 			{
@@ -45,7 +44,7 @@ public:
 		}
 	}
 
-	GP_MainTitleWindow(void) : MkBaseWindowNode(GamePageMainTitle::Name)
+	GP_MainTitleWindow(const MkHashStr& name) : MkBaseWindowNode(name)
 	{
 		const float btnWidth = 200.f;
 		MkDrawStep* drawStep = MK_RENDERER.GetDrawQueue().GetStep(L"MainDS");
@@ -80,7 +79,7 @@ bool GamePageMainTitle::SetUp(MkDataNode& sharingNode)
 	drawStep->AddSceneNode(m_SceneNode);
 
 	MkSRect* bgRect = m_SceneNode->CreateSRect(L"MainBG");
-	bgRect->SetTexture(L"Image\\main_bg.dds", MkHashStr::NullHash);
+	bgRect->SetTexture(L"Scene\\main_bg.dds", MkHashStr::NullHash);
 
 	MkSRect* textRect = m_SceneNode->CreateSRect(L"Title");
 
@@ -93,15 +92,14 @@ bool GamePageMainTitle::SetUp(MkDataNode& sharingNode)
 	m_SceneNode->UpdateAll();
 
 	// window
-	MK_WIN_EVENT_MGR.RegisterWindow(new GP_MainTitleWindow(), true);
+	MK_WIN_EVENT_MGR.RegisterWindow(new GP_MainTitleWindow(GetPageName()), true);
 
 	return true;
 }
 
 void GamePageMainTitle::Update(const MkTimeState& timeState)
 {
-	// 한 번 출력만이 목적이므로 아무것도 하지않고 바로 다음 페이지로 이동
-	//MK_PAGE_MGR.SetMoveMessage(L"ToNextPage");
+	
 }
 
 void GamePageMainTitle::Clear(void)
@@ -114,10 +112,10 @@ void GamePageMainTitle::Clear(void)
 		drawStep->ClearAllSceneNodes();
 	}
 
-	MK_WIN_EVENT_MGR.RemoveWindow(GamePageMainTitle::Name);
+	MK_WIN_EVENT_MGR.RemoveWindow(GetPageName());
 }
 
-GamePageMainTitle::GamePageMainTitle() : MkBasePage(Name)
+GamePageMainTitle::GamePageMainTitle(const MkHashStr& name) : MkBasePage(name)
 {
 	m_SceneNode = NULL;
 }

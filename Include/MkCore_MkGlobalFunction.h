@@ -95,6 +95,18 @@ inline ResultType ConvertToPercentage(const DataType& a, const DataType& b)
 }
 
 //------------------------------------------------------------------------------------------------//
+// 퍼센트값 적용해 반환
+// ex>
+//	int rlt = ConvertToPercentage<float, int>(8.f, 20.f); // 40
+//------------------------------------------------------------------------------------------------//
+
+template<class DataType, class PercentageType>
+inline DataType ApplyPercentage(const DataType& a, const PercentageType& p)
+{
+	return (static_cast<DataType>(static_cast<float>(a) * static_cast<float>(p) / 100.f));
+}
+
+//------------------------------------------------------------------------------------------------//
 // 오름차순으로 정렬된 배열에서 value의 lower bound를 이진탐색기법으로 찾아 index 반환
 // value가 가장 작은 값(최초 element)보다 작으면 0을 반환하고 가장 큰 값(마지막 element)보다
 // 크면 마지막 index 반환, 빈 배열이면 0xffffffff 반환

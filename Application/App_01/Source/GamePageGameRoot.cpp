@@ -6,12 +6,11 @@
 #include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkWindowEventManager.h"
 
+#include "GameSharedUI.h"
+
 #include "GamePageGameRoot.h"
 
 //------------------------------------------------------------------------------------------------//
-
-const MkHashStr GamePageGameRoot::Name(L"GameRoot");
-
 
 bool GamePageGameRoot::SetUp(MkDataNode& sharingNode)
 {
@@ -25,6 +24,7 @@ bool GamePageGameRoot::SetUp(MkDataNode& sharingNode)
 	MK_WIN_EVENT_MGR.SetUp(sceneTexture);
 
 	// 게임 공용 리소스 로딩
+	GameSharedUI::SetUp();
 
 	return true;
 }
@@ -37,6 +37,8 @@ void GamePageGameRoot::Update(const MkTimeState& timeState)
 
 void GamePageGameRoot::Clear(void)
 {
+	GameSharedUI::Clear();
+
 	// window manager 날리고
 	MK_WIN_EVENT_MGR.Clear();
 
@@ -44,7 +46,7 @@ void GamePageGameRoot::Clear(void)
 	MK_RENDERER.GetDrawQueue().RemoveStep(L"MainDS");
 }
 
-GamePageGameRoot::GamePageGameRoot() : MkBasePage(Name)
+GamePageGameRoot::GamePageGameRoot(const MkHashStr& name) : MkBasePage(name)
 {
 	
 }

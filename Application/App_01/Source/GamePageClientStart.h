@@ -12,15 +12,13 @@ class GamePageClientStart : public MkBasePage
 {
 public:
 
-	static const MkHashStr Name;
-
 	virtual bool SetUp(MkDataNode& sharingNode);
 
 	virtual void Update(const MkTimeState& timeState);
 
 	virtual void Clear(void);
 
-	GamePageClientStart();
+	GamePageClientStart(const MkHashStr& name);
 	virtual ~GamePageClientStart() { Clear(); }
 
 protected:

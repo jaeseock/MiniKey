@@ -27,10 +27,14 @@
 
 //#include "MkCore_MkDevPanel.h"
 
+#include "GameGlobalDefinition.h"
 #include "GamePageAppRoot.h"
 #include "GamePageClientStart.h"
 #include "GamePageGameRoot.h"
 #include "GamePageMainTitle.h"
+#include "GamePageIslandAgora.h"
+#include "GamePageWizardLab.h"
+#include "GamePageBarrack.h"
 
 //------------------------------------------------------------------------------------------------//
 
@@ -39,21 +43,25 @@ class GameFramework : public MkRenderFramework
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
 	{
+		//const MkHashStr GamePageName::WizardLab(L"WizardLab");
+		//const MkHashStr GamePageName::Barrack(L"Barrack");
 		// AppRoot
 		//	- ClientStart
 		//	- GameRoot
 		//		- MainTitle
-		MK_PAGE_MGR.SetUp(new GamePageAppRoot);
+		//		- IslandAgora
+		MK_PAGE_MGR.SetUp(new GamePageAppRoot(GamePageName::AppRoot));
 
-		MK_PAGE_MGR.RegisterChildPage(GamePageAppRoot::Name, new GamePageClientStart);
-		MK_PAGE_MGR.RegisterChildPage(GamePageAppRoot::Name, new GamePageGameRoot);
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::AppRoot, new GamePageClientStart(GamePageName::ClientStart));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::AppRoot, new GamePageGameRoot(GamePageName::GameRoot));
 
-		MK_PAGE_MGR.RegisterChildPage(GamePageGameRoot::Name, new GamePageMainTitle);
-
-		MK_PAGE_MGR.SetPageFlowTable(GamePageClientStart::Name, L"ToNextPage", GamePageMainTitle::Name);
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageMainTitle(GamePageName::MainTitle));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageIslandAgora(GamePageName::IslandAgora));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageWizardLab(GamePageName::WizardLab));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageBarrack(GamePageName::Barrack));
 
 		// start page
-		MK_PAGE_MGR.ChangePageDirectly(GamePageClientStart::Name);
+		MK_PAGE_MGR.ChangePageDirectly(GamePageName::ClientStart);
 
 		return MkRenderFramework::SetUp(clientWidth, clientHeight, fullScreen, arg);
 	}

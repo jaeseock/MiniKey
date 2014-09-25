@@ -2078,6 +2078,8 @@ void MkBaseWindowNode::_PushWindowEvent(MkSceneNodeFamilyDefinition::eWindowEven
 {
 	WindowEvent evt(type, this);
 
+	__PushEvent(evt);
+
 	// 부모부터 루트 윈도우까지 이벤트를 통지함
 	MkSceneNode* parentNode = m_ParentNodePtr;
 	while (true)

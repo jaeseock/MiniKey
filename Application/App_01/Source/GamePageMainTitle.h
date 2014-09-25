@@ -12,15 +12,13 @@ class GamePageMainTitle : public MkBasePage
 {
 public:
 
-	static const MkHashStr Name;
-
 	virtual bool SetUp(MkDataNode& sharingNode);
 
 	virtual void Update(const MkTimeState& timeState);
 
 	virtual void Clear(void);
 
-	GamePageMainTitle();
+	GamePageMainTitle(const MkHashStr& name);
 	virtual ~GamePageMainTitle() { Clear(); }
 
 protected:

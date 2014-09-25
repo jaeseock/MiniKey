@@ -9,6 +9,7 @@
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
 #include "MkCore_MkRect.h"
+#include "MkCore_MkPathName.h"
 #include "MkCore_MkTimeCounter.h"
 
 #include "MkS2D_MkProjectDefinition.h"

@@ -7,13 +7,10 @@
 
 //------------------------------------------------------------------------------------------------//
 
-const MkHashStr GamePageAppRoot::Name(L"AppRoot");
-
-
 bool GamePageAppRoot::SetUp(MkDataNode& sharingNode)
 {
 	// 기본 배경 이미지 preloading
-	MK_TEXTURE_POOL.LoadBitmapTexture(L"Image\\main_bg.dds");
+	MK_TEXTURE_POOL.LoadBitmapTexture(L"Scene\\main_bg.dds");
 	return true;
 }
 
@@ -27,7 +24,7 @@ void GamePageAppRoot::Clear(void)
 	
 }
 
-GamePageAppRoot::GamePageAppRoot() : MkBasePage(Name)
+GamePageAppRoot::GamePageAppRoot(const MkHashStr& name) : MkBasePage(name)
 {
 	
 }

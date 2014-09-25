@@ -96,7 +96,7 @@ public:
 	inline eFeedBackMsg Proceed(const ConditionType& condition, bool updateNextState = true)
 	{
 		StateType nextState;
-		if (!m_State[m_CurrentStateID].GetState(condition, nextState))
+		if ((!m_State.Exist(m_CurrentStateID)) || (!m_State[m_CurrentStateID].GetState(condition, nextState)))
 		{
 			return eNoneCondition;
 		}

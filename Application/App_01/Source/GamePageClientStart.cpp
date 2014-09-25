@@ -6,12 +6,10 @@
 #include "MkS2D_MkDrawStep.h"
 #include "MkS2D_MkRenderer.h"
 
+#include "GameGlobalDefinition.h"
 #include "GamePageClientStart.h"
 
 //------------------------------------------------------------------------------------------------//
-
-const MkHashStr GamePageClientStart::Name(L"ClientStart");
-
 
 bool GamePageClientStart::SetUp(MkDataNode& sharingNode)
 {
@@ -25,7 +23,7 @@ bool GamePageClientStart::SetUp(MkDataNode& sharingNode)
 	drawStep->AddSceneNode(m_SceneNode);
 
 	MkSRect* bgRect = m_SceneNode->CreateSRect(L"MainBG");
-	bgRect->SetTexture(L"Image\\main_bg.dds", MkHashStr::NullHash);
+	bgRect->SetTexture(L"Scene\\main_bg.dds", MkHashStr::NullHash);
 
 	MkSRect* textRect = m_SceneNode->CreateSRect(L"Msg");
 	
@@ -43,7 +41,7 @@ bool GamePageClientStart::SetUp(MkDataNode& sharingNode)
 void GamePageClientStart::Update(const MkTimeState& timeState)
 {
 	// 한 번 출력만이 목적이므로 아무것도 하지않고 바로 다음 페이지로 이동
-	MK_PAGE_MGR.SetMoveMessage(L"ToNextPage");
+	MK_PAGE_MGR.ChangePageDirectly(GamePageName::MainTitle);
 }
 
 void GamePageClientStart::Clear(void)
@@ -53,7 +51,7 @@ void GamePageClientStart::Clear(void)
 	MK_RENDERER.GetDrawQueue().RemoveStep(L"TmpDS");
 }
 
-GamePageClientStart::GamePageClientStart() : MkBasePage(Name)
+GamePageClientStart::GamePageClientStart(const MkHashStr& name) : MkBasePage(name)
 {
 	m_SceneNode = NULL;
 }

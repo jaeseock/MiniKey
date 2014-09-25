@@ -732,6 +732,16 @@ void MkWindowEventManager::Update(void)
 		MkDataNode node;
 		m_CurrentTargetWindowNode->Save(node);
 
+		if (m_CurrentTargetWindowNode->CheckRootWindow())
+		{
+			MkVec3 pos;
+			if (node.GetData(MkSceneNodeFamilyDefinition::Scene::PositionKey, pos, 0))
+			{
+				pos.z = -MKDEF_BASE_WINDOW_DEPTH_GRID;
+				node.SetData(MkSceneNodeFamilyDefinition::Scene::PositionKey, pos, 0);
+			}
+		}
+
 		MkStr ext = m_SaveCurrentTargetWindowNodePath.GetFileExtension();
 		ext.ToLower();
 		
@@ -884,7 +894,7 @@ MkWindowEventManager::MkWindowEventManager() : MkSingletonPattern<MkWindowEventM
 
 	m_DrawStep = NULL;
 	m_RootNode = NULL;
-	m_EditMode = true;
+	m_EditMode = false;
 	m_FocusLostByClick = false;
 	m_FrontHitWindow = NULL;
 	m_CurrentTargetWindowNode = NULL;

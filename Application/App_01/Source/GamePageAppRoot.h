@@ -10,14 +10,12 @@ class GamePageAppRoot : public MkBasePage
 {
 public:
 
-	static const MkHashStr Name;
-
 	virtual bool SetUp(MkDataNode& sharingNode);
 
 	virtual void Update(const MkTimeState& timeState);
 
 	virtual void Clear(void);
 
-	GamePageAppRoot();
+	GamePageAppRoot(const MkHashStr& name);
 	virtual ~GamePageAppRoot() { Clear(); }
 };
