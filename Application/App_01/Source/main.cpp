@@ -63,6 +63,10 @@ public:
 		// start page
 		MK_PAGE_MGR.ChangePageDirectly(GamePageName::ClientStart);
 
+		// singleton
+		m_InstanceDeallocator.Expand(1);
+		//m_InstanceDeallocator.RegisterInstance(new MkHiddenEditBox());
+
 		return MkRenderFramework::SetUp(clientWidth, clientHeight, fullScreen, arg);
 	}
 

@@ -382,6 +382,14 @@
 		<Filter
 			Name="Game system"
 			>
+			<File
+				RelativePath=".\Source\GameSystemManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\GameSystemManager.h"
+				>
+			</File>
 			<Filter
 				Name="Base class"
 				>

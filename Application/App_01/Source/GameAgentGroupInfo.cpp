@@ -7,8 +7,10 @@
 
 //------------------------------------------------------------------------------------------------//
 
-bool GameAgentGroupInfo::SetUp(const MkArray<GameAgentUnitInfo>& members, unsigned int maxTroopers)
+void GameAgentGroupInfo::SetUp(const MkArray<GameAgentUnitInfo>& members, unsigned int maxTroopers)
 {
+	Clear();
+
 	MK_INDEXING_LOOP(members, i)
 	{
 		const GameAgentUnitInfo& agent = members[i];
@@ -19,8 +21,6 @@ bool GameAgentGroupInfo::SetUp(const MkArray<GameAgentUnitInfo>& members, unsign
 	
 	SortBy(m_GroupSortingMethod);
 	//MkDataNode initNode;
-
-	return true;
 }
 
 void GameAgentGroupInfo::SortBy(eGroupSortingMethod gsm)
@@ -93,6 +93,12 @@ void GameAgentGroupInfo::SortBy(eGroupSortingMethod gsm)
 			}
 		}
 	}
+}
+
+void GameAgentGroupInfo::Clear(void)
+{
+	m_Members.Clear();
+	m_MemberSequence.Clear();
 }
 
 bool GameAgentGroupInfo::GetTroopers(MkArray<const GameAgentUnitInfo*>& troopers) const

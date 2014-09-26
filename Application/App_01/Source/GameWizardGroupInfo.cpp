@@ -6,8 +6,10 @@
 
 //------------------------------------------------------------------------------------------------//
 
-bool GameWizardGroupInfo::SetUp(const MkArray<GameWizardUnitInfo>& members, unsigned int targetWizardID)
+void GameWizardGroupInfo::SetUp(const MkArray<GameWizardUnitInfo>& members, unsigned int targetWizardID)
 {
+	Clear();
+
 	MK_INDEXING_LOOP(members, i)
 	{
 		const GameWizardUnitInfo& wizard = members[i];
@@ -16,8 +18,11 @@ bool GameWizardGroupInfo::SetUp(const MkArray<GameWizardUnitInfo>& members, unsi
 
 	m_TargetWizardID = targetWizardID;
 	//MkDataNode initNode;
+}
 
-	return true;
+void GameWizardGroupInfo::Clear(void)
+{
+	m_Members.Clear();
 }
 
 GameWizardGroupInfo::GameWizardGroupInfo()

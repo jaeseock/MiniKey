@@ -12,9 +12,11 @@ class GameAgentGroupInfo
 {
 public:
 
-	bool SetUp(const MkArray<GameAgentUnitInfo>& members, unsigned int maxTroopers);
+	void SetUp(const MkArray<GameAgentUnitInfo>& members, unsigned int maxTroopers);
 
 	void SortBy(eGroupSortingMethod gsm);
+
+	void Clear(void);
 
 	//inline const GameAgentUnitInfo* GetAgentUnitInfo(unsigned int gameID) const { return m_Members.Exist(gameID) ? &m_Members[gameID] : NULL;  }
 
@@ -23,7 +25,7 @@ public:
 	bool GetTroopers(MkArray<const GameAgentUnitInfo*>& troopers) const;
 	
 	GameAgentGroupInfo();
-	~GameAgentGroupInfo() {}
+	~GameAgentGroupInfo() { Clear(); }
 
 protected:
 

@@ -12,14 +12,16 @@ class GameWizardGroupInfo
 {
 public:
 
-	bool SetUp(const MkArray<GameWizardUnitInfo>& members, unsigned int targetWizardID);
+	void SetUp(const MkArray<GameWizardUnitInfo>& members, unsigned int targetWizardID);
+
+	void Clear(void);
 
 	inline void SelectTargetWizard(unsigned int targetWizardID) { m_TargetWizardID = targetWizardID; }
 
 	inline const GameWizardUnitInfo* GetTargetWizardInfo(void) const { return m_Members.Exist(m_TargetWizardID) ? &m_Members[m_TargetWizardID] : NULL; }
 	
 	GameWizardGroupInfo();
-	~GameWizardGroupInfo() {}
+	~GameWizardGroupInfo() { Clear(); }
 
 protected:
 
