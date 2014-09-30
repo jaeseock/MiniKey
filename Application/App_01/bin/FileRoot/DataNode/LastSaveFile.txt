@@ -1,0 +1,34 @@
+
+//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path  : DataNode\LastSaveFile.txt
+//   - time stamp : 2014.09.30 (19:51:40),
+//   - exporter   : ø¿¿ÁºÆ (App_01)
+//--------------------------------------------------------------------//
+
+
+
+Node "WizardGroup"
+{
+	uint TargetWizard = 3;
+
+	Node "1"
+	{
+		int WizardLevel = 10;
+	}
+
+	Node "2"
+	{
+		int WizardLevel = 5;
+	}
+
+	Node "3"
+	{
+		int WizardLevel = 8;
+	}
+
+	Node "4"
+	{
+		int WizardLevel = 3;
+	}
+}

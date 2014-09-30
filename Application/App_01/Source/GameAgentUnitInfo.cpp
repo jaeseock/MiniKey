@@ -20,7 +20,7 @@ GameAgentUnitInfo::GameAgentUnitInfo()
 	
 	m_Name = L"Undefined";
 	
-	m_AgentLevel = 0;
+	m_AgentLevel = -1;
 	m_MemberTypeLevel[eTMT_Attack] = 10;
 	m_MemberTypeLevel[eTMT_Defense] = 10;
 	m_MemberTypeLevel[eTMT_Support] = 10;

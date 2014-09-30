@@ -9,9 +9,14 @@
 #include "GameGlobalDefinition.h"
 
 
+class MkDataNode;
+
 class GameAgentUnitInfo
 {
 public:
+
+	//bool Load(const MkDataNode& node);
+	//bool Save(MkDataNode& node);
 
 	bool SetUp(void); // tmp
 

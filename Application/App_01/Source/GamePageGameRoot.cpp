@@ -1,13 +1,15 @@
 
-//#include "MkCore_MkPathName.h"
+#include "MkCore_MkCheck.h"
+#include "MkCore_MkPathName.h"
 #include "MkCore_MkDataNode.h"
 
 #include "MkS2D_MkDisplayManager.h"
 #include "MkS2D_MkRenderer.h"
 #include "MkS2D_MkWindowEventManager.h"
 
+#include "GameDataNode.h"
 #include "GameSharedUI.h"
-
+#include "GameSystemManager.h"
 #include "GamePageGameRoot.h"
 
 //------------------------------------------------------------------------------------------------//
@@ -24,7 +26,14 @@ bool GamePageGameRoot::SetUp(MkDataNode& sharingNode)
 	MK_WIN_EVENT_MGR.SetUp(sceneTexture);
 
 	// 게임 공용 리소스 로딩
+	GameDataNode::SetUp();
 	GameSharedUI::SetUp();
+
+	// 기본 유저 설정
+	MkDataNode defUserSetting;
+	MkPathName defUserFilePath = L"DataNode\\DefaultUserData.txt";
+	MK_CHECK(defUserSetting.Load(defUserFilePath) && GAME_SYSTEM.GetMasterPlayer().Load(defUserSetting), L"기본 유저 설정파일 로딩 오류 : " + defUserFilePath)
+		return false;
 
 	return true;
 }
@@ -37,6 +46,13 @@ void GamePageGameRoot::Update(const MkTimeState& timeState)
 
 void GamePageGameRoot::Clear(void)
 {
+	MkDataNode lastSaveData;
+	if (GAME_SYSTEM.GetMasterPlayer().Save(lastSaveData))
+	{
+		lastSaveData.SaveToText(L"DataNode\\LastSaveFile.txt");
+	}
+
+	GameDataNode::Clear();
 	GameSharedUI::Clear();
 
 	// window manager 날리고

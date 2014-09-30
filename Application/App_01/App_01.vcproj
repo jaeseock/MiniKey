@@ -352,6 +352,14 @@
 						RelativePath=".\Source\GameSUI_IslandVisitCB.h"
 						>
 					</File>
+					<File
+						RelativePath=".\Source\GameSUI_Thumbnail.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\GameSUI_Thumbnail.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="1.2. Wizard laboratory"
@@ -462,6 +470,18 @@
 					</File>
 				</Filter>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="Game data"
+			>
+			<File
+				RelativePath=".\Source\GameDataNode.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Source\GameDataNode.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\Source\main.cpp"

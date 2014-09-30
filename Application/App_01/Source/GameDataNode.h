@@ -3,14 +3,13 @@
 //------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------//
 
-class MkBaseWindowNode;
+class MkDataNode;
 
-class GameSharedUI
+class GameDataNode
 {
 public:
 
-	static MkBaseWindowNode* VisitCB;
-	static MkBaseWindowNode* SystemCB;
+	static MkDataNode* WizardSet;
 
 	static void SetUp(void);
 	static void Clear(void);

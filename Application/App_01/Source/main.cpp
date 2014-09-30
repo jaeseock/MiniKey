@@ -36,6 +36,8 @@
 #include "GamePageWizardLab.h"
 #include "GamePageBarrack.h"
 
+#include "GameSystemManager.h"
+
 //------------------------------------------------------------------------------------------------//
 
 class GameFramework : public MkRenderFramework
@@ -65,7 +67,7 @@ public:
 
 		// singleton
 		m_InstanceDeallocator.Expand(1);
-		//m_InstanceDeallocator.RegisterInstance(new MkHiddenEditBox());
+		m_InstanceDeallocator.RegisterInstance(new GameSystemManager());
 
 		return MkRenderFramework::SetUp(clientWidth, clientHeight, fullScreen, arg);
 	}

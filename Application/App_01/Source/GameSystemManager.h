@@ -54,6 +54,9 @@ class MasterPlayer : public GamePlayerBase
 {
 public:
 
+	bool Load(const MkDataNode& node);
+	bool Save(MkDataNode& node);
+
 	inline GameWizardGroupInfo& GetWizardGroup(void) { return m_WizardGroup; }
 	inline const GameWizardGroupInfo& GetWizardGroup(void) const { return m_WizardGroup; }
 

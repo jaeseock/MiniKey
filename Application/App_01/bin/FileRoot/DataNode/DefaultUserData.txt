@@ -1,0 +1,25 @@
+
+Node "WizardGroup"
+{
+	uint TargetWizard = 1;
+	
+	Node "1"
+	{
+		int WizardLevel = 10;
+	}
+	
+	Node "2"
+	{
+		int WizardLevel = 5;
+	}
+	
+	Node "3"
+	{
+		int WizardLevel = 8;
+	}
+	
+	Node "4"
+	{
+		int WizardLevel = 3;
+	}
+}

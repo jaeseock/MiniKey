@@ -1,0 +1,24 @@
+
+Node "1"
+{
+	str Name = "°ø°Ý Àü¹®°¡";
+	str ImagePath = "Object\Wizard\wizard_set_a_01.png";
+}
+
+Node "2"
+{
+	str Name = "´ÚÄ¡°í ¸ö»§";
+	str ImagePath = "Object\Wizard\wizard_set_d_01.png";
+}
+
+Node "3"
+{
+	str Name = "¾ßºñÇÑ Èú·¯";
+	str ImagePath = "Object\Wizard\wizard_set_s_01.png";
+}
+
+Node "4"
+{
+	str Name = "µ·³»³ö »¡¶û";
+	str ImagePath = "Object\Wizard\wizard_set_r_01.png";
+}
