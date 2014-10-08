@@ -32,14 +32,14 @@ bool GameWizardGroupInfo::Load(const MkDataNode& node)
 	return !members.Empty();
 }
 
-bool GameWizardGroupInfo::Save(MkDataNode& node)
+bool GameWizardGroupInfo::Save(MkDataNode& node) const
 {
 	if (!node.CreateUnit(TARGET_WIZARD, m_TargetWizardID))
 	{
 		node.SetData(TARGET_WIZARD, m_TargetWizardID, 0);
 	}
 
-	MkMapLooper<unsigned int, GameWizardUnitInfo> looper(m_Members);
+	MkConstMapLooper<unsigned int, GameWizardUnitInfo> looper(m_Members);
 	MK_STL_LOOP(looper)
 	{
 		MkHashStr key = MkStr(looper.GetCurrentField().GetWizardID());

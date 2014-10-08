@@ -49,8 +49,8 @@ public:
 					MkStr wizardName;
 					wizardData->GetData(L"Name", wizardName, 0);
 
-					GameSUI_ThumbnailWizard* btn = new GameSUI_ThumbnailWizard(wizardKey);
-					btn->CreateThumbnailWizard(imagePath, L"TN_WL", wui.GetWizardLevel(), wizardName);
+					GameSUI_WizardThumbnail* btn = new GameSUI_WizardThumbnail(wizardKey);
+					btn->CreateWizardThumbnail(imagePath, L"TN_WL", wui.GetWizardLevel(), wizardName);
 					btn->SetLocalPosition(MkVec3(100.f + iPos * 30.f, 600.f - iPos * 130.f, -MKDEF_BASE_WINDOW_DEPTH_GRID));
 					AttachChildNode(btn);
 

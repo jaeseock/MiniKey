@@ -8,14 +8,12 @@
 #include "GameWizardUnitInfo.h"
 
 
-class MkDataNode;
-
 class GameWizardGroupInfo
 {
 public:
 
 	bool Load(const MkDataNode& node);
-	bool Save(MkDataNode& node);
+	bool Save(MkDataNode& node) const;
 
 	void SetUp(const MkArray<GameWizardUnitInfo>& members, unsigned int targetWizardID);
 

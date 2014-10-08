@@ -385,6 +385,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="1.4. Train room"
+					>
+					<File
+						RelativePath=".\Source\GamePageTrainRoom.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\GamePageTrainRoom.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

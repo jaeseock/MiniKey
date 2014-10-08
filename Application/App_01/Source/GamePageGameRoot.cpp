@@ -30,9 +30,7 @@ bool GamePageGameRoot::SetUp(MkDataNode& sharingNode)
 	GameSharedUI::SetUp();
 
 	// 기본 유저 설정
-	MkDataNode defUserSetting;
-	MkPathName defUserFilePath = L"DataNode\\DefaultUserData.txt";
-	MK_CHECK(defUserSetting.Load(defUserFilePath) && GAME_SYSTEM.GetMasterPlayer().Load(defUserSetting), L"기본 유저 설정파일 로딩 오류 : " + defUserFilePath)
+	MK_CHECK(GAME_SYSTEM.LoadMasterUserData(GDEF_DEF_USER_DATA_PATH), L"기본 유저 설정파일 로딩 오류")
 		return false;
 
 	return true;
@@ -46,11 +44,7 @@ void GamePageGameRoot::Update(const MkTimeState& timeState)
 
 void GamePageGameRoot::Clear(void)
 {
-	MkDataNode lastSaveData;
-	if (GAME_SYSTEM.GetMasterPlayer().Save(lastSaveData))
-	{
-		lastSaveData.SaveToText(L"DataNode\\LastSaveFile.txt");
-	}
+	MK_CHECK(GAME_SYSTEM.SaveMasterUserData(GDEF_LAST_SAVE_DATA_PATH), L"마지막 저장 파일 기록 오류") {}
 
 	GameDataNode::Clear();
 	GameSharedUI::Clear();

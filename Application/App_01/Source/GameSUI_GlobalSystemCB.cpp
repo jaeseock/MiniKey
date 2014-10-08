@@ -1,8 +1,10 @@
 
+#include "MkCore_MkCheck.h"
 #include "MkCore_MkDataNode.h"
 #include "MkCore_MkPageManager.h"
 
 #include "GameGlobalDefinition.h"
+#include "GameSystemManager.h"
 #include "GameSUI_GlobalSystemCB.h"
 
 
@@ -18,7 +20,11 @@ void GameSUI_GlobalSystemCB::UseWindowEvent(WindowEvent& evt)
 		const MkHashStr& targetKey = GetTargetItemKey();
 		if (targetKey == Save)
 		{
-			//
+			MkPathName filePath;
+			if (filePath.GetSaveFilePathFromDialog(GDEF_USER_SAVE_DATA_EXT))
+			{
+				MK_CHECK(GAME_SYSTEM.SaveMasterUserData(filePath), L"저장 파일 기록 오류") {}
+			}
 		}
 		else if (targetKey == ToTitle)
 		{

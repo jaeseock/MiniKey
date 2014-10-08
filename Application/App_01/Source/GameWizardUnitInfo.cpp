@@ -13,14 +13,14 @@ bool GameWizardUnitInfo::Load(const MkDataNode& node)
 {
 	m_WizardID = node.GetNodeName().GetString().ToInteger();
 
-	m_WizardLevel = -1;
+	m_WizardLevel = 1;
 	if (!node.GetData(WIZARD_LEVEL, m_WizardLevel, 0))
 		return false;
 
 	return true;
 }
 
-bool GameWizardUnitInfo::Save(MkDataNode& node)
+bool GameWizardUnitInfo::Save(MkDataNode& node) const
 {
 	if (!node.CreateUnit(WIZARD_LEVEL, m_WizardLevel))
 	{
@@ -33,9 +33,7 @@ bool GameWizardUnitInfo::Save(MkDataNode& node)
 GameWizardUnitInfo::GameWizardUnitInfo()
 {
 	m_WizardID = 0;
-	m_UniqueID = 0;
-
-	m_WizardLevel = -1;
+	m_WizardLevel = 1;
 }
 
 //------------------------------------------------------------------------------------------------//

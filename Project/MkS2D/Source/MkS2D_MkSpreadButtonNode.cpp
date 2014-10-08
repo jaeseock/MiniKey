@@ -539,8 +539,26 @@ void MkSpreadButtonNode::SetPresetComponentSize(const MkFloat2& componentSize)
 	}
 }
 
+void MkSpreadButtonNode::DetachFromParentNode(void)
+{
+	if ((!GetReadOnly()) && (m_ParentNodePtr != NULL))
+	{
+		CloseAllItems();
+		
+		m_ParentNodePtr->DetachChildNode(GetNodeName());
+	}
+}
+
 bool MkSpreadButtonNode::DetachChildNode(const MkHashStr& childNodeName)
 {
+	if (!m_ItemSequence.Empty())
+	{
+		if (m_ItemSequence.FindFirstInclusion(MkArraySection(0), childNodeName) != MKDEF_ARRAY_ERROR)
+		{
+			CloseAllItems();
+		}
+	}
+
 	bool ok = MkBaseWindowNode::DetachChildNode(childNodeName);
 	if (ok)
 	{

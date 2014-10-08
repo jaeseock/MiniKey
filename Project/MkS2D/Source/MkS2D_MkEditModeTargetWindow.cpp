@@ -88,6 +88,7 @@ const static MkHashStr TAG_ICON_UK = L"__#IconUK";
 const static MkHashStr TAG_CAPTION_UK = L"__#CapUK";
 const static MkHashStr SET_TAG_BTN_NAME = L"__#SetTag";
 const static MkHashStr DEL_TAG_BTN_NAME = L"__#DelTag";
+const static MkHashStr NEW_TAG_BTN_NAME = L"__#NewTag";
 const static MkHashStr TAG_ALIGN_LEFT_BTN_NAME = L"__#TagAlignLeft";
 const static MkHashStr TAG_ALIGN_CENTER_BTN_NAME = L"__#TagAlignCenter";
 const static MkHashStr TAG_ALIGN_RIGHT_BTN_NAME = L"__#TagAlignRight";
@@ -634,16 +635,22 @@ bool MkEditModeTargetWindow::Initialize(void)
 				m_TabTag_TargetSelection->SetTargetItem(TAG_ICON_UK);
 
 				const float selectionBtnWidth = m_TabTag_TargetSelection->GetPresetComponentSize().x;
-				MkFloat2 currBtnSize(80.f, MKDEF_DEF_CTRL_HEIGHT);
+				MkFloat2 currBtnSize(100.f, MKDEF_DEF_CTRL_HEIGHT);
 
 				MkBaseWindowNode* setTag = MkWindowOpHelper::CreateWindowPreset
-					(tagWin, SET_TAG_BTN_NAME, themeName, eS2D_WPC_OKButton, currBtnSize, L"태그 설정", MkFloat2(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY));
+					(tagWin, SET_TAG_BTN_NAME, themeName, eS2D_WPC_NormalButton, currBtnSize, L"해당 태그 설정", MkFloat2(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY));
 
 				MkBaseWindowNode* delTag = MkWindowOpHelper::CreateWindowPreset
-					(tagWin, DEL_TAG_BTN_NAME, themeName, eS2D_WPC_CancelButton, currBtnSize, L"태그 삭제", MkFloat2(MKDEF_CTRL_MARGIN * 3.f + selectionBtnWidth + currBtnSize.x, btnPosY));
+					(tagWin, DEL_TAG_BTN_NAME, themeName, eS2D_WPC_CancelButton, currBtnSize, L"해당 태그 삭제", MkFloat2(MKDEF_CTRL_MARGIN * 3.f + selectionBtnWidth + currBtnSize.x, btnPosY));
 				m_TabTag_EnableWindows.PushBack(delTag);
 
 				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+
+				MkBaseWindowNode* newTag = MkWindowOpHelper::CreateWindowPreset
+					(tagWin, NEW_TAG_BTN_NAME, themeName, eS2D_WPC_OKButton, currBtnSize, L"전용 태그 생성", MkFloat2(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY));
+
+				btnPosY -= MKDEF_CTRL_MARGIN + MKDEF_DEF_CTRL_HEIGHT;
+				currBtnSize.x = 80.f;
 
 				MkBaseWindowNode* alignLeft = MkWindowOpHelper::CreateWindowPreset
 					(tagWin, TAG_ALIGN_LEFT_BTN_NAME, themeName, eS2D_WPC_NormalButton, currBtnSize, L"좌측 정렬", MkFloat2(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth, btnPosY));
@@ -657,7 +664,7 @@ bool MkEditModeTargetWindow::Initialize(void)
 					(tagWin, TAG_ALIGN_RIGHT_BTN_NAME, themeName, eS2D_WPC_NormalButton, currBtnSize, L"우측 정렬", MkFloat2(MKDEF_CTRL_MARGIN * 4.f + selectionBtnWidth + currBtnSize.x * 2.f, btnPosY));
 				m_TabTag_EnableWindows.PushBack(alignRight);
 
-				MkFloat2 pivot(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth + 42.f, 140.f);
+				MkFloat2 pivot(MKDEF_CTRL_MARGIN * 2.f + selectionBtnWidth + 42.f, 110.f);
 
 				MkBaseWindowNode* moveLL = __CreateWindowPreset(tagWin, TAG_PX_MOVE_LL_BTN_NAME, themeName, eS2D_WPC_DirLeftButton, MkFloat2(0.f, 0.f));
 				const MkFloat2& dirBtnSize = moveLL->GetPresetComponentSize();
@@ -1224,6 +1231,31 @@ void MkEditModeTargetWindow::UseWindowEvent(WindowEvent& evt)
 						_UpdateTabTagDesc();
 						_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
 					}
+				}
+			}
+			else if (evt.node->GetNodeName() == NEW_TAG_BTN_NAME)
+			{
+				MkStr keyName = L"PrivateTag_";
+				unsigned int index = 0;
+				while (true)
+				{
+					MkHashStr targetKey = keyName + MkStr(index);
+					if (!m_TargetNode->ExistSRect(targetKey))
+					{
+						MkSRect* srect = m_TargetNode->CreateSRect(targetKey);
+						srect->SetDecoString(L"[" + targetKey.GetString() + L"]");
+						srect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
+
+						ItemTagInfo ti;
+						ti.captionDesc.SetString(targetKey.GetString());
+						m_TabTag_TargetSelection->AddItem(targetKey, ti);
+						m_TabTag_TargetSelection->SetTargetItem(targetKey);
+
+						_UpdateTabTagDesc();
+						_UpdateTabTagControlEnable(_GetTargetComponentTagExistByTargetTab());
+						break;
+					}
+					++index;
 				}
 			}
 			else if ((m_TargetNode != NULL) && (m_TargetNode->GetPresetComponentType() != eS2D_WPC_None) &&

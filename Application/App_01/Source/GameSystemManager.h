@@ -21,7 +21,7 @@ class GamePlayerBase
 public:
 
 	virtual const GameWizardUnitInfo* GetTargetWizardInfo(void) const = NULL;
-	virtual bool GetTroopers(MkArray<const GameAgentUnitInfo*>& troopers) const = NULL;
+	virtual void GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const = NULL;
 
 	GamePlayerBase() {}
 	virtual ~GamePlayerBase() {}
@@ -36,7 +36,7 @@ public:
 	void SetUp(const GameWizardUnitInfo& wizard, const MkArray<GameAgentUnitInfo>& troop);
 
 	virtual const GameWizardUnitInfo* GetTargetWizardInfo(void) const { return &m_WizardInfo; }
-	virtual bool GetTroopers(MkArray<const GameAgentUnitInfo*>& troopers) const { troopers = m_Troopers; return true; }
+	virtual void GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const { buffer = m_TroopInfo; }
 
 	NormalPlayer() : GamePlayerBase() {}
 	virtual ~NormalPlayer() {}
@@ -45,7 +45,6 @@ protected:
 
 	GameWizardUnitInfo m_WizardInfo;
 	MkArray<GameAgentUnitInfo> m_TroopInfo;
-	MkArray<const GameAgentUnitInfo*> m_Troopers;
 };
 
 //------------------------------------------------------------------------------------------------//
@@ -55,7 +54,7 @@ class MasterPlayer : public GamePlayerBase
 public:
 
 	bool Load(const MkDataNode& node);
-	bool Save(MkDataNode& node);
+	bool Save(MkDataNode& node) const;
 
 	inline GameWizardGroupInfo& GetWizardGroup(void) { return m_WizardGroup; }
 	inline const GameWizardGroupInfo& GetWizardGroup(void) const { return m_WizardGroup; }
@@ -64,7 +63,7 @@ public:
 	inline const GameAgentGroupInfo& GetAgentGroup(void) const { return m_AgentGroup; }
 
 	virtual const GameWizardUnitInfo* GetTargetWizardInfo(void) const { return m_WizardGroup.GetTargetWizardInfo(); }
-	virtual bool GetTroopers(MkArray<const GameAgentUnitInfo*>& troopers) const { return m_AgentGroup.GetTroopers(troopers); }
+	virtual void GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const { m_AgentGroup.GetTroopers(buffer); }
 
 	void Clear(void);
 
@@ -79,6 +78,8 @@ protected:
 
 //------------------------------------------------------------------------------------------------//
 
+class MkPathName;
+
 class GameSystemManager : public MkSingletonPattern<GameSystemManager>
 {
 public:
@@ -86,7 +87,8 @@ public:
 	inline MasterPlayer& GetMasterPlayer(void) { return m_MasterPlayer; }
 	inline const MasterPlayer& GetMasterPlayer(void) const { return m_MasterPlayer; }
 
-	
+	bool LoadMasterUserData(const MkPathName& filePath);
+	bool SaveMasterUserData(const MkPathName& filePath) const;
 
 	GameSystemManager() {}
 	virtual ~GameSystemManager() {}

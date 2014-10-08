@@ -155,6 +155,8 @@ public:
 
 	virtual void SetPresetComponentSize(const MkFloat2& componentSize);
 
+	virtual void DetachFromParentNode(void);
+
 	virtual bool DetachChildNode(const MkHashStr& childNodeName);
 
 	MkSpreadButtonNode(const MkHashStr& name);

@@ -10,7 +10,7 @@ enum eResourceType
 	eRT_None = -1,
 	eRT_Red = 0, // amplification, attack
 	eRT_Green, // stability, defense
-	eRT_White, // vitality, support
+	eRT_Violet, // vitality, support
 	eRT_Blue, // transformation, resource
 	eRT_Void,
 
@@ -22,7 +22,7 @@ enum eResourceCharacteristic
 	eRC_None = -1,
 	eRC_Amplification = 0, // red, attack
 	eRC_Stability, // green, defense
-	eRC_Vitality, // white, support
+	eRC_Vitality, // violet, support
 	eRC_Transformation, // blue, resource
 
 	eRC_Max
@@ -33,7 +33,7 @@ enum eTroopMemberType
 	eTMT_None = -1,
 	eTMT_Attack = 0, // red, amplification
 	eTMT_Defense, // green, stability
-	eTMT_Support, // white, vitality
+	eTMT_Support, // violet, vitality
 	eTMT_Resource, // blue, transformation
 
 	eTMT_Max
@@ -53,13 +53,11 @@ enum eResComboType
 
 enum eGroupSortingMethod
 {
-	eGSM_AgentName = 0,
-	eGSM_AgentLevel,
-	eGSM_AttackLevel,
-	eGSM_DefenseLevel,
-	eGSM_SupportLevel,
-	eGSM_ResourceLevel,
-	eGSM_AllRoundLevel
+	eGSM_Name = 0,
+	eGSM_DescendingLevel,
+	eGSM_AscendingLevel,
+
+	eGSM_Max
 };
 
 class GamePageName
@@ -72,6 +70,7 @@ public:
 	static const MkHashStr IslandAgora;
 	static const MkHashStr WizardLab;
 	static const MkHashStr Barrack;
+	static const MkHashStr TrainRoom;
 };
 
 class GameStateName
@@ -130,3 +129,11 @@ public:
 		static const MkHashStr S_ViewHiddenPath; // 숨겨진 스테이지 이동 경로 보기
 	};
 };
+
+#define GDEF_DEF_USER_DATA_PATH L"DataNode\\DefaultUserData.txt"
+#define GDEF_LAST_SAVE_DATA_PATH L"UserData\\LastSaveFile.txt"
+
+#define GDEF_USER_SAVE_DATA_EXT L"txt"
+
+#define GDEF_MAX_AGENT_COUNT 0xff
+#define GDEF_MAX_AGENT_LEVEL 0xff

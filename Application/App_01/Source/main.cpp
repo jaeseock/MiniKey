@@ -35,6 +35,7 @@
 #include "GamePageIslandAgora.h"
 #include "GamePageWizardLab.h"
 #include "GamePageBarrack.h"
+#include "GamePageTrainRoom.h"
 
 #include "GameSystemManager.h"
 
@@ -61,6 +62,7 @@ public:
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageIslandAgora(GamePageName::IslandAgora));
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageWizardLab(GamePageName::WizardLab));
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageBarrack(GamePageName::Barrack));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageTrainRoom(GamePageName::TrainRoom));
 
 		// start page
 		MK_PAGE_MGR.ChangePageDirectly(GamePageName::ClientStart);

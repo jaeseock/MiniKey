@@ -1,33 +1,39 @@
 
-//#include "MkCore_MkDataNode.h"
+#include "MkCore_MkDataNode.h"
 
 #include "GameAgentUnitInfo.h"
+
+const static MkHashStr AGENT_LEVEL = L"AgentLevel";
 
 
 //------------------------------------------------------------------------------------------------//
 
-bool GameAgentUnitInfo::SetUp(void)
+bool GameAgentUnitInfo::Load(const MkDataNode& node)
 {
-	//MkDataNode initNode;
+	m_AgentID = node.GetNodeName().GetString().ToInteger();
+
+	m_AgentLevel = 1;
+	if (!node.GetData(AGENT_LEVEL, m_AgentLevel, 0))
+		return false;
+
+	return true;
+}
+
+bool GameAgentUnitInfo::Save(MkDataNode& node) const
+{
+	if (!node.CreateUnit(AGENT_LEVEL, m_AgentLevel))
+	{
+		node.SetData(AGENT_LEVEL, m_AgentLevel, 0);
+	}
 
 	return true;
 }
 
 GameAgentUnitInfo::GameAgentUnitInfo()
 {
-	m_GameID = 0;
-	m_UniqueID = 0;
-	
-	m_Name = L"Undefined";
-	
-	m_AgentLevel = -1;
-	m_MemberTypeLevel[eTMT_Attack] = 10;
-	m_MemberTypeLevel[eTMT_Defense] = 10;
-	m_MemberTypeLevel[eTMT_Support] = 10;
-	m_MemberTypeLevel[eTMT_Resource] = 10;
-	m_Trooper = false;
-
-	m_ViewSetID = 0;
+	m_AgentID = 0;
+	m_AgentLevel = 1;
+	m_DopingLevel = 0;
 }
 
 //------------------------------------------------------------------------------------------------//

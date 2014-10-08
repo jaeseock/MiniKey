@@ -388,7 +388,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="system window"
+				Name="System window"
 				>
 				<File
 					RelativePath=".\Source\MkS2D_MkEditModeSettingWindow.cpp"

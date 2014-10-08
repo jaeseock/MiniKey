@@ -6,7 +6,7 @@
 #include "MkCore_MkGlobalDefinition.h"
 #include "MkCore_MkStr.h"
 
-#include "GameGlobalDefinition.h"
+//#include "GameGlobalDefinition.h"
 
 
 class MkDataNode;
@@ -15,32 +15,25 @@ class GameAgentUnitInfo
 {
 public:
 
-	//bool Load(const MkDataNode& node);
-	//bool Save(MkDataNode& node);
+	bool Load(const MkDataNode& node);
+	bool Save(MkDataNode& node) const;
 
-	bool SetUp(void); // tmp
+	inline unsigned int GetAgentID(void) const { return m_AgentID; }
 
-	inline unsigned int GetGameID(void) const { return m_GameID; }
-	inline ID64 GetUniqieID(void) const { return m_UniqueID; }
-	inline const MkStr& GetName(void) const { return m_Name; }
 	inline int GetAgentLevel(void) const { return m_AgentLevel; }
-	inline int GetMemberTypeLevel(eTroopMemberType tmt) const { return m_MemberTypeLevel[tmt]; }
-	inline unsigned int GetViewSetID(void) const { return m_ViewSetID; }
-	inline bool IsTrooper(void) const { return m_Trooper; }
-	
+
+	inline void SetDopingLevel(int level) { m_DopingLevel = level; }
+	inline int GetDopingLevel(void) const { return m_DopingLevel; }
+
 	GameAgentUnitInfo();
 	~GameAgentUnitInfo() {}
 
 protected:
 
-	unsigned int m_GameID;
-	ID64 m_UniqueID;
-	
-	MkStr m_Name;
+	unsigned int m_AgentID;
 
 	int m_AgentLevel;
-	int m_MemberTypeLevel[eTMT_Max];
-	bool m_Trooper;
-
-	unsigned int m_ViewSetID;
+	int m_DopingLevel;
 };
+
+MKDEF_DECLARE_FIXED_SIZE_TYPE(GameAgentUnitInfo)

@@ -8,16 +8,31 @@
 
 //------------------------------------------------------------------------------------------------//
 
-class GameSUI_ThumbnailWizard : public MkBaseWindowNode
+class GameSUI_WizardThumbnail : public MkBaseWindowNode
 {
 public:
 
-	bool CreateThumbnailWizard(const MkPathName& iconPath, const MkHashStr& iconSubset, int initLevel, const MkStr& name);
+	bool CreateWizardThumbnail(const MkPathName& iconPath, const MkHashStr& iconSubset, int initLevel, const MkStr& name);
 
 	MkSRect* SetWizardLevel(int level);
 
-	GameSUI_ThumbnailWizard(const MkHashStr& name) : MkBaseWindowNode(name) {}
-	virtual ~GameSUI_ThumbnailWizard() {}
+	GameSUI_WizardThumbnail(const MkHashStr& name) : MkBaseWindowNode(name) {}
+	virtual ~GameSUI_WizardThumbnail() {}
+};
+
+//------------------------------------------------------------------------------------------------//
+
+class GameSUI_SmallAgentThumbnail : public MkBaseWindowNode
+{
+public:
+
+	bool CreateSmallAgentThumbnail(unsigned int agentID, int initLevel, bool toBattle);
+
+	void SetAgentLevel(int level);
+	void SetToBattle(bool enable);
+
+	GameSUI_SmallAgentThumbnail(const MkHashStr& name) : MkBaseWindowNode(name) {}
+	virtual ~GameSUI_SmallAgentThumbnail() {}
 };
 
 //------------------------------------------------------------------------------------------------//

@@ -15,6 +15,7 @@ void GameSUI_IslandVisitCB::UseWindowEvent(WindowEvent& evt)
 		const static MkHashStr Agora(L"Agora");
 		const static MkHashStr WizardOffice(L"WizardOffice");
 		const static MkHashStr Troop(L"Troop");
+		const static MkHashStr TrainRoom(L"TrainRoom");
 
 		const MkHashStr& targetKey = GetTargetItemKey();
 		if (targetKey == Agora)
@@ -28,6 +29,10 @@ void GameSUI_IslandVisitCB::UseWindowEvent(WindowEvent& evt)
 		else if (targetKey == Troop)
 		{
 			MK_PAGE_MGR.ChangePageDirectly(GamePageName::Barrack);
+		}
+		else if (targetKey == TrainRoom)
+		{
+			MK_PAGE_MGR.ChangePageDirectly(GamePageName::TrainRoom);
 		}
 
 		m_TargetUniqueKey.Clear();

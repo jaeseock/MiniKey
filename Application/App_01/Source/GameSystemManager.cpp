@@ -14,35 +14,47 @@ void NormalPlayer::SetUp(const GameWizardUnitInfo& wizard, const MkArray<GameAge
 {
 	m_WizardInfo = wizard;
 	m_TroopInfo = troop;
-
-	m_Troopers.Clear();
-	if (!m_TroopInfo.Empty())
-	{
-		m_Troopers.Reserve(m_TroopInfo.GetSize());
-
-		MK_INDEXING_LOOP(m_TroopInfo, i)
-		{
-			m_Troopers.PushBack(&m_TroopInfo[i]);
-		}
-	}
 }
 
 //------------------------------------------------------------------------------------------------//
 
+template <class DataType>
+class __TSI_DataFileOp
+{
+public:
+	static bool Load(const MkDataNode& node, const MkHashStr& key, DataType& instance)
+	{
+		return (node.ChildExist(key) && instance.Load(*node.GetChildNode(key)));
+	}
+
+	static bool Save(MkDataNode& node, const MkHashStr& key, const DataType& instance)
+	{
+		MkDataNode* targetNode = node.ChildExist(key) ? node.GetChildNode(key) : node.CreateChildNode(key);
+		return instance.Save(*targetNode);
+	}
+};
+
+
 const static MkHashStr WIZARD_GROUP_KEY = L"WizardGroup";
+const static MkHashStr AGENT_GROUP_KEY = L"AgentGroup";
 
 bool MasterPlayer::Load(const MkDataNode& node)
 {
-	if ((!node.ChildExist(WIZARD_GROUP_KEY)) || (!m_WizardGroup.Load(*node.GetChildNode(WIZARD_GROUP_KEY))))
+	if (!__TSI_DataFileOp<GameWizardGroupInfo>::Load(node, WIZARD_GROUP_KEY, m_WizardGroup))
+		return false;
+
+	if (!__TSI_DataFileOp<GameAgentGroupInfo>::Load(node, AGENT_GROUP_KEY, m_AgentGroup))
 		return false;
 
 	return true;
 }
 
-bool MasterPlayer::Save(MkDataNode& node)
+bool MasterPlayer::Save(MkDataNode& node) const
 {
-	MkDataNode* wizardGroupNode = node.ChildExist(WIZARD_GROUP_KEY) ? node.GetChildNode(WIZARD_GROUP_KEY) : node.CreateChildNode(WIZARD_GROUP_KEY);
-	if (!m_WizardGroup.Save(*wizardGroupNode))
+	if (!__TSI_DataFileOp<GameWizardGroupInfo>::Save(node, WIZARD_GROUP_KEY, m_WizardGroup))
+		return false;
+
+	if (!__TSI_DataFileOp<GameAgentGroupInfo>::Save(node, AGENT_GROUP_KEY, m_AgentGroup))
 		return false;
 
 	return true;
@@ -52,6 +64,25 @@ void MasterPlayer::Clear(void)
 {
 	m_WizardGroup.Clear();
 	m_AgentGroup.Clear();
+}
+
+//------------------------------------------------------------------------------------------------//
+
+bool GameSystemManager::LoadMasterUserData(const MkPathName& filePath)
+{
+	MkDataNode userData;
+	return (userData.Load(filePath) && GetMasterPlayer().Load(userData));
+}
+
+bool GameSystemManager::SaveMasterUserData(const MkPathName& filePath) const
+{
+	MkDataNode userData;
+	if (GetMasterPlayer().Save(userData))
+	{
+		if (userData.SaveToText(filePath))
+			return true;
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------------------------//

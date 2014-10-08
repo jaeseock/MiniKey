@@ -1,23 +1,88 @@
 
-//#include "MkCore_MkDataNode.h"
 #include "MkCore_MkMultiMap.h"
+#include "MkCore_MkDataNode.h"
 
+#include "GameDataNode.h"
 #include "GameAgentGroupInfo.h"
+
+const static MkHashStr TROOPERS = L"Troopers";
 
 
 //------------------------------------------------------------------------------------------------//
 
-void GameAgentGroupInfo::SetUp(const MkArray<GameAgentUnitInfo>& members, unsigned int maxTroopers)
+bool GameAgentGroupInfo::Load(const MkDataNode& node)
+{
+	MkArray<MkHashStr> keys;
+	node.GetChildNodeList(keys);
+
+	MkArray<GameAgentUnitInfo> members(GDEF_MAX_AGENT_COUNT);
+	MK_INDEXING_LOOP(keys, i)
+	{
+		GameAgentUnitInfo agentUnitInfo;
+		if (agentUnitInfo.Load(*node.GetChildNode(keys[i])))
+		{
+			members.PushBack(agentUnitInfo);
+		}
+	}
+
+	SetUp(members);
+
+	MkArray<unsigned int> troopers;
+	if (!node.GetData(TROOPERS, troopers))
+		return false;
+
+	unsigned int currTroopers = troopers.GetSize();
+	if (currTroopers > m_MaxTroopers)
+	{
+		troopers.PopBack(currTroopers - m_MaxTroopers);
+	}
+
+	MK_INDEXING_LOOP(troopers, i)
+	{
+		unsigned int currID = troopers[i];
+		if (m_Members.Exist(currID))
+		{
+			m_Troopers.Create(currID, &m_Members[currID]);
+		}
+	}
+
+	return !members.Empty();
+}
+
+bool GameAgentGroupInfo::Save(MkDataNode& node) const
+{
+	MkArray<unsigned int> troopers(m_Troopers.GetSize());
+	MkConstMapLooper<unsigned int, GameAgentUnitInfo*> trooperLooper(m_Troopers);
+	MK_STL_LOOP(trooperLooper)
+	{
+		troopers.PushBack(trooperLooper.GetCurrentKey());
+	}
+	if (!node.CreateUnit(TROOPERS, troopers))
+	{
+		node.SetData(TROOPERS, troopers);
+	}
+
+	MkConstMapLooper<unsigned int, GameAgentUnitInfo> memberLooper(m_Members);
+	MK_STL_LOOP(memberLooper)
+	{
+		MkHashStr key = MkStr(memberLooper.GetCurrentField().GetAgentID());
+		MkDataNode* childNode = node.ChildExist(key) ? node.GetChildNode(key) : node.CreateChildNode(key);
+		if (!memberLooper.GetCurrentField().Save(*childNode))
+			return false;
+	}
+
+	return true;
+}
+
+void GameAgentGroupInfo::SetUp(const MkArray<GameAgentUnitInfo>& members)
 {
 	Clear();
 
 	MK_INDEXING_LOOP(members, i)
 	{
 		const GameAgentUnitInfo& agent = members[i];
-		m_Members.Create(agent.GetGameID(), agent);
+		m_Members.Create(agent.GetAgentID(), agent);
 	}
-
-	m_MaxTroopers = maxTroopers;
 	
 	SortBy(m_GroupSortingMethod);
 	//MkDataNode initNode;
@@ -38,15 +103,26 @@ void GameAgentGroupInfo::SortBy(eGroupSortingMethod gsm)
 
 		MkMapLooper<unsigned int, GameAgentUnitInfo> looper(m_Members);
 
-		if (m_GroupSortingMethod == eGSM_AgentName)
+		if (m_GroupSortingMethod == eGSM_Name)
 		{
-			MkMultiMap<MkStr, GameAgentUnitInfo*> seq;
+			MkMap<MkStr, GameAgentUnitInfo*> seq;
 			MK_STL_LOOP(looper)
 			{
-				seq.Create(looper.GetCurrentField().GetName(), &looper.GetCurrentField());
+				const MkDataNode* agentData = GameDataNode::AgentSet->GetChildNode(MkStr(looper.GetCurrentField().GetAgentID()));
+				if (agentData != NULL)
+				{
+					//MkStr imagePath;
+					//wizardData->GetData(L"ImagePath", imagePath, 0);
+
+					MkStr agentName;
+					if (agentData->GetData(L"Name", agentName, 0))
+					{
+						seq.Create(agentName, &looper.GetCurrentField());
+					}
+				}
 			}
 
-			MkMultiMapLooper<MkStr, GameAgentUnitInfo*> seqLooper(seq);
+			MkMapLooper<MkStr, GameAgentUnitInfo*> seqLooper(seq);
 			MK_STL_LOOP(seqLooper)
 			{
 				m_MemberSequence.PushBack(seqLooper.GetCurrentField());
@@ -55,34 +131,24 @@ void GameAgentGroupInfo::SortBy(eGroupSortingMethod gsm)
 		else
 		{
 			MkMultiMap<int, GameAgentUnitInfo*> seq;
-			const int inverter = 0xffff;
-
+			
 			MK_STL_LOOP(looper)
 			{
 				const GameAgentUnitInfo& agent = looper.GetCurrentField();
+				int currKey = -1;
 				switch (m_GroupSortingMethod)
 				{
-				case eGSM_AgentLevel:
-					seq.Create(inverter - agent.GetAgentLevel(), &looper.GetCurrentField());
+				case eGSM_AscendingLevel:
+					currKey = agent.GetAgentLevel();
 					break;
-				case eGSM_AttackLevel:
-					seq.Create(inverter - agent.GetMemberTypeLevel(eTMT_Attack), &looper.GetCurrentField());
+				case eGSM_DescendingLevel:
+					currKey = GDEF_MAX_AGENT_LEVEL - agent.GetAgentLevel();
 					break;
-				case eGSM_DefenseLevel:
-					seq.Create(inverter - agent.GetMemberTypeLevel(eTMT_Defense), &looper.GetCurrentField());
-					break;
-				case eGSM_SupportLevel:
-					seq.Create(inverter - agent.GetMemberTypeLevel(eTMT_Support), &looper.GetCurrentField());
-					break;
-				case eGSM_ResourceLevel:
-					seq.Create(inverter - agent.GetMemberTypeLevel(eTMT_Resource), &looper.GetCurrentField());
-					break;
-				case eGSM_AllRoundLevel:
-					seq.Create(inverter - (agent.GetMemberTypeLevel(eTMT_Attack) +
-						agent.GetMemberTypeLevel(eTMT_Defense) +
-						agent.GetMemberTypeLevel(eTMT_Support) + 
-						agent.GetMemberTypeLevel(eTMT_Resource)), &looper.GetCurrentField());
-					break;
+				}
+
+				if (currKey >= 0)
+				{
+					seq.Create(currKey, &looper.GetCurrentField());
 				}
 			}
 
@@ -98,28 +164,64 @@ void GameAgentGroupInfo::SortBy(eGroupSortingMethod gsm)
 void GameAgentGroupInfo::Clear(void)
 {
 	m_Members.Clear();
+	m_Troopers.Clear();
 	m_MemberSequence.Clear();
 }
 
-bool GameAgentGroupInfo::GetTroopers(MkArray<const GameAgentUnitInfo*>& troopers) const
+bool GameAgentGroupInfo::SetTrooper(unsigned int agentID, bool enable)
 {
-	troopers.Reserve(m_MaxTroopers);
-
-	MkConstMapLooper<unsigned int, GameAgentUnitInfo> looper(m_Members);
-	MK_STL_LOOP(looper)
+	if (m_Members.Exist(agentID))
 	{
-		const GameAgentUnitInfo& agent = looper.GetCurrentField();
-		if (agent.IsTrooper())
+		if (enable)
 		{
-			troopers.PushBack(&agent);
+			if (!m_Troopers.Exist(agentID))
+			{
+				if (m_Troopers.GetSize() < m_MaxTroopers)
+				{
+					m_Troopers.Create(agentID, &m_Members[agentID]);
+					return true;
+				}
+			}
+		}
+		else
+		{
+			if (m_Troopers.Exist(agentID))
+			{
+				m_Troopers.Erase(agentID);
+				return true;
+			}
 		}
 	}
-	return (troopers.GetSize() == m_MaxTroopers);
+	return false;
+}
+
+void GameAgentGroupInfo::GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const
+{
+	buffer.Reserve(m_MaxTroopers);
+
+	// eGSM_DescendingLevel로 정렬된 순서대로 끊어서 troopers에 추가
+	MkMultiMap<int, GameAgentUnitInfo*> seq;
+	MkConstMapLooper<unsigned int, GameAgentUnitInfo*> looper(m_Troopers);
+	MK_STL_LOOP(looper)
+	{
+		seq.Create(GDEF_MAX_AGENT_LEVEL - looper.GetCurrentField()->GetAgentLevel(), looper.GetCurrentField());
+	}
+
+	MkMultiMapLooper<int, GameAgentUnitInfo*> seqLooper(seq);
+	MK_STL_LOOP(seqLooper)
+	{
+		if (buffer.GetSize() < m_MaxTroopers)
+		{
+			buffer.PushBack(*seqLooper.GetCurrentField());
+		}
+		else
+			break;
+	}
 }
 
 GameAgentGroupInfo::GameAgentGroupInfo()
 {
-	m_GroupSortingMethod = eGSM_AgentLevel;
+	m_GroupSortingMethod = eGSM_DescendingLevel;
 	m_MaxTroopers = 8;
 }
 

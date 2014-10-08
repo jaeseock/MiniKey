@@ -1,4 +1,5 @@
 
+#include "MkCore_MkCheck.h"
 #include "MkCore_MkPageManager.h"
 #include "MkCore_MkInputManager.h"
 
@@ -11,6 +12,7 @@
 #include "MkS2D_MkWindowOpHelper.h"
 
 #include "GameGlobalDefinition.h"
+#include "GameSystemManager.h"
 #include "GamePageMainTitle.h"
 
 //------------------------------------------------------------------------------------------------//
@@ -35,7 +37,16 @@ public:
 			}
 			else if (evt.node->GetNodeName() == m_LoadBtnName)
 			{
-				//MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
+				MkPathName filePath;
+				if (filePath.GetSingleFilePathFromDialog(GDEF_USER_SAVE_DATA_EXT))
+				{
+					MK_CHECK(GAME_SYSTEM.LoadMasterUserData(filePath), L"유저 설정파일 로딩 오류, 기본 설정 복구")
+					{
+						GAME_SYSTEM.LoadMasterUserData(GDEF_DEF_USER_DATA_PATH);
+					}
+
+					MK_PAGE_MGR.ChangePageDirectly(GamePageName::IslandAgora);
+				}
 			}
 			else if (evt.node->GetNodeName() == m_ExitBtnName)
 			{

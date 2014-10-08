@@ -11,6 +11,7 @@ const MkHashStr GamePageName::MainTitle(L"MainTitle");
 const MkHashStr GamePageName::IslandAgora(L"IslandAgora");
 const MkHashStr GamePageName::WizardLab(L"WizardLab");
 const MkHashStr GamePageName::Barrack(L"Barrack");
+const MkHashStr GamePageName::TrainRoom(L"TrainRoom");
 
 // resource
 const MkHashStr GameStateName::Team::R_ExtractResCD(L"R_ExtractResCD");
