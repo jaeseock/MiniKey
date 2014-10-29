@@ -36,3 +36,15 @@ public:
 };
 
 //------------------------------------------------------------------------------------------------//
+
+class GameSUI_SmallAgentView : public MkSceneNode
+{
+public:
+
+	bool CreateSmallAgentView(unsigned int agentID);
+
+	GameSUI_SmallAgentView(const MkHashStr& name) : MkSceneNode(name) {}
+	virtual ~GameSUI_SmallAgentView() {}
+};
+
+//------------------------------------------------------------------------------------------------//

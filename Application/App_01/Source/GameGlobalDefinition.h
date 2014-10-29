@@ -60,73 +60,90 @@ enum eGroupSortingMethod
 	eGSM_Max
 };
 
+enum eShowTroopInfoLevel
+{
+	eSTIL_None = 0,
+	eSTIL_Little,
+	eSTIL_Low,
+	eSTIL_Medium,
+	eSTIL_High,
+	eSTIL_All
+};
+
 class GamePageName
 {
 public:
 	static const MkHashStr AppRoot;
 	static const MkHashStr ClientStart;
 	static const MkHashStr GameRoot;
+	static const MkHashStr IslandRoot;
 	static const MkHashStr MainTitle;
 	static const MkHashStr IslandAgora;
 	static const MkHashStr WizardLab;
 	static const MkHashStr Barrack;
 	static const MkHashStr TrainRoom;
+	static const MkHashStr SupplyDepot;
+	static const MkHashStr BattleRoot;
+	static const MkHashStr Scout;
 };
 
 class GameStateName
 {
 public:
 
-	class Team
+	class Troop
 	{
 	public:
-		// resource
-		static const MkHashStr R_ExtractResCD; // 자원 추출 쿨다운
-		static const MkHashStr R_BoostExtraction; // 자원 추출 쿨다운 가속
-		static const MkHashStr R_BonusResPerc; // 추가 자원 추출 확률
-		static const MkHashStr R_VoidTypeResAppPerc; // 부정형 자원 등장 확률
-		static const MkHashStr R_ComboLevForBonusRes; // 공격 받았을 시 추가 자원 얻는 콤보 레벨
-		static const MkHashStr R_BonusResPercByCritical; // 크리티컬 공격을 받았을 시 추가 자원 얻을 확률
-		static const MkHashStr R_PurgeSingleResource; // 자원 하나 삭제 가능
-		static const MkHashStr R_ResourceSlotSize; // 자원 슬롯 크기
 
 		// attack
-		static const MkHashStr A_AttackPowerRate; // 공격 적용률
 		static const MkHashStr A_BonusAttackPower; // 추가 공격력
-		static const MkHashStr A_CriticalPerc; // 크리티컬 발생 확률
-		static const MkHashStr A_CriticalPowerRate; // 크리티컬 발생시 추가 공격 적용률
-		static const MkHashStr A_PowerPenetration; // 방어 무시율
-		static const MkHashStr A_BustDurability; // 자신이 준 damage가 상대의 내구도 하락으로 전환되는 비율
-		static const MkHashStr A_ComboPowerBonus20; // combo 조합의 추가 AP율
-		static const MkHashStr A_ComboPowerBonus30; // combo 조합의 추가 AP율
-		static const MkHashStr A_ComboPowerBonus32; // combo 조합의 추가 AP율
-		static const MkHashStr A_ComboPowerBonus40; // combo 조합의 추가 AP율
-		static const MkHashStr A_ComboPowerBonus50; // combo 조합의 추가 AP율
+		static const MkHashStr A_AttackPowerRate; // 공격 적용률
+		static const MkHashStr A_OnPairBonusAP; // one-pair 조합의 추가 공격력
+		static const MkHashStr A_TrippleBonusAP; // tripple 조합의 추가 공격력
+		static const MkHashStr A_FullHouseBonusAP; // full-house 조합의 추가 공격력
+		static const MkHashStr A_FourCardBonusAP; // 4-card 조합의 추가 공격력
+		static const MkHashStr A_FiveCardBonusAP; // 5-card 조합의 추가 공격력
+		static const MkHashStr A_CriticalDamageRate; // 최종 데미지에서 치명손상으로 인정되는 비율
+		static const MkHashStr A_DrainHPAtFourCard; // 4-card 조합시 최종 데미지의 일정량을 일반회복
+		static const MkHashStr A_DrainHPAtFiveCard; // 5-card 조합시 최종 데미지의 일정량을 일반회복
+		static const MkHashStr A_DecayEnemyHPt; // 최종 데미지의 일정량만큼 상대의 일반 회복점수 하락
 
 		// defense
-		static const MkHashStr D_ImpactResistance; // % 저항력(dam = AP - AP * ImpactResistance)
-		static const MkHashStr D_DefensePower; // - 방어력(dam = AP - ImpactProtection)
-		static const MkHashStr D_ProtectDurability; // 상대가 준 damage가 자신의 내구도 데미지로 전환되는 비율
-		static const MkHashStr D_UnionDefense; // 자신이 공격하지 않았을 경우 공격력의 일부가 IP로 전환되는 비율
-		static const MkHashStr D_CriticalResistance; // 크리티컬 damage에 대한 저항
-		static const MkHashStr D_ComboPowerResist20; // combo 조합의 AP에 대한 저항
-		static const MkHashStr D_ComboPowerResist30; // combo 조합의 AP에 대한 저항
-		static const MkHashStr D_ComboPowerResist32; // combo 조합의 AP에 대한 저항
-		static const MkHashStr D_ComboPowerResist40; // combo 조합의 AP에 대한 저항
-		static const MkHashStr D_ComboPowerResist50; // combo 조합의 AP에 대한 저항
+		static const MkHashStr D_DamageResistance; // % 저항력(dam = AP - AP * DamageResistance)
+		static const MkHashStr D_DefensePower; // - 방어력(dam = AP - DefensePower)
+		static const MkHashStr D_BonusDRAtRest; // 대기시 추가 저항력
+		static const MkHashStr D_Toughness; // 패배시 추가 방어력
+		static const MkHashStr D_CritRecoveryAtFourCard; // 4-card 조합시 치명손상 복구량
+		static const MkHashStr D_CritRecoveryAtFiveCard; // 5-card 조합시 치명손상 복구량
 
 		// support
 		static const MkHashStr S_SupplimentCapacity; // 인구수
-		static const MkHashStr S_UnitTransformTime; // 유닛 소환/업글 시간
-		static const MkHashStr S_BonusSkillAccCount; // 추가 누적 스킬 슬롯 크기
-		static const MkHashStr S_BonusHealPower; // 추가 heal 량
-		static const MkHashStr S_BonusHealRate; // 추가 heal 비율
-		static const MkHashStr S_HitPointRestorationForNextStage; // 다음 스테이지 진행시 HP 복구량
-		static const MkHashStr S_DurationRestorationForNextStage; // 다음 스테이지 진행시 dur 복구량
-		static const MkHashStr S_ViewEnemyResourcePool; // 상대 자원 보기
-		static const MkHashStr S_ViewEnemySkillAccum; // 상대 누적 스킬 보기
-		static const MkHashStr S_ViewStageReward; // 스테이지 보상 아이템 보기
-		static const MkHashStr S_ViewHiddenPath; // 숨겨진 스테이지 이동 경로 보기
+		static const MkHashStr S_BonusTransformTime; // 추가 유닛 소환/업글 시간
+		static const MkHashStr S_HealPower; // 일반 회복량
+		static const MkHashStr S_PtToGainHeal; // 일반회복 얻는 점수
+		static const MkHashStr S_HPtAtRest; // 휴식시 얻는 일반 회복점수
+		static const MkHashStr S_HPtForEveryTurn; // 턴당 얻는 일반 회복점수
+		static const MkHashStr S_HPtAtLoss; // 패배시 얻는 일반 회복점수
+		static const MkHashStr S_ViewEnemyInfo; // 상대 부대 정보공개 단계
+		static const MkHashStr S_WinnerBonusAPR; // 승리시 추가 공격 적용률
+
+		// resource
+		static const MkHashStr R_RedResWeight; // red 자원 발생비중
+		static const MkHashStr R_GreenResWeight; // green 자원 발생비중
+		static const MkHashStr R_VioletResWeight; // violet 자원 발생비중
+		static const MkHashStr R_BlueResWeight; // blue 자원 발생비중
+		static const MkHashStr R_VoidResWeight; // 부정형 자원 발생비중
+		static const MkHashStr R_PtToGainRes; // 자원 얻는 점수
+		static const MkHashStr R_RPtAtRest; // 휴식시 얻는 자원점수
+		static const MkHashStr R_RPtForEveryTurn; // 턴당 얻는 자원점수
+		static const MkHashStr R_ResSlotSize; // 자원 슬롯 크기
+		static const MkHashStr R_OnPairPower; // one-pair 조합의 power
+		static const MkHashStr R_TripplePower; // tripple 조합의 power
+		static const MkHashStr R_FullHousePower; // full-house 조합의 power
+		static const MkHashStr R_FourCardPower; // 4-card 조합의 power
+		static const MkHashStr R_FiveCardPower; // 5-card 조합의 power
+		static const MkHashStr R_DecayEnemyRPtAtFourCard; // 4-card 조합시 상대 자원점수 감소량
+		static const MkHashStr R_DecayEnemyRPtAtFiveCard; // 5-card 조합시 상대 자원점수 감소량
 	};
 };
 
@@ -137,3 +154,6 @@ public:
 
 #define GDEF_MAX_AGENT_COUNT 0xff
 #define GDEF_MAX_AGENT_LEVEL 0xff
+
+#define GDEF_MAX_TEAM_PLAYER_COUNT 3
+#define GDEF_MAX_TROOP_AGENT_COUNT 8

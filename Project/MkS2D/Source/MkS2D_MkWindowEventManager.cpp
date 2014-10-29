@@ -156,7 +156,11 @@ bool MkWindowEventManager::RegisterWindow(MkBaseWindowNode* windowNode, bool act
 	_SetFocusToWindowNode(windowNode);
 	m_OnActivatingWindows.PushBack(name);
 
-	if (!activate)
+	if (activate)
+	{
+		m_FocusLostByClick = false;
+	}
+	else
 	{
 		DeactivateWindow(name);
 	}

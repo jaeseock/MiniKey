@@ -10,25 +10,30 @@
 #include "GameStateType.h"
 
 
-class GameWizardUnitInfo;
-class GameAgentUnitInfo;
+class MkDataNode;
+class GameNormalPlayer;
 
 class GameTroopState
 {
 public:
 
-	bool SetUp(const GameWizardUnitInfo* wizard, const MkArray<const GameAgentUnitInfo*>& troopers);
+	bool SetUp(const GameNormalPlayer* player);
 
-	void UpdateTeamState(void);
+	void Clear(void);
+
+	void UpdateTroopState(void);
 
 	
 	GameTroopState();
-	~GameTroopState() {}
+	~GameTroopState() { Clear(); }
 
 protected:
 
-	const GameWizardUnitInfo* m_Wizard;
-	MkArray<const GameAgentUnitInfo*> m_Troopers;
+	void _SetState(const MkDataNode* baseState, const MkHashStr& key, int defValue, int minCap, int maxCap);
+
+protected:
+
+	const GameNormalPlayer* m_Player;
 
 	GameHitPointGage m_HitPointGage;
 

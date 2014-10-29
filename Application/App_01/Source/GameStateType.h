@@ -29,6 +29,7 @@ public:
 	{
 		m_Addition = static_cast<TargetClass>(0);
 		m_Final = m_Default = defValue;
+		m_Modified = false;
 	}
 
 	inline const TargetClass& GetMinCap(void) const { return m_MinCap; }
@@ -41,6 +42,7 @@ public:
 	{
 		TargetClass& mod = m_Modifier.Exist(modifierOwnerID) ? m_Modifier[modifierOwnerID] : m_Modifier.Create(modifierOwnerID);
 		mod = value;
+		m_Modified = true;
 	}
 
 	inline void DetachModifier(unsigned int modifierOwnerID)
@@ -48,23 +50,29 @@ public:
 		if (m_Modifier.Exist(modifierOwnerID))
 		{
 			m_Modifier.Erase(modifierOwnerID);
+			m_Modified = true;
 		}
 	}
 
 	inline void UpdateState(void)
 	{
-		m_Final = m_Default;
-		m_Addition = static_cast<TargetClass>(0);
-
-		if (!m_Modifier.Empty())
+		if (m_Modified)
 		{
-			MkConstMapLooper<unsigned int, TargetClass> looper(m_Modifier);
-			MK_STL_LOOP(looper)
+			m_Final = m_Default;
+			m_Addition = static_cast<TargetClass>(0);
+
+			if (!m_Modifier.Empty())
 			{
-				m_Addition += looper.GetCurrentField();
+				MkConstMapLooper<unsigned int, TargetClass> looper(m_Modifier);
+				MK_STL_LOOP(looper)
+				{
+					m_Addition += looper.GetCurrentField();
+				}
+
+				m_Final = Clamp<TargetClass>(m_Final + m_Addition, m_MinCap, m_MaxCap);
 			}
 
-			m_Final = Clamp<TargetClass>(m_Final + m_Addition, m_MinCap, m_MaxCap);
+			m_Modified = false;
 		}
 	}
 
@@ -79,6 +87,7 @@ protected:
 
 	MkMap<unsigned int, TargetClass> m_Modifier; // modifier owner ID, value
 	TargetClass m_Addition;
+	bool m_Modified;
 
 	TargetClass m_Final;
 };

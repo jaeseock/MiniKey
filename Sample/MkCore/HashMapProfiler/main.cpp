@@ -152,7 +152,7 @@ public:
 		MK_DEV_PANEL.MsgToFreeboard(0, MkStr(tmp));
 	}
 
-	virtual void Clear(void)
+	virtual void Clear(MkDataNode* sharingNode = NULL)
 	{
 		m_Keys.Clear();
 		m_MapAndInt.Clear();

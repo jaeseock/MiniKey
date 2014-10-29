@@ -7,20 +7,20 @@
 #include "MkS2D_MkBaseWindowNode.h"
 
 
-class GP_IslandBaseWindow : public MkBaseWindowNode
+class GP_BattleBaseWindow : public MkBaseWindowNode
 {
 public:
 
-	GP_IslandBaseWindow(const MkHashStr& name, const MkPathName& filePath);
-	virtual ~GP_IslandBaseWindow() {}
+	GP_BattleBaseWindow(const MkHashStr& name, const MkPathName& filePath);
+	virtual ~GP_BattleBaseWindow() {}
 };
 
-class GamePageIslandBase : public MkBasePage
+class GamePageBattleBase : public MkBasePage
 {
 public:
 
 	virtual void Clear(MkDataNode* sharingNode = NULL);
 
-	GamePageIslandBase(const MkHashStr& name) : MkBasePage(name) {}
-	virtual ~GamePageIslandBase() { Clear(); }
+	GamePageBattleBase(const MkHashStr& name) : MkBasePage(name) {}
+	virtual ~GamePageBattleBase() { Clear(); }
 };

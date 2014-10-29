@@ -31,11 +31,15 @@
 #include "GamePageAppRoot.h"
 #include "GamePageClientStart.h"
 #include "GamePageGameRoot.h"
+#include "GamePageIslandRoot.h"
 #include "GamePageMainTitle.h"
 #include "GamePageIslandAgora.h"
 #include "GamePageWizardLab.h"
 #include "GamePageBarrack.h"
 #include "GamePageTrainRoom.h"
+#include "GamePageSupplyDepot.h"
+#include "GamePageBattleRoot.h"
+#include "GamePageScout.h"
 
 #include "GameSystemManager.h"
 
@@ -52,17 +56,29 @@ public:
 		//	- ClientStart
 		//	- GameRoot
 		//		- MainTitle
-		//		- IslandAgora
+		//		- IslandRoot
+		//			- IslandAgora
+		//			- WizardLab
+		//			- Barrack
+		//			- TrainRoom
+		//			- SupplyDepot
+		//		- BattleRoot
+		//			- Scout
 		MK_PAGE_MGR.SetUp(new GamePageAppRoot(GamePageName::AppRoot));
 
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::AppRoot, new GamePageClientStart(GamePageName::ClientStart));
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::AppRoot, new GamePageGameRoot(GamePageName::GameRoot));
 
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageMainTitle(GamePageName::MainTitle));
-		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageIslandAgora(GamePageName::IslandAgora));
-		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageWizardLab(GamePageName::WizardLab));
-		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageBarrack(GamePageName::Barrack));
-		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageTrainRoom(GamePageName::TrainRoom));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageIslandRoot(GamePageName::IslandRoot));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::IslandRoot, new GamePageIslandAgora(GamePageName::IslandAgora));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::IslandRoot, new GamePageWizardLab(GamePageName::WizardLab));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::IslandRoot, new GamePageBarrack(GamePageName::Barrack));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::IslandRoot, new GamePageTrainRoom(GamePageName::TrainRoom));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::IslandRoot, new GamePageSupplyDepot(GamePageName::SupplyDepot));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageBattleRoot(GamePageName::BattleRoot));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::BattleRoot, new GamePageScout(GamePageName::Scout));
+		
 
 		// start page
 		MK_PAGE_MGR.ChangePageDirectly(GamePageName::ClientStart);

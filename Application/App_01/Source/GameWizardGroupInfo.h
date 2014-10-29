@@ -22,9 +22,9 @@ public:
 	inline void SetTargetWizard(unsigned int targetWizardID) { m_TargetWizardID = targetWizardID; }
 	inline unsigned int GetTargetWizard(void) const { return m_TargetWizardID; }
 
-	inline const GameWizardUnitInfo* GetTargetWizardInfo(void) const { return m_Members.Exist(m_TargetWizardID) ? &m_Members[m_TargetWizardID] : NULL; }
-
 	inline MkMap<unsigned int, GameWizardUnitInfo>& GetMembers(void) { return m_Members; }
+
+	inline const GameWizardUnitInfo& GetWizardInfo(void) const { return m_Members[m_TargetWizardID]; }
 	
 	GameWizardGroupInfo();
 	~GameWizardGroupInfo() { Clear(); }

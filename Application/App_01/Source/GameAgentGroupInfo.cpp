@@ -31,18 +31,13 @@ bool GameAgentGroupInfo::Load(const MkDataNode& node)
 	if (!node.GetData(TROOPERS, troopers))
 		return false;
 
-	unsigned int currTroopers = troopers.GetSize();
-	if (currTroopers > m_MaxTroopers)
-	{
-		troopers.PopBack(currTroopers - m_MaxTroopers);
-	}
-
 	MK_INDEXING_LOOP(troopers, i)
 	{
 		unsigned int currID = troopers[i];
 		if (m_Members.Exist(currID))
 		{
-			m_Troopers.Create(currID, &m_Members[currID]);
+			m_Troopers.Create(currID, m_ReadyToBattleAgents.GetSize());
+			m_ReadyToBattleAgents.PushBack(m_Members[currID]);
 		}
 	}
 
@@ -51,11 +46,10 @@ bool GameAgentGroupInfo::Load(const MkDataNode& node)
 
 bool GameAgentGroupInfo::Save(MkDataNode& node) const
 {
-	MkArray<unsigned int> troopers(m_Troopers.GetSize());
-	MkConstMapLooper<unsigned int, GameAgentUnitInfo*> trooperLooper(m_Troopers);
-	MK_STL_LOOP(trooperLooper)
+	MkArray<unsigned int> troopers(m_ReadyToBattleAgents.GetSize());
+	MK_INDEXING_LOOP(m_ReadyToBattleAgents, i)
 	{
-		troopers.PushBack(trooperLooper.GetCurrentKey());
+		troopers.PushBack(m_ReadyToBattleAgents[i].GetAgentID());
 	}
 	if (!node.CreateUnit(TROOPERS, troopers))
 	{
@@ -165,6 +159,7 @@ void GameAgentGroupInfo::Clear(void)
 {
 	m_Members.Clear();
 	m_Troopers.Clear();
+	m_ReadyToBattleAgents.Clear();
 	m_MemberSequence.Clear();
 }
 
@@ -176,9 +171,10 @@ bool GameAgentGroupInfo::SetTrooper(unsigned int agentID, bool enable)
 		{
 			if (!m_Troopers.Exist(agentID))
 			{
-				if (m_Troopers.GetSize() < m_MaxTroopers)
+				if (m_Troopers.GetSize() < GDEF_MAX_TROOP_AGENT_COUNT)
 				{
-					m_Troopers.Create(agentID, &m_Members[agentID]);
+					m_Troopers.Create(agentID, m_ReadyToBattleAgents.GetSize());
+					m_ReadyToBattleAgents.PushBack(m_Members[agentID]);
 					return true;
 				}
 			}
@@ -187,6 +183,8 @@ bool GameAgentGroupInfo::SetTrooper(unsigned int agentID, bool enable)
 		{
 			if (m_Troopers.Exist(agentID))
 			{
+				unsigned int index = m_Troopers[agentID];
+				m_ReadyToBattleAgents.Erase(MkArraySection(index, 1));
 				m_Troopers.Erase(agentID);
 				return true;
 			}
@@ -195,34 +193,9 @@ bool GameAgentGroupInfo::SetTrooper(unsigned int agentID, bool enable)
 	return false;
 }
 
-void GameAgentGroupInfo::GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const
-{
-	buffer.Reserve(m_MaxTroopers);
-
-	// eGSM_DescendingLevel로 정렬된 순서대로 끊어서 troopers에 추가
-	MkMultiMap<int, GameAgentUnitInfo*> seq;
-	MkConstMapLooper<unsigned int, GameAgentUnitInfo*> looper(m_Troopers);
-	MK_STL_LOOP(looper)
-	{
-		seq.Create(GDEF_MAX_AGENT_LEVEL - looper.GetCurrentField()->GetAgentLevel(), looper.GetCurrentField());
-	}
-
-	MkMultiMapLooper<int, GameAgentUnitInfo*> seqLooper(seq);
-	MK_STL_LOOP(seqLooper)
-	{
-		if (buffer.GetSize() < m_MaxTroopers)
-		{
-			buffer.PushBack(*seqLooper.GetCurrentField());
-		}
-		else
-			break;
-	}
-}
-
 GameAgentGroupInfo::GameAgentGroupInfo()
 {
 	m_GroupSortingMethod = eGSM_DescendingLevel;
-	m_MaxTroopers = 8;
 }
 
 //------------------------------------------------------------------------------------------------//

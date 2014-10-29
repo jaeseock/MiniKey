@@ -7,58 +7,64 @@
 const MkHashStr GamePageName::AppRoot(L"AppRoot");
 const MkHashStr GamePageName::ClientStart(L"ClientStart");
 const MkHashStr GamePageName::GameRoot(L"GameRoot");
+const MkHashStr GamePageName::IslandRoot(L"IslandRoot");
 const MkHashStr GamePageName::MainTitle(L"MainTitle");
 const MkHashStr GamePageName::IslandAgora(L"IslandAgora");
 const MkHashStr GamePageName::WizardLab(L"WizardLab");
 const MkHashStr GamePageName::Barrack(L"Barrack");
 const MkHashStr GamePageName::TrainRoom(L"TrainRoom");
-
-// resource
-const MkHashStr GameStateName::Team::R_ExtractResCD(L"R_ExtractResCD");
-const MkHashStr GameStateName::Team::R_BoostExtraction(L"R_BoostExtraction");
-const MkHashStr GameStateName::Team::R_BonusResPerc(L"R_BonusResPerc");
-const MkHashStr GameStateName::Team::R_VoidTypeResAppPerc(L"R_VoidTypeResAppPerc");
-const MkHashStr GameStateName::Team::R_ComboLevForBonusRes(L"R_ComboLevForBonusRes");
-const MkHashStr GameStateName::Team::R_BonusResPercByCritical(L"R_BonusResPercByCritical");
-const MkHashStr GameStateName::Team::R_PurgeSingleResource(L"R_PurgeSingleResource");
-const MkHashStr GameStateName::Team::R_ResourceSlotSize(L"S_ResourceSlotSize");
+const MkHashStr GamePageName::SupplyDepot(L"SupplyDepot");
+const MkHashStr GamePageName::BattleRoot(L"BattleRoot");
+const MkHashStr GamePageName::Scout(L"Scout");
 
 // attack
-const MkHashStr GameStateName::Team::A_AttackPowerRate(L"A_AttackPowerRate");
-const MkHashStr GameStateName::Team::A_BonusAttackPower(L"A_BonusAttackPower");
-const MkHashStr GameStateName::Team::A_CriticalPerc(L"A_CriticalPerc");
-const MkHashStr GameStateName::Team::A_CriticalPowerRate(L"A_CriticalPowerRate");
-const MkHashStr GameStateName::Team::A_PowerPenetration(L"A_PowerPenetration");
-const MkHashStr GameStateName::Team::A_BustDurability(L"A_BustDurability");
-const MkHashStr GameStateName::Team::A_ComboPowerBonus20(L"A_ComboPowerBonus20");
-const MkHashStr GameStateName::Team::A_ComboPowerBonus30(L"A_ComboPowerBonus30");
-const MkHashStr GameStateName::Team::A_ComboPowerBonus32(L"A_ComboPowerBonus32");
-const MkHashStr GameStateName::Team::A_ComboPowerBonus40(L"A_ComboPowerBonus40");
-const MkHashStr GameStateName::Team::A_ComboPowerBonus50(L"A_ComboPowerBonus50");
+const MkHashStr GameStateName::Troop::A_BonusAttackPower(L"A_BonusAttackPower");
+const MkHashStr GameStateName::Troop::A_AttackPowerRate(L"A_AttackPowerRate");
+const MkHashStr GameStateName::Troop::A_OnPairBonusAP(L"A_OnPairBonusAP");
+const MkHashStr GameStateName::Troop::A_TrippleBonusAP(L"A_TrippleBonusAP");
+const MkHashStr GameStateName::Troop::A_FullHouseBonusAP(L"A_FullHouseBonusAP");
+const MkHashStr GameStateName::Troop::A_FourCardBonusAP(L"A_FourCardBonusAP");
+const MkHashStr GameStateName::Troop::A_FiveCardBonusAP(L"A_FiveCardBonusAP");
+const MkHashStr GameStateName::Troop::A_CriticalDamageRate(L"A_CriticalDamageRate");
+const MkHashStr GameStateName::Troop::A_DrainHPAtFourCard(L"A_DrainHPAtFourCard");
+const MkHashStr GameStateName::Troop::A_DrainHPAtFiveCard(L"A_DrainHPAtFiveCard");
+const MkHashStr GameStateName::Troop::A_DecayEnemyHPt(L"A_DecayEnemyHPt");
 
 // defense
-const MkHashStr GameStateName::Team::D_ImpactResistance(L"D_ImpactResistance");
-const MkHashStr GameStateName::Team::D_DefensePower(L"D_DefensePower");
-const MkHashStr GameStateName::Team::D_ProtectDurability(L"D_ProtectDurability");
-const MkHashStr GameStateName::Team::D_UnionDefense(L"D_UnionDefense");
-const MkHashStr GameStateName::Team::D_CriticalResistance(L"D_CriticalResistance");
-const MkHashStr GameStateName::Team::D_ComboPowerResist20(L"D_ComboPowerResist20");
-const MkHashStr GameStateName::Team::D_ComboPowerResist30(L"D_ComboPowerResist30");
-const MkHashStr GameStateName::Team::D_ComboPowerResist32(L"D_ComboPowerResist32");
-const MkHashStr GameStateName::Team::D_ComboPowerResist40(L"D_ComboPowerResist40");
-const MkHashStr GameStateName::Team::D_ComboPowerResist50(L"D_ComboPowerResist50");
+const MkHashStr GameStateName::Troop::D_DamageResistance(L"D_DamageResistance");
+const MkHashStr GameStateName::Troop::D_DefensePower(L"D_DefensePower");
+const MkHashStr GameStateName::Troop::D_BonusDRAtRest(L"D_BonusDRAtRest");
+const MkHashStr GameStateName::Troop::D_Toughness(L"D_Toughness");
+const MkHashStr GameStateName::Troop::D_CritRecoveryAtFourCard(L"D_CritRecoveryAtFourCard");
+const MkHashStr GameStateName::Troop::D_CritRecoveryAtFiveCard(L"D_CritRecoveryAtFiveCard");
 
 // support
-const MkHashStr GameStateName::Team::S_SupplimentCapacity(L"S_SupplimentCapacity");
-const MkHashStr GameStateName::Team::S_UnitTransformTime(L"S_UnitTransformTime");
-const MkHashStr GameStateName::Team::S_BonusSkillAccCount(L"S_BonusSkillAccCount");
-const MkHashStr GameStateName::Team::S_BonusHealPower(L"S_BonusHealPower");
-const MkHashStr GameStateName::Team::S_BonusHealRate(L"S_BonusHealRate");
-const MkHashStr GameStateName::Team::S_HitPointRestorationForNextStage(L"S_HitPointRestorationForNextStage");
-const MkHashStr GameStateName::Team::S_DurationRestorationForNextStage(L"S_DurationRestorationForNextStage");
-const MkHashStr GameStateName::Team::S_ViewEnemyResourcePool(L"S_ViewEnemyResourcePool");
-const MkHashStr GameStateName::Team::S_ViewEnemySkillAccum(L"S_ViewEnemySkillAccum");
-const MkHashStr GameStateName::Team::S_ViewStageReward(L"S_ViewStageReward");
-const MkHashStr GameStateName::Team::S_ViewHiddenPath(L"S_ViewHiddenPath");
+const MkHashStr GameStateName::Troop::S_SupplimentCapacity(L"S_SupplimentCapacity");
+const MkHashStr GameStateName::Troop::S_BonusTransformTime(L"S_BonusTransformTime");
+const MkHashStr GameStateName::Troop::S_HealPower(L"S_HealPower");
+const MkHashStr GameStateName::Troop::S_PtToGainHeal(L"S_PtToGainHeal");
+const MkHashStr GameStateName::Troop::S_HPtAtRest(L"S_HPtAtRest");
+const MkHashStr GameStateName::Troop::S_HPtForEveryTurn(L"S_HPtForEveryTurn");
+const MkHashStr GameStateName::Troop::S_HPtAtLoss(L"S_HPtAtLoss");
+const MkHashStr GameStateName::Troop::S_ViewEnemyInfo(L"S_ViewEnemyInfo");
+const MkHashStr GameStateName::Troop::S_WinnerBonusAPR(L"S_WinnerBonusAPR");
+
+// resource
+const MkHashStr GameStateName::Troop::R_RedResWeight(L"R_RedResWeight");
+const MkHashStr GameStateName::Troop::R_GreenResWeight(L"R_GreenResWeight");
+const MkHashStr GameStateName::Troop::R_VioletResWeight(L"R_VioletResWeight");
+const MkHashStr GameStateName::Troop::R_BlueResWeight(L"R_BlueResWeight");
+const MkHashStr GameStateName::Troop::R_VoidResWeight(L"R_VoidResWeight");
+const MkHashStr GameStateName::Troop::R_PtToGainRes(L"R_PtToGainRes");
+const MkHashStr GameStateName::Troop::R_RPtAtRest(L"R_RPtAtRest");
+const MkHashStr GameStateName::Troop::R_RPtForEveryTurn(L"R_RPtForEveryTurn");
+const MkHashStr GameStateName::Troop::R_ResSlotSize(L"R_ResSlotSize");
+const MkHashStr GameStateName::Troop::R_OnPairPower(L"R_OnPairPower");
+const MkHashStr GameStateName::Troop::R_TripplePower(L"R_TripplePower");
+const MkHashStr GameStateName::Troop::R_FullHousePower(L"R_FullHousePower");
+const MkHashStr GameStateName::Troop::R_FourCardPower(L"R_FourCardPower");
+const MkHashStr GameStateName::Troop::R_FiveCardPower(L"R_FiveCardPower");
+const MkHashStr GameStateName::Troop::R_DecayEnemyRPtAtFourCard(L"R_DecayEnemyRPtAtFourCard");
+const MkHashStr GameStateName::Troop::R_DecayEnemyRPtAtFiveCard(L"R_DecayEnemyRPtAtFiveCard");
 
 //------------------------------------------------------------------------------------------------//

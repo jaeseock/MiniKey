@@ -89,10 +89,12 @@ public:
 
 		m_PointTable.Clear();
 		m_TotalPoint = 0;
-		MK_INDEXING_LOOP(m_IdTable)
+
+		MkMapLooper<IDType, unsigned int> looper(m_IdTable);
+		MK_STL_LOOP(looper)
 		{
-			m_PointTable.Create(m_TotalPoint, m_IdTable.GetCurrentKey());
-			m_TotalPoint += m_IdTable.GetCurrentField();
+			m_PointTable.Create(m_TotalPoint, looper.GetCurrentKey());
+			m_TotalPoint += looper.GetCurrentField();
 		}
 	}
 

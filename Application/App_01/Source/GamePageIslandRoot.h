@@ -6,9 +6,7 @@
 #include "MkCore_MkBasePage.h"
 
 
-class MkSceneNode;
-
-class GamePageClientStart : public MkBasePage
+class GamePageIslandRoot : public MkBasePage
 {
 public:
 
@@ -18,10 +16,8 @@ public:
 
 	virtual void Clear(MkDataNode* sharingNode = NULL);
 
-	GamePageClientStart(const MkHashStr& name);
-	virtual ~GamePageClientStart() { Clear(); }
+	GamePageIslandRoot(const MkHashStr& name);
+	virtual ~GamePageIslandRoot() { Clear(); }
 
 protected:
-
-	MkSceneNode* m_SceneNode;
 };

@@ -158,13 +158,16 @@ bool MkPageManager::_CheckAndUpdatePageMovement(void)
 			break;
 	}
 
+	// sharing node
+	MkDataNode sharingNode;
+
 	// clear
 	MkStr msgBuf;
 	msgBuf.Reserve(clearPath.GetSize() * 64 + 100);
 	msgBuf += L"> MkPageManager::Clear()";
 	MK_INDEXING_RLOOP(clearPath, i)
 	{
-		m_PageTree.GetInstancePtr(clearPath[i])->Clear();
+		m_PageTree.GetInstancePtr(clearPath[i])->Clear(&sharingNode);
 		msgBuf += L" - ";
 		msgBuf += clearPath[i];
 	}
@@ -174,7 +177,6 @@ bool MkPageManager::_CheckAndUpdatePageMovement(void)
 	}
 
 	// setup
-	MkDataNode sharingNode(L"_SharingNode");
 	msgBuf.Flush();
 	msgBuf.Reserve(setupPath.GetSize() * 64 + 100);
 	msgBuf += L"> MkPageManager::SetUp()";

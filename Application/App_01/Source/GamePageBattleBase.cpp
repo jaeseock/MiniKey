@@ -3,30 +3,30 @@
 #include "MkS2D_MkWindowEventManager.h"
 
 #include "GameSharedUI.h"
-#include "GamePageIslandBase.h"
+#include "GamePageBattleBase.h"
 
 //------------------------------------------------------------------------------------------------//
 
-GP_IslandBaseWindow::GP_IslandBaseWindow(const MkHashStr& name, const MkPathName& filePath) : MkBaseWindowNode(name)
+GP_BattleBaseWindow::GP_BattleBaseWindow(const MkHashStr& name, const MkPathName& filePath) : MkBaseWindowNode(name)
 {
 	MkDataNode node;
 	if (node.Load(filePath))
 	{
 		Load(node);
 
-		AttachChildNode(GameSharedUI::VisitCB);
+		//AttachChildNode(GameSharedUI::VisitCB);
 		AttachChildNode(GameSharedUI::SystemCB);
 	}
 }
 
 //------------------------------------------------------------------------------------------------//
 
-void GamePageIslandBase::Clear(MkDataNode* sharingNode)
+void GamePageBattleBase::Clear(MkDataNode* sharingNode)
 {
-	if (GameSharedUI::VisitCB != NULL)
-	{
-		GameSharedUI::VisitCB->DetachFromParentNode();
-	}
+	//if (GameSharedUI::VisitCB != NULL)
+	//{
+	//	GameSharedUI::VisitCB->DetachFromParentNode();
+	//}
 	if (GameSharedUI::SystemCB != NULL)
 	{
 		GameSharedUI::SystemCB->DetachFromParentNode();

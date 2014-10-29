@@ -3,22 +3,69 @@ Node "1"
 {
 	str Name = "°ø°Ý Àü¹®°¡";
 	str ImagePath = "Object\Wizard\wizard_set_a_01.png";
+	
+	int BaseHP = 1000;
+	int LevelHP = 100;
+	
+	Node "BaseState"
+	{
+		int R_RedResWeight = 50;
+		int A_BonusAttackPower = 10;
+		int A_AttackPowerRate = 5;
+		int A_CriticalDamageRate = 2;
+	}
 }
 
 Node "2"
 {
 	str Name = "´ÚÄ¡°í ¸ö»§";
 	str ImagePath = "Object\Wizard\wizard_set_d_01.png";
+	
+	int BaseHP = 1600;
+	int LevelHP = 160;
+	
+	Node "BaseState"
+	{
+		int R_GreenResWeight = 50;
+		int D_DamageResistance = 5;
+		int D_DefensePower = 5;
+		int D_BonusDRAtRest = 5;
+		int D_Toughness = 10;
+	}
 }
 
 Node "3"
 {
 	str Name = "¾ßºñÇÑ Èú·¯";
 	str ImagePath = "Object\Wizard\wizard_set_s_01.png";
+	
+	int BaseHP = 800;
+	int LevelHP = 80;
+	
+	Node "BaseState"
+	{
+		int R_VioletResWeight = 50;
+		int S_SupplimentCapacity = 1;
+		int S_HealPower = 20;
+		int S_HPtAtRest = 10;
+		int S_HPtAtLoss = 10;
+		int S_ViewEnemyInfo = 1;
+	}
 }
 
 Node "4"
 {
 	str Name = "µ·³»³ö »¡¶û";
 	str ImagePath = "Object\Wizard\wizard_set_r_01.png";
+	
+	int BaseHP = 1100;
+	int LevelHP = 110;
+	
+	Node "BaseState"
+	{
+		int R_BlueResWeight = 50;
+		int R_PtToGainRes = -10;
+		int R_VoidResPerc = 5;
+		int R_OnPairPower = 2;
+	}
 }

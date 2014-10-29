@@ -14,7 +14,7 @@ public:
 
 	virtual void Update(const MkTimeState& timeState);
 
-	virtual void Clear(void);
+	virtual void Clear(MkDataNode* sharingNode = NULL);
 
 	GamePageGameRoot(const MkHashStr& name);
 	virtual ~GamePageGameRoot() { Clear(); }

@@ -33,7 +33,6 @@ GameAgentUnitInfo::GameAgentUnitInfo()
 {
 	m_AgentID = 0;
 	m_AgentLevel = 1;
-	m_DopingLevel = 0;
 }
 
 //------------------------------------------------------------------------------------------------//

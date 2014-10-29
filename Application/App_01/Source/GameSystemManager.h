@@ -7,74 +7,14 @@
 
 //#include "MkCore_MkHashStr.h"
 #include "MkCore_MkSingletonPattern.h"
+#include "MkCore_MkBiasedDice.h"
+#include "MkCore_MkUniformDice.h"
 
-#include "GameWizardGroupInfo.h"
-#include "GameAgentGroupInfo.h"
+#include "GameBattleSystem.h"
 
 
 #define GAME_SYSTEM GameSystemManager::Instance()
 
-//------------------------------------------------------------------------------------------------//
-
-class GamePlayerBase
-{
-public:
-
-	virtual const GameWizardUnitInfo* GetTargetWizardInfo(void) const = NULL;
-	virtual void GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const = NULL;
-
-	GamePlayerBase() {}
-	virtual ~GamePlayerBase() {}
-};
-
-//------------------------------------------------------------------------------------------------//
-
-class NormalPlayer : public GamePlayerBase
-{
-public:
-
-	void SetUp(const GameWizardUnitInfo& wizard, const MkArray<GameAgentUnitInfo>& troop);
-
-	virtual const GameWizardUnitInfo* GetTargetWizardInfo(void) const { return &m_WizardInfo; }
-	virtual void GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const { buffer = m_TroopInfo; }
-
-	NormalPlayer() : GamePlayerBase() {}
-	virtual ~NormalPlayer() {}
-
-protected:
-
-	GameWizardUnitInfo m_WizardInfo;
-	MkArray<GameAgentUnitInfo> m_TroopInfo;
-};
-
-//------------------------------------------------------------------------------------------------//
-
-class MasterPlayer : public GamePlayerBase
-{
-public:
-
-	bool Load(const MkDataNode& node);
-	bool Save(MkDataNode& node) const;
-
-	inline GameWizardGroupInfo& GetWizardGroup(void) { return m_WizardGroup; }
-	inline const GameWizardGroupInfo& GetWizardGroup(void) const { return m_WizardGroup; }
-
-	inline GameAgentGroupInfo& GetAgentGroup(void) { return m_AgentGroup; }
-	inline const GameAgentGroupInfo& GetAgentGroup(void) const { return m_AgentGroup; }
-
-	virtual const GameWizardUnitInfo* GetTargetWizardInfo(void) const { return m_WizardGroup.GetTargetWizardInfo(); }
-	virtual void GetTroopers(MkArray<GameAgentUnitInfo>& buffer) const { m_AgentGroup.GetTroopers(buffer); }
-
-	void Clear(void);
-
-	MasterPlayer() : GamePlayerBase() {}
-	virtual ~MasterPlayer() { Clear(); }
-
-protected:
-
-	GameWizardGroupInfo m_WizardGroup;
-	GameAgentGroupInfo m_AgentGroup;
-};
 
 //------------------------------------------------------------------------------------------------//
 
@@ -84,22 +24,33 @@ class GameSystemManager : public MkSingletonPattern<GameSystemManager>
 {
 public:
 
-	inline MasterPlayer& GetMasterPlayer(void) { return m_MasterPlayer; }
-	inline const MasterPlayer& GetMasterPlayer(void) const { return m_MasterPlayer; }
+	inline GameMasterPlayer& GetMasterPlayer(void) { return m_MasterPlayer; }
+	inline const GameMasterPlayer& GetMasterPlayer(void) const { return m_MasterPlayer; }
 
 	bool LoadMasterUserData(const MkPathName& filePath);
 	bool SaveMasterUserData(const MkPathName& filePath) const;
+
+	// battle
+	inline GameBattleSystem& GetBattleSystem(void) { return m_BattleSystem; }
+
+	bool StartBattle(void);
+
+	// dice
+	void SetDiceSeed(unsigned int seed = 0xffffffff);
+	inline MkBiasedDice<unsigned int>& GetBiasedDice(void) { return m_BiasedDice; }
+	inline MkUniformDice& GetUniformDice(void) { return m_UniformDice; }
 
 	GameSystemManager() {}
 	virtual ~GameSystemManager() {}
 
 protected:
 
-	MasterPlayer m_MasterPlayer;
+	GameMasterPlayer m_MasterPlayer;
 
-	// battle
-	MkArray<NormalPlayer> m_Ally;
-	MkArray<NormalPlayer> m_Enemy;
+	GameBattleSystem m_BattleSystem;
+
+	MkBiasedDice<unsigned int> m_BiasedDice;
+	MkUniformDice m_UniformDice;
 };
 
 //------------------------------------------------------------------------------------------------//

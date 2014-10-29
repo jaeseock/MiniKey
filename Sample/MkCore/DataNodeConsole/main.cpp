@@ -223,7 +223,7 @@ public:
 	}
 
 	virtual void Update(const MkTimeState& timeState) {}
-	virtual void Clear(void) {}
+	virtual void Clear(MkDataNode* sharingNode = NULL) {}
 
 	TestPage(const MkHashStr& name) : MkBasePage(name) {}
 	virtual ~TestPage() {}	

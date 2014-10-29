@@ -118,3 +118,36 @@ void GameSUI_SmallAgentThumbnail::SetToBattle(bool enable)
 }
 
 //------------------------------------------------------------------------------------------------//
+
+bool GameSUI_SmallAgentView::CreateSmallAgentView(unsigned int agentID)
+{
+	const MkHashStr agentKey = MkStr(agentID);
+	const MkDataNode* agentData = GameDataNode::AgentSet->GetChildNode(agentKey);
+	if (agentData != NULL)
+	{
+		MkStr imagePath;
+		agentData->GetData(L"ImagePath", imagePath, 0);
+
+		//MkStr subset;
+		//agentData->GetData(L"Subset", subset, 0);
+		MkHashStr subset = agentKey;
+
+		MkStr agentName;
+		agentData->GetData(L"Name", agentName, 0);
+
+		MkSRect* faceTag = CreateSRect(L"Face");
+		faceTag->SetTexture(MkPathName(imagePath), subset);
+
+		MkSRect* nameTag = CreateSRect(L"Name");
+		MkStr buffer;
+		MkDecoStr::Convert(L"°íµñ14", MK_FONT_MGR.GreenFS(), 0, agentName, buffer);
+		nameTag->SetDecoString(buffer);
+		nameTag->SetLocalPosition(MkFloat2(80.f, 0.f));
+
+		return true;
+	}
+
+	return false;
+}
+
+//------------------------------------------------------------------------------------------------//

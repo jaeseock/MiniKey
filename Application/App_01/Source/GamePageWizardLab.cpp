@@ -98,9 +98,9 @@ void GamePageWizardLab::Update(const MkTimeState& timeState)
 	
 }
 
-void GamePageWizardLab::Clear(void)
+void GamePageWizardLab::Clear(MkDataNode* sharingNode)
 {
-	GamePageIslandBase::Clear();
+	GamePageIslandBase::Clear(sharingNode);
 }
 
 GamePageWizardLab::GamePageWizardLab(const MkHashStr& name) : GamePageIslandBase(name)

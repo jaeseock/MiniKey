@@ -1,6 +1,10 @@
 
-#include "MkS2D_MkWindowEventManager.h"
+#include "MkCore_MkPageManager.h"
 
+#include "MkS2D_MkWindowEventManager.h"
+#include "MkS2D_MkSpreadButtonNode.h"
+
+#include "GameGlobalDefinition.h"
 #include "GamePageIslandAgora.h"
 
 //------------------------------------------------------------------------------------------------//
@@ -11,27 +15,28 @@ public:
 
 	virtual void UseWindowEvent(WindowEvent& evt)
 	{
-		/*
-		if (evt.type == MkSceneNodeFamilyDefinition::eCursorLeftRelease)
+		if (evt.type == MkSceneNodeFamilyDefinition::eSetTargetItem)
 		{
-			if (evt.node->GetNodeName() == m_NewBtnName)
+			MkSpreadButtonNode* cbNode = dynamic_cast<MkSpreadButtonNode*>(evt.node);
+			if (cbNode != NULL)
 			{
-				//MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
-			}
-			else if (evt.node->GetNodeName() == m_LoadBtnName)
-			{
-				//MK_WIN_EVENT_MGR.DeactivateWindow(GetNodeName());
-			}
-			else if (evt.node->GetNodeName() == m_ExitBtnName)
-			{
-				DestroyWindow(MK_INPUT_MGR.__GetTargetWindowHandle());
+				if (cbNode->GetTargetItemKey() == m_ScoutBtnKey)
+				{
+					MK_PAGE_MGR.ChangePageDirectly(GamePageName::SupplyDepot);
+				}
 			}
 		}
-		*/
 	}
 
-	GP_IslandAgoraWindow(const MkHashStr& name) : GP_IslandBaseWindow(name, L"Scene\\island_lobby_page.msd") {}
+	GP_IslandAgoraWindow(const MkHashStr& name) : GP_IslandBaseWindow(name, L"Scene\\island_lobby_page.msd")
+	{
+		m_ScoutBtnKey = L"Scout";
+	}
 	virtual ~GP_IslandAgoraWindow() {}
+
+protected:
+
+	MkHashStr m_ScoutBtnKey;
 };
 
 //------------------------------------------------------------------------------------------------//
@@ -48,9 +53,9 @@ void GamePageIslandAgora::Update(const MkTimeState& timeState)
 	
 }
 
-void GamePageIslandAgora::Clear(void)
+void GamePageIslandAgora::Clear(MkDataNode* sharingNode)
 {
-	GamePageIslandBase::Clear();
+	GamePageIslandBase::Clear(sharingNode);
 }
 
 GamePageIslandAgora::GamePageIslandAgora(const MkHashStr& name) : GamePageIslandBase(name)

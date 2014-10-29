@@ -1,6 +1,7 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkPageManager.h"
+#include "MkCore_MkFileManager.h"
 #include "MkCore_MkInputManager.h"
 
 #include "MkS2D_MkDrawStep.h"
@@ -23,6 +24,7 @@ protected:
 
 	MkHashStr m_NewBtnName;
 	MkHashStr m_LoadBtnName;
+	MkHashStr m_ContinueBtnName;
 	MkHashStr m_ExitBtnName;
 
 public:
@@ -33,6 +35,9 @@ public:
 		{
 			if (evt.node->GetNodeName() == m_NewBtnName)
 			{
+				MK_CHECK(GAME_SYSTEM.LoadMasterUserData(GDEF_DEF_USER_DATA_PATH), L"기본 유저 설정파일 로딩 오류")
+					return;
+
 				MK_PAGE_MGR.ChangePageDirectly(GamePageName::IslandAgora);
 			}
 			else if (evt.node->GetNodeName() == m_LoadBtnName)
@@ -40,10 +45,18 @@ public:
 				MkPathName filePath;
 				if (filePath.GetSingleFilePathFromDialog(GDEF_USER_SAVE_DATA_EXT))
 				{
-					MK_CHECK(GAME_SYSTEM.LoadMasterUserData(filePath), L"유저 설정파일 로딩 오류, 기본 설정 복구")
-					{
-						GAME_SYSTEM.LoadMasterUserData(GDEF_DEF_USER_DATA_PATH);
-					}
+					MK_CHECK(GAME_SYSTEM.LoadMasterUserData(filePath), L"유저 설정파일 로딩 오류")
+						return;
+
+					MK_PAGE_MGR.ChangePageDirectly(GamePageName::IslandAgora);
+				}
+			}
+			else if (evt.node->GetNodeName() == m_ContinueBtnName)
+			{
+				if (MkFileManager::CheckAvailable(GDEF_LAST_SAVE_DATA_PATH))
+				{
+					MK_CHECK(GAME_SYSTEM.LoadMasterUserData(GDEF_LAST_SAVE_DATA_PATH), L"마지막 저장 파일 로딩 오류")
+						return;
 
 					MK_PAGE_MGR.ChangePageDirectly(GamePageName::IslandAgora);
 				}
@@ -66,11 +79,18 @@ public:
 
 		m_NewBtnName = L"NewBtn";
 		m_LoadBtnName = L"LoadBtn";
+		m_ContinueBtnName = L"ContinueBtn";
 		m_ExitBtnName = L"ExitBtn";
 		
-		MkWindowOpHelper::CreateWindowPreset(this, m_NewBtnName, MkHashStr::NullHash, eS2D_WPC_OKButton, btnSize, L"새 게임 시작", MkFloat2(0.f, 160.f));
-		MkWindowOpHelper::CreateWindowPreset(this, m_LoadBtnName, MkHashStr::NullHash, eS2D_WPC_OKButton, btnSize, L"이전 게임 이어하기", MkFloat2(0.f, 80.f));
+		MkWindowOpHelper::CreateWindowPreset(this, m_NewBtnName, MkHashStr::NullHash, eS2D_WPC_OKButton, btnSize, L"새 게임 시작", MkFloat2(0.f, 180.f));
+		MkWindowOpHelper::CreateWindowPreset(this, m_LoadBtnName, MkHashStr::NullHash, eS2D_WPC_OKButton, btnSize, L"이전 게임 이어하기", MkFloat2(0.f, 120.f));
+		MkBaseWindowNode* cBtn = MkWindowOpHelper::CreateWindowPreset(this, m_ContinueBtnName, MkHashStr::NullHash, eS2D_WPC_OKButton, btnSize, L"마지막 게임 이어하기", MkFloat2(0.f, 60.f));
 		MkWindowOpHelper::CreateWindowPreset(this, m_ExitBtnName, MkHashStr::NullHash, eS2D_WPC_CancelButton, btnSize, L"종료", MkFloat2(0.f, 0.f));
+
+		if (cBtn != NULL)
+		{
+			cBtn->SetEnable(MkFileManager::CheckAvailable(GDEF_LAST_SAVE_DATA_PATH));
+		}
 	}
 
 	virtual ~GP_MainTitleWindow() {}
@@ -113,7 +133,7 @@ void GamePageMainTitle::Update(const MkTimeState& timeState)
 	
 }
 
-void GamePageMainTitle::Clear(void)
+void GamePageMainTitle::Clear(MkDataNode* sharingNode)
 {
 	MK_DELETE(m_SceneNode);
 

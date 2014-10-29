@@ -271,7 +271,7 @@
 				>
 			</File>
 			<Filter
-				Name="0. ClientStart"
+				Name="0. Client start"
 				>
 				<File
 					RelativePath=".\Source\GamePageClientStart.cpp"
@@ -283,7 +283,7 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="1. GameRoot"
+				Name="1. Game root"
 				>
 				<File
 					RelativePath=".\Source\GamePageGameRoot.cpp"
@@ -293,37 +293,37 @@
 					RelativePath=".\Source\GamePageGameRoot.h"
 					>
 				</File>
-				<File
-					RelativePath=".\Source\GamePageIslandBase.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\GamePageIslandBase.h"
-					>
-				</File>
 				<Filter
-					Name="1.0. MainTitle"
+					Name="1.2. Battle root"
 					>
 					<File
-						RelativePath=".\Source\GamePageMainTitle.cpp"
+						RelativePath=".\Source\GamePageBattleBase.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\Source\GamePageMainTitle.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="1.1. Island agora"
-					>
-					<File
-						RelativePath=".\Source\GamePageIslandAgora.cpp"
+						RelativePath=".\Source\GamePageBattleBase.h"
 						>
 					</File>
 					<File
-						RelativePath=".\Source\GamePageIslandAgora.h"
+						RelativePath=".\Source\GamePageBattleRoot.cpp"
 						>
 					</File>
+					<File
+						RelativePath=".\Source\GamePageBattleRoot.h"
+						>
+					</File>
+					<Filter
+						Name="1.2.0. Scout"
+						>
+						<File
+							RelativePath=".\Source\GamePageScout.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\GamePageScout.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
 					Name="Shared UI"
@@ -362,38 +362,94 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="1.2. Wizard laboratory"
+					Name="1.1. Island root"
 					>
 					<File
-						RelativePath=".\Source\GamePageWizardLab.cpp"
+						RelativePath=".\Source\GamePageIslandBase.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\Source\GamePageWizardLab.h"
+						RelativePath=".\Source\GamePageIslandBase.h"
 						>
 					</File>
+					<File
+						RelativePath=".\Source\GamePageIslandRoot.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\GamePageIslandRoot.h"
+						>
+					</File>
+					<Filter
+						Name="1.1.0. Island agora"
+						>
+						<File
+							RelativePath=".\Source\GamePageIslandAgora.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\GamePageIslandAgora.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="1.1.1. Wizard laboratory"
+						>
+						<File
+							RelativePath=".\Source\GamePageWizardLab.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\GamePageWizardLab.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="1.1.2. Barrack"
+						>
+						<File
+							RelativePath=".\Source\GamePageBarrack.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\GamePageBarrack.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="1.1.3. Train room"
+						>
+						<File
+							RelativePath=".\Source\GamePageTrainRoom.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\GamePageTrainRoom.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="1.1.a. Supply depot"
+						>
+						<File
+							RelativePath=".\Source\GamePageSupplyDepot.cpp"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\GamePageSupplyDepot.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 				<Filter
-					Name="1.3. Barrack"
+					Name="1.0. Main title"
 					>
 					<File
-						RelativePath=".\Source\GamePageBarrack.cpp"
+						RelativePath=".\Source\GamePageMainTitle.cpp"
 						>
 					</File>
 					<File
-						RelativePath=".\Source\GamePageBarrack.h"
-						>
-					</File>
-				</Filter>
-				<Filter
-					Name="1.4. Train room"
-					>
-					<File
-						RelativePath=".\Source\GamePageTrainRoom.cpp"
-						>
-					</File>
-					<File
-						RelativePath=".\Source\GamePageTrainRoom.h"
+						RelativePath=".\Source\GamePageMainTitle.h"
 						>
 					</File>
 				</Filter>
@@ -469,6 +525,14 @@
 			<Filter
 				Name="Battle system"
 				>
+				<File
+					RelativePath=".\Source\GameBattleSystem.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\GameBattleSystem.h"
+					>
+				</File>
 				<Filter
 					Name="Troop"
 					>
@@ -478,6 +542,18 @@
 					</File>
 					<File
 						RelativePath=".\Source\GameTroopState.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Player"
+					>
+					<File
+						RelativePath=".\Source\GamePlayerSystem.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\GamePlayerSystem.h"
 						>
 					</File>
 				</Filter>

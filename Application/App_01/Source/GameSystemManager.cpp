@@ -10,64 +10,6 @@
 
 //------------------------------------------------------------------------------------------------//
 
-void NormalPlayer::SetUp(const GameWizardUnitInfo& wizard, const MkArray<GameAgentUnitInfo>& troop)
-{
-	m_WizardInfo = wizard;
-	m_TroopInfo = troop;
-}
-
-//------------------------------------------------------------------------------------------------//
-
-template <class DataType>
-class __TSI_DataFileOp
-{
-public:
-	static bool Load(const MkDataNode& node, const MkHashStr& key, DataType& instance)
-	{
-		return (node.ChildExist(key) && instance.Load(*node.GetChildNode(key)));
-	}
-
-	static bool Save(MkDataNode& node, const MkHashStr& key, const DataType& instance)
-	{
-		MkDataNode* targetNode = node.ChildExist(key) ? node.GetChildNode(key) : node.CreateChildNode(key);
-		return instance.Save(*targetNode);
-	}
-};
-
-
-const static MkHashStr WIZARD_GROUP_KEY = L"WizardGroup";
-const static MkHashStr AGENT_GROUP_KEY = L"AgentGroup";
-
-bool MasterPlayer::Load(const MkDataNode& node)
-{
-	if (!__TSI_DataFileOp<GameWizardGroupInfo>::Load(node, WIZARD_GROUP_KEY, m_WizardGroup))
-		return false;
-
-	if (!__TSI_DataFileOp<GameAgentGroupInfo>::Load(node, AGENT_GROUP_KEY, m_AgentGroup))
-		return false;
-
-	return true;
-}
-
-bool MasterPlayer::Save(MkDataNode& node) const
-{
-	if (!__TSI_DataFileOp<GameWizardGroupInfo>::Save(node, WIZARD_GROUP_KEY, m_WizardGroup))
-		return false;
-
-	if (!__TSI_DataFileOp<GameAgentGroupInfo>::Save(node, AGENT_GROUP_KEY, m_AgentGroup))
-		return false;
-
-	return true;
-}
-
-void MasterPlayer::Clear(void)
-{
-	m_WizardGroup.Clear();
-	m_AgentGroup.Clear();
-}
-
-//------------------------------------------------------------------------------------------------//
-
 bool GameSystemManager::LoadMasterUserData(const MkPathName& filePath)
 {
 	MkDataNode userData;
@@ -83,6 +25,22 @@ bool GameSystemManager::SaveMasterUserData(const MkPathName& filePath) const
 			return true;
 	}
 	return false;
+}
+
+bool GameSystemManager::StartBattle(void)
+{
+	return m_BattleSystem.StartBattle(&GetMasterPlayer());
+}
+
+void GameSystemManager::SetDiceSeed(unsigned int seed)
+{
+	if (seed > 20000)
+	{
+		seed = static_cast<unsigned int>(GetTickCount()) % 20001; // 0 ~ 20000
+	}
+
+	m_BiasedDice.SetSeed(seed);
+	m_UniformDice.SetSeed(seed);
 }
 
 //------------------------------------------------------------------------------------------------//

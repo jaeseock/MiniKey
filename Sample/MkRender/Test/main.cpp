@@ -360,7 +360,7 @@ public:
 		MK_DEV_PANEL.MsgToFreeboard(15, L"Rect count : " + MkStr(m_RectCount));
 	}
 
-	virtual void Clear(void)
+	virtual void Clear(MkDataNode* sharingNode = NULL)
 	{
 		MK_DELETE(m_RootNode);
 		MK_DELETE(m_ScreenNode);
@@ -465,7 +465,7 @@ public:
 		m_RootNode->UpdateAll();
 	}
 
-	virtual void Clear(void)
+	virtual void Clear(MkDataNode* sharingNode = NULL)
 	{
 		MK_WIN_EVENT_MGR.Clear();
 		MK_DELETE(m_RootNode);

@@ -1,24 +1,103 @@
 
-//#include "MkCore_MkDataNode.h"
+#include "MkCore_MkDataNode.h"
 
 #include "GameGlobalDefinition.h"
-#include "GameWizardUnitInfo.h"
-#include "GameAgentUnitInfo.h"
+#include "GamePlayerSystem.h"
+//#include "GameWizardUnitInfo.h"
+//#include "GameAgentUnitInfo.h"
+#include "GameDataNode.h"
 #include "GameTroopState.h"
 
 
 //------------------------------------------------------------------------------------------------//
 
-bool GameTroopState::SetUp(const GameWizardUnitInfo* wizard, const MkArray<const GameAgentUnitInfo*>& troopers)
+bool GameTroopState::SetUp(const GameNormalPlayer* player)
 {
-	m_Wizard = wizard;
-	m_Troopers = troopers;
-	//MkDataNode initNode;
+	m_Player = player;
+	if (m_Player == NULL)
+		return false;
+
+	// wizard
+	unsigned int wizardID = m_Player->GetWizardInfo().GetWizardID();
+	MkHashStr wizardKey = MkStr(wizardID);
+	const MkDataNode* wizardData = GameDataNode::WizardSet->GetChildNode(wizardKey);
+	if (wizardData == NULL)
+		return false;
+
+	const MkDataNode* baseState = wizardData->GetChildNode(L"BaseState");
+
+	int wizardLvIndex = m_Player->GetWizardInfo().GetWizardLevel() - 1;
+	
+	int baseHP = 0;
+	wizardData->GetData(L"BaseHP", baseHP, 0);
+
+	int levelHP = 0;
+	wizardData->GetData(L"LevelHP", levelHP, 0);
+
+	// base
+	m_HitPointGage.Initialize(baseHP + wizardLvIndex * levelHP);
+
+	// attack
+	_SetState(baseState, GameStateName::Troop::A_BonusAttackPower, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::A_AttackPowerRate, 100, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::A_OnPairBonusAP, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::A_TrippleBonusAP, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::A_FullHouseBonusAP, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::A_FourCardBonusAP, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::A_FiveCardBonusAP, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::A_CriticalDamageRate, 20, 1, 100);
+	_SetState(baseState, GameStateName::Troop::A_DrainHPAtFourCard, 0, 0, 100);
+	_SetState(baseState, GameStateName::Troop::A_DrainHPAtFiveCard, 0, 0, 100);
+	_SetState(baseState, GameStateName::Troop::A_DecayEnemyHPt, 0, 0, 100);
+
+	// defense
+	_SetState(baseState, GameStateName::Troop::D_DamageResistance, 5, 0, 100);
+	_SetState(baseState, GameStateName::Troop::D_DefensePower, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::D_BonusDRAtRest, 5, 0, 100);
+	_SetState(baseState, GameStateName::Troop::D_Toughness, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::D_CritRecoveryAtFourCard, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::D_CritRecoveryAtFiveCard, 0, 0, 0xffff);
+
+	// support
+	_SetState(baseState, GameStateName::Troop::S_SupplimentCapacity, 4, 0, 20);
+	_SetState(baseState, GameStateName::Troop::S_BonusTransformTime, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::S_HealPower, 100, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::S_PtToGainHeal, 100, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::S_HPtAtRest, 15, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::S_HPtForEveryTurn, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::S_HPtAtLoss, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::S_ViewEnemyInfo, eSTIL_None, eSTIL_None, eSTIL_All);
+	_SetState(baseState, GameStateName::Troop::S_WinnerBonusAPR, 100, 0, 0xffff);
+
+	// resource
+	_SetState(baseState, GameStateName::Troop::R_RedResWeight, 100, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_GreenResWeight, 100, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_VioletResWeight, 100, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_BlueResWeight, 100, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_VoidResWeight, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_PtToGainRes, 100, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_RPtAtRest, 10, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_RPtForEveryTurn, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_ResSlotSize, 5, 0, 8);
+	_SetState(baseState, GameStateName::Troop::R_OnPairPower, 10, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_TripplePower, 20, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_FullHousePower, 40, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_FourCardPower, 45, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_FiveCardPower, 60, 1, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_DecayEnemyRPtAtFourCard, 0, 0, 0xffff);
+	_SetState(baseState, GameStateName::Troop::R_DecayEnemyRPtAtFiveCard, 0, 0, 0xffff);
 
 	return true;
 }
 
-void GameTroopState::UpdateTeamState(void)
+void GameTroopState::Clear(void)
+{
+	m_Player = NULL;
+	m_HitPointGage.Clear();
+	m_StateTable.Clear();
+}
+
+void GameTroopState::UpdateTroopState(void)
 {
 	m_HitPointGage.UpdateGage();
 
@@ -31,58 +110,20 @@ void GameTroopState::UpdateTeamState(void)
 
 GameTroopState::GameTroopState()
 {
-	m_Wizard = NULL;
+	m_Player = NULL;
+}
 
-	// base
-	m_HitPointGage.Initialize(1000);
+//------------------------------------------------------------------------------------------------//
 
-	// resource
-	m_StateTable.Create(GameStateName::Team::R_ExtractResCD).Initialize(5, 1, 0xffff);
-	m_StateTable.Create(GameStateName::Team::R_BoostExtraction).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::R_BonusResPerc).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::R_VoidTypeResAppPerc).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::R_ComboLevForBonusRes).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::R_BonusResPercByCritical).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::R_PurgeSingleResource).Initialize(0, 0, 1);
-	m_StateTable.Create(GameStateName::Team::R_ResourceSlotSize).Initialize(5, 0, 8);
+void GameTroopState::_SetState(const MkDataNode* baseState, const MkHashStr& key, int defValue, int minCap, int maxCap)
+{
+	int attribute = 0;
+	if ((baseState != NULL) && baseState->IsValidKey(key))
+	{
+		baseState->GetData(key, attribute, 0);
+	}
 
-	// attack
-	m_StateTable.Create(GameStateName::Team::A_AttackPowerRate).Initialize(100, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::A_BonusAttackPower).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::A_CriticalPerc).Initialize(5, 0, 100);
-	m_StateTable.Create(GameStateName::Team::A_CriticalPowerRate).Initialize(30, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::A_PowerPenetration).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::A_BustDurability).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::A_ComboPowerBonus20).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::A_ComboPowerBonus30).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::A_ComboPowerBonus32).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::A_ComboPowerBonus40).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::A_ComboPowerBonus50).Initialize(0, 0, 0xffff);
-
-	// defense
-	m_StateTable.Create(GameStateName::Team::D_ImpactResistance).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_DefensePower).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::D_ProtectDurability).Initialize(25, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_UnionDefense).Initialize(10, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_CriticalResistance).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_ComboPowerResist20).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_ComboPowerResist30).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_ComboPowerResist32).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_ComboPowerResist40).Initialize(0, 0, 100);
-	m_StateTable.Create(GameStateName::Team::D_ComboPowerResist50).Initialize(0, 0, 100);
-
-	// support
-	m_StateTable.Create(GameStateName::Team::S_SupplimentCapacity).Initialize(6, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::S_UnitTransformTime).Initialize(3, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::S_BonusSkillAccCount).Initialize(1, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::S_BonusHealPower).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::S_BonusHealRate).Initialize(0, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::S_HitPointRestorationForNextStage).Initialize(50, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::S_DurationRestorationForNextStage).Initialize(50, 0, 0xffff);
-	m_StateTable.Create(GameStateName::Team::S_ViewEnemyResourcePool).Initialize(0, 0, 1);
-	m_StateTable.Create(GameStateName::Team::S_ViewEnemySkillAccum).Initialize(0, 0, 1);
-	m_StateTable.Create(GameStateName::Team::S_ViewStageReward).Initialize(0, 0, 2);
-	m_StateTable.Create(GameStateName::Team::S_ViewHiddenPath).Initialize(0, 0, 2);
+	m_StateTable.Create(key).Initialize(defValue + attribute, minCap, maxCap);
 }
 
 //------------------------------------------------------------------------------------------------//

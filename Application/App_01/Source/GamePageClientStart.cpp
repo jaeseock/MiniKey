@@ -44,7 +44,7 @@ void GamePageClientStart::Update(const MkTimeState& timeState)
 	MK_PAGE_MGR.ChangePageDirectly(GamePageName::MainTitle);
 }
 
-void GamePageClientStart::Clear(void)
+void GamePageClientStart::Clear(MkDataNode* sharingNode)
 {
 	MK_DELETE(m_SceneNode);
 

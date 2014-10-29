@@ -106,8 +106,14 @@ public:
 		}
 	}
 
+	inline void Clear(void)
+	{
+		m_DurabilityModifier.Clear();
+		m_HitPointModifier.Clear();
+	}
+
 	GameHitPointGage() {}
-	~GameHitPointGage() {}
+	~GameHitPointGage() { Clear(); }
 
 protected:
 

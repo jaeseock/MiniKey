@@ -47,6 +47,7 @@ public:
 				{
 					m_TargetAgentBtn = dynamic_cast<GameSUI_SmallAgentThumbnail*>(evt.node);
 					_UpdateBattleInfoControl();
+					_UpdateTargetAgentInfoTag();
 				}
 				else if (evt.node == m_ToBattleBtn)
 				{
@@ -125,6 +126,7 @@ public:
 
 		m_TargetAgentBtn = NULL;
 		_UpdateBattleInfoControl();
+		_UpdateTargetAgentInfoTag();
 	}
 	virtual ~GP_BarrackWindow() {}
 
@@ -165,9 +167,23 @@ protected:
 
 	void _UpdateTargetAgentInfoTag(void)
 	{
-		//m_FaceIconTag;
-		//m_AgentLevelTag;
-		//m_AgentNameTag;
+		const MkHashStr viewKey = L"AgentView";
+
+		if (ChildExist(viewKey))
+		{
+			MkSceneNode* viewNode = GetChildNode(viewKey);
+			DetachChildNode(viewKey);
+			delete viewNode;
+		}
+
+		if (m_TargetAgentBtn != NULL)
+		{
+			GameSUI_SmallAgentView* viewNode = new GameSUI_SmallAgentView(viewKey);
+			unsigned int agentID = m_TargetAgentBtn->GetNodeName().GetString().ToUnsignedInteger();
+			viewNode->CreateSmallAgentView(agentID);
+			viewNode->SetLocalPosition(MkVec3(630.f, 600.f, -MKDEF_BASE_WINDOW_DEPTH_GRID));
+			AttachChildNode(viewNode);
+		}
 	}
 
 	void _UpdateTrooperInfoTag(void)
@@ -176,7 +192,7 @@ protected:
 		{
 			const GameAgentGroupInfo& gi = GAME_SYSTEM.GetMasterPlayer().GetAgentGroup();
 			unsigned int currCount = gi.GetCurrTroopers();
-			unsigned int maxCount = gi.GetMaxTroopers();
+			unsigned int maxCount = GDEF_MAX_TROOP_AGENT_COUNT;
 			MkStr msg = L"전투 대기조 최대 " + MkStr(maxCount) + L"명 중 " + MkStr(currCount) + L"명 선택됨";
 			MkStr buffer;
 			const MkHashStr& fontState = (currCount < maxCount) ? MK_FONT_MGR.OrangeFS() : MK_FONT_MGR.GreenFS();
@@ -203,7 +219,7 @@ protected:
 			bool tbEnable = !cbEnable;
 			if (tbEnable)
 			{
-				tbEnable = (gi.GetCurrTroopers() < gi.GetMaxTroopers());
+				tbEnable = (gi.GetCurrTroopers() < GDEF_MAX_TROOP_AGENT_COUNT);
 			}
 
 			if (m_ToBattleBtn != NULL) m_ToBattleBtn->SetEnable(tbEnable);
@@ -220,10 +236,6 @@ protected:
 	MkBaseWindowNode* m_ToBattleBtn;
 	MkBaseWindowNode* m_CancelBattleBtn;
 	MkSRect* m_TrooperInfoTag;
-
-	MkSRect* m_FaceIconTag;
-	MkSRect* m_AgentLevelTag;
-	MkSRect* m_AgentNameTag;
 
 	MkMap<unsigned int, GameSUI_SmallAgentThumbnail*> m_AgentBtns;
 	GameSUI_SmallAgentThumbnail* m_TargetAgentBtn;
@@ -243,9 +255,9 @@ void GamePageBarrack::Update(const MkTimeState& timeState)
 	
 }
 
-void GamePageBarrack::Clear(void)
+void GamePageBarrack::Clear(MkDataNode* sharingNode)
 {
-	GamePageIslandBase::Clear();
+	GamePageIslandBase::Clear(sharingNode);
 }
 
 GamePageBarrack::GamePageBarrack(const MkHashStr& name) : GamePageIslandBase(name)

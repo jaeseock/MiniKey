@@ -1,11 +1,11 @@
 
 #include "MkS2D_MkWindowEventManager.h"
 
-#include "GamePageTrainRoom.h"
+#include "GamePageScout.h"
 
 //------------------------------------------------------------------------------------------------//
 
-class GP_TrainRoomWindow : public GP_IslandBaseWindow
+class GP_ScoutWindow : public GP_BattleBaseWindow
 {
 public:
 
@@ -30,30 +30,30 @@ public:
 		*/
 	}
 
-	GP_TrainRoomWindow(const MkHashStr& name) : GP_IslandBaseWindow(name, L"Scene\\wizard_lab_page.msd") {}
-	virtual ~GP_TrainRoomWindow() {}
+	GP_ScoutWindow(const MkHashStr& name) : GP_BattleBaseWindow(name, L"Scene\\battle_root.msd") {}
+	virtual ~GP_ScoutWindow() {}
 };
 
 //------------------------------------------------------------------------------------------------//
 
-bool GamePageTrainRoom::SetUp(MkDataNode& sharingNode)
+bool GamePageScout::SetUp(MkDataNode& sharingNode)
 {
-	MK_WIN_EVENT_MGR.RegisterWindow(new GP_TrainRoomWindow(GetPageName()), true);
+	MK_WIN_EVENT_MGR.RegisterWindow(new GP_ScoutWindow(GetPageName()), true);
 
 	return true;
 }
 
-void GamePageTrainRoom::Update(const MkTimeState& timeState)
+void GamePageScout::Update(const MkTimeState& timeState)
 {
 	
 }
 
-void GamePageTrainRoom::Clear(MkDataNode* sharingNode)
+void GamePageScout::Clear(MkDataNode* sharingNode)
 {
-	GamePageIslandBase::Clear(sharingNode);
+	GamePageBattleBase::Clear(sharingNode);
 }
 
-GamePageTrainRoom::GamePageTrainRoom(const MkHashStr& name) : GamePageIslandBase(name)
+GamePageScout::GamePageScout(const MkHashStr& name) : GamePageBattleBase(name)
 {
 	
 }

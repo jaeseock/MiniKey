@@ -19,7 +19,7 @@ void GamePageAppRoot::Update(const MkTimeState& timeState)
 	
 }
 
-void GamePageAppRoot::Clear(void)
+void GamePageAppRoot::Clear(MkDataNode* sharingNode)
 {
 	
 }

@@ -3,12 +3,10 @@
 //------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------//
 
-#include "MkCore_MkBasePage.h"
+#include "GamePageBattleBase.h"
 
 
-class MkSceneNode;
-
-class GamePageClientStart : public MkBasePage
+class GamePageScout : public GamePageBattleBase
 {
 public:
 
@@ -18,10 +16,6 @@ public:
 
 	virtual void Clear(MkDataNode* sharingNode = NULL);
 
-	GamePageClientStart(const MkHashStr& name);
-	virtual ~GamePageClientStart() { Clear(); }
-
-protected:
-
-	MkSceneNode* m_SceneNode;
+	GamePageScout(const MkHashStr& name);
+	virtual ~GamePageScout() { Clear(); }
 };

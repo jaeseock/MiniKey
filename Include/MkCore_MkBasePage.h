@@ -23,7 +23,7 @@ public:
 	virtual void Update(const MkTimeState& timeState) {}
 
 	// 해제
-	virtual void Clear(void) {}
+	virtual void Clear(MkDataNode* sharingNode = NULL) {}
 
 	// 현재 페이지 이름 반환
 	inline const MkHashStr& GetPageName(void) { return m_PageName; }

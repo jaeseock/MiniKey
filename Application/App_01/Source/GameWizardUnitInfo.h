@@ -17,8 +17,10 @@ public:
 	bool Load(const MkDataNode& node);
 	bool Save(MkDataNode& node) const;
 
+	inline void SetWizardID(unsigned int id) { m_WizardID = id; }
 	inline unsigned int GetWizardID(void) const { return m_WizardID; }
 	
+	inline void SetWizardLevel(int level) { m_WizardLevel = level; }
 	inline int GetWizardLevel(void) const { return m_WizardLevel; }
 	
 	GameWizardUnitInfo();
