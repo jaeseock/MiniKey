@@ -22,7 +22,7 @@ public:
 		{
 			if (evt.node->GetNodeName() == m_StartBtnKey)
 			{
-				MK_PAGE_MGR.ChangePageDirectly(GamePageName::Scout);
+				MK_PAGE_MGR.ChangePageDirectly(GamePageName::BattlePhase);
 			}
 			else if (evt.node->GetNodeName() == m_BackBtnKey)
 			{

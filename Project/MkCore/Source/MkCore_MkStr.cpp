@@ -595,6 +595,21 @@ unsigned int MkStr::GetLineNumber(unsigned int position) const
 	return count;
 }
 
+unsigned int MkStr::CountBacksideSpace(unsigned int position) const
+{
+	unsigned int cnt = 0;
+	for (unsigned int i=GetSize()-1; (i>=position) && m_Str.IsValidIndex(i); --i)
+	{
+		if (m_Str[i] == MKDEF_WCHAR_SPACE)
+		{
+			++cnt;
+		}
+		else
+			break;
+	}
+	return cnt;
+}
+
 //------------------------------------------------------------------------------------------------//
 
 void MkStr::ReplaceKeyword(const MkStr& keywordFrom, const MkStr& keywordTo)
@@ -915,7 +930,7 @@ void MkStr::RemoveAllComment(void)
 
 //------------------------------------------------------------------------------------------------//
 
-unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkStr& separator) const
+unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkStr& separator, bool ignoreEmptyToken) const
 {
 	unsigned int sepCnt = CountKeyword(separator);
 	tokens.Reserve(sepCnt + 1);
@@ -940,6 +955,10 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkStr& separator) con
 					GetSubStr(MkArraySection(beginPos, found - beginPos), subset);
 					tokens.PushBack(subset);
 				}
+				else if (!ignoreEmptyToken) // beginPos == found
+				{
+					tokens.PushBack(Null);
+				}
 				beginPos = found + sepSize;
 			}
 			else
@@ -950,6 +969,10 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkStr& separator) con
 					GetSubStr(MkArraySection(beginPos, currSize - beginPos), subset);
 					tokens.PushBack(subset);
 				}
+				else if (!ignoreEmptyToken) // beginPos == found
+				{
+					tokens.PushBack(Null);
+				}
 				break;
 			}
 		}
@@ -958,7 +981,7 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkStr& separator) con
 	return tokens.GetSize();
 }
 
-unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkArray<MkStr>& separators) const
+unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkArray<MkStr>& separators, bool ignoreEmptyToken) const
 {
 	if (separators.Empty())
 		return 0;
@@ -972,9 +995,9 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkArray<MkStr>& separ
 		{
 			tmpBuf.ReplaceKeyword(separators[i], firstSeparator); // 첫번째 구분자로 다른 구분자 치환
 		}
-		return tmpBuf.Tokenize(tokens, firstSeparator);
+		return tmpBuf.Tokenize(tokens, firstSeparator, ignoreEmptyToken);
 	}
-	return Tokenize(tokens, firstSeparator);
+	return Tokenize(tokens, firstSeparator, ignoreEmptyToken);
 }
 
 unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens) const
@@ -984,7 +1007,7 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens) const
 	separators.PushBack(MKDEF_STR_TAP);
 	separators.PushBack(MKDEF_STR_LINEFEED);
 	separators.PushBack(MKDEF_STR_RETURN);
-	return Tokenize(tokens, separators);
+	return Tokenize(tokens, separators, true);
 }
 
 //------------------------------------------------------------------------------------------------//

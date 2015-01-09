@@ -11,6 +11,7 @@
 *manifest.res
 MkCore.lib
 MkS2D.lib
+MkPanelArt.lib
 vc90.idb
 MiniKey.ncb
 MiniKey.suo

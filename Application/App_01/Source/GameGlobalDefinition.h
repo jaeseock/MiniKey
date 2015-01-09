@@ -84,7 +84,7 @@ public:
 	static const MkHashStr TrainRoom;
 	static const MkHashStr SupplyDepot;
 	static const MkHashStr BattleRoot;
-	static const MkHashStr Scout;
+	static const MkHashStr BattlePhase;
 };
 
 class GameStateName

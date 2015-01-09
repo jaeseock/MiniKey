@@ -6,7 +6,7 @@
 #include "GamePageBattleBase.h"
 
 
-class GamePageScout : public GamePageBattleBase
+class GamePageBattlePhase : public GamePageBattleBase
 {
 public:
 
@@ -16,6 +16,6 @@ public:
 
 	virtual void Clear(MkDataNode* sharingNode = NULL);
 
-	GamePageScout(const MkHashStr& name);
-	virtual ~GamePageScout() { Clear(); }
+	GamePageBattlePhase(const MkHashStr& name);
+	virtual ~GamePageBattlePhase() { Clear(); }
 };

@@ -1,11 +1,11 @@
 
 #include "MkS2D_MkWindowEventManager.h"
 
-#include "GamePageScout.h"
+#include "GamePageBattlePhase.h"
 
 //------------------------------------------------------------------------------------------------//
 
-class GP_ScoutWindow : public GP_BattleBaseWindow
+class GP_BattlePhaseWindow : public GP_BattleBaseWindow
 {
 public:
 
@@ -30,30 +30,30 @@ public:
 		*/
 	}
 
-	GP_ScoutWindow(const MkHashStr& name) : GP_BattleBaseWindow(name, L"Scene\\battle_root.msd") {}
-	virtual ~GP_ScoutWindow() {}
+	GP_BattlePhaseWindow(const MkHashStr& name) : GP_BattleBaseWindow(name, L"Scene\\battle_root.msd") {}
+	virtual ~GP_BattlePhaseWindow() {}
 };
 
 //------------------------------------------------------------------------------------------------//
 
-bool GamePageScout::SetUp(MkDataNode& sharingNode)
+bool GamePageBattlePhase::SetUp(MkDataNode& sharingNode)
 {
-	MK_WIN_EVENT_MGR.RegisterWindow(new GP_ScoutWindow(GetPageName()), true);
+	MK_WIN_EVENT_MGR.RegisterWindow(new GP_BattlePhaseWindow(GetPageName()), false);
 
 	return true;
 }
 
-void GamePageScout::Update(const MkTimeState& timeState)
+void GamePageBattlePhase::Update(const MkTimeState& timeState)
 {
 	
 }
 
-void GamePageScout::Clear(MkDataNode* sharingNode)
+void GamePageBattlePhase::Clear(MkDataNode* sharingNode)
 {
 	GamePageBattleBase::Clear(sharingNode);
 }
 
-GamePageScout::GamePageScout(const MkHashStr& name) : GamePageBattleBase(name)
+GamePageBattlePhase::GamePageBattlePhase(const MkHashStr& name) : GamePageBattleBase(name)
 {
 	
 }

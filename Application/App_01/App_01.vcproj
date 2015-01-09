@@ -316,11 +316,11 @@
 						Name="1.2.0. Scout"
 						>
 						<File
-							RelativePath=".\Source\GamePageScout.cpp"
+							RelativePath=".\Source\GamePageBattlePhase.cpp"
 							>
 						</File>
 						<File
-							RelativePath=".\Source\GamePageScout.h"
+							RelativePath=".\Source\GamePageBattlePhase.h"
 							>
 						</File>
 					</Filter>

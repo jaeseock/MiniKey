@@ -274,6 +274,10 @@ public:
 	// return : 해당 라인 번호. 0부터 시작. position이 범위를 넘어가면 마지막 라인 번호 반환
 	unsigned int GetLineNumber(unsigned int position = 0) const;
 
+	// position이후 문자열의 뒷부분에 유효문자까지 존재하는 공문자(space) 갯수를 반환
+	// space만 해당되는 것으로 tab, line feed 등은 세지 않음
+	unsigned int CountBacksideSpace(unsigned int position = 0) const;
+
 	//------------------------------------------------------------------------------------------------//
 	// 키워드 검사 후 수정
 	//------------------------------------------------------------------------------------------------//
@@ -442,22 +446,28 @@ public:
 	// separator가 존재하지 않을 경우 자신 복사
 	// (out) tokens : 분리된 토큰들이 담길 MkArray container
 	// (in) separator : 구분자
+	// (in) ignoreEmptyToken : true일 경우 공문자열 토큰 무시(ex> separator가 겹쳐져 있을 경우 등)
 	// return : 토큰 갯수 반환
-	// ex> (L"12;34;;;5;678;;9").Tokenize(tokens, L";") -> tokens == L"12", L"34", L"5", L"678", L"9"
-	unsigned int Tokenize(MkArray<MkStr>& tokens, const MkStr& separator) const;
+	// ex> (L";12;34;;;5;678;;9;")
+	//		.Tokenize(tokens, L";", true) -> tokens == L"12", L"34", L"5", L"678", L"9"
+	//		.Tokenize(tokens, L";", false) -> tokens == L"", L"12", L"34", L"", L"", L"5", L"678", L"", L"9", L""
+	unsigned int Tokenize(MkArray<MkStr>& tokens, const MkStr& separator, bool ignoreEmptyToken = true) const;
 
 	// 정해진 separator 리스트를 기준으로 문자열을 토큰들로 자름
 	// separator가 존재하지 않을 경우 자신 복사
 	// (out) tokens : 분리된 토큰들이 담길 MkArray container
 	// (in) separators : 구분자 리스트
+	// (in) ignoreEmptyToken : true일 경우 공문자열 토큰 무시(ex> separator가 겹쳐져 있을 경우 등)
 	// return : 토큰 갯수 반환
 	// ex>
 	//	MkArray<MkStr> separators;
 	//	separators.PushBack(L";");
 	//	separators.PushBack(L"=");
 	//	separators.PushBack(L"#");
-	//	(L"12;34=;#5#678==9;").Tokenize(tokens, separators) -> tokens == L"12", L"34", L"5", L"678", L"9"
-	unsigned int Tokenize(MkArray<MkStr>& tokens, const MkArray<MkStr>& separators) const;
+	//	(L"12;34=;#5#678==9;")
+	//		.Tokenize(tokens, separators, true) -> tokens == L"12", L"34", L"5", L"678", L"9"
+	//		.Tokenize(tokens, separators, false) -> tokens == L"12", L"34", L"", L"", L"5", L"678", L"", L"9", L""
+	unsigned int Tokenize(MkArray<MkStr>& tokens, const MkArray<MkStr>& separators, bool ignoreEmptyToken = true) const;
 
 	// 공문자(tab, space, line feed, return)를 separator로 지정하여 토큰들로 자름
 	// 공문자가 존재하지 않을 경우 자신 복사

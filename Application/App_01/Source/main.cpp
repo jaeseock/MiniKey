@@ -39,7 +39,7 @@
 #include "GamePageTrainRoom.h"
 #include "GamePageSupplyDepot.h"
 #include "GamePageBattleRoot.h"
-#include "GamePageScout.h"
+#include "GamePageBattlePhase.h"
 
 #include "GameSystemManager.h"
 
@@ -77,7 +77,7 @@ public:
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::IslandRoot, new GamePageTrainRoom(GamePageName::TrainRoom));
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::IslandRoot, new GamePageSupplyDepot(GamePageName::SupplyDepot));
 		MK_PAGE_MGR.RegisterChildPage(GamePageName::GameRoot, new GamePageBattleRoot(GamePageName::BattleRoot));
-		MK_PAGE_MGR.RegisterChildPage(GamePageName::BattleRoot, new GamePageScout(GamePageName::Scout));
+		MK_PAGE_MGR.RegisterChildPage(GamePageName::BattleRoot, new GamePageBattlePhase(GamePageName::BattlePhase));
 		
 
 		// start page

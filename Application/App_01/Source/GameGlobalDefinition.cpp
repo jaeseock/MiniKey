@@ -15,7 +15,7 @@ const MkHashStr GamePageName::Barrack(L"Barrack");
 const MkHashStr GamePageName::TrainRoom(L"TrainRoom");
 const MkHashStr GamePageName::SupplyDepot(L"SupplyDepot");
 const MkHashStr GamePageName::BattleRoot(L"BattleRoot");
-const MkHashStr GamePageName::Scout(L"Scout");
+const MkHashStr GamePageName::BattlePhase(L"BattlePhase");
 
 // attack
 const MkHashStr GameStateName::Troop::A_BonusAttackPower(L"A_BonusAttackPower");

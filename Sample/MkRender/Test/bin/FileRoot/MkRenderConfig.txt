@@ -1,161 +1,67 @@
 
-Template "T_FontType"
-{
-	str face = "GulimChe";
-	uint size = 12;
-	int thickness = 0; // 0:eThin, 1:eMedium, 2:eThick, 3:eFull
-}
-
-Template "T_FontState"
-{
-	str textColor = "White"; // Node "FontColor"
-	int mode = 0; // 0:eNormal, 1:eOutline, 2:eShadow
-	str modeColor = "Pink"; // Node "FontColor"
-}
-
 str SceneDecoTextTable = "Scene\SceneDecoTextTable.txt";
 
 Node "FontResource"
 {
 	Node "FontType"
 	{
-		str FontFilePath = "Text\NanumGothic.ttf";
-		
-		Node "±¼¸²8" : "T_FontType"
+		//str FontFilePath = "Text\NanumGothic.ttf";
+			
+		//Node "EX"
+		//{
+		//	str face = "GulimChe"; // ¸¼Àº°íµñ, ³ª´®°íµñ, ...
+		//	uint size = 12;
+		//	int thickness = 0; // 0:eThin, 1:eMedium, 2:eThick, 3:eFull
+		//}
+			
+		Node "¸¼Àº°íµñ"
 		{
-			uint size = 8;
-		}
-
-		Node "±¼¸²12" : "T_FontType" {}
-		
-		Node "±¼¸²14" : "T_FontType"
-		{
-			uint size = 14;
-		}
-
-		Node "±¼¸²16" : "T_FontType"
-		{
-			uint size = 16;
-		}
-
-		Node "±¼¸²20" : "T_FontType"
-		{
-			uint size = 20;
+			Node "DefaultT" // duty. predefined keyword
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 14;
+				int thickness = 0;
+			}
 		}
 		
-		Node "³ª°í12" : "T_FontType"
+		Node "±¼¸²"
 		{
-			str face = "³ª´®°íµñ";
-			uint size = 12;
+			Node "DefaultT" // duty. predefined keyword
+			{
+				str face = "GulimChe";
+				uint size = 14;
+				int thickness = 0;
+			}
 		}
 		
-		Node "³ª°í14" : "T_FontType"
+		Node "³ª´®°íµñ"
 		{
-			str face = "³ª´®°íµñ";
-			uint size = 14;
-		}
-		
-		Node "³ª°í16" : "T_FontType"
-		{
-			str face = "³ª´®°íµñ";
-			uint size = 16;
-		}
-		
-		Node "³ª°í20" : "T_FontType"
-		{
-			str face = "³ª´®°íµñ";
-			uint size = 20;
-		}
-		
-		Node "³ª°í40" : "T_FontType"
-		{
-			str face = "³ª´®°íµñ";
-			uint size = 40;
+			str FontFilePath = "Text\NanumGothic.ttf";
+			
+			Node "DefaultT" // duty. predefined keyword
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 16;
+				int thickness = 0;
+			}
 		}
 	}
 
 	Node "FontColor"
 	{
-		uint Black = 0 / 0 / 0;
-		uint White = 255 / 255 / 255;
-		uint LightGray = 170 / 170 / 170;
-		uint DarkGray = 85 / 85 / 85;
-		uint Red = 255 / 0 / 0;
-		uint Green = 0 / 255 / 0;
-		uint Blue = 0 / 0 / 255;
-		uint Yellow = 255 / 255 / 0;
-		uint Cian = 0 / 255 / 255;
-		uint Pink = 255 / 0 / 255;
-		uint Violet = 255 / 102 / 204;
-		uint Orange = 255 / 153 / 52;
+		// predefined colors (BlackC, WhiteC, LightGrayC, DarkGrayC, RedC, GreenC, BlueC, YellowC, CianC, PinkC, VioletC, OrangeC)
 	}
 
 	Node "FontState"
 	{
-		Node "EditBoxCursor" : "T_FontState"
-		{
-			str textColor = "Pink";
-		}
+		// predefined states (BlackS, WhiteS, LightGrayS, DarkGrayS, RedS, GreenS, BlueS, YellowS, CianS, PinkS, VioletS, OrangeS)
 		
-		Node "³ë¶û±×¸²ÀÚ" : "T_FontState"
-		{
-			str textColor = "Yellow";
-			int mode = 2;
-			str modeColor = "Red";
-		}
-		
-		Node "ClientStartMsg" : "T_FontState"
-		{
-			str textColor = "LightGray";
-		}
-
-		Node "»ùÇÃ01" : "T_FontState"
-		{
-			str textColor = "Red";
-		}
-
-		Node "»ùÇÃ02" : "T_FontState"
-		{
-			str textColor = "Red";
-			int mode = 1;
-			str modeColor = "White";
-		}
-
-		Node "»ùÇÃ03" : "T_FontState"
-		{
-			str textColor = "Yellow";
-			int mode = 2;
-			str modeColor = "Black";
-		}
-
-		Node "Á¦¸ñ" : "T_FontState"
-		{
-			str textColor = "Violet";
-			int mode = 1;
-			str modeColor = "White";
-		}
-
-		Node "ÀÏ¹ÝÇ×¸ñ" : "T_FontState"
-		{
-			str textColor = "LightGray";
-		}
-
-		Node "°­Á¶Ç×¸ñ" : "T_FontState"
-		{
-			str textColor = "Yellow";
-			int mode = 2;
-			str modeColor = "Black";
-		}
-		
-		Node "WinTitleLF" : "T_FontState"
-		{
-			str textColor = "White";
-		}
-
-		Node "WinTitleOF" : "T_FontState"
-		{
-			str textColor = "Yellow";
-		}
+		//Node "EX"
+		//{
+		//	str textColor = "WhiteC"; // a predefined color, or a child of Node "FontColor"
+		//	int mode = 2; // 0:eNormal, 1:eOutline, 2:eShadow
+		//	str modeColor = "RedC"; // same as textColor
+		//}
 	}
 }
 
