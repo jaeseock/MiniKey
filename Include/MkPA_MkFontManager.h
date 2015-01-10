@@ -15,19 +15,21 @@
 //   기존 등록되어 있던 type에 존재 할 경우 같은 unit을 공유함
 //   다른 이름의 type이 같은 설정을 공유할 경우에도 마찬가지로 unit은 공유됨
 // - font color : 컬러값 정의
-// - font state : 어떤 식으로 그려질지를 정의. text color + output mode + mode color
+// - font style : 어떤 식으로 그려질지를 정의. text color + output mode + mode color
 //
 // 기본 정의 type keyword
 // - DefaultT
-// - (NOTE) 초기화용 data node에 반드시 해당 이름의 font type node가 정의되어 있어야 함
+//   (NOTE) 초기화용 data node에 반드시 해당 이름의 font type node가 정의되어 있어야 함
 //
 // 기본 정의 color
 // - BlackC, WhiteC, LightGrayC, DarkGrayC, RedC, GreenC, BlueC, YellowC, CianC, PinkC, VioletC, OrangeC
-// - (NOTE) 초기화용 data node에 해당 이름의 font color가 정의되어 있으면 그걸 사용하고 없으면 자체 생성
+//   (NOTE) 초기화용 data node에 해당 이름의 font color가 정의되어 있으면 그걸 사용하고 없으면 자체 생성
 //
-// 기본 정의 state
+// 기본 정의 style
+// - DefaultS
+//   (NOTE) 초기화용 data node에 반드시 해당 이름의 font style node가 정의되어 있어야 함
 // - BlackS, WhiteS, LightGrayS, DarkGrayS, RedS, GreenS, BlueS, YellowS, CianS, PinkS, VioletS, OrangeS
-// - (NOTE) 초기화용 data node에 해당 이름의 font state가 정의되어 있으면 그걸 사용하고 없으면 자체 생성
+//   (NOTE) 초기화용 data node에 해당 이름의 font style가 정의되어 있으면 그걸 사용하고 없으면 자체 생성
 //
 //------------------------------------------------------------------------------------------------//
 
@@ -73,7 +75,7 @@ public:
 	void SetUp(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey);
 
 	// 해당 설정으로 폰트 교체
-	// (NOTE) font type만 리셋되고 color와 state는 그대로 유지됨
+	// (NOTE) font type만 리셋되고 color와 style는 그대로 유지됨
 	void ChangeFontType(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey);
 
 	// 별도로 등록할 폰트 파일이 있을 경우 사용
@@ -99,15 +101,15 @@ public:
 	// r, g, b : 0 ~ 255 범위
 	bool CreateFontColor(const MkHashStr& colorKey, unsigned int r, unsigned int g, unsigned int b);
 
-	// 폰트 state 생성
-	// fontState : 해당 state의 key로 사용할 문자열
+	// 폰트 style 생성
+	// fontStyle : 해당 style의 key로 사용할 문자열
 	// textColor : 문자열 색상
 	// mode : eOutputMode
 	// modeColor : outline이나 shadow 모드의 색상
-	bool CreateFontState(const MkHashStr& fontState, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor);
+	bool CreateFontStyle(const MkHashStr& fontStyle, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor);
 
-	// font state 존재여부 반환
-	inline bool CheckAvailableFontState(const MkHashStr& fontState) const { return m_StateList.Exist(fontState); }
+	// font style 존재여부 반환
+	inline bool CheckAvailableFontStyle(const MkHashStr& fontStyle) const { return m_StyleList.Exist(fontStyle); }
 
 	// 해제
 	void Clear(void);
@@ -145,7 +147,7 @@ public:
 	//	}
 	bool RestrictSize(const MkHashStr& fontType, const MkStr& msg, const MkInt2& restriction, MkArray<MkStr>& pageBuffer);
 
-	// DefaultT/WhiteS 로 텍스트 출력
+	// DefaultT/DefaultS 로 텍스트 출력
 	bool DrawMessage(const MkInt2& position, const MkStr& msg);
 
 	// 세부 설정으로 텍스트 출력
@@ -153,8 +155,8 @@ public:
 		(const MkInt2& position, const MkHashStr& faceName, int size, eThickness thickness,
 		const MkHashStr& textColor, eOutputMode outputMode, const MkHashStr& modeColor, const MkStr& msg);
 
-	// type과 state로 텍스트 출력
-	bool DrawMessage(const MkInt2& position, const MkHashStr& fontType, const MkHashStr& fontState, const MkStr& msg);
+	// type과 style로 텍스트 출력
+	bool DrawMessage(const MkInt2& position, const MkHashStr& fontType, const MkHashStr& fontStyle, const MkStr& msg);
 
 	// MkDecoStr로 텍스트 출력
 	//bool DrawMessage(const MkInt2& position, const MkDecoStr& msg);
@@ -192,20 +194,20 @@ protected:
 	}
 	_FontType;
 
-	typedef struct __FontState
+	typedef struct __FontStyle
 	{
 		D3DCOLOR textColor;
 		eOutputMode mode;
 		D3DCOLOR modeColor;
 	}
-	_FontState;
+	_FontStyle;
 
 	void _LoadFontTypes(const MkDataNode* dataNode);
 	void _LoadFontColors(const MkDataNode* dataNode);
-	void _LoadFontStates(const MkDataNode* dataNode);
+	void _LoadFontStyles(const MkDataNode* dataNode);
 
 	void _CreateDefaultFontColor(const MkHashStr& colorKey, unsigned int r, unsigned int g, unsigned int b);
-	void _CreateDefaultFontState(const MkHashStr& fontState, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor);
+	void _CreateDefaultFontStyle(const MkHashStr& fontStyle, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor);
 
 	// 설정에 맞는 font key를 반환하고 없으면 생성해 반환
 	bool _GetFontKey(const MkHashStr& faceName, int size, eThickness thickness, MkHashStr& fontKey);
@@ -243,8 +245,8 @@ protected:
 	MkHashMap<MkHashStr, D3DCOLOR> m_ColorList;
 	D3DCOLOR m_ErrorColor;
 
-	// state
-	MkHashMap<MkHashStr, _FontState> m_StateList;
+	// style
+	MkHashMap<MkHashStr, _FontStyle> m_StyleList;
 
 	// default font type
 	static const MkHashStr DefaultT;
@@ -263,7 +265,8 @@ protected:
 	static const MkHashStr VioletC;
 	static const MkHashStr OrangeC;
 
-	// default font state
+	// default font style
+	static const MkHashStr DefaultS;
 	static const MkHashStr BlackS;
 	static const MkHashStr WhiteS;
 	static const MkHashStr LightGrayS;

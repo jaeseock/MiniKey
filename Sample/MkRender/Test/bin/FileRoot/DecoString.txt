@@ -51,7 +51,7 @@ VOffset = 10;
 }
 
 
-int H = 5;
+int HOffset = 5;
 str S = "³ë¶û±×¸²ÀÚ";
 str T = "º¼µå °íµñ 20";
 

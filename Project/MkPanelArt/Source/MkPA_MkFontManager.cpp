@@ -28,6 +28,7 @@ const MkHashStr MkFontManager::PinkC(L"PinkC");
 const MkHashStr MkFontManager::VioletC(L"VioletC");
 const MkHashStr MkFontManager::OrangeC(L"OrangeC");
 
+const MkHashStr MkFontManager::DefaultS(L"DefaultS");
 const MkHashStr MkFontManager::BlackS(L"BlackS");
 const MkHashStr MkFontManager::WhiteS(L"WhiteS");
 const MkHashStr MkFontManager::LightGrayS(L"LightGrayS");
@@ -50,7 +51,7 @@ void MkFontManager::SetUp(const MkDataNode* dataNode, const MkHashStr& fontTypeN
 		ChangeFontType(dataNode, fontTypeNodeKey);
 
 		_LoadFontColors(dataNode->GetChildNode(L"FontColor"));
-		_LoadFontStates(dataNode->GetChildNode(L"FontState"));
+		_LoadFontStyles(dataNode->GetChildNode(L"FontStyle"));
 	}
 }
 
@@ -120,17 +121,17 @@ bool MkFontManager::CreateFontColor(const MkHashStr& colorKey, unsigned int r, u
 	return true;
 }
 
-bool MkFontManager::CreateFontState(const MkHashStr& fontState, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor)
+bool MkFontManager::CreateFontStyle(const MkHashStr& fontStyle, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor)
 {
-	MK_CHECK(!m_StateList.Exist(fontState), L"이미 존재하는 " + fontState.GetString() + L" font state 생성 시도")
+	MK_CHECK(!m_StyleList.Exist(fontStyle), L"이미 존재하는 " + fontStyle.GetString() + L" font style 생성 시도")
 		return false;
 
-	_FontState& fs = m_StateList.Create(fontState);
+	_FontStyle& fs = m_StyleList.Create(fontStyle);
 	fs.textColor = MKDEF_PA_GET_COLOR(textColor);
 	fs.mode = mode;
 	fs.modeColor = MKDEF_PA_GET_COLOR(modeColor);
 
-	MK_DEV_PANEL.MsgToLog(L"> font state : " + fontState.GetString(), true);
+	MK_DEV_PANEL.MsgToLog(L"> font style : " + fontStyle.GetString(), true);
 	return true;
 }
 
@@ -139,7 +140,7 @@ void MkFontManager::Clear(void)
 	_ClearFontType();
 
 	m_ColorList.Clear();
-	m_StateList.Clear();
+	m_StyleList.Clear();
 }
 
 MkInt2 MkFontManager::GetTextSize(const MkHashStr& fontType, const MkStr& msg, bool ignoreBacksideBlank)
@@ -290,7 +291,7 @@ bool MkFontManager::RestrictSize(const MkHashStr& fontType, const MkStr& msg, co
 
 bool MkFontManager::DrawMessage(const MkInt2& position, const MkStr& msg)
 {
-	return DrawMessage(position, DefaultT, WhiteS, msg);
+	return DrawMessage(position, DefaultT, DefaultS, msg);
 }
 
 bool MkFontManager::DrawMessage
@@ -300,21 +301,21 @@ bool MkFontManager::DrawMessage
 	return _DrawMessage(position, faceName, size, thickness, MKDEF_PA_GET_COLOR(textColor), outputMode, MKDEF_PA_GET_COLOR(modeColor), msg);
 }
 
-bool MkFontManager::DrawMessage(const MkInt2& position, const MkHashStr& fontType, const MkHashStr& fontState, const MkStr& msg)
+bool MkFontManager::DrawMessage(const MkInt2& position, const MkHashStr& fontType, const MkHashStr& fontStyle, const MkStr& msg)
 {
-	if (m_TypeList.Exist(fontType) && m_StateList.Exist(fontState))
+	if (m_TypeList.Exist(fontType) && m_StyleList.Exist(fontStyle))
 	{
 		const _FontType& currFontType = m_TypeList[fontType];
-		const _FontState& currFontState = m_StateList[fontState];
+		const _FontStyle& currFontStyle = m_StyleList[fontStyle];
 		return _DrawMessage
-			(position, currFontType.faceName, currFontType.size, currFontType.thickness, currFontState.textColor, currFontState.mode, currFontState.modeColor, msg);
+			(position, currFontType.faceName, currFontType.size, currFontType.thickness, currFontStyle.textColor, currFontStyle.mode, currFontStyle.modeColor, msg);
 	}
 	return false;
 }
 /*
 bool MkFontManager::DrawMessage(const MkInt2& position, const MkDecoStr& msg)
 {
-	MkHashStr currentType, currentState;
+	MkHashStr currentType, currentStyle;
 
 	const MkArray<MkDecoStr::SectorInfo>& outputList = msg.__GetOutputList();
 	MK_INDEXING_LOOP(outputList, i)
@@ -324,12 +325,12 @@ bool MkFontManager::DrawMessage(const MkInt2& position, const MkDecoStr& msg)
 		{
 			currentType = si.type;
 		}
-		if (!si.state.Empty())
+		if (!si.style.Empty())
 		{
-			currentState = si.state;
+			currentStyle = si.style;
 		}
 
-		if (!DrawMessage(position + si.position, currentType, currentState, si.text))
+		if (!DrawMessage(position + si.position, currentType, currentStyle, si.text))
 			return false;
 	}
 	return true;
@@ -406,6 +407,8 @@ void MkFontManager::_LoadFontTypes(const MkDataNode* dataNode)
 
 			m_TypeList.Rehash();
 		}
+
+		MK_CHECK(CheckAvailableFontType(DefaultT), DefaultT.GetString() + L" font type이 등록되어 있지 않음") {}
 	}
 }
 
@@ -449,51 +452,53 @@ void MkFontManager::_LoadFontColors(const MkDataNode* dataNode)
 	_CreateDefaultFontColor(OrangeC, 255, 153, 52);
 }
 
-void MkFontManager::_LoadFontStates(const MkDataNode* dataNode)
+void MkFontManager::_LoadFontStyles(const MkDataNode* dataNode)
 {
-	m_StateList.Clear();
+	m_StyleList.Clear();
 
 	if (dataNode != NULL)
 	{
-		MkArray<MkHashStr> fontStateBuffer;
-		if (dataNode->GetChildNodeList(fontStateBuffer) > 0)
+		MkArray<MkHashStr> fontStyleBuffer;
+		if (dataNode->GetChildNodeList(fontStyleBuffer) > 0)
 		{
-			fontStateBuffer.SortInAscendingOrder(); // 정렬
+			fontStyleBuffer.SortInAscendingOrder(); // 정렬
 
-			MK_INDEXING_LOOP(fontStateBuffer, i)
+			MK_INDEXING_LOOP(fontStyleBuffer, i)
 			{
-				const MkHashStr& stateName = fontStateBuffer[i];
-				const MkDataNode& stateNode = *dataNode->GetChildNode(stateName);
+				const MkHashStr& styleName = fontStyleBuffer[i];
+				const MkDataNode& styleNode = *dataNode->GetChildNode(styleName);
 
 				MkStr textColorBuf, modeColorBuf;
 				int modeBuf;
-				MK_CHECK(stateNode.GetData(L"textColor", textColorBuf, 0), stateName.GetString() + L" font state에 textColor 항목이 없음")
+				MK_CHECK(styleNode.GetData(L"textColor", textColorBuf, 0), styleName.GetString() + L" font style에 textColor 항목이 없음")
 					continue;
-				MK_CHECK(stateNode.GetData(L"mode", modeBuf, 0), stateName.GetString() + L" font state에 mode 항목이 없음")
+				MK_CHECK(styleNode.GetData(L"mode", modeBuf, 0), styleName.GetString() + L" font style에 mode 항목이 없음")
 					continue;
-				MK_CHECK(stateNode.GetData(L"modeColor", modeColorBuf, 0), stateName.GetString() + L" font state에 modeColor 항목이 없음")
+				MK_CHECK(styleNode.GetData(L"modeColor", modeColorBuf, 0), styleName.GetString() + L" font style에 modeColor 항목이 없음")
 					continue;
 
-				CreateFontState(stateName, textColorBuf, static_cast<eOutputMode>(modeBuf), modeColorBuf);
+				CreateFontStyle(styleName, textColorBuf, static_cast<eOutputMode>(modeBuf), modeColorBuf);
 			}
 
-			m_StateList.Rehash();
+			m_StyleList.Rehash();
 		}
+
+		MK_CHECK(CheckAvailableFontStyle(DefaultS), DefaultS.GetString() + L" font style이 등록되어 있지 않음") {}
 	}
 
-	// 기본 font state 생성
-	_CreateDefaultFontState(BlackS, BlackC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(WhiteS, WhiteC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(LightGrayS, LightGrayC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(DarkGrayS, DarkGrayC, eShadow, BlackC);
-	_CreateDefaultFontState(RedS, RedC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(GreenS, GreenC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(BlueS, BlueC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(YellowS, YellowC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(CianS, CianC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(PinkS, PinkC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(VioletS, VioletC, eShadow, DarkGrayC);
-	_CreateDefaultFontState(OrangeS, OrangeC, eShadow, DarkGrayC);
+	// 기본 font style 생성
+	_CreateDefaultFontStyle(BlackS, BlackC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(WhiteS, WhiteC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(LightGrayS, LightGrayC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(DarkGrayS, DarkGrayC, eShadow, BlackC);
+	_CreateDefaultFontStyle(RedS, RedC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(GreenS, GreenC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(BlueS, BlueC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(YellowS, YellowC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(CianS, CianC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(PinkS, PinkC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(VioletS, VioletC, eShadow, DarkGrayC);
+	_CreateDefaultFontStyle(OrangeS, OrangeC, eShadow, DarkGrayC);
 }
 
 void MkFontManager::_CreateDefaultFontColor(const MkHashStr& colorKey, unsigned int r, unsigned int g, unsigned int b)
@@ -504,11 +509,11 @@ void MkFontManager::_CreateDefaultFontColor(const MkHashStr& colorKey, unsigned 
 	}
 }
 
-void MkFontManager::_CreateDefaultFontState(const MkHashStr& fontState, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor)
+void MkFontManager::_CreateDefaultFontStyle(const MkHashStr& fontStyle, const MkHashStr& textColor, eOutputMode mode, const MkHashStr& modeColor)
 {
-	if (!m_StateList.Exist(fontState))
+	if (!m_StyleList.Exist(fontStyle))
 	{
-		CreateFontState(fontState, textColor, mode, modeColor);
+		CreateFontStyle(fontStyle, textColor, mode, modeColor);
 	}
 }
 

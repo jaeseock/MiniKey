@@ -52,9 +52,9 @@ Node "FontResource"
 		// predefined colors (BlackC, WhiteC, LightGrayC, DarkGrayC, RedC, GreenC, BlueC, YellowC, CianC, PinkC, VioletC, OrangeC)
 	}
 
-	Node "FontState"
+	Node "FontStyle"
 	{
-		// predefined states (BlackS, WhiteS, LightGrayS, DarkGrayS, RedS, GreenS, BlueS, YellowS, CianS, PinkS, VioletS, OrangeS)
+		// predefined styles (BlackS, WhiteS, LightGrayS, DarkGrayS, RedS, GreenS, BlueS, YellowS, CianS, PinkS, VioletS, OrangeS)
 		
 		//Node "EX"
 		//{
@@ -62,6 +62,13 @@ Node "FontResource"
 		//	int mode = 2; // 0:eNormal, 1:eOutline, 2:eShadow
 		//	str modeColor = "RedC"; // same as textColor
 		//}
+		
+		Node "DefaultS" // duty. predefined keyword
+		{
+			str textColor = "WhiteC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
 	}
 }
 
