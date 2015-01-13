@@ -13,10 +13,10 @@
 #define MKDEF_M_TO_T_RESERVATION 20
 
 // 기본 앵커는 tab
-#define MKDEF_M_TO_T_ANCHOR_TYPE L"\t"
+#define MKDEF_M_TO_T_ANCHOR_TYPE MkStr::TAB
 
 // 기본 공백문자는 space
-#define MKDEF_M_TO_T_BLANK_TYPE L" "
+#define MKDEF_M_TO_T_BLANK_TYPE MkStr::SPACE
 
 //------------------------------------------------------------------------------------------------//
 
@@ -73,13 +73,12 @@ bool MkMemoryToDataTextConverter::Convert(const MkByteArray& srcArray, const MkP
 void MkMemoryToDataTextConverter::_InitiateHeaderMsg(MkStr& strBuffer, const MkPathName& filePath) const
 {
 	// 헤더 구성
-	strBuffer += L"\n";
-	strBuffer += L"//--------------------------------------------------------------------//\n";
-	strBuffer += L"// MiniKey data node text source\n";
-	strBuffer += L"//   - file path  : " + MkStr(filePath) + L"\n";
-	strBuffer += L"//   - time stamp : " + MK_SYS_ENV.GetCurrentSystemDate() + L" (" + MK_SYS_ENV.GetCurrentSystemTime() + L"),\n";
-	strBuffer += L"//   - exporter   : " + MK_SYS_ENV.GetCurrentLogOnUserName() + L" (" + MkPathName::GetApplicationName() + L")\n";
-	strBuffer += L"//--------------------------------------------------------------------//\n\n";
+	strBuffer += L"//--------------------------------------------------------------------//" + MkStr::LF;
+	strBuffer += L"// MiniKey data node text source" + MkStr::LF;
+	strBuffer += L"//   - file path  : " + MkStr(filePath) + MkStr::LF;
+	strBuffer += L"//   - time stamp : " + MK_SYS_ENV.GetCurrentSystemDate() + L" (" + MK_SYS_ENV.GetCurrentSystemTime() + L")" + MkStr::LF;
+	strBuffer += L"//   - exporter   : " + MK_SYS_ENV.GetCurrentLogOnUserName() + L" (" + MkPathName::GetApplicationName() + L")" + MkStr::LF;
+	strBuffer += L"//--------------------------------------------------------------------//" + MkStr::LF + MkStr::LF;
 }
 
 bool MkMemoryToDataTextConverter::_BuildText(MkInterfaceForDataReading& drInterface, unsigned int nodeDepth, MkStr& strBuffer) const
@@ -111,10 +110,10 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 
 	// 앵커
 	static const MkStr blankStr = MKDEF_M_TO_T_ANCHOR_TYPE;
-	MkStr anchor = L"\n";
+	MkStr anchor = MkStr::LF;
 	if (nodeDepth > 0)
 	{
-		anchor.Reserve(blankStr.GetSize() * nodeDepth);
+		anchor.Reserve(MkStr::LF.GetSize() + blankStr.GetSize() * nodeDepth);
 		for (unsigned int i=0; i<nodeDepth; ++i)
 		{
 			anchor += blankStr;
@@ -140,7 +139,7 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 		// 기록
 		if (!strBuffer.CheckPostfix(MkTagDefinitionForDataNode::TagForBlockBegin))
 		{
-			strBuffer += L"\n"; // 노드 출력시에는 최초 노드가 아니면 한 줄의 공백을 둠
+			strBuffer += MkStr::LF; // 노드 출력시에는 최초 노드가 아니면 한 줄의 공백을 둠
 		}
 		
 		strBuffer += anchor;
@@ -222,7 +221,7 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 						MkStr tmp = dataList[i];
 						tmp.ReplaceKeyword(L"\"", MkTagDefinitionForDataNode::TagForDQM);
 						tmp.ReplaceKeyword(MkTagDefinitionForDataNode::TagForDQM, L"\\\"");
-						tmp.ReplaceCRtoTag();
+						tmp.ReplaceCRLFtoTag();
 
 						// DQM으로 둘러쌈
 						dataList[i].Reserve(tmp.GetSize() + 2);

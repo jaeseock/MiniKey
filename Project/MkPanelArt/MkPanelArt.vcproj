@@ -273,11 +273,11 @@
 				Name="Data type"
 				>
 				<File
-					RelativePath=".\Source\MkPA_MkDecoStr.cpp"
+					RelativePath=".\Source\MkPA_MkTextNode.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\Include\MkPA_MkDecoStr.h"
+					RelativePath="..\..\Include\MkPA_MkTextNode.h"
 					>
 				</File>
 			</Filter>

@@ -637,7 +637,7 @@ MkInt2 MkFontManager::_GetTextSize(const _FontUnit& funtUnit, const MkStr& msg, 
 	// msg를 분해해 직접 size를 결정. 문자열 뒷부분의 공(L' ')/개행(L'\n') 문자를 크기에 반영
 	// (NOTE) 단 DX와 마찬가지로 탭(L'\t')과 리턴(L'\r')은 무시 함
 	MkArray<MkStr> lines;
-	msg.Tokenize(lines, L"\n", false); // 공문자를 살린 라인들로 분할
+	msg.Tokenize(lines, MkStr::LF, false); // 공문자를 살린 라인들로 분할
 
 	int longestX = 0;
 	MK_INDEXING_LOOP(lines, i)
@@ -719,7 +719,7 @@ bool MkFontManager::_DrawMessage
 		const wchar_t* msgPtr = msg.GetPtr();
 		unsigned int size = msg.GetSize();
 
-		DWORD flag = msg.Exist(L"\n") ? DT_WORDBREAK : DT_SINGLELINE;
+		DWORD flag = msg.Exist(MkStr::LF) ? DT_WORDBREAK : DT_SINGLELINE;
 		flag |= DT_LEFT;
 		fontPtr->DrawTextW(NULL, msgPtr, size, &rect, flag | DT_CALCRECT, textColor);
 

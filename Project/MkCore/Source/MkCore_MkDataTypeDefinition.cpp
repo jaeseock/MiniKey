@@ -45,11 +45,15 @@ const MkQuaternion MkQuaternion::Zero(0.f, 0.f, 0.f, 0.f);
 const MkQuaternion MkQuaternion::Identity(1.f, 0.f, 0.f, 0.f);
 
 // MkStr
-const MkStr MkStr::Null(L"");
-const MkStr MkStr::CR(L"\r\n");
+const MkStr MkStr::EMPTY(L"");
+const MkStr MkStr::TAB(L"\t");
+const MkStr MkStr::LF(L"\n");
+const MkStr MkStr::CR(L"\r");
+const MkStr MkStr::SPACE(L" ");
+const MkStr MkStr::CRLF(L"\r\n");
 
 // MkHashStr
-const MkHashStr MkHashStr::NullHash(L"");
+const MkHashStr MkHashStr::EMPTY(L"");
 
 // MkPrimitiveDataType
 ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)

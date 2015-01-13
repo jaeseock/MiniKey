@@ -22,6 +22,55 @@ Node "FontResource"
 				uint size = 14;
 				int thickness = 0;
 			}
+			
+			Node "Small"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 12;
+				int thickness = 0;
+			}
+			
+			Node "SmallBold"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 12;
+				int thickness = 2;
+			}
+			
+			Node "Medium"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 14;
+				int thickness = 0;
+			}
+			
+			Node "MediumBold"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 14;
+				int thickness = 2;
+			}
+			
+			Node "Big"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 16;
+				int thickness = 1;
+			}
+			
+			Node "BigBold"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 16;
+				int thickness = 2;
+			}
+			
+			Node "Special"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 20;
+				int thickness = 1;
+			}
 		}
 		
 		Node "±¼¸²"
@@ -66,6 +115,48 @@ Node "FontResource"
 		Node "DefaultS" // duty. predefined keyword
 		{
 			str textColor = "WhiteC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "WindowTitle:Focus"
+		{
+			str textColor = "YellowC";
+			int mode = 2;
+			str modeColor = "LightGrayC";
+		}
+		
+		Node "WindowTitle:BG"
+		{
+			str textColor = "LightGrayC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Title"
+		{
+			str textColor = "GreenS";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Normal"
+		{
+			str textColor = "WhiteC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Highlight"
+		{
+			str textColor = "CianC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Notice"
+		{
+			str textColor = "RedS";
 			int mode = 2;
 			str modeColor = "DarkGrayC";
 		}

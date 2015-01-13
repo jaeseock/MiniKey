@@ -1,104 +1,66 @@
 
+str Type = "BigBold";
+str Style = "Desc:Title";
+int LFOffset = 5;
+str Seq = "1st" / "2st";
 
-<% DecoStr	%>
-<%LF=1%><%T="볼드 고딕 14"%><%S="노랑그림자"%>
-"첫번째 제목입니당.\n"
-<%T="기본 고딕 14"%><%S="제목"%>
-"  - 내용 항목 첫번째
-  - 내용 항목 "<%S="샘플03"%>"이거이 바로 강조\n"
-  
-<%LF=5%><%T="볼드 고딕 20"%><%S="노랑그림자"%>
-"\n첫번째 제목입니당.\n"
-<%T="기본 고딕 20"%><%S="제목"%>
-"  - 내용 항목 첫번째\n  - 내용 항목"<%S="샘플03"%>" 이거이 바로 강조"
-
-Type = "볼드 고딕 20";
-State = "노랑그림자";
-VOffset = 10;
-
-"[ 난 미남이다 ]\n";
-
+Node "1st"
 {
-	Type = "기본 고딕 14";
-	State = "제목";
-	VOffset = 5;
-
-	"  - 힘 : <%힘교체태그%>\n";
-	"  - 지능 : <%지능교체태그%>";
-	"\n  - 개행하는 교체 항목 나열";
-
-}
-
-"\n[ 당연한 말, 묻지마라 ]\n";
-
-{
-	Type = "기본 고딕 14";
-	State = "제목";
-	VOffset = 5;
-
-	"  - 평범 항목 첫번째";
-	"\n  - 평범 항목 두번째인줄 알았는데 ";
-
-	{
-		Type = "볼드 고딕 14";
-		State = "DSF";
-
-		"<%칭찬교체태그%>"
-	}
-
-	" <- 바꾸고 강조";
-
-}
-
-
-int HOffset = 5;
-str S = "노랑그림자";
-str T = "볼드 고딕 20";
-
-Node "0"
-{
-	str X = "[ 첫번째 제목입니당 ]";
+	str Text = "[ 첫번째 제목입니당 ]";
 	
-	Node "0"
+	Node "Sub list"
 	{
-		str S = "제목";
-		str T = "기본 고딕 14";
-		str X = "  - 평범 항목 첫번째" /
-			"  - 평범 항목 두번째이고" /
-			"  - 평범 항목 세번째인데" /
-			"  - 개행을 이런 식으로도 할 수 있음";
+		str Type = "Medium";
+		str Style = "Desc:Normal";
+		int HOffset = 8;
+		str Seq = "일번이고" / "이번이구나";
+		
+		Node "일번이고"
+		{
+			bool Visible = no;
+			str Text = "\n- 평범 항목 첫번째이고\n";
+		}
+		
+		Node "이번이구나"
+		{
+			str Text =
+				"- 평범 항목 두번째인데" /
+				"- 자동 개행의 유일한 방법";
+		}
 	}
 }
 
-Node "1"
+Node "2st"
 {
-	str X = "[ 이거이 두번째 제목 ]\n";
+	str Text = "\n[ 이거이 두번째 제목 ]";
 	
 	Node "0"
 	{
-		str S = "제목";
-		str T = "기본 고딕 14";
+		str Type = "Medium";
+		str Style = "Desc:Normal";
 
 		Node "0"
 		{
-			str X = "  - 내용 항목 첫번째";
+			str Text = "\n  - 내용 항목 첫번째";
 		}
 
 		Node "1"
 		{
-			str X = "\n  - 내용 항목 두번째인데 ";
-		}
-
-		Node "2"
-		{
-			str S = "DSF";
-			str T = "볼드 고딕 14";
-			str X = "<% 바꿔주시용 %>";
-		}
-
-		Node "3"
-		{
-			str X = " <- 바꾸고 강조";
+			Node "100"
+			{
+				str Text = "\n  - 내용 항목 두번째인데 ";
+			}
+			
+			Node "200"
+			{
+				str Style = "Desc:Highlight";
+				str Text = "<% 바꿔주시용 %>";
+			}
+			
+			Node "300"
+			{
+				str Text = " <- 바꾸고 강조";
+			}
 		}
 	}
 }

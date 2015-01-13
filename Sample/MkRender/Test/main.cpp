@@ -23,7 +23,7 @@
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkRenderer.h"
 
-#include "MkPA_MkDecoStr.h"
+#include "MkPA_MkTextNode.h"
 
 //#include "MkS2D_MkSceneNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
@@ -48,9 +48,17 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		MkStr txtStr;
-		txtStr.ReadTextFile(L"DecoString.txt");
-		MkDecoStr decoStr(txtStr);
+		MkTextNode tn;
+		tn.SetUp(L"DecoString.txt");
+
+		MkTextNode tnCopy = tn;
+
+		MkDataNode dn;
+		tnCopy.Export(dn);
+		dn.SaveToText(L"DecoString_.txt");
+		//MkStr txtStr;
+		//txtStr.ReadTextFile(L"DecoString.txt");
+		//MkDecoStr decoStr(txtStr);
 
 		//MkInt2 size01F = MK_FONT_MGR.GetTextSize(MK_FONT_MGR.DSF(), test01, false);
 		return true;

@@ -181,6 +181,8 @@ bool MkDataNode::CreateUnit(const MkHashStr& key, const MkVec2& value) { return 
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkVec3& value) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkVec3>(), 1) ? SetData(key, value, 0) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkStr& value) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkStr>(), 1) ? SetData(key, value, 0) : false; }
 
+bool MkDataNode::CreateUnitEx(const MkHashStr& key, const MkHashStr& value) { return CreateUnit(key, value.GetString()); }
+
 // SetData()에서 다시 크기를 잡으므로 CreateUnit()에서 size는 의미 없음
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<bool>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<bool>(), 1) ? SetData(key, values) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<int>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<int>(), 1) ? SetData(key, values) : false; }
@@ -190,6 +192,16 @@ bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkInt2>& values)
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkVec2>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkVec2>(), 1) ? SetData(key, values) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkVec3>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkVec3>(), 1) ? SetData(key, values) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkStr>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkStr>(), 1) ? SetData(key, values) : false; }
+
+bool MkDataNode::CreateUnitEx(const MkHashStr& key, const MkArray<MkHashStr>& values)
+{
+	MkArray<MkStr> buffer(values.GetSize());
+	MK_INDEXING_LOOP(values, i)
+	{
+		buffer.PushBack(values[i].GetString());
+	}
+	return CreateUnit(key, buffer);
+}
 
 bool MkDataNode::Expand(const MkHashStr& key, unsigned int size) { return GetReadOnly() ? false : m_DataPack.Expand(key, size); }
 
@@ -202,6 +214,8 @@ bool MkDataNode::SetData(const MkHashStr& key, const MkVec2& value, unsigned int
 bool MkDataNode::SetData(const MkHashStr& key, const MkVec3& value, unsigned int index) { return GetReadOnly() ? false : m_DataPack.SetData(key, value, index); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkStr& value, unsigned int index) { return GetReadOnly() ? false : m_DataPack.SetData(key, value, index); }
 
+bool MkDataNode::SetDataEx(const MkHashStr& key, const MkHashStr& value, unsigned int index) { return SetData(key, value.GetString(), index); }
+
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<bool>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<int>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<unsigned int>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
@@ -210,6 +224,16 @@ bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkInt2>& values) { 
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkVec2>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkVec3>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkStr>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
+
+bool MkDataNode::SetDataEx(const MkHashStr& key, const MkArray<MkHashStr>& values)
+{
+	MkArray<MkStr> buffer(values.GetSize());
+	MK_INDEXING_LOOP(values, i)
+	{
+		buffer.PushBack(values[i].GetString());
+	}
+	return SetData(key, buffer);
+}
 
 bool MkDataNode::GetData(const MkHashStr& key, bool& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
 bool MkDataNode::GetData(const MkHashStr& key, int& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
@@ -220,6 +244,17 @@ bool MkDataNode::GetData(const MkHashStr& key, MkVec2& buffer, unsigned int inde
 bool MkDataNode::GetData(const MkHashStr& key, MkVec3& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
 bool MkDataNode::GetData(const MkHashStr& key, MkStr& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
 
+bool MkDataNode::GetDataEx(const MkHashStr& key, MkHashStr& buffer, unsigned int index) const
+{
+	MkStr str;
+	bool ok = GetData(key, str, index);
+	if (ok)
+	{
+		buffer = str;
+	}
+	return ok;
+}
+
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<bool>& buffers) const { return m_DataPack.GetData(key, buffers); }
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<int>& buffers) const { return m_DataPack.GetData(key, buffers); }
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<unsigned int>& buffers) const { return m_DataPack.GetData(key, buffers); }
@@ -228,6 +263,21 @@ bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkInt2>& buffers) const {
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkVec2>& buffers) const { return m_DataPack.GetData(key, buffers); }
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkVec3>& buffers) const { return m_DataPack.GetData(key, buffers); }
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkStr>& buffers) const { return m_DataPack.GetData(key, buffers); }
+
+bool MkDataNode::GetDataEx(const MkHashStr& key, MkArray<MkHashStr>& buffers) const
+{
+	MkArray<MkStr> strs;
+	bool ok = GetData(key, strs);
+	if (ok && (!strs.Empty()))
+	{
+		buffers.Reserve(strs.GetSize());
+		MK_INDEXING_LOOP(strs, i)
+		{
+			buffers.PushBack(strs[i]);
+		}
+	}
+	return ok;
+}
 
 bool MkDataNode::RemoveUnit(const MkHashStr& key)
 {

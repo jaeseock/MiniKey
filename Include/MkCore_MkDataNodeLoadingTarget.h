@@ -6,7 +6,7 @@
 //
 // ex>
 //	MkLoadingTargetPtr ptr = new MkDataNodeLoadingTarget;
-//	MK_BG_LOADER.RegisterLoadingTarget(ptr, L"datanode_00.txt", MkStr::Null);
+//	MK_BG_LOADER.RegisterLoadingTarget(ptr, L"datanode_00.txt", MkStr::EMPTY);
 //	...
 //	void Update(void)
 //	{

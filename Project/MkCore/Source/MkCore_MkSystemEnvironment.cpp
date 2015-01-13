@@ -43,17 +43,17 @@ void MkSystemEnvironment::__PrintSystemInformationToLog(void) const
 	MkStr buffer;
 	buffer.Reserve(2048);
 	buffer += L"< System environment >";
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// application version
 	buffer += L"   - Application version : ";
 	buffer += m_ApplicationVersion.ToString();
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// minikey version
 	buffer += L"   - MiniKey version : ";
 	buffer += m_MiniKeyVersion.ToString();
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// build mode
 	MkStr currMode;
@@ -64,12 +64,12 @@ void MkSystemEnvironment::__PrintSystemInformationToLog(void) const
 	case eRelease: buffer += L"Release"; break;
 	case eShipping: buffer += L"Shipping"; break;
 	}
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// user
 	buffer += L"   - User name : ";
 	buffer += m_CurrentUserName;
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// OS
 	buffer += L"   - OS : Windows ";
@@ -80,38 +80,38 @@ void MkSystemEnvironment::__PrintSystemInformationToLog(void) const
 	case eX86: buffer += L" (x86)"; break;
 	case eX64: buffer += L" (x64)"; break;
 	}
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// core
 	buffer += L"   - Cores : ";
 	buffer += MkStr(m_NumberOfProcessors);
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// locale
 	buffer += L"   - Code page : ";
 	buffer += MkStr(MkStr::GetCodePage());
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// background resolution
 	buffer += L"   - Background resolution : ";
 	buffer += m_BackgroundResolution.x;
 	buffer += L" * ";
 	buffer += m_BackgroundResolution.y;
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// module directory
 	buffer += L"   - Module directory :";
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 	buffer += L"     ";
 	buffer += MkStr(MkPathName::GetModuleDirectory());
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// root directory
 	buffer += L"   - Root directory :";
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 	buffer += L"     ";
 	buffer += MkStr(MkPathName::GetRootDirectory());
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 
 	// print to log
 	MK_DEV_PANEL.MsgToLog(buffer, false);
@@ -169,7 +169,7 @@ void MkSystemEnvironment::_Initialize(void)
 	GetVersionEx(&osVer);
 	unsigned int osMajor = static_cast<unsigned int>(osVer.dwMajorVersion);
 	unsigned int osMinor = static_cast<unsigned int>(osVer.dwMinorVersion);
-	m_WindowsVersion = MkStr(osMajor) + L"." + MkStr(osMinor) + L" " + MkStr(osVer.szCSDVersion);
+	m_WindowsVersion = MkStr(osMajor) + L"." + MkStr(osMinor) + MkStr::SPACE + MkStr(osVer.szCSDVersion);
 	m_WindowsIsXpOrHigher = ((osMajor * 10 + osMinor) >= 51); // XP == 5.1
 	m_WindowsIsVistaOrHigher = ((osMajor * 10) >= 60); // Vista == 6.0
 

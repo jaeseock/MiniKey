@@ -290,11 +290,11 @@ public:
 	void ReplaceKeyword(const MkStr& keywordFrom, const MkStr& keywordTo);
 	void ReplaceKeyword(const MkArraySection& section, const MkStr& keywordFrom, const MkStr& keywordTo);
 
-	// carriage return + line feed를 tag(L"\\r\\n")으로 변환
-	void ReplaceCRtoTag(void);
+	// CRLF를 tag(L"\\r\\n")으로 변환
+	void ReplaceCRLFtoTag(void);
 
-	// tag(L"\\r\\n")를 carriage return으로 변환
-	void ReplaceTagtoCR(void);
+	// tag(L"\\r\\n")를 CRLF로 변환
+	void ReplaceTagtoCRLF(void);
 
 	// 키워드 제거
 	// (in) section : 검사 범위
@@ -418,7 +418,7 @@ public:
 	// return : 대체된 replaceBlock 바로 다음 위치. position이 source의 크기를 넘어가거나 매칭 블록이 존재하지 않으면 MKDEF_ARRAY_ERROR 반환
 	// ex>
 	//	치환 : (L"abc{123}de").ReplaceFirstBlock(0, L"{", L"}", L"##") -> *this == L"abc##de"
-	//	삭제 : (L"abc{123}de").ReplaceFirstBlock(0, L"{", L"}", MkStr::Null) -> *this == L"abcde"
+	//	삭제 : (L"abc{123}de").ReplaceFirstBlock(0, L"{", L"}", MkStr::EMPTY) -> *this == L"abcde"
 	unsigned int ReplaceFirstBlock(unsigned int position, const MkStr& beginKeyword, const MkStr& endKeyword, const MkStr& replaceBlock);
 
 	unsigned int ReplaceFirstBlock // 치환 전 대상 문자열을 buffer에 할당
@@ -578,10 +578,22 @@ public:
 	MkArray<wchar_t> m_Str;
 
 	// empty
-	static const MkStr Null;
+	static const MkStr EMPTY;
 
-	// CR + LF
+	// tab
+	static const MkStr TAB;
+
+	// line feed
+	static const MkStr LF;
+
+	// carriage return
 	static const MkStr CR;
+
+	// space
+	static const MkStr SPACE;
+
+	// window style line feed(CR + LF)
+	static const MkStr CRLF;
 };
 
 //------------------------------------------------------------------------------------------------//

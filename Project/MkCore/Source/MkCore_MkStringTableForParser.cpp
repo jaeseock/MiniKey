@@ -32,7 +32,7 @@ void MkStringTableForParser::BuildStringTable(MkStr& source)
 			if (!stringBuffer.Empty())
 			{
 				stringBuffer.ReplaceKeyword(MkTagDefinitionForDataNode::TagForDQM, dqmTag); // DQM
-				stringBuffer.ReplaceTagtoCR();
+				stringBuffer.ReplaceTagtoCRLF();
 			}
 
 			// 페어 추가

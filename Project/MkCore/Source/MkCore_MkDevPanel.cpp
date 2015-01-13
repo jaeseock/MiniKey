@@ -227,16 +227,7 @@ void MkDevPanel::MsgToLog(const MkStr& msg, bool addTime)
 
 	m_EventQueue.RegisterEvent(_PanelEvent(eMsgToLog, (addTime) ? TRUE : FALSE, msg));
 
-	if (msg.Exist(L"\r"))
-	{
-		MkStr msgCopy = msg;
-		msgCopy.RemoveKeyword(L"\r");
-		MK_LOG_MGR.Msg(msgCopy, addTime);
-	}
-	else
-	{
-		MK_LOG_MGR.Msg(msg, addTime);
-	}
+	MK_LOG_MGR.Msg(msg, addTime);
 }
 
 void MkDevPanel::ClearLogWindow(void)
@@ -617,7 +608,7 @@ void MkDevPanel::_PutMsgToLogBox(const MkStr& msg, bool addTime)
 	if ((m_LogHWND != NULL) && (MKDEF_MAX_LOG_LINE > 0))
 	{
 		MkStr newMsg = msg;
-		unsigned int additionalLineCount = newMsg.CountKeyword(MkStr::CR) + 1;
+		unsigned int additionalLineCount = newMsg.CountKeyword(MkStr::CRLF) + 1;
 		MkStr timeBuf;
 		if (addTime)
 		{
@@ -629,7 +620,7 @@ void MkDevPanel::_PutMsgToLogBox(const MkStr& msg, bool addTime)
 			m_LogMsg.Reserve(m_LogMsg.GetSize() + 2 + newMsg.GetSize() + ((addTime) ? 20 : 0));
 			if (!m_LogMsg.Empty())
 			{
-				m_LogMsg += MkStr::CR;
+				m_LogMsg += MkStr::CRLF;
 			}
 			
 			if (addTime)
@@ -647,10 +638,10 @@ void MkDevPanel::_PutMsgToLogBox(const MkStr& msg, bool addTime)
 			{
 				unsigned int removeLineCount = m_LogLineCount - MKDEF_MAX_LOG_LINE;
 				unsigned int lfPos = 0;
-				unsigned int crSize = MkStr::CR.GetSize();
+				unsigned int crSize = MkStr::CRLF.GetSize();
 				for (unsigned int i=0; i<removeLineCount; ++i)
 				{
-					lfPos = m_LogMsg.GetFirstKeywordPosition(MkArraySection(lfPos), MkStr::CR);
+					lfPos = m_LogMsg.GetFirstKeywordPosition(MkArraySection(lfPos), MkStr::CRLF);
 					lfPos += crSize;
 				}
 				m_LogMsg.PopFront(lfPos);

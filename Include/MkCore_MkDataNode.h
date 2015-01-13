@@ -127,6 +127,7 @@ public:
 	bool CreateUnit(const MkHashStr& key, const MkVec2& value);
 	bool CreateUnit(const MkHashStr& key, const MkVec3& value);
 	bool CreateUnit(const MkHashStr& key, const MkStr& value);
+	bool CreateUnitEx(const MkHashStr& key, const MkHashStr& value);
 
 	// data array로 data unit 생성
 	// return : 성공 여부. read-only 상태이거나 이미 존재하는 unit이 있으면 실패
@@ -138,6 +139,7 @@ public:
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkVec2>& values);
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkVec3>& values);
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkStr>& values);
+	bool CreateUnitEx(const MkHashStr& key, const MkArray<MkHashStr>& values);
 
 	// 존재하는 unit의 data 크기를 size만큼 확장
 	// return : 성공 여부. read-only 상태이거나 unit이 존재하지 않으면 실패
@@ -153,6 +155,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkVec2& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkVec3& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkStr& value, unsigned int index);
+	bool SetDataEx(const MkHashStr& key, const MkHashStr& value, unsigned int index);
 
 	// data array 할당 (dynamic cast 1회)
 	// return : 성공 여부. read-only 상태이거나 unit이 존재하지 않거나 타입이 다르면 실패
@@ -164,6 +167,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkArray<MkVec2>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkVec3>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkStr>& values);
+	bool SetDataEx(const MkHashStr& key, const MkArray<MkHashStr>& values);
 
 	// single data 반환 (dynamic cast 1회)
 	// return : 성공 여부. unit이 존재하지 않거나 타입이 다르거나 index가 data 범위를 벗어난 경우 실패
@@ -175,6 +179,7 @@ public:
 	bool GetData(const MkHashStr& key, MkVec2& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkVec3& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkStr& buffer, unsigned int index) const;
+	bool GetDataEx(const MkHashStr& key, MkHashStr& buffer, unsigned int index) const;
 
 	// data array 반환 (dynamic cast 1회)
 	// return : 성공 여부. unit이 존재하지 않거나 타입이 다르면 실패
@@ -186,6 +191,7 @@ public:
 	bool GetData(const MkHashStr& key, MkArray<MkVec2>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkVec3>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkStr>& buffers) const;
+	bool GetDataEx(const MkHashStr& key, MkArray<MkHashStr>& buffers) const;
 
 	// unit 제거하고 성공여부 반환
 	// (NOTE) read-only 상태이거나 템플릿에 의해 선 정의된 unit일 경우 실패

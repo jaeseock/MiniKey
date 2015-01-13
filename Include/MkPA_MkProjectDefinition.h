@@ -29,23 +29,8 @@
 //------------------------------------------------------------------------------------------------//
 
 // MkDecoStr에서 tag block 구분자
-#define MKDEF_PA_DECOSTR_TAG_BEGIN L"<%"
-#define MKDEF_PA_DECOSTR_TAG_END L"%>"
-
-// MkDecoStr에서 tag header
-#define MKDEF_PA_DECOSTR_HEADER_KEYWORD L"DecoStr"
-
-// MkDecoStr에서 tag seperator
-#define MKDEF_PA_DECOSTR_TAG_SEPERATOR L"="
-
-// MkDecoStr에서 font type tag keyword
-#define MKDEF_PA_DECOSTR_TYPE_KEYWORD L"T"
-
-// MkDecoStr에서 font state tag keyword
-#define MKDEF_PA_DECOSTR_STATE_KEYWORD L"S"
-
-// MkDecoStr에서 line feed offset tag keyword
-#define MKDEF_PA_DECOSTR_LINEFEED_KEYWORD L"LF"
+//#define MKDEF_PA_DECOSTR_TAG_BEGIN L"<%"
+//#define MKDEF_PA_DECOSTR_TAG_END L"%>"
 
 // MkDecoStr에서 투명 처리 될 color key(D3DCOLOR)
 #define MKDEF_PA_DECOSTR_COLOR_KEY 0xff010101

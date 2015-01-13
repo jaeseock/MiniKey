@@ -390,7 +390,7 @@ bool MkExcelToMemoryConverter::_StringFilter(const MkStr& source, MkStr& buffer)
 	if (!subset.Empty())
 	{
 		subset.ReplaceKeyword(L"\\\"", L"\""); // DQM
-		subset.ReplaceTagtoCR();
+		subset.ReplaceTagtoCRLF();
 	}
 
 	buffer = subset;
@@ -421,7 +421,7 @@ bool MkExcelToMemoryConverter::_StringFilter(const MkStr& source, MkArray<MkStr>
 				if (!stringBuffer.Empty()) // 탈출문자 반영
 				{
 					stringBuffer.ReplaceKeyword(MkTagDefinitionForDataNode::TagForDQM, dqmTag); // DQM
-					stringBuffer.ReplaceTagtoCR();
+					stringBuffer.ReplaceTagtoCRLF();
 				}
 				buffer.PushBack(stringBuffer);
 			}

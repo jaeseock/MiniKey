@@ -25,10 +25,6 @@
 #define MKDEF_WCHAR_LINEFEED L'\n'
 #define MKDEF_WCHAR_RETURN L'\r'
 #define MKDEF_WCHAR_SPACE L' '
-#define MKDEF_STR_TAP L"\t"
-#define MKDEF_STR_LINEFEED L"\n"
-#define MKDEF_STR_RETURN L"\r"
-#define MKDEF_STR_SPACE L" "
 
 // static value
 static unsigned int gCurrentCodePage = CP_ACP;
@@ -622,18 +618,18 @@ void MkStr::ReplaceKeyword(const MkArraySection& section, const MkStr& keywordFr
 	m_Str.ReplaceAll(section, keywordFrom.GetBodyBlockDescriptor(), keywordTo.GetBodyBlockDescriptor());
 }
 
-void MkStr::ReplaceCRtoTag(void)
+void MkStr::ReplaceCRLFtoTag(void)
 {
-	ReplaceKeyword(CR, L"\\r\\n");
+	ReplaceKeyword(MkStr::CRLF, L"\\r\\n");
 	ReplaceKeyword(L"\r", L"\\r");
-	ReplaceKeyword(L"\n", L"\\n");
+	ReplaceKeyword(MkStr::LF, L"\\n");
 }
 
-void MkStr::ReplaceTagtoCR(void)
+void MkStr::ReplaceTagtoCRLF(void)
 {
-	ReplaceKeyword(L"\\r\\n", CR);
+	ReplaceKeyword(L"\\r\\n", MkStr::CRLF);
 	ReplaceKeyword(L"\\r", L"\r");
-	ReplaceKeyword(L"\\n", L"\n");
+	ReplaceKeyword(L"\\n", MkStr::LF);
 }
 
 void MkStr::RemoveKeyword(const MkStr& keyword)
@@ -919,7 +915,7 @@ void MkStr::ReplaceAllBlocks(unsigned int position, const MkStr& beginKeyword, c
 void MkStr::RemoveAllComment(void)
 {
 	EraseAllBlocks(0, L"/*", L"*/");
-	ReplaceAllBlocks(0, L"//", MKDEF_STR_LINEFEED, MKDEF_STR_LINEFEED);
+	ReplaceAllBlocks(0, L"//", MkStr::LF, MkStr::LF);
 
 	unsigned int pos = GetFirstKeywordPosition(L"//");
 	if (pos != MKDEF_ARRAY_ERROR) // L"//" ~ EOF
@@ -957,7 +953,7 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkStr& separator, boo
 				}
 				else if (!ignoreEmptyToken) // beginPos == found
 				{
-					tokens.PushBack(Null);
+					tokens.PushBack(MkStr::EMPTY);
 				}
 				beginPos = found + sepSize;
 			}
@@ -971,7 +967,7 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkStr& separator, boo
 				}
 				else if (!ignoreEmptyToken) // beginPos == found
 				{
-					tokens.PushBack(Null);
+					tokens.PushBack(MkStr::EMPTY);
 				}
 				break;
 			}
@@ -1003,10 +999,10 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkArray<MkStr>& separ
 unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens) const
 {
 	MkArray<MkStr> separators(4);
-	separators.PushBack(MKDEF_STR_SPACE);
-	separators.PushBack(MKDEF_STR_TAP);
-	separators.PushBack(MKDEF_STR_LINEFEED);
-	separators.PushBack(MKDEF_STR_RETURN);
+	separators.PushBack(MkStr::SPACE);
+	separators.PushBack(MkStr::TAB);
+	separators.PushBack(MkStr::LF);
+	separators.PushBack(MkStr::CR);
 	return Tokenize(tokens, separators, true);
 }
 

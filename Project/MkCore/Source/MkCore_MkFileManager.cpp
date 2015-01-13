@@ -73,13 +73,13 @@ void MkFileManager::__PrintSystemInformationToLog(void) const
 	MkStr buffer;
 	buffer.Reserve(200);
 	buffer += L"< File system >";
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 	buffer += L"   - Chunks : ";
 	buffer += m_FileSystem.GetTotalChunkCount();
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 	buffer += L"   - Files : ";
 	buffer += m_FileSystem.GetTotalFileCount();
-	buffer += MkStr::CR;
+	buffer += MkStr::CRLF;
 	MK_DEV_PANEL.MsgToLog(buffer, false);
 }
 

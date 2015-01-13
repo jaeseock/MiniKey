@@ -138,7 +138,7 @@ protected:
 public:
 
 	// empty
-	static const MkHashStr NullHash;
+	static const MkHashStr EMPTY;
 };
 
 

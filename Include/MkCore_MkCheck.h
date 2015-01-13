@@ -33,7 +33,7 @@
 #define MK_CHECK(condition, message) if (!(condition)) if (MkCheck::ExceptionForDebug(message))
 
 #else
-#ifdef BS_SHIPPING
+#ifdef MK_SHIPPING
 
 #define MK_CHECK(condition, message) if (!(condition))
 

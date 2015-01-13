@@ -1209,7 +1209,7 @@ bool MkPathName::_ExcuteProcess(const MkStr& processTitle, DWORD flag, const MkS
 	{
 		argBuf.Reserve(tmpPath.GetSize() + 1 + argument.GetSize());
 		argBuf += tmpPath;
-		argBuf += L" ";
+		argBuf += MkStr::SPACE;
 		argBuf += argument;
 	}
 

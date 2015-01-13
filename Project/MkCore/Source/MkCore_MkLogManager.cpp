@@ -33,16 +33,20 @@ bool MkLogManager::CreateNewPage(const MkStr& pageName, const MkPathName& filePa
 
 		MkStr msgBuffer;
 		msgBuffer.Reserve(400);
-		msgBuffer += L"//-----------------------------------------------------------------------------//\n";
+		msgBuffer += L"//-----------------------------------------------------------------------------//";
+		msgBuffer += MkStr::CRLF;
 		msgBuffer += L"// [ ";
 		msgBuffer += pageName;
-		msgBuffer += L" ]\n";
+		msgBuffer += L" ]";
+		msgBuffer += MkStr::CRLF;
 		msgBuffer += L"//    - Begin at : ";
 		msgBuffer += MK_SYS_ENV.GetCurrentSystemDate();
-		msgBuffer += L" ";
+		msgBuffer += MkStr::SPACE;
 		msgBuffer += _MakeCurrentTimeStr();
-		msgBuffer += L"\n";
-		msgBuffer += L"//-----------------------------------------------------------------------------//\n\n";
+		msgBuffer += MkStr::CRLF;
+		msgBuffer += L"//-----------------------------------------------------------------------------//";
+		msgBuffer += MkStr::CRLF;
+		msgBuffer += MkStr::CRLF;
 
 		ok = msgBuffer.WriteToTextFile(targetFilePath, true);
 		if (ok)
@@ -68,12 +72,12 @@ void MkLogManager::Msg(const MkStr& pageName, const MkStr& message, bool addTime
 		if (addTime)
 		{
 			buffer += _MakeCurrentTimeStr();
-			buffer += L" ";
+			buffer += MkStr::SPACE;
 		}
 
 		// message
 		buffer += message;
-		buffer += L"\n";
+		buffer += MkStr::CRLF;
 
 		// print
 		buffer.WriteToTextFile(targetPage, false);
