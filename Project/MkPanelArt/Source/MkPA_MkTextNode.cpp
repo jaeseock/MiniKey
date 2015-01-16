@@ -16,6 +16,11 @@ const static MkHashStr KEY_TEXT(L"Text");
 const static MkHashStr KEY_SEQUENCE(L"Seq");
 
 
+// Build()용 임시 버퍼 예약크기. 데이터가 이 양을 넘어가더라도 기능상 이상은 없지만 구성 시간이 오래 걸리게 됨
+// 빌드 끝나면 날아가는 임시 데이터이니 메모리에 무리가 가지 않는 선에서 넉넉히 잡아도 됨 
+#define MKDEF_TEXTNODE_DEF_BLOCK_SIZE 512 // 블록 예약크기. 블록은 type, style 설정이 변하는 구간
+#define MKDEF_TEXTNODE_DEF_LINE_SIZE 512 // 블록당 라인 예약크기
+
 //------------------------------------------------------------------------------------------------//
 
 bool MkTextNode::SetUp(const MkPathName& filePath)
@@ -98,6 +103,9 @@ void MkTextNode::SetUp(const MkDataNode& node)
 				m_Text += textBuf[i];
 			}
 		}
+
+		m_Text.RemoveKeyword(MkStr::TAB); // tab 제거
+		m_Text.RemoveKeyword(MkStr::CR); // carriage return 제거
 	}
 
 	// sequence
@@ -173,14 +181,14 @@ MkTextNode& MkTextNode::operator = (const MkTextNode& source)
 	const MkHashStr& srcFT = source.GetFontType();
 	if (GetFontType() != srcFT)
 	{
-		SetFontType(srcFT);
+		m_Type = srcFT;
 	}
 
 	// font style
 	const MkHashStr& srcFS = source.GetFontStyle();
 	if (GetFontStyle() != srcFS)
 	{
-		SetFontStyle(srcFS);
+		m_Style = srcFS;
 	}
 
 	// linefeed/horizontal offset
@@ -284,6 +292,143 @@ void MkTextNode::Export(MkDataNode& node) const
 				continue;
 
 			looper.GetCurrentField()->Export(*childNode);
+		}
+	}
+}
+
+void MkTextNode::SetFontType(const MkHashStr& fontType)
+{
+	MK_CHECK(MK_FONT_MGR.CheckAvailableFontType(fontType), L"미등록된 " + fontType.GetString() + L" font type 지정 시도")
+		return;
+
+	m_Type = fontType;
+}
+
+void MkTextNode::SetFontStyle(const MkHashStr& fontStyle)
+{
+	MK_CHECK(MK_FONT_MGR.CheckAvailableFontStyle(fontStyle), L"미등록된 " + fontStyle.GetString() + L" font style 지정 시도")
+		return;
+
+	m_Style = fontStyle;
+}
+
+void MkTextNode::Build(int widthRestriction)
+{
+	// 모든 노드를 순회하며 text block 구성
+	MkArray<_TextBlock> textBlocks(MKDEF_TEXTNODE_DEF_BLOCK_SIZE);
+	__AddTextBlock(-1, -1, textBlocks);
+
+	// line이 존재하지 않는 무의미한 block 제거
+	MkArray<unsigned int> killList(textBlocks.GetSize());
+	MK_INDEXING_LOOP(textBlocks, i)
+	{
+		if (textBlocks[i].lines.Empty())
+		{
+			killList.PushBack(i);
+		}
+	}
+	if (!killList.Empty())
+	{
+		textBlocks.Erase(killList);
+	}
+
+	// 만들어진 block들을 바탕으로 그려질 위치를 계산
+
+	/*
+	unsigned int bs = textBlocks.GetSize();
+	MK_INDEXING_LOOP(textBlocks, i)
+	{
+		const _TextBlock& tb = textBlocks[i];
+		MK_INDEXING_LOOP(tb.lines, j)
+		{
+			const _LineInfo& li = tb.lines[j];
+			int k = 0;
+		}
+	}
+
+	int k = 0;
+	*/
+}
+
+void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_TextBlock>& textBlocks) const
+{
+	if (!m_Visible)
+		return;
+
+	int typeID = m_Type.Empty() ?
+		((parentTypeID < 0) ? MK_FONT_MGR.GetFontTypeID(MkFontManager::DefaultT) : parentTypeID) :
+		MK_FONT_MGR.GetFontTypeID(m_Type);
+
+	MK_CHECK(typeID >= 0, L"미등록 font type인 " + m_Type.GetString() + L"을 사용해 text node build 시도")
+		return;
+
+	int styleID = m_Style.Empty() ?
+		((parentStyleID < 0) ? MK_FONT_MGR.GetFontStyleID(MkFontManager::DefaultS) : parentStyleID) :
+		MK_FONT_MGR.GetFontStyleID(m_Style);
+
+	MK_CHECK(styleID >= 0, L"미등록 font style인 " + m_Style.GetString() + L"을 사용해 text node build 시도")
+		return;
+
+	bool createNewBlock = true;
+	if (!textBlocks.Empty())
+	{
+		const _TextBlock& tb = textBlocks[textBlocks.GetSize() - 1];
+		createNewBlock = ((typeID != tb.typeID) || (styleID != tb.styleID));
+	}
+
+	if (createNewBlock)
+	{
+		_TextBlock& tb = textBlocks.PushBack();
+		tb.typeID = typeID;
+		tb.styleID = styleID;
+		tb.lines.Reserve(MKDEF_TEXTNODE_DEF_LINE_SIZE);
+	}
+
+	if (!m_Text.Empty())
+	{
+		int spaceSize = MK_FONT_MGR.GetFontSpaceSize(MK_FONT_MGR.GetFontTypeName(typeID));
+		MkArray<_LineInfo>& lines = textBlocks[textBlocks.GetSize() - 1].lines;
+
+		MkArray<MkStr> tokens;
+		m_Text.Tokenize(tokens, MkStr::LF, false);
+
+		MK_INDEXING_LOOP(tokens, i)
+		{
+			_LineInfo li;
+			li.lineFeed = (i != 0); // 첫번째 라인은 개행의 대상이 아님
+			li.lfOffset = GetLineFeedOffset();
+			li.hOffset = GetHorizontalOffset();
+
+			MkStr& currText = tokens[i];
+			currText.RemoveKeyword(MkStr::TAB); // tab 제거
+			currText.RemoveKeyword(MkStr::CR); // carriage return 제거
+
+			if (!currText.Empty())
+			{
+				unsigned int validPos = currText.GetFirstValidPosition();
+				if (validPos != MKDEF_ARRAY_ERROR) // 출력 될 유효문자가 존재해야 함
+				{
+					currText.GetSubStr(MkArraySection(validPos), li.text);
+					li.hOffset += validPos * spaceSize;
+				}
+			}
+
+			if (li.lineFeed || (!li.text.Empty())) // 개행도 없는데 문자열이 비었으면 무시
+			{
+				lines.PushBack(li);
+			}
+		}
+	}
+
+	if (!m_Sequence.Empty())
+	{
+		MK_INDEXING_LOOP(m_Sequence, i)
+		{
+			const MkHashStr& currChildName = m_Sequence[i];
+			if (m_Children.Exist(currChildName))
+			{
+				m_Children[currChildName]->__AddTextBlock(typeID, styleID, textBlocks);
+			}
 		}
 	}
 }

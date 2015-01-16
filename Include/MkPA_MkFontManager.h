@@ -93,8 +93,17 @@ public:
 	// font type 존재여부 반환
 	inline bool CheckAvailableFontType(const MkHashStr& fontType) const { return m_TypeList.Exist(fontType); }
 
-	// font height 반환. 존재하지 않는 type이면 0 반환
+	// 해당 font type의 pixel height 반환. 존재하지 않는 type이면 0 반환
 	inline int GetFontHeight(const MkHashStr& fontType) const { return m_TypeList.Exist(fontType) ? m_TypeList[fontType].size : 0; }
+
+	// 해당 font type의 space size 반환. 존재하지 않는 type이면 0 반환
+	inline int GetFontSpaceSize(const MkHashStr& fontType) const { return m_TypeList.Exist(fontType) ? m_TypeList[fontType].spaceSize : 0; }
+
+	// 해당 font type의 id를 반환. 존재하지 않으면 -1 반환
+	inline int GetFontTypeID(const MkHashStr& fontType) const { return m_TypeList.Exist(fontType) ? m_TypeList[fontType].id : -1; }
+
+	// 해당 id의 font type을 반환. 존재하지 않으면 EMPTY 반환
+	inline const MkHashStr& GetFontTypeName(int id) const { unsigned int i = static_cast<unsigned int>(id); return m_TypeID.IsValidIndex(i) ? m_TypeID[i] : MkHashStr::EMPTY; }
 
 	// 폰트 color 생성
 	// colorKey : 해당 색의 key로 사용할 문자열
@@ -110,6 +119,12 @@ public:
 
 	// font style 존재여부 반환
 	inline bool CheckAvailableFontStyle(const MkHashStr& fontStyle) const { return m_StyleList.Exist(fontStyle); }
+
+	// 해당 font style의 id를 반환. 존재하지 않으면 -1 반환
+	inline int GetFontStyleID(const MkHashStr& fontStyle) const { return m_StyleList.Exist(fontStyle) ? m_StyleList[fontStyle].id : -1; }
+
+	// 해당 id의 font style을 반환. 존재하지 않으면 EMPTY 반환
+	inline const MkHashStr& GetFontStyleName(int id) const { unsigned int i = static_cast<unsigned int>(id); return m_StyleID.IsValidIndex(i) ? m_StyleID[i] : MkHashStr::EMPTY; }
 
 	// 해제
 	void Clear(void);
@@ -191,6 +206,8 @@ protected:
 		MkHashStr faceName;
 		int size;
 		eThickness thickness;
+		int spaceSize;
+		int id;
 	}
 	_FontType;
 
@@ -199,6 +216,7 @@ protected:
 		D3DCOLOR textColor;
 		eOutputMode mode;
 		D3DCOLOR modeColor;
+		int id;
 	}
 	_FontStyle;
 
@@ -240,6 +258,7 @@ protected:
 
 	// type
 	MkHashMap<MkHashStr, _FontType> m_TypeList;
+	MkArray<MkHashStr> m_TypeID;
 	
 	// color
 	MkHashMap<MkHashStr, D3DCOLOR> m_ColorList;
@@ -247,6 +266,9 @@ protected:
 
 	// style
 	MkHashMap<MkHashStr, _FontStyle> m_StyleList;
+	MkArray<MkHashStr> m_StyleID;
+
+public:
 
 	// default font type
 	static const MkHashStr DefaultT;

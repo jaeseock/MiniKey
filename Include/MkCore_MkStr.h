@@ -269,14 +269,15 @@ public:
 	// return : 존재하지 않으면 MKDEF_ARRAY_ERROR, 포함되었으면 위치 반환
 	unsigned int GetLastValidPosition(unsigned int position = 0) const;
 
+	// position이후 문자열의 끝부터 마지막 유효문자까지 존재하는 공문자 갯수를 반환
+	// (in) position : source의 검사 시작 위치
+	// return : 공문자 갯수
+	unsigned int CountBacksideBlank(unsigned int position = 0) const;
+
 	// position이 텍스트의 몇 번째 라인인지 반환
 	// (in) position : cursor 위치
 	// return : 해당 라인 번호. 0부터 시작. position이 범위를 넘어가면 마지막 라인 번호 반환
 	unsigned int GetLineNumber(unsigned int position = 0) const;
-
-	// position이후 문자열의 뒷부분에 유효문자까지 존재하는 공문자(space) 갯수를 반환
-	// space만 해당되는 것으로 tab, line feed 등은 세지 않음
-	unsigned int CountBacksideSpace(unsigned int position = 0) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 키워드 검사 후 수정

@@ -106,11 +106,11 @@ public:
 	inline bool GetVisible(void) const { return m_Visible; }
 
 	// type
-	inline void SetFontType(const MkHashStr& fontType) { m_Type = fontType; }
+	void SetFontType(const MkHashStr& fontType);
 	inline const MkHashStr& GetFontType(void) const { return (m_Type.Empty() && (m_ParentNode != NULL)) ? m_ParentNode->GetFontType() : m_Type; }
 
 	// style
-	inline void SetFontStyle(const MkHashStr& fontStyle) { m_Style = fontStyle; }
+	void SetFontStyle(const MkHashStr& fontStyle);
 	inline const MkHashStr& GetFontStyle(void) const { return (m_Style.Empty() && (m_ParentNode != NULL)) ? m_ParentNode->GetFontStyle() : m_Style; }
 
 	// line feed offset
@@ -147,6 +147,35 @@ public:
 	// 직계 자식 노드 리스트를 반환
 	inline unsigned int GetChildNodeList(MkArray<MkHashStr>& childNodeList) const { return m_Children.GetKeyList(childNodeList); }
 
+protected:
+
+	//------------------------------------------------------------------------------------------------//
+	// build
+	//------------------------------------------------------------------------------------------------//
+
+	typedef struct __LineInfo
+	{
+		bool lineFeed;
+		int lfOffset;
+		int hOffset;
+		MkStr text;
+	}
+	_LineInfo;
+
+	typedef struct __TextBlock
+	{
+		int typeID;
+		int styleID;
+		MkArray<_LineInfo> lines;
+	}
+	_TextBlock;
+
+public:
+
+	void Build(int widthRestriction = 0);
+
+	void __AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_TextBlock>& textBlocks) const;
+
 	//------------------------------------------------------------------------------------------------//
 
 	MkTextNode();
@@ -160,10 +189,6 @@ protected:
 
 protected:
 
-	//------------------------------------------------------------------------------------------------//
-	// data node로 구성
-	//------------------------------------------------------------------------------------------------//
-
 	bool m_Visible;
 	MkHashStr m_Type;
 	MkHashStr m_Style;
@@ -174,10 +199,6 @@ protected:
 
 	MkTextNode* m_ParentNode;
 	MkHashMap<MkHashStr, MkTextNode*> m_Children;
-
-	//------------------------------------------------------------------------------------------------//
-	// data node로 구성
-	//------------------------------------------------------------------------------------------------//
 
 	//MkInt2 m_DrawingSize;
 };

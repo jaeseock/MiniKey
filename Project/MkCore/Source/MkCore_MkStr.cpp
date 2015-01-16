@@ -569,6 +569,21 @@ unsigned int MkStr::GetLastValidPosition(unsigned int position) const
 	return MKDEF_ARRAY_ERROR;
 }
 
+unsigned int MkStr::CountBacksideBlank(unsigned int position) const
+{
+	unsigned int cnt = 0;
+	for (unsigned int i=GetSize()-1; (i>=position) && m_Str.IsValidIndex(i); --i)
+	{
+		if (_IsBlank(m_Str[i]))
+		{
+			++cnt;
+		}
+		else
+			break;
+	}
+	return cnt;
+}
+
 unsigned int MkStr::GetLineNumber(unsigned int position) const
 {
 	if (Empty())
@@ -589,21 +604,6 @@ unsigned int MkStr::GetLineNumber(unsigned int position) const
 		}
 	}
 	return count;
-}
-
-unsigned int MkStr::CountBacksideSpace(unsigned int position) const
-{
-	unsigned int cnt = 0;
-	for (unsigned int i=GetSize()-1; (i>=position) && m_Str.IsValidIndex(i); --i)
-	{
-		if (m_Str[i] == MKDEF_WCHAR_SPACE)
-		{
-			++cnt;
-		}
-		else
-			break;
-	}
-	return cnt;
 }
 
 //------------------------------------------------------------------------------------------------//

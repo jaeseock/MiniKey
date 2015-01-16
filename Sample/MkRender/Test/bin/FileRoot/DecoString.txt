@@ -17,7 +17,6 @@ Node "1st"
 		
 		Node "일번이고"
 		{
-			bool Visible = no;
 			str Text = "\n- 평범 항목 첫번째이고\n";
 		}
 		

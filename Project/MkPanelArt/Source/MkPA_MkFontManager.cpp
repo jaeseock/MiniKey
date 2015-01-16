@@ -102,6 +102,10 @@ bool MkFontManager::CreateFontType(const MkHashStr& fontType, const MkHashStr& f
 	ft.faceName = faceName;
 	ft.size = size;
 	ft.thickness = thickness;
+	ft.spaceSize = m_AvailableUnitList[currFontKey].spaceSize;
+	ft.id = static_cast<int>(m_TypeID.GetSize());
+
+	m_TypeID.PushBack(fontType);
 
 	MK_DEV_PANEL.MsgToLog(L"> font type : " + fontType.GetString(), true);
 	return true;
@@ -130,6 +134,9 @@ bool MkFontManager::CreateFontStyle(const MkHashStr& fontStyle, const MkHashStr&
 	fs.textColor = MKDEF_PA_GET_COLOR(textColor);
 	fs.mode = mode;
 	fs.modeColor = MKDEF_PA_GET_COLOR(modeColor);
+	fs.id = static_cast<int>(m_StyleID.GetSize());
+
+	m_StyleID.PushBack(fontStyle);
 
 	MK_DEV_PANEL.MsgToLog(L"> font style : " + fontStyle.GetString(), true);
 	return true;
@@ -141,6 +148,7 @@ void MkFontManager::Clear(void)
 
 	m_ColorList.Clear();
 	m_StyleList.Clear();
+	m_StyleID.Clear();
 }
 
 MkInt2 MkFontManager::GetTextSize(const MkHashStr& fontType, const MkStr& msg, bool ignoreBacksideBlank)
@@ -385,6 +393,8 @@ void MkFontManager::_LoadFontTypes(const MkDataNode* dataNode)
 		MkArray<MkHashStr> fontTypeBuffer;
 		if (dataNode->GetChildNodeList(fontTypeBuffer) > 0)
 		{
+			m_TypeID.Reserve(fontTypeBuffer.GetSize());
+
 			fontTypeBuffer.SortInAscendingOrder(); // 정렬
 
 			MK_INDEXING_LOOP(fontTypeBuffer, i)
@@ -455,12 +465,15 @@ void MkFontManager::_LoadFontColors(const MkDataNode* dataNode)
 void MkFontManager::_LoadFontStyles(const MkDataNode* dataNode)
 {
 	m_StyleList.Clear();
+	m_StyleID.Clear();
 
 	if (dataNode != NULL)
 	{
 		MkArray<MkHashStr> fontStyleBuffer;
 		if (dataNode->GetChildNodeList(fontStyleBuffer) > 0)
 		{
+			m_StyleID.Reserve(fontStyleBuffer.GetSize());
+
 			fontStyleBuffer.SortInAscendingOrder(); // 정렬
 
 			MK_INDEXING_LOOP(fontStyleBuffer, i)
@@ -642,11 +655,13 @@ MkInt2 MkFontManager::_GetTextSize(const _FontUnit& funtUnit, const MkStr& msg, 
 	int longestX = 0;
 	MK_INDEXING_LOOP(lines, i)
 	{
-		const MkStr& currLine = lines[i];
+		MkStr& currLine = lines[i];
+		currLine.RemoveKeyword(MkStr::TAB); // tab 제거
+		currLine.RemoveKeyword(MkStr::CR); // carriage return 제거
 		if (!currLine.Empty())
 		{
 			int currWidth = _GetDXStyleTextSize(funtUnit.fontPtr, DT_SINGLELINE, currLine).x;
-			currWidth += currLine.CountBacksideSpace() * funtUnit.spaceSize; // 뒷부분의 공문자 크기를 추가
+			currWidth += currLine.CountBacksideBlank() * funtUnit.spaceSize; // 뒷부분의 공문자 크기를 추가
 			if (currWidth > longestX)
 			{
 				longestX = currWidth;
@@ -781,6 +796,7 @@ void MkFontManager::_ClearFontType(void)
 	m_FontHandleList.Clear();
 	
 	m_TypeList.Clear();
+	m_TypeID.Clear();
 }
 
 //------------------------------------------------------------------------------------------------//
