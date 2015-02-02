@@ -10,7 +10,17 @@ float MkFloatOp::SnapToLowerBound(float source, float grid)
 	return (floor(source / grid) * grid);
 }
 
+double MkFloatOp::SnapToLowerBound(double source, double grid)
+{
+	return (floor(source / grid) * grid);
+}
+
 float MkFloatOp::SnapToUpperBound(float source, float grid)
+{
+	return (ceil(source / grid) * grid);
+}
+
+double MkFloatOp::SnapToUpperBound(double source, double grid)
 {
 	return (ceil(source / grid) * grid);
 }
@@ -20,9 +30,19 @@ float MkFloatOp::GetRemainder(float source, float divider)
 	return (source - SnapToLowerBound(source, divider));
 }
 
+double MkFloatOp::GetRemainder(double source, double divider)
+{
+	return (source - SnapToLowerBound(source, divider));
+}
+
 float MkFloatOp::RoundingOff(float source)
 {
 	return floor(source + 0.5f);
+}
+
+double MkFloatOp::RoundingOff(double source)
+{
+	return floor(source + 0.5);
 }
 
 int MkFloatOp::FloatToInt(float source)
@@ -83,14 +103,14 @@ float MkFloatOp::GenerateRandomNumber(int seed)
 	return static_cast<float>(1.0 - (double)((seed * (seed * seed * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0);
 }
 
-void MkFloatOp::ConvertSecondsToClockTime(float seconds, unsigned int& hour, unsigned int& minute, unsigned int& second, unsigned int& millisec)
+void MkFloatOp::ConvertSecondsToClockTime(double seconds, unsigned int& hour, unsigned int& minute, unsigned int& second, unsigned int& millisec)
 {
-	unsigned int secs = static_cast<unsigned int>(FloatToInt(seconds));
+	unsigned int secs = static_cast<unsigned int>(seconds);
 	hour = secs / 3600;
 	secs = secs % 3600;
 	minute = secs / 60;
 	second = secs % 60;
-	millisec = static_cast<unsigned int>(FloatToInt(seconds * 1000.f)) % 1000;
+	millisec = static_cast<unsigned int>(seconds * 1000.) % 1000;
 }
 
 //------------------------------------------------------------------------------------------------//

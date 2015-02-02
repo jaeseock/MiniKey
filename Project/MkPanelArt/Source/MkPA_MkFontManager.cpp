@@ -7,7 +7,6 @@
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkDeviceManager.h"
-//#include "MkS2D_MkDecoStr.h"
 #include "MkPA_MkFontManager.h"
 
 
@@ -165,138 +164,6 @@ MkInt2 MkFontManager::GetTextSize(const MkHashStr& fontType, const MkStr& msg, b
 	return MkInt2(0, 0);
 }
 
-bool MkFontManager::RestrictSize(const MkHashStr& fontType, const MkStr& msg, const MkInt2& restriction, MkArray<MkStr>& pageBuffer)
-{
-	if (!m_TypeList.Exist(fontType))
-		return false;
-
-	if (msg.Empty())
-	{
-		pageBuffer.PushBack(); // empty page
-		return true; // not error
-	}
-
-	if ((restriction.x <= 0) && (restriction.y <= 0))
-	{
-		pageBuffer.PushBack() = msg; // just copy
-		return true; // not error
-	}
-
-	const _FontType& currFontType = m_TypeList[fontType];
-
-	MkHashStr currFontKey;
-	if (!_GetFontKey(currFontType.faceName, currFontType.size, currFontType.thickness, currFontKey))
-		return false;
-
-	const _FontUnit& currFontUnit = m_AvailableUnitList[currFontKey];
-	MK_CHECK(currFontUnit.fontPtr != NULL, currFontKey.GetString() + L" 폰트가 생성되어 있지 않음")
-		return false;
-
-	// 제한 크기 확정
-	MkInt2 fixedRestriction;
-	fixedRestriction.x = (restriction.y <= 0) ? 0 : restriction.x;
-	fixedRestriction.y = (restriction.y <= 0) ? 0 : GetMax<int>(restriction.y, currFontUnit.height); // 최소 높이는 폰트 사이즈
-	bool widthRestriction = (fixedRestriction.x > 0);
-	bool heightRestriction = (fixedRestriction.y > 0);
-
-	// 높이 제한이 존재할 경우 페이지 분할이 발생할 수 있으므로 대략적인 크기를 계산
-	if (heightRestriction)
-	{
-		MkInt2 nativeSize = _GetTextSize(currFontUnit, msg, true); // 정확할 필요는 없으므로 속도를 위해 DX style로 계산
-
-		// 가로 제한이 있을 경우 면적 비율, 없을 경우 높이 비율로 판단
-		int txtSize = (widthRestriction) ? (nativeSize.x * nativeSize.y) : nativeSize.y;
-		int restrictionSize = (widthRestriction) ? (fixedRestriction.x * fixedRestriction.y) : fixedRestriction.y;
-		float pageCount = static_cast<float>(txtSize) / static_cast<float>(restrictionSize);
-
-		pageBuffer.Reserve(static_cast<unsigned int>(pageCount) + 2);
-	}
-
-	unsigned int currPos = 0;
-	while (currPos < msg.GetSize())
-	{
-		// 새 페이지 시작
-		MkStr& currPageBuffer = pageBuffer.PushBack();
-
-		// 가로 제한이 있을 경우만 개행으로 인한 크기 변동 발생
-		if (widthRestriction)
-		{
-		}
-		currPageBuffer.Reserve((msg.GetSize() - currPos) * 2); // 두 배 여유 공간 확보
-
-		int currPageHeight = currFontUnit.height;
-
-		// 진행 할 문자열이 남아있고 높이 제한이 없거나 제한 이하면 진행
-		while ((currPos < msg.GetSize()) && ((!heightRestriction) || (currPageHeight <= fixedRestriction.y)))
-		{
-			// currPos부터 개행문자나 문자열 끝까지의 라인 하나를 얻음
-			MkStr currLineBuffer;
-			unsigned int linefeedPos = msg.GetFirstLineFeedPosition(currPos);
-			bool endOfMsg = (linefeedPos == MKDEF_ARRAY_ERROR);
-			if (endOfMsg) // 문자열 종료
-			{
-				msg.GetSubStr(MkArraySection(currPos), currLineBuffer); // 남은 문자열을 버퍼에 복사
-			}
-			else if (linefeedPos > currPos)
-			{
-				msg.GetSubStr(MkArraySection(currPos, linefeedPos - currPos), currLineBuffer); // 개행문자까지의 라인을 버퍼에 복사
-			}
-
-			// 연달아 개행문자가 올 경우(linefeedPos == currPos) 빈 문자열이 지정 될 수 있음
-			if (currLineBuffer.Empty())
-			{
-				currPageBuffer += L"\n";
-				++currPos;
-			}
-			// 문자열이 존재하면
-			else
-			{
-				// 문자열이 두 글자 이상이고 너비 제한이 존재할 때 변환길이가 제한을 넘으면 제한길이만큼 라인을 분할해 앞 부분만 추가
-				if ((currLineBuffer.GetSize() > 1) && (fixedRestriction.x > 0) &&
-					(_GetTextSize(currFontUnit, currLineBuffer, true).x > fixedRestriction.x))
-				{
-					// 문자 폭이 제각각이기 때문에 높이처럼 일괄 계산이 불가능. 그나마 적당한 이진탐색으로 판별
-					unsigned int cutSize = _FindCutSizeOfLine(currFontUnit.fontPtr, currLineBuffer, fixedRestriction.x);
-
-					MkStr safeLineToken;
-					currLineBuffer.GetSubStr(MkArraySection(0, cutSize), safeLineToken);
-					safeLineToken.RemoveRearSideBlank();
-					currPageBuffer += safeLineToken;
-					currPageBuffer += L"\n";
-
-					currPos += cutSize; // 잘린 크기만큼만 전진
-				}
-				// 한 글자거나 제한을 넘지 않으면 현재 라인 그대로 추가
-				else
-				{
-					currLineBuffer.RemoveRearSideBlank();
-					currPageBuffer += currLineBuffer;
-
-					if (endOfMsg)
-					{
-						currPos = msg.GetSize(); // 문자열 종료
-					}
-					else
-					{
-						currPageBuffer += L"\n";
-						currPos = linefeedPos + 1; // 다음 라인 시작점
-					}
-				}
-			}
-
-			currPageHeight += currFontUnit.height;
-		}
-	}
-
-	// 각 페이지 마지막의 개행문자를 삭제
-	MK_INDEXING_LOOP(pageBuffer, i)
-	{
-		pageBuffer[i].RemoveRearSideBlank();
-	}
-
-	return true;
-}
-
 bool MkFontManager::DrawMessage(const MkInt2& position, const MkStr& msg)
 {
 	return DrawMessage(position, DefaultT, DefaultS, msg);
@@ -320,30 +187,7 @@ bool MkFontManager::DrawMessage(const MkInt2& position, const MkHashStr& fontTyp
 	}
 	return false;
 }
-/*
-bool MkFontManager::DrawMessage(const MkInt2& position, const MkDecoStr& msg)
-{
-	MkHashStr currentType, currentStyle;
 
-	const MkArray<MkDecoStr::SectorInfo>& outputList = msg.__GetOutputList();
-	MK_INDEXING_LOOP(outputList, i)
-	{
-		const MkDecoStr::SectorInfo& si = outputList[i];
-		if (!si.type.Empty())
-		{
-			currentType = si.type;
-		}
-		if (!si.style.Empty())
-		{
-			currentStyle = si.style;
-		}
-
-		if (!DrawMessage(position + si.position, currentType, currentStyle, si.text))
-			return false;
-	}
-	return true;
-}
-*/
 void MkFontManager::UnloadResource(void)
 {
 	MkHashMapLooper<MkHashStr, _FontUnit> looper(m_AvailableUnitList);
@@ -365,6 +209,32 @@ void MkFontManager::ReloadResource(LPDIRECT3DDEVICE9 device)
 			fontUnit.fontPtr = _CreateFont(fontUnit);
 		}
 	}
+}
+
+unsigned int MkFontManager::__FindSplitPosition(const MkHashStr& fontType, const MkStr& singleLine, int limitSize)
+{
+	if ((!singleLine.Empty()) && m_TypeList.Exist(fontType))
+	{
+		const _FontType& currFontType = m_TypeList[fontType];
+		MkHashStr currFontKey;
+		if (_GetFontKey(currFontType.faceName, currFontType.size, currFontType.thickness, currFontKey))
+		{
+			const _FontUnit& funtUnit = m_AvailableUnitList[currFontKey];
+			if (funtUnit.fontPtr != NULL)
+			{
+				int lineWidth = 0; // 누적 길이
+				MK_INDEXING_LOOP(singleLine, i)
+				{
+					// 한 글자씩 길이를 더하며 검사
+					lineWidth += (singleLine[i] == L' ') ? funtUnit.spaceSize : _GetDXStyleTextSize(funtUnit.fontPtr, DT_SINGLELINE, singleLine.GetPtr() + i, 1).x;
+					if (lineWidth > limitSize)
+						return i;
+				}
+				return singleLine.GetSize(); // 문자열 모두 해당
+			}
+		}
+	}
+	return 0;
 }
 
 MkFontManager::MkFontManager() : MkBaseResetableResource(), MkSingletonPattern<MkFontManager>()
@@ -671,51 +541,14 @@ MkInt2 MkFontManager::_GetTextSize(const _FontUnit& funtUnit, const MkStr& msg, 
 	return MkInt2(longestX, lines.GetSize() * funtUnit.height);
 }
 
-MkInt2 MkFontManager::_GetDXStyleTextSize(LPD3DXFONT fontPtr, DWORD flag, const MkStr& msg) const
+MkInt2 MkFontManager::_GetDXStyleTextSize(LPD3DXFONT fontPtr, DWORD flag, const wchar_t* ptr, int count) const
 {
 	RECT rect;
 	rect.left = 0;
 	rect.top = 0;
 	
-	fontPtr->DrawTextW(NULL, msg.GetPtr(), msg.GetSize(), &rect, flag | DT_LEFT | DT_CALCRECT, 0);
+	fontPtr->DrawTextW(NULL, ptr, count, &rect, flag | DT_LEFT | DT_CALCRECT, 0);
 	return MkInt2(rect.right, rect.bottom);
-}
-
-unsigned int MkFontManager::_FindCutSizeOfLine(LPD3DXFONT fontPtr, const MkStr& targetLine, int restrictionX) const
-{
-	// 여기 들어 올 전제 조건은 fontPtr은 보장, targetLine은 두 글자 이상이고 변환 길이가 restrictionX를 초과한 상태임
-
-	// DrawText의 calcrect의 특성상 공문자로 종료된 문자열은 마지막 유효문자 뒤의 공문자들을 무시한다
-	// 올바르고 친절한 방식이지만 문제는 이 특성때문에 대상 문자열을 분할해 각각의 크기를 합산하는 방식을 사용 할 수 없다
-	// (ex> L"가 나"의 경우 '가'와 '나'의 글자폭이 10, 공문자의 글자폭이 5라 했을 때 총 문자길이는 25이지만 분할해 합산하면 20이 된다)
-	// 따라서 비효율적이지만 처음부터 범위까지의 누적된 문자열을 모두 검사한다
-
-	unsigned int lowerBound = 1; // 제한을 넘기지 않는게 확실시 되는 추정상 마지막 크기
-	unsigned int upperBound = targetLine.GetSize(); // 제한을 넘기는게 확실시 되는 추정상 최초의 크기
-	while (true)
-	{
-		if (upperBound == (lowerBound + 1))
-			break;
-
-		unsigned int pivot = (lowerBound + upperBound) / 2;
-		MkStr buffer;
-		targetLine.GetSubStr(MkArraySection(0, pivot), buffer);
-		int conversion = _GetDXStyleTextSize(fontPtr, DT_SINGLELINE, buffer).x;
-		if (conversion < restrictionX)
-		{
-			lowerBound = pivot;
-		}
-		else if (conversion > restrictionX)
-		{
-			upperBound = pivot;
-		}
-		else
-		{
-			lowerBound = pivot;
-			break;
-		}
-	}
-	return lowerBound;
 }
 
 bool MkFontManager::_DrawMessage

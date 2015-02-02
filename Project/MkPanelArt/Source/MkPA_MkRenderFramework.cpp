@@ -5,11 +5,11 @@
 //#include "MkS2D_MkWindowEventManager.h"
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkFontManager.h"
-//#include "MkS2D_MkTexturePool.h"
+#include "MkPA_MkBitmapPool.h"
 //#include "MkS2D_MkCursorManager.h"
-//#include "MkS2D_MkRenderStateSetter.h"
+#include "MkPA_MkRenderStateSetter.h"
 //#include "MkS2D_MkS2DCheatMessage.h"
-//#include "MkS2D_MkDrawingMonitor.h"
+#include "MkPA_MkDrawingMonitor.h"
 #include "MkPA_MkRenderer.h"
 #include "MkPA_MkRenderFramework.h"
 
@@ -48,17 +48,17 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 	MK_RESETABLE_RESPOOL.RegisterResource(MkFontManager::InstancePtr());
 
 	// 6.
-	//m_InstanceDeallocator.RegisterInstance(new MkTexturePool());
+	m_InstanceDeallocator.RegisterInstance(new MkBitmapPool());
 
 	// 7.
 	//m_InstanceDeallocator.RegisterInstance(new MkCursorManager());
 	//MK_RESETABLE_RESPOOL.RegisterResource(MkCursorManager::InstancePtr());
 
 	// 8.
-	//m_InstanceDeallocator.RegisterInstance(new MkRenderStateSetter());
+	m_InstanceDeallocator.RegisterInstance(new MkRenderStateSetter());
 
 	// 9.
-	//m_InstanceDeallocator.RegisterInstance(new MkDrawingMonitor());
+	m_InstanceDeallocator.RegisterInstance(new MkDrawingMonitor());
 
 	// 10.
 	m_InstanceDeallocator.RegisterInstance(new MkRenderer());

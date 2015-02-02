@@ -229,11 +229,27 @@
 				Name="Singleton"
 				>
 				<File
+					RelativePath=".\Source\MkPA_MkBitmapPool.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkBitmapPool.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkPA_MkDeviceManager.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\Include\MkPA_MkDeviceManager.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkPA_MkDrawingMonitor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkDrawingMonitor.h"
 					>
 				</File>
 				<File
@@ -253,6 +269,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkPA_MkRenderStateSetter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkRenderStateSetter.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkPA_MkResetableResourcePool.cpp"
 					>
 				</File>
@@ -268,18 +292,106 @@
 					RelativePath="..\..\Include\MkPA_MkBaseResetableResource.h"
 					>
 				</File>
+				<Filter
+					Name="Text"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkTextNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkTextNode.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Image"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkBaseTexture.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkBaseTexture.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkBitmapTexture.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkBitmapTexture.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkImageInfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkImageInfo.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkRenderToTexture.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkRenderToTexture.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
-				Name="Data type"
+				Name="Draw"
+				>
+				<Filter
+					Name="Render target"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkRenderTarget.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkRenderTarget.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Scene object"
 				>
 				<File
-					RelativePath=".\Source\MkPA_MkTextNode.cpp"
+					RelativePath=".\Source\MkPA_MkSceneTransform.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\Include\MkPA_MkTextNode.h"
+					RelativePath="..\..\Include\MkPA_MkSceneTransform.h"
 					>
 				</File>
+				<Filter
+					Name="Camera"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkOrthogonalCamera.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkOrthogonalCamera.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Panel"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkPanel.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkPanel.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter
@@ -291,6 +403,10 @@
 			</File>
 			<File
 				RelativePath="..\..\Include\MkPA_MkD3DDefinition.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Include\MkPA_MkGlobalDefinition.h"
 				>
 			</File>
 			<File

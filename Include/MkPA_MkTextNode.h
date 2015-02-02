@@ -2,67 +2,106 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// deco string(font definition)
+// MkTextNode
+// - font type, style, 개행시 위치 설정을 가진 문자열 집합
+// - MkDataNode 기반의 data를 통한 구성
+// - 노드 구조를 가지며 key로 탐색하여 내부 값 변경 가능(반영을 위해서는 Build() 필요)
 //
-// * 공통 규칙
-// - 알파벳의 경우 대소문자 구별
-// - 탭(\t), 리턴(\r) 문자 무시
-// - 태그 구문에서의 공문자 무시
-//   ex> <%T="맑고 20"%>, <%T = "맑고 20" %>, <%  T = "맑고 20"  %> 구문 셋은 모두 동일
+// * Build()
+// - 노드 상태(수정 용이)를 그대로 그릴려고 하면 느리기 때문에 build를 통해 그리기 편한 형태로 변경
+// - build의 결과물도 수정이 가능은 하지만 문제가 없도록 엄격히 해야 함(가급적 setter를 통한 수정 후 build를 권장)
+// - Build시 가로 폭 제한 가능
+//   (NOTE) 만약 주어진 제한이 단 한 글자도 들어가지 못할 정도로 작으면 빌드 실패함
 //
-// * 선언용 헤더
-// <%DecoStr%>
-// - deco str 문법의 문자열로 인식되기 위해서는 해당 문자열의 첫 부분에 반드시 선언되어 있어야 함
+// * MkDataNode 구성 문법
+// - 설정 종류(keyword)
+//		- font type(Type)
+//		- font style(Style)
+//		- 개행시 높이 위치 pixel offset(LFV)
+//		- 개행시 수평 위치 pixel offset(LFH)
+//		- 문자열(Text) : 배열일 경우 자동 개행으로 인식
+//		(NOTE) 로딩되는 font type/style은 font manager에 등록된 상태이어야 함
+// - 노드 내부의 설정은 해당 노드와 자식들에게 영향을 미침
+// - 자식 노드에 해당 종류의 자체적인 설정이 없으면 부모 노드의 설정을 이어받음
+// - 출력 순서는 해당 노드의 Text, Seq에 선언된 순서대로의 자식 노드 순(Seq가 없으면 사전 순서)
+// - 노드 구조이므로 기본적으로 stack 형태이지만 필요하다면 나열 형식으로 사용 할 수는 있음
+// ex>
 //
-// * font type 선언
-// <%T=(font type)%>
-// - 선언 이후의 문자열에 대한 font type 지정
-// - 해당 font type은 반드시 font manager에 선언되어 있어야 함
-// - 지정되어 있지 않거나 설정이 비어 있는 문자열의 경우 기본 값인 DSF로 대체 됨
-// ex> <%T="맑고 20"%>, <%T="굴림 16"%>, <%T="제목용 FT"%>
+//	str Type = "BigBold";
+//	str Style = "Desc:Title";
+//	int LFV = 10;
+//	str Seq = "1st" / "2st";
 //
-// * font state 선언
-// <%S=(font state)%>
-// - 선언 이후의 문자열에 대한 font state 지정
-// - 해당 font state는 반드시 font manager에 선언되어 있어야 함
-// - 지정되어 있지 않거나 설정이 비어 있는 문자열의 경우 기본 값인 DSF로 대체 됨
-// ex> <%S="일반항목"%>, <%S="회색 그림자"%>, <%S="제목용 FS"%>
+//	Node "1st"
+//	{
+//		str Text = "[ 첫번째 제목입니당 ]";
+//	
+//		Node "Sub list"
+//		{
+//			str Type = "Medium";
+//			str Style = "Desc:Normal";
+//			int LFV = 3;
+//			int LFH = 8;
+//			str Seq = "일번이고" / "이번이구나";
+//		
+//			Node "일번이고"
+//			{
+//				str Text = "\n- 평범 항목 첫번째이고\n";
+//			}
+//		
+//			Node "이번이구나"
+//			{
+//				str Text =
+//					"- 평범 항목 두번째인데" /
+//					"- 자동 개행의 유일한 방법";
+//			}
+//		}
+//	}
 //
-// * 개행 간격 선언
-// <%LF=(offset)%>
-// - 개행시 라인과 라인간의 간격은 font face에 의해 결정되지만 선언 이후의 문자열에 대한 추가 간격 지정
-// - 지정되어 있지 않거나 설정이 비어 있는 문자열의 경우 기본 값인 0으로 지정됨
-// ex> <%LF=0%>, <%LF=20%>, <%LF=-5%>
+//	Node "2st"
+//	{
+//		str Text = "\n[ 이거이 두번째 제목 ]";
+//	
+//		Node "0"
+//		{
+//			str Type = "Medium";
+//			str Style = "Desc:Normal";
+//			int LFV = 3;
 //
-// - 샘플
-//	<%LFS:5%><%T:맑고20%><%S:제목%>첫번째 제목입니당.
-//	<%T:굴림16%><%S:일반항목%>  - 내용 항목 첫번째
-//	  - 내용 항목<%S:강조항목%> 이거이 바로 강조
+//			Node "0"
+//			{
+//				str Text = "\n  - 내용 항목 첫번째";
+//			}
 //
-//	<%T:맑고20%><%S:제목%>두번째 제목입니당.
-//	<%T:굴림16%><%S:일반항목%>  - 내용 항목 첫번째 또나옴
-//	  - 내용 항목<%S:강조항목%> 두번째 강조 ㄱㄱ
+//			Node "1"
+//			{
+//				Node "100"
+//				{
+//					str Text = "\n  - 내용 항목 두번째인데 ";
+//				}
 //
-//	<%T:맑고20%>new type <%T:남산16%>test <%T:맑고20%>again
-//
-// - 사용법 1
-//	MkStr bufStr = L"...";
-//	MkDecoStr decoStr(bufStr);
-//	MK_FONT_MGR.DrawMessage(MkInt2(300, 100), decoStr);
-//
-// - 사용법 2
-//	MkStr bufStr;
-//	MkDecoStr::Convert(L"맑고20", L"일반항목", 5, L"가나다\n 라마바\n\n  사아자", bufStr);
-//	MkDecoStr decoStr(bufStr);
-//	MK_FONT_MGR.DrawMessage(MkInt2(300, 100), decoStr);
+//				Node "200"
+//				{
+//					str Type = "Special";
+//					str Style = "Desc:Highlight";
+//					str Text = "<% 바꿔주시용 %>";
+//				}
+//			
+//				Node "300"
+//				{
+//					str Text = " <- 바꾸고 강조   " / "  - 막줄\n";
+//				}
+//			}
+//		}
+//	}
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
 
+
 class MkPathName;
 class MkDataNode;
-
 
 class MkTextNode
 {
@@ -99,6 +138,7 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// 내부값 get/set
+	// (NOTE) 변경이 발생했을 경우 Build()를 호출해 주어야 반영 됨
 	//------------------------------------------------------------------------------------------------//
 
 	// visible
@@ -114,12 +154,12 @@ public:
 	inline const MkHashStr& GetFontStyle(void) const { return (m_Style.Empty() && (m_ParentNode != NULL)) ? m_ParentNode->GetFontStyle() : m_Style; }
 
 	// line feed offset
-	inline void SetLineFeedOffset(int offset) { m_LFOffset = offset; }
-	inline int GetLineFeedOffset(void) const { return m_LFOffset; }
+	inline void SetLineFeedVerticalOffset(int offset) { m_LFV = offset; }
+	inline int GetLineFeedVerticalOffset(void) const { return m_LFV; }
 
 	// horizontal offset
-	inline void SetHorizontalOffset(int offset) { m_HOffset = offset; }
-	inline int GetHorizontalOffset(void) const { return m_HOffset; }
+	inline void SetLineFeedHorizontalOffset(int offset) { m_LFH = offset; }
+	inline int GetLineFeedHorizontalOffset(void) const { return m_LFH; }
 
 	// text
 	inline void SetText(const MkStr& text) { m_Text = text; }
@@ -128,9 +168,6 @@ public:
 	// sequence
 	// (NOTE) set은 허용하지 않음
 	inline const MkArray<MkHashStr>& GetSequence(void) const { return m_Sequence; }
-
-	// 문자열이 그려질 크기를 픽셀 단위로 반환
-	//inline const MkInt2& GetDrawingSize(void) const { return m_DrawingSize; }
 
 	//------------------------------------------------------------------------------------------------//
 	// get parent/child node
@@ -147,17 +184,30 @@ public:
 	// 직계 자식 노드 리스트를 반환
 	inline unsigned int GetChildNodeList(MkArray<MkHashStr>& childNodeList) const { return m_Children.GetKeyList(childNodeList); }
 
-protected:
-
 	//------------------------------------------------------------------------------------------------//
 	// build
 	//------------------------------------------------------------------------------------------------//
 
+	// 가로 폭 제한 설정/반환
+	// pixelWidth가 0보다 크면 해당 크기로 제한함(폭을 넘는 문자열은 개행됨)
+	// (NOTE) Build() 호출 후 반영됨
+	inline void SetWidthRestriction(int pixelWidth = 0) { m_WidthRestriction = pixelWidth; }
+	inline int GetWidthRestriction(void) const { return m_WidthRestriction; }
+
+	// 노드 정보를 토대로 렌더링에 최적화된 data를 생성
+	// (NOTE) 비용이 대단히 큼
+	void Build(void);
+
+	// 텍스트가 차지하는 픽셀 영역 반환(build시 생성됨)
+	inline const MkInt2& GetWholePixelSize(void) const { return m_WholePixelSize; }	
+
+protected:
+
 	typedef struct __LineInfo
 	{
 		bool lineFeed;
-		int lfOffset;
-		int hOffset;
+		int lfv;
+		int lfh;
 		MkStr text;
 	}
 	_LineInfo;
@@ -170,11 +220,20 @@ protected:
 	}
 	_TextBlock;
 
+	typedef struct __OutputData
+	{
+		int fontHeight;
+		MkInt2 position;
+		int typeID;
+		int styleID;
+		MkStr text;
+	}
+	_OutputData;
+
 public:
 
-	void Build(int widthRestriction = 0);
-
 	void __AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_TextBlock>& textBlocks) const;
+	void __Draw(const MkInt2& position = MkInt2(0, 0));
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -186,19 +245,26 @@ public:
 protected:
 
 	void _Init(void);
+	void _ApplySingleLineOutputData(MkArray<_OutputData>& lineData, int maxFontHeight);
 
 protected:
 
+	// MkDataNode로부터 구성
 	bool m_Visible;
 	MkHashStr m_Type;
 	MkHashStr m_Style;
-	int m_LFOffset;
-	int m_HOffset;
+	int m_LFV;
+	int m_LFH;
 	MkStr m_Text;
 	MkArray<MkHashStr> m_Sequence;
 
 	MkTextNode* m_ParentNode;
 	MkHashMap<MkHashStr, MkTextNode*> m_Children;
 
-	//MkInt2 m_DrawingSize;
+	// build용
+	int m_WidthRestriction;
+
+	// 출력 data
+	MkArray<_OutputData> m_OutputDataList;
+	MkInt2 m_WholePixelSize;
 };

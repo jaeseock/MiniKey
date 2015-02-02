@@ -47,7 +47,6 @@
 
 class MkColor;
 class MkDataNode;
-//class MkDecoStr;
 
 class MkFontManager : public MkBaseResetableResource, public MkSingletonPattern<MkFontManager>
 {
@@ -143,25 +142,6 @@ public:
 	//   문자열이 비었으면 이것 조차 의도라 생각하고 MkInt2(0, 폰트의 높이) 반환
 	MkInt2 GetTextSize(const MkHashStr& fontType, const MkStr& msg, bool ignoreBacksideBlank);
 
-	// 한정된 크기 안에서 주어진 텍스트가 범위를 넘지 않도록 개행하거나 페이지 단위로 분할해 반환
-	// 출력 영역 크기가 고정되어 있을 시 여러 페이지로 나누어 출력하거나 범위를 넘어서는 문자열을 잘라낼 때 사용
-	// - 가로 제한 : 길이를 넘어가면 개행이 이루어짐. 제한하지 않으려면 0 입력
-	// - 세로 제한 : 라인 수가 범위를 넘을 경우 이후의 문자열은 다음 페이지로 이동. 제한하지 않으려면 0 입력
-	// (NOTE) 제한 영역의 크기가 만약 한 글자도 담지 못할 정도로 작더라도 0보다 크면 최소한 글자 하나는 포함 됨
-	//
-	// ex>
-	//	MkStr testStr = L"가나다\n라마바사아자차카타\n\n카타파하 으헤으   헤허허\n";
-	//	// 맑은고딕 20 size에서 testStr 크기는 (170, 80). MkInt2(120, 50)로 제한하면 가로는 끝부분에서 개행이 이루어지고 한 페이지에 두 줄까지 들어감
-	//
-	//	MkArray<MkStr> pageBuf;
-	//	if (MK_FONT_MGR.RestrictSize(L"맑은고딕20", testStr, MkInt2(120, 50), pageBuf))
-	//	{
-	//		// pageBuf[0] == L"가나다\n라마바사아자차카";
-	//		// pageBuf[1] == L"타";
-	//		// pageBuf[2] == L"카타파하 으헤으\n헤허허";
-	//	}
-	bool RestrictSize(const MkHashStr& fontType, const MkStr& msg, const MkInt2& restriction, MkArray<MkStr>& pageBuffer);
-
 	// DefaultT/DefaultS 로 텍스트 출력
 	bool DrawMessage(const MkInt2& position, const MkStr& msg);
 
@@ -173,15 +153,18 @@ public:
 	// type과 style로 텍스트 출력
 	bool DrawMessage(const MkInt2& position, const MkHashStr& fontType, const MkHashStr& fontStyle, const MkStr& msg);
 
-	// MkDecoStr로 텍스트 출력
-	//bool DrawMessage(const MkInt2& position, const MkDecoStr& msg);
-
 	//------------------------------------------------------------------------------------------------//
 	// MkBaseResetableResource
 	//------------------------------------------------------------------------------------------------//
 
 	virtual void UnloadResource(void);
 	virtual void ReloadResource(LPDIRECT3DDEVICE9 device);
+
+	//------------------------------------------------------------------------------------------------//
+	// MkTextNode용 특수 함수
+	//------------------------------------------------------------------------------------------------//
+
+	unsigned int __FindSplitPosition(const MkHashStr& fontType, const MkStr& singleLine, int limitSize);
 
 public:
 
@@ -235,7 +218,8 @@ protected:
 	LPD3DXFONT _CreateFont(const _FontUnit& fontUnit);
 
 	MkInt2 _GetTextSize(const _FontUnit& funtUnit, const MkStr& msg, bool ignoreBacksideBlank) const;
-	MkInt2 _GetDXStyleTextSize(LPD3DXFONT fontPtr, DWORD flag, const MkStr& msg) const;
+	MkInt2 _GetDXStyleTextSize(LPD3DXFONT fontPtr, DWORD flag, const wchar_t* ptr, int count) const;
+	inline MkInt2 _GetDXStyleTextSize(LPD3DXFONT fontPtr, DWORD flag, const MkStr& msg) const { return _GetDXStyleTextSize(fontPtr, flag, msg.GetPtr(), msg.GetSize()); }
 
 	unsigned int _FindCutSizeOfLine(LPD3DXFONT fontPtr, const MkStr& targetLine, int restrictionX) const;
 
@@ -246,8 +230,6 @@ protected:
 	void _ClearFontType(void);
 
 protected:
-
-	LPDIRECT3DDEVICE9 m_Device;
 
 	// face, size, thickness 순서로 저장된 font key 테이블
 	MkHashMap<MkHashStr, MkMap<int, MkMap<eThickness, MkHashStr> > > m_FontKeyTable;
@@ -302,3 +284,5 @@ public:
 	static const MkHashStr VioletS;
 	static const MkHashStr OrangeS;
 };
+
+MKDEF_DECLARE_FIXED_SIZE_TYPE(MkFontManager::_FontStyle)

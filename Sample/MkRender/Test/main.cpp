@@ -11,6 +11,7 @@
 #include "MkCore_MkWin32Application.h"
 #include "MkCore_MkProfilingManager.h"
 #include "MkCore_MkSlangFilter.h"
+#include "MkCore_MkFloatOp.h"
 
 #include "MkCore_MkDataNode.h"
 
@@ -24,6 +25,7 @@
 #include "MkPA_MkRenderer.h"
 
 #include "MkPA_MkTextNode.h"
+#include "MkPA_MkImageInfo.h"
 
 //#include "MkS2D_MkSceneNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
@@ -48,15 +50,12 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		MkTextNode tn;
-		tn.SetUp(L"DecoString.txt");
-
-		tn.Build(0);
-
-		//MkTextNode tnCopy = tn;
-		//MkDataNode dn;
+		MkDataNode dn;
+		dn.Load(L"Image\\s01.mii");
 		//tnCopy.Export(dn);
 		//dn.SaveToText(L"DecoString_.txt");
+
+		info.SetUp(MkInt2(909, 505), dn);
 
 		//MkInt2 size01F = MK_FONT_MGR.GetTextSize(MK_FONT_MGR.DSF(), test01, false);
 		return true;
@@ -88,6 +87,18 @@ public:
 				MK_FONT_MGR.ChangeFontType(dataNode.GetChildNode(L"FontResource"), L"³ª´®°íµñ");
 			}
 		}
+
+		const MkHashStr& hcn = info.GetCurrentSubsetName(L"HorizontalChange", timeState.fullTime);
+		MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
+
+		const MkHashStr& vcn = info.GetCurrentSubsetName(L"VerticalChange", timeState.fullTime);
+		MK_DEV_PANEL.MsgToFreeboard(1, L"VerticalChange : " + vcn.GetString());
+
+		const MkHashStr& fcn = info.GetCurrentSubsetName(L"FullChange", timeState.fullTime);
+		MK_DEV_PANEL.MsgToFreeboard(2, L"FullChange : " + fcn.GetString());
+
+		const MkHashStr& pn = info.GetCurrentSubsetName(L"Panorama", timeState.fullTime);
+		MK_DEV_PANEL.MsgToFreeboard(3, L"Panorama : " + pn.GetString());
 		
 	}
 
@@ -104,6 +115,8 @@ public:
 	virtual ~TestPage() { Clear(); }
 
 protected:
+
+	MkImageInfo info;
 };
 
 class TestFramework : public MkRenderFramework

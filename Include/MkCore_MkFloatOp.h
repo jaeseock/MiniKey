@@ -2,7 +2,7 @@
 #define __MINIKEY_CORE_MKFLOATOP_H__
 
 //------------------------------------------------------------------------------------------------//
-// float 연산
+// float/double 연산
 // 기본 자료형의 래핑은 부하만 유발하므로 pure function화
 //------------------------------------------------------------------------------------------------//
 
@@ -17,11 +17,13 @@ public:
 	// ex> SnapToLowerBound(4.8f, 2.f) -> 4.f
 	// ex> SnapToLowerBound(-4.8f, 2.f) -> -6.f
 	static float SnapToLowerBound(float source, float grid);
+	static double SnapToLowerBound(double source, double grid);
 
 	// 올림. grid가 있는 ceil()
 	// ex> SnapToUpperBound(4.8f, 2.f) -> 6.f
 	// ex> SnapToUpperBound(-4.8f, 2.f) -> -4.f
 	static float SnapToUpperBound(float source, float grid);
+	static double SnapToUpperBound(double source, double grid);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -30,11 +32,13 @@ public:
 	// ex> GetRemainder(4.8f, 2.f) -> 0.8f
 	// ex> GetRemainder(-4.8f, 2.f) -> 1.2f
 	static float GetRemainder(float source, float divider);
+	static double GetRemainder(double source, double divider);
 
 	// 반올림
 	// ex> RoundingOff(4.8f) -> 5.f
 	// ex> RoundingOff(-4.8f) -> -5.f
 	static float RoundingOff(float source);
+	static double RoundingOff(double source);
 
 	// 내림 후 정수형변환
 	static int FloatToInt(float source);
@@ -79,7 +83,7 @@ public:
 
 	// 초단위 시간을 시:분:초:밀리초 단위로 변환
 	static void ConvertSecondsToClockTime
-		(float seconds, unsigned int& hour, unsigned int& minute, unsigned int& second, unsigned int& millisec);
+		(double seconds, unsigned int& hour, unsigned int& minute, unsigned int& second, unsigned int& millisec);
 
 	//------------------------------------------------------------------------------------------------//
 };

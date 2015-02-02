@@ -1,5 +1,6 @@
 
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkDeque.h"
 #include "MkCore_MkDataNode.h"
 
 //#include "MkCore_MkDevPanel.h"
@@ -10,8 +11,8 @@
 const static MkHashStr KEY_VISIBLE(L"Visible");
 const static MkHashStr KEY_TYPE(L"Type");
 const static MkHashStr KEY_STYLE(L"Style");
-const static MkHashStr KEY_LFOFFSET(L"LFOffset");
-const static MkHashStr KEY_HOFFSET(L"HOffset");
+const static MkHashStr KEY_LFV(L"LFV");
+const static MkHashStr KEY_LFH(L"LFH");
 const static MkHashStr KEY_TEXT(L"Text");
 const static MkHashStr KEY_SEQUENCE(L"Seq");
 
@@ -20,6 +21,8 @@ const static MkHashStr KEY_SEQUENCE(L"Seq");
 // 빌드 끝나면 날아가는 임시 데이터이니 메모리에 무리가 가지 않는 선에서 넉넉히 잡아도 됨 
 #define MKDEF_TEXTNODE_DEF_BLOCK_SIZE 512 // 블록 예약크기. 블록은 type, style 설정이 변하는 구간
 #define MKDEF_TEXTNODE_DEF_LINE_SIZE 512 // 블록당 라인 예약크기
+#define MKDEF_TEXTNODE_DEF_INC_SIZE_BY_RESTRICTION 64 // 폭 제한으로 인해 증가되리라 예상되는 라인 배수
+#define MKDEF_TEXTNODE_DEF_DATA_COUNT_IN_A_LINE 256 // 한 라인에 존재할 output data 예약크기
 
 //------------------------------------------------------------------------------------------------//
 
@@ -72,9 +75,9 @@ void MkTextNode::SetUp(const MkDataNode& node)
 	}
 
 	// linefeed/horizontal offset
-	// 부모가 존재할 경우 m_LFOffset/m_HOffset에는 이미 부모와 동일한 값이 들어가 있는 상태
-	node.GetData(KEY_LFOFFSET, m_LFOffset, 0);
-	node.GetData(KEY_HOFFSET, m_HOffset, 0);
+	// 부모가 존재할 경우 m_LFV/m_LFH에는 이미 부모와 동일한 값이 들어가 있는 상태
+	node.GetData(KEY_LFV, m_LFV, 0);
+	node.GetData(KEY_LFH, m_LFH, 0);
 
 	// text
 	MkArray<MkStr> textBuf;
@@ -146,10 +149,7 @@ void MkTextNode::SetUp(const MkDataNode& node)
 						killList.PushBack(i);
 					}
 				}
-				if (!killList.Empty())
-				{
-					m_Sequence.Erase(killList);
-				}
+				m_Sequence.Erase(killList);
 			}
 		}
 
@@ -192,13 +192,13 @@ MkTextNode& MkTextNode::operator = (const MkTextNode& source)
 	}
 
 	// linefeed/horizontal offset
-	if (m_LFOffset != source.GetLineFeedOffset())
+	if (m_LFV != source.GetLineFeedVerticalOffset())
 	{
-		SetLineFeedOffset(source.GetLineFeedOffset());
+		SetLineFeedVerticalOffset(source.GetLineFeedVerticalOffset());
 	}
-	if (m_HOffset != source.GetHorizontalOffset())
+	if (m_LFH != source.GetLineFeedHorizontalOffset())
 	{
-		SetHorizontalOffset(source.GetHorizontalOffset());
+		SetLineFeedHorizontalOffset(source.GetLineFeedHorizontalOffset());
 	}
 
 	// text
@@ -235,6 +235,11 @@ void MkTextNode::Clear(void)
 	}
 	m_Children.Clear();
 	m_Sequence.Clear();
+
+	m_WidthRestriction = 0;
+
+	m_OutputDataList.Clear();
+	m_WholePixelSize.Clear();
 }
 
 void MkTextNode::Export(MkDataNode& node) const
@@ -260,13 +265,13 @@ void MkTextNode::Export(MkDataNode& node) const
 	}
 
 	// linefeed/horizontal offset
-	if (m_LFOffset != ((m_ParentNode == NULL) ? 0 : m_ParentNode->GetLineFeedOffset()))
+	if (m_LFV != ((m_ParentNode == NULL) ? 0 : m_ParentNode->GetLineFeedVerticalOffset()))
 	{
-		node.CreateUnit(KEY_LFOFFSET, m_LFOffset);
+		node.CreateUnit(KEY_LFV, m_LFV);
 	}
-	if (m_HOffset != ((m_ParentNode == NULL) ? 0 : m_ParentNode->GetHorizontalOffset()))
+	if (m_LFH != ((m_ParentNode == NULL) ? 0 : m_ParentNode->GetLineFeedHorizontalOffset()))
 	{
-		node.CreateUnit(KEY_HOFFSET, m_HOffset);
+		node.CreateUnit(KEY_LFH, m_LFH);
 	}
 
 	// text
@@ -312,13 +317,14 @@ void MkTextNode::SetFontStyle(const MkHashStr& fontStyle)
 	m_Style = fontStyle;
 }
 
-void MkTextNode::Build(int widthRestriction)
+void MkTextNode::Build(void)
 {
 	// 모든 노드를 순회하며 text block 구성
 	MkArray<_TextBlock> textBlocks(MKDEF_TEXTNODE_DEF_BLOCK_SIZE);
 	__AddTextBlock(-1, -1, textBlocks);
 
 	// line이 존재하지 않는 무의미한 block 제거
+	unsigned int expectedLineCount = 0;
 	MkArray<unsigned int> killList(textBlocks.GetSize());
 	MK_INDEXING_LOOP(textBlocks, i)
 	{
@@ -326,28 +332,139 @@ void MkTextNode::Build(int widthRestriction)
 		{
 			killList.PushBack(i);
 		}
+		else
+		{
+			expectedLineCount = textBlocks[i].lines.GetSize();
+		}
 	}
-	if (!killList.Empty())
+	textBlocks.Erase(killList);
+
+	// output data 비우고 크기 예약
+	if (m_WidthRestriction > 0) // 폭 제한 여부
 	{
-		textBlocks.Erase(killList);
+		// 정밀하게 면적비율로 계산 할 수도 있지만 오버헤드를 줄이기 위해 메모리를 희생
+		// 어짜피 임시 할당이고 최적화를 할 것이므로 과해도 상관 없음
+		expectedLineCount *= MKDEF_TEXTNODE_DEF_INC_SIZE_BY_RESTRICTION;
 	}
+
+	m_OutputDataList.Clear();
+	m_OutputDataList.Reserve(expectedLineCount);
+	m_WholePixelSize.Clear();
 
 	// 만들어진 block들을 바탕으로 그려질 위치를 계산
+	MkInt2 position;
+	int maxFontHeight = 0; // 현재 행의 최대 폰트 크기
+	MkArray<_OutputData> lineData(MKDEF_TEXTNODE_DEF_DATA_COUNT_IN_A_LINE); // 한 행의 정보가 담길 임시 버퍼
 
-	/*
-	unsigned int bs = textBlocks.GetSize();
 	MK_INDEXING_LOOP(textBlocks, i)
 	{
 		const _TextBlock& tb = textBlocks[i];
+
+		const MkHashStr& typeName = MK_FONT_MGR.GetFontTypeName(tb.typeID);
+		int fontHeight = MK_FONT_MGR.GetFontHeight(typeName);
+		if (fontHeight > maxFontHeight)
+		{
+			maxFontHeight = fontHeight;
+		}
+
 		MK_INDEXING_LOOP(tb.lines, j)
 		{
-			const _LineInfo& li = tb.lines[j];
-			int k = 0;
+			MkDeque<_LineInfo> lineQueue; // 직접 tb.lines[j]를 쓰지 않는 이유는 폭 제한시 추가 _LineInfo가 생성 될 가능성이 있기 때문
+			lineQueue.PushBack(tb.lines[j]);
+
+			bool allTextPassed = false;
+			while (!lineQueue.Empty())
+			{
+				const _LineInfo& li = lineQueue[0];
+
+				if (li.lineFeed) // 개행 발생
+				{
+					_ApplySingleLineOutputData(lineData, maxFontHeight);
+					
+					position.x = li.lfh;
+					position.y += maxFontHeight + li.lfv;
+					m_WholePixelSize.y = position.y;
+
+					maxFontHeight = fontHeight;
+				}
+
+				if (!li.text.Empty())
+				{
+					MkStr outputText;
+					int lineWidth = position.x + MK_FONT_MGR.GetTextSize(typeName, li.text, false).x; // 현 행의 가로 폭
+
+					// 폭 제한이 있을 경우 체크
+					if ((m_WidthRestriction > 0) && (lineWidth > m_WidthRestriction))
+					{
+						// 개행용 _LineInfo 생성
+						_LineInfo& lfInfo = lineQueue.PushBack();
+						lfInfo.lineFeed = true;
+						lfInfo.lfv = li.lfv;
+						lfInfo.lfh = li.lfh;
+
+						// 텍스트를 분할해 출력 가능한 만큼 _OutputData에 남기고 나머지는 _LineInfo를 생성해 할당
+						_LineInfo& nextInfo = lineQueue.PushBack();
+						nextInfo.lineFeed = false;
+						nextInfo.lfv = 0;
+						nextInfo.lfh = 0;
+
+						// 논리적으로 모든 텍스트가 포함되는(cutPos == li.text.GetSize()) 경우는 없음(lineWidth > m_WidthRestriction)
+						unsigned int cutPos = MK_FONT_MGR.__FindSplitPosition(typeName, li.text, m_WidthRestriction - position.x);
+
+						if (cutPos == 0) // 모든 텍스트가 다음 행으로 넘어 감
+						{
+							// 연속적으로 아무런 텍스트도 넣지 못하면 m_WidthRestriction 지나치게 작게 잡힌거라 판단
+							MK_CHECK(!allTextPassed, L"폭 제한이 너무 작음")
+							{
+								m_OutputDataList.Clear();
+								m_WholePixelSize.Clear();
+								return;
+							}
+							allTextPassed = true;
+
+							nextInfo.text = li.text;
+						}
+						else // cutPos < li.text.GetSize(). 텍스트 분할
+						{
+							li.text.GetSubStr(MkArraySection(0, cutPos), outputText);
+							li.text.GetSubStr(MkArraySection(cutPos), nextInfo.text);
+						}
+
+						lineWidth = m_WidthRestriction;
+					}
+					else
+					{
+						outputText = li.text;
+					}
+
+					if (!outputText.Empty())
+					{
+						_OutputData& od = lineData.PushBack();
+						od.fontHeight = fontHeight;
+						od.position = position;
+						od.typeID = tb.typeID;
+						od.styleID = tb.styleID;
+						od.text = outputText;
+
+						position.x = lineWidth;
+						if (position.x > m_WholePixelSize.x) // 최대 가로 폭 갱신
+						{
+							m_WholePixelSize.x = position.x;
+						}
+
+						allTextPassed = false;
+					}
+				}
+
+				lineQueue.PopFront();
+			}
 		}
 	}
 
-	int k = 0;
-	*/
+	_ApplySingleLineOutputData(lineData, maxFontHeight);
+
+	m_WholePixelSize.y += maxFontHeight;
+	m_OutputDataList.OptimizeMemory();
 }
 
 void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_TextBlock>& textBlocks) const
@@ -396,8 +513,8 @@ void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_Te
 		{
 			_LineInfo li;
 			li.lineFeed = (i != 0); // 첫번째 라인은 개행의 대상이 아님
-			li.lfOffset = GetLineFeedOffset();
-			li.hOffset = GetHorizontalOffset();
+			li.lfv = GetLineFeedVerticalOffset();
+			li.lfh = GetLineFeedHorizontalOffset();
 
 			MkStr& currText = tokens[i];
 			currText.RemoveKeyword(MkStr::TAB); // tab 제거
@@ -409,7 +526,7 @@ void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_Te
 				if (validPos != MKDEF_ARRAY_ERROR) // 출력 될 유효문자가 존재해야 함
 				{
 					currText.GetSubStr(MkArraySection(validPos), li.text);
-					li.hOffset += validPos * spaceSize;
+					li.lfh += validPos * spaceSize;
 				}
 			}
 
@@ -430,6 +547,18 @@ void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_Te
 				m_Children[currChildName]->__AddTextBlock(typeID, styleID, textBlocks);
 			}
 		}
+	}
+}
+
+void MkTextNode::__Draw(const MkInt2& position)
+{
+	MK_INDEXING_LOOP(m_OutputDataList, i)
+	{
+		const MkTextNode::_OutputData& od = m_OutputDataList[i];
+		const MkHashStr& fontType = MK_FONT_MGR.GetFontTypeName(od.typeID);
+		const MkHashStr& fontStyle = MK_FONT_MGR.GetFontStyleName(od.styleID);
+
+		MK_FONT_MGR.DrawMessage(position + od.position, fontType, fontStyle, od.text);
 	}
 }
 
@@ -458,9 +587,24 @@ void MkTextNode::_Init(void)
 	SetVisible(true);
 	m_Type.Clear();
 	m_Style.Clear();
-	SetLineFeedOffset((m_ParentNode == NULL) ? 0 : m_ParentNode->GetLineFeedOffset());
-	SetHorizontalOffset((m_ParentNode == NULL) ? 0 : m_ParentNode->GetHorizontalOffset());
+	SetLineFeedVerticalOffset((m_ParentNode == NULL) ? 0 : m_ParentNode->GetLineFeedVerticalOffset());
+	SetLineFeedHorizontalOffset((m_ParentNode == NULL) ? 0 : m_ParentNode->GetLineFeedHorizontalOffset());
 	m_Text.Clear();
+}
+
+void MkTextNode::_ApplySingleLineOutputData(MkArray<_OutputData>& lineData, int maxFontHeight)
+{
+	if (!lineData.Empty())
+	{
+		MK_INDEXING_LOOP(lineData, i)
+		{
+			_OutputData& od = lineData[i];
+			od.position.y += (maxFontHeight - od.fontHeight) / 2;
+		}
+
+		m_OutputDataList += lineData;
+		lineData.Flush();
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

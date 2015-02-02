@@ -114,18 +114,18 @@ public:
 
 	// key를 포함하는 구간의 키를 리턴 (lowerBoundKey <= key < upperBoundKey)
 	// (NOTE) std::map의 lower_bound() / upper_bound()와 개념이 다름!!!
+	// (NOTE) 멤버가 없을 경우 에러
 	//
-	// Empty()의 경우 에러
 	// (lowerBoundKey == upperBoundKey)의 경우는 다음의 셋 중 하나임
 	//	- 멤버가 하나일 경우 key 상관 없이 그 하나의 키가 리턴
 	//	- key가 첫번째 키 이하일 경우(GetFirstKey() >= key) 첫번째 키 리턴
 	//	- key가 마지막 키 이상일 경우(GetLastKey() <= key) 마지막 키 리턴
 	//
 	// ex> key (4, 6, 7, 10) 일 때,
-	//		.GetBound(1) -> 4, 4
-	//		.GetBound(12) -> 10, 10
-	//		.GetBound(5) -> 4, 6
-	//		.GetBound(8) -> 7, 10
+	//		.GetBoundKey(1) -> 4, 4
+	//		.GetBoundKey(12) -> 10, 10
+	//		.GetBoundKey(5) -> 4, 6
+	//		.GetBoundKey(8) -> 7, 10
 	inline void GetBoundKey(const KeyType& key, KeyType& lowerBoundKey, KeyType& upperBoundKey) const
 	{
 		// std::map의 key조건 상 <=, >= operator가 존재
@@ -154,6 +154,23 @@ public:
 		// (firstKey >= key)조건이 제외되므로 --itr 안전하게 사용가능(반드시 존재)
 		--itr;
 		lowerBoundKey = itr->first;
+	}
+
+	// GetBoundKey()의 lowerBoundKey에 해당하는 필드 참조
+	inline FieldType& GetLowerBoundField(const KeyType& key)
+	{
+		KeyType lowerBoundKey, upperBoundKey;
+		GetBoundKey(key, lowerBoundKey, upperBoundKey);
+		std::map<KeyType, FieldType>::iterator itr = m_Pair.find(lowerBoundKey);
+		return itr->second;
+	}
+
+	inline const FieldType& GetLowerBoundField(const KeyType& key) const
+	{
+		KeyType lowerBoundKey, upperBoundKey;
+		GetBoundKey(key, lowerBoundKey, upperBoundKey);
+		std::map<KeyType, FieldType>::const_iterator itr = m_Pair.find(lowerBoundKey);
+		return itr->second;
 	}
 
 	// 필드 참조

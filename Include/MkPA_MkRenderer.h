@@ -17,6 +17,8 @@
 #include "MkCore_MkEventQueuePattern.h"
 //#include "MkS2D_MkDrawQueue.h"
 
+#include "MkPA_MkTextNode.h"
+
 
 #define MK_RENDERER MkRenderer::Instance()
 
@@ -93,4 +95,6 @@ protected:
 
 	// render queue
 	//MkDrawQueue m_DrawQueue;
+
+	MkTextNode tn;
 };

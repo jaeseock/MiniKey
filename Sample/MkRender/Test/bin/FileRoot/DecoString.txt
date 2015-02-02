@@ -1,7 +1,7 @@
 
 str Type = "BigBold";
 str Style = "Desc:Title";
-int LFOffset = 5;
+int LFV = 10;
 str Seq = "1st" / "2st";
 
 Node "1st"
@@ -12,7 +12,8 @@ Node "1st"
 	{
 		str Type = "Medium";
 		str Style = "Desc:Normal";
-		int HOffset = 8;
+		int LFV = 3;
+		int LFH = 8;
 		str Seq = "일번이고" / "이번이구나";
 		
 		Node "일번이고"
@@ -37,6 +38,7 @@ Node "2st"
 	{
 		str Type = "Medium";
 		str Style = "Desc:Normal";
+		int LFV = 3;
 
 		Node "0"
 		{
@@ -52,13 +54,14 @@ Node "2st"
 			
 			Node "200"
 			{
+				str Type = "Special";
 				str Style = "Desc:Highlight";
 				str Text = "<% 바꿔주시용 %>";
 			}
 			
 			Node "300"
 			{
-				str Text = " <- 바꾸고 강조";
+				str Text = " <- 바꾸고 강조   " / "  - 막줄\n";
 			}
 		}
 	}

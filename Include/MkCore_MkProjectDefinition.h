@@ -55,9 +55,8 @@
 //------------------------------------------------------------------------------------------------//
 
 #define MKDEF_FRAME_COUNTS_PER_SEC 60 // 초당 루핑 수
-#define MKDEF_FRAME_TIME_FACTOR 0.06f // MKDEF_FRAME_COUNTS_PER_SEC / 1000.f
-#define MKDEF_FRAME_ELAPSED_TIME 0.01666666f // 1.f / MKDEF_FRAME_COUNTS_PER_SEC
-#define MKDEF_FRAME_ELAPSED_IN_MICROSEC_FACTOR 0.006f // MKDEF_FRAME_COUNTS_PER_SEC / 1000000.f * 100
+#define MKDEF_FRAME_TIME_FACTOR 0.06 // MKDEF_FRAME_COUNTS_PER_SEC / 1000.
+#define MKDEF_FRAME_ELAPSED_TIME 0.0166666666666666 // 1. / MKDEF_FRAME_COUNTS_PER_SEC
 
 //------------------------------------------------------------------------------------------------//
 // MkInputManager

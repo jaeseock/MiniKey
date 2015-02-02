@@ -50,7 +50,7 @@ public:
 	// 상태 복사
 	inline void GetCurrentTimeState(MkTimeState& buffer) { buffer = m_CurrentTimeState; }
 
-	// 상태를 "시:분:초:밀리초 (프레임카운트)" 현태의 문자열로 반환
+	// 상태를 "시:분:초:밀리초 (프레임카운트)" 형태의 문자열로 반환
 	void GetCurrentTimeState(MkStr& buffer);
 
 	MkTimeManager();

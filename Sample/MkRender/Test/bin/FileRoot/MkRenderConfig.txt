@@ -1,5 +1,5 @@
 
-str SceneDecoTextTable = "Scene\SceneDecoTextTable.txt";
+//str SceneDecoTextTable = "Scene\SceneDecoTextTable.txt";
 
 Node "FontResource"
 {
@@ -69,7 +69,7 @@ Node "FontResource"
 			{
 				str face = "¸¼Àº°íµñ";
 				uint size = 20;
-				int thickness = 1;
+				int thickness = 2;
 			}
 		}
 		
@@ -80,6 +80,55 @@ Node "FontResource"
 				str face = "GulimChe";
 				uint size = 14;
 				int thickness = 0;
+			}
+			
+			Node "Small"
+			{
+				str face = "GulimChe";
+				uint size = 12;
+				int thickness = 0;
+			}
+			
+			Node "SmallBold"
+			{
+				str face = "GulimChe";
+				uint size = 12;
+				int thickness = 2;
+			}
+			
+			Node "Medium"
+			{
+				str face = "GulimChe";
+				uint size = 14;
+				int thickness = 0;
+			}
+			
+			Node "MediumBold"
+			{
+				str face = "GulimChe";
+				uint size = 14;
+				int thickness = 2;
+			}
+			
+			Node "Big"
+			{
+				str face = "GulimChe";
+				uint size = 16;
+				int thickness = 1;
+			}
+			
+			Node "BigBold"
+			{
+				str face = "GulimChe";
+				uint size = 16;
+				int thickness = 2;
+			}
+			
+			Node "Special"
+			{
+				str face = "GulimChe";
+				uint size = 20;
+				int thickness = 2;
 			}
 		}
 		
@@ -92,6 +141,55 @@ Node "FontResource"
 				str face = "³ª´®°íµñ";
 				uint size = 16;
 				int thickness = 0;
+			}
+			
+			Node "Small"
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 12;
+				int thickness = 0;
+			}
+			
+			Node "SmallBold"
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 12;
+				int thickness = 2;
+			}
+			
+			Node "Medium"
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 14;
+				int thickness = 0;
+			}
+			
+			Node "MediumBold"
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 14;
+				int thickness = 2;
+			}
+			
+			Node "Big"
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 16;
+				int thickness = 1;
+			}
+			
+			Node "BigBold"
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 16;
+				int thickness = 2;
+			}
+			
+			Node "Special"
+			{
+				str face = "³ª´®°íµñ";
+				uint size = 20;
+				int thickness = 2;
 			}
 		}
 	}
@@ -162,7 +260,7 @@ Node "FontResource"
 		}
 	}
 }
-
+/*
 Node "WindowTypeImageSet"
 {
 	Node "DefaultBackground"
@@ -979,3 +1077,4 @@ Node "CursorList"
 		int2 Hotspot = (0, 0);
 	}
 }
+*/

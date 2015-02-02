@@ -11,7 +11,7 @@
 void MkTimeManager::SetUp(void)
 {
 	m_ZeroTime = GetTickCount();
-	m_CurrentTimeState = MkTimeState(0, 0.f, 0.f, false);
+	m_CurrentTimeState = MkTimeState();
 }
 
 void MkTimeManager::Update(void)
@@ -21,10 +21,10 @@ void MkTimeManager::Update(void)
 		// 현재 시간에 해당하는 Fixed 프레임 카운트를 구함
 		// (NOTE) Windows계열 시간함수들의 정밀도는 별도로 지정하지 않는 이상 15~16 ms임
 		DWORD systemTime = GetTickCount() - m_ZeroTime;
-		float currentTick = static_cast<float>(systemTime) * MKDEF_FRAME_TIME_FACTOR;
+		double currentTick = static_cast<double>(systemTime) * MKDEF_FRAME_TIME_FACTOR;
 
 		// 목표 프레임 카운트
-		unsigned int targetFrameCount = MkFloatOp::FloatToInt(currentTick);
+		unsigned int targetFrameCount = static_cast<unsigned int>(currentTick);
 
 		// 임시 time state
 		MkTimeState ts = m_CurrentTimeState;
@@ -56,7 +56,7 @@ void MkTimeManager::Update(void)
 		else
 		{
 			// time slice 양보의 미덕
-			// Sleep(0)은 자칫 starvation을 불러 올 수도 있으므로 1을 쓰지만 스케쥴링에 따라 수십 ms 밀릴 수도 있음
+			// Sleep(0)은 자칫 starvation을 불러 올 수도 있으므로 1을 쓰지만 OS 스케쥴링에 따라 수십 ms 밀릴 수도 있음
 			// 이는 전적으로 windows에 종속된 것이므로 기본 시간정밀도(xp 이하 10ms, vista 이상 20ms) 주의
 			// timeBeginPeriod/timeEndPeriod는 의미 없음
 			Sleep(1);
