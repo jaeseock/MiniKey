@@ -43,7 +43,7 @@ public:
 	inline MkType2 operator - (const MkType2& pt) const { return MkType2(x - pt.x, y - pt.y); }
 	inline MkType2 operator * (const DataType& value) const { return MkType2(x * value, y * value); }
 	inline friend MkType2 operator * (const DataType& value, const MkType2& pt) { return MkType2(value * pt.x, value * pt.y); }
-	inline MkType2 operator / (const DataType& value) const { return MkVec2(x / value, y / value); } // divided by zero 예외처리 없음
+	inline MkType2 operator / (const DataType& value) const { return MkType2(x / value, y / value); } // divided by zero 예외처리 없음
 	inline MkType2 operator - () const { return MkType2(-x, -y); }
 
 	inline MkType2& operator += (const MkType2& pt)

@@ -1,7 +1,0 @@
-
-Node "Face_"
-{
-	int2 Position = (0, 0);
-	int2 Size = (101, 101);
-	int Quilt = 45;
-}

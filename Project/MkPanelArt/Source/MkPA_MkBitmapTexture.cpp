@@ -13,7 +13,8 @@ bool MkBitmapTexture::SetUp(const MkByteArray& srcData, const MkDataNode* infoNo
 		return false;
 
 	// 텍스쳐 생성
-	if (!_SetUp(MkInt2(static_cast<int>(imgInfo.Width), static_cast<int>(imgInfo.Height)), imgInfo.MipLevels, 0, imgInfo.Format, ePoint, D3DTADDRESS_WRAP, MkColor::Black, infoNode))
+	if (!MkBaseTexture::SetUp(MkInt2(static_cast<int>(imgInfo.Width), static_cast<int>(imgInfo.Height)), imgInfo.MipLevels, 0, imgInfo.Format, ePoint,
+		D3DTADDRESS_BORDER, MkBaseTexture::IsAlphaFormat(imgInfo.Format) ? MkColor::Empty : MkColor::Black, infoNode))
 		return false;
 
 	// 서페이스에 이미지 출력

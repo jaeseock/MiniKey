@@ -75,6 +75,12 @@ public:
 
 	// 해당 설정으로 폰트 교체
 	// (NOTE) font type만 리셋되고 color와 style는 그대로 유지됨
+	// ex>
+	//	MkDataNode dataNode;
+	//	if (dataNode.Load(L"MkRenderConfig.txt"))
+	//	{
+	//		MK_FONT_MGR.ChangeFontType(dataNode.GetChildNode(L"FontResource"), L"맑은고딕");
+	//	}
 	void ChangeFontType(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey);
 
 	// 별도로 등록할 폰트 파일이 있을 경우 사용

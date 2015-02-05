@@ -18,12 +18,14 @@ bool MkRenderTarget::SetUp(eTargetType type, unsigned int count, const MkInt2& s
 	{
 		unsigned int success = 0;
 		m_TargetTexture.Reserve(count);
+
+		MkInt2 finalSize = ((size.x == 0) && (size.y == 0)) ? MK_DEVICE_MGR.GetCurrentResolution() : size;
 		for (unsigned int i=0; i<count; ++i)
 		{
 			MkRenderToTexture* rtt = new MkRenderToTexture();
 			if (rtt != NULL)
 			{
-				if (rtt->SetUp(size, format, i))
+				if (rtt->SetUp(finalSize, format, i))
 				{
 					m_TargetTexture.PushBack() = rtt;
 					++success;

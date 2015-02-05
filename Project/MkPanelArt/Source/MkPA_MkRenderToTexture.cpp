@@ -12,9 +12,6 @@ bool MkRenderToTexture::SetUp(const MkInt2& size, eFormat format, int targetInde
 		return false;
 
 	m_Size = size;
-	m_HasAlphaChannel = (format == eRGBA);
-	m_BlendType = (m_HasAlphaChannel) ? ePA_MBT_AlphaChannel : ePA_MBT_Opaque;
-
 	m_RenderToTextureFormat = format;
 	m_TargetIndex = targetIndex;
 
@@ -23,14 +20,18 @@ bool MkRenderToTexture::SetUp(const MkInt2& size, eFormat format, int targetInde
 	D3DFORMAT d3dFormat;
 	if (m_RenderToTextureFormat == eDepth)
 	{
+		m_HasAlphaChannel = false;
 		d3dFormat = D3DFMT_R32F;
 	}
 	else
 	{
+		m_HasAlphaChannel = (format == eRGBA);
 		d3dFormat = (m_HasAlphaChannel) ? D3DFMT_A8R8G8B8 : D3DFMT_X8R8G8B8;
 	}
+
+	m_BlendType = (m_HasAlphaChannel) ? ePA_MBT_AlphaChannel : ePA_MBT_Opaque;
 	
-	if (_SetUp(m_Size, 1, D3DUSAGE_RENDERTARGET, d3dFormat))
+	if (MkBaseTexture::SetUp(m_Size, 1, D3DUSAGE_RENDERTARGET, d3dFormat, ePoint, D3DTADDRESS_BORDER, (m_HasAlphaChannel) ? MkColor::Empty : MkColor::Black))
 	{
 		LPDIRECT3DDEVICE9 device = MK_DEVICE_MGR.GetDevice();
 		D3DFORMAT depthStencilFormat = MK_DEVICE_MGR.GetDepthStencilFormat();

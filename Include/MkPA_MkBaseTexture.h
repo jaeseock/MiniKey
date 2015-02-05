@@ -32,6 +32,11 @@ public:
 
 public:
 
+	bool SetUp
+		(const MkInt2& size, unsigned int mipLevel, DWORD usage, D3DFORMAT format, // 이미지 데이터에 종속
+		eFilterType filterType = ePoint, D3DTEXTUREADDRESS addressMode = D3DTADDRESS_CLAMP, const MkColor& borderColor = MkColor::Black, // 외부 설정
+		const MkDataNode* infoNode = NULL);
+
 	// 렌더 스테이트 갱신
 	void UpdateRenderState(DWORD objectAlpha) const;
 
@@ -82,15 +87,13 @@ public:
 	// image info
 	inline const MkImageInfo& GetImageInfo(void) const { return m_Info; }
 
+	// 해당 포맷이 알파 포맷인지 체크
+	static bool IsAlphaFormat(D3DFORMAT format);
+
 	MkBaseTexture();
 	virtual ~MkBaseTexture() { _Clear(); }
 
 protected:
-
-	bool _SetUp
-		(const MkInt2& size, unsigned int mipLevel, DWORD usage, D3DFORMAT format, // 이미지 데이터에 종속
-		eFilterType filterType = ePoint, D3DTEXTUREADDRESS addressMode = D3DTADDRESS_WRAP, const MkColor& borderColor = MkColor::Black, // 외부 설정
-		const MkDataNode* infoNode = NULL); // MkImageInfo
 
 	void _Clear(void);
 

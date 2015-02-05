@@ -5,14 +5,17 @@ Node "FontResource"
 {
 	Node "FontType"
 	{
-		//str FontFilePath = "Text\NanumGothic.ttf";
-			
-		//Node "EX"
-		//{
-		//	str face = "GulimChe"; // ¸¼Àº°íµñ, ³ª´®°íµñ, ...
-		//	uint size = 12;
-		//	int thickness = 0; // 0:eThin, 1:eMedium, 2:eThick, 3:eFull
-		//}
+		// Node "Category"
+		// {
+		//	str FontFilePath = "xxx.ttf" / "yyy.ttf" / ...;
+		//
+		//	Node "TypeName"
+		//	{
+		//		str face = "GulimChe"; // ¸¼Àº°íµñ, ³ª´®°íµñ, ...
+		//		uint size = 12;
+		//		int thickness = 0; // 0:eThin, 1:eMedium, 2:eThick, 3:eFull
+		//	}
+		// }
 			
 		Node "¸¼Àº°íµñ"
 		{

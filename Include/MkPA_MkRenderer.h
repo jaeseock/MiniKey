@@ -11,13 +11,12 @@
 
 
 #include "MkCore_MkSingletonPattern.h"
-#include "MkCore_MkBitFieldDW.h"
+#include "MkCore_MkBitField32.h"
 #include "MkCore_MkVersionTag.h"
 #include "MkCore_MkWindowUpdateListener.h"
 #include "MkCore_MkEventQueuePattern.h"
 //#include "MkS2D_MkDrawQueue.h"
-
-#include "MkPA_MkTextNode.h"
+#include "MkPA_MkDrawSceneNodeStep.h"
 
 
 #define MK_RENDERER MkRenderer::Instance()
@@ -58,6 +57,8 @@ public:
 	virtual void ListenShowCmdUpdate(unsigned int newShowCmd, const MkIntRect& newRect);
 	virtual void ListenWindowRestored(const MkIntRect& newRect);
 
+	inline MkDrawSceneNodeStep& GetDS(void) { return ds; }
+
 public:
 
 	MkRenderer();
@@ -85,7 +86,7 @@ protected:
 	MkVersionTag m_RendererVersion;
 
 	// 렌더러 상태
-	MkBitFieldDW m_RendererState;
+	MkBitField32 m_RendererState;
 
 	// 이벤트
 	MkEventQueuePattern<_RendererEvent> m_EventQueue;
@@ -95,6 +96,5 @@ protected:
 
 	// render queue
 	//MkDrawQueue m_DrawQueue;
-
-	MkTextNode tn;
+	MkDrawSceneNodeStep ds;
 };

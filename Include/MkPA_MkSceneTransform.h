@@ -7,10 +7,10 @@
 // - position에 depth가 포함되지 않음(계산식도 다름)
 // - 2d rotation
 // - 2d scaling
+// - transform은 아니지만 alpha 포함
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkRect.h"
-#include "MkPA_MkProjectDefinition.h"
 
 
 class MkSceneTransform
@@ -27,14 +27,18 @@ public:
 	void SetLocalRotation(float rotation);
 	inline float GetLocalRotation(void) const { return m_LocalRotation; }
 
-	inline void SetLocalScale(float scale) { m_LocalScale = (scale < 0.f) ? 0.f : scale; }
+	inline void SetLocalScale(float scale) { m_LocalScale = GetMax<float>(scale, 0.f); }
 	inline float GetLocalScale(void) const { return m_LocalScale; }
+
+	inline void SetLocalAlpha(float alpha) { m_LocalAlpha = Clamp<float>(alpha, 0.f, 1.f); }
+	inline float GetLocalAlpha(void) const { return m_LocalAlpha; }
 
 	// world
 	inline const MkFloat2& GetWorldPosition(void) const { return m_WorldPosition; }
 	inline float GetWorldDepth(void) const { return m_WorldDepth; }
 	inline float GetWorldRotation(void) const { return m_WorldRotation; }
 	inline float GetWorldScale(void) const { return m_WorldScale; }
+	inline float GetWorldAlpha(void) const { return m_WorldAlpha; }
 
 	// update
 	void Update(const MkSceneTransform* parentTransform);
@@ -43,7 +47,7 @@ public:
 	void Clear(void);
 
 	// local rect -> world rect vertices
-	void GetWorldRectVertices(const MkFloat2& rectSize, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const;
+	void GetWorldRectVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const;
 
 	MkSceneTransform() { Clear(); }
 	~MkSceneTransform() {}
@@ -54,9 +58,11 @@ protected:
 	float m_LocalDepth;
 	float m_LocalRotation;
 	float m_LocalScale;
+	float m_LocalAlpha;
 
 	MkFloat2 m_WorldPosition;
 	float m_WorldDepth;
 	float m_WorldRotation;
 	float m_WorldScale;
+	float m_WorldAlpha;
 };

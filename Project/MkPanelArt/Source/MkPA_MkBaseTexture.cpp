@@ -9,6 +9,48 @@
 
 //------------------------------------------------------------------------------------------------//
 
+bool MkBaseTexture::SetUp
+(const MkInt2& size, unsigned int mipLevel, DWORD usage, D3DFORMAT format,
+ eFilterType filterType, D3DTEXTUREADDRESS addressMode, const MkColor& borderColor, const MkDataNode* infoNode)
+{
+	LPDIRECT3DDEVICE9 device = MK_DEVICE_MGR.GetDevice();
+	if (device == NULL)
+		return false;
+
+	D3DPOOL poolType = ((usage == D3DUSAGE_DYNAMIC) || (usage == D3DUSAGE_RENDERTARGET)) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
+
+	unsigned int width = static_cast<unsigned int>(size.x);
+	unsigned int height = static_cast<unsigned int>(size.y);
+	MK_CHECK(D3DXCheckTextureRequirements(device, &width, &height, &mipLevel, 0, &format, poolType) == D3D_OK, L"허용되지 않는 포맷의 텍스쳐")
+		return false;
+
+	MK_CHECK(D3DXCreateTexture(device, width, height, mipLevel, usage, format, poolType, &m_Texture) == D3D_OK, L"d3d texture 생성 실패")
+		return false;
+
+	MK_CHECK(m_Texture->GetSurfaceLevel(0, &m_Surface) == D3D_OK, L"texture로부터 surface 생성 실패")
+	{
+		MK_RELEASE(m_Texture);
+		return false;
+	}
+
+	m_Size = MkInt2(static_cast<int>(width), static_cast<int>(height));
+	m_Format = format;
+	m_UseMipmap = (mipLevel > 1);
+
+	m_AlphaTestingRef = 1;
+
+	m_HasAlphaChannel = IsAlphaFormat(format);
+	m_BlendType = (m_HasAlphaChannel) ? ePA_MBT_AlphaChannel : ePA_MBT_Opaque;
+	
+	SetFilterType(filterType);
+
+	m_AddressMode = addressMode;
+	m_BorderColor = static_cast<D3DCOLOR>(borderColor.ConvertToD3DCOLOR());
+
+	m_Info.SetUp(m_Size, infoNode);
+	return true;
+}
+
 void MkBaseTexture::UpdateRenderState(DWORD objectAlpha) const
 {
 	if ((m_Texture != NULL) && (m_Surface != NULL))
@@ -171,53 +213,8 @@ void MkBaseTexture::SetFilterType(eFilterType filterType)
 	}
 }
 
-MkBaseTexture::MkBaseTexture()
+bool MkBaseTexture::IsAlphaFormat(D3DFORMAT format)
 {
-	m_Texture = NULL;
-	m_Surface = NULL;
-	m_Format = D3DFMT_UNKNOWN;
-
-	m_AlphaTestingRef = 1;
-	SetFilterType(ePoint);
-	m_AddressMode = D3DTADDRESS_WRAP;
-	m_BorderColor = MkColor::Black.ConvertToD3DCOLOR();
-	m_UseMipmap = false;
-	m_HasAlphaChannel = false;
-	m_BlendType = ePA_MBT_Opaque;
-}
-
-bool MkBaseTexture::_SetUp
-(const MkInt2& size, unsigned int mipLevel, DWORD usage, D3DFORMAT format,
- eFilterType filterType, D3DTEXTUREADDRESS addressMode, const MkColor& borderColor, const MkDataNode* infoNode)
-{
-	LPDIRECT3DDEVICE9 device = MK_DEVICE_MGR.GetDevice();
-	if (device == NULL)
-		return false;
-
-	D3DPOOL poolType = ((usage == D3DUSAGE_DYNAMIC) || (usage == D3DUSAGE_RENDERTARGET)) ? D3DPOOL_DEFAULT : D3DPOOL_MANAGED;
-
-	unsigned int width = static_cast<unsigned int>(size.x);
-	unsigned int height = static_cast<unsigned int>(size.y);
-	MK_CHECK(D3DXCheckTextureRequirements(device, &width, &height, &mipLevel, 0, &format, poolType) == D3D_OK, L"허용되지 않는 포맷의 텍스쳐")
-		return false;
-
-	MK_CHECK(D3DXCreateTexture(device, width, height, mipLevel, usage, format, poolType, &m_Texture) == D3D_OK, L"d3d texture 생성 실패")
-		return false;
-
-	MK_CHECK(m_Texture->GetSurfaceLevel(0, &m_Surface) == D3D_OK, L"texture로부터 surface 생성 실패")
-	{
-		MK_RELEASE(m_Texture);
-		return false;
-	}
-
-	m_Size = MkInt2(static_cast<int>(width), static_cast<int>(height));
-	m_Format = format;
-	m_UseMipmap = (mipLevel > 1);
-
-	m_AlphaTestingRef = 1;
-
-	m_HasAlphaChannel = false;
-	m_BlendType = ePA_MBT_Opaque;
 	switch (format)
 	{
 	case D3DFMT_A8R8G8B8:
@@ -237,22 +234,24 @@ bool MkBaseTexture::_SetUp
 	case D3DFMT_DXT3: // 알파 4bit
 	//case D3DFMT_DXT4: DXT3 + premultified alpha
 	case D3DFMT_DXT5: // 알파 4bit를 8bit로 보간
-		m_HasAlphaChannel = true;
-		m_BlendType = ePA_MBT_AlphaChannel;
-		break;
+		return true;
     }
-	
-	SetFilterType(filterType);
+	return false;
+}
 
-	m_AddressMode = addressMode;
-	m_BorderColor = static_cast<D3DCOLOR>(borderColor.ConvertToD3DCOLOR());
+MkBaseTexture::MkBaseTexture()
+{
+	m_Texture = NULL;
+	m_Surface = NULL;
+	m_Format = D3DFMT_UNKNOWN;
 
-	if (infoNode != NULL)
-	{
-		m_Info.SetUp(m_Size, *infoNode);
-	}
-
-	return true;
+	m_AlphaTestingRef = 1;
+	SetFilterType(ePoint);
+	m_AddressMode = D3DTADDRESS_CLAMP;
+	m_BorderColor = MkColor::Black.ConvertToD3DCOLOR();
+	m_UseMipmap = false;
+	m_HasAlphaChannel = false;
+	m_BlendType = ePA_MBT_Opaque;
 }
 
 void MkBaseTexture::_Clear(void)

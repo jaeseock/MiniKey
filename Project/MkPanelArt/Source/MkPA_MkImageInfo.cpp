@@ -20,12 +20,9 @@ const static MkHashStr CMD_AUTO_GEN_SUBSET_LIST = L"~";
 
 //------------------------------------------------------------------------------------------------//
 
-void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode& node)
+void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 {
 	Clear();
-
-	// group
-	node.GetDataEx(GROUP_KEY, m_Group, 0);
 
 	// ready to uv converting
 	MkFloat2 fImageSize(static_cast<float>(imageSize.x), static_cast<float>(imageSize.y));
@@ -38,13 +35,19 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode& node)
 	emptySubset.uv[MkFloatRect::eLeftBottom] = MkFloat2(0.f, 1.f);
 	emptySubset.uv[MkFloatRect::eRightBottom] = MkFloat2(1.f, 1.f);
 
+	if (node == NULL)
+		return;
+
+	// group
+	node->GetDataEx(GROUP_KEY, m_Group, 0);
+
 	// parse nodes
 	MkArray<MkHashStr> keyList;
-	node.GetChildNodeList(keyList);
+	node->GetChildNodeList(keyList);
 	MK_INDEXING_LOOP(keyList, i)
 	{
 		const MkHashStr& childName = keyList[i];
-		const MkDataNode& childNode = *node.GetChildNode(childName);
+		const MkDataNode& childNode = *node->GetChildNode(childName);
 
 		do
 		{
@@ -86,6 +89,7 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode& node)
 							_RegisterSubset(childName.GetString() + MkStr(y * table.x + x), fSubsetSize, currPivot, fImageSize, fUVSize);
 							currPivot.x += offset.x;
 						}
+						currPivot.x = position.x;
 						currPivot.y += offset.y;
 					}
 				}

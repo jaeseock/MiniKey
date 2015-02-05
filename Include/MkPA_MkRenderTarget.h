@@ -26,12 +26,12 @@ public:
 
 	// 초기화
 	// type : back buffer(eBackbuffer) or render to texture(eTexture)
-	// count : type이 eTexture일 경우 최대 채널 수
-	// size : type이 eTexture일 경우 생성 할 render to texture의 크기
+	// count : type이 eTexture일 경우 최대 채널 수(MRT를 사용 할 경우 2 이상)
+	// size : type이 eTexture일 경우 생성 할 render to texture의 크기. (0, 0)일 경우 screen size로 설정
 	// format : type이 eTexture일 경우 생성 할 render to texture의 포맷
 	bool SetUp(
 		eTargetType type = eBackbuffer,
-		unsigned int count = 0,
+		unsigned int count = 1,
 		const MkInt2& size = MkInt2(0, 0),
 		MkRenderToTexture::eFormat format = MkRenderToTexture::eRGBA);
 
@@ -49,7 +49,7 @@ public:
 	MkInt2 GetScreenSize(void) const;
 
 	// 지정된 영역 정보 반환
-	inline const MkFloatRect& GetNewestRegionRect(void) const { return m_RegionRect; }
+	inline const MkFloatRect& GetRegionRect(void) const { return m_RegionRect; }
 
 	// 텍스쳐 참조 반환
 	inline unsigned int GetTextureCount(void) const { return m_TargetTexture.GetSize(); }

@@ -25,9 +25,8 @@
 #include "MkPA_MkRenderer.h"
 
 #include "MkPA_MkTextNode.h"
-#include "MkPA_MkImageInfo.h"
 
-//#include "MkS2D_MkSceneNode.h"
+#include "MkPA_MkSceneNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -35,7 +34,7 @@
 //#include "MkS2D_MkEditBoxNode.h"
 //#include "MkS2D_MkTabWindowNode.h"
 
-//#include "MkS2D_MkDrawStep.h"
+#include "MkPA_MkDrawSceneNodeStep.h"
 //#include "MkS2D_MkWindowEventManager.h"
 
 //#include "MkCore_MkNameSelection.h"
@@ -50,73 +49,152 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		MkDataNode dn;
-		dn.Load(L"Image\\s01.mii");
-		//tnCopy.Export(dn);
-		//dn.SaveToText(L"DecoString_.txt");
+		sn = new MkSceneNode(L"Root");
+		MkPanel* p = sn->GetPanel(L"Test");
+		p->SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
+		p->SetBiggerSourceOp(MkPanel::eCutSource);
+		p->SetPanelSize(MkFloat2(110.f, 250.f));
+		
+		//p->SetTexture(L"Image\\s01.jpg");
+		
+		MkTextNode tn;
+		tn.SetUp(L"TextNodeSample.txt");
+		p->SetTextNode(tn, true);
 
-		info.SetUp(MkInt2(909, 505), dn);
+		//sn->SetLocalPosition(MkFloat2(0.f, 505.f));
+		//sn->SetLocalDepth(1.f);
 
-		//MkInt2 size01F = MK_FONT_MGR.GetTextSize(MK_FONT_MGR.DSF(), test01, false);
+		MkDrawSceneNodeStep& ds = MK_RENDERER.GetDS();
+		ds.SetSceneNode(sn);
+
 		return true;
 	}
 
 	virtual void Update(const MkTimeState& timeState)
 	{
-		if (MK_INPUT_MGR.GetKeyReleased(VK_F1))
+		if (sn != NULL)
 		{
-			MkDataNode dataNode;
-			if (dataNode.Load(L"MkRenderConfig.txt"))
+			MkPanel* p = sn->GetPanel(L"Test");
+
+			MkFloat2 localPos = p->GetLocalPosition();
+			const float movement = static_cast<float>(timeState.elapsed) * 300.f;
+			if (MK_INPUT_MGR.GetKeyPushing(L'A'))
 			{
-				MK_FONT_MGR.ChangeFontType(dataNode.GetChildNode(L"FontResource"), L"¸¼Àº°íµñ");
+				localPos.x -= movement;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(L'D'))
+			{
+				localPos.x += movement;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(L'W'))
+			{
+				localPos.y += movement;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(L'S'))
+			{
+				localPos.y -= movement;
+			}
+			p->SetLocalPosition(localPos);
+
+			float localRot = p->GetLocalRotation();
+			const float rotVel = static_cast<float>(timeState.elapsed) * MKDEF_PI * 0.5f;
+			if (MK_INPUT_MGR.GetKeyPushing(L'Q'))
+			{
+				localRot -= rotVel;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(L'E'))
+			{
+				localRot += rotVel;
+			}
+			p->SetLocalRotation(localRot);
+
+			float localScale = p->GetLocalScale();
+			const float scaleVel = static_cast<float>(timeState.elapsed);
+			if (MK_INPUT_MGR.GetKeyPushing(L'Z'))
+			{
+				localScale -= scaleVel;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(L'X'))
+			{
+				localScale += scaleVel;
+			}
+			p->SetLocalScale(localScale);
+
+			MkFloat2 psp = p->GetPixelScrollPosition();
+			if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
+			{
+				psp.x -= movement;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
+			{
+				psp.x += movement;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
+			{
+				psp.y -= movement;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
+			{
+				psp.y += movement;
+			}
+			p->SetPixelScrollPosition(psp);
+		}
+
+		if (MK_INPUT_MGR.GetKeyReleased(L' '))
+		{
+			if (sn != NULL)
+			{
+				MkPanel* p = sn->GetPanel(L"Test");
+				MkArray<MkHashStr> keys;
+				p->GetAllSequences(keys);
+				++si;
+				if (si >= keys.GetSize())
+				{
+					si = 0;
+				}
+				p->SetSubsetOrSequenceName(keys[si], timeState.fullTime);
+				MK_DEV_PANEL.MsgToLog(keys[si].GetString());
 			}
 		}
-		else if (MK_INPUT_MGR.GetKeyReleased(VK_F2))
+
+		if (MK_INPUT_MGR.GetKeyReleased(L'1'))
 		{
-			MkDataNode dataNode;
-			if (dataNode.Load(L"MkRenderConfig.txt"))
+			if (sn != NULL)
 			{
-				MK_FONT_MGR.ChangeFontType(dataNode.GetChildNode(L"FontResource"), L"±¼¸²");
-			}
-		}
-		else if (MK_INPUT_MGR.GetKeyReleased(VK_F3))
-		{
-			MkDataNode dataNode;
-			if (dataNode.Load(L"MkRenderConfig.txt"))
-			{
-				MK_FONT_MGR.ChangeFontType(dataNode.GetChildNode(L"FontResource"), L"³ª´®°íµñ");
+				MkPanel* panel = sn->GetPanel(L"Test");
+				MkTextNode* textNode = panel->GetTextNodePtr();
+				MkTextNode* targetNode = textNode->GetChildNode(L"1st")->GetChildNode(L"Sub list")->GetChildNode(L"ÀÌ¹øÀÌ±¸³ª");
+				targetNode->SetFontStyle(L"Desc:Notice");
+				targetNode->SetText(L"- ÀÌ°É·Î ¹Ù²åÀ½´ç ( ¤Ñ_-)r");
+				panel->BuildAndUpdateTextCache();
 			}
 		}
 
-		const MkHashStr& hcn = info.GetCurrentSubsetName(L"HorizontalChange", timeState.fullTime);
-		MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
-
-		const MkHashStr& vcn = info.GetCurrentSubsetName(L"VerticalChange", timeState.fullTime);
-		MK_DEV_PANEL.MsgToFreeboard(1, L"VerticalChange : " + vcn.GetString());
-
-		const MkHashStr& fcn = info.GetCurrentSubsetName(L"FullChange", timeState.fullTime);
-		MK_DEV_PANEL.MsgToFreeboard(2, L"FullChange : " + fcn.GetString());
-
-		const MkHashStr& pn = info.GetCurrentSubsetName(L"Panorama", timeState.fullTime);
-		MK_DEV_PANEL.MsgToFreeboard(3, L"Panorama : " + pn.GetString());
+		if (sn != NULL)
+		{
+			sn->Update(timeState.fullTime);
+		}
 		
+		//MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
 	}
 
 	virtual void Clear(MkDataNode* sharingNode = NULL)
 	{
-		
+		MK_DELETE(sn);
 	}
 
 	TestPage(const MkHashStr& name) : MkBasePage(name)
 	{
-		
+		sn = NULL;
+		si = 0;
 	}
 
 	virtual ~TestPage() { Clear(); }
 
 protected:
 
-	MkImageInfo info;
+	MkSceneNode* sn;
+	unsigned int si;
 };
 
 class TestFramework : public MkRenderFramework

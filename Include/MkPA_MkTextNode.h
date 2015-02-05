@@ -9,7 +9,7 @@
 //
 // * Build()
 // - 노드 상태(수정 용이)를 그대로 그릴려고 하면 느리기 때문에 build를 통해 그리기 편한 형태로 변경
-// - build의 결과물도 수정이 가능은 하지만 문제가 없도록 엄격히 해야 함(가급적 setter를 통한 수정 후 build를 권장)
+// - build의 결과물도 수정은 가능하지만 문제가 없도록 엄격히 해야 함(가급적 setter를 통한 수정 후 build를 권장)
 // - Build시 가로 폭 제한 가능
 //   (NOTE) 만약 주어진 제한이 단 한 글자도 들어가지 못할 정도로 작으면 빌드 실패함
 //
@@ -124,6 +124,7 @@ public:
 
 	// deep copy
 	// (NOTE) source의 parent는 할당되지 않음
+	// (NOTE) source의 build 정보도 할당되지 않음. 따라서 복사된 객체를 사용하기 위해서는 별도로 Build()를 호출해 주어야 함
 	MkTextNode& operator = (const MkTextNode& source);
 
 	// 해제
@@ -233,7 +234,7 @@ protected:
 public:
 
 	void __AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_TextBlock>& textBlocks) const;
-	void __Draw(const MkInt2& position = MkInt2(0, 0));
+	void __Draw(const MkInt2& position = MkInt2(0, 0)) const;
 
 	//------------------------------------------------------------------------------------------------//
 

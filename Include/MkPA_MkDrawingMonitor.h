@@ -21,7 +21,7 @@ public:
 	inline void IncreaseRenderTargetCounter(void) { ++m_RenderTargetCounter; }
 
 	inline void IncreaseValidPanelCounter(unsigned int count) { m_ValidPanelCounter += count; }
-	inline void IncreaseValidTextureCounter(unsigned int count) { m_ValidTextureCounter += count; }
+	inline void IncreaseValidMaterialCounter(unsigned int count) { m_ValidMaterialCounter += count; }
 	inline void IncreasePanelSetCounter(unsigned int count) { m_PanelSetCounter += count; }
 
 	void EndOfFrame(void);
@@ -35,7 +35,7 @@ protected:
 	unsigned int m_RenderTargetCounter;
 
 	unsigned int m_ValidPanelCounter;
-	unsigned int m_ValidTextureCounter;
+	unsigned int m_ValidMaterialCounter;
 	unsigned int m_PanelSetCounter;
 
 };

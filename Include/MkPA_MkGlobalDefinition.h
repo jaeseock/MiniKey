@@ -10,24 +10,24 @@ enum ePA_MaterialBlendType
 	ePA_MBT_ColorAdd,
 	ePA_MBT_ColorMult
 };
-/*
+
 // scene node type
-enum eS2D_SceneNodeType
+enum ePA_SceneNodeType
 {
-	eS2D_SNT_SceneNode = 0, // MkSceneNode
-	eS2D_SNT_BaseWindowNode, // MkBaseWindowNode
+	ePA_SNT_SceneNode = 0 // MkSceneNode
+	//ePA_SNT_BaseWindowNode, // MkBaseWindowNode
 
-	eS2D_SNT_ControlWindowNodeBegin,
+	//ePA_SNT_ControlWindowNodeBegin,
 
-	eS2D_SNT_SpreadButtonNode = eS2D_SNT_ControlWindowNodeBegin, // MkSpreadButtonNode
-	eS2D_SNT_CheckButtonNode, // MkCheckButtonNode
-	eS2D_SNT_ScrollBarNode, // MkScrollBarNode
-	eS2D_SNT_EditBoxNode, // MkEditBoxNode
-	eS2D_SNT_TabWindowNode, // MkTabWindowNode
+	//ePA_SNT_SpreadButtonNode = ePA_SNT_ControlWindowNodeBegin, // MkSpreadButtonNode
+	//ePA_SNT_CheckButtonNode, // MkCheckButtonNode
+	//ePA_SNT_ScrollBarNode, // MkScrollBarNode
+	//ePA_SNT_EditBoxNode, // MkEditBoxNode
+	//ePA_SNT_TabWindowNode, // MkTabWindowNode
 
-	eS2D_SNT_ControlWindowNodeEnd
+	//ePA_SNT_ControlWindowNodeEnd
 };
-
+/*
 // window preset component
 enum eS2D_WindowPresetComponent
 {

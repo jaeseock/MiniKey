@@ -54,7 +54,7 @@ public:
 	Sequence;
 
 	// 초기화
-	void SetUp(const MkInt2& imageSize, const MkDataNode& node);
+	void SetUp(const MkInt2& imageSize, const MkDataNode* node);
 
 	// 해당 sequence의 pointer 반환
 	const Sequence* GetSequencePtr(const MkHashStr& sequenceName) const;
@@ -66,6 +66,9 @@ public:
 	// 해당 sequence의 elapsed 구간에 맞는 subset pointer를 반환
 	// 에러 상황이면 NULL 반환
 	const Subset* GetCurrentSubsetPtr(const MkHashStr& subsetOrSequenceName, double elapsed = 0.) const;
+
+	// 사용 가능한 subset, sequence name인지 여부 반환
+	inline bool IsValidName(const MkHashStr& subsetOrSequenceName) const { return (m_Subsets.Exist(subsetOrSequenceName) || m_Sequences.Exist(subsetOrSequenceName)); }
 
 	// 그룹명 반환
 	inline const MkHashStr& GetGroup(void) const { return m_Group; }

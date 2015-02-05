@@ -356,6 +356,38 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="Draw step"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkDrawSceneNodeStep.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkDrawSceneNodeStep.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkDrawStepInterface.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkDrawTextNodeStep.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkDrawTextNodeStep.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkDrawToStaticTextureStep.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkDrawToStaticTextureStep.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="Scene object"
@@ -389,6 +421,18 @@
 					</File>
 					<File
 						RelativePath="..\..\Include\MkPA_MkPanel.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="0. Scene node"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkSceneNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkSceneNode.h"
 						>
 					</File>
 				</Filter>

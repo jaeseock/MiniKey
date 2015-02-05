@@ -18,38 +18,40 @@
 //	}
 //------------------------------------------------------------------------------------------------//
 
-#include "MkCore_MkBitFieldDW.h"
+#include "MkCore_MkBitField32.h"
 #include "MkPA_MkSceneTransform.h"
 #include "MkPA_MkBaseTexture.h"
 //#include "MkS2D_MkTextCacheStep.h"
 
 
+class MkDrawStepInterface;
+class MkTextNode;
+
 class MkPanel
 {
 public:
 
-	enum eSrcType
+	//enum eSrcType
+	//{
+	//	eNone = 0,
+	//	eStaticImage,
+	//	eRenderToTexture
+	//};
+
+	// source의 크기가 panel의 크기보다 작을 때의 동작
+	enum eSmallerSourceOp
 	{
-		eNone = 0,
-		eStaticImage,
-		eRenderToTexture
+		eReducePanel = 0, // source의 크기에 맞게 panel을 축소해 맞춤. Update()시 panel size 자동계산
+		eExpandSource, // panel 크기에 맞게 source를 확대해 맞춤. Update()전 panel size 사전입력 필요
+		eAttachToLeftTop // panel과 source 크기를 모두 유지. panel의 left-top을 기준으로 출력. Update()전 panel size 사전입력 필요
 	};
 
-	enum eResizingType // source와 panel의 크기가 다를 때의 동작
+	// source의 크기가 panel의 크기보다 클 때의 동작
+	enum eBiggerSourceOp
 	{
-		eFollowSource = 0, // source의 크기에 panel을 맞춤
-		eExpandOrReduce, // panel 크기에 source를 확대/축소해 맞춤
-		eExpandOrCut // source가 panel보다 작을 경우 확대, 클 경우 일부만 잘라 보여줌. offset(scrolling) 지정 가능
-	};
-
-	enum eAttribute
-	{
-		// 출력 여부
-		eVisible = 1,
-
-		// uv 반전
-		eHorizontalReflection = 1 << 1, // u
-		eVerticalReflection = 1 << 2 // v
+		eExpandPanel = 0, // source의 크기에 맞게 panel을 확대해 맞춤. Update()시 panel size 자동계산
+		eReduceSource, // panel 크기에 맞게 source를 축소해 맞춤. Update()전 panel size 사전입력 필요
+		eCutSource // source를 panel 크기에 맞게 일부만 잘라 보여줌. pixel position 지정 가능. Update()전 panel size 사전입력 필요
 	};
 
 public:
@@ -60,73 +62,125 @@ public:
 	// MkDataNode로 출력
 	//void Save(MkDataNode& node);
 
+	//------------------------------------------------------------------------------------------------//
 	// transform
-	inline MkSceneTransform& GetTransform(void) { return m_Transform; }
-	inline const MkSceneTransform& GetTransform(void) const { return m_Transform; }
+	//------------------------------------------------------------------------------------------------//
 
-	// set & get object alpha(0.f ~ 1.f)
-	void SetObjectAlpha(float alpha);
-	float GetObjectAlpha(void) const;
+	// local
+	inline void SetLocalPosition(const MkFloat2& position) { m_Transform.SetLocalPosition(position); }
+	inline const MkFloat2& GetLocalPosition(void) const { return m_Transform.GetLocalPosition(); }
 
-	// panel resizing type
-	inline void SetResizingType(eResizingType type) { m_ResizingType = type; }
-	inline eResizingType GetResizingType(void) const { return m_ResizingType; }
+	inline void SetLocalDepth(float depth) { m_Transform.SetLocalDepth(depth); }
+	inline float GetLocalDepth(void) const { return m_Transform.GetLocalDepth(); }
+
+	inline void SetLocalRotation(float rotation) { m_Transform.SetLocalRotation(rotation); }
+	inline float GetLocalRotation(void) const { return m_Transform.GetLocalRotation(); }
+
+	inline void SetLocalScale(float scale) { m_Transform.SetLocalScale(scale); }
+	inline float GetLocalScale(void) const { return m_Transform.GetLocalScale(); }
+
+	inline void SetLocalAlpha(float alpha) { m_Transform.SetLocalAlpha(alpha); }
+	inline float GetLocalAlpha(void) const { return m_Transform.GetLocalAlpha(); }
+
+	// world
+	inline const MkFloat2& GetWorldPosition(void) const { return m_Transform.GetWorldPosition(); }
+	inline float GetWorldDepth(void) const { return m_Transform.GetWorldDepth(); }
+	inline float GetWorldRotation(void) const { return m_Transform.GetWorldRotation(); }
+	inline float GetWorldScale(void) const { return m_Transform.GetWorldScale(); }
+	inline float GetWorldAlpha(void) const { return m_Transform.GetWorldAlpha(); }
+
+	// identify transform
+	inline void IdentifyTransform(void) { m_Transform.Clear(); }
+
+	// get axis-aligned minimum bounding rect
+	inline const MkFloatRect& GetWorldAABR(void) const { return m_AABR; }
+
+	//------------------------------------------------------------------------------------------------//
+	// panel size, uv op & resizing(image source와 panel 크기가 다를 경우의 처리)
+	//------------------------------------------------------------------------------------------------//
+
+	// panel resizing op : src is smaller than panel
+	void SetSmallerSourceOp(eSmallerSourceOp op);
+	eSmallerSourceOp GetSmallerSourceOp(void) const;
+
+	// panel resizing op : src is bigger than panel
+	void SetBiggerSourceOp(eBiggerSourceOp op);
+	eBiggerSourceOp GetBiggerSourceOp(void) const;
 
 	// panel size
 	inline void SetPanelSize(const MkFloat2& size) { m_PanelSize = size; } // resizing type이 eFollowSource일 때는 의미 없음
 	inline const MkFloat2& GetPanelSize(void) const { return m_PanelSize; }
 
-	// panel scroll offset
+	// panel pixel scroll position
 	// resizing type이 eExpandOrCut이고 source 크기가 panel보다 클 경우(cut) 상황에만 동작
-	inline void SetScrollOffset(const MkFloat2& offset) { m_ScrollOffset = offset; }
-	inline const MkFloat2& GetScrollOffset(void) const { return m_ScrollOffset; }
+	// top-down coordinate. (0, 0)이 left-top을 의미
+	inline void SetPixelScrollPosition(const MkFloat2& position) { m_PixelScrollPosition = position; }
+	inline const MkFloat2& GetPixelScrollPosition(void) const { return m_PixelScrollPosition; }
 
-	// get axis-aligned minimum bounding rect
-	inline const MkFloatRect& GetAABR(void) const { return m_AABR; }
+	// uv reflection
+	void SetHorizontalReflection(bool enable);
+	bool GetHorizontalReflection(void) const;
+
+	void SetVerticalReflection(bool enable);
+	bool GetVerticalReflection(void) const;
+
+	// visible
+	void SetVisible(bool visible);
+	bool GetVisible(void) const;
 
 	// 강제 font state 설정. 이후 적용되는 모든 deco string은 해당 설정이 강제로 적용 됨
 	//void SetFocedFontState(const MkHashStr& fontState);
 	//inline bool CheckFocedFontTypeAndState(void) const { return (!m_ForcedFontState.Empty()); }
 
-	// texture
-	// (NOTE) SetDecoString()과 배타적. 기존 설정 된 original/scene deco text가 있을 경우 text 무효화
-	void SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double initTime = 0.);
-	void SetTexture(const MkPathName& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double initTime = 0.);
+	//------------------------------------------------------------------------------------------------//
+	// 그려질 대상 설정
+	//------------------------------------------------------------------------------------------------//
+
+	// texture 설정
+	// sequence 지정의 경우 startTime은 현재 시간, initTime은 sequence 내부에서의 시작 시간을 의미
+	// (NOTE) SetTextNode()와 배타적
+	bool SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
+	bool SetTexture(const MkPathName& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
 
 	// image info
-	inline void SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName) { m_SubsetOrSequenceName = subsetOrSequenceName; }
+	// (NOTE) 호출 전 texture가 설정되어 있어야 함
+	bool SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double startTime = 0., double initTime = 0.);
 	inline const MkHashStr& GetSubsetOrSequenceName(void) const { return m_SubsetOrSequenceName; }
 	unsigned int GetAllSubsets(MkArray<MkHashStr>& keyList) const;
 	unsigned int GetAllSequences(MkArray<MkHashStr>& keyList) const;
 
-	// original deco text 설정
-	// deco string 문법으로 구성되어 있으면 그대로 적용되고, 일반 문자열이면 DSF가 적용되어 출력됨
-	// (NOTE) SetTexture()와 배타적. 설정이 성공하면 캐쉬 텍스쳐가 기존 설정 된 texture를 교체(기존 texture 무효화)
-	//bool SetDecoString(const MkStr& decoStr);
+	// text node 설정
+	// 호출시 Build() 수행
+	// MkDrawTextNodeStep을 통해 static image를 caching해 사용하므로 draw시 최초 한 번만 부하 발생
+	// deep copy로 자체적인 객체를 소유. 이는 GetTextNodePtr()로 얻은 객체의 변경이 원본 손상 없이 가능함을 의미(수정 후 추가적인 Build() 필요)
+	// restrictToPanelWidth가 true인 경우 panel size의 x로 가로 폭 제한
+	// (NOTE) SetTexture()와 배타적
+	// (TIP) 장문의 경우 restrictToPanelWidth = true, eAttachToLeftTop, eCutSource와 조합하면 일반적인 세로 스크롤 출력이 됨
+	void SetTextNode(const MkTextNode& source, bool restrictToPanelWidth = false);
 
-	// scene deco text table에서 nodeNameAndKey에 해당하는 deco text 설정
-	// (NOTE) SetTexture()와 배타적. 설정이 성공하면 캐쉬 텍스쳐가 기존 설정 된 texture를 교체(기존 texture 무효화)
-	//bool SetDecoString(const MkArray<MkHashStr>& nodeNameAndKey);
+	// (NOTE) 이름으로 text node를 설정했을 경우 static으로 여겨지기 때문에 GetTextNodePtr()로 얻어온 복사본을 수정하더라도
+	//        저장시 수정 내용이 반영되지 않음
+	bool SetTextNode(const MkHashStr& name, bool restrictToPanelWidth = false);
 
-	// 설정된 deco text 반환
-	//inline const MkDecoStr& GetDecoString(void) const { return m_TextCacheStep.GetDecoStr(); }
+	// 설정된 text node 정보 반환
+	inline const MkHashStr& GetTextNodeName(void) const { return m_TargetTextNodeName; }
+	inline MkTextNode* GetTextNodePtr(void) { return m_TargetTextNodePtr; }
+	inline const MkTextNode* GetTextNodePtr(void) const { return m_TargetTextNodePtr; }
+
+	// GetTextNodePtr()로 얻어낸 text node 수정 후 반영을 위해 호출
+	// ex> sample test node는 "MkPA_MkTextNode.h"의 헤더 부분 참조
+	//	MkPanel* panel = sceneNode->GetPanel(L"Test");
+	//	MkTextNode* textNode = panel->GetTextNodePtr();
+	//	MkTextNode* targetNode = textNode->GetChildNode(L"1st")->GetChildNode(L"Sub list")->GetChildNode(L"이번이구나");
+	//	targetNode->SetFontStyle(L"Desc:Notice");
+	//	targetNode->SetText(L"- 이걸로 바꿨음당 ( ㅡ_-)r");
+	//	panel->BuildAndUpdateTextCache();
+	void BuildAndUpdateTextCache(void);
 
 	// 기존 설정된 deco string이 있다면 재로딩
 	//void RestoreDecoString(void);
 
-	// uv reflection
-	inline void SetHorizontalReflection(bool enable) { m_Attribute.Assign(eHorizontalReflection, enable); }
-	inline bool GetHorizontalReflection(void) const { return m_Attribute[eHorizontalReflection]; }
-
-	inline void SetVerticalReflection(bool enable) { m_Attribute.Assign(eVerticalReflection, enable); }
-	inline bool GetVerticalReflection(void) const { return m_Attribute[eVerticalReflection]; }
-
-	// visible
-	inline void SetVisible(bool visible) { m_Attribute.Assign(eVisible, visible); }
-	inline bool GetVisible(void) const { return m_Attribute[eVisible]; }
-
-	// 그려질 수 있는지 여부 반환
-	bool CheckDrawable(const MkFloatRect& cameraAABR) const;
+	//------------------------------------------------------------------------------------------------//
 
 	// 정렬
 	//void AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset);
@@ -135,6 +189,7 @@ public:
 	void Clear(void);
 
 public:
+
 	//------------------------------------------------------------------------------------------------//
 
 	typedef struct _VertexData
@@ -152,7 +207,7 @@ public:
 		MaterialKey()
 		{
 			m_TextureID = 0;
-			m_ObjectAlpha = 0;
+			m_ObjectAlpha = 0xff;
 		}
 
 		ID64 m_TextureID;
@@ -161,11 +216,15 @@ public:
 
 	//static void __GenerateBuildingTemplate(void);
 
+	// 활성화 여부 반환
+	bool __CheckDrawable(void) const;
+	bool __CheckDrawable(const MkFloatRect& cameraAABR) const;
+
 	inline const MaterialKey& __GetMaterialKey(void) const { return m_MaterialKey; }
 
-	//void __GenerateTextCache(void);
+	void __ExcuteCustomDrawStep(void);
 
-	void __UpdateTransform(const MkSceneTransform* parentTransform, double elapsed);
+	void __Update(const MkSceneTransform* parentTransform, double currTime);
 
 	void __FillVertexData(MkArray<VertexData>& buffer) const;
 
@@ -178,9 +237,25 @@ public:
 
 protected:
 
-	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkArray<VertexData>& buffer) const;
+	enum eAttribute
+	{
+		// eSmallerSourceOp(value)
+		eSmallerSourceOpPosition = 0,
+		eSmallerSourceOpBandwidth = 2, // eSmallerSourceOp(0 ~ 2)
 
-	//bool _SetDecoString(const MkDecoStr& decoStr);
+		// eBiggerSourceOp(value)
+		eBiggerSourceOpPosition = 2, // eSmallerSourceOpPosition + eSmallerSourceOpBandwidth,
+		eBiggerSourceOpBandwidth = 2, // eBiggerSourceOp(0 ~ 2)
+
+		// 출력 여부
+		eVisible = 4, // eBiggerSourceOpPosition + eBiggerSourceOpBandwidth,
+
+		// uv 반전
+		eHorizontalReflection, // u
+		eVerticalReflection // v
+	};
+
+	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkArray<VertexData>& buffer) const;
 
 protected:
 
@@ -188,9 +263,8 @@ protected:
 	MkSceneTransform m_Transform;
 
 	// panel size
-	eResizingType m_ResizingType;
 	MkFloat2 m_PanelSize;
-	MkFloat2 m_ScrollOffset;
+	MkFloat2 m_PixelScrollPosition;
 	
 	// transform result
 	MkFloat2 m_WorldVertice[MkFloatRect::eMaxPointName];
@@ -202,15 +276,19 @@ protected:
 	// texture
 	MkBaseTexturePtr m_Texture;
 	MkHashStr m_SubsetOrSequenceName;
+	double m_SequenceStartTime;
 	double m_SequenceInitTime;
 	MaterialKey m_MaterialKey;
 
-	//MkTextCacheStep m_TextCacheStep;
-	//MkArray<MkHashStr> m_SceneDecoTextNodeNameAndKey;
-	//MkStr m_OriginalDecoStr;
+	// text node
+	MkHashStr m_TargetTextNodeName;
+	MkTextNode* m_TargetTextNodePtr;
+
+	// custom draw step
+	MkDrawStepInterface* m_DrawStep;
 
 	// flag
-	MkBitFieldDW m_Attribute;
+	MkBitField32 m_Attribute;
 };
 
 MKDEF_DECLARE_FIXED_SIZE_TYPE(MkPanel::VertexData)

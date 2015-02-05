@@ -3,10 +3,12 @@
 //#include "MkCore_MkGlobalFunction.h"
 //#include "MkCore_MkDataNode.h"
 
-//#include "MkS2D_MkProjectDefinition.h"
+#include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkBitmapPool.h"
 //#include "MkS2D_MkFontManager.h"
 //#include "MkS2D_MkWindowResourceManager.h"
+#include "MkPA_MkTextNode.h"
+#include "MkPA_MkDrawTextNodeStep.h"
 #include "MkPA_MkPanel.h"
 
 
@@ -174,17 +176,7 @@ void MkPanel::Save(MkDataNode& node) // Load의 역
 	node.SetData(REFLECTION_KEY, m_VerticalReflection, 1);
 	node.SetData(VISIBLE_KEY, m_Visible, 0);
 }
-*/
-void MkPanel::SetObjectAlpha(float alpha)
-{
-	m_MaterialKey.m_ObjectAlpha = static_cast<DWORD>(alpha * 255.f);
-}
 
-float MkPanel::GetObjectAlpha(void) const
-{
-	return (static_cast<float>(m_MaterialKey.m_ObjectAlpha) / 255.f);
-}
-/*
 void MkPanel::SetFocedFontState(const MkHashStr& fontState)
 {
 	if (m_ForcedFontState != fontState)
@@ -199,21 +191,96 @@ void MkPanel::SetFocedFontState(const MkHashStr& fontState)
 	}
 }
 */
-void MkPanel::SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetName, double initTime)
+
+void MkPanel::SetSmallerSourceOp(eSmallerSourceOp op)
+{
+	m_Attribute.SetValue(static_cast<unsigned int>(op), eSmallerSourceOpPosition, eSmallerSourceOpBandwidth);
+}
+
+MkPanel::eSmallerSourceOp MkPanel::GetSmallerSourceOp(void) const
+{
+	return static_cast<eSmallerSourceOp>(m_Attribute.GetValue(eSmallerSourceOpPosition, eSmallerSourceOpBandwidth));
+}
+
+void MkPanel::SetBiggerSourceOp(eBiggerSourceOp op)
+{
+	m_Attribute.SetValue(static_cast<unsigned int>(op), eBiggerSourceOpPosition, eBiggerSourceOpBandwidth);
+}
+
+MkPanel::eBiggerSourceOp MkPanel::GetBiggerSourceOp(void) const
+{
+	return static_cast<eBiggerSourceOp>(m_Attribute.GetValue(eBiggerSourceOpPosition, eBiggerSourceOpBandwidth));
+}
+
+void MkPanel::SetHorizontalReflection(bool enable)
+{
+	m_Attribute.Assign(eHorizontalReflection, enable);
+}
+
+bool MkPanel::GetHorizontalReflection(void) const
+{
+	return m_Attribute[eHorizontalReflection];
+}
+
+void MkPanel::SetVerticalReflection(bool enable)
+{
+	m_Attribute.Assign(eVerticalReflection, enable);
+}
+
+bool MkPanel::GetVerticalReflection(void) const
+{
+	return m_Attribute[eVerticalReflection];
+}
+
+void MkPanel::SetVisible(bool visible)
+{
+	m_Attribute.Assign(eVisible, visible);
+}
+
+bool MkPanel::GetVisible(void) const
+{
+	return m_Attribute[eVisible];
+}
+
+bool MkPanel::SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
 {
 	Clear();
 
 	m_Texture = texture;
 	m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
-	m_SequenceInitTime = initTime;
+	return SetSubsetOrSequenceName(subsetOrSequenceName, startTime, initTime);
 }
 
-void MkPanel::SetTexture(const MkPathName& imagePath, const MkHashStr& subsetOrSequenceName, double initTime)
+bool MkPanel::SetTexture(const MkPathName& imagePath, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
 {
 	MkBaseTexturePtr texture;
 	MK_BITMAP_POOL.GetBitmapTexture(imagePath, texture);
 	MK_CHECK(texture != NULL, MkStr(imagePath) + L" 이미지 파일 로딩 실패") {}
-	SetTexture(texture, subsetOrSequenceName, initTime);
+	return SetTexture(texture, subsetOrSequenceName, startTime, initTime);
+}
+
+bool MkPanel::SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
+{
+	bool ok = ((m_Texture != NULL) && m_Texture->GetImageInfo().IsValidName(subsetOrSequenceName));
+	if (ok)
+	{
+		m_SubsetOrSequenceName = subsetOrSequenceName;
+		m_SequenceStartTime = startTime;
+		m_SequenceInitTime = initTime;
+
+		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, m_SequenceInitTime);
+		if (((m_PanelSize.x > ssPtr->rectSize.x) && (GetSmallerSourceOp() == eReducePanel)) ||
+			((m_PanelSize.x < ssPtr->rectSize.x) && (GetBiggerSourceOp() == eExpandPanel)))
+		{
+			m_PanelSize.x = ssPtr->rectSize.x;
+		}
+		if (((m_PanelSize.y > ssPtr->rectSize.y) && (GetSmallerSourceOp() == eReducePanel)) ||
+			((m_PanelSize.y < ssPtr->rectSize.y) && (GetBiggerSourceOp() == eExpandPanel)))
+		{
+			m_PanelSize.y = ssPtr->rectSize.y;
+		}
+	}
+	return ok;
 }
 
 unsigned int MkPanel::GetAllSubsets(MkArray<MkHashStr>& keyList) const
@@ -225,38 +292,68 @@ unsigned int MkPanel::GetAllSequences(MkArray<MkHashStr>& keyList) const
 {
 	return (m_Texture == NULL) ? 0 : m_Texture->GetImageInfo().GetAllSequences(keyList);
 }
-/*
-bool MkPanel::SetDecoString(const MkStr& decoStr)
+
+void MkPanel::SetTextNode(const MkTextNode& source, bool restrictToPanelWidth)
 {
 	Clear();
 
-	if (decoStr.GetFirstValidPosition() == MKDEF_ARRAY_ERROR)
-		return false;
-
-	bool ok = _SetDecoString(MkDecoStr(decoStr));
-	if (ok)
+	do
 	{
-		m_OriginalDecoStr = decoStr;
+		m_TargetTextNodePtr = new MkTextNode;
+		MK_CHECK(m_TargetTextNodePtr != NULL, L"MkTextNode alloc 실패")
+			break;
+
+		*m_TargetTextNodePtr = source; // deep copy
+
+		if (restrictToPanelWidth)
+		{
+			m_TargetTextNodePtr->SetWidthRestriction(static_cast<int>(m_PanelSize.x));
+		}
+		m_TargetTextNodePtr->Build();
+
+		MkDrawTextNodeStep* drawStep = new MkDrawTextNodeStep;
+		MK_CHECK(drawStep != NULL, L"MkDrawTextNodeStep alloc 실패")
+			break;
+
+		drawStep->SetUp(m_TargetTextNodePtr);
+		drawStep->GetTargetTexture(0, m_Texture);
+		m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
+
+		m_DrawStep = drawStep;
+		return;
 	}
-	return ok;
+	while (false);
+
+	MK_DELETE(m_TargetTextNodePtr);
+	MK_DELETE(m_DrawStep);
 }
 
-bool MkPanel::SetDecoString(const MkArray<MkHashStr>& nodeNameAndKey)
+bool MkPanel::SetTextNode(const MkHashStr& name, bool restrictToPanelWidth)
 {
-	if (!nodeNameAndKey.Empty())
-	{
-		Clear();
+	return true;
+}
 
-		const MkDecoStr& decoStr = MK_WR_DECO_TEXT.GetDecoText(nodeNameAndKey);
-		if ((!decoStr.Empty()) && _SetDecoString(decoStr))
+void MkPanel::BuildAndUpdateTextCache(void)
+{
+	if ((m_TargetTextNodePtr != NULL) && (m_DrawStep != NULL))
+	{
+		MkDrawTextNodeStep* drawTextNodeStep = dynamic_cast<MkDrawTextNodeStep*>(m_DrawStep);
+		if (drawTextNodeStep != NULL)
 		{
-			m_SceneDecoTextNodeNameAndKey = nodeNameAndKey;
-			return true;
+			m_TargetTextNodePtr->Build();
+
+			// draw step은 재사용하지만 texture는 Build()시 크기가 변할 수 있으므로 파괴 후 재생성
+			m_Texture = NULL; // ref-
+			m_MaterialKey.m_TextureID = 0;
+
+			drawTextNodeStep->SetUp(m_TargetTextNodePtr);
+
+			m_DrawStep->GetTargetTexture(0, m_Texture);
+			m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
 		}
 	}
-	return false;
 }
-
+/*
 void MkPanel::RestoreDecoString(void)
 {
 	if (!m_OriginalDecoStr.Empty())
@@ -271,17 +368,6 @@ void MkPanel::RestoreDecoString(void)
 	}
 }
 */
-
-bool MkPanel::CheckDrawable(const MkFloatRect& cameraAABR) const
-{
-	return
-		(GetVisible() && // 보이기 설정이 되어 있고
-		(m_PanelSize.x > 0) && (m_PanelSize.y > 0) && (m_AABR.size.x > 0) && (m_AABR.size.y > 0) && // 유효한 크기가 존재하며
-		(m_Transform.GetWorldDepth() >= 0.f) && (m_Transform.GetWorldDepth() <= MKDEF_PA_MAX_WORLD_DEPTH) && // 깊이값이 카메라 범위 안에 있고
-		(m_Texture != NULL) && // 텍스쳐가 있으며
-		(m_MaterialKey.m_ObjectAlpha > 0) && // 오브젝트 알파가 0보다 크고
-		m_AABR.CheckIntersection(cameraAABR)); // 프러스텀 체크도 통과하면 true
-}
 /*
 void MkPanel::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset)
 {
@@ -295,15 +381,15 @@ void MkPanel::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition align
 */
 void MkPanel::Clear(void)
 {
-	m_ScrollOffset.Clear();
+	m_PixelScrollPosition.Clear();
 	m_Texture = NULL;
-	m_SubsetOrSequenceName.Clear();
-	m_SequenceInitTime = 0.;
-	//m_TextCacheStep.Clear();
-	//m_SceneDecoTextNodeNameAndKey.Clear();
-	//m_OriginalDecoStr.Clear();
 	m_MaterialKey.m_TextureID = 0;
-	m_PanelSize.Clear();
+	m_SubsetOrSequenceName.Clear();
+	m_SequenceStartTime = 0.;
+	m_SequenceInitTime = 0.;
+	m_TargetTextNodeName.Clear();
+	MK_DELETE(m_TargetTextNodePtr);
+	MK_DELETE(m_DrawStep);
 }
 /*
 void MkPanel::__GenerateBuildingTemplate(void)
@@ -326,19 +412,42 @@ void MkPanel::__GenerateBuildingTemplate(void)
 
 	tNode->DeclareToTemplate(true);
 }
-
-void MkPanel::__GenerateTextCache(void)
-{
-	m_TextCacheStep.Draw();
-}
 */
-void MkPanel::__UpdateTransform(const MkSceneTransform* parentTransform, double elapsed)
+void MkPanel::__ExcuteCustomDrawStep(void)
 {
+	if (m_DrawStep != NULL)
+	{
+		m_DrawStep->Draw();
+	}
+}
+
+bool MkPanel::__CheckDrawable(void) const
+{
+	return
+		(GetVisible() && // 보이기 활성화 중이고
+		(m_Texture != NULL) && // 텍스쳐가 존재하고
+		(m_PanelSize.x > 0) && (m_PanelSize.y > 0) && (m_AABR.size.x > 0) && (m_AABR.size.y > 0) && // 유효한 크기가 존재하고
+		(m_Transform.GetWorldDepth() >= 0.f) && (m_Transform.GetWorldDepth() <= MKDEF_PA_MAX_WORLD_DEPTH) && // 깊이값이 카메라 범위 안에 있고
+		(m_MaterialKey.m_ObjectAlpha > 0)); // 오브젝트 알파가 0보다 크면 true
+}
+
+bool MkPanel::__CheckDrawable(const MkFloatRect& cameraAABR) const
+{
+	return (__CheckDrawable() && m_AABR.CheckIntersection(cameraAABR)); // 영역 체크도 통과하면 true
+}
+
+void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
+{
+	// transform
 	m_Transform.Update(parentTransform);
 
+	// alpha
+	m_MaterialKey.m_ObjectAlpha = static_cast<DWORD>(m_Transform.GetWorldAlpha() * 255.f);
+
+	// world vertex and uv
 	if (m_Texture != NULL)
 	{
-		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, elapsed + m_SequenceInitTime);
+		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, currTime - m_SequenceStartTime + m_SequenceInitTime);
 		if (ssPtr == NULL)
 		{
 			m_WorldVertice[MkFloatRect::eLeftTop] = m_Transform.GetWorldPosition();
@@ -350,41 +459,92 @@ void MkPanel::__UpdateTransform(const MkSceneTransform* parentTransform, double 
 		}
 		else
 		{
-			// panel size & uv
 			bool copyU = true, copyV = true;
-			if (m_ResizingType == eFollowSource)
+
+			// 휘발성 local position/size offset
+			MkFloat2 internalPos, internalSize;
+
+			// x size, u
+			if (m_PanelSize.x > ssPtr->rectSize.x) // smaller src
 			{
-				m_PanelSize = ssPtr->rectSize;
-			}
-			else if (m_ResizingType == eExpandOrCut)
-			{
-				if (m_PanelSize.x < ssPtr->rectSize.x)
+				switch (GetSmallerSourceOp())
 				{
-					float uLength = ssPtr->uv[MkFloatRect::eRightTop].x - ssPtr->uv[MkFloatRect::eLeftTop].x;
-					float offset = Clamp<float>(m_ScrollOffset.x, 0.f, ssPtr->rectSize.x - m_PanelSize.x);
-					float uBegin = uLength * offset / ssPtr->rectSize.x;
-					float uEnd = uBegin + uLength * m_PanelSize.x / ssPtr->rectSize.x;
-					m_UV[MkFloatRect::eLeftTop].x = uBegin;
-					m_UV[MkFloatRect::eRightTop].x = uEnd;
-					m_UV[MkFloatRect::eLeftBottom].x = uBegin;
-					m_UV[MkFloatRect::eRightBottom].x = uEnd;
-					copyU = false;
-					
+				case eReducePanel: // source의 크기에 맞게 panel을 축소해 맞춤
+					m_PanelSize.x = ssPtr->rectSize.x;
+					break;
+				case eExpandSource: // panel 크기에 맞게 source를 확대해 맞춤
+					break;
+				case eAttachToLeftTop: // panel과 source 크기를 모두 유지. panel의 left-top을 기준으로 출력
+					internalSize.x = ssPtr->rectSize.x - m_PanelSize.x;
+					break;
 				}
-				if (m_PanelSize.y < ssPtr->rectSize.y)
+			}
+			else if (m_PanelSize.x < ssPtr->rectSize.x) // bigger src
+			{
+				switch (GetBiggerSourceOp())
 				{
-					float vLength = ssPtr->uv[MkFloatRect::eLeftBottom].y - ssPtr->uv[MkFloatRect::eLeftTop].y;
-					float offset = Clamp<float>(m_ScrollOffset.y, 0.f, ssPtr->rectSize.y - m_PanelSize.y);
-					float vBegin = vLength * offset / ssPtr->rectSize.y;
-					float vEnd = vBegin + vLength * m_PanelSize.y / ssPtr->rectSize.y;
-					m_UV[MkFloatRect::eLeftTop].y = vBegin;
-					m_UV[MkFloatRect::eRightTop].y = vBegin;
-					m_UV[MkFloatRect::eLeftBottom].y = vEnd;
-					m_UV[MkFloatRect::eRightBottom].y = vEnd;
-					copyV = false;
+				case eExpandPanel: // source의 크기에 맞게 panel을 확대해 맞춤
+					m_PanelSize.x = ssPtr->rectSize.x;
+					break;
+				case eReduceSource: // panel 크기에 맞게 source를 축소해 맞춤
+					break;
+				case eCutSource: // source를 panel 크기에 맞게 일부만 잘라 보여줌
+					{
+						float uLength = ssPtr->uv[MkFloatRect::eRightTop].x - ssPtr->uv[MkFloatRect::eLeftTop].x;
+						m_PixelScrollPosition.x = Clamp<float>(m_PixelScrollPosition.x, 0.f, ssPtr->rectSize.x - m_PanelSize.x);
+						float uBegin = uLength * m_PixelScrollPosition.x / ssPtr->rectSize.x;
+						float uEnd = uBegin + uLength * m_PanelSize.x / ssPtr->rectSize.x;
+						m_UV[MkFloatRect::eLeftTop].x = uBegin;
+						m_UV[MkFloatRect::eRightTop].x = uEnd;
+						m_UV[MkFloatRect::eLeftBottom].x = uBegin;
+						m_UV[MkFloatRect::eRightBottom].x = uEnd;
+						copyU = false;
+					}
+					break;
 				}
 			}
 
+			// y size, v
+			if (m_PanelSize.y > ssPtr->rectSize.y) // smaller src
+			{
+				switch (GetSmallerSourceOp())
+				{
+				case eReducePanel: // source의 크기에 맞게 panel을 축소해 맞춤
+					m_PanelSize.y = ssPtr->rectSize.y;
+					break;
+				case eExpandSource: // panel 크기에 맞게 source를 확대해 맞춤
+					break;
+				case eAttachToLeftTop: // panel과 source 크기를 모두 유지. panel의 left-top을 기준으로 출력
+					internalPos.y = m_PanelSize.y - ssPtr->rectSize.y;
+					internalSize.y = -internalPos.y;
+					break;
+				}
+			}
+			else if (m_PanelSize.y < ssPtr->rectSize.y) // bigger src
+			{
+				switch (GetBiggerSourceOp())
+				{
+				case eExpandPanel: // source의 크기에 맞게 panel을 확대해 맞춤
+					m_PanelSize.y = ssPtr->rectSize.y;
+					break;
+				case eReduceSource: // panel 크기에 맞게 source를 축소해 맞춤
+					break;
+				case eCutSource: // source를 panel 크기에 맞게 일부만 잘라 보여줌
+					{
+						float vLength = ssPtr->uv[MkFloatRect::eLeftBottom].y - ssPtr->uv[MkFloatRect::eLeftTop].y;
+						m_PixelScrollPosition.y = Clamp<float>(m_PixelScrollPosition.y, 0.f, ssPtr->rectSize.y - m_PanelSize.y);
+						float vBegin = vLength * m_PixelScrollPosition.y / ssPtr->rectSize.y;
+						float vEnd = vBegin + vLength * m_PanelSize.y / ssPtr->rectSize.y;
+						m_UV[MkFloatRect::eLeftTop].y = vBegin;
+						m_UV[MkFloatRect::eRightTop].y = vBegin;
+						m_UV[MkFloatRect::eLeftBottom].y = vEnd;
+						m_UV[MkFloatRect::eRightBottom].y = vEnd;
+						copyV = false;
+					}
+					break;
+				}
+			}
+			
 			if (copyU && copyV)
 			{
 				memcpy_s(m_UV, sizeof(MkFloat2) * MkFloatRect::eMaxPointName, ssPtr->uv, sizeof(MkFloat2) * MkFloatRect::eMaxPointName);
@@ -405,7 +565,7 @@ void MkPanel::__UpdateTransform(const MkSceneTransform* parentTransform, double 
 			}
 
 			// vertices
-			m_Transform.GetWorldRectVertices(m_PanelSize, m_WorldVertice);
+			m_Transform.GetWorldRectVertices(MkFloatRect(internalPos, m_PanelSize + internalSize), m_WorldVertice);
 
 			// update AABR
 			MkFloat2 minPt(m_WorldVertice[MkFloatRect::eLeftTop]);
@@ -483,16 +643,17 @@ MkPanel::eSrcType MkPanel::__GetSrcInfo(MkPathName& imagePath, MkHashStr& subset
 */
 MkPanel::MkPanel()
 {
-	SetObjectAlpha(1.f);
-	SetResizingType(eFollowSource);
+	SetSmallerSourceOp(eReducePanel);
+	SetBiggerSourceOp(eExpandPanel);
 
 	m_Attribute.Clear();
 	SetVisible(true);
 	SetHorizontalReflection(false);
 	SetVerticalReflection(false);
-}
 
-//------------------------------------------------------------------------------------------------//
+	m_TargetTextNodePtr = NULL;
+	m_DrawStep = NULL;
+}
 
 void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkArray<VertexData>& buffer) const
 {
@@ -507,32 +668,5 @@ void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkAr
 	vd.u = (hr) ? (1.f - uv.x) : uv.x;
 	vd.v = (vr) ? (1.f - uv.y) : uv.y;
 }
-/*
-bool MkPanel::_SetDecoString(const MkDecoStr& decoStr)
-{
-	bool ok;
-	bool changeState = (!m_ForcedFontState.Empty());
-	if (changeState)
-	{
-		MkDecoStr tmpStr = decoStr;
-		if (changeState)
-		{
-			tmpStr.ChangeState(m_ForcedFontState);
-		}
-		ok = m_TextCacheStep.SetUp(tmpStr);
-	}
-	else
-	{
-		ok = m_TextCacheStep.SetUp(decoStr);
-	}
-	if (ok)
-	{
-		m_TextCacheStep.GetTargetTexture(m_Texture);
-		m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
-	}
 
-	SetSubset(L"");
-	return ok;
-}
-*/
 //------------------------------------------------------------------------------------------------//

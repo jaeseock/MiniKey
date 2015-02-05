@@ -550,7 +550,7 @@ void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_Te
 	}
 }
 
-void MkTextNode::__Draw(const MkInt2& position)
+void MkTextNode::__Draw(const MkInt2& position) const
 {
 	MK_INDEXING_LOOP(m_OutputDataList, i)
 	{
