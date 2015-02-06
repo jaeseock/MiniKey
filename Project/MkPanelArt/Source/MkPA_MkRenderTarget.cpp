@@ -39,6 +39,11 @@ bool MkRenderTarget::SetUp(eTargetType type, unsigned int count, const MkInt2& s
 			}
 		}
 
+		if (format == MkRenderToTexture::eRGBA)
+		{
+			SetBackgroundColor(MkColor::Empty);
+		}
+
 		ok = (success == count);
 	}
 

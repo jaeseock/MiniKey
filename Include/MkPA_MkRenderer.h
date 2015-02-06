@@ -15,8 +15,8 @@
 #include "MkCore_MkVersionTag.h"
 #include "MkCore_MkWindowUpdateListener.h"
 #include "MkCore_MkEventQueuePattern.h"
-//#include "MkS2D_MkDrawQueue.h"
-#include "MkPA_MkDrawSceneNodeStep.h"
+
+#include "MkPA_MkDrawQueue.h"
 
 
 #define MK_RENDERER MkRenderer::Instance()
@@ -33,11 +33,11 @@ public:
 
 	bool SetUp(MkListeningWindow* targetWindow, int clientWidth, int clientHeight, bool fullScreen);
 
-	//inline MkDrawQueue& GetDrawQueue(void) { return m_DrawQueue; }
-
 	void Update(void);
 
 	void Clear(void);
+
+	inline MkDrawQueue& GetDrawQueue(void) { return m_DrawQueue; }
 
 	inline const MkVersionTag& GetRendererVersion(void) const { return m_RendererVersion; }
 
@@ -56,8 +56,6 @@ public:
 	virtual void ListenWindowSizeUpdate(const MkIntRect& newRect);
 	virtual void ListenShowCmdUpdate(unsigned int newShowCmd, const MkIntRect& newRect);
 	virtual void ListenWindowRestored(const MkIntRect& newRect);
-
-	inline MkDrawSceneNodeStep& GetDS(void) { return ds; }
 
 public:
 
@@ -94,7 +92,6 @@ protected:
 	// 아무것도 그릴 것이 없을 때의 클리어 컬러
 	D3DCOLOR m_DefaultBackbufferColor;
 
-	// render queue
-	//MkDrawQueue m_DrawQueue;
-	MkDrawSceneNodeStep ds;
+	// draw queue
+	MkDrawQueue m_DrawQueue;
 };

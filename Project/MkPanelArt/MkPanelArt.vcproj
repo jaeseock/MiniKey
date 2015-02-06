@@ -284,6 +284,14 @@
 					RelativePath="..\..\Include\MkPA_MkResetableResourcePool.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Source\MkPA_MkStaticResourceContainer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkStaticResourceContainer.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="System class"
@@ -385,6 +393,18 @@
 					</File>
 					<File
 						RelativePath="..\..\Include\MkPA_MkDrawToStaticTextureStep.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Draw queue"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkDrawQueue.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkDrawQueue.h"
 						>
 					</File>
 				</Filter>

@@ -1,5 +1,8 @@
 
-//str SceneDecoTextTable = "Scene\SceneDecoTextTable.txt";
+Node "StaticResource"
+{
+	str TextNode = "Text\StaticTextNode.txt";
+}
 
 Node "FontResource"
 {

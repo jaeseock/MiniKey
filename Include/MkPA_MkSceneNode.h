@@ -46,6 +46,9 @@ public:
 	inline void SetLocalAlpha(float alpha) { m_Transform.SetLocalAlpha(alpha); }
 	inline float GetLocalAlpha(void) const { return m_Transform.GetLocalAlpha(); }
 
+	// clear local
+	inline void ClearLocalTransform(void) { m_Transform.ClearLocalTransform(); }
+
 	// world
 	inline const MkFloat2& GetWorldPosition(void) const { return m_Transform.GetWorldPosition(); }
 	inline float GetWorldDepth(void) const { return m_Transform.GetWorldDepth(); }
@@ -53,29 +56,39 @@ public:
 	inline float GetWorldScale(void) const { return m_Transform.GetWorldScale(); }
 	inline float GetWorldAlpha(void) const { return m_Transform.GetWorldAlpha(); }
 
-	// identify
-	inline void IdentifyTransform(void) { m_Transform.Clear(); }
-
-	// total AABR
+	// get AABR
 	inline const MkFloatRect& GetTotalAABR(void) const { return m_TotalAABR; }
 
 	//------------------------------------------------------------------------------------------------//
 	// panel 관리
+	// - normal panel : 일반적인 panel
+	// - masking panel : 대상 노드를 특정 영역만큼 잘라 그려주는 panel
 	//------------------------------------------------------------------------------------------------//
 
 	// panel 존재 여부
 	inline bool PanelExist(const MkHashStr& name) const { return m_Panels.Exist(name); }
 
-	// panel 반환. 없으면 생성해 반환
-	inline MkPanel* GetPanel(const MkHashStr& name) { return m_Panels.Exist(name) ? &m_Panels[name] : &m_Panels.Create(name); }
+	// normal panel 생성. 같은 이름의 panel이 이미 존재하면 삭제 후 재생성
+	MkPanel& CreatePanel(const MkHashStr& name);
+
+	// targetNode를 masking하는 panel 생성. 같은 이름의 panel이 이미 존재하면 삭제 후 재생성
+	// (NOTE) targetNode는 현 노드가 속한 계층군과 관계 없는 독립적인 노드이어야 함
+	//        만약 같은 계층군에 속해 있을 경우 transform이 꼬이거나 무한 루프에 빠질 수 있음
+	// (NOTE) panel size는 반드시 유효한 크기이어야 함
+	MkPanel& CreatePanel(const MkHashStr& name, const MkSceneNode* targetNode, const MkInt2& panelSize);
+
+	// panel 반환. 없으면 NULL 반환
+	inline MkPanel* GetPanel(const MkHashStr& name) { return m_Panels.Exist(name) ? &m_Panels[name] : NULL; }
 
 	// panel 이름 리스트 반환
 	inline unsigned int GetPanelNameList(MkArray<MkHashStr>& buffer) const { return m_Panels.GetKeyList(buffer); }
 
 	// panel 삭제
 	inline void DeletePanel(const MkHashStr& name) { if (m_Panels.Exist(name)) { m_Panels.Erase(name); } }
-	inline void DeleteAllPanels(void) { m_Panels.Clear(); }
 
+	// 모든 panel 삭제
+	inline void DeleteAllPanels(void) { m_Panels.Clear(); }
+	
 	// 기존 설정된 deco string이 있다면 재로딩
 	//void RestoreDecoString(void);
 
@@ -131,7 +144,6 @@ protected:
 
 	//------------------------------------------------------------------------------------------------//
 
-	// transform
 	MkSceneTransform m_Transform;
 
 	MkFloatRect m_PanelAABR; // 직계 panel들만 대상

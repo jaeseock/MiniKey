@@ -16,16 +16,23 @@
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkDrawSceneNodeStep::SetUp(MkRenderTarget::eTargetType type, unsigned int count, const MkInt2& size, MkRenderToTexture::eFormat texFormat)
+bool MkDrawSceneNodeStep::SetUp
+(MkRenderTarget::eTargetType type, unsigned int count, const MkInt2& size, const MkFloat2& camOffset, MkRenderToTexture::eFormat texFormat)
 {
 	bool ok = m_RenderTarget.SetUp(type, count, size, texFormat);
 	if (ok)
 	{
-		_UpdateCameraInfo();
+		SetCameraOffset(camOffset);
 
 		MK_RESETABLE_RESPOOL.RegisterResource(this);
 	}
 	return ok;
+}
+
+void MkDrawSceneNodeStep::SetCameraOffset(const MkFloat2& camOffset)
+{
+	m_CameraOffset = camOffset;
+	_UpdateCameraInfo();
 }
 
 void MkDrawSceneNodeStep::GetTargetTexture(unsigned int index, MkBaseTexturePtr& buffer) const
@@ -152,7 +159,7 @@ bool MkDrawSceneNodeStep::Draw(void)
 			--ml.allocCount;
 		}
 
-		// union을 순회하며 text가 존재 할 경우 cache 생성
+		// union을 순회하며 독자적인 draw step이 존재 할 경우 실행
 		MK_INDEXING_LOOP(unions, i)
 		{
 			MkPanel* currPanel = const_cast<MkPanel*>(unions[i][0]);
@@ -245,7 +252,7 @@ void MkDrawSceneNodeStep::_UpdateCameraInfo(void)
 	MkFloat2 fss(static_cast<float>(ss.x), static_cast<float>(ss.y));
 
 	m_Camera.SetSize(fss);
-	m_Camera.SetPosition(fss / 2.f);
+	m_Camera.SetPosition(fss / 2.f + m_CameraOffset);
 }
 
 //------------------------------------------------------------------------------------------------//

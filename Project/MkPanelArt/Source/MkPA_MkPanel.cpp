@@ -4,11 +4,13 @@
 //#include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkProjectDefinition.h"
+#include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkBitmapPool.h"
 //#include "MkS2D_MkFontManager.h"
 //#include "MkS2D_MkWindowResourceManager.h"
-#include "MkPA_MkTextNode.h"
 #include "MkPA_MkDrawTextNodeStep.h"
+#include "MkPA_MkDrawSceneNodeStep.h"
+#include "MkPA_MkSceneNode.h"
 #include "MkPA_MkPanel.h"
 
 
@@ -69,11 +71,6 @@ void MkPanel::Load(const MkDataNode& node)
 	float depth = 0.f;
 	node.GetData(DEPTH_KEY, depth, 0);
 	SetLocalDepth(depth);
-
-	// font state
-	MkStr fontState;
-	node.GetData(FORCED_FONT_STATE_KEY, fontState, 0);
-	m_ForcedFontState = fontState;
 
 	// resource
 	MkArray<MkStr> resBuf;
@@ -136,8 +133,7 @@ void MkPanel::Save(MkDataNode& node) // Load의 역
 	node.SetData(POSITION_KEY, MkVec2(m_LocalRect.position.x, m_LocalRect.position.y), 0);
 	node.SetData(SIZE_KEY, MkVec2(m_LocalRect.size.x, m_LocalRect.size.y), 0);
 	node.SetData(DEPTH_KEY, m_LocalDepth, 0);
-	node.SetData(FORCED_FONT_STATE_KEY, m_ForcedFontState.GetString(), 0);
-
+	
 	if (m_Texture != NULL)
 	{
 		MkArray<MkStr> resBuf;
@@ -175,20 +171,6 @@ void MkPanel::Save(MkDataNode& node) // Load의 역
 	node.SetData(REFLECTION_KEY, m_HorizontalReflection, 0);
 	node.SetData(REFLECTION_KEY, m_VerticalReflection, 1);
 	node.SetData(VISIBLE_KEY, m_Visible, 0);
-}
-
-void MkPanel::SetFocedFontState(const MkHashStr& fontState)
-{
-	if (m_ForcedFontState != fontState)
-	{
-		m_ForcedFontState = fontState;
-		if (!MK_FONT_MGR.CheckAvailableFontState(fontState))
-		{
-			m_ForcedFontState.Clear();
-		}
-
-		RestoreDecoString();
-	}
 }
 */
 
@@ -328,9 +310,11 @@ void MkPanel::SetTextNode(const MkTextNode& source, bool restrictToPanelWidth)
 	MK_DELETE(m_DrawStep);
 }
 
-bool MkPanel::SetTextNode(const MkHashStr& name, bool restrictToPanelWidth)
+void MkPanel::SetTextNode(const MkHashStr& name, bool restrictToPanelWidth)
 {
-	return true;
+	m_TargetTextNodeName = name;
+	const MkTextNode& textNode = MK_STATIC_RES.GetTextNode(m_TargetTextNodeName);
+	SetTextNode(textNode, restrictToPanelWidth);
 }
 
 void MkPanel::BuildAndUpdateTextCache(void)
@@ -368,6 +352,37 @@ void MkPanel::RestoreDecoString(void)
 	}
 }
 */
+
+void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
+{
+	MK_CHECK((m_PanelSize.x >= 1.f) && (m_PanelSize.y >= 1.f), L"유효한 panel size가 설정되어 있어야 함")
+		return;
+
+	Clear();
+
+	if (sceneNode != NULL)
+	{
+		do
+		{
+			MkDrawSceneNodeStep* drawStep = new MkDrawSceneNodeStep;
+			MK_CHECK(drawStep != NULL, L"MkDrawSceneNodeStep alloc 실패")
+				break;
+
+			m_DrawStep = drawStep;
+			MK_CHECK(drawStep->SetUp(MkRenderTarget::eTexture, 1, MkInt2(static_cast<int>(m_PanelSize.x), static_cast<int>(m_PanelSize.y))), L"MkDrawSceneNodeStep SetUp 실패")
+				break;
+
+			drawStep->GetTargetTexture(0, m_Texture);
+			m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
+
+			drawStep->SetSceneNode(sceneNode);
+			return;
+		}
+		while (false);
+
+		MK_DELETE(m_DrawStep);
+	}
+}
 /*
 void MkPanel::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset)
 {

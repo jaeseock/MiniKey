@@ -191,6 +191,21 @@ void MkSceneNode::AlignPosition(const MkSceneNode* anchorNode, eRectAlignmentPos
 	}
 }
 */
+
+MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name)
+{
+	DeletePanel(name);
+	return m_Panels.Create(name);
+}
+
+MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name, const MkSceneNode* targetNode, const MkInt2& panelSize)
+{
+	MkPanel& panel = CreatePanel(name);
+	panel.SetPanelSize(MkFloat2(static_cast<float>(panelSize.x), static_cast<float>(panelSize.y)));
+	panel.SetMaskingNode(targetNode);
+	return panel;
+}
+
 void MkSceneNode::Update(double currTime)
 {
 	// transform

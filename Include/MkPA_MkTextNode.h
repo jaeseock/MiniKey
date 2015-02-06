@@ -179,8 +179,9 @@ public:
 	inline const MkTextNode* GetParentNode(void) const { return m_ParentNode; }
 
 	// child
-	inline MkTextNode* GetChildNode(const MkHashStr& name) { return m_Children.Exist(name) ? m_Children[name] : NULL; }
-	inline const MkTextNode* GetChildNode(const MkHashStr& name) const { return m_Children.Exist(name) ? m_Children[name] : NULL; }
+	inline bool ChildExist(const MkHashStr& name) const { return m_Children.Exist(name); }
+	inline MkTextNode* GetChildNode(const MkHashStr& name) { return ChildExist(name) ? m_Children[name] : NULL; }
+	inline const MkTextNode* GetChildNode(const MkHashStr& name) const { return ChildExist(name) ? m_Children[name] : NULL; }
 
 	// 직계 자식 노드 리스트를 반환
 	inline unsigned int GetChildNodeList(MkArray<MkHashStr>& childNodeList) const { return m_Children.GetKeyList(childNodeList); }

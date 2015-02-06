@@ -50,19 +50,13 @@ void MkSceneTransform::Update(const MkSceneTransform* parentTransform)
 	}
 }
 
-void MkSceneTransform::Clear(void)
+void MkSceneTransform::ClearLocalTransform(void)
 {
 	m_LocalPosition.Clear();
 	m_LocalDepth = 0.f;
 	m_LocalRotation = 0.f;
 	m_LocalScale = 1.f;
 	m_LocalAlpha = 1.f;
-
-	m_WorldPosition.Clear();
-	m_WorldDepth = 0.f;
-	m_WorldRotation = 0.f;
-	m_WorldScale = 1.f;
-	m_WorldAlpha = 1.f;
 }
 
 void MkSceneTransform::GetWorldRectVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const
@@ -85,6 +79,17 @@ void MkSceneTransform::GetWorldRectVertices(const MkFloatRect& rect, MkFloat2 (&
 	localVertex = rect.GetAbsolutePosition(MkFloatRect::eRightBottom, false);
 	vertices[MkFloatRect::eRightBottom].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
 	vertices[MkFloatRect::eRightBottom].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+}
+
+MkSceneTransform::MkSceneTransform()
+{
+	ClearLocalTransform();
+
+	m_WorldPosition.Clear();
+	m_WorldDepth = 0.f;
+	m_WorldRotation = 0.f;
+	m_WorldScale = 1.f;
+	m_WorldAlpha = 1.f;
 }
 
 //------------------------------------------------------------------------------------------------//

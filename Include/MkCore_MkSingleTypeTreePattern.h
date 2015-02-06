@@ -346,6 +346,9 @@ public:
 	// 직계 자식 노드 이름 리스트 반환
 	inline unsigned int GetChildNodeList(MkArray<MkHashStr>& childNodeList) const { return m_ChildrenNode.GetKeyList(childNodeList); }
 
+	// 직계 자식 노드 필드 리스트 반환
+	inline unsigned int GetChildFieldList(MkArray<TargetClass*>& childFieldList) const { return m_ChildrenNode.GetFieldList(childFieldList); }
+
 	// 직계 자식 노드 수 반환
 	inline unsigned int GetChildNodeCount(void) const { return m_ChildrenNode.GetSize(); }
 

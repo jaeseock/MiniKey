@@ -26,6 +26,7 @@
 
 class MkDrawStepInterface;
 class MkTextNode;
+class MkSceneNode;
 
 class MkPanel
 {
@@ -82,15 +83,15 @@ public:
 	inline void SetLocalAlpha(float alpha) { m_Transform.SetLocalAlpha(alpha); }
 	inline float GetLocalAlpha(void) const { return m_Transform.GetLocalAlpha(); }
 
+	// clear local
+	inline void ClearLocalTransform(void) { m_Transform.ClearLocalTransform(); }
+
 	// world
 	inline const MkFloat2& GetWorldPosition(void) const { return m_Transform.GetWorldPosition(); }
 	inline float GetWorldDepth(void) const { return m_Transform.GetWorldDepth(); }
 	inline float GetWorldRotation(void) const { return m_Transform.GetWorldRotation(); }
 	inline float GetWorldScale(void) const { return m_Transform.GetWorldScale(); }
 	inline float GetWorldAlpha(void) const { return m_Transform.GetWorldAlpha(); }
-
-	// identify transform
-	inline void IdentifyTransform(void) { m_Transform.Clear(); }
 
 	// get axis-aligned minimum bounding rect
 	inline const MkFloatRect& GetWorldAABR(void) const { return m_AABR; }
@@ -128,12 +129,11 @@ public:
 	void SetVisible(bool visible);
 	bool GetVisible(void) const;
 
-	// 강제 font state 설정. 이후 적용되는 모든 deco string은 해당 설정이 강제로 적용 됨
-	//void SetFocedFontState(const MkHashStr& fontState);
-	//inline bool CheckFocedFontTypeAndState(void) const { return (!m_ForcedFontState.Empty()); }
-
 	//------------------------------------------------------------------------------------------------//
 	// 그려질 대상 설정
+	// - texture(static/dynamic)
+	// - text node
+	// - masking scene node
 	//------------------------------------------------------------------------------------------------//
 
 	// texture 설정
@@ -158,9 +158,9 @@ public:
 	// (TIP) 장문의 경우 restrictToPanelWidth = true, eAttachToLeftTop, eCutSource와 조합하면 일반적인 세로 스크롤 출력이 됨
 	void SetTextNode(const MkTextNode& source, bool restrictToPanelWidth = false);
 
-	// (NOTE) 이름으로 text node를 설정했을 경우 static으로 여겨지기 때문에 GetTextNodePtr()로 얻어온 복사본을 수정하더라도
-	//        저장시 수정 내용이 반영되지 않음
-	bool SetTextNode(const MkHashStr& name, bool restrictToPanelWidth = false);
+	// 해당 이름의 text node를 static resource container에서 불러와 설정
+	// (NOTE) static으로 여겨지기 때문에 GetTextNodePtr()로 얻어온 복사본을 수정하더라도 저장시 수정 내용이 반영되지 않음
+	void SetTextNode(const MkHashStr& name, bool restrictToPanelWidth = false);
 
 	// 설정된 text node 정보 반환
 	inline const MkHashStr& GetTextNodeName(void) const { return m_TargetTextNodeName; }
@@ -179,6 +179,9 @@ public:
 
 	// 기존 설정된 deco string이 있다면 재로딩
 	//void RestoreDecoString(void);
+
+	// (NOTE) 호출 전 반드시 유효한 panel size가 설정되어 있어야 함
+	void SetMaskingNode(const MkSceneNode* sceneNode);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -271,8 +274,6 @@ protected:
 	MkFloat2 m_UV[MkFloatRect::eMaxPointName];
 	MkFloatRect m_AABR; // axis-aligned bounding rect
 
-	//MkHashStr m_ForcedFontState;
-
 	// texture
 	MkBaseTexturePtr m_Texture;
 	MkHashStr m_SubsetOrSequenceName;
@@ -283,6 +284,9 @@ protected:
 	// text node
 	MkHashStr m_TargetTextNodeName;
 	MkTextNode* m_TargetTextNodePtr;
+
+	// masking node
+	const MkSceneNode* m_TargetMaskingNodePtr;
 
 	// custom draw step
 	MkDrawStepInterface* m_DrawStep;

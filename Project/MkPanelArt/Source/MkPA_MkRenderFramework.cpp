@@ -3,6 +3,7 @@
 #include "MkPA_MkResetableResourcePool.h"
 //#include "MkS2D_MkWindowResourceManager.h"
 //#include "MkS2D_MkWindowEventManager.h"
+#include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkFontManager.h"
 #include "MkPA_MkBitmapPool.h"
@@ -35,7 +36,7 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 	m_InstanceDeallocator.RegisterInstance(new MkResetableResourcePool());
 	
 	// 2.
-	//m_InstanceDeallocator.RegisterInstance(new MkWindowResourceManager());
+	m_InstanceDeallocator.RegisterInstance(new MkStaticResourceContainer());
 
 	// 3.
 	//m_InstanceDeallocator.RegisterInstance(new MkWindowEventManager());

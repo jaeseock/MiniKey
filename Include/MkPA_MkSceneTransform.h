@@ -44,12 +44,12 @@ public:
 	void Update(const MkSceneTransform* parentTransform);
 
 	// identify
-	void Clear(void);
+	void ClearLocalTransform(void);
 
 	// local rect -> world rect vertices
 	void GetWorldRectVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const;
 
-	MkSceneTransform() { Clear(); }
+	MkSceneTransform();
 	~MkSceneTransform() {}
 
 protected:
