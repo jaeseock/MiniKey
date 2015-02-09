@@ -1,9 +1,4 @@
 
-Node "StaticResource"
-{
-	str TextNode = "Text\StaticTextNode.txt";
-}
-
 Node "FontResource"
 {
 	Node "FontType"
@@ -264,6 +259,47 @@ Node "FontResource"
 			int mode = 2;
 			str modeColor = "DarkGrayC";
 		}
+	}
+}
+
+Node "StaticResource"
+{
+	str TextNode = "Text\StaticTextNode.txt";
+}
+
+Node "CursorType"
+{
+	Node "Normal"
+	{
+		str FilePath = "Default\cursor_normal.png";
+	}
+	
+	Node "Excutable"
+	{
+		str FilePath = "Default\cursor_excutable.png";
+	}
+	
+	Node "Disable"
+	{
+		str FilePath = "Default\cursor_disable.png";
+	}
+	
+	Node "Movable"
+	{
+		str FilePath = "Default\cursor_movable.png";
+		int2 Hotspot = (7, 7);
+	}
+	
+	Node "Moving"
+	{
+		str FilePath = "Default\cursor_moving.png";
+		int2 Hotspot = (7, 7);
+	}
+	
+	Node "TextCursor"
+	{
+		str FilePath = "Default\cursor_textcursor.png";
+		int2 Hotspot = (2, 1);
 	}
 }
 /*
@@ -1050,37 +1086,6 @@ Node "WindowPreset"
 		str BackgroundWindow = "DefaultStaticBG";
 		
 		str FontState = "ป๙วร02" / "ClientStartMsg";
-	}
-}
-
-Node "CursorList"
-{
-	str NormalCursor = "ArrowDef";
-	str ActionCursor = "ArrowBlue";
-	str DisableCursor = "ArrowRed";
-	
-	Node "ArrowDef"
-	{
-		str FilePath = "Default\cursor_arrow_def.png";
-		int2 Hotspot = (0, 0);
-	}
-	
-	Node "ArrowRed"
-	{
-		str FilePath = "Default\cursor_arrow_r.png";
-		int2 Hotspot = (0, 0);
-	}
-	
-	Node "ArrowGreen"
-	{
-		str FilePath = "Default\cursor_arrow_g.png";
-		int2 Hotspot = (0, 0);
-	}
-	
-	Node "ArrowBlue"
-	{
-		str FilePath = "Default\cursor_arrow_b.png";
-		int2 Hotspot = (0, 0);
 	}
 }
 */

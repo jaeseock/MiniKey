@@ -237,6 +237,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkPA_MkCursorManager.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkCursorManager.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkPA_MkDeviceManager.cpp"
 					>
 				</File>

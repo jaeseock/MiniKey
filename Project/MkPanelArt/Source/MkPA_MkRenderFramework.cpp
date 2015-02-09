@@ -7,7 +7,7 @@
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkFontManager.h"
 #include "MkPA_MkBitmapPool.h"
-//#include "MkS2D_MkCursorManager.h"
+#include "MkPA_MkCursorManager.h"
 #include "MkPA_MkRenderStateSetter.h"
 //#include "MkS2D_MkS2DCheatMessage.h"
 #include "MkPA_MkDrawingMonitor.h"
@@ -52,8 +52,8 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 	m_InstanceDeallocator.RegisterInstance(new MkBitmapPool());
 
 	// 7.
-	//m_InstanceDeallocator.RegisterInstance(new MkCursorManager());
-	//MK_RESETABLE_RESPOOL.RegisterResource(MkCursorManager::InstancePtr());
+	m_InstanceDeallocator.RegisterInstance(new MkCursorManager());
+	MK_RESETABLE_RESPOOL.RegisterResource(MkCursorManager::InstancePtr());
 
 	// 8.
 	m_InstanceDeallocator.RegisterInstance(new MkRenderStateSetter());
@@ -71,10 +71,10 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 	return true;
 }
 
-//void MkRenderFramework::ConsumeSetCursorMsg(void)
-//{
-//	MK_CURSOR_MGR.__ConsumeSetCursorMsg();
-//}
+void MkRenderFramework::ConsumeSetCursorMsg(void)
+{
+	MK_CURSOR_MGR.__ConsumeSetCursorMsg();
+}
 
 void MkRenderFramework::Update(void)
 {

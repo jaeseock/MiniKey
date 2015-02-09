@@ -29,9 +29,6 @@
 // render config 파일에서 window preset 노드명
 //#define MKDEF_PA_WINDOW_PRESET_NODE_NAME L"WindowPreset"
 
-// render config 파일에서 cursor list 노드명
-//#define MKDEF_PA_CURSOR_LIST_NODE_NAME L"CursorList"
-
 //------------------------------------------------------------------------------------------------//
 
 // MkTextNode에서 투명 처리 될 color key(D3DCOLOR)

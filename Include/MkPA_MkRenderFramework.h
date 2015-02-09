@@ -16,7 +16,7 @@ public:
 
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg);
 
-	//virtual void ConsumeSetCursorMsg(void);
+	virtual void ConsumeSetCursorMsg(void);
 
 	virtual void Update(void);
 
