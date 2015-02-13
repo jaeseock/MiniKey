@@ -14,7 +14,8 @@ enum ePA_MaterialBlendType
 // scene node type
 enum ePA_SceneNodeType
 {
-	ePA_SNT_SceneNode = 0 // MkSceneNode
+	ePA_SNT_SceneNode = 0, // MkSceneNode
+	ePA_SNT_Overlay // MkOverlay
 	//ePA_SNT_BaseWindowNode, // MkBaseWindowNode
 
 	//ePA_SNT_ControlWindowNodeBegin,
@@ -27,6 +28,16 @@ enum ePA_SceneNodeType
 
 	//ePA_SNT_ControlWindowNodeEnd
 };
+
+
+// theme
+enum ePA_PieceSetType
+{
+	ePA_PST_None = -1,
+	ePA_PST_Default = 0,
+	ePA_PST_Shadow
+};
+
 /*
 // window preset component
 enum eS2D_WindowPresetComponent

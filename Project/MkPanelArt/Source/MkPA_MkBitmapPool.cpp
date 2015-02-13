@@ -20,6 +20,9 @@ bool MkBitmapPool::LoadBitmapTexture(const MkPathName& filePath)
 	if (m_Pool.Exist(currKey)) // 이미 존재. 무시
 		return true;
 
+	MK_CHECK(!filePath.Empty(), L"비어 있는 bitmap file 경로로 로딩 시도")
+		return false;
+
 	MK_CHECK(MkFileManager::CheckAvailable(filePath), L"존재하지 않는 bitmap file 로딩 시도 : " + filePath)
 		return false;
 
@@ -58,33 +61,53 @@ bool MkBitmapPool::LoadBitmapTexture(const MkPathName& filePath)
 
 	if (groupName.Empty())
 	{
-		MK_DEV_PANEL.MsgToLog(L"> bitmap 생성 : " + filePath, true);
+		MK_DEV_PANEL.MsgToLog(L"bitmap 생성 : " + filePath, true);
 	}
 	else
 	{
-		MK_DEV_PANEL.MsgToLog(L"> bitmap 생성(" + groupName.GetString() + L") : " + filePath, true);
+		MK_DEV_PANEL.MsgToLog(L"bitmap 생성(" + groupName.GetString() + L") : " + filePath, true);
 	}
 
 	MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_TEXPOOL, MKDEF_BITMAPS_ON_POOL_MSG_TEXT + MkStr(m_Pool.GetSize()));
 	return true;
 }
 
-void MkBitmapPool::GetBitmapTexture(const MkPathName& filePath, MkBaseTexturePtr& texture)
+MkBaseTexture* MkBitmapPool::GetBitmapTexture(const MkPathName& filePath)
 {
-	MK_CHECK(texture == NULL, L"생성하려는 texture ptr에 이미 값이 들어 있음")
-		return;
+	// MkHashStr > MkPathName 변환은 문자열 복사만 일어나지만 MkPathName > MkHashStr 변환은 해쉬키 생성 비용이 추가됨
+	return GetBitmapTexture(MkHashStr(filePath));
+}
 
-	MkHashStr currKey = filePath;
-
+MkBaseTexture* MkBitmapPool::GetBitmapTexture(const MkHashStr& filePath)
+{
 	// 없으면 생성
-	if (!m_Pool.Exist(currKey))
+	if (!m_Pool.Exist(filePath))
 	{
 		if (!LoadBitmapTexture(filePath))
-			return;
+			return NULL;
 	}
 	
 	// 참조 반환
-	texture = m_Pool[currKey];
+	return m_Pool[filePath];
+}
+
+void MkBitmapPool::UnloadBitmapTexture(const MkPathName& filePath)
+{
+	UnloadBitmapTexture(MkHashStr(filePath));
+}
+
+void MkBitmapPool::UnloadBitmapTexture(const MkHashStr& filePath)
+{
+	if (m_Pool.Exist(filePath))
+	{
+		MK_CHECK(m_Pool[filePath].GetReferenceCounter() == 1, L"<WARNING> 참조 중인 bitmap texture " + filePath.GetString() + L"를 삭제 시도")
+			return;
+
+		m_Pool.Erase(filePath);
+
+		MK_DEV_PANEL.MsgToLog(L"bitmap 삭제 : " + filePath.GetString(), true);
+		MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_TEXPOOL, MKDEF_BITMAPS_ON_POOL_MSG_TEXT + MkStr(m_Pool.GetSize()));
+	}
 }
 
 void MkBitmapPool::UnloadGroup(const MkHashStr& groupName)
@@ -101,8 +124,7 @@ void MkBitmapPool::UnloadGroup(const MkHashStr& groupName)
 
 			m_Pool.Erase(currKey);
 
-			MK_DEV_PANEL.MsgToLog(L"> bitmap 삭제 : " + currKey.GetString(), true);
-			
+			MK_DEV_PANEL.MsgToLog(L"bitmap 삭제 : " + currKey.GetString(), true);
 		}
 
 		m_GroupTable.Erase(groupName);

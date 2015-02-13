@@ -21,6 +21,8 @@ void MkCursorManager::SetUp(const MkDataNode* node)
 	if (node == NULL)
 		return;
 
+	MK_DEV_PANEL.MsgToLog(L"< Cursor >", false);
+
 	for (unsigned int i=0; i<eMaxType; ++i)
 	{
 		const MkDataNode* childNode = node->GetChildNode(CURSOR_NAME[i]);
@@ -36,6 +38,8 @@ void MkCursorManager::SetUp(const MkDataNode* node)
 			RegisterCursor(static_cast<eCursorType>(i), filePath, static_cast<unsigned int>(hotspot.x), static_cast<unsigned int>(hotspot.y));
 		}
 	}
+
+	MK_DEV_PANEL.MsgToLog(L"", false);
 }
 
 bool MkCursorManager::RegisterCursor(eCursorType cursorType, const MkPathName& filePath, unsigned int hotspotX, unsigned int hotspotY)
@@ -56,7 +60,7 @@ bool MkCursorManager::RegisterCursor(eCursorType cursorType, const MkPathName& f
 	ci.hotspotX = hotspotX;
 	ci.hotspotY = hotspotY;
 
-	MK_DEV_PANEL.MsgToLog(L"> cursor type µî·Ï : " + cursorName, true);
+	MK_DEV_PANEL.MsgToLog(L"   - cursor type : " + cursorName, false);
 	return true;
 }
 
@@ -68,18 +72,14 @@ bool MkCursorManager::SetCursorType(eCursorType cursorType)
 	LPDIRECT3DDEVICE9 device = MK_DEVICE_MGR.GetDevice();
 	if (device != NULL)
 	{
-		MkBaseTexturePtr texBuf;
 		const _CursorInfo& ci = m_CursorInfoTable[cursorType];
-		MK_BITMAP_POOL.GetBitmapTexture(ci.filePath, texBuf);
 
-		if (texBuf != NULL)
+		MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(ci.filePath);
+		if (texture != NULL)
 		{
-			if (device->SetCursorProperties(ci.hotspotX, ci.hotspotY, texBuf->GetSurface()) == D3D_OK)
+			if (device->SetCursorProperties(ci.hotspotX, ci.hotspotY, texture->GetSurface()) == D3D_OK)
 			{
 				m_CurrentCursorType = cursorType;
-
-				m_CurrentCursorTexture = NULL;
-				m_CurrentCursorTexture = texBuf;
 				return true;
 			}
 		}
@@ -91,7 +91,6 @@ void MkCursorManager::Clear(void)
 {
 	m_CursorInfoTable.Clear();
 	m_CurrentCursorType = eNone;
-	m_CurrentCursorTexture = NULL;
 }
 
 void MkCursorManager::ReloadResource(LPDIRECT3DDEVICE9 device)

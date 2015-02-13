@@ -28,9 +28,33 @@ const MkTextNode& MkStaticResourceContainer::GetTextNode(const MkHashStr& name) 
 	return m_TextNode.ChildExist(name) ? *m_TextNode.GetChildNode(name) : m_EmptyTextNode;
 }
 
+//------------------------------------------------------------------------------------------------//
+
+bool MkStaticResourceContainer::LoadWindowThemeSet(const MkDataNode* dataNode)
+{
+	if (dataNode == NULL)
+		return true;
+
+	m_WindowThemeSet.Clear();
+	bool ok = m_WindowThemeSet.SetUp(*dataNode);
+	if (!ok)
+	{
+		m_WindowThemeSet.Clear();
+	}
+	return ok;
+}
+
+//------------------------------------------------------------------------------------------------//
+
+void MkStaticResourceContainer::Update(void)
+{
+	m_WindowThemeSet.UnloadUnusedThemeImage();
+}
+
 void MkStaticResourceContainer::Clear(void)
 {
 	m_TextNode.Clear();
+	m_WindowThemeSet.Clear();
 }
 
 //------------------------------------------------------------------------------------------------//

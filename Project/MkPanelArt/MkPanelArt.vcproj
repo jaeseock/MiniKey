@@ -309,7 +309,7 @@
 					>
 				</File>
 				<Filter
-					Name="Text"
+					Name="Text node"
 					>
 					<File
 						RelativePath=".\Source\MkPA_MkTextNode.cpp"
@@ -355,6 +355,46 @@
 						RelativePath="..\..\Include\MkPA_MkRenderToTexture.h"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="Window"
+					>
+					<Filter
+						Name="Theme"
+						>
+						<File
+							RelativePath=".\Source\MkPA_MkWindowThemeData.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkWindowThemeData.h"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\MkPA_MkWindowThemeFormData.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkWindowThemeFormData.h"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\MkPA_MkWindowThemeSet.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkWindowThemeSet.h"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\MkPA_MkWindowThemeUnitData.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkWindowThemeUnitData.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 			<Filter
@@ -453,16 +493,40 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="0. Scene node"
+					Name="Node"
 					>
-					<File
-						RelativePath=".\Source\MkPA_MkSceneNode.cpp"
+					<Filter
+						Name="0. Scene node"
 						>
-					</File>
-					<File
-						RelativePath="..\..\Include\MkPA_MkSceneNode.h"
+						<File
+							RelativePath=".\Source\MkPA_MkSceneNode.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkSceneNode.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="1. Overlay"
 						>
-					</File>
+						<File
+							RelativePath=".\Source\MkPA_MkOverlay.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkOverlay.h"
+							>
+						</File>
+						<File
+							RelativePath=".\Source\MkWindowViewArgument.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkWindowViewArgument.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

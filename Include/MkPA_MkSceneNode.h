@@ -61,14 +61,14 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// panel 관리
-	// - normal panel : 일반적인 panel
+	// - single panel : 일반적인 panel
 	// - masking panel : 대상 노드를 특정 영역만큼 잘라 그려주는 panel
 	//------------------------------------------------------------------------------------------------//
 
 	// panel 존재 여부
 	inline bool PanelExist(const MkHashStr& name) const { return m_Panels.Exist(name); }
 
-	// normal panel 생성. 같은 이름의 panel이 이미 존재하면 삭제 후 재생성
+	// single panel 생성. 같은 이름의 panel이 이미 존재하면 삭제 후 재생성
 	MkPanel& CreatePanel(const MkHashStr& name);
 
 	// targetNode를 masking하는 panel 생성. 같은 이름의 panel이 이미 존재하면 삭제 후 재생성
@@ -97,8 +97,8 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// visible
-	inline void SetVisible(bool visible) { m_Visible = visible; }
-	inline bool GetVisible(void) const { return m_Visible; }
+	void SetVisible(bool visible);
+	bool GetVisible(void) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 정렬
@@ -140,6 +140,12 @@ protected:
 
 	//void _ApplyBuildingTemplateToSave(MkDataNode& node, const MkHashStr& templateName);
 
+	enum eSceneNodeAttribute
+	{
+		eVisible = 0,
+		eSceneNodeAttrBandwidth = 4 // MkSceneNode : 4bit 대역폭 확보
+	};
+
 protected:
 
 	//------------------------------------------------------------------------------------------------//
@@ -151,5 +157,6 @@ protected:
 
 	MkHashMap<MkHashStr, MkPanel> m_Panels; // name, panel
 
-	bool m_Visible;
+	// flag
+	MkBitField32 m_Attribute;
 };

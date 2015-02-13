@@ -7,6 +7,7 @@
 
 #include "MkCore_MkSingletonPattern.h"
 #include "MkPA_MkTextNode.h"
+#include "MkPA_MkWindowThemeSet.h"
 
 
 #define MK_STATIC_RES MkStaticResourceContainer::Instance()
@@ -26,6 +27,16 @@ public:
 	const MkTextNode& GetTextNode(const MkHashStr& name) const;
 
 	//------------------------------------------------------------------------------------------------//
+	// window theme set
+	//------------------------------------------------------------------------------------------------//
+
+	bool LoadWindowThemeSet(const MkDataNode* dataNode);
+
+	inline const MkWindowThemeSet& GetWindowThemeSet(void) const { return m_WindowThemeSet; }
+
+	//------------------------------------------------------------------------------------------------//
+
+	void Update(void);
 
 	void Clear(void);
 
@@ -34,6 +45,10 @@ public:
 
 protected:
 
+	// text node
 	MkTextNode m_TextNode;
 	MkTextNode m_EmptyTextNode;
+
+	// window theme set
+	MkWindowThemeSet m_WindowThemeSet;
 };

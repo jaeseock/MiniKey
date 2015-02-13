@@ -30,6 +30,8 @@ const MkStr MkTagDefinitionForDataNode::TagForUnitAssign(L"=");
 const MkStr MkTagDefinitionForDataNode::TagForUnitEnd(L";");
 const MkStr MkTagDefinitionForDataNode::TagForArrayDivider(L"/");
 
+const MkStr MkTagDefinitionForDataNode::StringArrayAutomationKeyword(L"~");
+
 const unsigned char __BDN_TAG[4] = { '#', 'B', 'D', 'N' };
 const MkByteArray MkTagDefinitionForDataNode::TagForBinaryDataNode(static_cast<const unsigned char*>(__BDN_TAG), 4);
 

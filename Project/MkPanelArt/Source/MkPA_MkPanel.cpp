@@ -224,19 +224,18 @@ bool MkPanel::GetVisible(void) const
 	return m_Attribute[eVisible];
 }
 
-bool MkPanel::SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
+bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
 {
 	Clear();
 
-	m_Texture = texture;
+	m_Texture = const_cast<MkBaseTexture*>(texture); // ref++
 	m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
 	return SetSubsetOrSequenceName(subsetOrSequenceName, startTime, initTime);
 }
 
-bool MkPanel::SetTexture(const MkPathName& imagePath, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
+bool MkPanel::SetTexture(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
 {
-	MkBaseTexturePtr texture;
-	MK_BITMAP_POOL.GetBitmapTexture(imagePath, texture);
+	const MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(imagePath);
 	MK_CHECK(texture != NULL, MkStr(imagePath) + L" 이미지 파일 로딩 실패") {}
 	return SetTexture(texture, subsetOrSequenceName, startTime, initTime);
 }
@@ -298,7 +297,7 @@ void MkPanel::SetTextNode(const MkTextNode& source, bool restrictToPanelWidth)
 			break;
 
 		drawStep->SetUp(m_TargetTextNodePtr);
-		drawStep->GetTargetTexture(0, m_Texture);
+		m_Texture = drawStep->GetTargetTexture();
 		m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
 
 		m_DrawStep = drawStep;
@@ -332,7 +331,7 @@ void MkPanel::BuildAndUpdateTextCache(void)
 
 			drawTextNodeStep->SetUp(m_TargetTextNodePtr);
 
-			m_DrawStep->GetTargetTexture(0, m_Texture);
+			m_Texture = m_DrawStep->GetTargetTexture();
 			m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
 		}
 	}
@@ -372,7 +371,7 @@ void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 			MK_CHECK(drawStep->SetUp(MkRenderTarget::eTexture, 1, MkInt2(static_cast<int>(m_PanelSize.x), static_cast<int>(m_PanelSize.y))), L"MkDrawSceneNodeStep SetUp 실패")
 				break;
 
-			drawStep->GetTargetTexture(0, m_Texture);
+			m_Texture = drawStep->GetTargetTexture();
 			m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
 
 			drawStep->SetSceneNode(sceneNode);
@@ -475,10 +474,11 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 		else
 		{
 			bool copyU = true, copyV = true;
+			bool srcSizeChanged = false;
 
-			// 휘발성 local position/size offset
-			MkFloat2 internalPos, internalSize;
-
+			// 휘발성 local rect
+			MkFloatRect internalRect;
+			
 			// x size, u
 			if (m_PanelSize.x > ssPtr->rectSize.x) // smaller src
 			{
@@ -488,9 +488,10 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 					m_PanelSize.x = ssPtr->rectSize.x;
 					break;
 				case eExpandSource: // panel 크기에 맞게 source를 확대해 맞춤
+					srcSizeChanged = true;
 					break;
 				case eAttachToLeftTop: // panel과 source 크기를 모두 유지. panel의 left-top을 기준으로 출력
-					internalSize.x = ssPtr->rectSize.x - m_PanelSize.x;
+					internalRect.size.x = ssPtr->rectSize.x - m_PanelSize.x;
 					break;
 				}
 			}
@@ -502,6 +503,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 					m_PanelSize.x = ssPtr->rectSize.x;
 					break;
 				case eReduceSource: // panel 크기에 맞게 source를 축소해 맞춤
+					srcSizeChanged = true;
 					break;
 				case eCutSource: // source를 panel 크기에 맞게 일부만 잘라 보여줌
 					{
@@ -528,10 +530,11 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 					m_PanelSize.y = ssPtr->rectSize.y;
 					break;
 				case eExpandSource: // panel 크기에 맞게 source를 확대해 맞춤
+					srcSizeChanged = true;
 					break;
 				case eAttachToLeftTop: // panel과 source 크기를 모두 유지. panel의 left-top을 기준으로 출력
-					internalPos.y = m_PanelSize.y - ssPtr->rectSize.y;
-					internalSize.y = -internalPos.y;
+					internalRect.position.y = m_PanelSize.y - ssPtr->rectSize.y;
+					internalRect.size.y = -internalRect.position.y;
 					break;
 				}
 			}
@@ -543,6 +546,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 					m_PanelSize.y = ssPtr->rectSize.y;
 					break;
 				case eReduceSource: // panel 크기에 맞게 source를 축소해 맞춤
+					srcSizeChanged = true;
 					break;
 				case eCutSource: // source를 panel 크기에 맞게 일부만 잘라 보여줌
 					{
@@ -559,7 +563,8 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 					break;
 				}
 			}
-			
+
+			// copy untouched uv
 			if (copyU && copyV)
 			{
 				memcpy_s(m_UV, sizeof(MkFloat2) * MkFloatRect::eMaxPointName, ssPtr->uv, sizeof(MkFloat2) * MkFloatRect::eMaxPointName);
@@ -580,7 +585,13 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 			}
 
 			// vertices
-			m_Transform.GetWorldRectVertices(MkFloatRect(internalPos, m_PanelSize + internalSize), m_WorldVertice);
+			internalRect.size += m_PanelSize;
+			m_Transform.GetWorldRectVertices(internalRect, m_WorldVertice);
+
+			// filtering mode. 이미지 원본을 확대/축소 할 경우 point보다는 linear filtering이 유리
+			// 원칙적으로는 최종 출력 크기로 비교해야 하지만 잘라 그리기의 경우 uv로부터 size를 역산해야되는데 floating 계산 특성상 발생하는
+			// 오차로 인해 오히려 잘못된 결과가 나올 가능성이 높음. 따라서 단순하게 조건식으로 처리
+			m_Texture->SetFilterType((srcSizeChanged || (m_Transform.GetWorldScale() != 1.f)) ? MkBaseTexture::eLinear : MkBaseTexture::ePoint);
 
 			// update AABR
 			MkFloat2 minPt(m_WorldVertice[MkFloatRect::eLeftTop]);

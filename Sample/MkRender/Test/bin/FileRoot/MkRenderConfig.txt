@@ -17,7 +17,7 @@ Node "FontResource"
 			
 		Node "¸¼Àº°íµñ"
 		{
-			Node "DefaultT" // duty. predefined keyword
+			Node "DefaultT" // duty
 			{
 				str face = "¸¼Àº°íµñ";
 				uint size = 14;
@@ -76,7 +76,7 @@ Node "FontResource"
 		
 		Node "±¼¸²"
 		{
-			Node "DefaultT" // duty. predefined keyword
+			Node "DefaultT" // duty
 			{
 				str face = "GulimChe";
 				uint size = 14;
@@ -137,7 +137,7 @@ Node "FontResource"
 		{
 			str FontFilePath = "Text\NanumGothic.ttf";
 			
-			Node "DefaultT" // duty. predefined keyword
+			Node "DefaultT" // duty
 			{
 				str face = "³ª´®°íµñ";
 				uint size = 16;
@@ -211,7 +211,7 @@ Node "FontResource"
 		//	str modeColor = "RedC"; // same as textColor
 		//}
 		
-		Node "DefaultS" // duty. predefined keyword
+		Node "DefaultS" // duty
 		{
 			str textColor = "WhiteC";
 			int mode = 2;
@@ -265,6 +265,51 @@ Node "FontResource"
 Node "StaticResource"
 {
 	str TextNode = "Text\StaticTextNode.txt";
+	
+	Node "Theme"
+	{
+		Node "Default" // duty
+		{
+			str ImagePath = "Default\theme_default.png";
+			
+			/*
+			Node "COMPONENT_NAME"
+			{
+				str POSITION_KEY = "Default_0"; // 1°³. eUT_Image
+				str POSITION_KEY = "~" / "Default_" / "0" / "3" / "5" / "8"; // 8°³. eUT_Edge
+				str POSITION_KEY = "~" / "Default_" / "0" / "8"; // 9°³. eUT_Table
+			}
+			
+			Node "COMPONENT_NAME" // eFT_SingleUnit
+			{
+				str Single = ...;
+			}
+			Node "COMPONENT_NAME" // eFT_DualUnit
+			{
+				str Back = ...;
+				str Front = ...;
+			}
+			Node "COMPONENT_NAME" // eFT_QuadUnit
+			{
+				str Normal = ...;
+				str Focus = ...;
+				str Pushing = ...;
+				str Disable = ...;
+			}
+			*/
+			
+			// component
+			Node "Default" // eFT_SingleUnit
+			{
+				str Single = "~" / "Default_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "Shadow" // eFT_SingleUnit
+			{
+				str Single = "~" / "Shadow_" / "0" / "3" / "5" / "8"; // eUT_Edge
+			}
+		}
+	}
 }
 
 Node "CursorType"
@@ -302,6 +347,7 @@ Node "CursorType"
 		int2 Hotspot = (2, 1);
 	}
 }
+
 /*
 Node "WindowTypeImageSet"
 {

@@ -21,7 +21,6 @@
 #include "MkCore_MkBitField32.h"
 #include "MkPA_MkSceneTransform.h"
 #include "MkPA_MkBaseTexture.h"
-//#include "MkS2D_MkTextCacheStep.h"
 
 
 class MkDrawStepInterface;
@@ -138,9 +137,9 @@ public:
 
 	// texture 설정
 	// sequence 지정의 경우 startTime은 현재 시간, initTime은 sequence 내부에서의 시작 시간을 의미
-	// (NOTE) SetTextNode()와 배타적
-	bool SetTexture(const MkBaseTexturePtr& texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
-	bool SetTexture(const MkPathName& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
+	// (NOTE) SetTextNode(), SetMaskingNode()와 배타적
+	bool SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
+	bool SetTexture(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
 
 	// image info
 	// (NOTE) 호출 전 texture가 설정되어 있어야 함
@@ -148,13 +147,14 @@ public:
 	inline const MkHashStr& GetSubsetOrSequenceName(void) const { return m_SubsetOrSequenceName; }
 	unsigned int GetAllSubsets(MkArray<MkHashStr>& keyList) const;
 	unsigned int GetAllSequences(MkArray<MkHashStr>& keyList) const;
+	inline double GetSequenceStartTime(void) const { return m_SequenceStartTime; }
 
 	// text node 설정
 	// 호출시 Build() 수행
 	// MkDrawTextNodeStep을 통해 static image를 caching해 사용하므로 draw시 최초 한 번만 부하 발생
 	// deep copy로 자체적인 객체를 소유. 이는 GetTextNodePtr()로 얻은 객체의 변경이 원본 손상 없이 가능함을 의미(수정 후 추가적인 Build() 필요)
 	// restrictToPanelWidth가 true인 경우 panel size의 x로 가로 폭 제한
-	// (NOTE) SetTexture()와 배타적
+	// (NOTE) SetTexture(), SetMaskingNode()와 배타적
 	// (TIP) 장문의 경우 restrictToPanelWidth = true, eAttachToLeftTop, eCutSource와 조합하면 일반적인 세로 스크롤 출력이 됨
 	void SetTextNode(const MkTextNode& source, bool restrictToPanelWidth = false);
 
@@ -180,6 +180,8 @@ public:
 	// 기존 설정된 deco string이 있다면 재로딩
 	//void RestoreDecoString(void);
 
+	// mask panel 설정
+	// (NOTE) SetTexture(), SetTextNode()와 배타적
 	// (NOTE) 호출 전 반드시 유효한 panel size가 설정되어 있어야 함
 	void SetMaskingNode(const MkSceneNode* sceneNode);
 

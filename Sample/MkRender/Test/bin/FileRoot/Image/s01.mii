@@ -47,8 +47,7 @@ Node "FaceP_" // horizontal panorama. FaceP_0, FaceP_1, ..., FaceP_29
 Node "NAME"
 {
 	float TotalRange = 4.5; // 총 시간 구간의 길이(sec)
-	str SubsetList = "P_0" / "P_1" / "P_2"; // subset list
-	//str SubsetList = "~" / "P_" / "0" / "2"; // 위의 리스트를 이런 식으로도 표현 가능. 형식은 ("~" / "PREFIX" / "1st FIRST_INDEX" / "1st LAST_INDEX" / "2nd FIRST_INDEX" / "2nd LAST_INDEX" / ...)
+	str SubsetList = "P_0" / "P_1" / "P_2"; // subset list. MkDataNode의 automation 기능 추천(해당 문장은 str SubsetList = "~" / "P_" / "0" / "2";와 동일)
 	float TimeList = 0 / 1.5 / 3; // (opt)subset list와 1:1 대응되는 등장 시간. 없으면 Range를 Subset 갯수만큼 균일하게 쪼개서 사용
 	bool Loop = yes; // (opt)루핑 여부. 기본값은 true
 }

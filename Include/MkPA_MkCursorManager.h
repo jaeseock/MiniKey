@@ -13,10 +13,8 @@
 #include "MkCore_MkSingletonPattern.h"
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
-#include "MkCore_MkPathName.h"
 
 #include "MkPA_MkBaseResetableResource.h"
-#include "MkPA_MkBaseTexture.h"
 
 
 #define MK_CURSOR_MGR MkCursorManager::Instance()
@@ -73,7 +71,7 @@ protected:
 
 	typedef struct __CursorInfo
 	{
-		MkPathName filePath;
+		MkHashStr filePath;
 		unsigned int hotspotX;
 		unsigned int hotspotY;
 	}
@@ -84,5 +82,4 @@ protected:
 	MkHashMap<eCursorType, _CursorInfo> m_CursorInfoTable;
 
 	eCursorType m_CurrentCursorType;
-	MkBaseTexturePtr m_CurrentCursorTexture;
 };

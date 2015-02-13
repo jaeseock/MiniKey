@@ -112,6 +112,9 @@ bool MkBaseFramework::__Start
 	// 10.
 	m_InstanceDeallocator.RegisterInstance(new MkPageManager());
 
+	// start!!!
+	MK_DEV_PANEL.MsgToLog(L"Application start" + MkStr::CRLF, true);
+
 	// 메인 윈도우 생성
 	if (!m_MainWindow.SetUpByWindowCreation(hInstance, (wndProc == NULL) ? WndProc : wndProc, NULL, title, sysWinProp, MkInt2(x, y), MkInt2(clientWidth, clientHeight)))
 		return false;
@@ -163,10 +166,10 @@ bool MkBaseFramework::__Start
 		ChangeWindowMessageFilter(0x0049, 0x0001); // WM_COPYGLOBALDATA, MSGFLT_ADD
 		ChangeWindowMessageFilter(WM_DROPFILES, MSGFLT_ADD);
 #endif
-		MK_DEV_PANEL.MsgToLog(L"> Drag accept files", true);
+		MK_DEV_PANEL.MsgToLog(L"Drag accept files", false);
 	}
 
-	MK_DEV_PANEL.MsgToLog(L"> MkBaseFramework 초기화 성공", true);
+	MK_DEV_PANEL.MsgToLog(L"MkBaseFramework 초기화 성공", false);
 	return true;
 }
 
@@ -180,10 +183,11 @@ void MkBaseFramework::__Run(void)
 	if (!m_ThreadManager.WaitTillAllThreadsAreRunning())
 		return;
 
-	MK_DEV_PANEL.MsgToLog(L"> MkBaseFramework 루핑 진입", true);
-
 	// 루핑 알람
 	StartLooping();
+
+	MK_DEV_PANEL.MsgToLog(L"MkBaseFramework 루핑 진입", false);
+	MK_DEV_PANEL.MsgToLog(L"----------------------------------------------------------", false);
 
 	// 루핑 돌입
 	const MkHashStr profKey = MkStr(MKDEF_PROFILING_PREFIX_FOR_THREAD) + MkStr(MKDEF_MAIN_THREAD_NAME);
@@ -335,7 +339,7 @@ void MkBaseFramework::__End(void)
 	m_ASKSetter.Restore();
 
 	// end msg
-	MK_DEV_PANEL.MsgToLog(L"> MkBaseFramework end. Bye~", true);
+	MK_DEV_PANEL.MsgToLog(L"MkBaseFramework end. Bye~", true);
 
 	// 싱글톤 종료
 	m_InstanceDeallocator.ClearRearToFront();

@@ -15,7 +15,7 @@
 #define MKDEF_PA_CONFIG_FILE_NAME L"MkRenderConfig.txt"
 
 // world에서 panel이 존재할 수 있는 가장 뒤의 거리(가장 앞은 0.f)
-#define MKDEF_PA_MAX_WORLD_DEPTH 1000.f
+#define MKDEF_PA_MAX_WORLD_DEPTH 10000.f
 
 // MkImageInfo file 확장자
 #define MKDEF_PA_IMAGE_INFO_FILE_EXT L"mii"

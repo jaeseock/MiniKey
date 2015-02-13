@@ -68,7 +68,7 @@ void MkLoadingThreadUnit::Update(const MkTimeState& timeState)
 			continue;
 		
 #if (MKDEF_SHOW_BGLOADING_COMPLETE)
-		MK_DEV_PANEL.MsgToLog(L"> background loading으로 " + MkStr(currTarget.filePath) + L" 파일 로딩 완료", true);
+		MK_DEV_PANEL.MsgToLog(L"background loading으로 " + MkStr(currTarget.filePath) + L" 파일 로딩 완료", true);
 #endif
 	}
 }

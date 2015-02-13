@@ -53,7 +53,7 @@ public:
 	inline bool GetVisible(void) const { return m_Visible; }
 
 	// 렌더 타겟이 eTexture일 경우 텍스쳐 참조 반환
-	virtual void GetTargetTexture(unsigned int index, MkBaseTexturePtr& buffer) const;
+	virtual MkBaseTexture* GetTargetTexture(unsigned int index = 0) const;
 
 	// 그리기
 	virtual bool Draw(void);

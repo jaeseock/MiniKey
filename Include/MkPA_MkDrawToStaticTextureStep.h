@@ -12,6 +12,7 @@
 // 실제 그리기 위한 명령은 _DrawContents()를 재정의해 사용 할 것
 //------------------------------------------------------------------------------------------------//
 
+#include "MkPA_MkBaseTexture.h"
 #include "MkPA_MkDrawStepInterface.h"
 
 
@@ -20,7 +21,7 @@ class MkDrawToStaticTextureStep : public MkDrawStepInterface
 public:
 
 	// 결과 텍스쳐 반환
-	virtual void GetTargetTexture(unsigned int index, MkBaseTexturePtr& buffer) const { buffer = m_TargetTexture; }
+	virtual MkBaseTexture* GetTargetTexture(unsigned int index = 0) const;
 
 	// 그리기
 	virtual bool Draw(void);

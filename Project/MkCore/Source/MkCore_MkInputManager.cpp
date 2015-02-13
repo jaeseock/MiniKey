@@ -104,8 +104,6 @@ void MkInputManager::UpdateTargetWindowClientSize(HWND targetHWND)
 		GetClientRect(m_TargetWindowHandle, &rect);
 		m_TargetWindowClientSize.x = static_cast<int>(rect.right);
 		m_TargetWindowClientSize.y = static_cast<int>(rect.bottom);
-
-		MK_DEV_PANEL.MsgToLog(L"m_TargetWindowClientSize : " + MkStr(m_TargetWindowClientSize));
 	}
 }
 
@@ -450,25 +448,25 @@ void MkInputManager::__Update(void)
 					switch (evt.eventType)
 					{
 					case eKeyPress:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyPress : " + ConvertKeyCodeToString(evt.arg0));
+						MK_DEV_PANEL.MsgToLog(L"   - input evt eKeyPress : " + ConvertKeyCodeToString(evt.arg0));
 						break;
 					case eKeyRelease:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eKeyRelease : " + ConvertKeyCodeToString(evt.arg0));
+						MK_DEV_PANEL.MsgToLog(L"   - input evt eKeyRelease : " + ConvertKeyCodeToString(evt.arg0));
 						break;
 					case eMousePress:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eMousePress : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						MK_DEV_PANEL.MsgToLog(L"   - input evt eMousePress : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
 						break;
 					case eMouseRelease:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseRelease : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						MK_DEV_PANEL.MsgToLog(L"   - input evt eMouseRelease : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
 						break;
 					case eMouseDoubleClick:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseDoubleClick : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						MK_DEV_PANEL.MsgToLog(L"   - input evt eMouseDoubleClick : btn(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
 						break;
 					case eMouseWheelMove:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseWheelMove : delta(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						MK_DEV_PANEL.MsgToLog(L"   - input evt eMouseWheelMove : delta(" + MkStr(evt.arg0) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
 						break;
 					case eMouseMove:
-						MK_DEV_PANEL.MsgToLog(L"> input evt eMouseMove : inside(" + MkStr(evt.arg0 == 1) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
+						MK_DEV_PANEL.MsgToLog(L"   - input evt eMouseMove : inside(" + MkStr(evt.arg0 == 1) + L"), pos(" + MkStr(evt.arg1) + L", " + MkStr(evt.arg2) + L")");
 						break;
 					}
 				}

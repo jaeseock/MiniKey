@@ -17,6 +17,10 @@
 //
 // (NOTE) reference counting이 operator=를 통해 이루어지기 때문에 이를 사용하지 않는 할당은 문제가 됨
 // ex> 기본 STL 컨테이너(vector, deque, map, etc...)
+//
+// (NOTE) TargetClass*와 MkSharedPointer&, const TargetClass*와 const MkSharedPointer& 할당을
+// 모두 선언할 경우 모호성 오류가 나게 됨. 따라서 TargetClass*, const MkSharedPointer& 할당만
+// 지원하며 필요 할 경우 직접 const_cast를 사용해 할당 할 것
 //------------------------------------------------------------------------------------------------//
 
 #include <assert.h>

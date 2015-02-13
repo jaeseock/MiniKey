@@ -164,34 +164,39 @@ bool MkPageManager::_CheckAndUpdatePageMovement(void)
 	// clear
 	MkStr msgBuf;
 	msgBuf.Reserve(clearPath.GetSize() * 64 + 100);
-	msgBuf += L"> MkPageManager::Clear()";
+	msgBuf += L"page ";
 	MK_INDEXING_RLOOP(clearPath, i)
 	{
-		m_PageTree.GetInstancePtr(clearPath[i])->Clear(&sharingNode);
-		msgBuf += L" - ";
-		msgBuf += clearPath[i];
-	}
-	if (!clearPath.Empty())
-	{
-		MK_DEV_PANEL.MsgToLog(msgBuf, true);
+		const MkHashStr& targetPageName = clearPath[i];
+		msgBuf += targetPageName;
+		if (!clearPath.Empty())
+		{
+			MK_DEV_PANEL.MsgToLog(msgBuf + L"::Clear()", true);
+		}
+
+		m_PageTree.GetInstancePtr(targetPageName)->Clear(&sharingNode);
+
+		msgBuf += L"-";
 	}
 
 	// setup
-	msgBuf.Flush();
+	msgBuf.Clear();
 	msgBuf.Reserve(setupPath.GetSize() * 64 + 100);
-	msgBuf += L"> MkPageManager::SetUp()";
+	msgBuf += L"page ";
 	MK_INDEXING_LOOP(setupPath, i)
 	{
-		bool ok = m_PageTree.GetInstancePtr(setupPath[i])->SetUp(sharingNode);
-		MK_CHECK(ok, MkStr(m_PageTree.GetInstancePtr(setupPath[i])->GetPageName()) + L"페이지 SetUp 실패")
+		const MkHashStr& targetPageName = setupPath[i];
+		msgBuf += targetPageName;
+		if (!setupPath.Empty())
+		{
+			MK_DEV_PANEL.MsgToLog(msgBuf + L"::SetUp()", true);
+		}
+
+		bool ok = m_PageTree.GetInstancePtr(targetPageName)->SetUp(sharingNode);
+		MK_CHECK(ok, MkStr(m_PageTree.GetInstancePtr(targetPageName)->GetPageName()) + L"페이지 SetUp 실패")
 			return false;
 
-		msgBuf += L" - ";
-		msgBuf += setupPath[i];
-	}
-	if (!setupPath.Empty())
-	{
-		MK_DEV_PANEL.MsgToLog(msgBuf, true);
+		msgBuf += L"-";
 	}
 
 	// change

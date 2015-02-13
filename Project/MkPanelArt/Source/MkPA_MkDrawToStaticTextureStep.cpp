@@ -8,6 +8,11 @@
 
 //------------------------------------------------------------------------------------------------//
 
+MkBaseTexture* MkDrawToStaticTextureStep::GetTargetTexture(unsigned int index) const
+{
+	return const_cast<MkBaseTexture*>(m_TargetTexture.GetPtr());
+}
+
 bool MkDrawToStaticTextureStep::Draw(void)
 {
 	if ((!m_GenerateTexture) || (m_TextureSize.x <= 0) || (m_TextureSize.y <= 0))

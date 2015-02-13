@@ -29,7 +29,13 @@ public:
 
 	// bitmap texture 참조를 texture에 담아 반환
 	// 이전 생성된 객체가 없으면 생성 후 반환
-	void GetBitmapTexture(const MkPathName& filePath, MkBaseTexturePtr& texture);
+	MkBaseTexture* GetBitmapTexture(const MkPathName& filePath);
+	MkBaseTexture* GetBitmapTexture(const MkHashStr& filePath);
+
+	// 해당 bitmap texture를 pool에서 해제
+	// (NOTE) 호출 전 해당 텍스쳐에 대한 외부 참조는 모두 해제된 상태이어야 함
+	void UnloadBitmapTexture(const MkPathName& filePath);
+	void UnloadBitmapTexture(const MkHashStr& filePath);
 
 	// 해당 group에 속한 bitmap texture들을 pool에서 해제
 	// (NOTE) 호출 전 해당 텍스쳐들에 대한 외부 참조는 모두 해제된 상태이어야 함

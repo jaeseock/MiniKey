@@ -72,7 +72,7 @@ public:
 
 		MkPanel& mp = sn->CreatePanel(L"MaskingTest", sub, MkInt2(200, 150));
 		mp.SetLocalPosition(MkFloat2(120.f, 50.f));
-
+		
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		ds->SetSceneNode(sn);
 
@@ -124,6 +124,10 @@ public:
 			if (MK_INPUT_MGR.GetKeyPushing(L'X'))
 			{
 				localScale += scaleVel;
+			}
+			if (MK_INPUT_MGR.GetKeyPushing(L'C'))
+			{
+				localScale = 1.f;
 			}
 			sn->SetLocalScale(localScale);
 

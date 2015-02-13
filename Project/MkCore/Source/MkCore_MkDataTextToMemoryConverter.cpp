@@ -220,11 +220,65 @@ unsigned int MkDataTextToMemoryConverter::_ParseBlock(const MkStr& source, MkInt
 		MkArray<MkStr> tokens;
 		unsigned int valueCount = body.Tokenize(tokens, MkTagDefinitionForDataNode::TagForArrayDivider);
 
-		dwInterface.Write(valueCount);
-
-		MK_INDEXING_LOOP(tokens, i)
+		// automation?
+		if ((typeEnum == ePDT_Str) && (valueCount >= 4) && ((valueCount % 2) == 0) &&
+			(m_StringTable.GetString(tokens[0]) == MkTagDefinitionForDataNode::StringArrayAutomationKeyword))
 		{
-			MkHelperForDataNodeConverter::WriteUnitString(typeEnum, (typeEnum == ePDT_Str) ? m_StringTable.GetString(tokens[i]) : tokens[i], dwInterface);
+			unsigned int indexPartSize = valueCount - 2;
+			int totalArrayCount = 0;
+			MkArray<int> indexTable(indexPartSize);
+			for (unsigned int i=2; i<valueCount; i+=2)
+			{
+				const MkStr& firstStr = m_StringTable.GetString(tokens[i]);
+				const MkStr& lastStr = m_StringTable.GetString(tokens[i+1]);
+				if (firstStr.IsDigit() && lastStr.IsDigit())
+				{
+					int firstIndex = firstStr.ToInteger();
+					int lastIndex = lastStr.ToInteger();
+					
+					totalArrayCount += abs(lastIndex - firstIndex) + 1;
+					
+					indexTable.PushBack(firstIndex);
+					indexTable.PushBack(lastIndex);
+				}
+				else
+					break;
+			}
+			MK_CHECK(indexTable.GetSize() == indexPartSize, L"문자 배열 자동완성 문법 오류 : index 파트")
+				return currentPosition;
+
+			dwInterface.Write(totalArrayCount);
+
+			const MkStr& prefix = m_StringTable.GetString(tokens[1]);
+			for (unsigned int i=0; i<indexPartSize; i+=2)
+			{
+				int firstIndex = indexTable[i];
+				int lastIndex = indexTable[i+1];
+
+				if (firstIndex <= lastIndex)
+				{
+					for (int j=firstIndex; j<=lastIndex; ++j)
+					{
+						MkHelperForDataNodeConverter::WriteUnitString(typeEnum, prefix + MkStr(j), dwInterface);
+					}
+				}
+				else
+				{
+					for (int j=firstIndex; j>=lastIndex; --j)
+					{
+						MkHelperForDataNodeConverter::WriteUnitString(typeEnum, prefix + MkStr(j), dwInterface);
+					}
+				}
+			}
+		}
+		else
+		{
+			dwInterface.Write(valueCount);
+
+			MK_INDEXING_LOOP(tokens, i)
+			{
+				MkHelperForDataNodeConverter::WriteUnitString(typeEnum, (typeEnum == ePDT_Str) ? m_StringTable.GetString(tokens[i]) : tokens[i], dwInterface);
+			}
 		}
 	}
 	

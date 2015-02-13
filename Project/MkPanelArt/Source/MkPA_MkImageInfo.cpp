@@ -16,8 +16,6 @@ const static MkHashStr SUBSET_LIST_KEY = L"SubsetList";
 const static MkHashStr TIME_LIST_KEY = L"TimeList";
 const static MkHashStr LOOP_KEY = L"Loop";
 
-const static MkHashStr CMD_AUTO_GEN_SUBSET_LIST = L"~";
-
 //------------------------------------------------------------------------------------------------//
 
 void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
@@ -111,63 +109,6 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 
 				bool loop = true;
 				childNode.GetData(LOOP_KEY, loop, 0);
-
-				// subset list 자동생성
-				if (subsetList[0] == CMD_AUTO_GEN_SUBSET_LIST)
-				{
-					unsigned int srcSize = subsetList.GetSize();
-					MK_CHECK((srcSize >= 4) && ((srcSize % 2) == 0), childName.GetString() + L" 노드의 " + SUBSET_LIST_KEY.GetString() + L" 값 자동완성 문법 오류 : 인자 수가 틀림")
-						break;
-
-					unsigned int indexSize = srcSize - 2;
-					int totalSubsetCount = 0;
-					MkArray<int> indexTable(indexSize);
-					for (unsigned int j=2; j<srcSize; j+=2)
-					{
-						const MkStr& firstStr = subsetList[j].GetString();
-						const MkStr& lastStr = subsetList[j+1].GetString();
-						if (firstStr.IsDigit() && lastStr.IsDigit())
-						{
-							int firstIndex = firstStr.ToInteger();
-							int lastIndex = lastStr.ToInteger();
-							MK_CHECK(firstIndex != lastIndex, childName.GetString() + L" 노드의 " + SUBSET_LIST_KEY.GetString() + L" 값 자동완성 문법 오류 : first/last index는 달라야 함")
-								break;
-
-							totalSubsetCount += abs(lastIndex - firstIndex) + 1;
-							
-							indexTable.PushBack(firstIndex);
-							indexTable.PushBack(lastIndex);
-						}
-						else
-							break;
-					}
-					MK_CHECK(indexTable.GetSize() == indexSize, childName.GetString() + L" 노드의 " + SUBSET_LIST_KEY.GetString() + L" 값 자동완성 문법 오류 : index 파트")
-						break;
-
-					MkStr prefix = subsetList[1].GetString();
-					subsetList.Clear();
-					subsetList.Reserve(totalSubsetCount);
-
-					for (unsigned int j=0; j<indexSize; j+=2)
-					{
-						int firstIndex = indexTable[j];
-						int lastIndex = indexTable[j+1];
-						if (firstIndex < lastIndex)
-						{
-							for (int k=firstIndex; k<=lastIndex; ++k)
-							{
-								subsetList.PushBack(prefix + MkStr(k));
-							}
-						}
-						else
-						{
-							for (int k=firstIndex; k>=lastIndex; --k)
-							{
-								subsetList.PushBack(prefix + MkStr(k));
-							}
-						}
-					}
-				}
 
 				// time list 검증 및 자동생성
 				if (timeList.Empty())

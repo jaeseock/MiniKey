@@ -206,6 +206,16 @@ MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name, const MkSceneNode* targ
 	return panel;
 }
 
+void MkSceneNode::SetVisible(bool visible)
+{
+	m_Attribute.Assign(eVisible, visible);
+}
+
+bool MkSceneNode::GetVisible(void) const
+{
+	return m_Attribute[eVisible];
+}
+
 void MkSceneNode::Update(double currTime)
 {
 	// transform
@@ -257,7 +267,8 @@ void MkSceneNode::Clear(void)
 
 MkSceneNode::MkSceneNode(const MkHashStr& name) : MkSingleTypeTreePattern<MkSceneNode>(name)
 {
-	m_Visible = true;
+	m_Attribute.Clear();
+	SetVisible(true);
 }
 
 //------------------------------------------------------------------------------------------------//

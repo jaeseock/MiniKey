@@ -40,6 +40,8 @@ public:
 	static const MkStr TagForUnitEnd; // L";"
 	static const MkStr TagForArrayDivider; // L"/"
 
+	static const MkStr StringArrayAutomationKeyword; // L"~"
+
 	//
 	static const MkByteArray TagForBinaryDataNode; // "#BDN"
 };

@@ -35,9 +35,9 @@ void MkDrawSceneNodeStep::SetCameraOffset(const MkFloat2& camOffset)
 	_UpdateCameraInfo();
 }
 
-void MkDrawSceneNodeStep::GetTargetTexture(unsigned int index, MkBaseTexturePtr& buffer) const
+MkBaseTexture* MkDrawSceneNodeStep::GetTargetTexture(unsigned int index) const
 {
-	buffer = (m_RenderTarget.GetTargetType() == MkRenderTarget::eTexture) ? const_cast<MkRenderToTexture*>(m_RenderTarget.GetTargetTexture(index)) : NULL;
+	return (m_RenderTarget.GetTargetType() == MkRenderTarget::eTexture) ? const_cast<MkRenderToTexture*>(m_RenderTarget.GetTargetTexture(index)) : NULL;
 }
 
 bool MkDrawSceneNodeStep::Draw(void)

@@ -47,10 +47,14 @@ void MkFontManager::SetUp(const MkDataNode* dataNode, const MkHashStr& fontTypeN
 {
 	if (dataNode != NULL)
 	{
+		MK_DEV_PANEL.MsgToLog(L"< Font >", false);
+
 		ChangeFontType(dataNode, fontTypeNodeKey);
 
 		_LoadFontColors(dataNode->GetChildNode(L"FontColor"));
 		_LoadFontStyles(dataNode->GetChildNode(L"FontStyle"));
+
+		MK_DEV_PANEL.MsgToLog(L"", false);
 	}
 }
 
@@ -106,7 +110,7 @@ bool MkFontManager::CreateFontType(const MkHashStr& fontType, const MkHashStr& f
 
 	m_TypeID.PushBack(fontType);
 
-	MK_DEV_PANEL.MsgToLog(L"> font type : " + fontType.GetString(), true);
+	MK_DEV_PANEL.MsgToLog(L"   - font type : " + fontType.GetString(), false);
 	return true;
 }
 
@@ -120,7 +124,7 @@ bool MkFontManager::CreateFontColor(const MkHashStr& colorKey, unsigned int r, u
 	unsigned int cb = Clamp<unsigned int>(b, 0, 255);
 	m_ColorList.Create(colorKey, D3DCOLOR_XRGB(cr, cg, cb));
 
-	MK_DEV_PANEL.MsgToLog(L"> font color : " + colorKey.GetString(), true);
+	MK_DEV_PANEL.MsgToLog(L"   - font color : " + colorKey.GetString(), false);
 	return true;
 }
 
@@ -137,7 +141,7 @@ bool MkFontManager::CreateFontStyle(const MkHashStr& fontStyle, const MkHashStr&
 
 	m_StyleID.PushBack(fontStyle);
 
-	MK_DEV_PANEL.MsgToLog(L"> font style : " + fontStyle.GetString(), true);
+	MK_DEV_PANEL.MsgToLog(L"   - font style : " + fontStyle.GetString(), false);
 	return true;
 }
 
@@ -288,7 +292,10 @@ void MkFontManager::_LoadFontTypes(const MkDataNode* dataNode)
 			m_TypeList.Rehash();
 		}
 
-		MK_CHECK(CheckAvailableFontType(DefaultT), DefaultT.GetString() + L" font type이 등록되어 있지 않음") {}
+		MK_CHECK(CheckAvailableFontType(DefaultT), DefaultT.GetString() + L" font type이 등록되어 있지 않음. 14크기 굴림체로 대체")
+		{
+			CreateFontType(DefaultT, L"GulimChe", 14, eThin);
+		}
 	}
 }
 
@@ -366,7 +373,10 @@ void MkFontManager::_LoadFontStyles(const MkDataNode* dataNode)
 			m_StyleList.Rehash();
 		}
 
-		MK_CHECK(CheckAvailableFontStyle(DefaultS), DefaultS.GetString() + L" font style이 등록되어 있지 않음") {}
+		MK_CHECK(CheckAvailableFontStyle(DefaultS), DefaultS.GetString() + L" font style이 등록되어 있지 않음. 회색 그림자의 하얀 글자색으로 대체")
+		{
+			CreateFontStyle(DefaultS, L"WhiteC", eShadow, L"DarkGrayC");
+		}
 	}
 
 	// 기본 font style 생성
@@ -476,7 +486,7 @@ bool MkFontManager::_CreateFont(const MkHashStr& fontKey, const MkHashStr& faceN
 
 		m_AvailableUnitList.Create(fontKey, fu);
 
-		MK_DEV_PANEL.MsgToLog(L"> font unit : " + fontKey.GetString(), true);
+		MK_DEV_PANEL.MsgToLog(L"   - font unit : " + fontKey.GetString(), false);
 	}
 	return ok;
 }

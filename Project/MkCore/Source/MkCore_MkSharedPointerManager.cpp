@@ -20,7 +20,7 @@ void MkSharedPointerManager::AssignPointer(ID64 id)
 #if (MKDEF_SHOW_SHARED_POINTER_REF_INFO)
 		if (m_InstanceNameTable.Exist(id))
 		{
-			MK_DEV_PANEL.MsgToLog(L"> smart ptr ref. 刘啊 : (" + m_InstanceNameTable[id] + L") " + MkStr(m_RefCounter[id] - 1) + L" -> " + MkStr(m_RefCounter[id]), true);
+			MK_DEV_PANEL.MsgToLog(L"smart ptr ref. 刘啊 : (" + m_InstanceNameTable[id] + L") " + MkStr(m_RefCounter[id] - 1) + L" -> " + MkStr(m_RefCounter[id]), true);
 		}
 #endif
 	}
@@ -32,7 +32,7 @@ void MkSharedPointerManager::AssignPointer(ID64 id)
 		if (!name.Empty())
 		{
 			m_InstanceNameTable.Create(id, name);
-			MK_DEV_PANEL.MsgToLog(L"> smart ptr ref. 积己 : (" + name + L")", true);
+			MK_DEV_PANEL.MsgToLog(L"smart ptr ref. 积己 : (" + name + L")", true);
 		}
 #endif
 	}
@@ -53,7 +53,7 @@ bool MkSharedPointerManager::ReleasePointer(ID64 id)
 #if (MKDEF_SHOW_SHARED_POINTER_REF_INFO)
 		if (m_InstanceNameTable.Exist(id))
 		{
-			MK_DEV_PANEL.MsgToLog(L"> smart ptr ref. 昏力 : (" + m_InstanceNameTable[id] + L")", true);
+			MK_DEV_PANEL.MsgToLog(L"smart ptr ref. 昏力 : (" + m_InstanceNameTable[id] + L")", true);
 			m_InstanceNameTable.Erase(id);
 		}
 #endif
@@ -65,7 +65,7 @@ bool MkSharedPointerManager::ReleasePointer(ID64 id)
 #if (MKDEF_SHOW_SHARED_POINTER_REF_INFO)
 		if (m_InstanceNameTable.Exist(id))
 		{
-			MK_DEV_PANEL.MsgToLog(L"> smart ptr ref. 皑家 : (" + m_InstanceNameTable[id] + L") " + MkStr(m_RefCounter[id] + 1) + L" -> " + MkStr(m_RefCounter[id]), true);
+			MK_DEV_PANEL.MsgToLog(L"smart ptr ref. 皑家 : (" + m_InstanceNameTable[id] + L") " + MkStr(m_RefCounter[id] + 1) + L" -> " + MkStr(m_RefCounter[id]), true);
 		}
 #endif
 	}
