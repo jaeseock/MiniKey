@@ -27,6 +27,7 @@
 #include "MkPA_MkTextNode.h"
 
 #include "MkPA_MkSceneNode.h"
+#include "MkPA_MkThemedNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -50,160 +51,181 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		sn = new MkSceneNode(L"Root");
-		sn->SetLocalPosition(MkFloat2(100.f, 100.f));
+		m_RootNode = new MkSceneNode(L"Root");
 
-		sub = new MkSceneNode(L"Sub");
-		sub->CreatePanel(L"P").SetTexture(L"Image\\s03.jpg");
+		MkSceneNode* mainNode = new MkSceneNode(L"Main");
+		m_RootNode->AttachChildNode(mainNode);
+
+		MkSceneNode* subNode = new MkSceneNode(L"Sub");
+		subNode->CreatePanel(L"P").SetTexture(L"Image\\s03.jpg");
+		m_RootNode->AttachChildNode(subNode);
 		
-		MkPanel& ip = sn->CreatePanel(L"ImgTest");
+		MkPanel& ip = mainNode->CreatePanel(L"ImgTest");
 		ip.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
 		ip.SetBiggerSourceOp(MkPanel::eCutSource);
 		ip.SetPanelSize(MkFloat2(450.f, 250.f));
 		ip.SetLocalDepth(2.f);
 		ip.SetTexture(L"Image\\s01.jpg");
 
-		MkPanel& tp = sn->CreatePanel(L"TextTest");
+		MkPanel& tp = mainNode->CreatePanel(L"TextTest");
 		tp.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
 		tp.SetBiggerSourceOp(MkPanel::eCutSource);
 		tp.SetPanelSize(MkFloat2(110.f, 250.f));
 		tp.SetLocalDepth(1.f);
 		tp.SetTextNode(L"_Sample", true);
 
-		MkPanel& mp = sn->CreatePanel(L"MaskingTest", sub, MkInt2(200, 150));
+		MkPanel& mp = mainNode->CreatePanel(L"MaskingTest", subNode, MkInt2(200, 150));
 		mp.SetLocalPosition(MkFloat2(120.f, 50.f));
+
+		MkThemedNode* themeNode = new MkThemedNode(L"ThemedRoot");
+		themeNode->SetLocalPosition(MkFloat2(500.f, 100.f));
+		themeNode->SetTheme(L"Default");
+		themeNode->SetComponent(MkWindowThemeData::eCT_Default);
+		themeNode->SetClientSize(MkFloat2(300.f, 200.f));
+		//themeNode->SetFormPosition(MkWindowThemeFormData::eP_Single);
+		mainNode->AttachChildNode(themeNode);
 		
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
-		ds->SetSceneNode(sn);
+		ds->SetSceneNode(mainNode);
 
 		return true;
 	}
 
 	virtual void Update(const MkTimeState& timeState)
 	{
-		if (sn != NULL)
+		MkInt2 mp = MK_INPUT_MGR.GetAbsoluteMousePosition(true);
+		MK_DEV_PANEL.MsgToFreeboard(0, L"Cursor : " + MkStr(mp));
+
+		if (m_RootNode != NULL)
 		{
-			MkFloat2 localPos = sn->GetLocalPosition();
-			const float movement = static_cast<float>(timeState.elapsed) * 300.f;
-			if (MK_INPUT_MGR.GetKeyPushing(L'A'))
+			MkSceneNode* mainNode = m_RootNode->GetChildNode(L"Main");
+			if (mainNode != NULL)
 			{
-				localPos.x -= movement;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(L'D'))
-			{
-				localPos.x += movement;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(L'W'))
-			{
-				localPos.y += movement;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(L'S'))
-			{
-				localPos.y -= movement;
-			}
-			sn->SetLocalPosition(localPos);
-
-			float localRot = sn->GetLocalRotation();
-			const float rotVel = static_cast<float>(timeState.elapsed) * MKDEF_PI * 0.5f;
-			if (MK_INPUT_MGR.GetKeyPushing(L'Q'))
-			{
-				localRot -= rotVel;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(L'E'))
-			{
-				localRot += rotVel;
-			}
-			sn->SetLocalRotation(localRot);
-
-			float localScale = sn->GetLocalScale();
-			const float scaleVel = static_cast<float>(timeState.elapsed);
-			if (MK_INPUT_MGR.GetKeyPushing(L'Z'))
-			{
-				localScale -= scaleVel;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(L'X'))
-			{
-				localScale += scaleVel;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(L'C'))
-			{
-				localScale = 1.f;
-			}
-			sn->SetLocalScale(localScale);
-
-			MkPanel* tp = sn->GetPanel(L"TextTest");
-			MkFloat2 psp = tp->GetPixelScrollPosition();
-			if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
-			{
-				psp.x -= movement;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
-			{
-				psp.x += movement;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
-			{
-				psp.y -= movement;
-			}
-			if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
-			{
-				psp.y += movement;
-			}
-			tp->SetPixelScrollPosition(psp);
-		}
-
-		if (MK_INPUT_MGR.GetKeyReleased(L' '))
-		{
-			if (sn != NULL)
-			{
-				MkPanel* ip = sn->GetPanel(L"ImgTest");
-				MkArray<MkHashStr> keys;
-				ip->GetAllSequences(keys);
-				++si;
-				if (si >= keys.GetSize())
+				if (MK_INPUT_MGR.GetMouseLeftButtonReleased())
 				{
-					si = 0;
+					MkArray<MkPanel*> buffer;
+					if (mainNode->PickPanel(buffer, MkFloat2(static_cast<float>(mp.x), static_cast<float>(mp.y))))
+					{
+						MK_DEV_PANEL.MsgToLog(L"Pick : " + buffer[0]->GetParentNode()->GetNodeName().GetString());
+					}
 				}
-				ip->SetSubsetOrSequenceName(keys[si], timeState.fullTime);
-				MK_DEV_PANEL.MsgToLog(keys[si].GetString());
-			}
-		}
 
-		if (MK_INPUT_MGR.GetKeyReleased(L'1'))
-		{
-			if (sn != NULL)
+				MkFloat2 localPos = mainNode->GetLocalPosition();
+				const float movement = static_cast<float>(timeState.elapsed) * 300.f;
+				if (MK_INPUT_MGR.GetKeyPushing(L'A'))
+				{
+					localPos.x -= movement;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(L'D'))
+				{
+					localPos.x += movement;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(L'W'))
+				{
+					localPos.y += movement;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(L'S'))
+				{
+					localPos.y -= movement;
+				}
+				mainNode->SetLocalPosition(localPos);
+
+				float localRot = mainNode->GetLocalRotation();
+				const float rotVel = static_cast<float>(timeState.elapsed) * MKDEF_PI * 0.5f;
+				if (MK_INPUT_MGR.GetKeyPushing(L'Q'))
+				{
+					localRot -= rotVel;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(L'E'))
+				{
+					localRot += rotVel;
+				}
+				mainNode->SetLocalRotation(localRot);
+
+				float localScale = mainNode->GetLocalScale();
+				const float scaleVel = static_cast<float>(timeState.elapsed);
+				if (MK_INPUT_MGR.GetKeyPushing(L'Z'))
+				{
+					localScale -= scaleVel;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(L'X'))
+				{
+					localScale += scaleVel;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(L'C'))
+				{
+					localScale = 1.f;
+				}
+				mainNode->SetLocalScale(localScale);
+
+				MkPanel* tp = mainNode->GetPanel(L"TextTest");
+				MkFloat2 psp = tp->GetPixelScrollPosition();
+				if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
+				{
+					psp.x -= movement;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
+				{
+					psp.x += movement;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
+				{
+					psp.y -= movement;
+				}
+				if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
+				{
+					psp.y += movement;
+				}
+				tp->SetPixelScrollPosition(psp);
+			}
+
+			if (MK_INPUT_MGR.GetKeyReleased(L' '))
 			{
-				MkPanel* tp = sn->GetPanel(L"TextTest");
-				MkTextNode* textNode = tp->GetTextNodePtr();
-				MkTextNode* targetNode = textNode->GetChildNode(L"1st")->GetChildNode(L"Sub list")->GetChildNode(L"이번이구나");
-				targetNode->SetFontStyle(L"Desc:Notice");
-				targetNode->SetText(L"- 이걸로 바꿨음당 ( ㅡ_-)r");
-				tp->BuildAndUpdateTextCache();
+				if (mainNode != NULL)
+				{
+					MkPanel* ip = mainNode->GetPanel(L"ImgTest");
+					MkArray<MkHashStr> keys;
+					ip->GetAllSequences(keys);
+					++si;
+					if (si >= keys.GetSize())
+					{
+						si = 0;
+					}
+					ip->SetSubsetOrSequenceName(keys[si], timeState.fullTime);
+					MK_DEV_PANEL.MsgToLog(keys[si].GetString());
+				}
 			}
-		}
 
-		if (sn != NULL)
-		{
-			sn->Update(timeState.fullTime);
+			if (MK_INPUT_MGR.GetKeyReleased(L'1'))
+			{
+				if (mainNode != NULL)
+				{
+					MkPanel* tp = mainNode->GetPanel(L"TextTest");
+					MkTextNode* textNode = tp->GetTextNodePtr();
+					MkTextNode* targetNode = textNode->GetChildNode(L"1st")->GetChildNode(L"Sub list")->GetChildNode(L"이번이구나");
+					targetNode->SetFontStyle(L"Desc:Notice");
+					targetNode->SetText(L"- 이걸로 바꿨음당 ( ㅡ_-)r");
+					tp->BuildAndUpdateTextCache();
+				}
+			}
+
+			if (m_RootNode != NULL)
+			{
+				m_RootNode->Update(timeState.fullTime);
+			}
+			
+			//MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
 		}
-		if (sub != NULL)
-		{
-			sub->Update(timeState.fullTime);
-		}
-		
-		//MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
 	}
 
 	virtual void Clear(MkDataNode* sharingNode = NULL)
 	{
-		MK_DELETE(sn);
-		MK_DELETE(sub);
+		MK_DELETE(m_RootNode);
 	}
 
 	TestPage(const MkHashStr& name) : MkBasePage(name)
 	{
-		sn = NULL;
-		sub = NULL;
+		m_RootNode = NULL;
 		si = 0;
 	}
 
@@ -211,8 +233,7 @@ public:
 
 protected:
 
-	MkSceneNode* sn;
-	MkSceneNode* sub;
+	MkSceneNode* m_RootNode;
 	unsigned int si;
 };
 

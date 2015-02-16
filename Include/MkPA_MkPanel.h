@@ -187,6 +187,8 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 
+	inline MkSceneNode* GetParentNode(void) const { return m_ParentNode; }
+
 	// 정렬
 	//void AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset);
 
@@ -219,6 +221,8 @@ public:
 		DWORD m_ObjectAlpha;
 	};
 
+	inline void __SetParentNode(MkSceneNode* parentNode) { m_ParentNode = parentNode; }
+
 	//static void __GenerateBuildingTemplate(void);
 
 	// 활성화 여부 반환
@@ -235,9 +239,11 @@ public:
 
 	void __AffectTexture(void) const;
 
+	bool __CheckWorldIntersection(const MkFloat2& worldPoint) const;
+
 	//eSrcType __GetSrcInfo(MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) const;
 
-	MkPanel();
+	MkPanel(void);
 	virtual ~MkPanel() { Clear(); }
 
 protected:
@@ -262,7 +268,12 @@ protected:
 
 	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkArray<VertexData>& buffer) const;
 
+	float _GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const;
+
 protected:
+
+	// parent
+	MkSceneNode* m_ParentNode;
 
 	// transform
 	MkSceneTransform m_Transform;

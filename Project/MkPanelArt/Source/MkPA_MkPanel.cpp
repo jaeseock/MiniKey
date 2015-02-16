@@ -591,7 +591,9 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 			// filtering mode. 이미지 원본을 확대/축소 할 경우 point보다는 linear filtering이 유리
 			// 원칙적으로는 최종 출력 크기로 비교해야 하지만 잘라 그리기의 경우 uv로부터 size를 역산해야되는데 floating 계산 특성상 발생하는
 			// 오차로 인해 오히려 잘못된 결과가 나올 가능성이 높음. 따라서 단순하게 조건식으로 처리
-			m_Texture->SetFilterType((srcSizeChanged || (m_Transform.GetWorldScale() != 1.f)) ? MkBaseTexture::eLinear : MkBaseTexture::ePoint);
+			m_Texture->SetFilterType
+				((srcSizeChanged || (m_Transform.GetWorldRotation() != 0.f) || (m_Transform.GetWorldScale() != 1.f)) ?
+				MkBaseTexture::eLinear : MkBaseTexture::ePoint);
 
 			// update AABR
 			MkFloat2 minPt(m_WorldVertice[MkFloatRect::eLeftTop]);
@@ -636,6 +638,24 @@ void MkPanel::__AffectTexture(void) const
 		m_Texture->UpdateRenderState(m_MaterialKey.m_ObjectAlpha);
 	}
 }
+
+bool MkPanel::__CheckWorldIntersection(const MkFloat2& worldPoint) const
+{
+	if (m_Transform.GetWorldRotation() == 0.f) // rotation이 없으므로 (m_WorldVertice == m_AABR)임
+		return m_AABR.CheckIntersection(worldPoint);
+
+	// minikey의 좌표계에서는 line vector와 point의 외적값이 line의 좌측에 존재하면 양수, 우측에 존재하면 음수임
+	// 따라서 어느 한 라인에서라도 외적값이 양수면 바깥쪽에 존재함이 증명 됨
+	if (_GetCrossProduct(MkFloatRect::eLeftTop, MkFloatRect::eRightTop, worldPoint) > 0.f)
+		return false;
+	if (_GetCrossProduct(MkFloatRect::eRightTop, MkFloatRect::eRightBottom, worldPoint) > 0.f)
+		return false;
+	if (_GetCrossProduct(MkFloatRect::eRightBottom, MkFloatRect::eLeftBottom, worldPoint) > 0.f)
+		return false;
+	if (_GetCrossProduct(MkFloatRect::eLeftBottom, MkFloatRect::eLeftTop, worldPoint) > 0.f)
+		return false;
+	return true;
+}
 /*
 MkPanel::eSrcType MkPanel::__GetSrcInfo(MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) const
 {
@@ -667,8 +687,10 @@ MkPanel::eSrcType MkPanel::__GetSrcInfo(MkPathName& imagePath, MkHashStr& subset
 	return eNone;
 }
 */
-MkPanel::MkPanel()
+MkPanel::MkPanel(void)
 {
+	m_ParentNode = NULL;
+
 	SetSmallerSourceOp(eReducePanel);
 	SetBiggerSourceOp(eExpandPanel);
 
@@ -693,6 +715,13 @@ void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkAr
 	const MkFloat2& uv = m_UV[pn];
 	vd.u = (hr) ? (1.f - uv.x) : uv.x;
 	vd.v = (vr) ? (1.f - uv.y) : uv.y;
+}
+
+float MkPanel::_GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const
+{
+	MkFloat2 lineVector = m_WorldVertice[to] - m_WorldVertice[from];
+	MkFloat2 pointVector = point - m_WorldVertice[from];
+	return (lineVector.x * pointVector.y - lineVector.y * pointVector.x);
 }
 
 //------------------------------------------------------------------------------------------------//

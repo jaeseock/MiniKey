@@ -190,11 +190,11 @@ void MkWindowThemeUnitData::_ApplyUnit(MkSceneNode* sceneNode, bool createOrGet,
 	switch (GetUnitType())
 	{
 	case eUT_Image:
-		_SetImageToPiece(sceneNode, createOrGet, ImagePositionName, imagePath, m_PieceDatas[0].subsetOrSequenceName, true, startTime);
+		_SetImageToPiece(sceneNode, createOrGet, ImagePositionName, imagePath, m_PieceDatas[0].subsetOrSequenceName, false, startTime);
 		break;
 
 	case eUT_Table:
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MC], imagePath, m_PieceDatas[eP_RB].subsetOrSequenceName, false, startTime);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MC], imagePath, m_PieceDatas[eP_MC].subsetOrSequenceName, false, startTime);
 	case eUT_Edge:
 		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_LT], imagePath, m_PieceDatas[eP_LT].subsetOrSequenceName, true, startTime);
 		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MT], imagePath, m_PieceDatas[eP_MT].subsetOrSequenceName, false, startTime);

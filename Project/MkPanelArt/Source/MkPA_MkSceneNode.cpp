@@ -3,6 +3,7 @@
 //#include "MkCore_MkAngleOp.h"
 //#include "MkCore_MkDataNode.h"
 
+#include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkSceneNode.h"
 //#include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
@@ -195,15 +196,65 @@ void MkSceneNode::AlignPosition(const MkSceneNode* anchorNode, eRectAlignmentPos
 MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name)
 {
 	DeletePanel(name);
-	return m_Panels.Create(name);
+	MkPanel& panel = m_Panels.Create(name);
+	panel.__SetParentNode(this);
+	return panel;
 }
 
 MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name, const MkSceneNode* targetNode, const MkInt2& panelSize)
 {
 	MkPanel& panel = CreatePanel(name);
+	panel.__SetParentNode(this);
 	panel.SetPanelSize(MkFloat2(static_cast<float>(panelSize.x), static_cast<float>(panelSize.y)));
 	panel.SetMaskingNode(targetNode);
 	return panel;
+}
+
+bool MkSceneNode::PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth) const
+{
+	if (m_TotalAABR.CheckIntersection(worldPoint))
+	{
+		// 직계 panel 상대로 검사
+		if (m_PanelAABR.CheckIntersection(worldPoint))
+		{
+			MkConstHashMapLooper<MkHashStr, MkPanel> looper(m_Panels);
+			MK_STL_LOOP(looper)
+			{
+				const MkPanel& currPanel = looper.GetCurrentField();
+				if (currPanel.__CheckDrawable()) // 그려지는 panel만 대상으로 함
+				{
+					float panelDepth = currPanel.GetWorldDepth();
+					float depthLimit = buffer.Empty() ? MKDEF_PA_MAX_WORLD_DEPTH : buffer[0]->GetWorldDepth();
+					if ((panelDepth >= startDepth) && (panelDepth <= depthLimit) && currPanel.__CheckWorldIntersection(worldPoint))
+					{
+						// 새 최근거리 발견하면 새로 시작, 아니면(panelDepth == depthLimit) 기존 최근거리에 추가만 함
+						if (panelDepth < depthLimit)
+						{
+							buffer.Flush();
+						}
+						
+						buffer.PushBack(const_cast<MkPanel*>(&currPanel));
+					}
+				}
+			}
+		}
+
+		// 하위 node 상대로 검사
+		if (!m_ChildrenNode.Empty())
+		{
+			MkConstHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
+			MK_STL_LOOP(looper)
+			{
+				const MkSceneNode* node = looper.GetCurrentField();
+				if (node->GetVisible())
+				{
+					node->PickPanel(buffer, worldPoint, startDepth);
+				}
+			}
+		}
+	}
+
+	return !buffer.Empty();
 }
 
 void MkSceneNode::SetVisible(bool visible)
@@ -317,6 +368,7 @@ void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray
 		}
 	}
 }
+
 /*
 void MkSceneNode::_ApplyBuildingTemplateToSave(MkDataNode& node, const MkHashStr& templateName)
 {

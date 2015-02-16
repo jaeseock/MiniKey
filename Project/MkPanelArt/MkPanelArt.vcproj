@@ -508,22 +508,14 @@
 						</File>
 					</Filter>
 					<Filter
-						Name="1. Overlay"
+						Name="1. Themed node"
 						>
 						<File
-							RelativePath=".\Source\MkPA_MkOverlay.cpp"
+							RelativePath=".\Source\MkPA_MkThemedNode.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\Include\MkPA_MkOverlay.h"
-							>
-						</File>
-						<File
-							RelativePath=".\Source\MkWindowViewArgument.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkWindowViewArgument.h"
+							RelativePath="..\..\Include\MkPA_MkThemedNode.h"
 							>
 						</File>
 					</Filter>

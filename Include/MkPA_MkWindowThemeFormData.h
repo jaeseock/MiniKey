@@ -36,6 +36,8 @@ public:
 
 	enum ePosition
 	{
+		eP_None = -1,
+
 		// eFT_SingleUnit
 		eP_Single = 0,
 
@@ -64,7 +66,10 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// scene node에 default position의 form 적용
-	bool AttachFormToSceneNode(MkSceneNode* sceneNode, double startTime = 0.) const;
+	bool AttachForm(MkSceneNode* sceneNode, double startTime = 0.) const;
+
+	// scene node에 적용된 form 삭제
+	void RemoveForm(MkSceneNode* sceneNode) const;
 
 	// position unit이 적용된 scene node에 client size 적용
 	// 적용된 unit type에 따라 동작이 다름

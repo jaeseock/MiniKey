@@ -88,6 +88,10 @@ public:
 
 	// 모든 panel 삭제
 	inline void DeleteAllPanels(void) { m_Panels.Clear(); }
+
+	// 자신과 모든 하위 노드를 대상으로 startDepth이상의 거리에서 startDepth와 가장 가깝고 worldPoint와 충돌하는 MkPanel을 buffer에 넣어 반환
+	// (NOTE) 대상 노드(자신)는 최소한 한 번 이상 Update()를 통해 world transform이 갱신된 상태이어야 함
+	bool PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth = 0.f) const;
 	
 	// 기존 설정된 deco string이 있다면 재로딩
 	//void RestoreDecoString(void);

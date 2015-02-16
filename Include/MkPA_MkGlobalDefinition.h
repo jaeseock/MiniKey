@@ -15,7 +15,7 @@ enum ePA_MaterialBlendType
 enum ePA_SceneNodeType
 {
 	ePA_SNT_SceneNode = 0, // MkSceneNode
-	ePA_SNT_Overlay // MkOverlay
+	ePA_SNT_ThemedNode // MkThemedNode
 	//ePA_SNT_BaseWindowNode, // MkBaseWindowNode
 
 	//ePA_SNT_ControlWindowNodeBegin,

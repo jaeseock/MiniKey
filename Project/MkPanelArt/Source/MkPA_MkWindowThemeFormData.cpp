@@ -99,7 +99,7 @@ MkWindowThemeFormData::eFormType MkWindowThemeFormData::GetFormType(void) const
 	return eFT_None;
 }
 
-bool MkWindowThemeFormData::AttachFormToSceneNode(MkSceneNode* sceneNode, double startTime) const
+bool MkWindowThemeFormData::AttachForm(MkSceneNode* sceneNode, double startTime) const
 {
 	if ((sceneNode == NULL) || (GetFormType() == eFT_None))
 		return false;
@@ -107,7 +107,7 @@ bool MkWindowThemeFormData::AttachFormToSceneNode(MkSceneNode* sceneNode, double
 	MkWindowThemeUnitData::eUnitType myUnitType = _GetUnitType(); // eUT_None일 가능성은 없음(초기화 실패한 경우는 호출 자체가 안될뿐더러 위에서 걸러짐)
 	MkWindowThemeUnitData::eUnitType nodeUnitType = MkWindowThemeUnitData::GetUnitType(sceneNode);
 
-	// 노드에 적용 될 unit type과 다른 unit type이 존재하면 있으면 삭제
+	// 노드에 적용 될 unit type과 다른 unit type이 존재하면 삭제
 	if ((nodeUnitType != MkWindowThemeUnitData::eUT_None) && (nodeUnitType != myUnitType))
 	{
 		// 등록된 모든 unit은 같은 type을 가지고 있으므로 아무 곳에서나 명령 가능
@@ -120,7 +120,21 @@ bool MkWindowThemeFormData::AttachFormToSceneNode(MkSceneNode* sceneNode, double
 		// 0번 position(eP_Single, eP_Back, eP_Normal)이 default
 		m_UnitList[0].CreateUnit(sceneNode, *m_ImagePathPtr, startTime);
 	}
+	// 같은 unit type이면 theme 변경일 가능성이 있으므로 set
+	else
+	{
+		m_UnitList[0].SetUnit(sceneNode, *m_ImagePathPtr);
+	}
 	return true;
+}
+
+void MkWindowThemeFormData::RemoveForm(MkSceneNode* sceneNode) const
+{
+	if (MkWindowThemeUnitData::GetUnitType(sceneNode) != MkWindowThemeUnitData::eUT_None)
+	{
+		// 등록된 모든 unit은 같은 type을 가지고 있으므로 아무 곳에서나 명령 가능
+		m_UnitList[0].DeleteUnit(sceneNode);
+	}
 }
 
 void MkWindowThemeFormData::SetClientSizeToForm(MkSceneNode* sceneNode, MkFloat2& clientSize, MkFloat2& clientPosition, MkFloat2& windowSize) const
@@ -134,7 +148,7 @@ void MkWindowThemeFormData::SetClientSizeToForm(MkSceneNode* sceneNode, MkFloat2
 
 bool MkWindowThemeFormData::SetFormPosition(MkSceneNode* sceneNode, ePosition position) const
 {
-	if (sceneNode == NULL)
+	if ((sceneNode == NULL) || (position == eP_None))
 		return false;
 
 	MK_CHECK(_CheckPosition(position), sceneNode->GetNodeName().GetString() + L" node에 적용된 form과 다른 unit으로 position 변경 시도")

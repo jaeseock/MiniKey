@@ -32,6 +32,7 @@ public:
 
 	bool LoadWindowThemeSet(const MkDataNode* dataNode);
 
+	inline MkWindowThemeSet& GetWindowThemeSet(void) { return m_WindowThemeSet; }
 	inline const MkWindowThemeSet& GetWindowThemeSet(void) const { return m_WindowThemeSet; }
 
 	//------------------------------------------------------------------------------------------------//
