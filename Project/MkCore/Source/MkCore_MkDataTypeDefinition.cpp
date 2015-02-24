@@ -1,4 +1,6 @@
 
+#include "MkCore_MkBitField32.h"
+#include "MkCore_MkType2.h"
 #include "MkCore_MkColor.h"
 #include "MkCore_MkMat3.h"
 #include "MkCore_MkQuaternion.h"
@@ -7,6 +9,22 @@
 
 
 //------------------------------------------------------------------------------------------------//
+
+// MkBitField32
+const MkBitField32 MkBitField32::EMPTY;
+const MkBitField32 MkBitField32::FULL(0xffffffff);
+
+// MkType2
+const MkShort2 MkShort2::Zero(0, 0);
+const MkUShort2 MkUShort2::Zero(0, 0);
+const MkInt2 MkInt2::Zero(0, 0);
+const MkUInt2 MkUInt2::Zero(0, 0);
+const MkLong2 MkLong2::Zero(0, 0);
+const MkULong2 MkULong2::Zero(0, 0);
+const MkInt642 MkInt642::Zero(0, 0);
+const MkUInt642 MkUInt642::Zero(0, 0);
+const MkFloat2 MkFloat2::Zero(0.f, 0.f);
+const MkDouble2 MkDouble2::Zero(0., 0.);
 
 // MkVec2
 const MkVec2 MkVec2::Zero(0.f, 0.f);

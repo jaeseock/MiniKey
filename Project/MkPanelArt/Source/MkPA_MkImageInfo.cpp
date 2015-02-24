@@ -28,7 +28,7 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 	// empty subset
 	Subset& emptySubset = m_Subsets.Create(MkHashStr::EMPTY);
 	emptySubset.rectSize = fImageSize;
-	emptySubset.uv[MkFloatRect::eLeftTop] = MkFloat2(0.f, 0.f);
+	emptySubset.uv[MkFloatRect::eLeftTop] = MkFloat2::Zero;
 	emptySubset.uv[MkFloatRect::eRightTop] = MkFloat2(1.f, 0.f);
 	emptySubset.uv[MkFloatRect::eLeftBottom] = MkFloat2(0.f, 1.f);
 	emptySubset.uv[MkFloatRect::eRightBottom] = MkFloat2(1.f, 1.f);
@@ -57,12 +57,12 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 
 				MkInt2 size;
 				childNode.GetData(SIZE_KEY, size, 0);
-				MK_CHECK((size.x > 0) && (size.y > 0), childName.GetString() + L" 노드의 " + SIZE_KEY.GetString() + L" 값 오류")
+				MK_CHECK(size.IsPositive(), childName.GetString() + L" 노드의 " + SIZE_KEY.GetString() + L" 값 오류")
 					break;
 
 				MkInt2 table(1, 1);
 				childNode.GetData(TABLE_KEY, table, 0);
-				MK_CHECK((table.x > 0) && (table.y > 0), childName.GetString() + L" 노드의 " + TABLE_KEY.GetString() + L" 값 오류")
+				MK_CHECK(table.IsPositive(), childName.GetString() + L" 노드의 " + TABLE_KEY.GetString() + L" 값 오류")
 					break;
 
 				MkFloat2 fSubsetSize(static_cast<float>(size.x), static_cast<float>(size.y));

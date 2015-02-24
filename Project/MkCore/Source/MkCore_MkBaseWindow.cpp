@@ -39,10 +39,10 @@ bool MkBaseWindow::SetUpByWindowCreation
 	if ((windowSize.x <= 0) || (windowSize.y <= 0))
 	{
 		windowSize = GetWorkspaceSize();
-		if (windowSize == MkInt2(0, 0))
+		if (windowSize == MkInt2::Zero)
 			return false;
 
-		windowPos = MkInt2(0, 0);
+		windowPos = MkInt2::Zero;
 	}
 	else
 	{
@@ -119,7 +119,7 @@ bool MkBaseWindow::SetClientSize(const MkInt2& size)
 MkInt2 MkBaseWindow::GetClientSize(void) const
 {
 	MK_CHECK(m_hWnd != NULL, L"초기화되지 않은 윈도우")
-		return MkInt2(0, 0);
+		return MkInt2::Zero;
 
 	RECT rect;
 	GetClientRect(m_hWnd, &rect);
@@ -202,7 +202,7 @@ MkInt2 MkBaseWindow::ConvertClientToWindowSize(const MkInt2& clientSize) const
 
 MkInt2 MkBaseWindow::ConvertWindowToClientSize(const MkInt2& windowSize) const
 {
-	return (windowSize - ConvertClientToWindowSize(MkInt2(0, 0)));
+	return (windowSize - ConvertClientToWindowSize(MkInt2::Zero));
 }
 
 HINSTANCE MkBaseWindow::GetInstanceHandle(void) const
@@ -215,7 +215,7 @@ MkInt2 MkBaseWindow::GetWorkspaceSize(void)
 	// 워크스페이스 영역 얻기
 	RECT rect;
 	MK_CHECK(SystemParametersInfo(SPI_GETWORKAREA, 0, &rect, 0) != 0, L"워크스페이스 영역을 얻을 수 없음")
-		return MkInt2(0, 0);
+		return MkInt2::Zero;
 
 	return MkInt2(static_cast<int>(rect.right - rect.left), static_cast<int>(rect.bottom - rect.top));
 }
@@ -223,7 +223,7 @@ MkInt2 MkBaseWindow::GetWorkspaceSize(void)
 MkInt2 MkBaseWindow::GetWindowPosition(HWND hWnd)
 {
 	MK_CHECK(hWnd != NULL, L"초기화되지 않은 윈도우")
-		return MkInt2(0, 0);
+		return MkInt2::Zero;
 
 	RECT rect;
 	::GetWindowRect(hWnd, &rect);
@@ -233,7 +233,7 @@ MkInt2 MkBaseWindow::GetWindowPosition(HWND hWnd)
 MkInt2 MkBaseWindow::GetWindowSize(HWND hWnd)
 {
 	MK_CHECK(hWnd != NULL, L"초기화되지 않은 윈도우")
-		return MkInt2(0, 0);
+		return MkInt2::Zero;
 
 	RECT rect;
 #if (MKDEF_CORE_DEV_ENV_OVER_VISTA)

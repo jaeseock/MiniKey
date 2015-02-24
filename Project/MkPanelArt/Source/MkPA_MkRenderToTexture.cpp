@@ -8,7 +8,7 @@
 
 bool MkRenderToTexture::SetUp(const MkInt2& size, eFormat format, int targetIndex)
 {
-	MK_CHECK((size.x > 0) && (size.y > 0), L"render to texture의 size는 0보다 커야 함")
+	MK_CHECK(size.IsPositive(), L"render to texture의 size는 0보다 커야 함")
 		return false;
 
 	m_Size = size;

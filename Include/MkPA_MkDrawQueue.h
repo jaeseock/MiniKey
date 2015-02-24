@@ -32,8 +32,8 @@ public:
 		int priority = -1,
 		MkRenderTarget::eTargetType type = MkRenderTarget::eBackbuffer,
 		unsigned int count = 1,
-		const MkInt2& size = MkInt2(0, 0),
-		const MkFloat2& camOffset = MkFloat2(0.f, 0.f),
+		const MkInt2& size = MkInt2::Zero,
+		const MkFloat2& camOffset = MkFloat2::Zero,
 		MkRenderToTexture::eFormat texFormat = MkRenderToTexture::eRGBA);
 
 	// step ¹ÝÈ¯

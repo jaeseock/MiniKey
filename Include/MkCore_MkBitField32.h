@@ -133,6 +133,9 @@ public:
 public:
 
 	unsigned int m_Field;
+
+	static const MkBitField32 EMPTY;
+	static const MkBitField32 FULL;
 };
 
 //------------------------------------------------------------------------------------------------//

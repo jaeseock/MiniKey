@@ -89,7 +89,7 @@ MkInt2 MkRenderTarget::GetScreenSize(void) const
 		}
 		break;
 	}
-	return MkInt2(0, 0);
+	return MkInt2::Zero;
 }
 
 const MkRenderToTexture* MkRenderTarget::GetTargetTexture(unsigned int index) const

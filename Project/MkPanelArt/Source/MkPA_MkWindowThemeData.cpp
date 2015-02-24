@@ -9,16 +9,43 @@
 
 const MkHashStr MkWindowThemeData::DefaultThemeName(L"Default");
 
+
 const MkHashStr MkWindowThemeData::ComponentTypeName[MkWindowThemeData::eCT_Max] =
 {
-	L"Default", // eCT_Default
-	L"Shadow" // eCT_Shadow
+	MK_VALUE_TO_STRING(eCT_ShadowBox),
+	MK_VALUE_TO_STRING(eCT_DefaultBox),
+	MK_VALUE_TO_STRING(eCT_NoticeBox),
+	MK_VALUE_TO_STRING(eCT_StaticBox),
+	MK_VALUE_TO_STRING(eCT_GuideBox),
+	MK_VALUE_TO_STRING(eCT_Title),
+	MK_VALUE_TO_STRING(eCT_NormalBtn),
+	MK_VALUE_TO_STRING(eCT_OKBtn),
+	MK_VALUE_TO_STRING(eCT_CancelBtn),
+	MK_VALUE_TO_STRING(eCT_YellowZone),
+	MK_VALUE_TO_STRING(eCT_BlueZone),
+	MK_VALUE_TO_STRING(eCT_RedOutlineZone),
+	MK_VALUE_TO_STRING(eCT_YellowSelBtn),
+	MK_VALUE_TO_STRING(eCT_BlueSelBtn),
+	MK_VALUE_TO_STRING(eCT_RedOutlineSelBtn)
 };
 
 const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[MkWindowThemeData::eCT_Max] =
 {
-	MkWindowThemeFormData::eFT_SingleUnit, // eCT_Default
-	MkWindowThemeFormData::eFT_SingleUnit // eCT_Shadow
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_ShadowBox
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_DefaultBox
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_NoticeBox
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_StaticBox
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_GuideBox
+	MkWindowThemeFormData::eFT_DualUnit, // eCT_Title
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_NormalBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_OKBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_CancelBtn
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_YellowZone
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_BlueZone
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_RedOutlineZone
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_YellowSelBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueSelBtn
+	MkWindowThemeFormData::eFT_QuadUnit // eCT_RedOutlineSelBtn
 };
 
 //------------------------------------------------------------------------------------------------//

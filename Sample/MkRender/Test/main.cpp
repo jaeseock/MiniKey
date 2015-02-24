@@ -5,6 +5,7 @@
 
 #include <windows.h>
 
+#include "MkCore_MkCheck.h"
 #include "MkCore_MkPageManager.h"
 #include "MkCore_MkInputManager.h"
 #include "MkCore_MkTimeState.h"
@@ -53,12 +54,15 @@ public:
 	{
 		m_RootNode = new MkSceneNode(L"Root");
 
-		MkSceneNode* mainNode = new MkSceneNode(L"Main");
-		m_RootNode->AttachChildNode(mainNode);
+		MkSceneNode* mainNode = m_RootNode->CreateChildNode(L"Main");
+		m_TargetNode = mainNode;
 
-		MkSceneNode* subNode = new MkSceneNode(L"Sub");
+		MkSceneNode* subNode = m_RootNode->CreateChildNode(L"Sub");
 		subNode->CreatePanel(L"P").SetTexture(L"Image\\s03.jpg");
-		m_RootNode->AttachChildNode(subNode);
+
+		MkSceneNode* bgNode = mainNode->CreateChildNode(L"BG");
+		bgNode->CreatePanel(L"P").SetTexture(L"Image\\rohan_screenshot.png");
+		bgNode->SetLocalDepth(10000.f);
 		
 		MkPanel& ip = mainNode->CreatePanel(L"ImgTest");
 		ip.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
@@ -77,13 +81,22 @@ public:
 		MkPanel& mp = mainNode->CreatePanel(L"MaskingTest", subNode, MkInt2(200, 150));
 		mp.SetLocalPosition(MkFloat2(120.f, 50.f));
 
-		MkThemedNode* themeNode = new MkThemedNode(L"ThemedRoot");
-		themeNode->SetLocalPosition(MkFloat2(500.f, 100.f));
-		themeNode->SetTheme(L"Default");
-		themeNode->SetComponent(MkWindowThemeData::eCT_Default);
-		themeNode->SetClientSize(MkFloat2(300.f, 200.f));
-		//themeNode->SetFormPosition(MkWindowThemeFormData::eP_Single);
-		mainNode->AttachChildNode(themeNode);
+		MkThemedNode* themeRootNode = MkThemedNode::CreateChildNode(mainNode, L"ThemedRoot");
+		themeRootNode->SetLocalPosition(MkFloat2(500.f, 100.f));
+		themeRootNode->SetLocalDepth(2.f);
+		themeRootNode->SetTheme(L"Default");
+		themeRootNode->SetComponent(MkWindowThemeData::eCT_DefaultBox);
+		themeRootNode->SetClientSize(MkFloat2(300.f, 200.f));
+		themeRootNode->SetShadowEnable(true);
+		themeRootNode->SetAcceptInput(true);
+
+		MkThemedNode* themeSubNode = MkThemedNode::CreateChildNode(themeRootNode, L"ThemedSub");
+		themeSubNode->SetLocalDepth(-1.f);
+		themeSubNode->SetTheme(L"Default");
+		themeSubNode->SetComponent(MkWindowThemeData::eCT_NoticeBox);
+		themeSubNode->SetClientSize(MkFloat2(80.f, 50.f));
+		themeSubNode->SetShadowEnable(true);
+		themeSubNode->SetAcceptInput(true);
 		
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		ds->SetSceneNode(mainNode);
@@ -103,15 +116,22 @@ public:
 			{
 				if (MK_INPUT_MGR.GetMouseLeftButtonReleased())
 				{
+					MkBitField32 attr;
+					attr.Set(MkThemedNode::eAT_AcceptInput);
 					MkArray<MkPanel*> buffer;
-					if (mainNode->PickPanel(buffer, MkFloat2(static_cast<float>(mp.x), static_cast<float>(mp.y))))
+					if (mainNode->PickPanel(buffer, MkFloat2(static_cast<float>(mp.x), static_cast<float>(mp.y)), 0., attr))
 					{
-						MK_DEV_PANEL.MsgToLog(L"Pick : " + buffer[0]->GetParentNode()->GetNodeName().GetString());
+						m_TargetNode = buffer[0]->GetParentNode();
+						MK_DEV_PANEL.MsgToLog(L"Pick : " + m_TargetNode->GetNodeName().GetString());
 					}
 				}
+			}
 
-				MkFloat2 localPos = mainNode->GetLocalPosition();
+			if (m_TargetNode != NULL)
+			{
 				const float movement = static_cast<float>(timeState.elapsed) * 300.f;
+
+				MkFloat2 localPos = m_TargetNode->GetLocalPosition();
 				if (MK_INPUT_MGR.GetKeyPushing(L'A'))
 				{
 					localPos.x -= movement;
@@ -128,9 +148,9 @@ public:
 				{
 					localPos.y -= movement;
 				}
-				mainNode->SetLocalPosition(localPos);
+				m_TargetNode->SetLocalPosition(localPos);
 
-				float localRot = mainNode->GetLocalRotation();
+				float localRot = m_TargetNode->GetLocalRotation();
 				const float rotVel = static_cast<float>(timeState.elapsed) * MKDEF_PI * 0.5f;
 				if (MK_INPUT_MGR.GetKeyPushing(L'Q'))
 				{
@@ -140,9 +160,9 @@ public:
 				{
 					localRot += rotVel;
 				}
-				mainNode->SetLocalRotation(localRot);
+				m_TargetNode->SetLocalRotation(localRot);
 
-				float localScale = mainNode->GetLocalScale();
+				float localScale = m_TargetNode->GetLocalScale();
 				const float scaleVel = static_cast<float>(timeState.elapsed);
 				if (MK_INPUT_MGR.GetKeyPushing(L'Z'))
 				{
@@ -156,57 +176,125 @@ public:
 				{
 					localScale = 1.f;
 				}
-				mainNode->SetLocalScale(localScale);
+				m_TargetNode->SetLocalScale(localScale);
 
-				MkPanel* tp = mainNode->GetPanel(L"TextTest");
-				MkFloat2 psp = tp->GetPixelScrollPosition();
-				if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
+				if (m_TargetNode->GetNodeName().GetString() == L"Main")
 				{
-					psp.x -= movement;
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
-				{
-					psp.x += movement;
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
-				{
-					psp.y -= movement;
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
-				{
-					psp.y += movement;
-				}
-				tp->SetPixelScrollPosition(psp);
-			}
-
-			if (MK_INPUT_MGR.GetKeyReleased(L' '))
-			{
-				if (mainNode != NULL)
-				{
-					MkPanel* ip = mainNode->GetPanel(L"ImgTest");
-					MkArray<MkHashStr> keys;
-					ip->GetAllSequences(keys);
-					++si;
-					if (si >= keys.GetSize())
+					MkPanel* tp = m_TargetNode->GetPanel(L"TextTest");
+					MkFloat2 psp = tp->GetPixelScrollPosition();
+					if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
 					{
-						si = 0;
+						psp.x -= movement;
 					}
-					ip->SetSubsetOrSequenceName(keys[si], timeState.fullTime);
-					MK_DEV_PANEL.MsgToLog(keys[si].GetString());
-				}
-			}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
+					{
+						psp.x += movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
+					{
+						psp.y -= movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
+					{
+						psp.y += movement;
+					}
+					tp->SetPixelScrollPosition(psp);
 
-			if (MK_INPUT_MGR.GetKeyReleased(L'1'))
-			{
-				if (mainNode != NULL)
-				{
-					MkPanel* tp = mainNode->GetPanel(L"TextTest");
-					MkTextNode* textNode = tp->GetTextNodePtr();
-					MkTextNode* targetNode = textNode->GetChildNode(L"1st")->GetChildNode(L"Sub list")->GetChildNode(L"이번이구나");
-					targetNode->SetFontStyle(L"Desc:Notice");
-					targetNode->SetText(L"- 이걸로 바꿨음당 ( ㅡ_-)r");
-					tp->BuildAndUpdateTextCache();
+					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
+					{
+						MkPanel* ip = m_TargetNode->GetPanel(L"ImgTest");
+						MkArray<MkHashStr> keys;
+						ip->GetAllSequences(keys);
+						++si;
+						if (si >= keys.GetSize())
+						{
+							si = 0;
+						}
+						ip->SetSubsetOrSequenceName(keys[si], timeState.fullTime);
+						MK_DEV_PANEL.MsgToLog(keys[si].GetString());
+					}
+
+					if (MK_INPUT_MGR.GetKeyReleased(L'2'))
+					{
+						MkPanel* tp = m_TargetNode->GetPanel(L"TextTest");
+						MkTextNode* textNode = tp->GetTextNodePtr();
+						MkTextNode* targetNode = textNode->GetChildNode(L"1st")->GetChildNode(L"Sub list")->GetChildNode(L"이번이구나");
+						targetNode->SetFontStyle(L"Desc:Notice");
+						targetNode->SetText(L"- 이걸로 바꿨음당 ( ㅡ_-)r");
+						tp->BuildAndUpdateTextCache();
+					}
 				}
+				else if (m_TargetNode->GetNodeType() >= ePA_SNT_ThemedNode)
+				{
+					MkThemedNode* themedNode = dynamic_cast<MkThemedNode*>(m_TargetNode);
+					MkFloat2 cs = themedNode->GetClientRect().size;
+					if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
+					{
+						cs.x -= movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
+					{
+						cs.x += movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
+					{
+						cs.y += movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
+					{
+						cs.y -= movement;
+					}
+					themedNode->SetClientSize(cs);
+
+					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
+					{
+						themedNode->SetShadowEnable(!themedNode->GetShadowEnable());
+					}
+
+					if (MK_INPUT_MGR.GetKeyReleased(L'2'))
+					{
+						int comp = static_cast<int>(themedNode->GetComponent()) + 1;
+						if (comp >= static_cast<int>(MkWindowThemeData::eCT_Max))
+						{
+							comp = 1;
+						}
+						themedNode->SetComponent(static_cast<MkWindowThemeData::eComponentType>(comp));
+
+						MK_DEV_PANEL.MsgToLog(L"component : " + MkWindowThemeData::ComponentTypeName[comp].GetString());
+					}
+
+					if (MK_INPUT_MGR.GetKeyReleased(L'3'))
+					{
+						MkWindowThemeFormData::eFormType ft = themedNode->GetFormType();
+						int maxPos = 0;
+						if (ft == MkWindowThemeFormData::eFT_DualUnit)
+						{
+							maxPos = 2;
+						}
+						else if (ft == MkWindowThemeFormData::eFT_QuadUnit)
+						{
+							maxPos = 4;
+						}
+						if (maxPos > 0)
+						{
+							int fp = static_cast<int>(themedNode->GetFormPosition()) + 1;
+							if (fp >= maxPos)
+							{
+								fp = 0;
+							}
+							themedNode->SetFormPosition(static_cast<MkWindowThemeFormData::ePosition>(fp));
+							MK_DEV_PANEL.MsgToLog(L"form pos : " + MkStr(fp));
+						}
+					}
+
+					if (MK_INPUT_MGR.GetKeyReleased(L'4'))
+					{
+						_IncAP();
+						themedNode->SnapToParentClientRect(ap);
+					}
+				}
+
+				MK_DEV_PANEL.MsgToFreeboard(1, L"Target node : " + m_TargetNode->GetNodeName().GetString());
 			}
 
 			if (m_RootNode != NULL)
@@ -226,15 +314,59 @@ public:
 	TestPage(const MkHashStr& name) : MkBasePage(name)
 	{
 		m_RootNode = NULL;
+		m_TargetNode = NULL;
 		si = 0;
+		ap = eRAP_NonePosition;
 	}
 
 	virtual ~TestPage() { Clear(); }
 
 protected:
 
+	void _IncAP(void)
+	{
+		switch (ap)
+		{
+		case eRAP_NonePosition: ap = eRAP_LMostOver; break;
+
+		case eRAP_LMostOver: ap = eRAP_LMostTop; break;
+		case eRAP_LMostTop: ap = eRAP_LMostCenter; break;
+		case eRAP_LMostCenter: ap = eRAP_LMostBottom; break;
+		case eRAP_LMostBottom: ap = eRAP_LMostUnder; break;
+		case eRAP_LMostUnder: ap = eRAP_LeftOver; break;
+
+		case eRAP_LeftOver: ap = eRAP_LeftTop; break;
+		case eRAP_LeftTop: ap = eRAP_LeftCenter; break;
+		case eRAP_LeftCenter: ap = eRAP_LeftBottom; break;
+		case eRAP_LeftBottom: ap = eRAP_LeftUnder; break;
+		case eRAP_LeftUnder: ap = eRAP_MiddleOver; break;
+
+		case eRAP_MiddleOver: ap = eRAP_MiddleTop; break;
+		case eRAP_MiddleTop: ap = eRAP_MiddleCenter; break;
+		case eRAP_MiddleCenter: ap = eRAP_MiddleBottom; break;
+		case eRAP_MiddleBottom: ap = eRAP_MiddleUnder; break;
+		case eRAP_MiddleUnder: ap = eRAP_RightOver; break;
+
+		case eRAP_RightOver: ap = eRAP_RightTop; break;
+		case eRAP_RightTop: ap = eRAP_RightCenter; break;
+		case eRAP_RightCenter: ap = eRAP_RightBottom; break;
+		case eRAP_RightBottom: ap = eRAP_RightUnder; break;
+		case eRAP_RightUnder: ap = eRAP_RMostOver; break;
+
+		case eRAP_RMostOver: ap = eRAP_RMostTop; break;
+		case eRAP_RMostTop: ap = eRAP_RMostCenter; break;
+		case eRAP_RMostCenter: ap = eRAP_RMostBottom; break;
+		case eRAP_RMostBottom: ap = eRAP_RMostUnder; break;
+		case eRAP_RMostUnder: ap = eRAP_LMostOver; break;
+		}
+	}
+
+protected:
+
 	MkSceneNode* m_RootNode;
+	MkSceneNode* m_TargetNode;
 	unsigned int si;
+	eRectAlignmentPosition ap;
 };
 
 class TestFramework : public MkRenderFramework

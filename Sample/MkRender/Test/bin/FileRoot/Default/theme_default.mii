@@ -12,15 +12,37 @@ Node "PRIFIX(single일 경우 NAME)"
 }
 */
 
-Node "Default_"
+Template "T_Table"
 {
-	int2 Size = (6, 6);
+	int2 Size = (3, 3);
 	int2 Table = (3, 3);
 }
 
-Node "Shadow_"
-{
-	int2 Position = (0, 18);
-	int2 Size = (20, 20);
-	int2 Table = (3, 3);
-}
+Node "SdwE_" : "T_Table" { int2 Size = (20, 20); }
+
+Node "DefT_" : "T_Table" { int2 Position = (0, 61); }
+Node "NotT_" : "T_Table" { int2 Position = (10, 61); }
+Node "SttT_" : "T_Table" { int2 Position = (20, 61); }
+Node "GuiE_" : "T_Table" { int2 Position = (30, 61); }
+
+Node "TtlTB_" : "T_Table" { int2 Position = (0, 71); }
+Node "TtlTF_" : "T_Table" { int2 Position = (10, 71); }
+
+Node "BtnNormTN_" : "T_Table" { int2 Position = (0, 81); }
+Node "BtnNormTF_" : "T_Table" { int2 Position = (10, 81); }
+Node "BtnNormTP_" : "T_Table" { int2 Position = (20, 81); }
+
+Node "BtnTD_" : "T_Table" { int2 Position = (30, 81); }
+
+Node "BtnOkTN_" : "T_Table" { int2 Position = (0, 91); }
+Node "BtnOkTF_" : "T_Table" { int2 Position = (10, 91); }
+Node "BtnOkTP_" : "T_Table" { int2 Position = (20, 91); }
+
+Node "BtnClTN_" : "T_Table" { int2 Position = (0, 101); }
+Node "BtnClTF_" : "T_Table" { int2 Position = (10, 101); }
+Node "BtnClTP_" : "T_Table" { int2 Position = (20, 101); }
+
+Node "SelYeT_" : "T_Table" { int2 Position = (0, 111); }
+Node "SelBlT_" : "T_Table" { int2 Position = (10, 111); }
+Node "SelRgT_" : "T_Table" { int2 Position = (20, 111); }
+Node "SelDT_" : "T_Table" { int2 Position = (30, 111); }

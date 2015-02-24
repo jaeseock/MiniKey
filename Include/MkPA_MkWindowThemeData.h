@@ -5,6 +5,7 @@
 // theme 정의 data
 // MkWindowThemeFormData의 집합
 // component는 각 항목마다 정해진 predefined name과 form type이 존재
+// window system의 visual 담당
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkMap.h"
@@ -23,8 +24,25 @@ public:
 
 		//------------------------------------------------------------------------------------------------//
 		
-		eCT_Default = 0, // L"Default", eFT_SingleUnit
-		eCT_Shadow, // L"Shadow", eFT_SingleUnit
+		eCT_ShadowBox = 0, // eFT_SingleUnit
+		eCT_DefaultBox, // eFT_SingleUnit
+		eCT_NoticeBox, // eFT_SingleUnit
+		eCT_StaticBox, // eFT_SingleUnit
+		eCT_GuideBox, // eFT_SingleUnit
+
+		eCT_Title, // eFT_DualUnit
+
+		eCT_NormalBtn, // eFT_QuadUnit
+		eCT_OKBtn, // eFT_QuadUnit
+		eCT_CancelBtn, // eFT_QuadUnit
+
+		eCT_YellowZone, // eFT_SingleUnit
+		eCT_BlueZone, // eFT_SingleUnit
+		eCT_RedOutlineZone, // eFT_SingleUnit
+
+		eCT_YellowSelBtn, // eFT_QuadUnit
+		eCT_BlueSelBtn, // eFT_QuadUnit
+		eCT_RedOutlineSelBtn, // eFT_QuadUnit
 
 		//------------------------------------------------------------------------------------------------//
 

@@ -14,7 +14,9 @@
 //------------------------------------------------------------------------------------------------//
 //
 // (NOTE) 등록된 MkWindowThemeUnitData 자체는 image/edge/table 어느 것이든 상관 없지만,
-//        하나의 form에 등록된 unit data들은 모두 동일한 형태, 매칭되는 piece들간의 크기를 가지고 있어야 함
+// 하나의 form에 등록된 unit data들은 모두 동일한 형태, 매칭되는 piece들간의 크기를 가지고 있어야 함
+// (NOTE) position으로 empty unit data를 가질 수 있지만 하나의 form 안에는 최소한 하나의 구성된
+// unit data가 존재해야 함
 //------------------------------------------------------------------------------------------------//
 
 #include "MkPA_MkWindowThemeUnitData.h"
@@ -59,7 +61,7 @@ public:
 	bool SetUp(const MkHashStr* imagePath, const MkBaseTexture* texture, const MkDataNode& node);
 
 	// form type 반환
-	eFormType GetFormType(void) const;
+	inline eFormType GetFormType(void) const { return m_FormType; }
 
 	//------------------------------------------------------------------------------------------------//
 	// scene node 구성용 interface
@@ -87,9 +89,12 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 
+	MkWindowThemeFormData();
+	~MkWindowThemeFormData() {}
+
 protected:
 
-	bool _AddUnitData(const MkBaseTexture* texture, const MkArray<MkHashStr>& subsetOrSequenceNameList);
+	bool _AddUnitData(const MkBaseTexture* texture, const MkArray<MkHashStr>& subsetOrSequenceNameList, bool filledUnit);
 
 	// unit type 반환
 	// 초기화시 소속 unit들은 모두 동일 type으로 구성되어 있음을 보장하기 때문에 가능
@@ -101,6 +106,8 @@ protected:
 protected:
 
 	const MkHashStr* m_ImagePathPtr;
+
+	eFormType m_FormType;
 
 	MkArray<MkWindowThemeUnitData> m_UnitList;
 };

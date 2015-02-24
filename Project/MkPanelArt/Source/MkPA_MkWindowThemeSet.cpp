@@ -52,6 +52,8 @@ bool MkWindowThemeSet::SetCurrentTheme(const MkHashStr& themeName)
 		}
 
 		m_CurrentTheme = themeName;
+
+		MK_DEV_PANEL.MsgToLog(L"theme 사용 지정 : " + m_CurrentTheme.GetString(), false);
 	}
 	return ok;
 }
@@ -81,17 +83,23 @@ const MkWindowThemeFormData* MkWindowThemeSet::GetFormData(MkWindowThemeData::eC
 
 void MkWindowThemeSet::UnloadUnusedThemeImage(void)
 {
-	while (!m_UsedThemes.Empty())
+	if (!m_UsedThemes.Empty())
 	{
-		const MkHashStr& targetTheme = m_UsedThemes[0];
-		const MkHashStr& imageFilePath = m_Themes[targetTheme].GetImageFilePath();
-
-		MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(imageFilePath);
-		unsigned int refCounter = MK_SHARED_PTR_MGR.GetReferenceCounter(MK_PTR_TO_ID64(texture));
-		if (refCounter == 1) // bitmap pool에 물려 있는 곳 말고는 참조된 곳이 없다는 의미
+		MkArray<MkHashStr> usedThemes = m_UsedThemes;
+		MK_INDEXING_LOOP(usedThemes, i)
 		{
-			MK_BITMAP_POOL.UnloadBitmapTexture(imageFilePath);
-			m_UsedThemes.PopFront();
+			const MkHashStr& targetTheme = usedThemes[i];
+			const MkHashStr& imageFilePath = m_Themes[targetTheme].GetImageFilePath();
+
+			MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(imageFilePath);
+			unsigned int refCounter = MK_SHARED_PTR_MGR.GetReferenceCounter(MK_PTR_TO_ID64(texture));
+			if (refCounter == 1) // bitmap pool에 물려 있는 곳 말고는 참조된 곳이 없다는 의미
+			{
+				MK_BITMAP_POOL.UnloadBitmapTexture(imageFilePath);
+				m_UsedThemes.Erase(MkArraySection(i, 1));
+
+				MK_DEV_PANEL.MsgToLog(L"theme 자원 해제 : " + targetTheme.GetString(), false);
+			}
 		}
 	}
 }

@@ -11,7 +11,16 @@
 
 //------------------------------------------------------------------------------------------------//
 
-const static MkHashStr CURSOR_NAME[MkCursorManager::eMaxType] = { L"Normal", L"Excutable", L"Disable", L"Movable", L"Moving", L"TextCursor" };
+const static MkHashStr CURSOR_NAME[MkCursorManager::eMaxType] =
+{
+	MK_VALUE_TO_STRING(eNormal),
+	MK_VALUE_TO_STRING(eExcutable),
+	MK_VALUE_TO_STRING(eDisable),
+	MK_VALUE_TO_STRING(eMovable),
+	MK_VALUE_TO_STRING(eMoving),
+	MK_VALUE_TO_STRING(eTextCursor)
+};
+
 const static MkHashStr FILE_PATH_KEY = L"FilePath";
 const static MkHashStr HOTSPOT_KEY = L"Hotspot";
 

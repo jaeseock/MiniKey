@@ -7,6 +7,7 @@
 
 #include "MkCore_MkSingleTypeTreePattern.h"
 #include "MkCore_MkPairArray.h"
+#include "MkCore_MkEventQueuePattern.h"
 
 #include "MkPA_MkPanel.h"
 
@@ -89,9 +90,10 @@ public:
 	// 모든 panel 삭제
 	inline void DeleteAllPanels(void) { m_Panels.Clear(); }
 
-	// 자신과 모든 하위 노드를 대상으로 startDepth이상의 거리에서 startDepth와 가장 가깝고 worldPoint와 충돌하는 MkPanel을 buffer에 넣어 반환
+	// 자신과 모든 하위 노드 중 attrCondition을 만족하는(CheckInclusion) 노드들을 대상으로,
+	// startDepth이상의 거리에서 startDepth와 가장 가깝고 worldPoint와 충돌하는 MkPanel을 buffer에 넣어 반환
 	// (NOTE) 대상 노드(자신)는 최소한 한 번 이상 Update()를 통해 world transform이 갱신된 상태이어야 함
-	bool PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth = 0.f) const;
+	bool PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth = 0.f, const MkBitField32& attrCondition = MkBitField32::EMPTY) const;
 	
 	// 기존 설정된 deco string이 있다면 재로딩
 	//void RestoreDecoString(void);
@@ -100,9 +102,16 @@ public:
 	// attribute
 	//------------------------------------------------------------------------------------------------//
 
-	// visible
-	void SetVisible(bool visible);
-	bool GetVisible(void) const;
+	enum eSceneNodeAttribute
+	{
+		eAT_Visible = 0,
+
+		eAT_SceneNodeBandwidth = 4 // 4bit 대역폭 확보
+	};
+
+	// visible. default는 true
+	inline void SetVisible(bool visible) { m_Attribute.Assign(eAT_Visible, visible); }
+	inline bool GetVisible(void) const { return m_Attribute[eAT_Visible]; }
 
 	//------------------------------------------------------------------------------------------------//
 	// 정렬
@@ -141,14 +150,19 @@ public:
 protected:
 
 	//------------------------------------------------------------------------------------------------//
+	// 하위 node(scene node 계열)와의 event pushing을 위한 interface
+	// scene node는 가장 상위의 class이기 때문에 별도의 event type이 필요하지는 않음
+	//------------------------------------------------------------------------------------------------//
+	typedef MkEventUnitPack1<int, MkHashStr> _NodeEvent;
+
+public:
+	virtual void __SendNodeEvent(const _NodeEvent& evt);
+
+protected:
+
+	//------------------------------------------------------------------------------------------------//
 
 	//void _ApplyBuildingTemplateToSave(MkDataNode& node, const MkHashStr& templateName);
-
-	enum eSceneNodeAttribute
-	{
-		eVisible = 0,
-		eSceneNodeAttrBandwidth = 4 // MkSceneNode : 4bit 대역폭 확보
-	};
 
 protected:
 

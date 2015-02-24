@@ -20,19 +20,11 @@
 // MkImageInfo file 확장자
 #define MKDEF_PA_IMAGE_INFO_FILE_EXT L"mii"
 
-// render config 파일에서 scene deco text table 파일 경로명 key
-//#define MKDEF_PA_SCENE_DECO_TEXT_TABLE_FILE_PATH L"SceneDecoTextTable"
-
-// render config 파일에서 window type image set 노드명
-//#define MKDEF_PA_WINDOW_TYPE_IMAGE_SET_NODE_NAME L"WindowTypeImageSet"
-
-// render config 파일에서 window preset 노드명
-//#define MKDEF_PA_WINDOW_PRESET_NODE_NAME L"WindowPreset"
-
-//------------------------------------------------------------------------------------------------//
-
 // MkTextNode에서 투명 처리 될 color key(D3DCOLOR)
 #define MKDEF_PA_TEXTNODE_COLOR_KEY 0xff010101
+
+// window theme에서 system이 처리 할 node, panel name prefix
+#define MKDEF_PA_WINDOW_THEME_TAG_PREFIX L"__#WT:"
 
 //------------------------------------------------------------------------------------------------//
 

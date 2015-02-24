@@ -1,49 +1,73 @@
 
 #include "MkCore_MkCheck.h"
 
+#include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkBaseTexture.h"
 #include "MkPA_MkSceneNode.h"
 #include "MkPA_MkWindowThemeUnitData.h"
 
+const MkStr MkWindowThemeUnitData::WindowThemeTagPrefix(MKDEF_PA_WINDOW_THEME_TAG_PREFIX);
 
-const MkHashStr MkWindowThemeUnitData::ImagePositionName = L"__#P:IMG";
+const MkHashStr MkWindowThemeUnitData::ImagePositionName = WindowThemeTagPrefix + L"IMG";
 
 const MkHashStr MkWindowThemeUnitData::EdgeAndTablePositionName[9] =
 {
-	L"__#P:LT", // eP_LT
-	L"__#P:MT", // eP_MT
-	L"__#P:RT", // eP_RT
-	L"__#P:LC", // eP_LC
-	L"__#P:MC", // eP_MC
-	L"__#P:RC", // eP_RC
-	L"__#P:LB", // eP_LB
-	L"__#P:MB", // eP_MB
-	L"__#P:RB" // eP_RB
+	WindowThemeTagPrefix + L"LT", // eP_LT
+	WindowThemeTagPrefix + L"MT", // eP_MT
+	WindowThemeTagPrefix + L"RT", // eP_RT
+	WindowThemeTagPrefix + L"LC", // eP_LC
+	WindowThemeTagPrefix + L"MC", // eP_MC
+	WindowThemeTagPrefix + L"RC", // eP_RC
+	WindowThemeTagPrefix + L"LB", // eP_LB
+	WindowThemeTagPrefix + L"MB", // eP_MB
+	WindowThemeTagPrefix + L"RB" // eP_RB
 };
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkWindowThemeUnitData::SetUp(const MkStr& imagePath, const MkBaseTexture* texture, const MkArray<MkHashStr>& subsetOrSequenceNameList)
+bool MkWindowThemeUnitData::SetUp
+(const MkStr& imagePath, const MkBaseTexture* texture, const MkArray<MkHashStr>& subsetOrSequenceNameList, bool filledUnit)
 {
 	unsigned int count = subsetOrSequenceNameList.GetSize();
+	switch (count)
+	{
+	case 1: m_UnitType = eUT_Image; break;
+	case 8: m_UnitType = eUT_Edge; break;
+	case 9: m_UnitType = eUT_Table; break;
+	default:
+		{
+			m_UnitType = eUT_None;
 
-	MK_CHECK((count == 1) || (count == 8) || (count == 9), L"MkWindowThemeUnitData의 구성은 1, 8, 9개의 subset/sequence 필요")
-		return false;
+			MK_CHECK(false, L"MkWindowThemeUnitData의 구성은 1, 8, 9개의 subset/sequence 필요")
+				return false;
+		}
+		break;
+	}
 
 	m_PieceDatas.Reserve(count);
 
 	for (unsigned int i=0; i<count; ++i)
 	{
-		if ((count == 8) && (i == eP_MC))
+		if ((i == eP_MC) && (m_UnitType == eUT_Edge))
 		{
 			m_PieceDatas.PushBack(); // eUT_Edge의 경우 middle-center에 해당하는 공간을 비워 둠
 		}
 
-		if (!_AddPieceData(imagePath, texture, subsetOrSequenceNameList[i]))
+		const MkHashStr& currSSName = subsetOrSequenceNameList[i];
+		const MkImageInfo::Subset* subset = texture->GetImageInfo().GetCurrentSubsetPtr(currSSName);
+		MK_CHECK(subset != NULL, L"잘못된 subset/sequence 지정 : " + imagePath + L" (" + currSSName.GetString() + L")")
 			return false;
+
+		PieceData& pd = m_PieceDatas.PushBack();
+
+		if (filledUnit)
+		{
+			pd.subsetOrSequenceName = currSSName;
+		}
+		pd.size = subset->rectSize;
 	}
 
-	if ((count == 8) || (count == 9))
+	if ((m_UnitType == eUT_Edge) || (m_UnitType == eUT_Table))
 	{
 		// size 검증
 		MK_CHECK((m_PieceDatas[eP_LT].size.x == m_PieceDatas[eP_LC].size.x) && (m_PieceDatas[eP_LC].size.x == m_PieceDatas[eP_LB].size.x), L"LT, LC, LB의 width는 동일해야 함")
@@ -72,16 +96,6 @@ bool MkWindowThemeUnitData::SetUp(const MkStr& imagePath, const MkBaseTexture* t
 	}
 
 	return true;
-}
-
-MkWindowThemeUnitData::eUnitType MkWindowThemeUnitData::GetUnitType(void) const
-{
-	switch (m_PieceDatas.GetSize())
-	{
-	case 1: return eUT_Image;
-	case 9: return m_PieceDatas[eP_MC].subsetOrSequenceName.Empty() ? eUT_Edge : eUT_Table;
-	}
-	return eUT_None;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -113,26 +127,23 @@ void MkWindowThemeUnitData::SetUnit(MkSceneNode* sceneNode, const MkHashStr& ima
 	_ApplyUnit(sceneNode, false, imagePath, 0.);
 }
 
-void MkWindowThemeUnitData::DeleteUnit(MkSceneNode* sceneNode) const
+void MkWindowThemeUnitData::DeleteUnit(MkSceneNode* sceneNode)
 {
-	switch (GetUnitType())
+	if (sceneNode->PanelExist(ImagePositionName))
 	{
-	case eUT_Image:
 		sceneNode->DeletePanel(ImagePositionName);
-		break;
-
-	case eUT_Table:
-		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_MC]);
-	case eUT_Edge:
+	}
+	else
+	{
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_LT]);
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_MT]);
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_RT]);
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_LC]);
+		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_MC]);
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_RC]);
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_LB]);
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_MB]);
 		sceneNode->DeletePanel(EdgeAndTablePositionName[eP_RB]);
-		break;
 	}
 }
 
@@ -171,19 +182,12 @@ void MkWindowThemeUnitData::SetClientSize(MkSceneNode* sceneNode, MkFloat2& clie
 	}
 }
 
-//------------------------------------------------------------------------------------------------//
-
-bool MkWindowThemeUnitData::_AddPieceData(const MkStr& imagePath, const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
+MkWindowThemeUnitData::MkWindowThemeUnitData()
 {
-	const MkImageInfo::Subset* subset = texture->GetImageInfo().GetCurrentSubsetPtr(subsetOrSequenceName);
-	MK_CHECK(subset != NULL, L"잘못된 subset/sequence 지정 : " + imagePath + L" (" + subsetOrSequenceName.GetString() + L")")
-		return false;
-
-	PieceData& pd = m_PieceDatas.PushBack();
-	pd.subsetOrSequenceName = subsetOrSequenceName;
-	pd.size = subset->rectSize;
-	return true;
+	m_UnitType = eUT_None;
 }
+
+//------------------------------------------------------------------------------------------------//
 
 void MkWindowThemeUnitData::_ApplyUnit(MkSceneNode* sceneNode, bool createOrGet, const MkHashStr& imagePath, double startTime) const
 {
@@ -217,8 +221,9 @@ void MkWindowThemeUnitData::_SetImageToPiece
 
 	if (panel != NULL)
 	{
+		// subsetOrSequenceName이 비었을 경우 null texture 설정(panel 정보는 유지되지만 그려지지는 않음)
 		// get일 경우 start time은 이전 값을 그대로 계승
-		panel->SetTexture(imagePath, subsetOrSequenceName, createOrGet ? startTime : panel->GetSequenceStartTime(), 0.);
+		panel->SetTexture(subsetOrSequenceName.Empty() ? MkHashStr::EMPTY : imagePath, subsetOrSequenceName, createOrGet ? startTime : panel->GetSequenceStartTime(), 0.);
 		panel->SetSmallerSourceOp(keepSrcSize ? MkPanel::eReducePanel : MkPanel::eExpandSource);
 		panel->SetBiggerSourceOp(keepSrcSize ? MkPanel::eExpandPanel : MkPanel::eReduceSource);
 	}

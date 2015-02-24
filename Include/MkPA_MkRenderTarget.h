@@ -32,7 +32,7 @@ public:
 	bool SetUp(
 		eTargetType type = eBackbuffer,
 		unsigned int count = 1,
-		const MkInt2& size = MkInt2(0, 0),
+		const MkInt2& size = MkInt2::Zero,
 		MkRenderToTexture::eFormat format = MkRenderToTexture::eRGBA);
 
 	// 배경색 지정

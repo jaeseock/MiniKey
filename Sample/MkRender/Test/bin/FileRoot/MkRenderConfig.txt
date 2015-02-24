@@ -268,13 +268,14 @@ Node "StaticResource"
 	
 	Node "Theme"
 	{
-		Node "Default" // duty
+		Node "Default" // duty. all components are also duty
 		{
 			str ImagePath = "Default\theme_default.png";
 			
 			/*
-			Node "COMPONENT_NAME"
+			Node "COMPONENT_NAME" // COMPONENT_NAME은 MkWindowThemeData::eComponentType, POSITION_KEY는 MkWindowThemeFormData::ePosition 참조
 			{
+				str POSITION_KEY = ""; // empty unit data
 				str POSITION_KEY = "Default_0"; // 1개. eUT_Image
 				str POSITION_KEY = "~" / "Default_" / "0" / "3" / "5" / "8"; // 8개. eUT_Edge
 				str POSITION_KEY = "~" / "Default_" / "0" / "8"; // 9개. eUT_Table
@@ -282,856 +283,155 @@ Node "StaticResource"
 			
 			Node "COMPONENT_NAME" // eFT_SingleUnit
 			{
-				str Single = ...;
+				str eP_Single = ...;
 			}
 			Node "COMPONENT_NAME" // eFT_DualUnit
 			{
-				str Back = ...;
-				str Front = ...;
+				str eP_Back = ...;
+				str eP_Front = ...;
 			}
 			Node "COMPONENT_NAME" // eFT_QuadUnit
 			{
-				str Normal = ...;
-				str Focus = ...;
-				str Pushing = ...;
-				str Disable = ...;
+				str eP_Normal = ...;
+				str eP_Focus = ...;
+				str eP_Pushing = ...;
+				str eP_Disable = ...;
 			}
 			*/
 			
 			// component
-			Node "Default" // eFT_SingleUnit
+			Node "eCT_ShadowBox" // eFT_SingleUnit
 			{
-				str Single = "~" / "Default_" / "0" / "8"; // eUT_Table
+				str eP_Single = "~" / "SdwE_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
-			Node "Shadow" // eFT_SingleUnit
+			Node "eCT_DefaultBox" // eFT_SingleUnit
 			{
-				str Single = "~" / "Shadow_" / "0" / "3" / "5" / "8"; // eUT_Edge
+				str eP_Single = "~" / "DefT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_NoticeBox" // eFT_SingleUnit
+			{
+				str eP_Single = "~" / "NotT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_StaticBox" // eFT_SingleUnit
+			{
+				str eP_Single = "~" / "SttT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_GuideBox" // eFT_SingleUnit
+			{
+				str eP_Single = "~" / "GuiE_" / "0" / "3" / "5" / "8"; // eUT_Edge
+			}
+			
+			Node "eCT_Title" // eFT_DualUnit
+			{
+				str eP_Back = "~" / "TtlTB_" / "0" / "8"; // eUT_Table
+				str eP_Front = "~" / "TtlTF_" / "0" / "8";
+			}
+			
+			Node "eCT_NormalBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "~" / "BtnNormTN_" / "0" / "8"; // eUT_Table
+				str eP_Focus = "~" / "BtnNormTF_" / "0" / "8";
+				str eP_Pushing = "~" / "BtnNormTP_" / "0" / "8";
+				str eP_Disable = "~" / "BtnTD_" / "0" / "8";
+			}
+			
+			Node "eCT_OKBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "~" / "BtnOkTN_" / "0" / "8"; // eUT_Table
+				str eP_Focus = "~" / "BtnOkTF_" / "0" / "8";
+				str eP_Pushing = "~" / "BtnOkTP_" / "0" / "8";
+				str eP_Disable = "~" / "BtnTD_" / "0" / "8";
+			}
+			
+			Node "eCT_CancelBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "~" / "BtnClTN_" / "0" / "8"; // eUT_Table
+				str eP_Focus = "~" / "BtnClTF_" / "0" / "8";
+				str eP_Pushing = "~" / "BtnClTP_" / "0" / "8";
+				str eP_Disable = "~" / "BtnTD_" / "0" / "8";
+			}
+			
+			Node "eCT_YellowZone" // eFT_SingleUnit
+			{
+				str eP_Single = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_BlueZone" // eFT_SingleUnit
+			{
+				str eP_Single = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_RedOutlineZone" // eFT_SingleUnit
+			{
+				str eP_Single = "~" / "SelRgT_" / "0" / "3" / "5" / "8"; // eUT_Edge
+			}
+			
+			Node "eCT_YellowSelBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "";
+				str eP_Focus = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
+				str eP_Pushing = "~" / "SelYeT_" / "0" / "8";
+				str eP_Disable = "~" / "SelDT_" / "0" / "8";
+			}
+			
+			Node "eCT_BlueSelBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "";
+				str eP_Focus = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
+				str eP_Pushing = "~" / "SelBlT_" / "0" / "8";
+				str eP_Disable = "~" / "SelDT_" / "0" / "8";
+			}
+			
+			Node "eCT_RedOutlineSelBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "";
+				str eP_Focus = "~" / "SelRgT_" / "0" / "8"; // eUT_Table
+				str eP_Pushing = "~" / "SelRgT_" / "0" / "8";
+				str eP_Disable = "~" / "SelDT_" / "0" / "8";
 			}
 		}
 	}
 }
 
-Node "CursorType"
+Node "CursorType" // 커서 지정에 대해서는 kCursorManager::eCursorType 참조
 {
-	Node "Normal"
+	Node "eNormal"
 	{
 		str FilePath = "Default\cursor_normal.png";
+		int2 Hotspot = (1, 1);
 	}
 	
-	Node "Excutable"
+	Node "eExcutable"
 	{
 		str FilePath = "Default\cursor_excutable.png";
+		int2 Hotspot = (1, 1);
 	}
 	
-	Node "Disable"
+	Node "eDisable"
 	{
 		str FilePath = "Default\cursor_disable.png";
+		int2 Hotspot = (1, 1);
 	}
 	
-	Node "Movable"
+	Node "eMovable"
 	{
 		str FilePath = "Default\cursor_movable.png";
-		int2 Hotspot = (7, 7);
+		int2 Hotspot = (8, 8);
 	}
 	
-	Node "Moving"
+	Node "eMoving"
 	{
 		str FilePath = "Default\cursor_moving.png";
-		int2 Hotspot = (7, 7);
+		int2 Hotspot = (8, 8);
 	}
 	
-	Node "TextCursor"
+	Node "eTextCursor"
 	{
 		str FilePath = "Default\cursor_textcursor.png";
-		int2 Hotspot = (2, 1);
+		int2 Hotspot = (3, 2);
 	}
 }
-
-/*
-Node "WindowTypeImageSet"
-{
-	Node "DefaultBackground"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "DefBG_LT";
-		str MT = "DefBG_MT";
-		str RT = "DefBG_RT";
-		str LC = "DefBG_LC";
-		str MC = "DefBG_MC";
-		str RC = "DefBG_RC";
-		str LB = "DefBG_LB";
-		str MB = "DefBG_MB";
-		str RB = "DefBG_RB";
-	}
-	
-	Node "DefaultStaticBG"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "StaticBG_LT";
-		str MT = "StaticBG_MT";
-		str RT = "StaticBG_RT";
-		str LC = "StaticBG_LC";
-		str MC = "StaticBG_MC";
-		str RC = "StaticBG_RC";
-		str LB = "StaticBG_LB";
-		str MB = "StaticBG_MB";
-		str RB = "StaticBG_RB";
-	}
-	
-	Node "DefaultGuideBox"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "GuideBox_LT";
-		str MT = "GuideBox_MT";
-		str RT = "GuideBox_RT";
-		str LC = "GuideBox_LC";
-		str MC = "GuideBox_MC";
-		str RC = "GuideBox_RC";
-		str LB = "GuideBox_LB";
-		str MB = "GuideBox_MB";
-		str RB = "GuideBox_RB";
-	}
-	
-	Node "DefaultTitleOnFocus"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "TitleOF_LT";
-		str MT = "TitleOF_MT";
-		str RT = "TitleOF_RT";
-		str LC = "TitleOF_LC";
-		str MC = "TitleOF_MC";
-		str RC = "TitleOF_RC";
-		str LB = "TitleOF_LB";
-		str MB = "TitleOF_MB";
-		str RB = "TitleOF_RB";
-	}
-	
-	Node "DefaultTitleLostFocus"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "TitleLF_LT";
-		str MT = "TitleLF_MT";
-		str RT = "TitleLF_RT";
-		str LC = "TitleLF_LC";
-		str MC = "TitleLF_MC";
-		str RC = "TitleLF_RC";
-		str LB = "TitleLF_LB";
-		str MB = "TitleLF_MB";
-		str RB = "TitleLF_RB";
-	}
-	
-	Node "DefaultNBtnDefault"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "NBtnDef_LT";
-		str MT = "NBtnDef_MT";
-		str RT = "NBtnDef_RT";
-		str LC = "NBtnDef_LC";
-		str MC = "NBtnDef_MC";
-		str RC = "NBtnDef_RC";
-		str LB = "NBtnDef_LB";
-		str MB = "NBtnDef_MB";
-		str RB = "NBtnDef_RB";
-	}
-	
-	Node "DefaultNBtnOnCursor"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "NBtnOCu_LT";
-		str MT = "NBtnOCu_MT";
-		str RT = "NBtnOCu_RT";
-		str LC = "NBtnOCu_LC";
-		str MC = "NBtnOCu_MC";
-		str RC = "NBtnOCu_RC";
-		str LB = "NBtnOCu_LB";
-		str MB = "NBtnOCu_MB";
-		str RB = "NBtnOCu_RB";
-	}
-	
-	Node "DefaultNBtnOnClick"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "NBtnOCl_LT";
-		str MT = "NBtnOCl_MT";
-		str RT = "NBtnOCl_RT";
-		str LC = "NBtnOCl_LC";
-		str MC = "NBtnOCl_MC";
-		str RC = "NBtnOCl_RC";
-		str LB = "NBtnOCl_LB";
-		str MB = "NBtnOCl_MB";
-		str RB = "NBtnOCl_RB";
-	}
-	
-	Node "DefaultOBtnDefault"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "OBtnDef_LT";
-		str MT = "OBtnDef_MT";
-		str RT = "OBtnDef_RT";
-		str LC = "OBtnDef_LC";
-		str MC = "OBtnDef_MC";
-		str RC = "OBtnDef_RC";
-		str LB = "OBtnDef_LB";
-		str MB = "OBtnDef_MB";
-		str RB = "OBtnDef_RB";
-	}
-	
-	Node "DefaultOBtnOnCursor"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "OBtnOCu_LT";
-		str MT = "OBtnOCu_MT";
-		str RT = "OBtnOCu_RT";
-		str LC = "OBtnOCu_LC";
-		str MC = "OBtnOCu_MC";
-		str RC = "OBtnOCu_RC";
-		str LB = "OBtnOCu_LB";
-		str MB = "OBtnOCu_MB";
-		str RB = "OBtnOCu_RB";
-	}
-	
-	Node "DefaultOBtnOnClick"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "OBtnOCl_LT";
-		str MT = "OBtnOCl_MT";
-		str RT = "OBtnOCl_RT";
-		str LC = "OBtnOCl_LC";
-		str MC = "OBtnOCl_MC";
-		str RC = "OBtnOCl_RC";
-		str LB = "OBtnOCl_LB";
-		str MB = "OBtnOCl_MB";
-		str RB = "OBtnOCl_RB";
-	}
-	
-	Node "DefaultCBtnDefault"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "CBtnDef_LT";
-		str MT = "CBtnDef_MT";
-		str RT = "CBtnDef_RT";
-		str LC = "CBtnDef_LC";
-		str MC = "CBtnDef_MC";
-		str RC = "CBtnDef_RC";
-		str LB = "CBtnDef_LB";
-		str MB = "CBtnDef_MB";
-		str RB = "CBtnDef_RB";
-	}
-	
-	Node "DefaultCBtnOnCursor"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "CBtnOCu_LT";
-		str MT = "CBtnOCu_MT";
-		str RT = "CBtnOCu_RT";
-		str LC = "CBtnOCu_LC";
-		str MC = "CBtnOCu_MC";
-		str RC = "CBtnOCu_RC";
-		str LB = "CBtnOCu_LB";
-		str MB = "CBtnOCu_MB";
-		str RB = "CBtnOCu_RB";
-	}
-	
-	Node "DefaultCBtnOnClick"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "CBtnOCl_LT";
-		str MT = "CBtnOCl_MT";
-		str RT = "CBtnOCl_RT";
-		str LC = "CBtnOCl_LC";
-		str MC = "CBtnOCl_MC";
-		str RC = "CBtnOCl_RC";
-		str LB = "CBtnOCl_LB";
-		str MB = "CBtnOCl_MB";
-		str RB = "CBtnOCl_RB";
-	}
-	
-	Node "DefaultSBtnDefault"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "Empty_LT";
-		str MT = "Empty_MT";
-		str RT = "Empty_RT";
-		str LC = "Empty_LC";
-		str MC = "Empty_MC";
-		str RC = "Empty_RC";
-		str LB = "Empty_LB";
-		str MB = "Empty_MB";
-		str RB = "Empty_RB";
-	}
-	
-	Node "DefaultSBtnOnCursor"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "Select_LT";
-		str MT = "Select_MT";
-		str RT = "Select_RT";
-		str LC = "Select_LC";
-		str MC = "Select_MC";
-		str RC = "Select_RC";
-		str LB = "Select_LB";
-		str MB = "Select_MB";
-		str RB = "Select_RB";
-	}
-	
-	Node "DefaultBtnDisable"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "BtnDis_LT";
-		str MT = "BtnDis_MT";
-		str RT = "BtnDis_RT";
-		str LC = "BtnDis_LC";
-		str MC = "BtnDis_MC";
-		str RC = "BtnDis_RC";
-		str LB = "BtnDis_LB";
-		str MB = "BtnDis_MB";
-		str RB = "BtnDis_RB";
-	}
-	
-	Node "DefaultRBtnDefault"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "RBtnDef_LT";
-		str MT = "RBtnDef_MT";
-		str RT = "RBtnDef_RT";
-		str LC = "RBtnDef_LC";
-		str MC = "RBtnDef_MC";
-		str RC = "RBtnDef_RC";
-		str LB = "RBtnDef_LB";
-		str MB = "RBtnDef_MB";
-		str RB = "RBtnDef_RB";
-	}
-	
-	Node "DefaultRBtnOnCursor"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "RBtnOCu_LT";
-		str MT = "RBtnOCu_MT";
-		str RT = "RBtnOCu_RT";
-		str LC = "RBtnOCu_LC";
-		str MC = "RBtnOCu_MC";
-		str RC = "RBtnOCu_RC";
-		str LB = "RBtnOCu_LB";
-		str MB = "RBtnOCu_MB";
-		str RB = "RBtnOCu_RB";
-	}
-	
-	Node "DefaultRBtnDisable"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "RBtnDis_LT";
-		str MT = "RBtnDis_MT";
-		str RT = "RBtnDis_RT";
-		str LC = "RBtnDis_LC";
-		str MC = "RBtnDis_MC";
-		str RC = "RBtnDis_RC";
-		str LB = "RBtnDis_LB";
-		str MB = "RBtnDis_MB";
-		str RB = "RBtnDis_RB";
-	}
-	
-	Node "DefaultLBtnDefault"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "LBtnDef_LT";
-		str MT = "LBtnDef_MT";
-		str RT = "LBtnDef_RT";
-		str LC = "LBtnDef_LC";
-		str MC = "LBtnDef_MC";
-		str RC = "LBtnDef_RC";
-		str LB = "LBtnDef_LB";
-		str MB = "LBtnDef_MB";
-		str RB = "LBtnDef_RB";
-	}
-	
-	Node "DefaultLBtnOnCursor"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "LBtnOCu_LT";
-		str MT = "LBtnOCu_MT";
-		str RT = "LBtnOCu_RT";
-		str LC = "LBtnOCu_LC";
-		str MC = "LBtnOCu_MC";
-		str RC = "LBtnOCu_RC";
-		str LB = "LBtnOCu_LB";
-		str MB = "LBtnOCu_MB";
-		str RB = "LBtnOCu_RB";
-	}
-	
-	Node "DefaultLBtnDisable"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "LBtnDis_LT";
-		str MT = "LBtnDis_MT";
-		str RT = "LBtnDis_RT";
-		str LC = "LBtnDis_LC";
-		str MC = "LBtnDis_MC";
-		str RC = "LBtnDis_RC";
-		str LB = "LBtnDis_LB";
-		str MB = "LBtnDis_MB";
-		str RB = "LBtnDis_RB";
-	}
-	
-	Node "DefaultArrowLeft"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "ArrowL";
-	}
-	
-	Node "DefaultArrowRight"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "ArrowR";
-	}
-	
-	Node "DefaultArrowUp"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "ArrowU";
-	}
-	
-	Node "DefaultArrowDown"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "ArrowD";
-	}
-	
-	Node "DefaultCloseDefault"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CloseDef";
-	}
-	
-	Node "DefaultCloseOnCursor"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CloseOCu";
-	}
-	
-	Node "DefaultCloseOnClick"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CloseOCl";
-	}
-	
-	Node "DefaultCloseDisable"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CloseDis";
-	}
-	
-	Node "DefaultUncheckDefault"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "UnchkDef";
-	}
-	
-	Node "DefaultUncheckOnCursor"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "UnchkOCu";
-	}
-	
-	Node "DefaultCheckDefault"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CheckDef";
-	}
-	
-	Node "DefaultCheckOnCursor"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CheckOCu";
-	}
-	
-	Node "DefaultCheckOnClick"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CheckOCl";
-	}
-	
-	Node "DefaultCheckDisable"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "CheckDis";
-	}
-	
-	Node "DefaultDirLeftDefault"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirLDef";
-	}
-	
-	Node "DefaultDirLeftOnCursor"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirLOCu";
-	}
-	
-	Node "DefaultDirLeftOnClick"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirLOCl";
-	}
-	
-	Node "DefaultDirLeftDisable"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirLDis";
-	}
-	
-	Node "DefaultDirRightDefault"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirRDef";
-	}
-	
-	Node "DefaultDirRightOnCursor"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirROCu";
-	}
-	
-	Node "DefaultDirRightOnClick"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirROCl";
-	}
-	
-	Node "DefaultDirRightDisable"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirRDis";
-	}
-	
-	Node "DefaultDirUpDefault"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirUDef";
-	}
-	
-	Node "DefaultDirUpOnCursor"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirUOCu";
-	}
-	
-	Node "DefaultDirUpOnClick"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirUOCl";
-	}
-	
-	Node "DefaultDirUpDisable"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirUDis";
-	}
-	
-	Node "DefaultDirDownDefault"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirDDef";
-	}
-	
-	Node "DefaultDirDownOnCursor"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirDOCu";
-	}
-	
-	Node "DefaultDirDownOnClick"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirDOCl";
-	}
-	
-	Node "DefaultDirDownDisable"
-	{
-		int Type = 0;
-		str Image = "Default\default_theme.png";
-		str SN = "DirDDis";
-	}
-	
-	Node "DefaultVSlideBar"
-	{
-		int Type = 2;
-		str Image = "Default\default_theme.png";
-		str T = "VSBar_T";
-		str C = "VSBar_C";
-		str B = "VSBar_B";
-	}
-	
-	Node "DefaultVSlideBtnDefault"
-	{
-		int Type = 2;
-		str Image = "Default\default_theme.png";
-		str T = "VSBtnDef_T";
-		str C = "VSBtnDef_C";
-		str B = "VSBtnDef_B";
-	}
-	
-	Node "DefaultVSlideBtnOnCursor"
-	{
-		int Type = 2;
-		str Image = "Default\default_theme.png";
-		str T = "VSBtnOCu_T";
-		str C = "VSBtnOCu_C";
-		str B = "VSBtnOCu_B";
-	}
-	
-	Node "DefaultVSlideBtnOnClick"
-	{
-		int Type = 2;
-		str Image = "Default\default_theme.png";
-		str T = "VSBtnOCl_T";
-		str C = "VSBtnOCl_C";
-		str B = "VSBtnOCl_B";
-	}
-	
-	Node "DefaultVSlideBtnDisable"
-	{
-		int Type = 2;
-		str Image = "Default\default_theme.png";
-		str T = "VSBtnDis_T";
-		str C = "VSBtnDis_C";
-		str B = "VSBtnDis_B";
-	}
-	
-	Node "DefaultHSlideBar"
-	{
-		int Type = 1;
-		str Image = "Default\default_theme.png";
-		str L = "HSBar_L";
-		str M = "HSBar_M";
-		str R = "HSBar_R";
-	}
-	
-	Node "DefaultHSlideBtnDefault"
-	{
-		int Type = 1;
-		str Image = "Default\default_theme.png";
-		str L = "HSBtnDef_L";
-		str M = "HSBtnDef_M";
-		str R = "HSBtnDef_R";
-	}
-	
-	Node "DefaultHSlideBtnOnCursor"
-	{
-		int Type = 1;
-		str Image = "Default\default_theme.png";
-		str L = "HSBtnOCu_L";
-		str M = "HSBtnOCu_M";
-		str R = "HSBtnOCu_R";
-	}
-	
-	Node "DefaultHSlideBtnOnClick"
-	{
-		int Type = 1;
-		str Image = "Default\default_theme.png";
-		str L = "HSBtnOCl_L";
-		str M = "HSBtnOCl_M";
-		str R = "HSBtnOCl_R";
-	}
-	
-	Node "DefaultHSlideBtnDisable"
-	{
-		int Type = 1;
-		str Image = "Default\default_theme.png";
-		str L = "HSBtnDis_L";
-		str M = "HSBtnDis_M";
-		str R = "HSBtnDis_R";
-	}
-	
-	Node "DefaultTabFront"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "TabF_LT";
-		str MT = "TabF_MT";
-		str RT = "TabF_RT";
-		str LC = "TabF_LC";
-		str MC = "TabF_MC";
-		str RC = "TabF_RC";
-		str LB = "TabF_LB";
-		str MB = "TabF_MB";
-		str RB = "TabF_RB";
-	}
-	
-	Node "DefaultTabRearDefault"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "TabRDef_LT";
-		str MT = "TabRDef_MT";
-		str RT = "TabRDef_RT";
-		str LC = "TabRDef_LC";
-		str MC = "TabRDef_MC";
-		str RC = "TabRDef_RC";
-		str LB = "TabRDef_LB";
-		str MB = "TabRDef_MB";
-		str RB = "TabRDef_RB";
-	}
-	
-	Node "DefaultTabRearOnCursor"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "TabROCu_LT";
-		str MT = "TabROCu_MT";
-		str RT = "TabROCu_RT";
-		str LC = "TabROCu_LC";
-		str MC = "TabROCu_MC";
-		str RC = "TabROCu_RC";
-		str LB = "TabROCu_LB";
-		str MB = "TabROCu_MB";
-		str RB = "TabROCu_RB";
-	}
-	
-	Node "DefaultTabRearOnClick"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "TabROCl_LT";
-		str MT = "TabROCl_MT";
-		str RT = "TabROCl_RT";
-		str LC = "TabROCl_LC";
-		str MC = "TabROCl_MC";
-		str RC = "TabROCl_RC";
-		str LB = "TabROCl_LB";
-		str MB = "TabROCl_MB";
-		str RB = "TabROCl_RB";
-	}
-	
-	Node "DefaultTabRearDisable"
-	{
-		int Type = 3;
-		str Image = "Default\default_theme.png";
-		str LT = "TabRDis_LT";
-		str MT = "TabRDis_MT";
-		str RT = "TabRDis_RT";
-		str LC = "TabRDis_LC";
-		str MC = "TabRDis_MC";
-		str RC = "TabRDis_RC";
-		str LB = "TabRDis_LB";
-		str MB = "TabRDis_MB";
-		str RB = "TabRDis_RB";
-	}
-}
-
-Node "WindowPreset"
-{
-	str DefaultThemeName = "Default";
-	int Margin = 3;
-	
-	str SystemImageFilePath = "Default\window_mgr.png";
-	str DarkenLayerSubsetName = "Darken";
-	str RegionLayerSubsetName = "Region";
-	str WindowIconSampleSubsetName = "SampleIcon";
-	str WindowBackgroundSampleSubsetName = "SampleBG";
-	str WindowSelectIconSubsetName = "SelIcon";
-	
-	str EditBoxFontType = "DSF";
-	str EditBoxNormalFontState = "WhiteFS";
-	str EditBoxSelectionFontState = "CianFS";
-	str EditBoxCursorFontState = "EditBoxCursor";
-	str EditBoxSelectionSubsetName = "EBSelection";
-	
-	str NoticeButtonSubsetName = "NoticeDef" / "NoticeOCu" / "NoticeOCl" / "NoticeDis";
-	
-	Node "Default"
-	{
-		str BackgroundWindow = "DefaultBackground";
-		str StaticWindow = "DefaultStaticBG";
-		str GuideBox = "DefaultGuideBox";
-		str ArrowLeft = "DefaultArrowLeft";
-		str ArrowRight = "DefaultArrowRight";
-		str ArrowUp = "DefaultArrowUp";
-		str ArrowDown = "DefaultArrowDown";
-		str VSlideBar = "DefaultVSlideBar";
-		str HSlideBar = "DefaultHSlideBar";
-		str TabFront = "DefaultTabFront";
-		str NormalTitle = "DefaultTitleOnFocus" / "DefaultTitleLostFocus";
-		str SystemMsgTitle = "DefaultOBtnDefault" / "DefaultOBtnOnCursor";
-		str SystemErrorTitle = "DefaultCBtnDefault" / "DefaultCBtnOnCursor";
-		str NormalBtn = "DefaultNBtnDefault" / "DefaultNBtnOnCursor" / "DefaultNBtnOnClick" / "DefaultBtnDisable";
-		str OKBtn = "DefaultOBtnDefault" / "DefaultOBtnOnCursor" / "DefaultOBtnOnClick" / "DefaultBtnDisable";
-		str CancelBtn = "DefaultCBtnDefault" / "DefaultCBtnOnCursor" / "DefaultCBtnOnClick" / "DefaultBtnDisable";
-		str TabRearBtn = "DefaultTabRearDefault" / "DefaultTabRearOnCursor" / "DefaultTabRearOnClick" / "DefaultTabRearDisable";
-		str SelectionBtn = "DefaultSBtnDefault" / "DefaultSBtnOnCursor" / "DefaultSBtnOnCursor" / "DefaultSBtnDefault";
-		str RootBtn = "DefaultRBtnDefault" / "DefaultRBtnOnCursor" / "DefaultRBtnOnCursor" / "DefaultRBtnDisable";
-		str ListBtn = "DefaultLBtnDefault" / "DefaultLBtnOnCursor" / "DefaultLBtnOnCursor" / "DefaultLBtnDisable";
-		str UncheckBtn = "DefaultUncheckDefault" / "DefaultUncheckOnCursor" / "DefaultUncheckOnCursor" / "DefaultUncheckDefault";
-		str CheckBtn = "DefaultCheckDefault" / "DefaultCheckOnCursor" / "DefaultCheckOnClick" / "DefaultCheckDisable";
-		str DirLeftBtn = "DefaultDirLeftDefault" / "DefaultDirLeftOnCursor" / "DefaultDirLeftOnClick" / "DefaultDirLeftDisable";
-		str DirRightBtn = "DefaultDirRightDefault" / "DefaultDirRightOnCursor" / "DefaultDirRightOnClick" / "DefaultDirRightDisable";
-		str DirUpBtn = "DefaultDirUpDefault" / "DefaultDirUpOnCursor" / "DefaultDirUpOnClick" / "DefaultDirUpDisable";
-		str DirDownBtn = "DefaultDirDownDefault" / "DefaultDirDownOnCursor" / "DefaultDirDownOnClick" / "DefaultDirDownDisable";
-		str VSlideBtn = "DefaultVSlideBtnDefault" / "DefaultVSlideBtnOnCursor" / "DefaultVSlideBtnOnClick" / "DefaultVSlideBtnDisable";
-		str HSlideBtn = "DefaultHSlideBtnDefault" / "DefaultHSlideBtnOnCursor" / "DefaultHSlideBtnOnClick" / "DefaultHSlideBtnDisable";
-		str CloseBtn =  "DefaultCloseDefault" / "DefaultCloseOnCursor" / "DefaultCloseOnClick" / "DefaultCloseDisable";
-		
-		str FontState = "YellowFS" / "WhiteFS";
-	}
-	
-	Node "SolidLB"
-	{
-		str BackgroundWindow = "DefaultStaticBG";
-		
-		str FontState = "샘플02" / "ClientStartMsg";
-	}
-}
-*/

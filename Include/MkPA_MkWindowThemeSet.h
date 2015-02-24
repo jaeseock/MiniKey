@@ -15,7 +15,6 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkHashMap.h"
-#include "MkCore_MkDeque.h"
 #include "MkPA_MkWindowThemeData.h"
 
 
@@ -52,5 +51,5 @@ protected:
 	MkHashMap<MkHashStr, MkWindowThemeData> m_Themes;
 
 	MkHashStr m_CurrentTheme;
-	MkDeque<MkHashStr> m_UsedThemes;
+	MkArray<MkHashStr> m_UsedThemes;
 };

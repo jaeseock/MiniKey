@@ -188,14 +188,14 @@ public:
 		return MkType2<DataType>(x, y);
 	}
 
-	// 자신을 기준으로 rect가 alignmnentPosition 위치에 border만큼 떨어져 정렬될 위치를 반환
+	// 자신을 기준으로 rect가 alignmentPosition 위치에 border만큼 떨어져 정렬될 위치를 반환
 	// topDown이 true일 경우 y축을 top->down으로 간주(일반 윈도우 좌표계). false일 경우 down->top으로 간주
-	MkType2<DataType> GetSnapPosition(const MkRect& rect, eRectAlignmentPosition alignmnentPosition, const MkType2<DataType>& border, bool topDown = false) const
+	MkType2<DataType> GetSnapPosition(const MkRect& rect, eRectAlignmentPosition alignmentPosition, const MkType2<DataType>& border, bool topDown = false) const
 	{
 		MkType2<DataType> newPos = rect.position;
-		if ((alignmnentPosition != eRAP_NonePosition) && IsValidRectAlignmentPosition(alignmnentPosition))
+		if ((alignmentPosition != eRAP_NonePosition) && IsValidRectAlignmentPosition(alignmentPosition))
 		{
-			switch (GetHorizontalRectAlignmentType(alignmnentPosition))
+			switch (GetHorizontalRectAlignmentType(alignmentPosition))
 			{
 			case eRAT_LMost: newPos.x = position.x - rect.size.x - border.x; break;
 			case eRAT_Left: newPos.x = position.x + border.x; break;
@@ -206,7 +206,7 @@ public:
 
 			if (topDown)
 			{
-				switch (GetVerticalRectAlignmentType(alignmnentPosition))
+				switch (GetVerticalRectAlignmentType(alignmentPosition))
 				{
 				case eRAT_Over: newPos.y = position.y - rect.size.y - border.y; break;
 				case eRAT_Top: newPos.y = position.y + border.y; break;
@@ -217,7 +217,7 @@ public:
 			}
 			else
 			{
-				switch (GetVerticalRectAlignmentType(alignmnentPosition))
+				switch (GetVerticalRectAlignmentType(alignmentPosition))
 				{
 				case eRAT_Over: newPos.y = position.y + size.y + border.y; break;
 				case eRAT_Top: newPos.y = position.y + size.y - rect.size.y - border.y; break;
@@ -228,6 +228,12 @@ public:
 			}
 		}
 		return newPos;
+	}
+
+	inline MkType2<DataType> GetSnapPosition
+		(const MkType2<DataType>& rectSize, eRectAlignmentPosition alignmentPosition, const MkType2<DataType>& border, bool topDown = false) const
+	{
+		return GetSnapPosition(MkRect<DataType>(MkType2<DataType>::Zero, rectSize), alignmentPosition, border, topDown);
 	}
 
 public:

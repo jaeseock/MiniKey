@@ -53,10 +53,11 @@ public:
 
 	// 초기화
 	// subsetOrSequenceNameList의 형태에 따라 unit type이 결정 됨
-	bool SetUp(const MkStr& imagePath, const MkBaseTexture* texture, const MkArray<MkHashStr>& subsetOrSequenceNameList);
+	// filledUnit이 false 일 경우 panel을 구성할 size 정보만 생성
+	bool SetUp(const MkStr& imagePath, const MkBaseTexture* texture, const MkArray<MkHashStr>& subsetOrSequenceNameList, bool filledUnit);
 
 	// unit type 반환
-	eUnitType GetUnitType(void) const;
+	inline eUnitType GetUnitType(void) const { return m_UnitType; }
 
 	// data 참조 반환
 	inline const MkArray<PieceData>& GetPieceData(void) const { return m_PieceDatas; }
@@ -74,8 +75,8 @@ public:
 	// scene node에 적용된 unit type panel들을 현 data로 변경
 	void SetUnit(MkSceneNode* sceneNode, const MkHashStr& imagePath) const;
 
-	// 현 data가 적용된 unit type panel들을 sceneNode에서 제거
-	void DeleteUnit(MkSceneNode* sceneNode) const;
+	// 적용된 모든 unit type panel들을 sceneNode에서 제거
+	static void DeleteUnit(MkSceneNode* sceneNode);
 
 	// sceneNode에 속한 해당 unit type panel들의 크기를 client size에 맞추어 설정
 	// - eUT_Image type은 크기 변경이 허락되지 않으므로 반영되지 않음
@@ -87,12 +88,10 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 
-	MkWindowThemeUnitData() {}
+	MkWindowThemeUnitData();
 	~MkWindowThemeUnitData() {}
 
 protected:
-
-	bool _AddPieceData(const MkStr& imagePath, const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName);
 
 	void _ApplyUnit(MkSceneNode* sceneNode, bool createOrGet, const MkHashStr& imagePath, double startTime) const;
 
@@ -108,6 +107,10 @@ protected:
 	MkArray<PieceData> m_PieceDatas;
 
 public:
+
+	eUnitType m_UnitType;
+
+	static const MkStr WindowThemeTagPrefix;
 
 	// eUT_Image
 	static const MkHashStr ImagePositionName;

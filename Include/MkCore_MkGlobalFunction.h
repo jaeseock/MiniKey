@@ -17,6 +17,8 @@
 
 #define MK_PTR_TO_ID64(ptr) (reinterpret_cast<ID64>(ptr))
 
+#define MK_VALUE_TO_STRING(v) (L#v)
+
 //------------------------------------------------------------------------------------------------//
 // 자료형이 데이터형인지 포인터형인지 판별
 // ex>
@@ -167,40 +169,40 @@ inline unsigned int FindLowerBoundInArray(const DataType* targetArray, unsigned 
 // eRectAlignmentType, eRectAlignmentPosition 관련
 //------------------------------------------------------------------------------------------------//
 
-// alignmnentPosition에서 수평축(x) eRectAlignmentType을 추출해 반환
-inline eRectAlignmentType GetHorizontalRectAlignmentType(eRectAlignmentPosition alignmnentPosition)
+// alignmentPosition에서 수평축(x) eRectAlignmentType을 추출해 반환
+inline eRectAlignmentType GetHorizontalRectAlignmentType(eRectAlignmentPosition alignmentPosition)
 {
-	return static_cast<eRectAlignmentType>(alignmnentPosition & 0xf);
+	return static_cast<eRectAlignmentType>(alignmentPosition & 0xf);
 }
 
-// alignmnentPosition에서 수직축(y) eRectAlignmentType을 추출해 반환
-inline eRectAlignmentType GetVerticalRectAlignmentType(eRectAlignmentPosition alignmnentPosition)
+// alignmentPosition에서 수직축(y) eRectAlignmentType을 추출해 반환
+inline eRectAlignmentType GetVerticalRectAlignmentType(eRectAlignmentPosition alignmentPosition)
 {
-	return static_cast<eRectAlignmentType>(alignmnentPosition & 0xf0);
+	return static_cast<eRectAlignmentType>(alignmentPosition & 0xf0);
 }
 
-// alignmnentPosition 유효성 검증
-inline bool IsValidRectAlignmentPosition(eRectAlignmentPosition alignmnentPosition)
+// alignmentPosition 유효성 검증
+inline bool IsValidRectAlignmentPosition(eRectAlignmentPosition alignmentPosition)
 {
-	if (alignmnentPosition == eRAP_NonePosition)
+	if (alignmentPosition == eRAP_NonePosition)
 		return true;
 
-	eRectAlignmentType hType = GetHorizontalRectAlignmentType(alignmnentPosition);
-	eRectAlignmentType vType = GetVerticalRectAlignmentType(alignmnentPosition);
+	eRectAlignmentType hType = GetHorizontalRectAlignmentType(alignmentPosition);
+	eRectAlignmentType vType = GetVerticalRectAlignmentType(alignmentPosition);
 	return ((hType >= eRAT_LMost) && (hType <= eRAT_RMost) && (vType >= eRAT_Over) && (vType <= eRAT_Under));
 }
 
-// alignmnentPosition 형태 검증
+// alignmentPosition 형태 검증
 // return 0 : eRAP_NonePosition
 // return 1 : outside type(LMost, RMost & Over, Under)
 // return -1 : inside type(Left, Middle, Right & Top, Center, Bottom)
-inline int GetRectAlignmentPositionType(eRectAlignmentPosition alignmnentPosition)
+inline int GetRectAlignmentPositionType(eRectAlignmentPosition alignmentPosition)
 {
-	if (alignmnentPosition == eRAP_NonePosition)
+	if (alignmentPosition == eRAP_NonePosition)
 		return 0;
 
-	eRectAlignmentType hType = GetHorizontalRectAlignmentType(alignmnentPosition);
-	eRectAlignmentType vType = GetVerticalRectAlignmentType(alignmnentPosition);
+	eRectAlignmentType hType = GetHorizontalRectAlignmentType(alignmentPosition);
+	eRectAlignmentType vType = GetVerticalRectAlignmentType(alignmentPosition);
 	return ((hType == eRAT_LMost) || (hType == eRAT_RMost) || (vType == eRAT_Over) || (vType == eRAT_Under)) ? 1 : -1;
 }
 

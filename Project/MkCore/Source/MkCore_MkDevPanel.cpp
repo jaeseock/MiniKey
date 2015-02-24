@@ -73,7 +73,7 @@ bool MkDevPanel::SetUp(MkListeningWindow& rootWindow, eRectAlignmentPosition ali
 	HINSTANCE hInstance = reinterpret_cast<HINSTANCE>(GetWindowLong(hParent, GWL_HINSTANCE));
 	m_Window.SetAlignmentPosition(alignmentPosition);
 	bool ok = m_Window.SetUpByWindowCreation
-		(hInstance, __DevPanelWndProc, hParent, L"MK_DEV_PANEL", eSWP_None, MkInt2(0, 0), MkInt2(MKDEF_CLIENT_WIDTH, totalClientHeight));
+		(hInstance, __DevPanelWndProc, hParent, L"MK_DEV_PANEL", eSWP_None, MkInt2::Zero, MkInt2(MKDEF_CLIENT_WIDTH, totalClientHeight));
 
 	MK_CHECK(ok, L"MkDevPanel 생성 실패")
 	{

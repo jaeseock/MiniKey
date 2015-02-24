@@ -87,6 +87,11 @@ public:
 		return ((x == static_cast<DataType>(0)) && (y == static_cast<DataType>(0)));
 	}
 
+	inline bool IsPositive(void) const
+	{
+		return ((x > static_cast<DataType>(0)) && (y > static_cast<DataType>(0)));
+	}
+
 	// pt와 비교해 작은쪽을 저장
 	inline void CompareAndKeepMin(const MkType2& pt)
 	{
@@ -104,8 +109,13 @@ public:
 public:
 
 	DataType x, y;
+
+	static const MkType2<DataType> Zero;
 };
 
+//------------------------------------------------------------------------------------------------//
+// 기본 자료형 선언
+// (NOTE) data type을 추가하려면 "MkCore_MkDataTypeDefinition.cpp"에서 "Zero" static instance를 선언해 주어야 함
 //------------------------------------------------------------------------------------------------//
 
 typedef MkType2<short> MkShort2;

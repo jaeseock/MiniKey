@@ -210,12 +210,12 @@ MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name, const MkSceneNode* targ
 	return panel;
 }
 
-bool MkSceneNode::PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth) const
+bool MkSceneNode::PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth, const MkBitField32& attrCondition) const
 {
 	if (m_TotalAABR.CheckIntersection(worldPoint))
 	{
-		// 직계 panel 상대로 검사
-		if (m_PanelAABR.CheckIntersection(worldPoint))
+		// attribute를 만족하면 직계 panel 상대로 검사
+		if (m_Attribute.CheckInclusion(attrCondition) && m_PanelAABR.CheckIntersection(worldPoint))
 		{
 			MkConstHashMapLooper<MkHashStr, MkPanel> looper(m_Panels);
 			MK_STL_LOOP(looper)
@@ -248,23 +248,13 @@ bool MkSceneNode::PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoin
 				const MkSceneNode* node = looper.GetCurrentField();
 				if (node->GetVisible())
 				{
-					node->PickPanel(buffer, worldPoint, startDepth);
+					node->PickPanel(buffer, worldPoint, startDepth, attrCondition);
 				}
 			}
 		}
 	}
 
 	return !buffer.Empty();
-}
-
-void MkSceneNode::SetVisible(bool visible)
-{
-	m_Attribute.Assign(eVisible, visible);
-}
-
-bool MkSceneNode::GetVisible(void) const
-{
-	return m_Attribute[eVisible];
 }
 
 void MkSceneNode::Update(double currTime)
@@ -365,6 +355,18 @@ void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray
 			{
 				looper.GetCurrentField()->__GetAllValidPanels(cameraAABR, buffer);
 			}
+		}
+	}
+}
+
+void MkSceneNode::__SendNodeEvent(const _NodeEvent& evt)
+{
+	if (!m_ChildrenNode.Empty())
+	{
+		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
+		MK_STL_LOOP(looper)
+		{
+			looper.GetCurrentField()->__SendNodeEvent(evt);
 		}
 	}
 }

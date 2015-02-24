@@ -76,7 +76,7 @@ void MkSnappingWindow::SnapWindow(const MkIntRect& pivotRect)
 MkSnappingWindow::MkSnappingWindow() : MkListeningWindow()
 {
 	m_AlignmentPosition = eRAP_NonePosition;
-	m_Border = MkInt2(0, 0);
+	m_Border = MkInt2::Zero;
 }
 
 //------------------------------------------------------------------------------------------------//

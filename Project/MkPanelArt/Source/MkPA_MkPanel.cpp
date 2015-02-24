@@ -228,6 +228,9 @@ bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOr
 {
 	Clear();
 
+	if (texture == NULL)
+		return false;
+
 	m_Texture = const_cast<MkBaseTexture*>(texture); // ref++
 	m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
 	return SetSubsetOrSequenceName(subsetOrSequenceName, startTime, initTime);
@@ -235,9 +238,7 @@ bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOr
 
 bool MkPanel::SetTexture(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
 {
-	const MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(imagePath);
-	MK_CHECK(texture != NULL, MkStr(imagePath) + L" 이미지 파일 로딩 실패") {}
-	return SetTexture(texture, subsetOrSequenceName, startTime, initTime);
+	return SetTexture(imagePath.Empty() ? NULL : MK_BITMAP_POOL.GetBitmapTexture(imagePath), subsetOrSequenceName, startTime, initTime);
 }
 
 bool MkPanel::SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
@@ -399,8 +400,6 @@ void MkPanel::Clear(void)
 	m_Texture = NULL;
 	m_MaterialKey.m_TextureID = 0;
 	m_SubsetOrSequenceName.Clear();
-	m_SequenceStartTime = 0.;
-	m_SequenceInitTime = 0.;
 	m_TargetTextNodeName.Clear();
 	MK_DELETE(m_TargetTextNodePtr);
 	MK_DELETE(m_DrawStep);
@@ -440,7 +439,7 @@ bool MkPanel::__CheckDrawable(void) const
 	return
 		(GetVisible() && // 보이기 활성화 중이고
 		(m_Texture != NULL) && // 텍스쳐가 존재하고
-		(m_PanelSize.x > 0) && (m_PanelSize.y > 0) && (m_AABR.size.x > 0) && (m_AABR.size.y > 0) && // 유효한 크기가 존재하고
+		m_PanelSize.IsPositive() && m_AABR.size.IsPositive() && // 유효한 크기가 존재하고
 		(m_Transform.GetWorldDepth() >= 0.f) && (m_Transform.GetWorldDepth() <= MKDEF_PA_MAX_WORLD_DEPTH) && // 깊이값이 카메라 범위 안에 있고
 		(m_MaterialKey.m_ObjectAlpha > 0)); // 오브젝트 알파가 0보다 크면 true
 }
@@ -589,7 +588,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 			m_Transform.GetWorldRectVertices(internalRect, m_WorldVertice);
 
 			// filtering mode. 이미지 원본을 확대/축소 할 경우 point보다는 linear filtering이 유리
-			// 원칙적으로는 최종 출력 크기로 비교해야 하지만 잘라 그리기의 경우 uv로부터 size를 역산해야되는데 floating 계산 특성상 발생하는
+			// 원칙적으로는 최종 출력 rect로 비교해야 하지만 잘라 그리기의 경우 uv로부터 size를 역산해야되는데 floating 계산 특성상 발생하는
 			// 오차로 인해 오히려 잘못된 결과가 나올 가능성이 높음. 따라서 단순하게 조건식으로 처리
 			m_Texture->SetFilterType
 				((srcSizeChanged || (m_Transform.GetWorldRotation() != 0.f) || (m_Transform.GetWorldScale() != 1.f)) ?
@@ -693,6 +692,10 @@ MkPanel::MkPanel(void)
 
 	SetSmallerSourceOp(eReducePanel);
 	SetBiggerSourceOp(eExpandPanel);
+
+	m_SequenceStartTime = 0.;
+	m_SequenceInitTime = 0.;
+	m_MaterialKey.m_TextureID = 0;
 
 	m_Attribute.Clear();
 	SetVisible(true);

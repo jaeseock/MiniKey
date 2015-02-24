@@ -18,7 +18,7 @@ public:
 	// clientSize의 xy가 0 이하이면 워크스페이스(바탕화면에서 작업표시줄이 제외된 영역) 크기로 생성
 	// ex>
 	//	window.SetUpByWindowCreation(hI, WndProc, NULL, L"normal window", eSWP_All, MkInt2(CW_USEDEFAULT, CW_USEDEFAULT), MkInt2(640, 480));
-	//	window.SetUpByWindowCreation(hI, WndProc, NULL, L"full window", eSWP_Close, MkInt2(0, 0), MkInt2(0, 0));
+	//	window.SetUpByWindowCreation(hI, WndProc, NULL, L"full window", eSWP_Close, MkInt2::Zero, MkInt2::Zero);
 	virtual bool SetUpByWindowCreation
 		(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp,
 		const MkInt2& position, const MkInt2& clientSize);

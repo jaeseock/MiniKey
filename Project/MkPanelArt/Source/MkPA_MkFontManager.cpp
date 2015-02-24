@@ -165,7 +165,7 @@ MkInt2 MkFontManager::GetTextSize(const MkHashStr& fontType, const MkStr& msg, b
 			return _GetTextSize(m_AvailableUnitList[currFontKey], msg, ignoreBacksideBlank);
 		}
 	}
-	return MkInt2(0, 0);
+	return MkInt2::Zero;
 }
 
 bool MkFontManager::DrawMessage(const MkInt2& position, const MkStr& msg)
