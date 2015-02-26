@@ -24,6 +24,8 @@ public:
 	void LoadTextNode(const MkPathName& filePath);
 	void LoadTextNode(const MkDataNode* dataNode);
 
+	inline bool TextNodeExist(const MkHashStr& name) const { return m_TextNode.ChildExist(name); }
+
 	const MkTextNode& GetTextNode(const MkHashStr& name) const;
 
 	//------------------------------------------------------------------------------------------------//

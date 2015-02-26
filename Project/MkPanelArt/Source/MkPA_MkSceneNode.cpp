@@ -173,24 +173,6 @@ void MkSceneNode::RestoreDecoString(void)
 		}
 	}
 }
-
-void MkSceneNode::AlignPosition(const MkFloatRect& anchorRect, eRectAlignmentPosition alignment, const MkInt2& border)
-{
-	if (anchorRect.SizeIsNotZero() && (alignment != eRAP_NonePosition))
-	{
-		MkFloat2 offsetToWorldPos = MkFloat2(m_WorldPosition.GetDecision().x, m_WorldPosition.GetDecision().y) - m_TotalAABR.position;
-		MkFloat2 newPos = anchorRect.GetSnapPosition(m_TotalAABR, alignment, MkFloat2(static_cast<float>(border.x), static_cast<float>(border.y)));
-		SetLocalAsWorldPosition(newPos + offsetToWorldPos, true);
-	}
-}
-
-void MkSceneNode::AlignPosition(const MkSceneNode* anchorNode, eRectAlignmentPosition alignment, const MkInt2& border)
-{
-	if (anchorNode != NULL)
-	{
-		AlignPosition(anchorNode->GetTotalAABR(), alignment, border);
-	}
-}
 */
 
 MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name)

@@ -508,14 +508,38 @@
 						</File>
 					</Filter>
 					<Filter
-						Name="1. Themed node"
+						Name="1. Window visual pattern node"
 						>
 						<File
-							RelativePath=".\Source\MkPA_MkThemedNode.cpp"
+							RelativePath=".\Source\MkPA_MkVisualPatternNode.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\Include\MkPA_MkThemedNode.h"
+							RelativePath="..\..\Include\MkPA_MkVisualPatternNode.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="3. Window themed node"
+						>
+						<File
+							RelativePath=".\Source\MkPA_MkWindowThemedNode.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkWindowThemedNode.h"
+							>
+						</File>
+					</Filter>
+					<Filter
+						Name="2. Window tag node"
+						>
+						<File
+							RelativePath=".\Source\MkPA_MkWindowTagNode.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkWindowTagNode.h"
 							>
 						</File>
 					</Filter>

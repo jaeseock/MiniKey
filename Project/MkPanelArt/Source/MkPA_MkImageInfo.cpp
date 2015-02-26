@@ -235,9 +235,10 @@ void MkImageInfo::_RegisterSubset(const MkHashStr& name, const MkFloat2& subsetS
 	Subset& ss = m_Subsets.Create(name);
 	ss.rectSize = subsetSize;
 
-	MkFloat2 uvPos(static_cast<float>(pivot.x) / imgSize.x, static_cast<float>(pivot.y) / imgSize.y);
+	const float offset = 0.00001f; // floating 계산의 오류 보정. 현실적으로 만단위 크기의 texture를 사용하지는 않을 것이므로 이 정도의 해상도로 결정
+	MkFloat2 uvPos(static_cast<float>(pivot.x) / imgSize.x + offset, static_cast<float>(pivot.y) / imgSize.y + offset);
 
-	ss.uv[MkFloatRect::eLeftTop] = uvPos; //+0.00001f
+	ss.uv[MkFloatRect::eLeftTop] = uvPos;
 
 	ss.uv[MkFloatRect::eRightTop].x = uvPos.x + uvSize.x;
 	ss.uv[MkFloatRect::eRightTop].y = uvPos.y;

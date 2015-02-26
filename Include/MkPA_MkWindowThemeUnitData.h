@@ -110,8 +110,6 @@ public:
 
 	eUnitType m_UnitType;
 
-	static const MkStr WindowThemeTagPrefix;
-
 	// eUT_Image
 	static const MkHashStr ImagePositionName;
 

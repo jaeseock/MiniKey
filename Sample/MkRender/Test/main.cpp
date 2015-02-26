@@ -28,7 +28,7 @@
 #include "MkPA_MkTextNode.h"
 
 #include "MkPA_MkSceneNode.h"
-#include "MkPA_MkThemedNode.h"
+#include "MkPA_MkWindowThemedNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -81,22 +81,22 @@ public:
 		MkPanel& mp = mainNode->CreatePanel(L"MaskingTest", subNode, MkInt2(200, 150));
 		mp.SetLocalPosition(MkFloat2(120.f, 50.f));
 
-		MkThemedNode* themeRootNode = MkThemedNode::CreateChildNode(mainNode, L"ThemedRoot");
-		themeRootNode->SetLocalPosition(MkFloat2(500.f, 100.f));
-		themeRootNode->SetLocalDepth(2.f);
-		themeRootNode->SetTheme(L"Default");
-		themeRootNode->SetComponent(MkWindowThemeData::eCT_DefaultBox);
-		themeRootNode->SetClientSize(MkFloat2(300.f, 200.f));
-		themeRootNode->SetShadowEnable(true);
-		themeRootNode->SetAcceptInput(true);
+		MkWindowThemedNode* trNode = MkWindowThemedNode::CreateChildNode(mainNode, L"ThemeRoot");
+		trNode->SetLocalPosition(MkFloat2(500.f, 100.f));
+		trNode->SetLocalDepth(2.f);
+		trNode->SetTheme(L"Default");
+		trNode->SetComponent(MkWindowThemeData::eCT_DefaultBox);
+		trNode->SetClientSize(MkFloat2(300.f, 200.f));
+		trNode->SetShadowEnable(true);
+		trNode->SetAcceptInput(true);
 
-		MkThemedNode* themeSubNode = MkThemedNode::CreateChildNode(themeRootNode, L"ThemedSub");
-		themeSubNode->SetLocalDepth(-1.f);
-		themeSubNode->SetTheme(L"Default");
-		themeSubNode->SetComponent(MkWindowThemeData::eCT_NoticeBox);
-		themeSubNode->SetClientSize(MkFloat2(80.f, 50.f));
-		themeSubNode->SetShadowEnable(true);
-		themeSubNode->SetAcceptInput(true);
+		MkWindowThemedNode* tsNode = MkWindowThemedNode::CreateChildNode(trNode, L"ThemeSub");
+		tsNode->SetLocalDepth(-1.f);
+		tsNode->SetTheme(L"Default");
+		tsNode->SetComponent(MkWindowThemeData::eCT_NoticeBox);
+		tsNode->SetClientSize(MkFloat2(80.f, 50.f));
+		tsNode->SetShadowEnable(true);
+		tsNode->SetAcceptInput(true);
 		
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		ds->SetSceneNode(mainNode);
@@ -117,7 +117,7 @@ public:
 				if (MK_INPUT_MGR.GetMouseLeftButtonReleased())
 				{
 					MkBitField32 attr;
-					attr.Set(MkThemedNode::eAT_AcceptInput);
+					attr.Set(MkVisualPatternNode::eAT_AcceptInput);
 					MkArray<MkPanel*> buffer;
 					if (mainNode->PickPanel(buffer, MkFloat2(static_cast<float>(mp.x), static_cast<float>(mp.y)), 0., attr))
 					{
@@ -224,10 +224,10 @@ public:
 						tp->BuildAndUpdateTextCache();
 					}
 				}
-				else if (m_TargetNode->GetNodeType() >= ePA_SNT_ThemedNode)
+				else if (m_TargetNode->GetNodeType() >= ePA_SNT_WindowThemedNode)
 				{
-					MkThemedNode* themedNode = dynamic_cast<MkThemedNode*>(m_TargetNode);
-					MkFloat2 cs = themedNode->GetClientRect().size;
+					MkWindowThemedNode* thNode = dynamic_cast<MkWindowThemedNode*>(m_TargetNode);
+					MkFloat2 cs = thNode->GetClientRect().size;
 					if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
 					{
 						cs.x -= movement;
@@ -244,28 +244,28 @@ public:
 					{
 						cs.y -= movement;
 					}
-					themedNode->SetClientSize(cs);
+					thNode->SetClientSize(cs);
 
 					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
 					{
-						themedNode->SetShadowEnable(!themedNode->GetShadowEnable());
+						thNode->SetShadowEnable(!thNode->GetShadowEnable());
 					}
 
 					if (MK_INPUT_MGR.GetKeyReleased(L'2'))
 					{
-						int comp = static_cast<int>(themedNode->GetComponent()) + 1;
+						int comp = static_cast<int>(thNode->GetComponent()) + 1;
 						if (comp >= static_cast<int>(MkWindowThemeData::eCT_Max))
 						{
 							comp = 1;
 						}
-						themedNode->SetComponent(static_cast<MkWindowThemeData::eComponentType>(comp));
+						thNode->SetComponent(static_cast<MkWindowThemeData::eComponentType>(comp));
 
 						MK_DEV_PANEL.MsgToLog(L"component : " + MkWindowThemeData::ComponentTypeName[comp].GetString());
 					}
 
 					if (MK_INPUT_MGR.GetKeyReleased(L'3'))
 					{
-						MkWindowThemeFormData::eFormType ft = themedNode->GetFormType();
+						MkWindowThemeFormData::eFormType ft = thNode->GetFormType();
 						int maxPos = 0;
 						if (ft == MkWindowThemeFormData::eFT_DualUnit)
 						{
@@ -277,12 +277,12 @@ public:
 						}
 						if (maxPos > 0)
 						{
-							int fp = static_cast<int>(themedNode->GetFormPosition()) + 1;
+							int fp = static_cast<int>(thNode->GetFormPosition()) + 1;
 							if (fp >= maxPos)
 							{
 								fp = 0;
 							}
-							themedNode->SetFormPosition(static_cast<MkWindowThemeFormData::ePosition>(fp));
+							thNode->SetFormPosition(static_cast<MkWindowThemeFormData::ePosition>(fp));
 							MK_DEV_PANEL.MsgToLog(L"form pos : " + MkStr(fp));
 						}
 					}
@@ -290,7 +290,7 @@ public:
 					if (MK_INPUT_MGR.GetKeyReleased(L'4'))
 					{
 						_IncAP();
-						themedNode->SnapToParentClientRect(ap);
+						thNode->SnapToParentClientRect(ap);
 					}
 				}
 

@@ -185,6 +185,9 @@ public:
 	// (NOTE) 호출 전 반드시 유효한 panel size가 설정되어 있어야 함
 	void SetMaskingNode(const MkSceneNode* sceneNode);
 
+	// 그려질 대상(image, text, mask)의 크기를 반환
+	inline const MkFloat2& GetTextureSize(void) const { return m_TextureSize; }
+
 	//------------------------------------------------------------------------------------------------//
 
 	inline MkSceneNode* GetParentNode(void) const { return m_ParentNode; }
@@ -293,6 +296,7 @@ protected:
 	double m_SequenceStartTime;
 	double m_SequenceInitTime;
 	MaterialKey m_MaterialKey;
+	MkFloat2 m_TextureSize;
 
 	// text node
 	MkHashStr m_TargetTextNodeName;

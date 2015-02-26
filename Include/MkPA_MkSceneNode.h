@@ -3,6 +3,7 @@
 
 //------------------------------------------------------------------------------------------------//
 // scene node
+// 말 그대로 scene node
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkSingleTypeTreePattern.h"
@@ -104,7 +105,7 @@ public:
 
 	enum eSceneNodeAttribute
 	{
-		eAT_Visible = 0,
+		eAT_Visible = 0, // 그리기 여부
 
 		eAT_SceneNodeBandwidth = 4 // 4bit 대역폭 확보
 	};
@@ -114,15 +115,17 @@ public:
 	inline bool GetVisible(void) const { return m_Attribute[eAT_Visible]; }
 
 	//------------------------------------------------------------------------------------------------//
-	// 정렬
-	// (NOTE) 호출 전 Update()가 실행 된 상태여야 하며 호출 후 다시 Update()를 실행 할 필요 없음
+	// event
+	// 하위 node(scene node 계열)와의 event pushing을 위한 interface
+	// scene node는 가장 상위의 class이기 때문에 별도의 event type이 필요하지는 않음
 	//------------------------------------------------------------------------------------------------//
 
-	// anchorRect를 기준으로 정렬
-	//void AlignPosition(const MkFloatRect& anchorRect, eRectAlignmentPosition alignment, const MkInt2& border);
+protected:
 
-	// anchorNode의 world AABR 기준으로 정렬
-	//void AlignPosition(const MkSceneNode* anchorNode, eRectAlignmentPosition alignment, const MkInt2& border);
+	typedef MkEventUnitPack1<int, MkHashStr> _NodeEvent;
+
+public:
+	virtual void __SendNodeEvent(const _NodeEvent& evt);
 
 	//------------------------------------------------------------------------------------------------//
 	// proceed
@@ -146,17 +149,6 @@ public:
 	const MkSceneTransform* __GetTransformPtr(void) const { return &m_Transform; }
 
 	void __GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray<float, const MkPanel*>& buffer) const;
-
-protected:
-
-	//------------------------------------------------------------------------------------------------//
-	// 하위 node(scene node 계열)와의 event pushing을 위한 interface
-	// scene node는 가장 상위의 class이기 때문에 별도의 event type이 필요하지는 않음
-	//------------------------------------------------------------------------------------------------//
-	typedef MkEventUnitPack1<int, MkHashStr> _NodeEvent;
-
-public:
-	virtual void __SendNodeEvent(const _NodeEvent& evt);
 
 protected:
 

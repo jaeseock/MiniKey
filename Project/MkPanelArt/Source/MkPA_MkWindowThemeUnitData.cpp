@@ -6,21 +6,20 @@
 #include "MkPA_MkSceneNode.h"
 #include "MkPA_MkWindowThemeUnitData.h"
 
-const MkStr MkWindowThemeUnitData::WindowThemeTagPrefix(MKDEF_PA_WINDOW_THEME_TAG_PREFIX);
 
-const MkHashStr MkWindowThemeUnitData::ImagePositionName = WindowThemeTagPrefix + L"IMG";
+const MkHashStr MkWindowThemeUnitData::ImagePositionName = MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"IMG";
 
 const MkHashStr MkWindowThemeUnitData::EdgeAndTablePositionName[9] =
 {
-	WindowThemeTagPrefix + L"LT", // eP_LT
-	WindowThemeTagPrefix + L"MT", // eP_MT
-	WindowThemeTagPrefix + L"RT", // eP_RT
-	WindowThemeTagPrefix + L"LC", // eP_LC
-	WindowThemeTagPrefix + L"MC", // eP_MC
-	WindowThemeTagPrefix + L"RC", // eP_RC
-	WindowThemeTagPrefix + L"LB", // eP_LB
-	WindowThemeTagPrefix + L"MB", // eP_MB
-	WindowThemeTagPrefix + L"RB" // eP_RB
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"LT", // eP_LT
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"MT", // eP_MT
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"RT", // eP_RT
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"LC", // eP_LC
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"MC", // eP_MC
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"RC", // eP_RC
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"LB", // eP_LB
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"MB", // eP_MB
+	MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"RB" // eP_RB
 };
 
 //------------------------------------------------------------------------------------------------//
@@ -226,6 +225,12 @@ void MkWindowThemeUnitData::_SetImageToPiece
 		panel->SetTexture(subsetOrSequenceName.Empty() ? MkHashStr::EMPTY : imagePath, subsetOrSequenceName, createOrGet ? startTime : panel->GetSequenceStartTime(), 0.);
 		panel->SetSmallerSourceOp(keepSrcSize ? MkPanel::eReducePanel : MkPanel::eExpandSource);
 		panel->SetBiggerSourceOp(keepSrcSize ? MkPanel::eExpandPanel : MkPanel::eReduceSource);
+
+		// create일 경우 tag와 겹치는 일을 피하기 위해 local depth를 0.1f만큼 위치시킴
+		if (createOrGet)
+		{
+			panel->SetLocalDepth(0.1f);
+		}
 	}
 }
 

@@ -301,20 +301,22 @@ void MkTextNode::Export(MkDataNode& node) const
 	}
 }
 
-void MkTextNode::SetFontType(const MkHashStr& fontType)
+bool MkTextNode::SetFontType(const MkHashStr& fontType)
 {
 	MK_CHECK(MK_FONT_MGR.CheckAvailableFontType(fontType), L"미등록된 " + fontType.GetString() + L" font type 지정 시도")
-		return;
+		return false;
 
 	m_Type = fontType;
+	return true;
 }
 
-void MkTextNode::SetFontStyle(const MkHashStr& fontStyle)
+bool MkTextNode::SetFontStyle(const MkHashStr& fontStyle)
 {
 	MK_CHECK(MK_FONT_MGR.CheckAvailableFontStyle(fontStyle), L"미등록된 " + fontStyle.GetString() + L" font style 지정 시도")
-		return;
+		return false;
 
 	m_Style = fontStyle;
+	return true;
 }
 
 void MkTextNode::Build(void)

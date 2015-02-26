@@ -147,11 +147,11 @@ public:
 	inline bool GetVisible(void) const { return m_Visible; }
 
 	// type
-	void SetFontType(const MkHashStr& fontType);
+	bool SetFontType(const MkHashStr& fontType);
 	inline const MkHashStr& GetFontType(void) const { return (m_Type.Empty() && (m_ParentNode != NULL)) ? m_ParentNode->GetFontType() : m_Type; }
 
 	// style
-	void SetFontStyle(const MkHashStr& fontStyle);
+	bool SetFontStyle(const MkHashStr& fontStyle);
 	inline const MkHashStr& GetFontStyle(void) const { return (m_Style.Empty() && (m_ParentNode != NULL)) ? m_ParentNode->GetFontStyle() : m_Style; }
 
 	// line feed offset

@@ -23,8 +23,8 @@
 // MkTextNode에서 투명 처리 될 color key(D3DCOLOR)
 #define MKDEF_PA_TEXTNODE_COLOR_KEY 0xff010101
 
-// window theme에서 system이 처리 할 node, panel name prefix
-#define MKDEF_PA_WINDOW_THEME_TAG_PREFIX L"__#WT:"
+// window visual pattern node에서 system이 처리 할 node, panel name prefix
+#define MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX L"__#WT:"
 
 //------------------------------------------------------------------------------------------------//
 
