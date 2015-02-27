@@ -116,12 +116,6 @@ bool MkWindowTagNode::UpdateRegionInfo(const TagInfo& tagInfo)
 	return true;
 }
 
-void MkWindowTagNode::UpdatePositionInfo(const TagInfo& tagInfo, const MkFloatRect& parentClientRect)
-{
-	SnapTo(parentClientRect, tagInfo.alignmentPosition);
-	SetLocalPosition(GetLocalPosition() + tagInfo.offset);
-}
-
 MkTextNode* MkWindowTagNode::GetTagTextPtr(void)
 {
 	MkPanel* textPanel = GetPanel(TextPanelName);

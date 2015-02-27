@@ -93,10 +93,20 @@ public:
 		MkWindowThemedNode* tsNode = MkWindowThemedNode::CreateChildNode(trNode, L"ThemeSub");
 		tsNode->SetLocalDepth(-1.f);
 		tsNode->SetTheme(L"Default");
-		tsNode->SetComponent(MkWindowThemeData::eCT_NoticeBox);
+		tsNode->SetComponent(MkWindowThemeData::eCT_GuideBtn);
 		tsNode->SetClientSize(MkFloat2(80.f, 50.f));
-		tsNode->SetShadowEnable(true);
 		tsNode->SetAcceptInput(true);
+		tsNode->SetRestrictedWithinParentClient(true);
+
+		tsNode->CreateTag(L"Tag");
+		MkWindowTagNode::TagInfo tagInfo;
+		tagInfo.iconPath = L"Default\\theme_default.png";
+		tagInfo.iconSubsetOrSequenceName = L"IcnWinDef";
+		tagInfo.textName = L"WindowTitle";
+		tagInfo.lengthOfBetweenIconAndText = 4.f;
+		tagInfo.alignmentPosition = eRAP_LeftTop;
+		tagInfo.alignmentOffset = MkFloat2::Zero;
+		tsNode->SetTagInfo(L"Tag", tagInfo);
 		
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		ds->SetSceneNode(mainNode);
@@ -135,49 +145,55 @@ public:
 				if (MK_INPUT_MGR.GetKeyPushing(L'A'))
 				{
 					localPos.x -= movement;
+					m_TargetNode->SetLocalPosition(localPos);
 				}
 				if (MK_INPUT_MGR.GetKeyPushing(L'D'))
 				{
 					localPos.x += movement;
+					m_TargetNode->SetLocalPosition(localPos);
 				}
 				if (MK_INPUT_MGR.GetKeyPushing(L'W'))
 				{
 					localPos.y += movement;
+					m_TargetNode->SetLocalPosition(localPos);
 				}
 				if (MK_INPUT_MGR.GetKeyPushing(L'S'))
 				{
 					localPos.y -= movement;
+					m_TargetNode->SetLocalPosition(localPos);
 				}
-				m_TargetNode->SetLocalPosition(localPos);
 
 				float localRot = m_TargetNode->GetLocalRotation();
 				const float rotVel = static_cast<float>(timeState.elapsed) * MKDEF_PI * 0.5f;
 				if (MK_INPUT_MGR.GetKeyPushing(L'Q'))
 				{
 					localRot -= rotVel;
+					m_TargetNode->SetLocalRotation(localRot);
 				}
 				if (MK_INPUT_MGR.GetKeyPushing(L'E'))
 				{
 					localRot += rotVel;
+					m_TargetNode->SetLocalRotation(localRot);
 				}
-				m_TargetNode->SetLocalRotation(localRot);
-
+				
 				float localScale = m_TargetNode->GetLocalScale();
 				const float scaleVel = static_cast<float>(timeState.elapsed);
 				if (MK_INPUT_MGR.GetKeyPushing(L'Z'))
 				{
 					localScale -= scaleVel;
+					m_TargetNode->SetLocalScale(localScale);
 				}
 				if (MK_INPUT_MGR.GetKeyPushing(L'X'))
 				{
 					localScale += scaleVel;
+					m_TargetNode->SetLocalScale(localScale);
 				}
 				if (MK_INPUT_MGR.GetKeyPushing(L'C'))
 				{
 					localScale = 1.f;
+					m_TargetNode->SetLocalScale(localScale);
 				}
-				m_TargetNode->SetLocalScale(localScale);
-
+				
 				if (m_TargetNode->GetNodeName().GetString() == L"Main")
 				{
 					MkPanel* tp = m_TargetNode->GetPanel(L"TextTest");
@@ -185,20 +201,23 @@ public:
 					if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
 					{
 						psp.x -= movement;
+						tp->SetPixelScrollPosition(psp);
 					}
 					if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
 					{
 						psp.x += movement;
+						tp->SetPixelScrollPosition(psp);
 					}
 					if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
 					{
 						psp.y -= movement;
+						tp->SetPixelScrollPosition(psp);
 					}
 					if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
 					{
 						psp.y += movement;
+						tp->SetPixelScrollPosition(psp);
 					}
-					tp->SetPixelScrollPosition(psp);
 
 					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
 					{
@@ -290,7 +309,8 @@ public:
 					if (MK_INPUT_MGR.GetKeyReleased(L'4'))
 					{
 						_IncAP();
-						thNode->SnapToParentClientRect(ap);
+						thNode->SetAlignmentPosition(ap, MkFloat2::Zero);
+						thNode->UpdateAlignmentPosition();
 					}
 				}
 

@@ -32,15 +32,14 @@ MkWindowThemedNode* MkWindowThemedNode::CreateChildNode(MkSceneNode* parentNode,
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkWindowThemedNode::SetTheme(const MkHashStr& themeName)
+void MkWindowThemedNode::SetTheme(const MkHashStr& themeName)
 {
-	bool ok = _SetTheme(themeName);
-	if (ok)
-	{
-		MkVisualPatternNode::__SendNodeEvent(_NodeEvent(static_cast<int>(eET_SetTheme), themeName));
-	}
-	return ok;
-	
+	__SendNodeEvent(_NodeEvent(static_cast<int>(eET_SetTheme), themeName, MkHashStr::EMPTY, MkFloat2::Zero, MkFloat2::Zero));
+}
+
+void MkWindowThemedNode::ChangeTheme(const MkHashStr& srcThemeName, const MkHashStr& destThemeName)
+{
+	__SendNodeEvent(_NodeEvent(static_cast<int>(eET_ChangeTheme), srcThemeName, destThemeName, MkFloat2::Zero, MkFloat2::Zero));
 }
 
 void MkWindowThemedNode::SetComponent(MkWindowThemeData::eComponentType componentType)
@@ -97,10 +96,6 @@ void MkWindowThemedNode::CreateTag(const MkHashStr& name)
 
 	_TagData& tagData = m_Tags.Create(name);
 
-	// 초기화
-	tagData.tagInfo.lengthOfBetweenIconAndText = 10.f;
-	tagData.tagInfo.alignmentPosition = eRAP_LeftTop;
-
 	// node name 생성
 	tagData.nodeName = MkWindowTagNode::NodeNamePrefix.GetString() + name.GetString();
 }
@@ -156,10 +151,12 @@ bool MkWindowThemedNode::SetTagInfo(const MkHashStr& name, const MkWindowTagNode
 	}
 	currInfo.lengthOfBetweenIconAndText = tagInfo.lengthOfBetweenIconAndText;
 
-	// position
-	tagNode->UpdatePositionInfo(tagInfo, m_ClientRect);
+	// alignment
+	tagNode->SetAlignmentPosition(tagInfo.alignmentPosition, tagInfo.alignmentOffset);
+	tagNode->UpdateAlignmentPosition(m_ClientRect);
+
 	currInfo.alignmentPosition = tagInfo.alignmentPosition;
-	currInfo.offset = tagInfo.offset;
+	currInfo.alignmentOffset = tagInfo.alignmentOffset;
 
 	return true;
 }
@@ -231,7 +228,7 @@ void MkWindowThemedNode::CommitTagText(const MkHashStr& name)
 
 				// text node의 변화는 tag 크기 변경 가능성이 있으므로 region과 position을 재계산 해야 함
 				tagNode->UpdateRegionInfo(tagData.tagInfo); // UpdateRegionInfo()는 항상 성공(text node가 존재)
-				tagNode->UpdatePositionInfo(tagData.tagInfo, m_ClientRect);
+				tagNode->UpdateAlignmentPosition(m_ClientRect);
 			}
 		}
 	}
@@ -314,6 +311,13 @@ void MkWindowThemedNode::__SendNodeEvent(const _NodeEvent& evt)
 				return;
 		}
 		break;
+
+	case static_cast<int>(eET_ChangeTheme):
+		{
+			if (!_ChangeTheme(evt.arg0, evt.arg1))
+				return;
+		}
+		break;
 	}
 	
 	MkVisualPatternNode::__SendNodeEvent(evt);
@@ -342,6 +346,11 @@ bool MkWindowThemedNode::_SetTheme(const MkHashStr& themeName)
 		}
 	}
 	return true;
+}
+
+bool MkWindowThemedNode::_ChangeTheme(const MkHashStr& srcThemeName, const MkHashStr& destThemeName)
+{
+	return (srcThemeName == m_ThemeName) ? _SetTheme(destThemeName) : true;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -390,15 +399,15 @@ void MkWindowThemedNode::_ApplyThemeSize(const MkWindowThemeFormData* form)
 	{
 		form->SetClientSizeToForm(this, m_ClientRect.size, m_ClientRect.position, m_WindowSize);
 
-		// reposition tags
-		MkConstHashMapLooper<MkHashStr, _TagData> looper(m_Tags);
-		MK_STL_LOOP(looper)
+		// 직계 visual pattern node들의 snap position 반영
+		if (!m_ChildrenNode.Empty())
 		{
-			const _TagData& tagData = looper.GetCurrentField();
-			MkWindowTagNode* tagNode = _GetTagNode(tagData.nodeName);
-			if (tagNode != NULL)
+			_NodeEvent evt(static_cast<int>(MkVisualPatternNode::eET_UpdateAlignmentPosition), MkHashStr::EMPTY, MkHashStr::EMPTY, m_ClientRect.position, m_ClientRect.size);
+
+			MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
+			MK_STL_LOOP(looper)
 			{
-				tagNode->UpdatePositionInfo(tagData.tagInfo, m_ClientRect);
+				looper.GetCurrentField()->__SendNodeEvent(evt);
 			}
 		}
 	}

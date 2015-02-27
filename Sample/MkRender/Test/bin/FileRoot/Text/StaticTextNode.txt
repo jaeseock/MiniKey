@@ -69,3 +69,25 @@ Node "_Sample"
 		}
 	}
 }
+
+Node "WindowTitle"
+{
+	str Type = "Medium";
+	str Style = "WindowTitle:Back";
+
+	Node "0"
+	{
+		str Text = "윈도우 ";
+	}
+
+	Node "1"
+	{
+		str Style = "WindowTitle:Front";
+		str Text = "타이틀";
+	}
+	
+	Node "2"
+	{
+		str Text = " 샘플!";
+	}
+}

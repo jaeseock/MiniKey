@@ -36,9 +36,14 @@ public:
 		// region
 		float lengthOfBetweenIconAndText;
 
-		// postion
+		// alignment
 		eRectAlignmentPosition alignmentPosition;
-		MkFloat2 offset;
+		MkFloat2 alignmentOffset;
+
+		_TagInfo()
+		{
+			alignmentPosition = eRAP_LeftBottom;
+		}
 	}
 	TagInfo;
 
@@ -52,19 +57,8 @@ public:
 	// (NOTE) 호출 전 icon과 text panel 중 최소 하나는 존재해야 함
 	bool UpdateRegionInfo(const TagInfo& tagInfo);
 
-	// position 반영
-	void UpdatePositionInfo(const TagInfo& tagInfo, const MkFloatRect& parentClientRect);
-
 	// text panel에 반영 된 text node 반환
 	MkTextNode* GetTagTextPtr(void);
-
-	//------------------------------------------------------------------------------------------------//
-	// region
-	//------------------------------------------------------------------------------------------------//
-
-	// client size 적용
-	// tag는 client rect가 곧 window rect임
-	virtual void SetClientSize(const MkFloat2& clientSize) { m_WindowSize = m_ClientRect.size = clientSize; }
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute, event 없음

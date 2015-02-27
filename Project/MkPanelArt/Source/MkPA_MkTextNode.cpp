@@ -393,6 +393,7 @@ void MkTextNode::Build(void)
 				if (!li.text.Empty())
 				{
 					MkStr outputText;
+					position.x += li.shift;
 					int lineWidth = position.x + MK_FONT_MGR.GetTextSize(typeName, li.text, false).x; // 현 행의 가로 폭
 
 					// 폭 제한이 있을 경우 체크
@@ -403,12 +404,14 @@ void MkTextNode::Build(void)
 						lfInfo.lineFeed = true;
 						lfInfo.lfv = li.lfv;
 						lfInfo.lfh = li.lfh;
+						lfInfo.shift = 0;
 
-						// 텍스트를 분할해 출력 가능한 만큼 _OutputData에 남기고 나머지는 _LineInfo를 생성해 할당
+						// 텍스트를 분할해 현 라인에 출력 가능한 부분은 _OutputData에 남기고 나머지는 _LineInfo를 생성해 할당
 						_LineInfo& nextInfo = lineQueue.PushBack();
 						nextInfo.lineFeed = false;
 						nextInfo.lfv = 0;
 						nextInfo.lfh = 0;
+						nextInfo.shift = 0;
 
 						// 논리적으로 모든 텍스트가 포함되는(cutPos == li.text.GetSize()) 경우는 없음(lineWidth > m_WidthRestriction)
 						unsigned int cutPos = MK_FONT_MGR.__FindSplitPosition(typeName, li.text, m_WidthRestriction - position.x);
@@ -517,6 +520,7 @@ void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_Te
 			li.lineFeed = (i != 0); // 첫번째 라인은 개행의 대상이 아님
 			li.lfv = GetLineFeedVerticalOffset();
 			li.lfh = GetLineFeedHorizontalOffset();
+			li.shift = 0;
 
 			MkStr& currText = tokens[i];
 			currText.RemoveKeyword(MkStr::TAB); // tab 제거
@@ -528,7 +532,7 @@ void MkTextNode::__AddTextBlock(int parentTypeID, int parentStyleID, MkArray<_Te
 				if (validPos != MKDEF_ARRAY_ERROR) // 출력 될 유효문자가 존재해야 함
 				{
 					currText.GetSubStr(MkArraySection(validPos), li.text);
-					li.lfh += validPos * spaceSize;
+					li.shift = validPos * spaceSize;
 				}
 			}
 

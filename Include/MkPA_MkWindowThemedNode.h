@@ -39,9 +39,13 @@ public:
 	// theme
 	//------------------------------------------------------------------------------------------------//
 
-	// 자신과 하위 모든 node들을 대상으로 theme 적용
+	// 자신과 하위 모든 node들을 대상으로 theme 일괄 적용
 	// (NOTE) 비었을 경우 삭제로 인식
-	bool SetTheme(const MkHashStr& themeName);
+	void SetTheme(const MkHashStr& themeName);
+
+	// 자신과 하위 모든 node들을 대상으로 특정 theme(srcThemeName)를 다른 theme(destThemeName)로 변경
+	// (NOTE) destThemeName이 비었을 경우 삭제로 인식
+	void ChangeTheme(const MkHashStr& srcThemeName, const MkHashStr& destThemeName);
 
 	// theme 반환
 	inline const MkHashStr& GetTheme(void) const { return m_ThemeName; }
@@ -108,7 +112,8 @@ public:
 
 	enum eWindowThemedNodeAttribute
 	{
-		eAT_UseShadow = eAT_VisualPatternNodeBandwidth, // 그림자 사용 여부
+		// 그림자 사용 여부
+		eAT_UseShadow = eAT_VisualPatternNodeBandwidth,
 
 		eAT_WindowThemedNodeBandwidth = eAT_VisualPatternNodeBandwidth + 4 // 4bit 대역폭 확보
 	};
@@ -125,7 +130,11 @@ protected:
 
 	enum eWindowThemedNodeEventType
 	{
-		eET_SetTheme = eET_VisualPatternNodeBandwidth, // theme 설정
+		// theme 설정
+		eET_SetTheme = eET_VisualPatternNodeBandwidth,
+
+		// theme 변경
+		eET_ChangeTheme,
 
 		eET_WindowThemedNodeBandwidth
 	};
@@ -145,6 +154,7 @@ public:
 protected:
 
 	bool _SetTheme(const MkHashStr& themeName);
+	bool _ChangeTheme(const MkHashStr& srcThemeName, const MkHashStr& destThemeName);
 
 	const MkWindowThemeFormData* _GetValidForm(void) const;
 

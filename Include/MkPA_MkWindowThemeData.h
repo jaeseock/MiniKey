@@ -36,6 +36,11 @@ public:
 		eCT_OKBtn, // eFT_QuadUnit
 		eCT_CancelBtn, // eFT_QuadUnit
 
+		eCT_FlatBtn, // eFT_QuadUnit
+		eCT_GuideBtn, // eFT_QuadUnit
+
+		eCT_GuideLine, // eFT_SingleUnit
+
 		eCT_YellowZone, // eFT_SingleUnit
 		eCT_BlueZone, // eFT_SingleUnit
 		eCT_RedOutlineZone, // eFT_SingleUnit
@@ -43,6 +48,14 @@ public:
 		eCT_YellowSelBtn, // eFT_QuadUnit
 		eCT_BlueSelBtn, // eFT_QuadUnit
 		eCT_RedOutlineSelBtn, // eFT_QuadUnit
+
+		eCT_RedLEDBtn16, // eFT_QuadUnit
+		eCT_GreenLEDBtn16, // eFT_QuadUnit
+		eCT_BlueLEDBtn16, // eFT_QuadUnit
+
+		eCT_RedLEDBtn22, // eFT_QuadUnit
+		eCT_GreenLEDBtn22, // eFT_QuadUnit
+		eCT_BlueLEDBtn22, // eFT_QuadUnit
 
 		//------------------------------------------------------------------------------------------------//
 

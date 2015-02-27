@@ -21,12 +21,21 @@ const MkHashStr MkWindowThemeData::ComponentTypeName[MkWindowThemeData::eCT_Max]
 	MK_VALUE_TO_STRING(eCT_NormalBtn),
 	MK_VALUE_TO_STRING(eCT_OKBtn),
 	MK_VALUE_TO_STRING(eCT_CancelBtn),
+	MK_VALUE_TO_STRING(eCT_FlatBtn),
+	MK_VALUE_TO_STRING(eCT_GuideBtn),
+	MK_VALUE_TO_STRING(eCT_GuideLine),
 	MK_VALUE_TO_STRING(eCT_YellowZone),
 	MK_VALUE_TO_STRING(eCT_BlueZone),
 	MK_VALUE_TO_STRING(eCT_RedOutlineZone),
 	MK_VALUE_TO_STRING(eCT_YellowSelBtn),
 	MK_VALUE_TO_STRING(eCT_BlueSelBtn),
-	MK_VALUE_TO_STRING(eCT_RedOutlineSelBtn)
+	MK_VALUE_TO_STRING(eCT_RedOutlineSelBtn),
+	MK_VALUE_TO_STRING(eCT_RedLEDBtn16),
+	MK_VALUE_TO_STRING(eCT_GreenLEDBtn16),
+	MK_VALUE_TO_STRING(eCT_BlueLEDBtn16),
+	MK_VALUE_TO_STRING(eCT_RedLEDBtn22),
+	MK_VALUE_TO_STRING(eCT_GreenLEDBtn22),
+	MK_VALUE_TO_STRING(eCT_BlueLEDBtn22)
 };
 
 const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[MkWindowThemeData::eCT_Max] =
@@ -40,12 +49,21 @@ const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[MkWi
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_NormalBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_OKBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_CancelBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_FlatBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_GuideBtn
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_GuideLine
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_YellowZone
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_BlueZone
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_RedOutlineZone
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_YellowSelBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueSelBtn
-	MkWindowThemeFormData::eFT_QuadUnit // eCT_RedOutlineSelBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedOutlineSelBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedLEDBtn16
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_GreenLEDBtn16
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueLEDBtn16
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedLEDBtn22
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_GreenLEDBtn22
+	MkWindowThemeFormData::eFT_QuadUnit // eCT_BlueLEDBtn22
 };
 
 //------------------------------------------------------------------------------------------------//

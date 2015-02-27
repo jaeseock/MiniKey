@@ -33,7 +33,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// local
-	inline void SetLocalPosition(const MkFloat2& position) { m_Transform.SetLocalPosition(position); }
+	virtual void SetLocalPosition(const MkFloat2& position) { m_Transform.SetLocalPosition(position); }
 	inline const MkFloat2& GetLocalPosition(void) const { return m_Transform.GetLocalPosition(); }
 
 	inline void SetLocalDepth(float depth) { m_Transform.SetLocalDepth(depth); }
@@ -105,7 +105,8 @@ public:
 
 	enum eSceneNodeAttribute
 	{
-		eAT_Visible = 0, // 그리기 여부
+		// 그리기 여부
+		eAT_Visible = 0,
 
 		eAT_SceneNodeBandwidth = 4 // 4bit 대역폭 확보
 	};
@@ -122,7 +123,7 @@ public:
 
 protected:
 
-	typedef MkEventUnitPack1<int, MkHashStr> _NodeEvent;
+	typedef MkEventUnitPack4<int, MkHashStr, MkHashStr, MkFloat2, MkFloat2> _NodeEvent;
 
 public:
 	virtual void __SendNodeEvent(const _NodeEvent& evt);

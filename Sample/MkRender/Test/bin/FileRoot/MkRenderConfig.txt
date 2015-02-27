@@ -218,14 +218,14 @@ Node "FontResource"
 			str modeColor = "DarkGrayC";
 		}
 		
-		Node "WindowTitle:Focus"
+		Node "WindowTitle:Front"
 		{
-			str textColor = "YellowC";
+			str textColor = "WhiteC";
 			int mode = 2;
-			str modeColor = "LightGrayC";
+			str modeColor = "DarkGrayC";
 		}
 		
-		Node "WindowTitle:BG"
+		Node "WindowTitle:Back"
 		{
 			str textColor = "LightGrayC";
 			int mode = 2;
@@ -336,7 +336,7 @@ Node "StaticResource"
 				str eP_Normal = "~" / "BtnNormTN_" / "0" / "8"; // eUT_Table
 				str eP_Focus = "~" / "BtnNormTF_" / "0" / "8";
 				str eP_Pushing = "~" / "BtnNormTP_" / "0" / "8";
-				str eP_Disable = "~" / "BtnTD_" / "0" / "8";
+				str eP_Disable = "~" / "BtnNormTD_" / "0" / "8";
 			}
 			
 			Node "eCT_OKBtn" // eFT_QuadUnit
@@ -344,7 +344,7 @@ Node "StaticResource"
 				str eP_Normal = "~" / "BtnOkTN_" / "0" / "8"; // eUT_Table
 				str eP_Focus = "~" / "BtnOkTF_" / "0" / "8";
 				str eP_Pushing = "~" / "BtnOkTP_" / "0" / "8";
-				str eP_Disable = "~" / "BtnTD_" / "0" / "8";
+				str eP_Disable = "~" / "BtnOkTD_" / "0" / "8";
 			}
 			
 			Node "eCT_CancelBtn" // eFT_QuadUnit
@@ -352,7 +352,28 @@ Node "StaticResource"
 				str eP_Normal = "~" / "BtnClTN_" / "0" / "8"; // eUT_Table
 				str eP_Focus = "~" / "BtnClTF_" / "0" / "8";
 				str eP_Pushing = "~" / "BtnClTP_" / "0" / "8";
-				str eP_Disable = "~" / "BtnTD_" / "0" / "8";
+				str eP_Disable = "~" / "BtnClTD_" / "0" / "8";
+			}
+			
+			Node "eCT_FlatBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "~" / "BtnFlatT_" / "0" / "8"; // eUT_Table
+				str eP_Focus = "~" / "BtnFlatT_" / "0" / "8";
+				str eP_Pushing = "~" / "BtnFlatT_" / "0" / "8";
+				str eP_Disable = "~" / "BtnFlatT_" / "0" / "8";
+			}
+			
+			Node "eCT_GuideBtn" // eFT_QuadUnit
+			{
+				str eP_Normal = "~" / "BtnGuideTN_" / "0" / "8"; // eUT_Table
+				str eP_Focus = "~" / "BtnGuideTF_" / "0" / "8";
+				str eP_Pushing = "~" / "BtnGuideTF_" / "0" / "8";
+				str eP_Disable = "~" / "BtnGuideTD_" / "0" / "8";
+			}
+			
+			Node "eCT_GuideLine" // eFT_SingleUnit
+			{
+				str eP_Single = "~" / "LineGuideE_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
 			Node "eCT_YellowZone" // eFT_SingleUnit
@@ -392,6 +413,54 @@ Node "StaticResource"
 				str eP_Focus = "~" / "SelRgT_" / "0" / "8"; // eUT_Table
 				str eP_Pushing = "~" / "SelRgT_" / "0" / "8";
 				str eP_Disable = "~" / "SelDT_" / "0" / "8";
+			}
+			
+			Node "eCT_RedLEDBtn16" // eFT_QuadUnit
+			{
+				str eP_Normal = "BtnRI16N"; // eUT_Image
+				str eP_Focus = "BtnRI16F";
+				str eP_Pushing = "BtnRI16P";
+				str eP_Disable = "BtnRI16D";
+			}
+			
+			Node "eCT_GreenLEDBtn16" // eFT_QuadUnit
+			{
+				str eP_Normal = "BtnGI16N"; // eUT_Image
+				str eP_Focus = "BtnGI16F";
+				str eP_Pushing = "BtnGI16P";
+				str eP_Disable = "BtnGI16D";
+			}
+			
+			Node "eCT_BlueLEDBtn16" // eFT_QuadUnit
+			{
+				str eP_Normal = "BtnBI16N"; // eUT_Image
+				str eP_Focus = "BtnBI16F";
+				str eP_Pushing = "BtnBI16P";
+				str eP_Disable = "BtnBI16D";
+			}
+			
+			Node "eCT_RedLEDBtn22" // eFT_QuadUnit
+			{
+				str eP_Normal = "BtnRI22N"; // eUT_Image
+				str eP_Focus = "BtnRI22F";
+				str eP_Pushing = "BtnRI22P";
+				str eP_Disable = "BtnRI22D";
+			}
+			
+			Node "eCT_GreenLEDBtn22" // eFT_QuadUnit
+			{
+				str eP_Normal = "BtnGI22N"; // eUT_Image
+				str eP_Focus = "BtnGI22F";
+				str eP_Pushing = "BtnGI22P";
+				str eP_Disable = "BtnGI22D";
+			}
+			
+			Node "eCT_BlueLEDBtn22" // eFT_QuadUnit
+			{
+				str eP_Normal = "BtnBI22N"; // eUT_Image
+				str eP_Focus = "BtnBI22F";
+				str eP_Pushing = "BtnBI22P";
+				str eP_Disable = "BtnBI22D";
 			}
 		}
 	}

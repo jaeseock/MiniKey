@@ -27,6 +27,8 @@ public:
 
 	// 현재 theme 사용 지정
 	// 반환값은 해당 theme 사용 가능 여부
+	// 사용 지정이 된다고 해당 theme만 사용 할 수 있다는 것은 아니고 이전 theme도 사용되고 있는 곳이 있으면 계속 유지됨
+	// (이전 theme들은 사용되고 있는 곳이 없으면 자동으로 자원 해제됨)
 	bool SetCurrentTheme(const MkHashStr& themeName);
 
 	// 사용 지정된 theme 반환

@@ -210,6 +210,7 @@ protected:
 		bool lineFeed;
 		int lfv;
 		int lfh;
+		int shift;
 		MkStr text;
 	}
 	_LineInfo;
