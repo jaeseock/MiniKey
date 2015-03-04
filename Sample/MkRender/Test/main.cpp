@@ -28,6 +28,7 @@
 #include "MkPA_MkTextNode.h"
 
 #include "MkPA_MkSceneNode.h"
+#include "MkPA_MkWindowTagNode.h"
 #include "MkPA_MkWindowThemedNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
@@ -68,45 +69,49 @@ public:
 		ip.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
 		ip.SetBiggerSourceOp(MkPanel::eCutSource);
 		ip.SetPanelSize(MkFloat2(450.f, 250.f));
-		ip.SetLocalDepth(2.f);
+		ip.SetLocalDepth(1002.f);
 		ip.SetTexture(L"Image\\s01.jpg");
 
 		MkPanel& tp = mainNode->CreatePanel(L"TextTest");
 		tp.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
 		tp.SetBiggerSourceOp(MkPanel::eCutSource);
 		tp.SetPanelSize(MkFloat2(110.f, 250.f));
-		tp.SetLocalDepth(1.f);
+		tp.SetLocalDepth(1001.f);
 		tp.SetTextNode(L"_Sample", true);
 
 		MkPanel& mp = mainNode->CreatePanel(L"MaskingTest", subNode, MkInt2(200, 150));
+		mp.SetLocalDepth(1000.f);
 		mp.SetLocalPosition(MkFloat2(120.f, 50.f));
 
-		MkWindowThemedNode* trNode = MkWindowThemedNode::CreateChildNode(mainNode, L"ThemeRoot");
-		trNode->SetLocalPosition(MkFloat2(500.f, 100.f));
-		trNode->SetLocalDepth(2.f);
-		trNode->SetTheme(L"Default");
-		trNode->SetComponent(MkWindowThemeData::eCT_DefaultBox);
-		trNode->SetClientSize(MkFloat2(300.f, 200.f));
-		trNode->SetShadowEnable(true);
-		trNode->SetAcceptInput(true);
+		// BG
+		MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
+		tbgNode->SetLocalPosition(MkFloat2(500.f, 100.f));
+		tbgNode->SetLocalDepth(2.f);
+		tbgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		tbgNode->SetComponentType(MkWindowThemeData::eCT_DefaultBox);
+		tbgNode->SetShadowUsage(true);
+		tbgNode->SetClientSize(MkFloat2(300.f, 200.f));
+		tbgNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		tbgNode->SetAcceptInput(true);
 
-		MkWindowThemedNode* tsNode = MkWindowThemedNode::CreateChildNode(trNode, L"ThemeSub");
-		tsNode->SetLocalDepth(-1.f);
-		tsNode->SetTheme(L"Default");
-		tsNode->SetComponent(MkWindowThemeData::eCT_GuideBtn);
-		tsNode->SetClientSize(MkFloat2(80.f, 50.f));
-		tsNode->SetAcceptInput(true);
-		tsNode->SetRestrictedWithinParentClient(true);
+		// SUB
+		MkWindowThemedNode* tsubNode = MkWindowThemedNode::CreateChildNode(tbgNode, L"Themed SUB");
+		tsubNode->SetLocalDepth(-1.f);
+		tsubNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		tsubNode->SetComponentType(MkWindowThemeData::eCT_GuideBtn);
+		tsubNode->SetClientSize(MkFloat2(80.f, 50.f));
+		tsubNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		tsubNode->SetAcceptInput(true);
+		tsubNode->SetAlignmentPosition(eRAP_LeftTop);
 
-		tsNode->CreateTag(L"Tag");
-		MkWindowTagNode::TagInfo tagInfo;
-		tagInfo.iconPath = L"Default\\theme_default.png";
-		tagInfo.iconSubsetOrSequenceName = L"IcnWinDef";
-		tagInfo.textName = L"WindowTitle";
-		tagInfo.lengthOfBetweenIconAndText = 4.f;
-		tagInfo.alignmentPosition = eRAP_LeftTop;
-		tagInfo.alignmentOffset = MkFloat2::Zero;
-		tsNode->SetTagInfo(L"Tag", tagInfo);
+		// tag
+		MkWindowTagNode* tagNode = MkWindowTagNode::CreateChildNode(tsubNode, L"TAG");
+		tagNode->SetLocalDepth(-1.f);
+		tagNode->SetIconPath(L"Default\\theme_default.png");
+		tagNode->SetIconSubsetOrSequenceName(L"IcnWinDef");
+		tagNode->SetTextName(L"WindowTitle");
+		tagNode->SetAcceptInput(true);
+		tagNode->SetAlignmentPosition(eRAP_LeftCenter);
 		
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		ds->SetSceneNode(mainNode);
@@ -243,74 +248,96 @@ public:
 						tp->BuildAndUpdateTextCache();
 					}
 				}
-				else if (m_TargetNode->GetNodeType() >= ePA_SNT_WindowThemedNode)
+				else if (m_TargetNode->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 				{
-					MkWindowThemedNode* thNode = dynamic_cast<MkWindowThemedNode*>(m_TargetNode);
-					MkFloat2 cs = thNode->GetClientRect().size;
-					if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
-					{
-						cs.x -= movement;
-					}
-					if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
-					{
-						cs.x += movement;
-					}
-					if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
-					{
-						cs.y += movement;
-					}
-					if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
-					{
-						cs.y -= movement;
-					}
-					thNode->SetClientSize(cs);
+					MkVisualPatternNode* vpNode = dynamic_cast<MkVisualPatternNode*>(m_TargetNode);
 
 					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
 					{
-						thNode->SetShadowEnable(!thNode->GetShadowEnable());
+						_IncAP();
+						vpNode->SetAlignmentPosition(ap);
 					}
 
-					if (MK_INPUT_MGR.GetKeyReleased(L'2'))
+					if (vpNode->GetNodeType() == ePA_SNT_WindowTagNode)
 					{
-						int comp = static_cast<int>(thNode->GetComponent()) + 1;
-						if (comp >= static_cast<int>(MkWindowThemeData::eCT_Max))
-						{
-							comp = 1;
-						}
-						thNode->SetComponent(static_cast<MkWindowThemeData::eComponentType>(comp));
+						MkWindowTagNode* targetNode = dynamic_cast<MkWindowTagNode*>(vpNode);
 
-						MK_DEV_PANEL.MsgToLog(L"component : " + MkWindowThemeData::ComponentTypeName[comp].GetString());
+						if (MK_INPUT_MGR.GetKeyReleased(L'2'))
+						{
+							targetNode->SetIconPath(targetNode->GetIconPath().Empty() ? L"Default\\theme_default.png" : MkHashStr::EMPTY);
+						}
+
+						if (MK_INPUT_MGR.GetKeyReleased(L'3'))
+						{
+							targetNode->SetTextName(targetNode->GetTextName().Empty() ? L"WindowTitle" : MkHashStr::EMPTY);
+						}
 					}
-
-					if (MK_INPUT_MGR.GetKeyReleased(L'3'))
+					else if (vpNode->GetNodeType() == ePA_SNT_WindowThemedNode)
 					{
-						MkWindowThemeFormData::eFormType ft = thNode->GetFormType();
-						int maxPos = 0;
-						if (ft == MkWindowThemeFormData::eFT_DualUnit)
+						MkWindowThemedNode* targetNode = dynamic_cast<MkWindowThemedNode*>(vpNode);
+
+						MkFloat2 cs = targetNode->GetClientRect().size;
+						if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
 						{
-							maxPos = 2;
+							cs.x -= movement;
+							targetNode->SetClientSize(cs);
 						}
-						else if (ft == MkWindowThemeFormData::eFT_QuadUnit)
+						if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
 						{
-							maxPos = 4;
+							cs.x += movement;
+							targetNode->SetClientSize(cs);
 						}
-						if (maxPos > 0)
+						if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
 						{
-							int fp = static_cast<int>(thNode->GetFormPosition()) + 1;
-							if (fp >= maxPos)
+							cs.y += movement;
+							targetNode->SetClientSize(cs);
+						}
+						if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
+						{
+							cs.y -= movement;
+							targetNode->SetClientSize(cs);
+						}
+
+						if (MK_INPUT_MGR.GetKeyReleased(L'2'))
+						{
+							targetNode->SetShadowUsage(!targetNode->GetShadowUsage());
+						}
+
+						if (MK_INPUT_MGR.GetKeyReleased(L'3'))
+						{
+							int comp = static_cast<int>(targetNode->GetComponentType()) + 1;
+							if (comp >= static_cast<int>(MkWindowThemeData::eCT_Max))
 							{
-								fp = 0;
+								comp = 1;
 							}
-							thNode->SetFormPosition(static_cast<MkWindowThemeFormData::ePosition>(fp));
+							targetNode->SetComponentType(static_cast<MkWindowThemeData::eComponentType>(comp));
+
+							MK_DEV_PANEL.MsgToLog(L"component : " + MkWindowThemeData::ComponentTypeName[comp].GetString());
+						}
+
+						if (MK_INPUT_MGR.GetKeyReleased(L'4'))
+						{
+							MkWindowThemeFormData::eFormType ft = targetNode->GetFormType();
+							int maxPos = 0, fp = 0;
+							if (ft == MkWindowThemeFormData::eFT_DualUnit)
+							{
+								maxPos = 2;
+							}
+							else if (ft == MkWindowThemeFormData::eFT_QuadUnit)
+							{
+								maxPos = 4;
+							}
+							if (maxPos > 0)
+							{
+								fp = static_cast<int>(targetNode->GetFormState()) + 1;
+								if (fp >= maxPos)
+								{
+									fp = 0;
+								}
+							}
+							targetNode->SetFormState(static_cast<MkWindowThemeFormData::eState>(fp));
 							MK_DEV_PANEL.MsgToLog(L"form pos : " + MkStr(fp));
 						}
-					}
-
-					if (MK_INPUT_MGR.GetKeyReleased(L'4'))
-					{
-						_IncAP();
-						thNode->SetAlignmentPosition(ap, MkFloat2::Zero);
-						thNode->UpdateAlignmentPosition();
 					}
 				}
 

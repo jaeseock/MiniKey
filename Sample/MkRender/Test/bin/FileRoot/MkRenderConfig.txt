@@ -273,194 +273,194 @@ Node "StaticResource"
 			str ImagePath = "Default\theme_default.png";
 			
 			/*
-			Node "COMPONENT_NAME" // COMPONENT_NAME은 MkWindowThemeData::eComponentType, POSITION_KEY는 MkWindowThemeFormData::ePosition 참조
+			Node "COMPONENT_NAME" // COMPONENT_NAME은 MkWindowThemeData::eComponentType, STATE_KEY는 MkWindowThemeFormData::eState 참조
 			{
-				str POSITION_KEY = ""; // empty unit data
-				str POSITION_KEY = "Default_0"; // 1개. eUT_Image
-				str POSITION_KEY = "~" / "Default_" / "0" / "3" / "5" / "8"; // 8개. eUT_Edge
-				str POSITION_KEY = "~" / "Default_" / "0" / "8"; // 9개. eUT_Table
+				str STATE_KEY = ""; // empty unit data
+				str STATE_KEY = "Default_0"; // 1개. eUT_Image
+				str STATE_KEY = "~" / "Default_" / "0" / "3" / "5" / "8"; // 8개. eUT_Edge
+				str STATE_KEY = "~" / "Default_" / "0" / "8"; // 9개. eUT_Table
 			}
 			
 			Node "COMPONENT_NAME" // eFT_SingleUnit
 			{
-				str eP_Single = ...;
+				str eS_Single = ...;
 			}
 			Node "COMPONENT_NAME" // eFT_DualUnit
 			{
-				str eP_Back = ...;
-				str eP_Front = ...;
+				str eS_Back = ...;
+				str eS_Front = ...;
 			}
 			Node "COMPONENT_NAME" // eFT_QuadUnit
 			{
-				str eP_Normal = ...;
-				str eP_Focus = ...;
-				str eP_Pushing = ...;
-				str eP_Disable = ...;
+				str eS_Normal = ...;
+				str eS_Focus = ...;
+				str eS_Pushing = ...;
+				str eS_Disable = ...;
 			}
 			*/
 			
 			// component
 			Node "eCT_ShadowBox" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "SdwE_" / "0" / "3" / "5" / "8"; // eUT_Edge
+				str eS_Single = "~" / "SdwE_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
 			Node "eCT_DefaultBox" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "DefT_" / "0" / "8"; // eUT_Table
+				str eS_Single = "~" / "DefT_" / "0" / "8"; // eUT_Table
 			}
 			
 			Node "eCT_NoticeBox" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "NotT_" / "0" / "8"; // eUT_Table
+				str eS_Single = "~" / "NotT_" / "0" / "8"; // eUT_Table
 			}
 			
 			Node "eCT_StaticBox" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "SttT_" / "0" / "8"; // eUT_Table
+				str eS_Single = "~" / "SttT_" / "0" / "8"; // eUT_Table
 			}
 			
 			Node "eCT_GuideBox" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "GuiE_" / "0" / "3" / "5" / "8"; // eUT_Edge
+				str eS_Single = "~" / "GuiE_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
 			Node "eCT_Title" // eFT_DualUnit
 			{
-				str eP_Back = "~" / "TtlTB_" / "0" / "8"; // eUT_Table
-				str eP_Front = "~" / "TtlTF_" / "0" / "8";
+				str eS_Back = "~" / "TtlTB_" / "0" / "8"; // eUT_Table
+				str eS_Front = "~" / "TtlTF_" / "0" / "8";
 			}
 			
 			Node "eCT_NormalBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "~" / "BtnNormTN_" / "0" / "8"; // eUT_Table
-				str eP_Focus = "~" / "BtnNormTF_" / "0" / "8";
-				str eP_Pushing = "~" / "BtnNormTP_" / "0" / "8";
-				str eP_Disable = "~" / "BtnNormTD_" / "0" / "8";
+				str eS_Normal = "~" / "BtnNormTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnNormTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnNormTP_" / "0" / "8";
+				str eS_Disable = "~" / "BtnNormTD_" / "0" / "8";
 			}
 			
 			Node "eCT_OKBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "~" / "BtnOkTN_" / "0" / "8"; // eUT_Table
-				str eP_Focus = "~" / "BtnOkTF_" / "0" / "8";
-				str eP_Pushing = "~" / "BtnOkTP_" / "0" / "8";
-				str eP_Disable = "~" / "BtnOkTD_" / "0" / "8";
+				str eS_Normal = "~" / "BtnOkTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnOkTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnOkTP_" / "0" / "8";
+				str eS_Disable = "~" / "BtnOkTD_" / "0" / "8";
 			}
 			
 			Node "eCT_CancelBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "~" / "BtnClTN_" / "0" / "8"; // eUT_Table
-				str eP_Focus = "~" / "BtnClTF_" / "0" / "8";
-				str eP_Pushing = "~" / "BtnClTP_" / "0" / "8";
-				str eP_Disable = "~" / "BtnClTD_" / "0" / "8";
+				str eS_Normal = "~" / "BtnClTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnClTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnClTP_" / "0" / "8";
+				str eS_Disable = "~" / "BtnClTD_" / "0" / "8";
 			}
 			
 			Node "eCT_FlatBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "~" / "BtnFlatT_" / "0" / "8"; // eUT_Table
-				str eP_Focus = "~" / "BtnFlatT_" / "0" / "8";
-				str eP_Pushing = "~" / "BtnFlatT_" / "0" / "8";
-				str eP_Disable = "~" / "BtnFlatT_" / "0" / "8";
+				str eS_Normal = "~" / "BtnFlatT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnFlatT_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnFlatT_" / "0" / "8";
+				str eS_Disable = "~" / "BtnFlatT_" / "0" / "8";
 			}
 			
 			Node "eCT_GuideBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "~" / "BtnGuideTN_" / "0" / "8"; // eUT_Table
-				str eP_Focus = "~" / "BtnGuideTF_" / "0" / "8";
-				str eP_Pushing = "~" / "BtnGuideTF_" / "0" / "8";
-				str eP_Disable = "~" / "BtnGuideTD_" / "0" / "8";
+				str eS_Normal = "~" / "BtnGuideTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnGuideTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnGuideTF_" / "0" / "8";
+				str eS_Disable = "~" / "BtnGuideTD_" / "0" / "8";
 			}
 			
 			Node "eCT_GuideLine" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "LineGuideE_" / "0" / "3" / "5" / "8"; // eUT_Edge
+				str eS_Single = "~" / "LineGuideE_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
 			Node "eCT_YellowZone" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
+				str eS_Single = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
 			}
 			
 			Node "eCT_BlueZone" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
+				str eS_Single = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
 			}
 			
 			Node "eCT_RedOutlineZone" // eFT_SingleUnit
 			{
-				str eP_Single = "~" / "SelRgT_" / "0" / "3" / "5" / "8"; // eUT_Edge
+				str eS_Single = "~" / "SelRgT_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
 			Node "eCT_YellowSelBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "";
-				str eP_Focus = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
-				str eP_Pushing = "~" / "SelYeT_" / "0" / "8";
-				str eP_Disable = "~" / "SelDT_" / "0" / "8";
+				str eS_Normal = "";
+				str eS_Focus = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
+				str eS_Pushing = "~" / "SelYeT_" / "0" / "8";
+				str eS_Disable = "~" / "SelDT_" / "0" / "8";
 			}
 			
 			Node "eCT_BlueSelBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "";
-				str eP_Focus = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
-				str eP_Pushing = "~" / "SelBlT_" / "0" / "8";
-				str eP_Disable = "~" / "SelDT_" / "0" / "8";
+				str eS_Normal = "";
+				str eS_Focus = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
+				str eS_Pushing = "~" / "SelBlT_" / "0" / "8";
+				str eS_Disable = "~" / "SelDT_" / "0" / "8";
 			}
 			
 			Node "eCT_RedOutlineSelBtn" // eFT_QuadUnit
 			{
-				str eP_Normal = "";
-				str eP_Focus = "~" / "SelRgT_" / "0" / "8"; // eUT_Table
-				str eP_Pushing = "~" / "SelRgT_" / "0" / "8";
-				str eP_Disable = "~" / "SelDT_" / "0" / "8";
+				str eS_Normal = "";
+				str eS_Focus = "~" / "SelRgT_" / "0" / "8"; // eUT_Table
+				str eS_Pushing = "~" / "SelRgT_" / "0" / "8";
+				str eS_Disable = "~" / "SelDT_" / "0" / "8";
 			}
 			
 			Node "eCT_RedLEDBtn16" // eFT_QuadUnit
 			{
-				str eP_Normal = "BtnRI16N"; // eUT_Image
-				str eP_Focus = "BtnRI16F";
-				str eP_Pushing = "BtnRI16P";
-				str eP_Disable = "BtnRI16D";
+				str eS_Normal = "BtnRI16N"; // eUT_Image
+				str eS_Focus = "BtnRI16F";
+				str eS_Pushing = "BtnRI16P";
+				str eS_Disable = "BtnRI16D";
 			}
 			
 			Node "eCT_GreenLEDBtn16" // eFT_QuadUnit
 			{
-				str eP_Normal = "BtnGI16N"; // eUT_Image
-				str eP_Focus = "BtnGI16F";
-				str eP_Pushing = "BtnGI16P";
-				str eP_Disable = "BtnGI16D";
+				str eS_Normal = "BtnGI16N"; // eUT_Image
+				str eS_Focus = "BtnGI16F";
+				str eS_Pushing = "BtnGI16P";
+				str eS_Disable = "BtnGI16D";
 			}
 			
 			Node "eCT_BlueLEDBtn16" // eFT_QuadUnit
 			{
-				str eP_Normal = "BtnBI16N"; // eUT_Image
-				str eP_Focus = "BtnBI16F";
-				str eP_Pushing = "BtnBI16P";
-				str eP_Disable = "BtnBI16D";
+				str eS_Normal = "BtnBI16N"; // eUT_Image
+				str eS_Focus = "BtnBI16F";
+				str eS_Pushing = "BtnBI16P";
+				str eS_Disable = "BtnBI16D";
 			}
 			
 			Node "eCT_RedLEDBtn22" // eFT_QuadUnit
 			{
-				str eP_Normal = "BtnRI22N"; // eUT_Image
-				str eP_Focus = "BtnRI22F";
-				str eP_Pushing = "BtnRI22P";
-				str eP_Disable = "BtnRI22D";
+				str eS_Normal = "BtnRI22N"; // eUT_Image
+				str eS_Focus = "BtnRI22F";
+				str eS_Pushing = "BtnRI22P";
+				str eS_Disable = "BtnRI22D";
 			}
 			
 			Node "eCT_GreenLEDBtn22" // eFT_QuadUnit
 			{
-				str eP_Normal = "BtnGI22N"; // eUT_Image
-				str eP_Focus = "BtnGI22F";
-				str eP_Pushing = "BtnGI22P";
-				str eP_Disable = "BtnGI22D";
+				str eS_Normal = "BtnGI22N"; // eUT_Image
+				str eS_Focus = "BtnGI22F";
+				str eS_Pushing = "BtnGI22P";
+				str eS_Disable = "BtnGI22D";
 			}
 			
 			Node "eCT_BlueLEDBtn22" // eFT_QuadUnit
 			{
-				str eP_Normal = "BtnBI22N"; // eUT_Image
-				str eP_Focus = "BtnBI22F";
-				str eP_Pushing = "BtnBI22P";
-				str eP_Disable = "BtnBI22D";
+				str eS_Normal = "BtnBI22N"; // eUT_Image
+				str eS_Focus = "BtnBI22F";
+				str eS_Pushing = "BtnBI22P";
+				str eS_Disable = "BtnBI22D";
 			}
 		}
 	}

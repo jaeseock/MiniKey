@@ -3,9 +3,15 @@
 
 //------------------------------------------------------------------------------------------------//
 // window tag node
-// - icon과 text로 이루어진 pair
-// - 최대한 실수 여지를 줄이기 위해 parent node를 통한 간접 관리(wrapping)
-// - 정상적인 사용이라면 MkWindowTagNode::TagInfo 객체 이외에는 노출 될 일이 없음
+// icon과 text로 이루어진 pair
+//
+// ex>
+//	MkWindowTagNode* tagNode = MkWindowTagNode::CreateChildNode(tsubNode, L"TAG");
+//	tagNode->SetLocalDepth(-1.f);
+//	tagNode->SetIconPath(L"Default\\theme_default.png");
+//	tagNode->SetIconSubsetOrSequenceName(L"IcnWinDef");
+//	tagNode->SetTextName(L"WindowTitle");
+//	tagNode->SetAlignmentPosition(eRAP_LeftCenter);
 //------------------------------------------------------------------------------------------------//
 
 #include "MkPA_MkVisualPatternNode.h"
@@ -15,57 +21,85 @@ class MkWindowTagNode : public MkVisualPatternNode
 {
 public:
 
+	// node type
 	virtual ePA_SceneNodeType GetNodeType(void) const { return ePA_SNT_WindowTagNode; }
 
 	// alloc child instance
 	static MkWindowTagNode* CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName);
 
 	//------------------------------------------------------------------------------------------------//
-	// tag
+	// icon
 	//------------------------------------------------------------------------------------------------//
 
-	typedef struct _TagInfo
-	{
-		// icon
-		MkHashStr iconPath;
-		MkHashStr iconSubsetOrSequenceName;
+	// iconPath가 empty면 삭제
+	void SetIconPath(const MkHashStr& iconPath);
+	inline const MkHashStr& GetIconPath(void) const { return m_IconPath; }
 
-		// text
-		MkHashStr textName;
+	void SetIconSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName);
+	inline const MkHashStr& GetIconSubsetOrSequenceName(void) const { return m_IconSubsetOrSequenceName; }
 
-		// region
-		float lengthOfBetweenIconAndText;
+	//------------------------------------------------------------------------------------------------//
+	// text
+	//------------------------------------------------------------------------------------------------//
 
-		// alignment
-		eRectAlignmentPosition alignmentPosition;
-		MkFloat2 alignmentOffset;
+	// textName가 empty면 삭제
+	void SetTextName(const MkHashStr& textName);
+	inline const MkHashStr& GetTextName(void) const { return m_TextName; }
 
-		_TagInfo()
-		{
-			alignmentPosition = eRAP_LeftBottom;
-		}
-	}
-	TagInfo;
-
-	// icon panel 반영
-	bool UpdateIconInfo(const TagInfo& tagInfo);
-
-	// text panel 반영
-	bool UpdateTextInfo(const TagInfo& tagInfo);
-
-	// region(client/window size) 계산
-	// (NOTE) 호출 전 icon과 text panel 중 최소 하나는 존재해야 함
-	bool UpdateRegionInfo(const TagInfo& tagInfo);
-
-	// text panel에 반영 된 text node 반환
+	// text에 대한 휘발성 수정(저장되지 않음)을 위한 text node pointer 반환
 	MkTextNode* GetTagTextPtr(void);
+
+	// text 수정 사항 반영
+	void CommitTagText(void);
+
+	//------------------------------------------------------------------------------------------------//
+	// region
+	//------------------------------------------------------------------------------------------------//
+
+	void SetLengthOfBetweenIconAndText(float length);
+	inline float GetLengthOfBetweenIconAndText(void) const { return m_LengthOfBetweenIconAndText; }
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute, event 없음
 	//------------------------------------------------------------------------------------------------//
 
-	MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(name) {}
-	virtual ~MkWindowTagNode() { Clear(); }
+	MkWindowTagNode(const MkHashStr& name);
+	virtual ~MkWindowTagNode() {}
+
+	bool __UpdateIcon(void);
+	bool __UpdateText(void);
+
+	// (NOTE) 호출 전 icon과 text 중 최소 하나는 존재해야 함
+	bool __UpdateRegion(void);
+
+protected:
+
+	//------------------------------------------------------------------------------------------------//
+	// update command
+	//------------------------------------------------------------------------------------------------//
+
+	enum eWindowTagNodeUpdateCommand
+	{
+		eUC_Icon = eUC_VisualPatternNodeBandwidth,
+		eUC_Text,
+		eUC_Region,
+
+		eUC_WindowTagNodeBandwidth,
+	};
+
+	virtual void _ExcuteUpdateCommand(void);
+
+protected:
+
+	// icon
+	MkHashStr m_IconPath;
+	MkHashStr m_IconSubsetOrSequenceName;
+
+	// text
+	MkHashStr m_TextName;
+
+	// region
+	float m_LengthOfBetweenIconAndText;
 
 public:
 

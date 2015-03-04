@@ -3,190 +3,124 @@
 
 //------------------------------------------------------------------------------------------------//
 // window themed node
+// - window system의 경우 외부로 표현되는 형식의 종류는 얼마 되지 않음
+// - 자유도와 구현 난이도는 반비례 관계이므로 자유도를 규격화 함으로서 보다 쉽고 실수의 여지가 적은
+//   구현 환경 제시
+// - 내부 구조와 상관 없이 외부적으로는 black box화 된 pattern들로 노출되는데,
+//   이 pattern들을 component라 하고 component의 집합을 theme라 함
+// - theme에 대한 세부 설정은 MkWindowThemeData 참조
 //
-// - window theme
-//   * window system의 경우 외부로 표현되는 형식의 종류는 얼마 되지 않음
-//   * 자유도와 구현 난이도는 반비례 관계이므로 자유도를 규격화해 제한함으로서 보다 쉽고 실수의 여지가
-//     적은 구현 환경을 목표로 함
-//   * 내부적으로는 scene node와 panel들이 복잡하게 구성되어 있더라도 black box화 하여 외부적으로는
-//     규격화 된 몇 정류의 pattern으로 보이게 되는데, 이 pattern의 집합을 theme라 함
-//   * theme의 구성 설정은 static data 기반
-//   * 설정이 완료되면 window/client rect를 가지게 됨
-//   * form panel들의 depth는 0.1f
-//   * 그림자를 사용 할 경우 그림자 form panel들의 depth는 0.2f
-//
-// - tag (MkWindowTagNode)
-//   * 최대한 실수 여지를 줄이기 위해 자식 node를 통한 간접 관리(wrapping)
-//   * (NOTE) 모든 tag들은 같은 depth(0.f)를 가지므로 겹치지 않도록 주의
+// ex>
+//	MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
+//	tbgNode->SetLocalPosition(MkFloat2(500.f, 100.f));
+//	tbgNode->SetLocalDepth(2.f);
+//	tbgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+//	tbgNode->SetComponentType(MkWindowThemeData::eCT_DefaultBox);
+//	tbgNode->SetShadowUsage(true);
+//	tbgNode->SetClientSize(MkFloat2(300.f, 200.f));
+//	tbgNode->SetFormState(MkWindowThemeFormData::eS_Default);
+//	tbgNode->SetAcceptInput(true);
 //------------------------------------------------------------------------------------------------//
 
 #include "MkPA_MkWindowThemeData.h"
-#include "MkPA_MkWindowTagNode.h"
+#include "MkPA_MkVisualPatternNode.h"
 
-
-class MkWindowTagNode;
 
 class MkWindowThemedNode : public MkVisualPatternNode
 {
 public:
 
+	// node type
 	virtual ePA_SceneNodeType GetNodeType(void) const { return ePA_SNT_WindowThemedNode; }
 
 	// alloc child instance
 	static MkWindowThemedNode* CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName);
 
 	//------------------------------------------------------------------------------------------------//
-	// theme
+	// theme component
 	//------------------------------------------------------------------------------------------------//
 
-	// 자신과 하위 모든 node들을 대상으로 theme 일괄 적용
-	// (NOTE) 비었을 경우 삭제로 인식
-	void SetTheme(const MkHashStr& themeName);
+	// themeName이 empty면 삭제
+	void SetThemeName(const MkHashStr& themeName);
+	inline const MkHashStr& GetThemeName(void) const { return m_ThemeName; }
 
-	// 자신과 하위 모든 node들을 대상으로 특정 theme(srcThemeName)를 다른 theme(destThemeName)로 변경
-	// (NOTE) destThemeName이 비었을 경우 삭제로 인식
-	void ChangeTheme(const MkHashStr& srcThemeName, const MkHashStr& destThemeName);
+	// componentType이 MkWindowThemeData::eCT_None이면 삭제
+	void SetComponentType(MkWindowThemeData::eComponentType componentType);
+	inline MkWindowThemeData::eComponentType GetComponentType(void) const { return m_ComponentType; }
 
-	// theme 반환
-	inline const MkHashStr& GetTheme(void) const { return m_ThemeName; }
-
-	// componet 적용
-	// (NOTE) eCT_None일 경우 삭제로 인식
-	void SetComponent(MkWindowThemeData::eComponentType componentType);
-
-	// componet 반환
-	inline MkWindowThemeData::eComponentType GetComponent(void) const { return m_ComponentType; }
-
-	// 해당 form type에 맞는 position 적용
-	// eFT_SingleUnit : eP_Single
-	// eFT_DualUnit : eP_Back, eP_Front
-	// eFT_QuadUnit : eP_Normal, eP_Focus, eP_Pushing, eP_Disable
-	// (NOTE) : eP_None일 경우 무시
-	void SetFormPosition(MkWindowThemeFormData::ePosition position);
-
-	// form type 반환
-	// (NOTE) 호출 전 적합한 theme와 component가 설정된 상태이어야 함
-	MkWindowThemeFormData::eFormType GetFormType(void) const;
-
-	// form position 반환
-	inline MkWindowThemeFormData::ePosition GetFormPosition(void) const { return m_FormPosition; }
-
-	//------------------------------------------------------------------------------------------------//
-	// tag
-	//------------------------------------------------------------------------------------------------//
-
-	// tag 생성. 같은 이름의 tag가 이미 존재하면 삭제 후 재생성
-	void CreateTag(const MkHashStr& name);
-
-	// tagInfo로 tag 설정
-	bool SetTagInfo(const MkHashStr& name, const MkWindowTagNode::TagInfo& tagInfo);
-
-	// tagInfo 반환
-	bool GetTagInfo(const MkHashStr& name, MkWindowTagNode::TagInfo& buffer) const;
-
-	// tag 삭제
-	void DeleteTag(const MkHashStr& name);
-	void DeleteAllTags(void);
-
-	// text에 대한 휘발성 수정(저장되지 않음)을 위한 text node pointer 반환
-	// (NOTE) 수정사항은 CommitTagText() 호출 이후 적용됨
-	MkTextNode* GetTagTextPtr(const MkHashStr& name);
-	void CommitTagText(const MkHashStr& name);
-
-	// text에 대한 휘발성 수정의 특수예로 적용된 root text node의 font style을 변경
-	// 자체적으로 적용까지 완료하므로 별도의 CommitTagText() 호출은 필요 없음
-	bool SetTagTextFontStyle(const MkHashStr& name, const MkHashStr& fontStyle);
+	void SetShadowUsage(bool enable);
+	inline bool GetShadowUsage(void) const { return m_UseShadow; }
 
 	//------------------------------------------------------------------------------------------------//
 	// region
 	//------------------------------------------------------------------------------------------------//
 
-	// client size 적용
-	// (NOTE) 적용된 form의 unit type이 image일 경우 image source size로 재설정됨
-	// 따라서 입력된 clientSize를 믿지 말고 호출 후 갱신 된 GetClientRect().size를 사용하기를 권장
-	virtual void SetClientSize(const MkFloat2& clientSize);
+	void SetClientSize(const MkFloat2& clientSize);
+	inline const MkFloat2& GetClientSize(void) const { return m_ClientRect.size; }
 
 	//------------------------------------------------------------------------------------------------//
-	// attribute
+	// form state
 	//------------------------------------------------------------------------------------------------//
 
-	enum eWindowThemedNodeAttribute
-	{
-		// 그림자 사용 여부
-		eAT_UseShadow = eAT_VisualPatternNodeBandwidth,
+	// 현재 적용중인 form type 반환
+	// (NOTE) 호출 전 유효한 theme name, component type이 설정되어 있어야 함
+	MkWindowThemeFormData::eFormType GetFormType(void) const;
 
-		eAT_WindowThemedNodeBandwidth = eAT_VisualPatternNodeBandwidth + 4 // 4bit 대역폭 확보
-	};
-
-	// 그림자 사용여부. default는 false
-	void SetShadowEnable(bool enable);
-	inline bool GetShadowEnable(void) const { return m_Attribute[eAT_UseShadow]; }
-
+	// 해당 form type에 맞는 state 적용
+	// eFT_SingleUnit : eS_Single
+	// eFT_DualUnit : eS_Back, eS_Front
+	// eFT_QuadUnit : eS_Normal, eS_Focus, eS_Pushing, eS_Disable
+	// (NOTE) eS_None일 경우 무시
+	void SetFormState(MkWindowThemeFormData::eState formState);
+	inline MkWindowThemeFormData::eState GetFormState(void) const { return m_FormState; }
+	
 	//------------------------------------------------------------------------------------------------//
-	// event
+	// attribute, event 없음
 	//------------------------------------------------------------------------------------------------//
-
-protected:
-
-	enum eWindowThemedNodeEventType
-	{
-		// theme 설정
-		eET_SetTheme = eET_VisualPatternNodeBandwidth,
-
-		// theme 변경
-		eET_ChangeTheme,
-
-		eET_WindowThemedNodeBandwidth
-	};
-
-public:
-
-	virtual void __SendNodeEvent(const _NodeEvent& evt);
-
-	//------------------------------------------------------------------------------------------------//
-
-	// 해제
-	virtual void Clear(void);
 
 	MkWindowThemedNode(const MkHashStr& name);
-	virtual ~MkWindowThemedNode() { Clear(); }
+	virtual ~MkWindowThemedNode() {}
+
+	bool __UpdateThemeComponent(void);
+
+	// (NOTE) 호출 전 유효한 theme name, component type이 설정되어 있어야 함
+	// (NOTE) 적용중인 component의 unit type이 image일 경우 client size는 source size로 고정 됨
+	// 자세한 설명은 MkWindowThemeUnitData::SetClientSize() 참조
+	bool __UpdateRegion(void);
+
+	// (NOTE) 호출 전 유효한 theme name, component type이 설정되어 있어야 함
+	bool __UpdateFormState(void);
 
 protected:
 
-	bool _SetTheme(const MkHashStr& themeName);
-	bool _ChangeTheme(const MkHashStr& srcThemeName, const MkHashStr& destThemeName);
+	//------------------------------------------------------------------------------------------------//
+	// update command
+	//------------------------------------------------------------------------------------------------//
 
-	const MkWindowThemeFormData* _GetValidForm(void) const;
-
-	void _DeleteThemeForm(const MkWindowThemeFormData* form);
-	void _ApplyThemeForm(const MkWindowThemeFormData* form);
-	void _ApplyThemeSize(const MkWindowThemeFormData* form);
-	void _ApplyThemePosition(const MkWindowThemeFormData* form);
-
-	void _DeleteShadowNode(void);
-	void _ApplyShadowNode(void);
-	void _ApplyShadowSize(MkWindowThemedNode* shadowNode);
-
-	typedef struct __TagData
+	enum eWindowThemedNodeUpdateCommand
 	{
-		MkWindowTagNode::TagInfo tagInfo;
-		MkHashStr nodeName;
-	}
-	_TagData;
+		eUC_ThemeComponent = eUC_VisualPatternNodeBandwidth,
+		eUC_Region,
+		eUC_FormState,
 
-	MkWindowTagNode* _GetTagNode(const MkHashStr& nodeName);
+		eUC_WindowThemedNodeBandwidth,
+	};
+
+	virtual void _ExcuteUpdateCommand(void);
 
 protected:
 
-	// theme
-	MkHashStr m_ThemeName; // 보존
-	MkWindowThemeData::eComponentType m_ComponentType; // 보존
-	MkWindowThemeFormData::ePosition m_FormPosition; // 휘발
+	// theme component
+	MkHashStr m_ThemeName;
+	MkWindowThemeData::eComponentType m_ComponentType;
+	bool m_UseShadow;
 
-	// tag
-	MkHashMap<MkHashStr, _TagData> m_Tags;
+	// form state
+	MkWindowThemeFormData::eState m_FormState;
 
 public:
+
+	static const MkHashStr NodeNamePrefix;
 
 	static const MkHashStr ShadowNodeName;
 };

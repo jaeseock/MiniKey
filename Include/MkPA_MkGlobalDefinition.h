@@ -18,6 +18,7 @@ enum ePA_SceneNodeType
 	ePA_SNT_VisualPatternNode, // MkVisualPatternNode
 	ePA_SNT_WindowTagNode, // MkWindowTagNode
 	ePA_SNT_WindowThemedNode, // MkWindowThemedNode
+	ePA_SNT_WindowBaseNode // MkWindowBaseNode
 
 	//ePA_SNT_ControlWindowNodeBegin,
 

@@ -6,20 +6,20 @@
 #include "MkPA_MkWindowThemeFormData.h"
 
 
-const static MkHashStr SINGLE_UNIT_POS_KEY = MK_VALUE_TO_STRING(eP_Single);
+const static MkHashStr SINGLE_UNIT_POS_KEY = MK_VALUE_TO_STRING(eS_Single);
 
 const static MkHashStr DUAL_UNIT_POS_KEY[2] =
 {
-	MK_VALUE_TO_STRING(eP_Back),
-	MK_VALUE_TO_STRING(eP_Front)
+	MK_VALUE_TO_STRING(eS_Back),
+	MK_VALUE_TO_STRING(eS_Front)
 };
 
 const static MkHashStr QUAD_UNIT_POS_KEY[4] =
 {
-	MK_VALUE_TO_STRING(eP_Normal),
-	MK_VALUE_TO_STRING(eP_Focus),
-	MK_VALUE_TO_STRING(eP_Pushing),
-	MK_VALUE_TO_STRING(eP_Disable)
+	MK_VALUE_TO_STRING(eS_Normal),
+	MK_VALUE_TO_STRING(eS_Focus),
+	MK_VALUE_TO_STRING(eS_Pushing),
+	MK_VALUE_TO_STRING(eS_Disable)
 };
 
 //------------------------------------------------------------------------------------------------//
@@ -34,44 +34,44 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 	MkArray<MkHashStr> buffer[4];
 	
 	// eFT_SingleUnit
-	if (node.GetDataEx(SINGLE_UNIT_POS_KEY, buffer[eP_Single]))
+	if (node.GetDataEx(SINGLE_UNIT_POS_KEY, buffer[eS_Single]))
 	{
-		MK_CHECK(!buffer[eP_Single][0].Empty(), L"eFT_SingleUnit은 empty unit data가 허용되지 않음")
+		MK_CHECK(!buffer[eS_Single][0].Empty(), L"eFT_SingleUnit은 empty unit data가 허용되지 않음")
 			return false;
 
 		m_FormType = eFT_SingleUnit;
-		return _AddUnitData(texture, buffer[eP_Single], true);
+		return _AddUnitData(texture, buffer[eS_Single], true);
 	}
 	
 	MkArray<bool> haveUD(4);
 	unsigned int count = 0;
 
 	// eFT_DualUnit
-	if (node.GetDataEx(DUAL_UNIT_POS_KEY[eP_Back], buffer[eP_Back]) &&
-		node.GetDataEx(DUAL_UNIT_POS_KEY[eP_Front], buffer[eP_Front]))
+	if (node.GetDataEx(DUAL_UNIT_POS_KEY[eS_Back], buffer[eS_Back]) &&
+		node.GetDataEx(DUAL_UNIT_POS_KEY[eS_Front], buffer[eS_Front]))
 	{
 		count = 2;
-		haveUD.PushBack(!buffer[eP_Back][0].Empty());
-		haveUD.PushBack(!buffer[eP_Front][0].Empty());
+		haveUD.PushBack(!buffer[eS_Back][0].Empty());
+		haveUD.PushBack(!buffer[eS_Front][0].Empty());
 
-		MK_CHECK(haveUD[eP_Back] || haveUD[eP_Front], L"eFT_DualUnit은 최소 한 개 position에 해당하는 unit data를 가지고 있어야 함")
+		MK_CHECK(haveUD[eS_Back] || haveUD[eS_Front], L"eFT_DualUnit은 최소 한 개 state에 해당하는 unit data를 가지고 있어야 함")
 			return false;
 
 		m_FormType = eFT_DualUnit;
 	}
 	// eFT_QuadUnit
-	else if (node.GetDataEx(QUAD_UNIT_POS_KEY[eP_Normal], buffer[eP_Normal]) &&
-		node.GetDataEx(QUAD_UNIT_POS_KEY[eP_Focus], buffer[eP_Focus]) &&
-		node.GetDataEx(QUAD_UNIT_POS_KEY[eP_Pushing], buffer[eP_Pushing]) &&
-		node.GetDataEx(QUAD_UNIT_POS_KEY[eP_Disable], buffer[eP_Disable]))
+	else if (node.GetDataEx(QUAD_UNIT_POS_KEY[eS_Normal], buffer[eS_Normal]) &&
+		node.GetDataEx(QUAD_UNIT_POS_KEY[eS_Focus], buffer[eS_Focus]) &&
+		node.GetDataEx(QUAD_UNIT_POS_KEY[eS_Pushing], buffer[eS_Pushing]) &&
+		node.GetDataEx(QUAD_UNIT_POS_KEY[eS_Disable], buffer[eS_Disable]))
 	{
 		count = 4;
-		haveUD.PushBack(!buffer[eP_Normal][0].Empty());
-		haveUD.PushBack(!buffer[eP_Focus][0].Empty());
-		haveUD.PushBack(!buffer[eP_Pushing][0].Empty());
-		haveUD.PushBack(!buffer[eP_Disable][0].Empty());
+		haveUD.PushBack(!buffer[eS_Normal][0].Empty());
+		haveUD.PushBack(!buffer[eS_Focus][0].Empty());
+		haveUD.PushBack(!buffer[eS_Pushing][0].Empty());
+		haveUD.PushBack(!buffer[eS_Disable][0].Empty());
 
-		MK_CHECK(haveUD[eP_Normal] || haveUD[eP_Focus] || haveUD[eP_Pushing] || haveUD[eP_Disable], L"eFT_QuadUnit은 최소 한 개 position에 해당하는 unit data를 가지고 있어야 함")
+		MK_CHECK(haveUD[eS_Normal] || haveUD[eS_Focus] || haveUD[eS_Pushing] || haveUD[eS_Disable], L"eFT_QuadUnit은 최소 한 개 state에 해당하는 unit data를 가지고 있어야 함")
 			return false;
 
 		m_FormType = eFT_QuadUnit;
@@ -134,7 +134,7 @@ bool MkWindowThemeFormData::AttachForm(MkSceneNode* sceneNode, double startTime)
 	// 노드에 unit type이 없거나 적용 될 unit type과 다르면 생성
 	if ((nodeUnitType == MkWindowThemeUnitData::eUT_None) || (nodeUnitType != myUnitType))
 	{
-		// 0번 position(eP_Single, eP_Back, eP_Normal)이 default
+		// 0번 position(eS_Single, eS_Back, eS_Normal)이 default
 		m_UnitList[0].CreateUnit(sceneNode, *m_ImagePathPtr, startTime);
 	}
 	// 같은 unit type이면 theme 변경일 가능성이 있으므로 set
@@ -145,9 +145,9 @@ bool MkWindowThemeFormData::AttachForm(MkSceneNode* sceneNode, double startTime)
 	return true;
 }
 
-void MkWindowThemeFormData::RemoveForm(MkSceneNode* sceneNode) const
+void MkWindowThemeFormData::RemoveForm(MkSceneNode* sceneNode)
 {
-	if (MkWindowThemeUnitData::GetUnitType(sceneNode) != MkWindowThemeUnitData::eUT_None)
+	if ((sceneNode != NULL) && (MkWindowThemeUnitData::GetUnitType(sceneNode) != MkWindowThemeUnitData::eUT_None))
 	{
 		MkWindowThemeUnitData::DeleteUnit(sceneNode);
 	}
@@ -162,15 +162,12 @@ void MkWindowThemeFormData::SetClientSizeToForm(MkSceneNode* sceneNode, MkFloat2
 	}
 }
 
-bool MkWindowThemeFormData::SetFormPosition(MkSceneNode* sceneNode, ePosition position) const
+bool MkWindowThemeFormData::SetFormState(MkSceneNode* sceneNode, eState state) const
 {
-	if ((sceneNode == NULL) || (position == eP_None))
+	if ((sceneNode == NULL) || (state == eS_None) || (!_CheckState(state)))
 		return false;
 
-	MK_CHECK(_CheckPosition(position), sceneNode->GetNodeName().GetString() + L" node에 적용된 form과 다른 unit으로 position 변경 시도")
-		return false;
-
-	m_UnitList[position].SetUnit(sceneNode, *m_ImagePathPtr);
+	m_UnitList[state].SetUnit(sceneNode, *m_ImagePathPtr);
 	return true;
 }
 
@@ -192,13 +189,13 @@ MkWindowThemeUnitData::eUnitType MkWindowThemeFormData::_GetUnitType(void) const
 	return m_UnitList.Empty() ? MkWindowThemeUnitData::eUT_None : m_UnitList[0].GetUnitType();
 }
 
-bool MkWindowThemeFormData::_CheckPosition(ePosition position) const
+bool MkWindowThemeFormData::_CheckState(eState state) const
 {
 	switch (GetFormType())
 	{
-	case eFT_SingleUnit: return (position == eP_Single);
-	case eFT_DualUnit: return (position == eP_Back) || (position == eP_Front);
-	case eFT_QuadUnit: return (position == eP_Normal) || (position == eP_Focus) || (position == eP_Pushing) || (position == eP_Disable);
+	case eFT_SingleUnit: return (state == eS_Single);
+	case eFT_DualUnit: return (state == eS_Back) || (state == eS_Front);
+	case eFT_QuadUnit: return (state == eS_Normal) || (state == eS_Focus) || (state == eS_Pushing) || (state == eS_Disable);
 	}
 	return false;
 }

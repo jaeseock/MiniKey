@@ -36,22 +36,23 @@ public:
 		eFT_QuadUnit
 	};
 
-	enum ePosition
+	enum eState
 	{
-		eP_None = -1,
+		eS_None = -1,
+		eS_Default = 0,
 
 		// eFT_SingleUnit
-		eP_Single = 0,
+		eS_Single = eS_Default,
 
 		// eFT_DualUnit
-		eP_Back = 0,
-		eP_Front,
+		eS_Back = eS_Default,
+		eS_Front,
 
 		// eFT_QuadUnit
-		eP_Normal = 0,
-		eP_Focus,
-		eP_Pushing,
-		eP_Disable
+		eS_Normal = eS_Default,
+		eS_Focus,
+		eS_Pushing,
+		eS_Disable
 	};
 
 public:
@@ -71,7 +72,7 @@ public:
 	bool AttachForm(MkSceneNode* sceneNode, double startTime = 0.) const;
 
 	// scene node에 적용된 form 삭제
-	void RemoveForm(MkSceneNode* sceneNode) const;
+	static void RemoveForm(MkSceneNode* sceneNode);
 
 	// position unit이 적용된 scene node에 client size 적용
 	// 적용된 unit type에 따라 동작이 다름
@@ -82,10 +83,10 @@ public:
 	// (NOTE) 일반적인 window 구성은 2사분면(top-down)을 따르지만 minikey는 1사분면(down-top)을 따름
 	void SetClientSizeToForm(MkSceneNode* sceneNode, MkFloat2& clientSize, MkFloat2& clientPosition, MkFloat2& windowSize) const;
 
-	// scene node에 적용된 form의 position을 변경
+	// scene node에 적용된 form의 state를 변경
 	// 적용된 모든 unit들의 크기가 동일하므로 client size/position, window size에는 변화 없음
 	// panel의 sequence start time은 이전 값을 그대로 계승
-	bool SetFormPosition(MkSceneNode* sceneNode, ePosition position) const;
+	bool SetFormState(MkSceneNode* sceneNode, eState state) const;
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -100,8 +101,8 @@ protected:
 	// 초기화시 소속 unit들은 모두 동일 type으로 구성되어 있음을 보장하기 때문에 가능
 	MkWindowThemeUnitData::eUnitType _GetUnitType(void) const;
 
-	// form type에 따른 position 유효성 점검
-	bool _CheckPosition(ePosition position) const;
+	// form type에 따른 state 유효성 점검
+	bool _CheckState(eState state) const;
 
 protected:
 

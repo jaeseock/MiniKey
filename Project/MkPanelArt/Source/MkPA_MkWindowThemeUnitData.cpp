@@ -225,12 +225,6 @@ void MkWindowThemeUnitData::_SetImageToPiece
 		panel->SetTexture(subsetOrSequenceName.Empty() ? MkHashStr::EMPTY : imagePath, subsetOrSequenceName, createOrGet ? startTime : panel->GetSequenceStartTime(), 0.);
 		panel->SetSmallerSourceOp(keepSrcSize ? MkPanel::eReducePanel : MkPanel::eExpandSource);
 		panel->SetBiggerSourceOp(keepSrcSize ? MkPanel::eExpandPanel : MkPanel::eReduceSource);
-
-		// create일 경우 tag와 겹치는 일을 피하기 위해 local depth를 0.1f만큼 위치시킴
-		if (createOrGet)
-		{
-			panel->SetLocalDepth(0.1f);
-		}
 	}
 }
 

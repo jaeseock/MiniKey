@@ -535,6 +535,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\Include\MkCore_MkTypeHierarchy.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Include\MkCore_MkValueDecision.h"
 					>
 				</File>

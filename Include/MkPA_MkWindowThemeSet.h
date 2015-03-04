@@ -36,7 +36,7 @@ public:
 
 	// 사용 지정된 theme의 정보 반환
 	// 만약 주어진 theme나 component가 존재하지 않을 경우 default theme의 것을 대신 반환
-	// (초기화가 성공했다면 모든 component가 갖추어진 default theme가 존재한다는 의미이므로 항상 반환 성공)
+	// (초기화가 성공했다면 모든 component가 갖추어진 default theme가 존재한다는 의미이므로 MkWindowThemeData::eCT_None만 아니면 항상 반환 성공)
 	const MkHashStr& GetImageFilePath(void) const;
 	const MkWindowThemeFormData* GetFormData(MkWindowThemeData::eComponentType compType) const;
 

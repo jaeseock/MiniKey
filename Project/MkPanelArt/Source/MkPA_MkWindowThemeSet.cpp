@@ -69,6 +69,9 @@ const MkHashStr& MkWindowThemeSet::GetImageFilePath(void) const
 
 const MkWindowThemeFormData* MkWindowThemeSet::GetFormData(MkWindowThemeData::eComponentType compType) const
 {
+	if (compType == MkWindowThemeData::eCT_None)
+		return NULL;
+
 	MK_CHECK(!m_Themes.Empty(), L"초기화되지 않은 theme 정보 호출")
 		return NULL;
 

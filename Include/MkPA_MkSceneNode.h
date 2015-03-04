@@ -9,6 +9,7 @@
 #include "MkCore_MkSingleTypeTreePattern.h"
 #include "MkCore_MkPairArray.h"
 #include "MkCore_MkEventQueuePattern.h"
+#include "MkCore_MkTypeHierarchy.h"
 
 #include "MkPA_MkPanel.h"
 
@@ -19,6 +20,10 @@ public:
 
 	// node type
 	virtual ePA_SceneNodeType GetNodeType(void) const { return ePA_SNT_SceneNode; }
+
+	// hierarchy
+	bool IsDerivedFrom(ePA_SceneNodeType nodeType) const;
+	bool IsDerivedFrom(const MkSceneNode* instance) const;
 
 	// MkDataNode로 구성. 기존 설정값이 존재하면 덮어씀
 	// 기존 객체 중 이름이 겹치지 않는 독자적인 객체는 그대로 놔둠(transform, alpha 등 자식에게 영향을 주는 요소는 적용 됨)
@@ -33,7 +38,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// local
-	virtual void SetLocalPosition(const MkFloat2& position) { m_Transform.SetLocalPosition(position); }
+	inline void SetLocalPosition(const MkFloat2& position) { m_Transform.SetLocalPosition(position); }
 	inline const MkFloat2& GetLocalPosition(void) const { return m_Transform.GetLocalPosition(); }
 
 	inline void SetLocalDepth(float depth) { m_Transform.SetLocalDepth(depth); }
@@ -108,7 +113,8 @@ public:
 		// 그리기 여부
 		eAT_Visible = 0,
 
-		eAT_SceneNodeBandwidth = 4 // 4bit 대역폭 확보
+		// 4bit 대역폭 확보
+		eAT_SceneNodeBandwidth = 4
 	};
 
 	// visible. default는 true
@@ -123,7 +129,7 @@ public:
 
 protected:
 
-	typedef MkEventUnitPack4<int, MkHashStr, MkHashStr, MkFloat2, MkFloat2> _NodeEvent;
+	typedef MkEventUnitPack2<int, MkHashStr, MkHashStr> _NodeEvent;
 
 public:
 	virtual void __SendNodeEvent(const _NodeEvent& evt);
@@ -133,7 +139,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// 자신과 모든 하위 노드 정보 갱신
-	void Update(double currTime = 0.);
+	virtual void Update(double currTime = 0.);
 
 	// 해제
 	virtual void Clear(void);
@@ -144,6 +150,8 @@ public:
 public:
 
 	//------------------------------------------------------------------------------------------------//
+
+	static void __BuildSceneNodeTypeHierarchy(void);
 
 	//static void __GenerateBuildingTemplate(void);
 
@@ -170,4 +178,9 @@ protected:
 
 	// flag
 	MkBitField32 m_Attribute;
+
+public:
+
+	// class hierarchy
+	static MkTypeHierarchy<ePA_SceneNodeType> SceneNodeTypeHierarchy;
 };

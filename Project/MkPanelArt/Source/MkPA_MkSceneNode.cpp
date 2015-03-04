@@ -7,11 +7,25 @@
 #include "MkPA_MkSceneNode.h"
 //#include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
+// class hierarchy
+MkTypeHierarchy<ePA_SceneNodeType> MkSceneNode::SceneNodeTypeHierarchy(ePA_SNT_SceneNode);
+
+
 
 //const static MkHashStr CHILD_PANEL_NODE_NAME = MKDEF_S2D_SND_CHILD_PANEL_NODE_NAME;
 //const static MkHashStr CHILD_SNODE_NODE_NAME = MKDEF_S2D_SND_CHILD_SNODE_NODE_NAME;
 
 //------------------------------------------------------------------------------------------------//
+
+bool MkSceneNode::IsDerivedFrom(ePA_SceneNodeType nodeType) const
+{
+	return SceneNodeTypeHierarchy.IsDerivedFrom(nodeType, GetNodeType());
+}
+
+bool MkSceneNode::IsDerivedFrom(const MkSceneNode* instance) const
+{
+	return (instance == NULL) ? false : SceneNodeTypeHierarchy.IsDerivedFrom(instance->GetNodeType(), GetNodeType());
+}
 /*
 void MkSceneNode::Load(const MkDataNode& node)
 {
@@ -295,6 +309,14 @@ MkSceneNode::MkSceneNode(const MkHashStr& name) : MkSingleTypeTreePattern<MkScen
 }
 
 //------------------------------------------------------------------------------------------------//
+
+void MkSceneNode::__BuildSceneNodeTypeHierarchy(void)
+{
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_SceneNode, ePA_SNT_VisualPatternNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_VisualPatternNode, ePA_SNT_WindowTagNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_VisualPatternNode, ePA_SNT_WindowThemedNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowThemedNode, ePA_SNT_WindowBaseNode);
+}
 /*
 void MkSceneNode::__GenerateBuildingTemplate(void)
 {

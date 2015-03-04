@@ -543,6 +543,18 @@
 							>
 						</File>
 					</Filter>
+					<Filter
+						Name="4. Window base node"
+						>
+						<File
+							RelativePath=".\Source\MkPA_MkWindowBaseNode.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\Include\MkPA_MkWindowBaseNode.h"
+							>
+						</File>
+					</Filter>
 				</Filter>
 			</Filter>
 		</Filter>

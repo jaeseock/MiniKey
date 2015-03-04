@@ -7,59 +7,68 @@ const MkStr MkVisualPatternNode::NamePrefix(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX);
 
 //------------------------------------------------------------------------------------------------//
 
-void MkVisualPatternNode::SetLocalPosition(const MkFloat2& position)
+void MkVisualPatternNode::SetAlignmentPosition(eRectAlignmentPosition position)
 {
-	if (GetRestrictedWithinParentClient() && (m_ParentNodePtr != NULL) && (m_ParentNodePtr->GetNodeType() >= ePA_SNT_VisualPatternNode))
+	if (position != m_AlignmentPosition)
 	{
-		const MkVisualPatternNode* parentVisualPatternNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
-		MkFloat2 restrictedPos = parentVisualPatternNode->GetClientRect().Confine(MkFloatRect(position, m_WindowSize));
-		MkSceneNode::SetLocalPosition(restrictedPos);
-	}
-	else
-	{
-		MkSceneNode::SetLocalPosition(position);
+		m_AlignmentPosition = position;
+		m_UpdateCommand.Set(eUC_Alignment);
 	}
 }
 
-void MkVisualPatternNode::SetAlignmentPosition(eRectAlignmentPosition position, const MkFloat2& offset)
+void MkVisualPatternNode::SetAlignmentOffset(const MkFloat2& offset)
 {
-	m_AlignmentPosition = position;
-	m_AlignmentOffset = offset;
-}
-
-void MkVisualPatternNode::UpdateAlignmentPosition(const MkFloatRect& targetRect)
-{
-	if (targetRect.SizeIsNotZero() && m_WindowSize.IsPositive())
+	if (offset != m_AlignmentOffset)
 	{
-		MkFloat2 snapPos = targetRect.GetSnapPosition(m_WindowSize, m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
-		SetLocalPosition(snapPos + m_AlignmentOffset);
+		m_AlignmentOffset = offset;
+		m_UpdateCommand.Set(eUC_Alignment);
 	}
 }
 
-void MkVisualPatternNode::UpdateAlignmentPosition(void)
+void MkVisualPatternNode::Update(double currTime)
 {
-	if ((m_ParentNodePtr != NULL) && (m_ParentNodePtr->GetNodeType() >= ePA_SNT_VisualPatternNode))
+	// update command
+	if (m_UpdateCommand.Any())
 	{
-		const MkVisualPatternNode* parentVisualPatternNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
-		UpdateAlignmentPosition(parentVisualPatternNode->GetClientRect());
+		_ExcuteUpdateCommand();
+		m_UpdateCommand.Clear();
 	}
-}
 
-void MkVisualPatternNode::__SendNodeEvent(const _NodeEvent& evt)
-{
-	switch (evt.eventType)
-	{
-	case static_cast<int>(eET_UpdateAlignmentPosition):
-		UpdateAlignmentPosition(MkFloatRect(evt.arg2, evt.arg3));
-		return;
-	}
-	
-	MkSceneNode::__SendNodeEvent(evt);
+	MkSceneNode::Update(currTime);
 }
 
 MkVisualPatternNode::MkVisualPatternNode(const MkHashStr& name) : MkSceneNode(name)
 {
 	m_AlignmentPosition = eRAP_NonePosition;
+}
+
+
+void MkVisualPatternNode::__UpdateAlignment(const MkVisualPatternNode* parentNode)
+{
+	if ((parentNode != NULL) && parentNode->GetClientRect().SizeIsNotZero() && m_WindowRect.SizeIsNotZero())
+	{
+		MkFloat2 snapPos = parentNode->GetClientRect().GetSnapPosition
+			(MkFloatRect(GetLocalPosition() + m_WindowRect.position, m_WindowRect.size), m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
+
+		SetLocalPosition(snapPos + m_AlignmentOffset - m_WindowRect.position);
+	}
+}
+
+void MkVisualPatternNode::__UpdateAlignment(void)
+{
+	if ((m_ParentNodePtr != NULL) && m_ParentNodePtr->IsDerivedFrom(ePA_SNT_VisualPatternNode))
+	{
+		const MkVisualPatternNode* parentNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
+		__UpdateAlignment(parentNode);
+	}
+}
+
+void MkVisualPatternNode::_ExcuteUpdateCommand(void)
+{
+	if (m_UpdateCommand[eUC_Alignment])
+	{
+		__UpdateAlignment();
+	}
 }
 
 //------------------------------------------------------------------------------------------------//
