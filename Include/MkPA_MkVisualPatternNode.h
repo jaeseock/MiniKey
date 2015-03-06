@@ -44,7 +44,7 @@ public:
 	virtual void Update(double currTime = 0.);
 
 	//------------------------------------------------------------------------------------------------//
-	// attribute
+	// attribute. data에 저장되는 값이므로 대역폭 확보 중요
 	//------------------------------------------------------------------------------------------------//
 
 	enum eVisualPatternNodeAttribute
@@ -64,16 +64,24 @@ public:
 	// event
 	//------------------------------------------------------------------------------------------------//
 
-protected:
-
 	enum eVisualPatternNodeEventType
 	{
-		eET_VisualPatternNodeBandwidth = 0, // event 없음
+		eET_VisualPatternNodeBandwidth = eET_SceneNodeBandwidth, // 없음
 	};
+
+	MkVisualPatternNode(const MkHashStr& name);
+	virtual ~MkVisualPatternNode() {}
+
+	// 설정된 position, offset으로 parentNode의 client rect에 대한 정렬 실행
+	// (NOTE) parentNode의 client rect, 자신의 window rect는 유효해야 함
+	void __UpdateAlignment(const MkVisualPatternNode* parentNode);
+	void __UpdateAlignment(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// update command
 	//------------------------------------------------------------------------------------------------//
+
+protected:
 
 	enum eVisualPatternNodeUpdateCommand
 	{
@@ -83,18 +91,6 @@ protected:
 	};
 
 	virtual void _ExcuteUpdateCommand(void);
-
-	//------------------------------------------------------------------------------------------------//
-
-public:
-
-	MkVisualPatternNode(const MkHashStr& name);
-	virtual ~MkVisualPatternNode() {}
-
-	// 설정된 position, offset으로 parentNode의 client rect에 대한 정렬 실행
-	// (NOTE) parentNode의 client rect, 자신의 window rect는 유효해야 함
-	void __UpdateAlignment(const MkVisualPatternNode* parentNode);
-	void __UpdateAlignment(void);
 
 protected:
 

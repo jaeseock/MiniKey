@@ -16,20 +16,8 @@ const MkHashStr MkWindowTagNode::TextPanelName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN
 
 MkWindowTagNode* MkWindowTagNode::CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName)
 {
-	if (parentNode != NULL)
-	{
-		MK_CHECK(!parentNode->ChildExist(childNodeName), parentNode->GetNodeName().GetString() + L" node에 이미 " + childNodeName.GetString() + L" 이름을 가진 자식이 존재")
-			return NULL;
-	}
-
-	MkWindowTagNode* node = new MkWindowTagNode(childNodeName);
-	MK_CHECK(node != NULL, childNodeName.GetString() + L" MkWindowTagNode alloc 실패")
-		return NULL;
-
-	if (parentNode != NULL)
-	{
-		parentNode->AttachChildNode(node);
-	}
+	MkWindowTagNode* node = __TSI_SceneNodeDerivedInstanceOp<MkWindowTagNode>::Alloc(parentNode, childNodeName);
+	MK_CHECK(node != NULL, childNodeName.GetString() + L" MkWindowTagNode 생성 실패") {}
 	return node;
 }
 
@@ -85,6 +73,15 @@ void MkWindowTagNode::SetLengthOfBetweenIconAndText(float length)
 		m_LengthOfBetweenIconAndText = length;
 		m_UpdateCommand.Set(eUC_Region);
 	}
+}
+
+void MkWindowTagNode::Clear(void)
+{
+	m_IconPath.Clear();
+	m_IconSubsetOrSequenceName.Clear();
+	m_TextName.Clear();
+
+	MkVisualPatternNode::Clear();
 }
 
 MkWindowTagNode::MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(name)

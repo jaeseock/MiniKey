@@ -357,44 +357,40 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="Window"
+					Name="Window theme data"
 					>
-					<Filter
-						Name="Theme"
+					<File
+						RelativePath=".\Source\MkPA_MkWindowThemeData.cpp"
 						>
-						<File
-							RelativePath=".\Source\MkPA_MkWindowThemeData.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkPA_MkWindowThemeData.h"
-							>
-						</File>
-						<File
-							RelativePath=".\Source\MkPA_MkWindowThemeFormData.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkPA_MkWindowThemeFormData.h"
-							>
-						</File>
-						<File
-							RelativePath=".\Source\MkPA_MkWindowThemeSet.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkPA_MkWindowThemeSet.h"
-							>
-						</File>
-						<File
-							RelativePath=".\Source\MkPA_MkWindowThemeUnitData.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkPA_MkWindowThemeUnitData.h"
-							>
-						</File>
-					</Filter>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkWindowThemeData.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkWindowThemeFormData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkWindowThemeFormData.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkWindowThemeSet.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkWindowThemeSet.h"
+						>
+					</File>
+					<File
+						RelativePath=".\Source\MkPA_MkWindowThemeUnitData.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkWindowThemeUnitData.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter

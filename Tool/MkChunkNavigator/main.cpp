@@ -216,7 +216,7 @@ public:
 
 			MkPathName relativePath;
 			_GetCurrentDirectoryPath(m_CurrentNode, relativePath);
-			MkPathName fullPath = m_ChunkFilePath + relativePath;
+			MkPathName fullPath = m_UnpackingFilePath + relativePath;
 			fullPath.OpenDirectoryInExplorer();
 
 			EnableWindow(m_UnpackDirHandle, TRUE);
@@ -382,9 +382,23 @@ public:
 						{
 							EnableWindow(m_UnpackDirHandle, FALSE);
 
-							m_OnUnpacking = true;
+							MkPathName defPath;
+							if (!_GetPathFromEditBox(m_ChunkDirHandle, defPath))
+							{
+								defPath = MkPathName::GetModuleDirectory();
+							}
 
-							MK_DEV_PANEL.MsgToLog(L"< 언패킹 중... >");
+							m_UnpackingFilePath.Clear();
+							if (m_UnpackingFilePath.GetDirectoryPathFromDialog(L"풀린 파일들이 위치 할 폴더 선택", m_MainWindow.GetWindowHandle(), defPath))
+							{
+								m_OnUnpacking = true;
+
+								MK_DEV_PANEL.MsgToLog(L"< 언패킹 중... >");
+							}
+							else
+							{
+								EnableWindow(m_UnpackDirHandle, TRUE);
+							}
 						}
 					}
 					break;
@@ -806,7 +820,7 @@ protected:
 				MK_INDEXING_LOOP(files, i)
 				{
 					MkPathName filePath = relativePath + files[i];
-					m_FileSystem.ExtractAvailableFile(filePath, m_ChunkFilePath);
+					m_FileSystem.ExtractAvailableFile(filePath, m_UnpackingFilePath);
 				}
 			}
 		}
@@ -840,6 +854,7 @@ protected:
 	MkPathName m_ChunkFilePath;
 
 	bool m_OnUnpacking;
+	MkPathName m_UnpackingFilePath;
 
 	bool m_OnUpdating;
 	MkPathName m_UpdateSrcPath;

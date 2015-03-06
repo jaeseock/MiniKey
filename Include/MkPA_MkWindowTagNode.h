@@ -60,11 +60,30 @@ public:
 	inline float GetLengthOfBetweenIconAndText(void) const { return m_LengthOfBetweenIconAndText; }
 
 	//------------------------------------------------------------------------------------------------//
-	// attribute, event 없음
+	// attribute. data에 저장되는 값이므로 대역폭 확보 중요
 	//------------------------------------------------------------------------------------------------//
 
+	enum eWindowTagNodeAttribute
+	{
+		eAT_WindowTagNodeBandwidth = eAT_VisualPatternNodeBandwidth // 없음. 대역폭 확보 안함
+	};
+
+	//------------------------------------------------------------------------------------------------//
+	// event
+	//------------------------------------------------------------------------------------------------//
+
+	enum eWindowTagNodeEventType
+	{
+		eET_WindowTagNodeBandwidth = eET_VisualPatternNodeBandwidth, // 없음
+	};
+
+public:
+
+	// 해제
+	virtual void Clear(void);
+
 	MkWindowTagNode(const MkHashStr& name);
-	virtual ~MkWindowTagNode() {}
+	virtual ~MkWindowTagNode() { Clear(); }
 
 	bool __UpdateIcon(void);
 	bool __UpdateText(void);

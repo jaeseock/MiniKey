@@ -44,7 +44,7 @@
 // MkFocusProfiler를 통해 포커싱 내의 프로파일링 수행 가능
 // ex>
 //	{
-//		MkFocusProfiler(L"key");
+//		MkFocusProfiler _fp(L"key");
 //		...
 //		if (...) return;
 //		...

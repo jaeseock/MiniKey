@@ -10,6 +10,9 @@
 //   이 pattern들을 component라 하고 component의 집합을 theme라 함
 // - theme에 대한 세부 설정은 MkWindowThemeData 참조
 //
+// 하나의 MkWindowThemedNode에 하나의 theme component 설정 가능
+// tag 추가는 제한 없음
+//
 // ex>
 //	MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
 //	tbgNode->SetLocalPosition(MkFloat2(500.f, 100.f));
@@ -51,6 +54,10 @@ public:
 	void SetShadowUsage(bool enable);
 	inline bool GetShadowUsage(void) const { return m_UseShadow; }
 
+	// 해당 node 및 하위 모든 node를 대상으로 srcThemeName에 해당하는 theme가 적용되어 있으면 destThemeName로 변경
+	// srcThemeName이 empty면 모든 node를 대상으로 일괄 교체
+	void ChangeThemeName(const MkHashStr& srcThemeName, const MkHashStr& destThemeName);
+
 	//------------------------------------------------------------------------------------------------//
 	// region
 	//------------------------------------------------------------------------------------------------//
@@ -75,11 +82,35 @@ public:
 	inline MkWindowThemeFormData::eState GetFormState(void) const { return m_FormState; }
 	
 	//------------------------------------------------------------------------------------------------//
-	// attribute, event 없음
+	// attribute. data에 저장되는 값이므로 대역폭 확보 중요
 	//------------------------------------------------------------------------------------------------//
 
+	enum eWindowThemedNodeAttribute
+	{
+		eAT_WindowThemedNodeBandwidth = eAT_VisualPatternNodeBandwidth // 없음. 대역폭 확보 안함
+	};
+
+	//------------------------------------------------------------------------------------------------//
+	// event
+	//------------------------------------------------------------------------------------------------//
+
+	enum eWindowThemedNodeEventType
+	{
+		// theme 변경
+		eET_ChangeTheme = eET_VisualPatternNodeBandwidth,
+
+		eET_WindowThemedNodeBandwidth
+	};
+
+	virtual void SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument);
+
+	//------------------------------------------------------------------------------------------------//
+
+	// 해제
+	virtual void Clear(void);
+
 	MkWindowThemedNode(const MkHashStr& name);
-	virtual ~MkWindowThemedNode() {}
+	virtual ~MkWindowThemedNode() { Clear(); }
 
 	bool __UpdateThemeComponent(void);
 

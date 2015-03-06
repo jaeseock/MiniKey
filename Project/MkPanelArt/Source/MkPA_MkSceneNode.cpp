@@ -26,6 +26,19 @@ bool MkSceneNode::IsDerivedFrom(const MkSceneNode* instance) const
 {
 	return (instance == NULL) ? false : SceneNodeTypeHierarchy.IsDerivedFrom(instance->GetNodeType(), GetNodeType());
 }
+
+MkSceneNode* MkSceneNode::FindNearestDerivedNode(ePA_SceneNodeType nodeType)
+{
+	MkSceneNode* node = this;
+	while (node != NULL)
+	{
+		if (node->IsDerivedFrom(nodeType))
+			return node;
+
+		node = node->GetParentNode();
+	}
+	return NULL;
+}
 /*
 void MkSceneNode::Load(const MkDataNode& node)
 {
@@ -363,14 +376,14 @@ void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray
 	}
 }
 
-void MkSceneNode::__SendNodeEvent(const _NodeEvent& evt)
+void MkSceneNode::SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument)
 {
 	if (!m_ChildrenNode.Empty())
 	{
 		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
 		MK_STL_LOOP(looper)
 		{
-			looper.GetCurrentField()->__SendNodeEvent(evt);
+			looper.GetCurrentField()->SendRootToLeafDirectionNodeEvent(eventType, argument);
 		}
 	}
 }

@@ -8,11 +8,12 @@
 
 #include "MkCore_MkSingleTypeTreePattern.h"
 #include "MkCore_MkPairArray.h"
-#include "MkCore_MkEventQueuePattern.h"
 #include "MkCore_MkTypeHierarchy.h"
 
 #include "MkPA_MkPanel.h"
 
+
+class MkDataNode;
 
 class MkSceneNode : public MkSingleTypeTreePattern<MkSceneNode>
 {
@@ -24,6 +25,9 @@ public:
 	// hierarchy
 	bool IsDerivedFrom(ePA_SceneNodeType nodeType) const;
 	bool IsDerivedFrom(const MkSceneNode* instance) const;
+
+	// 자신 혹은 조상들 중에서 nodeType 파생을 만족시키는 가장 가까운 객체를 반환
+	MkSceneNode* FindNearestDerivedNode(ePA_SceneNodeType nodeType);
 
 	// MkDataNode로 구성. 기존 설정값이 존재하면 덮어씀
 	// 기존 객체 중 이름이 겹치지 않는 독자적인 객체는 그대로 놔둠(transform, alpha 등 자식에게 영향을 주는 요소는 적용 됨)
@@ -105,7 +109,7 @@ public:
 	//void RestoreDecoString(void);
 
 	//------------------------------------------------------------------------------------------------//
-	// attribute
+	// attribute. data에 저장되는 값이므로 대역폭 확보 중요
 	//------------------------------------------------------------------------------------------------//
 
 	enum eSceneNodeAttribute
@@ -123,16 +127,16 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// event
-	// 하위 node(scene node 계열)와의 event pushing을 위한 interface
+	// 하위 node(scene node 계열)와의 root->leaf 방향 event pushing을 위한 interface
 	// scene node는 가장 상위의 class이기 때문에 별도의 event type이 필요하지는 않음
 	//------------------------------------------------------------------------------------------------//
 
-protected:
+	enum eSceneNodeEventType
+	{
+		eET_SceneNodeBandwidth = 0 // 없음
+	};
 
-	typedef MkEventUnitPack2<int, MkHashStr, MkHashStr> _NodeEvent;
-
-public:
-	virtual void __SendNodeEvent(const _NodeEvent& evt);
+	virtual void SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument);
 
 	//------------------------------------------------------------------------------------------------//
 	// proceed
@@ -184,3 +188,26 @@ public:
 	// class hierarchy
 	static MkTypeHierarchy<ePA_SceneNodeType> SceneNodeTypeHierarchy;
 };
+
+//------------------------------------------------------------------------------------------------//
+
+template <class DataType>
+class __TSI_SceneNodeDerivedInstanceOp
+{
+public:
+
+	static DataType* Alloc(MkSceneNode* parentNode, const MkHashStr& childNodeName)
+	{
+		if ((parentNode != NULL) && parentNode->ChildExist(childNodeName))
+			return NULL;
+
+		DataType* node = new DataType(childNodeName);
+		if ((node != NULL) && (parentNode != NULL))
+		{
+			parentNode->AttachChildNode(node);
+		}
+		return node;
+	}
+};
+
+//------------------------------------------------------------------------------------------------//

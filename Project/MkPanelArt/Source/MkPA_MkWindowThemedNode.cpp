@@ -1,6 +1,7 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkTimeManager.h"
+#include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkStaticResourceContainer.h"
@@ -10,24 +11,14 @@
 const MkHashStr MkWindowThemedNode::NodeNamePrefix(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Comp:");
 const MkHashStr MkWindowThemedNode::ShadowNodeName(NodeNamePrefix.GetString() + L"Shadow");
 
+const static MkHashStr CHANGE_THEME_ARG_KEY = L"ThemeName";
+
 //------------------------------------------------------------------------------------------------//
 
 MkWindowThemedNode* MkWindowThemedNode::CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName)
 {
-	if (parentNode != NULL)
-	{
-		MK_CHECK(!parentNode->ChildExist(childNodeName), parentNode->GetNodeName().GetString() + L" node에 이미 " + childNodeName.GetString() + L" 이름을 가진 자식이 존재")
-			return NULL;
-	}
-
-	MkWindowThemedNode* node = new MkWindowThemedNode(childNodeName);
-	MK_CHECK(node != NULL, childNodeName.GetString() + L" MkWindowThemedNode alloc 실패")
-		return NULL;
-
-	if (parentNode != NULL)
-	{
-		parentNode->AttachChildNode(node);
-	}
+	MkWindowThemedNode* node = __TSI_SceneNodeDerivedInstanceOp<MkWindowThemedNode>::Alloc(parentNode, childNodeName);
+	MK_CHECK(node != NULL, childNodeName.GetString() + L" MkWindowThemedNode 생성 실패") {}
 	return node;
 }
 
@@ -63,6 +54,17 @@ void MkWindowThemedNode::SetShadowUsage(bool enable)
 	}
 }
 
+void MkWindowThemedNode::ChangeThemeName(const MkHashStr& srcThemeName, const MkHashStr& destThemeName)
+{
+	MkArray<MkHashStr> names(2);
+	names.PushBack(srcThemeName);
+	names.PushBack(destThemeName);
+	MkDataNode argument;
+	argument.CreateUnitEx(CHANGE_THEME_ARG_KEY, names);
+
+	SendRootToLeafDirectionNodeEvent(eET_ChangeTheme, argument);
+}
+
 void MkWindowThemedNode::SetClientSize(const MkFloat2& clientSize)
 {
 	MkFloat2 cs = clientSize;
@@ -95,6 +97,37 @@ void MkWindowThemedNode::SetFormState(MkWindowThemeFormData::eState formState)
 		m_FormState = formState;
 		m_UpdateCommand.Set(eUC_FormState);
 	}
+}
+
+void MkWindowThemedNode::SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument)
+{
+	switch (eventType)
+	{
+	case eET_ChangeTheme:
+		{
+			MkArray<MkHashStr> names;
+			if (argument.GetDataEx(CHANGE_THEME_ARG_KEY, names) && (names.GetSize() == 2))
+			{
+				if (names[0].Empty() || (names[0] == m_ThemeName))
+				{
+					SetThemeName(names[1]);
+				}
+			}
+		}
+		break;
+	}
+	
+	MkVisualPatternNode::SendRootToLeafDirectionNodeEvent(eventType, argument);
+}
+
+void MkWindowThemedNode::Clear(void)
+{
+	m_ThemeName.Clear();
+	m_ComponentType = MkWindowThemeData::eCT_None;
+	m_UseShadow = false;
+	m_FormState = MkWindowThemeFormData::eS_None;
+
+	MkVisualPatternNode::Clear();
 }
 
 MkWindowThemedNode::MkWindowThemedNode(const MkHashStr& name) : MkVisualPatternNode(name)
