@@ -4,6 +4,7 @@
 
 //------------------------------------------------------------------------------------------------//
 
+MkHashStr::MkHashStr(void) { _GenerateHashKey(); }
 MkHashStr::MkHashStr(const MkHashStr& str) : m_Str(str.GetString()) { m_HashKey = str.GetHashKey(); }
 MkHashStr::MkHashStr(const MkStr& str) : m_Str(str) { _GenerateHashKey(); }
 MkHashStr::MkHashStr(const MkPathName& str) : m_Str(str) { _GenerateHashKey(); }

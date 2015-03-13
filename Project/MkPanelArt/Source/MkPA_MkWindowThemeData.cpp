@@ -117,4 +117,9 @@ void MkWindowThemeData::Clear(void)
 	m_Components.Clear();
 }
 
+MkWindowThemeFormData::eFormType MkWindowThemeData::GetFormTypeOfComponent(eComponentType compType)
+{
+	return (compType == eCT_None) ? MkWindowThemeFormData::eFT_None : MkWindowThemeData::ComponentFormType[compType];
+}
+
 //------------------------------------------------------------------------------------------------//

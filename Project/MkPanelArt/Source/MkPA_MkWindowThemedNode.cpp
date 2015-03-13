@@ -9,6 +9,8 @@
 
 
 const MkHashStr MkWindowThemedNode::NodeNamePrefix(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Comp:");
+
+const MkHashStr MkWindowThemedNode::CustomImagePanelName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"CImg");
 const MkHashStr MkWindowThemedNode::ShadowNodeName(NodeNamePrefix.GetString() + L"Shadow");
 
 const static MkHashStr CHANGE_THEME_ARG_KEY = L"ThemeName";
@@ -39,9 +41,32 @@ void MkWindowThemedNode::SetComponentType(MkWindowThemeData::eComponentType comp
 	{
 		m_ComponentType = componentType;
 		m_UpdateCommand.Set(eUC_ThemeComponent);
+		SetFormState(MkWindowThemeFormData::eS_Default); // component가 변경되면 form type도 변경이 일어날 수 있기 때문에 form state 초기화
 
-		// component가 변경되면 form type도 변경이 일어날 수 있기 때문에 form state 초기화
-		SetFormState(MkWindowThemeFormData::eS_Default);
+		m_CustomImagePath.Clear();
+		m_CustomSubsetOrSequenceName.Clear();
+	}
+}
+
+void MkWindowThemedNode::SetCustomImagePath(const MkHashStr& imagePath)
+{
+	if (imagePath != m_CustomImagePath)
+	{
+		m_CustomImagePath = imagePath;
+		m_UpdateCommand.Set(eUC_ThemeComponent);
+		
+		m_ComponentType = MkWindowThemeData::eCT_None;
+	}
+}
+
+void MkWindowThemedNode::SetCustomImageSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName)
+{
+	if (subsetOrSequenceName != m_CustomSubsetOrSequenceName)
+	{
+		m_CustomSubsetOrSequenceName = subsetOrSequenceName;
+		m_UpdateCommand.Set(eUC_ThemeComponent);
+		
+		m_ComponentType = MkWindowThemeData::eCT_None;
 	}
 }
 
@@ -62,7 +87,7 @@ void MkWindowThemedNode::ChangeThemeName(const MkHashStr& srcThemeName, const Mk
 	MkDataNode argument;
 	argument.CreateUnitEx(CHANGE_THEME_ARG_KEY, names);
 
-	SendRootToLeafDirectionNodeEvent(eET_ChangeTheme, argument);
+	SendNodeCommandTypeEvent(ePA_SNE_ChangeTheme, argument);
 }
 
 void MkWindowThemedNode::SetClientSize(const MkFloat2& clientSize)
@@ -99,11 +124,11 @@ void MkWindowThemedNode::SetFormState(MkWindowThemeFormData::eState formState)
 	}
 }
 
-void MkWindowThemedNode::SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument)
+void MkWindowThemedNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument)
 {
 	switch (eventType)
 	{
-	case eET_ChangeTheme:
+	case ePA_SNE_ChangeTheme:
 		{
 			MkArray<MkHashStr> names;
 			if (argument.GetDataEx(CHANGE_THEME_ARG_KEY, names) && (names.GetSize() == 2))
@@ -117,7 +142,7 @@ void MkWindowThemedNode::SendRootToLeafDirectionNodeEvent(int eventType, MkDataN
 		break;
 	}
 	
-	MkVisualPatternNode::SendRootToLeafDirectionNodeEvent(eventType, argument);
+	MkVisualPatternNode::SendNodeCommandTypeEvent(eventType, argument);
 }
 
 void MkWindowThemedNode::Clear(void)
@@ -126,6 +151,8 @@ void MkWindowThemedNode::Clear(void)
 	m_ComponentType = MkWindowThemeData::eCT_None;
 	m_UseShadow = false;
 	m_FormState = MkWindowThemeFormData::eS_None;
+	m_CustomImagePath.Clear();
+	m_CustomSubsetOrSequenceName.Clear();
 
 	MkVisualPatternNode::Clear();
 }
@@ -139,54 +166,73 @@ MkWindowThemedNode::MkWindowThemedNode(const MkHashStr& name) : MkVisualPatternN
 
 bool MkWindowThemedNode::__UpdateThemeComponent(void)
 {
-	m_UpdateCommand.Set(eUC_Region); // theme, component, shadow가 변경되면 region도 갱신되야 함
+	m_UpdateCommand.Set(eUC_Region); // theme, component, custom image, shadow가 변경되면 region도 갱신되야 함
 
 	if (MK_STATIC_RES.GetWindowThemeSet().SetCurrentTheme(m_ThemeName))
 	{
-		const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ComponentType);
-		if (formData != NULL)
-		{
-			MkTimeState ts;
-			MK_TIME_MGR.GetCurrentTimeState(ts);
-			if (formData->AttachForm(this, ts.fullTime))
-			{
-				if (m_UseShadow)
-				{
-					if (ChildExist(ShadowNodeName))
-					{
-						MkWindowThemedNode* shadowNode = dynamic_cast<MkWindowThemedNode*>(GetChildNode(ShadowNodeName));
-						if (shadowNode != NULL)
-						{
-							shadowNode->SetThemeName(m_ThemeName);
-						}
-					}
-					else
-					{
-						MkWindowThemedNode* shadowNode = CreateChildNode(this, ShadowNodeName);
-						if (shadowNode != NULL)
-						{
-							shadowNode->SetLocalDepth(0.1f); // form panel들과 겹치는 것을 피하기 위해 0.1f만큼 뒤에 위치
-							shadowNode->SetThemeName(m_ThemeName);
-							shadowNode->SetComponentType(MkWindowThemeData::eCT_ShadowBox);
-							shadowNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		bool ok = false;
+		MkTimeState ts;
+		MK_TIME_MGR.GetCurrentTimeState(ts);
 
-							// shadow는 __UpdateRegion()에서 바로 영역 계산을 요구하기때문에 정상적인 Update()라인을 통한
-							// 생성을 따르지 않고 바로 panel들을 만듬
-							shadowNode->__UpdateThemeComponent();
-						}
+		// custom image
+		if (m_ComponentType == MkWindowThemeData::eCT_None)
+		{
+			MkPanel* panel = PanelExist(CustomImagePanelName) ? GetPanel(CustomImagePanelName) : &CreatePanel(CustomImagePanelName);
+			if (panel != NULL)
+			{
+				if (panel->SetTexture(m_CustomImagePath, m_CustomSubsetOrSequenceName, ts.fullTime, 0.) && panel->GetTextureSize().IsPositive())
+				{
+					m_FormState = MkWindowThemeFormData::eS_None; // custom image는 form type이 존재하지 않음
+					m_UpdateCommand.Clear(eUC_FormState);
+
+					ok = true;
+				}
+			}
+		}
+		// component
+		else
+		{
+			const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ComponentType);
+			if (formData != NULL)
+			{
+				ok = formData->AttachForm(this, ts.fullTime);
+			}
+		}
+
+		if (ok)
+		{
+			if (m_UseShadow)
+			{
+				if (ChildExist(ShadowNodeName))
+				{
+					MkWindowThemedNode* shadowNode = dynamic_cast<MkWindowThemedNode*>(GetChildNode(ShadowNodeName));
+					if (shadowNode != NULL)
+					{
+						shadowNode->SetThemeName(m_ThemeName);
 					}
 				}
 				else
 				{
-					RemoveChildNode(ShadowNodeName);
-				}
+					MkWindowThemedNode* shadowNode = CreateChildNode(this, ShadowNodeName);
+					if (shadowNode != NULL)
+					{
+						shadowNode->SetLocalDepth(0.1f); // form panel들과 겹치는 것을 피하기 위해 0.1f만큼 뒤에 위치
+						shadowNode->SetThemeName(m_ThemeName);
+						shadowNode->SetComponentType(MkWindowThemeData::eCT_ShadowBox);
+						shadowNode->SetFormState(MkWindowThemeFormData::eS_Default);
 
-				return true;
+						// shadow는 __UpdateRegion()에서 바로 영역 계산을 요구하기때문에 정상적인 Update()라인을 통한
+						// 생성을 따르지 않고 바로 panel들을 만듬
+						shadowNode->__UpdateThemeComponent();
+					}
+				}
 			}
+			return true;
 		}
 	}
 
 	MkWindowThemeFormData::RemoveForm(this);
+	DeletePanel(CustomImagePanelName);
 	RemoveChildNode(ShadowNodeName);
 	return false;
 }
@@ -210,13 +256,37 @@ bool MkWindowThemedNode::__UpdateRegion(void)
 
 	if (MK_STATIC_RES.GetWindowThemeSet().SetCurrentTheme(m_ThemeName))
 	{
-		const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ComponentType);
-		if (formData != NULL)
-		{
-			formData->SetClientSizeToForm(this, m_ClientRect.size, m_ClientRect.position, m_WindowRect.size);
+		bool ok = false;
+		MkFloatRect oldClient = m_ClientRect;
 
-			// 자식 visual pattern node 재정렬
-			if (!m_ChildrenNode.Empty())
+		// custom image
+		if (m_ComponentType == MkWindowThemeData::eCT_None)
+		{
+			MkPanel* panel = GetPanel(CustomImagePanelName);
+			if (panel != NULL)
+			{
+				m_ClientRect.position.Clear();
+				m_ClientRect.size = panel->GetTextureSize();
+				m_WindowRect = m_ClientRect;
+				ok = true;
+			}
+		}
+		// component
+		else
+		{
+			const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ComponentType);
+			if (formData != NULL)
+			{
+				formData->SetClientSizeToForm(this, m_ClientRect.size, m_ClientRect.position, m_WindowRect.size);
+				ok = true;
+			}
+		}
+
+		// client rect에 변경이 발생하면 자식 visual pattern node 재정렬
+		// local transform만 갱신하는 것이므로 node간 선후는 관계 없음(자식들 먼저 갱신하고 부모는 나중에 해도 됨)
+		if (ok)
+		{
+			if ((!m_ChildrenNode.Empty()) && (m_ClientRect != oldClient))
 			{
 				MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
 				MK_STL_LOOP(looper)

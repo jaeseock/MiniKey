@@ -38,36 +38,18 @@ public:
 	inline const MkFloat2& GetAlignmentOffset(void) const { return m_AlignmentOffset; }
 
 	//------------------------------------------------------------------------------------------------//
+	// attribute
+	//------------------------------------------------------------------------------------------------//
+
+	// 입력 허용여부. default는 false
+	inline void SetAcceptInput(bool enable) { m_Attribute.Assign(ePA_SNA_AcceptInput, enable); }
+	inline bool GetAcceptInput(void) const { return m_Attribute[ePA_SNA_AcceptInput]; }
+
+	//------------------------------------------------------------------------------------------------//
 	// proceed
 	//------------------------------------------------------------------------------------------------//
 
 	virtual void Update(double currTime = 0.);
-
-	//------------------------------------------------------------------------------------------------//
-	// attribute. data에 저장되는 값이므로 대역폭 확보 중요
-	//------------------------------------------------------------------------------------------------//
-
-	enum eVisualPatternNodeAttribute
-	{
-		// 입력 허용 여부
-		eAT_AcceptInput = eAT_SceneNodeBandwidth,
-
-		// 4bit 대역폭 확보
-		eAT_VisualPatternNodeBandwidth = eAT_SceneNodeBandwidth + 4
-	};
-
-	// 입력 허용여부. default는 false
-	inline void SetAcceptInput(bool enable) { m_Attribute.Assign(eAT_AcceptInput, enable); }
-	inline bool GetAcceptInput(void) const { return m_Attribute[eAT_AcceptInput]; }
-
-	//------------------------------------------------------------------------------------------------//
-	// event
-	//------------------------------------------------------------------------------------------------//
-
-	enum eVisualPatternNodeEventType
-	{
-		eET_VisualPatternNodeBandwidth = eET_SceneNodeBandwidth, // 없음
-	};
 
 	MkVisualPatternNode(const MkHashStr& name);
 	virtual ~MkVisualPatternNode() {}

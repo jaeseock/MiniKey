@@ -46,7 +46,7 @@ public:
 	// »ý¼ºÀÚ
 	//------------------------------------------------------------------------------------------------//
 
-	MkHashStr(void) {}
+	MkHashStr(void);
 	MkHashStr(const MkHashStr& str);
 	MkHashStr(const MkStr& str);
 	MkHashStr(const MkPathName& str);

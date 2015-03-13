@@ -489,22 +489,30 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="Node"
+					Name="Scene node"
 					>
+					<File
+						RelativePath=".\Source\MkPA_MkSceneNode.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkSceneNode.h"
+						>
+					</File>
 					<Filter
-						Name="0. Scene node"
+						Name="Window manager node"
 						>
 						<File
-							RelativePath=".\Source\MkPA_MkSceneNode.cpp"
+							RelativePath=".\Source\MkPA_MkWindowManagerNode.cpp"
 							>
 						</File>
 						<File
-							RelativePath="..\..\Include\MkPA_MkSceneNode.h"
+							RelativePath="..\..\Include\MkPA_MkWindowManagerNode.h"
 							>
 						</File>
 					</Filter>
 					<Filter
-						Name="1. Window visual pattern node"
+						Name="Visual pattern node"
 						>
 						<File
 							RelativePath=".\Source\MkPA_MkVisualPatternNode.cpp"
@@ -514,42 +522,58 @@
 							RelativePath="..\..\Include\MkPA_MkVisualPatternNode.h"
 							>
 						</File>
-					</Filter>
-					<Filter
-						Name="3. Window themed node"
-						>
-						<File
-							RelativePath=".\Source\MkPA_MkWindowThemedNode.cpp"
+						<Filter
+							Name="Window tag node"
 							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkPA_MkWindowThemedNode.h"
+							<File
+								RelativePath=".\Source\MkPA_MkWindowTagNode.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\Include\MkPA_MkWindowTagNode.h"
+								>
+							</File>
+						</Filter>
+						<Filter
+							Name="Window themed node"
 							>
-						</File>
-					</Filter>
-					<Filter
-						Name="2. Window tag node"
-						>
-						<File
-							RelativePath=".\Source\MkPA_MkWindowTagNode.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkPA_MkWindowTagNode.h"
-							>
-						</File>
-					</Filter>
-					<Filter
-						Name="4. Window base node"
-						>
-						<File
-							RelativePath=".\Source\MkPA_MkWindowBaseNode.cpp"
-							>
-						</File>
-						<File
-							RelativePath="..\..\Include\MkPA_MkWindowBaseNode.h"
-							>
-						</File>
+							<File
+								RelativePath=".\Source\MkPA_MkWindowThemedNode.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\Include\MkPA_MkWindowThemedNode.h"
+								>
+							</File>
+							<Filter
+								Name="Window base node"
+								>
+								<File
+									RelativePath=".\Source\MkPA_MkWindowBaseNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkWindowBaseNode.h"
+									>
+								</File>
+								<Filter
+									Name="Window control node"
+									>
+								</Filter>
+								<Filter
+									Name="Root window style node"
+									>
+									<File
+										RelativePath=".\Source\MkPA_MkRootWindowStyleNode.cpp"
+										>
+									</File>
+									<File
+										RelativePath="..\..\Include\MkPA_MkRootWindowStyleNode.h"
+										>
+									</File>
+								</Filter>
+							</Filter>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

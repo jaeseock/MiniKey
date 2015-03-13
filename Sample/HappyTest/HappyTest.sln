@@ -15,6 +15,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EmptyWin32Project", "EmptyW
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HashMapProfiler", "HashMapProfiler\HashMapProfiler.vcproj", "{184210EC-EB62-441A-8ECF-25FDA39E4D2C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3_ReadAndSaveDataNode", "3_ReadAndSaveDataNode\3_ReadAndSaveDataNode.vcproj", "{8351E00F-2CC0-45B9-8AED-88A3021A44A1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4_CreateDataNode", "4_CreateDataNode\4_CreateDataNode.vcproj", "{30746E75-6C67-4FA2-AAA3-CBF54381F657}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -64,6 +68,18 @@ Global
 		{184210EC-EB62-441A-8ECF-25FDA39E4D2C}.Release|Win32.Build.0 = Release|Win32
 		{184210EC-EB62-441A-8ECF-25FDA39E4D2C}.Shipping|Win32.ActiveCfg = Release|Win32
 		{184210EC-EB62-441A-8ECF-25FDA39E4D2C}.Shipping|Win32.Build.0 = Release|Win32
+		{8351E00F-2CC0-45B9-8AED-88A3021A44A1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8351E00F-2CC0-45B9-8AED-88A3021A44A1}.Debug|Win32.Build.0 = Debug|Win32
+		{8351E00F-2CC0-45B9-8AED-88A3021A44A1}.Release|Win32.ActiveCfg = Release|Win32
+		{8351E00F-2CC0-45B9-8AED-88A3021A44A1}.Release|Win32.Build.0 = Release|Win32
+		{8351E00F-2CC0-45B9-8AED-88A3021A44A1}.Shipping|Win32.ActiveCfg = Release|Win32
+		{8351E00F-2CC0-45B9-8AED-88A3021A44A1}.Shipping|Win32.Build.0 = Release|Win32
+		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Debug|Win32.Build.0 = Debug|Win32
+		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Release|Win32.ActiveCfg = Release|Win32
+		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Release|Win32.Build.0 = Release|Win32
+		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Shipping|Win32.ActiveCfg = Release|Win32
+		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

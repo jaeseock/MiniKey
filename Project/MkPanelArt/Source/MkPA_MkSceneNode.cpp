@@ -219,9 +219,10 @@ MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name, const MkSceneNode* targ
 	return panel;
 }
 
-bool MkSceneNode::PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth, const MkBitField32& attrCondition) const
+bool MkSceneNode::PickPanel
+(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth, const MkBitField32& attrCondition) const
 {
-	if (m_TotalAABR.CheckIntersection(worldPoint))
+	if (GetVisible() && m_TotalAABR.CheckIntersection(worldPoint))
 	{
 		// attribute를 만족하면 직계 panel 상대로 검사
 		if (m_Attribute.CheckInclusion(attrCondition) && m_PanelAABR.CheckIntersection(worldPoint))
@@ -254,11 +255,7 @@ bool MkSceneNode::PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoin
 			MkConstHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
 			MK_STL_LOOP(looper)
 			{
-				const MkSceneNode* node = looper.GetCurrentField();
-				if (node->GetVisible())
-				{
-					node->PickPanel(buffer, worldPoint, startDepth, attrCondition);
-				}
+				looper.GetCurrentField()->PickPanel(buffer, worldPoint, startDepth, attrCondition);
 			}
 		}
 	}
@@ -325,10 +322,13 @@ MkSceneNode::MkSceneNode(const MkHashStr& name) : MkSingleTypeTreePattern<MkScen
 
 void MkSceneNode::__BuildSceneNodeTypeHierarchy(void)
 {
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_SceneNode, ePA_SNT_WindowManagerNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_SceneNode, ePA_SNT_VisualPatternNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_VisualPatternNode, ePA_SNT_WindowTagNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_VisualPatternNode, ePA_SNT_WindowThemedNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowThemedNode, ePA_SNT_WindowBaseNode);
+
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_RootWindowStyleNode);
 }
 /*
 void MkSceneNode::__GenerateBuildingTemplate(void)
@@ -376,15 +376,24 @@ void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray
 	}
 }
 
-void MkSceneNode::SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument)
+void MkSceneNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument)
 {
 	if (!m_ChildrenNode.Empty())
 	{
 		MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
 		MK_STL_LOOP(looper)
 		{
-			looper.GetCurrentField()->SendRootToLeafDirectionNodeEvent(eventType, argument);
+			looper.GetCurrentField()->SendNodeCommandTypeEvent(eventType, argument);
 		}
+	}
+}
+
+void MkSceneNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDeque<MkHashStr>& path, MkDataNode& argument)
+{
+	if (m_ParentNodePtr != NULL)
+	{
+		path.PushFront(GetNodeName());
+		m_ParentNodePtr->SendNodeReportTypeEvent(eventType, path, argument);
 	}
 }
 

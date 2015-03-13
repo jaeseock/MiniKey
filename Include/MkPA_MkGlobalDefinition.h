@@ -15,10 +15,13 @@ enum ePA_MaterialBlendType
 enum ePA_SceneNodeType
 {
 	ePA_SNT_SceneNode = 0, // MkSceneNode
+	ePA_SNT_WindowManagerNode, // MkWindowManagerNode
 	ePA_SNT_VisualPatternNode, // MkVisualPatternNode
 	ePA_SNT_WindowTagNode, // MkWindowTagNode
 	ePA_SNT_WindowThemedNode, // MkWindowThemedNode
-	ePA_SNT_WindowBaseNode // MkWindowBaseNode
+	ePA_SNT_WindowBaseNode, // MkWindowBaseNode
+
+	ePA_SNT_RootWindowStyleNode // MkRootWindowStyleNode
 
 	//ePA_SNT_ControlWindowNodeBegin,
 
@@ -31,13 +34,34 @@ enum ePA_SceneNodeType
 	//ePA_SNT_ControlWindowNodeEnd
 };
 
-
-// theme
-enum ePA_PieceSetType
+// scene node attribute
+// (NOTE) data에 저장되는 값
+enum ePA_SceneNodeAttribute
 {
-	ePA_PST_None = -1,
-	ePA_PST_Default = 0,
-	ePA_PST_Shadow
+	// MkSceneNode
+	ePA_SNA_Visible = 0,
+
+	// MkVisualPatternNode
+	ePA_SNA_AcceptInput,
+
+	// MkWindowBaseNode
+	ePA_SNA_Enable
+};
+
+// scene node event
+enum ePA_SceneNodeEvent
+{
+	// MkWindowThemedNode
+	ePA_SNE_ChangeTheme = 0,
+
+	// MkWindowBaseNode
+	ePA_SNE_Activate,
+	ePA_SNE_Deactivate,
+	ePA_SNE_OnFocus,
+	ePA_SNE_LostFocus,
+
+	// MkRootWindowStyleNode
+	ePA_SNE_CloseWindow,
 };
 
 /*

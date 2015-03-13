@@ -76,6 +76,9 @@ public:
 	// component form data 반환
 	inline const MkWindowThemeFormData* GetFormData(eComponentType compType) const { return m_Components.Exist(compType) ? &m_Components[compType] : NULL; }
 
+	// 해당 compType에 대한 form type 설정 반환
+	static MkWindowThemeFormData::eFormType GetFormTypeOfComponent(eComponentType compType);
+
 	~MkWindowThemeData() { Clear(); }
 
 protected:

@@ -30,6 +30,8 @@
 #include "MkPA_MkSceneNode.h"
 #include "MkPA_MkWindowTagNode.h"
 #include "MkPA_MkWindowThemedNode.h"
+#include "MkPA_MkWindowBaseNode.h"
+#include "MkPA_MkWindowManagerNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -83,12 +85,41 @@ public:
 		mp.SetLocalDepth(1000.f);
 		mp.SetLocalPosition(MkFloat2(120.f, 50.f));
 
+		// window mgr
+		MkWindowManagerNode* winMgrNode = MkWindowManagerNode::CreateChildNode(m_RootNode, L"WinMgr");
+		winMgrNode->SetDepthBandwidth(1000.f);
+
+		// window A
+		/*
+		// window A : title
+		MkWindowBaseNode* winARoot = MkWindowBaseNode::CreateChildNode(NULL, L"Win A Root");
+		winARoot->SetLocalPosition(MkFloat2(500.f, 300.f));
+		winARoot->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		winARoot->SetComponentType(MkWindowThemeData::eCT_Title);
+		winARoot->SetShadowUsage(false);
+		winARoot->SetClientSize(MkFloat2(300.f, 22.f));
+		winARoot->SetFormState(MkWindowThemeFormData::eS_Back);
+		winARoot->SetAcceptInput(true);
+
+		// window A : bg
+		MkWindowBaseNode* winABG = MkWindowBaseNode::CreateChildNode(mainNode, L"Themed BG");
+		winABG->SetLocalPosition(MkFloat2(500.f, 100.f));
+		winABG->SetLocalDepth(2.f);
+		winABG->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		winABG->SetComponentType(MkWindowThemeData::eCT_DefaultBox);
+		winABG->SetShadowUsage(true);
+		winABG->SetClientSize(MkFloat2(300.f, 200.f));
+		winABG->SetFormState(MkWindowThemeFormData::eS_Default);
+		winABG->SetAcceptInput(true);
+		*/
+
 		// BG
 		MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
 		tbgNode->SetLocalPosition(MkFloat2(500.f, 100.f));
 		tbgNode->SetLocalDepth(2.f);
 		tbgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
 		tbgNode->SetComponentType(MkWindowThemeData::eCT_DefaultBox);
+		//tbgNode->SetCustomImagePath(L"Image\\s02.jpg");
 		tbgNode->SetShadowUsage(true);
 		tbgNode->SetClientSize(MkFloat2(300.f, 200.f));
 		tbgNode->SetFormState(MkWindowThemeFormData::eS_Default);
@@ -132,7 +163,7 @@ public:
 				if (MK_INPUT_MGR.GetMouseLeftButtonReleased())
 				{
 					MkBitField32 attr;
-					attr.Set(MkVisualPatternNode::eAT_AcceptInput);
+					attr.Set(ePA_SNA_AcceptInput);
 					MkArray<MkPanel*> buffer;
 					if (mainNode->PickPanel(buffer, MkFloat2(static_cast<float>(mp.x), static_cast<float>(mp.y)), 0., attr))
 					{

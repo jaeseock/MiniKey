@@ -203,7 +203,10 @@ public:
 	// 해당 배열 포함여부
 	inline bool Exist(const MkArraySection& section, const MkArray<DataType>& values) const { return (FindFirstInclusion(section, values) != MKDEF_ARRAY_ERROR); }
 
-	// 자신과 targets를 비교하여 자신만 소유한 값은 sourceOnly, 공동 소유값은 intersection, target만 소유한 값은 targetOnly에 넣음
+	// 자신과 targets를 비교하여 각각의 차집합과 교집합을 반환
+	// sourceOnly : 차집합(source - targets)
+	// intersection : 교집합
+	// targetOnly : 차집합(targets - source)
 	// (NOTE) 값 중복검사를 하지 않으므로 자신과 targets에 들어 있는 값들은 해당 배열에서는 유일해야 함
 	inline void IntersectionTest
 		(const MkArray<DataType>& targets, MkArray<DataType>& sourceOnly, MkArray<DataType>& intersection, MkArray<DataType>& targetOnly) const
@@ -252,6 +255,71 @@ public:
 			if (enable[i])
 			{
 				targetOnly.PushBack(targets[i]);
+			}
+		}
+	}
+
+	// 차집합만 필요한 경우(source - targets)
+	inline void GetDefferenceOfSets(const MkArray<DataType>& targets, MkArray<DataType>& sourceOnly) const
+	{
+		if (m_ValueSize == 0)
+			return;
+
+		unsigned int targetSize = targets.GetSize();
+		if (targetSize == 0)
+		{
+			sourceOnly = *this;
+			return;
+		}
+
+		MkArray<bool> enable;
+		enable.Fill(targetSize, true);
+
+		sourceOnly.Reserve(m_ValueSize);
+		
+		for (unsigned int i=0; i<m_ValueSize; ++i)
+		{
+			bool notFound = true;
+			const DataType& currSrc = m_Element[i];
+			for (unsigned int j=0; j<targetSize; ++j)
+			{
+				if (enable[j] && (currSrc == targets[j])) // 일치. 탐색 리스트에서 제거
+				{
+					enable[j] = false;
+					notFound = false;
+					break;
+				}
+			}
+			if (notFound)
+			{
+				sourceOnly.PushBack(currSrc);
+			}
+		}
+	}
+
+	// 교집합만 필요한 경우
+	inline void GetIntersectionOfSets(const MkArray<DataType>& targets, MkArray<DataType>& intersection) const
+	{
+		unsigned int targetSize = targets.GetSize();
+		if ((m_ValueSize == 0) || (targetSize == 0))
+			return;
+
+		MkArray<bool> enable;
+		enable.Fill(targetSize, true);
+
+		intersection.Reserve(GetMin<unsigned int>(m_ValueSize, targetSize));
+		
+		for (unsigned int i=0; i<m_ValueSize; ++i)
+		{
+			const DataType& currSrc = m_Element[i];
+			for (unsigned int j=0; j<targetSize; ++j)
+			{
+				if (enable[j] && (currSrc == targets[j])) // 일치. 탐색 리스트에서 제거하며 intersection에 등록
+				{
+					intersection.PushBack(currSrc);
+					enable[j] = false;
+					break;
+				}
 			}
 		}
 	}

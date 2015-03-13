@@ -13,6 +13,8 @@
 // 하나의 MkWindowThemedNode에 하나의 theme component 설정 가능
 // tag 추가는 제한 없음
 //
+// theme가 존재하면 component 대신 custom image 설정 가능
+//
 // ex>
 //	MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
 //	tbgNode->SetLocalPosition(MkFloat2(500.f, 100.f));
@@ -41,6 +43,7 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// theme component
+	// (NOTE) component와 custom image는 배타적. 한 쪽이 설정되면 다른 쪽의 설정은 삭제 됨
 	//------------------------------------------------------------------------------------------------//
 
 	// themeName이 empty면 삭제
@@ -48,9 +51,19 @@ public:
 	inline const MkHashStr& GetThemeName(void) const { return m_ThemeName; }
 
 	// componentType이 MkWindowThemeData::eCT_None이면 삭제
+	// (NOTE) custom image 설정은 삭제 됨
 	void SetComponentType(MkWindowThemeData::eComponentType componentType);
 	inline MkWindowThemeData::eComponentType GetComponentType(void) const { return m_ComponentType; }
 
+	// custom image 설정
+	// (NOTE) component type 설정은 삭제 됨
+	void SetCustomImagePath(const MkHashStr& imagePath);
+	inline const MkHashStr& GetCustomImagePath(void) const { return m_CustomImagePath; }
+
+	void SetCustomImageSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName);
+	inline const MkHashStr& GetCustomImageSubsetOrSequenceName(void) const { return m_CustomSubsetOrSequenceName; }
+
+	// 그림자 사용 여부
 	void SetShadowUsage(bool enable);
 	inline bool GetShadowUsage(void) const { return m_UseShadow; }
 
@@ -60,6 +73,7 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// region
+	// (NOTE) custom image type이거나 component의 unit type이 image일 경우 의미 없음
 	//------------------------------------------------------------------------------------------------//
 
 	void SetClientSize(const MkFloat2& clientSize);
@@ -77,32 +91,15 @@ public:
 	// eFT_SingleUnit : eS_Single
 	// eFT_DualUnit : eS_Back, eS_Front
 	// eFT_QuadUnit : eS_Normal, eS_Focus, eS_Pushing, eS_Disable
-	// (NOTE) eS_None일 경우 무시
+	// (NOTE) custom image를 사용중이거나 eS_None일 경우 무시
 	void SetFormState(MkWindowThemeFormData::eState formState);
 	inline MkWindowThemeFormData::eState GetFormState(void) const { return m_FormState; }
-	
-	//------------------------------------------------------------------------------------------------//
-	// attribute. data에 저장되는 값이므로 대역폭 확보 중요
-	//------------------------------------------------------------------------------------------------//
-
-	enum eWindowThemedNodeAttribute
-	{
-		eAT_WindowThemedNodeBandwidth = eAT_VisualPatternNodeBandwidth // 없음. 대역폭 확보 안함
-	};
 
 	//------------------------------------------------------------------------------------------------//
 	// event
 	//------------------------------------------------------------------------------------------------//
 
-	enum eWindowThemedNodeEventType
-	{
-		// theme 변경
-		eET_ChangeTheme = eET_VisualPatternNodeBandwidth,
-
-		eET_WindowThemedNodeBandwidth
-	};
-
-	virtual void SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument);
+	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -141,9 +138,11 @@ protected:
 
 protected:
 
-	// theme component
+	// theme
 	MkHashStr m_ThemeName;
 	MkWindowThemeData::eComponentType m_ComponentType;
+	MkHashStr m_CustomImagePath;
+	MkHashStr m_CustomSubsetOrSequenceName;
 	bool m_UseShadow;
 
 	// form state
@@ -153,5 +152,6 @@ public:
 
 	static const MkHashStr NodeNamePrefix;
 
+	static const MkHashStr CustomImagePanelName;
 	static const MkHashStr ShadowNodeName;
 };

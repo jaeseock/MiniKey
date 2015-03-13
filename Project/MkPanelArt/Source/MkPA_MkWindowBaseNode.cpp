@@ -1,12 +1,12 @@
 
 #include "MkCore_MkCheck.h"
-#include "MkCore_MkTimeManager.h"
 
 //#include "MkPA_MkProjectDefinition.h"
-#include "MkPA_MkTextNode.h"
-#include "MkPA_MkWindowTagNode.h"
-#include "MkPA_MkWindowThemedNode.h"
 #include "MkPA_MkWindowBaseNode.h"
+
+
+//const MkHashStr MkWindowBaseNode::IconTagNodeName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"IconTag";
+//const MkHashStr MkWindowBaseNode::CaptionTagNodeName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"CaptionTag";
 
 
 //------------------------------------------------------------------------------------------------//
@@ -20,60 +20,113 @@ MkWindowBaseNode* MkWindowBaseNode::CreateChildNode(MkSceneNode* parentNode, con
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkWindowBaseNode::PickWindowBaseNode(MkArray<MkWindowBaseNode*>& buffer, const MkFloat2& worldPoint, float startDepth) const
+void MkWindowBaseNode::UpdateCursorState
+(const MkInt2& position, const MkInt2& movement, bool cursorInside, eCursorState leftCS, eCursorState middleCS, eCursorState rightCS, int wheelDelta)
 {
-	buffer.Clear();
-
-	MkArray<MkPanel*> panelBuffer;
-	MkBitField32 filterAttr;
-	filterAttr.Set(eAT_AcceptInput); // input을 받아들이는 node만 대상으로 함
-
-	// panel picking
-	if (PickPanel(panelBuffer, worldPoint, startDepth, filterAttr))
+	if (_IsQuadForm())
 	{
-		buffer.Reserve(panelBuffer.GetSize());
-
-		MK_INDEXING_LOOP(panelBuffer, i)
+		if (cursorInside)
 		{
-			// MkWindowBaseNode 파생 객체만 대상으로 함
-			MkSceneNode* targetNode = panelBuffer[0]->GetParentNode()->FindNearestDerivedNode(ePA_SNT_WindowBaseNode);
-			MkWindowBaseNode* winBaseNode = dynamic_cast<MkWindowBaseNode*>(targetNode);
-			if ((winBaseNode != NULL) && (buffer.FindFirstInclusion(MkArraySection(0), winBaseNode)))
+			switch (leftCS)
 			{
-				buffer.PushBack(winBaseNode);
+			case eCS_None:
+			case eCS_Released:
+				SetFormState(MkWindowThemeFormData::eS_Focus);
+				break;
+
+			case eCS_Pushing:
+			case eCS_Pressed:
+			case eCS_DoubleClicked:
+				SetFormState(MkWindowThemeFormData::eS_Pushing);
+				break;
 			}
 		}
+		else
+		{
+			SetFormState(MkWindowThemeFormData::eS_Normal);
+		}
 	}
-	return !buffer.Empty();
 }
 
-//------------------------------------------------------------------------------------------------//
-/*
-void MkWindowBaseNode::SendRootToLeafDirectionNodeEvent(int eventType, MkDataNode& argument)
+void MkWindowBaseNode::Activate(void)
+{
+	SetFormState(MkWindowThemeFormData::eS_Default);
+}
+
+void MkWindowBaseNode::Deactivate(void)
+{
+	SetFormState(MkWindowThemeFormData::eS_Default);
+}
+
+void MkWindowBaseNode::OnFocus(void)
+{
+	if (_IsDualForm())
+	{
+		SetFormState(MkWindowThemeFormData::eS_Front);
+	}
+}
+
+void MkWindowBaseNode::LostFocus(void)
+{
+	if (_IsDualForm())
+	{
+		SetFormState(MkWindowThemeFormData::eS_Back);
+	}
+}
+
+void MkWindowBaseNode::GetWindowPath(MkArray<MkHashStr>& path) const
+{
+	MkArray<MkHashStr> buffer(GetDepthFromRootNode() + 1);
+	const MkSceneNode* node = this;
+
+	while (true)
+	{
+		if (node == NULL) // MkWindowManagerNode 객체를 만나지 못한 상태로 root 도달. error
+			return;
+
+		if (node->IsDerivedFrom(ePA_SNT_WindowManagerNode)) // 정상 종료
+			break;
+
+		buffer.PushBack(GetNodeName());
+		node = node->GetParentNode();
+	}
+
+	buffer.ReverseOrder(); // root-> leaf 순서가 되도록 뒤집음
+	path = buffer;
+}
+
+void MkWindowBaseNode::SetEnable(bool enable)
+{
+	if (_IsQuadForm())
+	{
+		bool oldEnable = GetEnable();
+		if (oldEnable && (!enable)) // turn off
+		{
+			SetFormState(MkWindowThemeFormData::eS_Disable);
+		}
+		else if ((!oldEnable) && enable) // turn on
+		{
+			SetFormState(MkWindowThemeFormData::eS_Normal);
+		}
+	}
+
+	m_Attribute.Assign(ePA_SNA_Enable, enable);
+}
+
+void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument)
 {
 	switch (eventType)
 	{
-	case eET_ChangeTheme:
-		{
-			MkArray<MkHashStr> names;
-			if (argument.GetDataEx(CHANGE_THEME_ARG_KEY, names) && (names.GetSize() == 2))
-			{
-				if (names[0].Empty() || (names[0] == m_ThemeName))
-				{
-					SetThemeName(names[1]);
-				}
-			}
-		}
-		break;
+	case ePA_SNE_Activate: Activate(); break;
+	case ePA_SNE_Deactivate: Deactivate(); break;
+	case ePA_SNE_OnFocus: OnFocus(); break;
+	case ePA_SNE_LostFocus: LostFocus(); break;
 	}
 	
-	MkVisualPatternNode::SendRootToLeafDirectionNodeEvent(eventType, argument);
+	MkWindowThemedNode::SendNodeCommandTypeEvent(eventType, argument);
 }
-*/
-void MkWindowBaseNode::Clear(void)
-{
-	MkWindowThemedNode::Clear();
-}
+
+//------------------------------------------------------------------------------------------------//
 
 MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(name)
 {
