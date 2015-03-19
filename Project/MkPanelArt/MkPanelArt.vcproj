@@ -556,19 +556,23 @@
 									RelativePath="..\..\Include\MkPA_MkWindowBaseNode.h"
 									>
 								</File>
+								<File
+									RelativePath=".\Source\MkPA_MkWindowOpHelper.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkWindowOpHelper.h"
+									>
+								</File>
 								<Filter
 									Name="Window control node"
 									>
-								</Filter>
-								<Filter
-									Name="Root window style node"
-									>
 									<File
-										RelativePath=".\Source\MkPA_MkRootWindowStyleNode.cpp"
+										RelativePath=".\Source\MkPA_MkTitleBarControlNode.cpp"
 										>
 									</File>
 									<File
-										RelativePath="..\..\Include\MkPA_MkRootWindowStyleNode.h"
+										RelativePath="..\..\Include\MkPA_MkTitleBarControlNode.h"
 										>
 									</File>
 								</Filter>

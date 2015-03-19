@@ -328,7 +328,7 @@ void MkSceneNode::__BuildSceneNodeTypeHierarchy(void)
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_VisualPatternNode, ePA_SNT_WindowThemedNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowThemedNode, ePA_SNT_WindowBaseNode);
 
-	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_RootWindowStyleNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_TitleBarControlNode);
 }
 /*
 void MkSceneNode::__GenerateBuildingTemplate(void)
@@ -376,7 +376,7 @@ void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray
 	}
 }
 
-void MkSceneNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument)
+void MkSceneNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument)
 {
 	if (!m_ChildrenNode.Empty())
 	{
@@ -388,13 +388,43 @@ void MkSceneNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataN
 	}
 }
 
-void MkSceneNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDeque<MkHashStr>& path, MkDataNode& argument)
+void MkSceneNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDeque<MkHashStr>& path, MkDataNode* argument)
 {
 	if (m_ParentNodePtr != NULL)
 	{
 		path.PushFront(GetNodeName());
 		m_ParentNodePtr->SendNodeReportTypeEvent(eventType, path, argument);
 	}
+}
+
+void MkSceneNode::StartNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument)
+{
+	MkDeque<MkHashStr> path;
+	SendNodeReportTypeEvent(eventType, path, argument);
+}
+
+MkSceneNode* MkSceneNode::ConvertPathToSceneNode(const MkDeque<MkHashStr>& path)
+{
+	MkSceneNode* targetNode = this;
+	MK_INDEXING_LOOP(path, i)
+	{
+		targetNode = targetNode->GetChildNode(path[i]);
+		if (targetNode == NULL)
+			return NULL;
+	}
+	return targetNode;
+}
+
+MkSceneNode* MkSceneNode::ConvertPathToSceneNode(const MkArray<MkHashStr>& path)
+{
+	MkSceneNode* targetNode = this;
+	MK_INDEXING_LOOP(path, i)
+	{
+		targetNode = targetNode->GetChildNode(path[i]);
+		if (targetNode == NULL)
+			return NULL;
+	}
+	return targetNode;
 }
 
 /*

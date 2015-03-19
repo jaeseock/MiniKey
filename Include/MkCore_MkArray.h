@@ -132,7 +132,11 @@ public:
 	}
 
 	// 배열의 position 부터의 구간과 주어진 배열의 동일여부 반환
-	inline bool Equals(unsigned int position, const MkArray<DataType>& values) const { return Equals(position, values.GetMemoryBlockDescriptor()); }
+	inline bool Equals(unsigned int position, const MkArray<DataType>& values) const
+	{
+		return (IsValidIndex(position) && ((m_ValueSize - position) == values.GetSize())) ?
+			Equals(position, values.GetMemoryBlockDescriptor()) : false;
+	}
 
 	// 배열의 section에서 해당 블록들이 존재하는 최초 위치를, 없으면 MKDEF_ARRAY_ERROR 반환
 	inline unsigned int FindFirstInclusion(const MkArraySection& section, const MkArray< MkMemoryBlockDescriptor<DataType> >& descList) const

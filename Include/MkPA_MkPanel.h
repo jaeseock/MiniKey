@@ -155,6 +155,7 @@ public:
 	// deep copy로 자체적인 객체를 소유. 이는 GetTextNodePtr()로 얻은 객체의 변경이 원본 손상 없이 가능함을 의미(수정 후 추가적인 Build() 필요)
 	// restrictToPanelWidth가 true인 경우 panel size의 x로 가로 폭 제한
 	// (NOTE) SetTexture(), SetMaskingNode()와 배타적
+	// (NOTE) 기존 GetTextNodePtr() / BuildAndUpdateTextCache()로 세팅된 휘발성 정보는 모두 사라짐
 	// (TIP) 장문의 경우 restrictToPanelWidth = true, eAttachToLeftTop, eCutSource와 조합하면 일반적인 세로 스크롤 출력이 됨
 	void SetTextNode(const MkTextNode& source, bool restrictToPanelWidth = false);
 

@@ -87,8 +87,7 @@ protected:
 	}
 	_ActivationEvent;
 
-	MkWindowBaseNode* _GetWindowNodeByPath(const MkArray<MkHashStr>& path);
-
+	void _UpdateSceneNodePath(MkArray< MkArray<MkHashStr> >& targetPath, MkArray<MkSceneNode*>& nodeBuffer);
 	void _UpdateWindowPath(MkArray< MkArray<MkHashStr> >& targetPath, MkArray<MkWindowBaseNode*>& nodeBuffer);
 
 	// 자신과 하위 모든 node들 중 ePA_SNA_AcceptInput 속성을 가진 node들을 대상으로 picking을 실행해 검출된 node/path를
@@ -130,6 +129,7 @@ protected:
 	// 유효성을 갱신해 사용하기로 함
 	MkArray< MkArray<MkHashStr> > m_CursorOwnedWindowPath;
 	MkArray< MkArray<MkHashStr> > m_KeyInputTargetWindowPath;
+	MkArray< MkArray<MkHashStr> > m_LeftCursorDraggingNodePath;
 
 public:
 

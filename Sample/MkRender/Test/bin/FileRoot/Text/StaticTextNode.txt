@@ -91,3 +91,15 @@ Node "WindowTitle"
 		str Text = " ป๙วร!";
 	}
 }
+
+Node "Default::Caption::Small"
+{
+	str Type = "Small";
+	str Style = "WindowTitle:Front";
+}
+
+Node "Default::Caption::Large"
+{
+	str Type = "Medium";
+	str Style = "WindowTitle:Front";
+}

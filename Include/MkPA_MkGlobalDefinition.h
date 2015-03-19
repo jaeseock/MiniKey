@@ -21,7 +21,7 @@ enum ePA_SceneNodeType
 	ePA_SNT_WindowThemedNode, // MkWindowThemedNode
 	ePA_SNT_WindowBaseNode, // MkWindowBaseNode
 
-	ePA_SNT_RootWindowStyleNode // MkRootWindowStyleNode
+	ePA_SNT_TitleBarControlNode // MkTitleBarControlNode
 
 	//ePA_SNT_ControlWindowNodeBegin,
 
@@ -45,7 +45,8 @@ enum ePA_SceneNodeAttribute
 	ePA_SNA_AcceptInput,
 
 	// MkWindowBaseNode
-	ePA_SNA_Enable
+	ePA_SNA_Enable,
+	ePA_SNA_MovableByDragging
 };
 
 // scene node event
@@ -55,12 +56,21 @@ enum ePA_SceneNodeEvent
 	ePA_SNE_ChangeTheme = 0,
 
 	// MkWindowBaseNode
+	ePA_SNE_CursorLBtnPressed,
+	ePA_SNE_CursorLBtnReleased,
+	ePA_SNE_CursorLBtnDBClicked,
+	ePA_SNE_CursorMBtnPressed,
+	ePA_SNE_CursorMBtnReleased,
+	ePA_SNE_CursorMBtnDBClicked,
+	ePA_SNE_CursorRBtnPressed,
+	ePA_SNE_CursorRBtnReleased,
+	ePA_SNE_CursorRBtnDBClicked,
 	ePA_SNE_Activate,
 	ePA_SNE_Deactivate,
 	ePA_SNE_OnFocus,
 	ePA_SNE_LostFocus,
 
-	// MkRootWindowStyleNode
+	// MkTitleBarControlNode
 	ePA_SNE_CloseWindow,
 };
 

@@ -32,12 +32,15 @@
 #include "MkPA_MkWindowThemedNode.h"
 #include "MkPA_MkWindowBaseNode.h"
 #include "MkPA_MkWindowManagerNode.h"
+#include "MkPA_MkTitleBarControlNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
 //#include "MkS2D_MkScrollBarNode.h"
 //#include "MkS2D_MkEditBoxNode.h"
 //#include "MkS2D_MkTabWindowNode.h"
+
+#include "MkPA_MkWindowOpHelper.h"
 
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkStaticResourceContainer.h"
@@ -62,6 +65,7 @@ public:
 
 		MkSceneNode* subNode = m_RootNode->CreateChildNode(L"Sub");
 		subNode->CreatePanel(L"P").SetTexture(L"Image\\s03.jpg");
+		subNode->SetLocalDepth(2000.f);
 
 		MkSceneNode* bgNode = mainNode->CreateChildNode(L"BG");
 		bgNode->CreatePanel(L"P").SetTexture(L"Image\\rohan_screenshot.png");
@@ -89,20 +93,32 @@ public:
 		MkWindowManagerNode* winMgrNode = MkWindowManagerNode::CreateChildNode(m_RootNode, L"WinMgr");
 		winMgrNode->SetDepthBandwidth(1000.f);
 
-		// window A
+		// window A : title bar
+		MkTitleBarControlNode* titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBar");
+		titleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 300.f, true);
+		titleBar->SetIcon(MkWindowThemeData::eIT_Notice);
+		titleBar->SetCaption(L"코레가 타이틀데스!!!", eRAP_LeftCenter);
+		winMgrNode->AttachWindow(titleBar, MkWindowManagerNode::eLT_Normal);
+		winMgrNode->ActivateWindow(L"TitleBar");
+
+		titleBar->SetLocalPosition(MkFloat2(400.f, 600.f));
+		titleBar->SetLocalDepth(10.f); // tmp
+
 		/*
 		// window A : title
-		MkWindowBaseNode* winARoot = MkWindowBaseNode::CreateChildNode(NULL, L"Win A Root");
-		winARoot->SetLocalPosition(MkFloat2(500.f, 300.f));
+		MkWindowBaseNode* winARoot = MkWindowBaseNode::CreateChildNode(NULL, L"Win A title");
+		winARoot->SetLocalPosition(MkFloat2(400.f, 600.f));
 		winARoot->SetThemeName(MkWindowThemeData::DefaultThemeName);
 		winARoot->SetComponentType(MkWindowThemeData::eCT_Title);
 		winARoot->SetShadowUsage(false);
 		winARoot->SetClientSize(MkFloat2(300.f, 22.f));
 		winARoot->SetFormState(MkWindowThemeFormData::eS_Back);
 		winARoot->SetAcceptInput(true);
+		winARoot->SetMovableByDragging(true);
+		winMgrNode->AttachWindow(winARoot, MkWindowManagerNode::eLT_Normal);
 
 		// window A : bg
-		MkWindowBaseNode* winABG = MkWindowBaseNode::CreateChildNode(mainNode, L"Themed BG");
+		MkWindowBaseNode* winABG = MkWindowBaseNode::CreateChildNode(winARoot, L"Win A bg");
 		winABG->SetLocalPosition(MkFloat2(500.f, 100.f));
 		winABG->SetLocalDepth(2.f);
 		winABG->SetThemeName(MkWindowThemeData::DefaultThemeName);
@@ -112,14 +128,14 @@ public:
 		winABG->SetFormState(MkWindowThemeFormData::eS_Default);
 		winABG->SetAcceptInput(true);
 		*/
-
+		
 		// BG
 		MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
 		tbgNode->SetLocalPosition(MkFloat2(500.f, 100.f));
 		tbgNode->SetLocalDepth(2.f);
 		tbgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
 		tbgNode->SetComponentType(MkWindowThemeData::eCT_DefaultBox);
-		//tbgNode->SetCustomImagePath(L"Image\\s02.jpg");
+		//tbgNode->SetCustomForm(L"TestBtn01");
 		tbgNode->SetShadowUsage(true);
 		tbgNode->SetClientSize(MkFloat2(300.f, 200.f));
 		tbgNode->SetFormState(MkWindowThemeFormData::eS_Default);
@@ -134,8 +150,9 @@ public:
 		tsubNode->SetFormState(MkWindowThemeFormData::eS_Default);
 		tsubNode->SetAcceptInput(true);
 		tsubNode->SetAlignmentPosition(eRAP_LeftTop);
-
+		
 		// tag
+		/*
 		MkWindowTagNode* tagNode = MkWindowTagNode::CreateChildNode(tsubNode, L"TAG");
 		tagNode->SetLocalDepth(-1.f);
 		tagNode->SetIconPath(L"Default\\theme_default.png");
@@ -143,9 +160,10 @@ public:
 		tagNode->SetTextName(L"WindowTitle");
 		tagNode->SetAcceptInput(true);
 		tagNode->SetAlignmentPosition(eRAP_LeftCenter);
+		*/
 		
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
-		ds->SetSceneNode(mainNode);
+		ds->SetSceneNode(m_RootNode);
 
 		return true;
 	}
@@ -254,7 +272,7 @@ public:
 						psp.y += movement;
 						tp->SetPixelScrollPosition(psp);
 					}
-
+					
 					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
 					{
 						MkPanel* ip = m_TargetNode->GetPanel(L"ImgTest");
@@ -337,7 +355,7 @@ public:
 						if (MK_INPUT_MGR.GetKeyReleased(L'3'))
 						{
 							int comp = static_cast<int>(targetNode->GetComponentType()) + 1;
-							if (comp >= static_cast<int>(MkWindowThemeData::eCT_Max))
+							if (comp >= static_cast<int>(MkWindowThemeData::eCT_RegularMax))
 							{
 								comp = 1;
 							}

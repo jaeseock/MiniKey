@@ -1,12 +1,7 @@
 
 #include "MkCore_MkCheck.h"
 
-//#include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkWindowBaseNode.h"
-
-
-//const MkHashStr MkWindowBaseNode::IconTagNodeName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"IconTag";
-//const MkHashStr MkWindowBaseNode::CaptionTagNodeName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"CaptionTag";
 
 
 //------------------------------------------------------------------------------------------------//
@@ -23,9 +18,9 @@ MkWindowBaseNode* MkWindowBaseNode::CreateChildNode(MkSceneNode* parentNode, con
 void MkWindowBaseNode::UpdateCursorState
 (const MkInt2& position, const MkInt2& movement, bool cursorInside, eCursorState leftCS, eCursorState middleCS, eCursorState rightCS, int wheelDelta)
 {
-	if (_IsQuadForm())
+	if (cursorInside)
 	{
-		if (cursorInside)
+		if (_IsQuadForm())
 		{
 			switch (leftCS)
 			{
@@ -41,7 +36,31 @@ void MkWindowBaseNode::UpdateCursorState
 				break;
 			}
 		}
-		else
+
+		switch (leftCS)
+		{
+		case eCS_Released: StartNodeReportTypeEvent(ePA_SNE_CursorLBtnReleased, NULL); break;
+		case eCS_Pressed: StartNodeReportTypeEvent(ePA_SNE_CursorLBtnPressed, NULL); break;
+		case eCS_DoubleClicked: StartNodeReportTypeEvent(ePA_SNE_CursorLBtnDBClicked, NULL); break;
+		}
+
+		switch (middleCS)
+		{
+		case eCS_Released: StartNodeReportTypeEvent(ePA_SNE_CursorMBtnReleased, NULL); break;
+		case eCS_Pressed: StartNodeReportTypeEvent(ePA_SNE_CursorMBtnPressed, NULL); break;
+		case eCS_DoubleClicked: StartNodeReportTypeEvent(ePA_SNE_CursorMBtnDBClicked, NULL); break;
+		}
+
+		switch (rightCS)
+		{
+		case eCS_Released: StartNodeReportTypeEvent(ePA_SNE_CursorRBtnReleased, NULL); break;
+		case eCS_Pressed: StartNodeReportTypeEvent(ePA_SNE_CursorRBtnPressed, NULL); break;
+		case eCS_DoubleClicked: StartNodeReportTypeEvent(ePA_SNE_CursorRBtnDBClicked, NULL); break;
+		}
+	}
+	else
+	{
+		if (_IsQuadForm())
 		{
 			SetFormState(MkWindowThemeFormData::eS_Normal);
 		}
@@ -87,11 +106,11 @@ void MkWindowBaseNode::GetWindowPath(MkArray<MkHashStr>& path) const
 		if (node->IsDerivedFrom(ePA_SNT_WindowManagerNode)) // 정상 종료
 			break;
 
-		buffer.PushBack(GetNodeName());
+		buffer.PushBack(node->GetNodeName());
 		node = node->GetParentNode();
 	}
 
-	buffer.ReverseOrder(); // root-> leaf 순서가 되도록 뒤집음
+	buffer.ReverseOrder(); // root -> leaf 순서가 되도록 뒤집음
 	path = buffer;
 }
 
@@ -113,7 +132,7 @@ void MkWindowBaseNode::SetEnable(bool enable)
 	m_Attribute.Assign(ePA_SNA_Enable, enable);
 }
 
-void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument)
+void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument)
 {
 	switch (eventType)
 	{
@@ -126,11 +145,32 @@ void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, Mk
 	MkWindowThemedNode::SendNodeCommandTypeEvent(eventType, argument);
 }
 
+MkWindowBaseNode* MkWindowBaseNode::ConvertPathToWindowNode(const MkDeque<MkHashStr>& path)
+{
+	MkSceneNode* targetNode = ConvertPathToSceneNode(path);
+	return targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode) ? dynamic_cast<MkWindowBaseNode*>(targetNode) : NULL;
+}
+
+MkWindowBaseNode* MkWindowBaseNode::ConvertPathToWindowNode(const MkArray<MkHashStr>& path)
+{
+	MkSceneNode* targetNode = ConvertPathToSceneNode(path);
+	return targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode) ? dynamic_cast<MkWindowBaseNode*>(targetNode) : NULL;
+}
+
 //------------------------------------------------------------------------------------------------//
+
+void MkWindowBaseNode::Clear(void)
+{
+	m_WindowFrameType = MkWindowThemeData::eFT_None;
+
+	MkWindowThemedNode::Clear();
+}
 
 MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(name)
 {
 	SetEnable(true);
+
+	m_WindowFrameType = MkWindowThemeData::eFT_None;
 }
 
 //------------------------------------------------------------------------------------------------//

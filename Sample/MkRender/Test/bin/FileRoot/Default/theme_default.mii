@@ -58,9 +58,16 @@ Node "SelBlT_" : "T_Table" { int2 Position = (10, 111); }
 Node "SelRgT_" : "T_Table" { int2 Position = (20, 111); }
 Node "SelDT_" : "T_Table" { int2 Position = (30, 111); }
 
-Node "NotiI" : "T_16" { int2 Position = (0, 121); }
-Node "InfoI" : "T_16" { int2 Position = (17, 121); }
-Node "WarningI" : "T_16" { int2 Position = (34, 121); }
+Node "NotiI16" : "T_16" { int2 Position = (0, 121); }
+Node "InfoI16" : "T_16" { int2 Position = (17, 121); }
+Node "WarningI16" : "T_16" { int2 Position = (34, 121); }
+Node "WindowI16" : "T_16" { int2 Position = (51, 121); }
+Node "EditI16" : "T_16" { int2 Position = (68, 121); }
+Node "LArrowI16" : "T_16" { int2 Position = (85, 121); }
+Node "RArrowI16" : "T_16" { int2 Position = (102, 121); }
+Node "UArrowI16" : "T_16" { int2 Position = (119, 121); }
+Node "DArrowI16" : "T_16" { int2 Position = (136, 121); }
+Node "CheckI16" : "T_16" { int2 Position = (153, 121); }
 
 Node "BtnRI16N" : "T_16" { int2 Position = (0, 138); }
 Node "BtnRI16F" : "T_16" { int2 Position = (17, 138); }
@@ -77,8 +84,16 @@ Node "BtnBI16F" : "T_16" { int2 Position = (153, 138); }
 Node "BtnBI16P" : "T_16" { int2 Position = (170, 138); }
 Node "BtnBI16D" : "T_16" { int2 Position = (187, 138); }
 
-Node "IcnWinDef" : "T_22" { int2 Position = (0, 223); }
-Node "IcnWinEd" : "T_22" { int2 Position = (23, 223); }
+Node "NotiI22" : "T_22" { int2 Position = (0, 223); }
+Node "InfoI22" : "T_22" { int2 Position = (23, 223); }
+Node "WarningI22" : "T_22" { int2 Position = (46, 223); }
+Node "WindowI22" : "T_22" { int2 Position = (69, 223); }
+Node "EditI22" : "T_22" { int2 Position = (92, 223); }
+Node "LArrowI22" : "T_22" { int2 Position = (115, 223); }
+Node "RArrowI22" : "T_22" { int2 Position = (138, 223); }
+Node "UArrowI22" : "T_22" { int2 Position = (161, 223); }
+Node "DArrowI22" : "T_22" { int2 Position = (184, 223); }
+Node "CheckI22" : "T_22" { int2 Position = (207, 223); }
 
 Node "BtnRI22N" : "T_22" { int2 Position = (0, 246); }
 Node "BtnRI22F" : "T_22" { int2 Position = (23, 246); }

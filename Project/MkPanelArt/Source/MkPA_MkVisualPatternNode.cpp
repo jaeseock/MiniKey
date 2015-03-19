@@ -56,6 +56,8 @@ void MkVisualPatternNode::__UpdateAlignment(const MkVisualPatternNode* parentNod
 
 void MkVisualPatternNode::__UpdateAlignment(void)
 {
+	m_UpdateCommand.Clear(eUC_Alignment);
+
 	if ((m_ParentNodePtr != NULL) && m_ParentNodePtr->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 	{
 		const MkVisualPatternNode* parentNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);

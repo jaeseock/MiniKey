@@ -28,60 +28,48 @@ bool MkWindowThemeSet::SetUp(const MkDataNode& node)
 			return false;
 	}
 
-	SetCurrentTheme(MkWindowThemeData::DefaultThemeName);
-
 	MK_DEV_PANEL.MsgToLog(L"", false);
 	return true;
 }
 
-bool MkWindowThemeSet::SetCurrentTheme(const MkHashStr& themeName)
+const MkWindowThemeFormData* MkWindowThemeSet::GetFormData
+(const MkHashStr& themeName, MkWindowThemeData::eComponentType compType, const MkHashStr& formName)
 {
-	if (m_Themes.Empty()) // 초기화되지 않았음
-		return false;
+	if (m_Themes.Empty() || (compType == MkWindowThemeData::eCT_None))
+		return NULL;
 
-	if (themeName == m_CurrentTheme)
-		return true;
-
-	bool ok = m_Themes.Exist(themeName);
-	if (ok)
+	const MkWindowThemeFormData* dataPtr = _GetFormData(themeName, compType, formName);
+	if (dataPtr == NULL)
 	{
-		// 이전 theme를 삭제 감시 대상 목록에 추가
-		if (m_Themes.Exist(m_CurrentTheme))
-		{
-			m_UsedThemes.PushBack(m_CurrentTheme);
-		}
-
-		m_CurrentTheme = themeName;
-
-		MK_DEV_PANEL.MsgToLog(L"theme 사용 지정 : " + m_CurrentTheme.GetString(), false);
+		dataPtr = _GetFormData(MkWindowThemeData::DefaultThemeName, compType, formName);
 	}
-	return ok;
+	return dataPtr;
 }
 
-const MkHashStr& MkWindowThemeSet::GetImageFilePath(void) const
+float MkWindowThemeSet::GetFrameSize(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const
 {
-	MK_CHECK(!m_Themes.Empty(), L"초기화되지 않은 theme 정보 호출")
+	if (m_Themes.Empty())
+		return 0.f;
+
+	float size = 0.f;
+	if (m_Themes.Exist(themeName))
+	{
+		size = m_Themes[themeName].GetFrameSize(frameType);
+	}
+	return (size == 0.f) ? m_Themes[MkWindowThemeData::DefaultThemeName].GetFrameSize(frameType) : size;
+}
+
+const MkHashStr& MkWindowThemeSet::GetCaptionTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const
+{
+	if (m_Themes.Empty())
 		return MkHashStr::EMPTY;
 
-	const MkHashStr& targetThemeName = m_Themes.Exist(m_CurrentTheme) ? m_CurrentTheme : MkWindowThemeData::DefaultThemeName;
-	return m_Themes[targetThemeName].GetImageFilePath();
-}
-
-const MkWindowThemeFormData* MkWindowThemeSet::GetFormData(MkWindowThemeData::eComponentType compType) const
-{
-	if (compType == MkWindowThemeData::eCT_None)
-		return NULL;
-
-	MK_CHECK(!m_Themes.Empty(), L"초기화되지 않은 theme 정보 호출")
-		return NULL;
-
-	const MkWindowThemeFormData* dataPtr = NULL;
-	if (m_Themes.Exist(m_CurrentTheme))
+	if (m_Themes.Exist(themeName))
 	{
-		dataPtr = m_Themes[m_CurrentTheme].GetFormData(compType);
+		const MkHashStr& name = m_Themes[themeName].GetCaptionTextNode(frameType);
+		return name.Empty() ? m_Themes[MkWindowThemeData::DefaultThemeName].GetCaptionTextNode(frameType) : name;
 	}
-
-	return (dataPtr == NULL) ? m_Themes[MkWindowThemeData::DefaultThemeName].GetFormData(compType) : dataPtr;
+	return m_Themes[MkWindowThemeData::DefaultThemeName].GetCaptionTextNode(frameType);
 }
 
 void MkWindowThemeSet::UnloadUnusedThemeImage(void)
@@ -112,8 +100,22 @@ void MkWindowThemeSet::Clear(void)
 	UnloadUnusedThemeImage();
 
 	m_Themes.Clear();
-	m_CurrentTheme.Clear();
 	m_UsedThemes.Clear();
+}
+
+const MkWindowThemeFormData* MkWindowThemeSet::_GetFormData
+(const MkHashStr& themeName, MkWindowThemeData::eComponentType compType, const MkHashStr& formName)
+{
+	const MkWindowThemeFormData* dataPtr = NULL;
+	if (m_Themes.Exist(themeName))
+	{
+		dataPtr = m_Themes[themeName].GetFormData(compType, formName);
+		if ((dataPtr != NULL) && (!m_UsedThemes.Exist(MkArraySection(0), themeName)))
+		{
+			m_UsedThemes.PushBack(themeName);
+		}
+	}
+	return dataPtr;
 }
 
 //------------------------------------------------------------------------------------------------//

@@ -13,7 +13,8 @@
 // 하나의 MkWindowThemedNode에 하나의 theme component 설정 가능
 // tag 추가는 제한 없음
 //
-// theme가 존재하면 component 대신 custom image 설정 가능
+// 정규(regular) component 외에 전용 form을 사용하고 싶으면 custom form을 설정해 사용 가능
+// 이 경우 theme를 변경해도 해당 theme에 동일한 custom form이 존재하지 않는 한 변경이 무시됨
 //
 // ex>
 //	MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
@@ -43,25 +44,25 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// theme component
-	// (NOTE) component와 custom image는 배타적. 한 쪽이 설정되면 다른 쪽의 설정은 삭제 됨
+	// (NOTE) regular component와 custom form은 배타적. 어느 한 쪽이 설정되면 다른 쪽 설정은 삭제됨
 	//------------------------------------------------------------------------------------------------//
 
 	// themeName이 empty면 삭제
+	// (NOTE) custom form이 사용중일 때 주어진 theme에 동일한 custom form이 존재하지 않으면 무시
 	void SetThemeName(const MkHashStr& themeName);
 	inline const MkHashStr& GetThemeName(void) const { return m_ThemeName; }
 
-	// componentType이 MkWindowThemeData::eCT_None이면 삭제
-	// (NOTE) custom image 설정은 삭제 됨
+	// regular component 설정
+	// componentType이 MkWindowThemeData::eCT_None이면 삭제, MkWindowThemeData::eCT_CustomForm면 무시
+	// (NOTE) custom form 설정 삭제 됨
 	void SetComponentType(MkWindowThemeData::eComponentType componentType);
 	inline MkWindowThemeData::eComponentType GetComponentType(void) const { return m_ComponentType; }
 
-	// custom image 설정
-	// (NOTE) component type 설정은 삭제 됨
-	void SetCustomImagePath(const MkHashStr& imagePath);
-	inline const MkHashStr& GetCustomImagePath(void) const { return m_CustomImagePath; }
-
-	void SetCustomImageSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName);
-	inline const MkHashStr& GetCustomImageSubsetOrSequenceName(void) const { return m_CustomSubsetOrSequenceName; }
+	// custom form 설정
+	// (NOTE) regular component와는 달리 설정 실패 할 가능성 존재
+	// (NOTE) 설정 성공시 regular component 설정은 삭제 됨
+	bool SetCustomForm(const MkHashStr& customFormName);
+	inline const MkHashStr& GetCustomForm(void) const { return m_CustomFormName; }
 
 	// 그림자 사용 여부
 	void SetShadowUsage(bool enable);
@@ -99,7 +100,7 @@ public:
 	// event
 	//------------------------------------------------------------------------------------------------//
 
-	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument);
+	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -141,8 +142,7 @@ protected:
 	// theme
 	MkHashStr m_ThemeName;
 	MkWindowThemeData::eComponentType m_ComponentType;
-	MkHashStr m_CustomImagePath;
-	MkHashStr m_CustomSubsetOrSequenceName;
+	MkHashStr m_CustomFormName;
 	bool m_UseShadow;
 
 	// form state
@@ -151,7 +151,5 @@ protected:
 public:
 
 	static const MkHashStr NodeNamePrefix;
-
-	static const MkHashStr CustomImagePanelName;
 	static const MkHashStr ShadowNodeName;
 };

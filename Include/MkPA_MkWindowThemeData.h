@@ -9,6 +9,7 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkMap.h"
+#include "MkCore_MkHashMap.h"
 #include "MkPA_MkWindowThemeFormData.h"
 
 
@@ -23,7 +24,10 @@ public:
 		eCT_None = -1,
 
 		//------------------------------------------------------------------------------------------------//
+		// regular component
+		//------------------------------------------------------------------------------------------------//
 		
+		// flexible
 		eCT_ShadowBox = 0, // eFT_SingleUnit
 		eCT_DefaultBox, // eFT_SingleUnit
 		eCT_NoticeBox, // eFT_SingleUnit
@@ -49,17 +53,94 @@ public:
 		eCT_BlueSelBtn, // eFT_QuadUnit
 		eCT_RedOutlineSelBtn, // eFT_QuadUnit
 
-		eCT_RedLEDBtn16, // eFT_QuadUnit
-		eCT_GreenLEDBtn16, // eFT_QuadUnit
-		eCT_BlueLEDBtn16, // eFT_QuadUnit
+		// static. follow frame size
+		eCT_RedLEDBtnSmall, // eFT_QuadUnit
+		eCT_RedLEDBtnLarge, // eFT_QuadUnit
 
-		eCT_RedLEDBtn22, // eFT_QuadUnit
-		eCT_GreenLEDBtn22, // eFT_QuadUnit
-		eCT_BlueLEDBtn22, // eFT_QuadUnit
+		eCT_GreenLEDBtnSmall, // eFT_QuadUnit
+		eCT_GreenLEDBtnLarge, // eFT_QuadUnit
+
+		eCT_BlueLEDBtnSmall, // eFT_QuadUnit
+		eCT_BlueLEDBtnLarge, // eFT_QuadUnit
+
+		eCT_NoticeIconSmall, // eFT_SingleUnit
+		eCT_NoticeIconLarge, // eFT_SingleUnit
+
+		eCT_InformationIconSmall, // eFT_SingleUnit
+		eCT_InformationIconLarge, // eFT_SingleUnit
+
+		eCT_WarningIconSmall, // eFT_SingleUnit
+		eCT_WarningIconLarge, // eFT_SingleUnit
+
+		eCT_WindowIconSmall, // eFT_SingleUnit
+		eCT_WindowIconLarge, // eFT_SingleUnit
+
+		eCT_EditModeIconSmall, // eFT_SingleUnit
+		eCT_EditModeIconLarge, // eFT_SingleUnit
+
+		eCT_LeftArrowIconSmall, // eFT_SingleUnit
+		eCT_LeftArrowIconLarge, // eFT_SingleUnit
+
+		eCT_RightArrowIconSmall, // eFT_SingleUnit
+		eCT_RightArrowIconLarge, // eFT_SingleUnit
+
+		eCT_UpArrowIconSmall, // eFT_SingleUnit
+		eCT_UpArrowIconLarge, // eFT_SingleUnit
+
+		eCT_DownArrowIconSmall, // eFT_SingleUnit
+		eCT_DownArrowIconLarge, // eFT_SingleUnit
+
+		eCT_CheckArrowIconSmall, // eFT_SingleUnit
+		eCT_CheckArrowIconLarge, // eFT_SingleUnit
+
+		eCT_RegularMax,
 
 		//------------------------------------------------------------------------------------------------//
+		// custom component
+		//------------------------------------------------------------------------------------------------//
 
-		eCT_Max
+		eCT_CustomForm = eCT_RegularMax
+	};
+
+	// frame type 정의. size 결정
+	enum eFrameType
+	{
+		eFT_None = -1,
+
+		eFT_Small = 0,
+		eFT_Large,
+
+		eFT_Max
+	};
+
+	// LED type 정의
+	enum eLEDType
+	{
+		eLED_Red = 0,
+		eLED_Green,
+		eLED_Blue
+	};
+
+	// icon type 정의
+	// eIT_Default ~ eIT_CheckArrow는 system icon, eIT_CustomTag 직접 tag 지정
+	enum eIconType
+	{
+		eIT_None = -1,
+
+		eIT_Default = 0,
+		eIT_Notice,
+		eIT_Information,
+		eIT_Warning,
+		eIT_EditMode,
+
+		eIT_LeftArrow,
+		eIT_RightArrow,
+		eIT_UpArrow,
+		eIT_DownArrow,
+
+		eIT_CheckArrow,
+
+		eIT_CustomTag
 	};
 
 public:
@@ -70,28 +151,42 @@ public:
 	// 해제
 	void Clear(void);
 
-	// theme image file pathname 반환
+	// setting 반환
 	inline const MkHashStr& GetImageFilePath(void) const { return m_ImageFilePath; }
+	float GetFrameSize(eFrameType frameType) const;
+	const MkHashStr& GetCaptionTextNode(eFrameType frameType) const;
 
 	// component form data 반환
-	inline const MkWindowThemeFormData* GetFormData(eComponentType compType) const { return m_Components.Exist(compType) ? &m_Components[compType] : NULL; }
+	const MkWindowThemeFormData* GetFormData(eComponentType compType, const MkHashStr& formName) const;
 
-	// 해당 compType에 대한 form type 설정 반환
-	static MkWindowThemeFormData::eFormType GetFormTypeOfComponent(eComponentType compType);
+	// frame type에 맞는 LED button 반환
+	static eComponentType GetLEDButtonComponent(eFrameType frameType, eLEDType LEDType);
 
+	// frame type에 맞는 system icon 반환
+	static eComponentType GetSystemIconComponent(eFrameType frameType, eIconType iconType);
+
+	MkWindowThemeData();
 	~MkWindowThemeData() { Clear(); }
 
 protected:
 
+	// setting
 	MkHashStr m_ImageFilePath;
+	float m_FrameSize[eFT_Max];
+	MkHashStr m_CaptionTextNode[eFT_Max];
 
-	MkMap<eComponentType, MkWindowThemeFormData> m_Components;
+	// forms
+	MkMap<eComponentType, MkWindowThemeFormData> m_RegularComponents;
+	MkHashMap<MkHashStr, MkWindowThemeFormData>* m_CustomForms;
 
 public:
 
 	static const MkHashStr DefaultThemeName;
 
 	// eComponentType
-	static const MkHashStr ComponentTypeName[eCT_Max];
-	static const MkWindowThemeFormData::eFormType ComponentFormType[eCT_Max];
+	static const MkHashStr ComponentTypeName[eCT_RegularMax];
+	static const MkWindowThemeFormData::eFormType ComponentFormType[eCT_RegularMax];
+
+	// eCT_CustomForm
+	static const MkHashStr CustomFormName;
 };

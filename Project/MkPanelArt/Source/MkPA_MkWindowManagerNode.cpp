@@ -35,6 +35,7 @@ bool MkWindowManagerNode::AttachWindow(MkWindowBaseNode* windowNode, eLayerType 
 	if (ok)
 	{
 		m_DeactivatingWindows.PushBack(windowName);
+		windowNode->SetVisible(false);
 
 		_RootWindowInfo& wi = m_RootWindowList.Create(windowName);
 		wi.node = windowNode;
@@ -113,9 +114,12 @@ void MkWindowManagerNode::Update(double currTime)
 			if (m_RootWindowList.Exist(windowName))
 			{
 				unsigned int deactIndex = m_DeactivatingWindows.FindFirstInclusion(MkArraySection(0), windowName);
+				_RootWindowInfo& winInfo = m_RootWindowList[windowName];
 
-				MkArray<MkHashStr>& activatingLayer = m_ActivatingWindows[m_RootWindowList[windowName].layerType];
+				MkArray<MkHashStr>& activatingLayer = m_ActivatingWindows[winInfo.layerType];
 				activatingLayer.EraseFirstInclusion(MkArraySection(0), windowName);
+
+				winInfo.node->SetVisible(evt.activate);
 
 				if (evt.activate) // 활성화
 				{
@@ -157,7 +161,7 @@ void MkWindowManagerNode::Update(double currTime)
 	}
 
 	//------------------------------------------------------------------------------------------------//
-	// input 처리
+	// cursor input 처리
 	// snapshot(특정 시점 기준)과 event(발생 시점 기준) 중 snapshot으로 처리
 	// 이론상으로는 한 프레임에 여러번의 cursor event가 발생 할 수 있지만, 프로게이머의 apm이 최대 600정도고
 	// 60fps의 분당 모니터링 횟수는 3600회이므로 현실적으로는 한 프레임에 event 하나 발생하기도 힘들기 때문
@@ -167,12 +171,13 @@ void MkWindowManagerNode::Update(double currTime)
 	// cursor position
 	MkInt2 cursorPosition = MK_INPUT_MGR.GetAbsoluteMousePosition(true);
 	MkInt2 cursorMovement = MK_INPUT_MGR.GetAbsoluteMouseMovement(true);
+	bool cursorInside = MK_INPUT_MGR.GetMousePointerAvailable();
 
 	// 현 프레임에서 cursor를 소유한 window path 목록
 	MkArray< MkArray<MkHashStr> > cursorOwnedPathBuffer;
 
 	// cursor가 client 영역 안에 존재하면
-	if (MK_INPUT_MGR.GetMousePointerAvailable())
+	if (cursorInside)
 	{
 		// cursor가 위치한 window를 picking으로 검출
 		MkArray<MkWindowBaseNode*> nodeBuffer;
@@ -182,20 +187,40 @@ void MkWindowManagerNode::Update(double currTime)
 			eCursorState middleState = MK_INPUT_MGR.GetMouseMiddleButtonState();
 			eCursorState rightState = MK_INPUT_MGR.GetMouseRightButtonState();
 			int wheelDelta = MK_INPUT_MGR.GetMouseWheelMovement();
-
+			
 			MK_INDEXING_LOOP(nodeBuffer, i) // 통지
 			{
 				nodeBuffer[i]->UpdateCursorState(cursorPosition, cursorMovement, true, leftState, middleState, rightState, wheelDelta);
 			}
 
-			// 만약 어느 button이라도 임력되었으면 해당 window들을 입력 대상 window로 지정
+			// 만약 어느 button이라도 입력되었으면 해당 window들을 입력 대상 window로 지정
 			if ((leftState == eCS_Pressed) || (middleState == eCS_Pressed) || (rightState == eCS_Pressed))
 			{
 				m_KeyInputTargetWindowPath = cursorOwnedPathBuffer;
 			}
+
+			// left button에 변화가 발생하면
+			if ((leftState != eCS_None) && (leftState != eCS_Pushing))
+			{
+				m_LeftCursorDraggingNodePath.Clear();
+
+				// left button 입력이 감지되었다면 dragging node 저장
+				if ((leftState == eCS_Pressed) || (leftState == eCS_DoubleClicked))
+				{
+					m_LeftCursorDraggingNodePath.Reserve(cursorOwnedPathBuffer.GetSize());
+
+					MK_INDEXING_LOOP(nodeBuffer, i)
+					{
+						if (nodeBuffer[i]->GetMovableByDragging())
+						{
+							m_LeftCursorDraggingNodePath.PushBack(cursorOwnedPathBuffer[i]);
+						}
+					}
+				}
+			}
 		}
 	}
-	
+
 	// 이전 프레임의 cursor owner 중 현재 프레임에 cursor를 잃은 window를 추출
 	MkArray< MkArray<MkHashStr> > diffSets;
 	m_CursorOwnedWindowPath.GetDefferenceOfSets(cursorOwnedPathBuffer, diffSets); // diffSets = m_CursorOwnedWindowPath - cursorOwnedPathBuffer
@@ -210,7 +235,32 @@ void MkWindowManagerNode::Update(double currTime)
 
 	m_CursorOwnedWindowPath = cursorOwnedPathBuffer; // cursor owner 갱신
 
-	// key input은 snapshot이 아닌 event로 처리
+	// left cursor dragging 적용
+	if (cursorInside)
+	{
+		if (MK_INPUT_MGR.GetMouseLeftButtonPushing() && (!m_LeftCursorDraggingNodePath.Empty()))
+		{
+			MkFloat2 cursorFMov(static_cast<float>(cursorMovement.x), static_cast<float>(cursorMovement.y));
+
+			MkArray<MkSceneNode*> targetBuffer;
+			_UpdateSceneNodePath(m_LeftCursorDraggingNodePath, targetBuffer);
+
+			MK_INDEXING_LOOP(targetBuffer, i)
+			{
+				targetBuffer[i]->SetLocalPosition(targetBuffer[i]->GetLocalPosition() + cursorFMov);
+			}
+		}
+	}
+	else
+	{
+		m_LeftCursorDraggingNodePath.Clear();
+	}
+
+	//------------------------------------------------------------------------------------------------//
+	// key input 처리
+	// snapshot(특정 시점 기준)과 event(발생 시점 기준) 중 event로 처리
+	//------------------------------------------------------------------------------------------------//
+
 	MkArray<MkWindowBaseNode*> keyInputTargetBuffer;
 	_UpdateWindowPath(m_KeyInputTargetWindowPath, keyInputTargetBuffer);
 
@@ -251,8 +301,6 @@ void MkWindowManagerNode::Update(double currTime)
 	}
 	
 
-	
-
 	//------------------------------------------------------------------------------------------------//
 
 	MkSceneNode::Update(currTime);
@@ -277,6 +325,7 @@ void MkWindowManagerNode::Clear(void)
 	m_ActivationEvent.Clear();
 	m_CursorOwnedWindowPath.Clear();
 	m_KeyInputTargetWindowPath.Clear();
+	m_LeftCursorDraggingNodePath.Clear();
 	
 	MkSceneNode::Clear();
 }
@@ -295,20 +344,25 @@ MkWindowManagerNode::MkWindowManagerNode(const MkHashStr& name) : MkSceneNode(na
 
 //------------------------------------------------------------------------------------------------//
 
-MkWindowBaseNode* MkWindowManagerNode::_GetWindowNodeByPath(const MkArray<MkHashStr>& path)
+void MkWindowManagerNode::_UpdateSceneNodePath(MkArray< MkArray<MkHashStr> >& targetPath, MkArray<MkSceneNode*>& nodeBuffer)
 {
-	if (path.Empty())
-		return NULL;
+	MkArray<unsigned int> killList(targetPath.GetSize());
+	nodeBuffer.Reserve(targetPath.GetSize());
 
-	MkSceneNode* targetNode = this;
-	MK_INDEXING_LOOP(path, i)
+	MK_INDEXING_LOOP(targetPath, i)
 	{
-		targetNode = targetNode->GetChildNode(path[i]);
-		if (targetNode == NULL)
-			return NULL;
+		MkSceneNode* finalNode = ConvertPathToSceneNode(targetPath[i]);
+		if (finalNode == NULL)
+		{
+			killList.PushBack(i);
+		}
+		else
+		{
+			nodeBuffer.PushBack(finalNode);
+		}
 	}
 
-	return targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode) ? dynamic_cast<MkWindowBaseNode*>(targetNode) : NULL;
+	targetPath.Erase(killList);
 }
 
 void MkWindowManagerNode::_UpdateWindowPath(MkArray< MkArray<MkHashStr> >& targetPath, MkArray<MkWindowBaseNode*>& nodeBuffer)
@@ -318,14 +372,16 @@ void MkWindowManagerNode::_UpdateWindowPath(MkArray< MkArray<MkHashStr> >& targe
 
 	MK_INDEXING_LOOP(targetPath, i)
 	{
-		MkWindowBaseNode* node = _GetWindowNodeByPath(targetPath[i]);
-		if (node == NULL)
+		MkSceneNode* targetNode = ConvertPathToSceneNode(targetPath[i]);
+		MkWindowBaseNode* finalNode = (targetNode == NULL) ?
+			NULL : (targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode) ? dynamic_cast<MkWindowBaseNode*>(targetNode) : NULL);
+		if (finalNode == NULL)
 		{
 			killList.PushBack(i);
 		}
 		else
 		{
-			nodeBuffer.PushBack(node);
+			nodeBuffer.PushBack(finalNode);
 		}
 	}
 

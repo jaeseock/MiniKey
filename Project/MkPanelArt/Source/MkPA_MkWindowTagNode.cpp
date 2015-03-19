@@ -50,6 +50,33 @@ void MkWindowTagNode::SetTextName(const MkHashStr& textName)
 	}
 }
 
+void MkWindowTagNode::SetTextName(const MkHashStr& textName, const MkStr& msg)
+{
+	if (textName != m_TextName)
+	{
+		m_TextName = textName;
+	}
+
+	MkPanel* textPanel = GetPanel(TextPanelName);
+
+	if ((textPanel == NULL) && __UpdateText()) // panel이 없으면 바로 caption을 세팅해야되므로 즉각 반영
+	{
+		textPanel = GetPanel(TextPanelName);
+	}
+
+	if (textPanel != NULL)
+	{
+		MkTextNode* textNode = textPanel->GetTextNodePtr();
+		if (textNode != NULL)
+		{
+			textNode->SetText(msg);
+			textPanel->BuildAndUpdateTextCache();
+
+			m_UpdateCommand.Set(eUC_Region);
+		}
+	}
+}
+
 MkTextNode* MkWindowTagNode::GetTagTextPtr(void)
 {
 	MkPanel* textPanel = GetPanel(TextPanelName);
@@ -58,10 +85,10 @@ MkTextNode* MkWindowTagNode::GetTagTextPtr(void)
 
 void MkWindowTagNode::CommitTagText(void)
 {
-	MkTextNode* textNode = GetTagTextPtr();
-	if (textNode != NULL)
+	MkPanel* textPanel = GetPanel(TextPanelName);
+	if (textPanel != NULL)
 	{
-		textNode->Build();
+		textPanel->BuildAndUpdateTextCache();
 		m_UpdateCommand.Set(eUC_Region);
 	}
 }
@@ -91,8 +118,9 @@ MkWindowTagNode::MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(na
 
 bool MkWindowTagNode::__UpdateIcon(void)
 {
+	m_UpdateCommand.Clear(eUC_Icon);
 	m_UpdateCommand.Set(eUC_Region); // icon이 변경되면 region도 갱신되어야 함
-
+	
 	if (!m_IconPath.Empty())
 	{
 		MkPanel* panel = PanelExist(IconPanelName) ? GetPanel(IconPanelName) : &CreatePanel(IconPanelName);
@@ -113,6 +141,7 @@ bool MkWindowTagNode::__UpdateIcon(void)
 
 bool MkWindowTagNode::__UpdateText(void)
 {
+	m_UpdateCommand.Clear(eUC_Text);
 	m_UpdateCommand.Set(eUC_Region); // text가 변경되면 region도 갱신되어야 함
 
 	if ((!m_TextName.Empty()) && MK_STATIC_RES.TextNodeExist(m_TextName))
@@ -128,6 +157,7 @@ bool MkWindowTagNode::__UpdateText(void)
 
 bool MkWindowTagNode::__UpdateRegion(void)
 {
+	m_UpdateCommand.Clear(eUC_Region);
 	m_UpdateCommand.Set(eUC_Alignment); // region이 변경되면 alignment도 갱신되야 함
 
 	MkPanel* iconPanel = GetPanel(IconPanelName);

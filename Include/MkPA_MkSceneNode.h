@@ -122,11 +122,19 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// 상위에서 하위로 내려가는 이벤트(root -> leaf)
-	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument);
+	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument);
 
 	// 하위에서 상위로 올라오는 이벤트(leaf -> root)
 	// path에는 호출이 시작된 node name부터 호출 순서의 역순으로 담겨 있음(상위에서 해당 node를 찾으려면 순방향으로 참조)
-	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDeque<MkHashStr>& path, MkDataNode& argument);
+	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDeque<MkHashStr>& path, MkDataNode* argument);
+
+	// reporting 시작
+	void StartNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument);
+
+	// this->path[0]->path[1]->... 식으로 path 순방향으로 탐색해 최종 scene node를 반환
+	// path가 비었으면 this, 최종 node가 존재하지 않으면 NULL 반환
+	MkSceneNode* ConvertPathToSceneNode(const MkDeque<MkHashStr>& path);
+	MkSceneNode* ConvertPathToSceneNode(const MkArray<MkHashStr>& path);
 
 	//------------------------------------------------------------------------------------------------//
 	// proceed

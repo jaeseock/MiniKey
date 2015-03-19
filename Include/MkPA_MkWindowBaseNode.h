@@ -73,24 +73,35 @@ public:
 	void SetEnable(bool enable);
 	inline bool GetEnable(void) const { return m_Attribute[ePA_SNA_Enable]; }
 
+	// cursor dragging으로 이동 가능 여부. default는 false
+	inline void SetMovableByDragging(bool enable) { m_Attribute.Assign(ePA_SNA_MovableByDragging, enable); }
+	inline bool GetMovableByDragging(void) const { return m_Attribute[ePA_SNA_MovableByDragging]; }
+
 	//------------------------------------------------------------------------------------------------//
 	// event
 	//------------------------------------------------------------------------------------------------//
 
-	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode& argument);
+	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument);
 
+	MkWindowBaseNode* ConvertPathToWindowNode(const MkDeque<MkHashStr>& path);
+	MkWindowBaseNode* ConvertPathToWindowNode(const MkArray<MkHashStr>& path);
+	
 	//------------------------------------------------------------------------------------------------//
 
+	virtual void Clear(void);
+
 	MkWindowBaseNode(const MkHashStr& name);
-	virtual ~MkWindowBaseNode() {}
+	virtual ~MkWindowBaseNode() { Clear(); }
 
 protected:
 
-	inline bool _IsDualForm(void) { return (MkWindowThemeData::GetFormTypeOfComponent(GetComponentType()) == MkWindowThemeFormData::eFT_DualUnit); }
-	inline bool _IsQuadForm(void) { return (MkWindowThemeData::GetFormTypeOfComponent(GetComponentType()) == MkWindowThemeFormData::eFT_QuadUnit); }
+	inline bool _IsDualForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_DualUnit); }
+	inline bool _IsQuadForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_QuadUnit); }
+
+protected:
+
+	MkWindowThemeData::eFrameType m_WindowFrameType;
 
 public:
-
-	//static const MkHashStr IconTagNodeName;
 	//static const MkHashStr CaptionTagNodeName;
 };
