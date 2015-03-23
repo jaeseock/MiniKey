@@ -154,7 +154,7 @@ public:
 	// setting 반환
 	inline const MkHashStr& GetImageFilePath(void) const { return m_ImageFilePath; }
 	float GetFrameSize(eFrameType frameType) const;
-	const MkHashStr& GetCaptionTextNode(eFrameType frameType) const;
+	const MkArray<MkHashStr>& GetCaptionTextNode(eFrameType frameType) const;
 
 	// component form data 반환
 	const MkWindowThemeFormData* GetFormData(eComponentType compType, const MkHashStr& formName) const;
@@ -173,7 +173,7 @@ protected:
 	// setting
 	MkHashStr m_ImageFilePath;
 	float m_FrameSize[eFT_Max];
-	MkHashStr m_CaptionTextNode[eFT_Max];
+	MkArray<MkHashStr> m_CaptionTextNode[eFT_Max];
 
 	// forms
 	MkMap<eComponentType, MkWindowThemeFormData> m_RegularComponents;
@@ -189,4 +189,7 @@ public:
 
 	// eCT_CustomForm
 	static const MkHashStr CustomFormName;
+
+	// eFrameType
+	static const MkHashStr FrameTypeName[eFT_Max];
 };

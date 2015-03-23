@@ -82,9 +82,6 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	virtual void SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument);
-
-	MkWindowBaseNode* ConvertPathToWindowNode(const MkDeque<MkHashStr>& path);
-	MkWindowBaseNode* ConvertPathToWindowNode(const MkArray<MkHashStr>& path);
 	
 	//------------------------------------------------------------------------------------------------//
 

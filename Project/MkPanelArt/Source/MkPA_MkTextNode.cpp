@@ -319,6 +319,42 @@ bool MkTextNode::SetFontStyle(const MkHashStr& fontStyle)
 	return true;
 }
 
+bool MkTextNode::ChildExist(const MkArray<MkHashStr>& path) const
+{
+	const MkTextNode* targetNode = this;
+	MK_INDEXING_LOOP(path, i)
+	{
+		targetNode = targetNode->GetChildNode(path[i]);
+		if (targetNode == NULL)
+			return false;
+	}
+	return true;
+}
+
+MkTextNode* MkTextNode::GetChildNode(const MkArray<MkHashStr>& path)
+{
+	MkTextNode* targetNode = this;
+	MK_INDEXING_LOOP(path, i)
+	{
+		targetNode = targetNode->GetChildNode(path[i]);
+		if (targetNode == NULL)
+			return NULL;
+	}
+	return targetNode;
+}
+
+const MkTextNode* MkTextNode::GetChildNode(const MkArray<MkHashStr>& path) const
+{
+	const MkTextNode* targetNode = this;
+	MK_INDEXING_LOOP(path, i)
+	{
+		targetNode = targetNode->GetChildNode(path[i]);
+		if (targetNode == NULL)
+			return NULL;
+	}
+	return targetNode;
+}
+
 void MkTextNode::Build(void)
 {
 	// 모든 노드를 순회하며 text block 구성

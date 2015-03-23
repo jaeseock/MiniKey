@@ -161,10 +161,10 @@ public:
 
 	// 해당 이름의 text node를 static resource container에서 불러와 설정
 	// (NOTE) static으로 여겨지기 때문에 GetTextNodePtr()로 얻어온 복사본을 수정하더라도 저장시 수정 내용이 반영되지 않음
-	void SetTextNode(const MkHashStr& name, bool restrictToPanelWidth = false);
+	void SetTextNode(const MkArray<MkHashStr>& name, bool restrictToPanelWidth = false);
 
 	// 설정된 text node 정보 반환
-	inline const MkHashStr& GetTextNodeName(void) const { return m_TargetTextNodeName; }
+	inline const MkArray<MkHashStr>& GetTextNodeName(void) const { return m_TargetTextNodeName; }
 	inline MkTextNode* GetTextNodePtr(void) { return m_TargetTextNodePtr; }
 	inline const MkTextNode* GetTextNodePtr(void) const { return m_TargetTextNodePtr; }
 
@@ -300,7 +300,7 @@ protected:
 	MkFloat2 m_TextureSize;
 
 	// text node
-	MkHashStr m_TargetTextNodeName;
+	MkArray<MkHashStr> m_TargetTextNodeName;
 	MkTextNode* m_TargetTextNodePtr;
 
 	// masking node

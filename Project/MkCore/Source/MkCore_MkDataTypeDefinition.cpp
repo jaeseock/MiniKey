@@ -72,6 +72,7 @@ const MkStr MkStr::CRLF(L"\r\n");
 
 // MkHashStr
 const MkHashStr MkHashStr::EMPTY(MkStr::EMPTY);
+const MkArray<MkHashStr> MkHashStr::EMPTY_ARRAY(0);
 
 // MkPrimitiveDataType
 ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)

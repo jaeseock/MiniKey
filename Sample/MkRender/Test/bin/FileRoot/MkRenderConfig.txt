@@ -272,8 +272,18 @@ Node "StaticResource"
 		{
 			// setting
 			str ImagePath = "Default\theme_default.png"; // duty
-			float FrameSize = 16 / 22; // small, large
-			str CaptionTextNode = "Default::Caption::Small" / "Default::Caption::Large";
+			
+			Node "eFT_Small"
+			{
+				float FrameSize = 16;
+				str CaptionTextNode = "Theme" / "Default" / "Small";
+			}
+			
+			Node "eFT_Large"
+			{
+				float FrameSize = 22;
+				str CaptionTextNode = "Theme" / "Default" / "Large";
+			}
 			
 			/*
 			Node "COMPONENT_NAME" // COMPONENT_NAME은 MkWindowThemeData::eComponentType, STATE_KEY는 MkWindowThemeFormData::eState 참조

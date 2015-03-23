@@ -24,9 +24,9 @@ public:
 	void LoadTextNode(const MkPathName& filePath);
 	void LoadTextNode(const MkDataNode* dataNode);
 
-	inline bool TextNodeExist(const MkHashStr& name) const { return m_TextNode.ChildExist(name); }
+	inline bool TextNodeExist(const MkArray<MkHashStr>& name) const { return m_TextNode.ChildExist(name); }
 
-	const MkTextNode& GetTextNode(const MkHashStr& name) const;
+	const MkTextNode& GetTextNode(const MkArray<MkHashStr>& name) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// window theme set

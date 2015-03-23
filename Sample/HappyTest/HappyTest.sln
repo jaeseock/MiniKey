@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3_ReadAndSaveDataNode", "3_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4_CreateDataNode", "4_CreateDataNode\4_CreateDataNode.vcproj", "{30746E75-6C67-4FA2-AAA3-CBF54381F657}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "5_SimpleMultithread", "5_SimpleMultithread\5_SimpleMultithread.vcproj", "{5602B061-527D-423B-A886-941933A4C0CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -80,6 +82,12 @@ Global
 		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Release|Win32.Build.0 = Release|Win32
 		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Shipping|Win32.ActiveCfg = Release|Win32
 		{30746E75-6C67-4FA2-AAA3-CBF54381F657}.Shipping|Win32.Build.0 = Release|Win32
+		{5602B061-527D-423B-A886-941933A4C0CA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5602B061-527D-423B-A886-941933A4C0CA}.Debug|Win32.Build.0 = Debug|Win32
+		{5602B061-527D-423B-A886-941933A4C0CA}.Release|Win32.ActiveCfg = Release|Win32
+		{5602B061-527D-423B-A886-941933A4C0CA}.Release|Win32.Build.0 = Release|Win32
+		{5602B061-527D-423B-A886-941933A4C0CA}.Shipping|Win32.ActiveCfg = Release|Win32
+		{5602B061-527D-423B-A886-941933A4C0CA}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

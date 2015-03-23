@@ -139,6 +139,7 @@ public:
 
 	// empty
 	static const MkHashStr EMPTY;
+	static const MkArray<MkHashStr> EMPTY_ARRAY;
 };
 
 

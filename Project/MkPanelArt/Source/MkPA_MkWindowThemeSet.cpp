@@ -59,14 +59,14 @@ float MkWindowThemeSet::GetFrameSize(const MkHashStr& themeName, MkWindowThemeDa
 	return (size == 0.f) ? m_Themes[MkWindowThemeData::DefaultThemeName].GetFrameSize(frameType) : size;
 }
 
-const MkHashStr& MkWindowThemeSet::GetCaptionTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const
+const MkArray<MkHashStr>& MkWindowThemeSet::GetCaptionTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const
 {
 	if (m_Themes.Empty())
-		return MkHashStr::EMPTY;
+		return MkHashStr::EMPTY_ARRAY;
 
 	if (m_Themes.Exist(themeName))
 	{
-		const MkHashStr& name = m_Themes[themeName].GetCaptionTextNode(frameType);
+		const MkArray<MkHashStr>& name = m_Themes[themeName].GetCaptionTextNode(frameType);
 		return name.Empty() ? m_Themes[MkWindowThemeData::DefaultThemeName].GetCaptionTextNode(frameType) : name;
 	}
 	return m_Themes[MkWindowThemeData::DefaultThemeName].GetCaptionTextNode(frameType);

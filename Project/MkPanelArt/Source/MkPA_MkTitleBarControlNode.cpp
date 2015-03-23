@@ -129,9 +129,43 @@ void MkTitleBarControlNode::SetIcon(MkWindowThemeData::eIconType iconType, const
 	}
 }
 
+void MkTitleBarControlNode::SetCaption(const MkArray<MkHashStr>& textNode, eRectAlignmentPosition position)
+{
+	_SetCaption(textNode, MkHashStr::EMPTY, position);
+
+	if (ChildExist(CaptionNodeName))
+	{
+		m_CaptionTextNode = textNode;
+	}
+}
+
 void MkTitleBarControlNode::SetCaption(const MkStr& caption, eRectAlignmentPosition position)
 {
-	if (caption.Empty())
+	_SetCaption(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_WindowFrameType), caption, position);
+}
+
+void MkTitleBarControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
+{
+	// left cursor click이고 해당 window가 close button이면 event를 ePA_SNE_CloseWindow로 바꾸어 보냄
+	if ((eventType == ePA_SNE_CursorLBtnReleased) && (path.GetSize() == 1) && (path[0] == CloseButtonNodeName))
+	{
+		StartNodeReportTypeEvent(ePA_SNE_CloseWindow, NULL);
+	}
+	else
+	{
+		MkWindowBaseNode::SendNodeReportTypeEvent(eventType, path, argument);
+	}
+}
+
+MkTitleBarControlNode::MkTitleBarControlNode(const MkHashStr& name) : MkWindowBaseNode(name)
+{
+	SetAcceptInput(true);
+	SetMovableByDragging(true);
+}
+
+void MkTitleBarControlNode::_SetCaption(const MkArray<MkHashStr>& textNode, const MkStr& caption, eRectAlignmentPosition position)
+{
+	if (textNode.Empty() || (!MK_STATIC_RES.TextNodeExist(textNode)))
 	{
 		RemoveChildNode(CaptionNodeName);
 		return;
@@ -146,7 +180,14 @@ void MkTitleBarControlNode::SetCaption(const MkStr& caption, eRectAlignmentPosit
 		node->SetLocalDepth(-0.1f); // title과 겹치는 것을 피하기 위해 0.1f만큼 앞에 위치
 
 		// caption
-		node->SetTextName(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_WindowFrameType), caption);
+		if (caption.Empty())
+		{
+			node->SetTextName(textNode);
+		}
+		else
+		{
+			node->SetTextName(textNode, caption);
+		}
 
 		// alignment
 		node->SetAlignmentPosition(position);
@@ -156,12 +197,6 @@ void MkTitleBarControlNode::SetCaption(const MkStr& caption, eRectAlignmentPosit
 			node->SetAlignmentOffset(MkFloat2(frameSize + node->GetLengthOfBetweenIconAndText(), 0.f));
 		}
 	}
-}
-
-MkTitleBarControlNode::MkTitleBarControlNode(const MkHashStr& name) : MkWindowBaseNode(name)
-{
-	SetAcceptInput(true);
-	SetMovableByDragging(true);
 }
 
 //------------------------------------------------------------------------------------------------//

@@ -95,6 +95,23 @@ void MkWindowManagerNode::DeactivateWindow(const MkHashStr& windowName)
 
 //------------------------------------------------------------------------------------------------//
 
+void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
+{
+	switch (eventType)
+	{
+	case ePA_SNE_CloseWindow:
+		{
+			if (!path.Empty())
+			{
+				DeactivateWindow(path[0]); // path¿« root∏¶ ¥›¿Ω
+			}
+		}
+		break;
+	}
+}
+
+//------------------------------------------------------------------------------------------------//
+
 void MkWindowManagerNode::Update(double currTime)
 {
 	// LOCK!!!
@@ -351,7 +368,7 @@ void MkWindowManagerNode::_UpdateSceneNodePath(MkArray< MkArray<MkHashStr> >& ta
 
 	MK_INDEXING_LOOP(targetPath, i)
 	{
-		MkSceneNode* finalNode = ConvertPathToSceneNode(targetPath[i]);
+		MkSceneNode* finalNode = GetChildNode(targetPath[i]);
 		if (finalNode == NULL)
 		{
 			killList.PushBack(i);
@@ -372,7 +389,7 @@ void MkWindowManagerNode::_UpdateWindowPath(MkArray< MkArray<MkHashStr> >& targe
 
 	MK_INDEXING_LOOP(targetPath, i)
 	{
-		MkSceneNode* targetNode = ConvertPathToSceneNode(targetPath[i]);
+		MkSceneNode* targetNode = GetChildNode(targetPath[i]);
 		MkWindowBaseNode* finalNode = (targetNode == NULL) ?
 			NULL : (targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode) ? dynamic_cast<MkWindowBaseNode*>(targetNode) : NULL);
 		if (finalNode == NULL)

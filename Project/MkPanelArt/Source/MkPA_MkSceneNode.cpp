@@ -388,43 +388,19 @@ void MkSceneNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, MkDataN
 	}
 }
 
-void MkSceneNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDeque<MkHashStr>& path, MkDataNode* argument)
+void MkSceneNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
 {
 	if (m_ParentNodePtr != NULL)
 	{
-		path.PushFront(GetNodeName());
+		path.Insert(0, GetNodeName()); // MkDeque::PushFront()가 어울리지만 비용이 크지 않을거라 예상되므로 그냥 MkArray::Insert() 사용
 		m_ParentNodePtr->SendNodeReportTypeEvent(eventType, path, argument);
 	}
 }
 
 void MkSceneNode::StartNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkDataNode* argument)
 {
-	MkDeque<MkHashStr> path;
+	MkArray<MkHashStr> path;
 	SendNodeReportTypeEvent(eventType, path, argument);
-}
-
-MkSceneNode* MkSceneNode::ConvertPathToSceneNode(const MkDeque<MkHashStr>& path)
-{
-	MkSceneNode* targetNode = this;
-	MK_INDEXING_LOOP(path, i)
-	{
-		targetNode = targetNode->GetChildNode(path[i]);
-		if (targetNode == NULL)
-			return NULL;
-	}
-	return targetNode;
-}
-
-MkSceneNode* MkSceneNode::ConvertPathToSceneNode(const MkArray<MkHashStr>& path)
-{
-	MkSceneNode* targetNode = this;
-	MK_INDEXING_LOOP(path, i)
-	{
-		targetNode = targetNode->GetChildNode(path[i]);
-		if (targetNode == NULL)
-			return NULL;
-	}
-	return targetNode;
 }
 
 /*

@@ -316,7 +316,7 @@ void MkPanel::SetTextNode(const MkTextNode& source, bool restrictToPanelWidth)
 	MK_DELETE(m_DrawStep);
 }
 
-void MkPanel::SetTextNode(const MkHashStr& name, bool restrictToPanelWidth)
+void MkPanel::SetTextNode(const MkArray<MkHashStr>& name, bool restrictToPanelWidth)
 {
 	m_TargetTextNodeName = name;
 	const MkTextNode& textNode = MK_STATIC_RES.GetTextNode(m_TargetTextNodeName);

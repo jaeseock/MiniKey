@@ -6,6 +6,8 @@
 // - font type, style, 개행시 위치 설정을 가진 문자열 집합
 // - MkDataNode 기반의 data를 통한 구성
 // - 노드 구조를 가지며 key로 탐색하여 내부 값 변경 가능(반영을 위해서는 Build() 필요)
+// - MkSingleTypeTreePattern<>를 사용하면 구현은 편하지만, 기능 제한을 위해 사용하지 않음
+//   코드를 통한 자유로운 조작 대신 data를 통한 구성을 사용하도록 유도하기 위함
 //
 // * Build()
 // - 노드 상태(수정 용이)를 그대로 그릴려고 하면 느리기 때문에 build를 통해 그리기 편한 형태로 변경
@@ -180,8 +182,13 @@ public:
 
 	// child
 	inline bool ChildExist(const MkHashStr& name) const { return m_Children.Exist(name); }
+	bool ChildExist(const MkArray<MkHashStr>& path) const;
+
 	inline MkTextNode* GetChildNode(const MkHashStr& name) { return ChildExist(name) ? m_Children[name] : NULL; }
 	inline const MkTextNode* GetChildNode(const MkHashStr& name) const { return ChildExist(name) ? m_Children[name] : NULL; }
+
+	MkTextNode* GetChildNode(const MkArray<MkHashStr>& path);
+	const MkTextNode* GetChildNode(const MkArray<MkHashStr>& path) const;
 
 	// 직계 자식 노드 리스트를 반환
 	inline unsigned int GetChildNodeList(MkArray<MkHashStr>& childNodeList) const { return m_Children.GetKeyList(childNodeList); }

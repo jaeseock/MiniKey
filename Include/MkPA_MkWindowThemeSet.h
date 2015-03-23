@@ -32,7 +32,7 @@ public:
 
 	// theme setting
 	float GetFrameSize(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;
-	const MkHashStr& GetCaptionTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;
+	const MkArray<MkHashStr>& GetCaptionTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;
 
 	// 사용되지 않는 theme를 체크해 이미지를 삭제
 	void UnloadUnusedThemeImage(void);

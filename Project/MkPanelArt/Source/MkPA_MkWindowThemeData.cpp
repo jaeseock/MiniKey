@@ -11,7 +11,7 @@
 const MkHashStr MkWindowThemeData::DefaultThemeName(L"Default");
 
 
-const MkHashStr MkWindowThemeData::ComponentTypeName[MkWindowThemeData::eCT_RegularMax] =
+const MkHashStr MkWindowThemeData::ComponentTypeName[eCT_RegularMax] =
 {
 	MK_VALUE_TO_STRING(eCT_ShadowBox),
 	MK_VALUE_TO_STRING(eCT_DefaultBox),
@@ -59,7 +59,7 @@ const MkHashStr MkWindowThemeData::ComponentTypeName[MkWindowThemeData::eCT_Regu
 	MK_VALUE_TO_STRING(eCT_CheckArrowIconLarge)
 };
 
-const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[MkWindowThemeData::eCT_RegularMax] =
+const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[eCT_RegularMax] =
 {
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_ShadowBox
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_DefaultBox
@@ -109,6 +109,12 @@ const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[MkWi
 
 const MkHashStr MkWindowThemeData::CustomFormName(MK_VALUE_TO_STRING(eCT_CustomForm));
 
+const MkHashStr MkWindowThemeData::FrameTypeName[eFT_Max] =
+{
+	MK_VALUE_TO_STRING(eFT_Small),
+	MK_VALUE_TO_STRING(eFT_Large)
+};
+
 //------------------------------------------------------------------------------------------------//
 
 bool MkWindowThemeData::SetUp(const MkDataNode& node)
@@ -123,65 +129,72 @@ bool MkWindowThemeData::SetUp(const MkDataNode& node)
 	MK_CHECK(texture != NULL, L"잘못된 이미지 경로 : " + m_ImageFilePath.GetString())
 		return false;
 
-	// setting : frame size. default theme만 duty
-	MkArray<float> frameSize;
-	if (notDefaultTheme)
+	// setting:: frame. default theme만 duty
+	for (unsigned int i=0; i<eFT_Max; ++i)
 	{
-		node.GetData(L"FrameSize", frameSize);
-	}
-	else
-	{
-		MK_CHECK(node.GetData(L"FrameSize", frameSize) && (frameSize.GetSize() == eFT_Max), node.GetNodeName().GetString() + L" theme node에 FrameSize 값이 없음")
-			return false;
-	}
-	if (frameSize.GetSize() == eFT_Max)
-	{
-		m_FrameSize[eFT_Small] = GetMax<float>(frameSize[eFT_Small], 0.f);
-		m_FrameSize[eFT_Large] = GetMax<float>(frameSize[eFT_Large], 0.f);
-	}
+		const MkHashStr& currTargetName = FrameTypeName[i];
+		bool hasNode = node.ChildExist(currTargetName);
 
-	// setting : caption text node. default theme만 duty
-	MkArray<MkHashStr> captionTextNode;
-	if (notDefaultTheme)
-	{
-		node.GetDataEx(L"CaptionTextNode", captionTextNode);
-	}
-	else
-	{
-		MK_CHECK(node.GetDataEx(L"CaptionTextNode", captionTextNode) && (captionTextNode.GetSize() == eFT_Max), node.GetNodeName().GetString() + L" theme node에 CaptionTextNode 값이 없음")
-			return false;
-	}
-
-	if (captionTextNode.GetSize() == eFT_Max)
-	{
-		MK_CHECK(MK_STATIC_RES.TextNodeExist(captionTextNode[eFT_Small]), node.GetNodeName().GetString() + L" theme node에서 존재하지 않는 caption text node 지정 : " + captionTextNode[eFT_Small].GetString())
-			return false;
-		MK_CHECK(MK_STATIC_RES.TextNodeExist(captionTextNode[eFT_Large]), node.GetNodeName().GetString() + L" theme node에서 존재하지 않는 caption text node 지정 : " + captionTextNode[eFT_Large].GetString())
+		// default theme는 모든 frame setting을 다 가지고 있어야 함
+		MK_CHECK(notDefaultTheme || hasNode, node.GetNodeName().GetString() + L" theme node에 " + currTargetName.GetString() + L" setting이 없음")
 			return false;
 
-		m_CaptionTextNode[eFT_Small] = captionTextNode[eFT_Small];
-		m_CaptionTextNode[eFT_Large] = captionTextNode[eFT_Large];
-	}
+		if (hasNode)
+		{
+			eFrameType frameType = static_cast<eFrameType>(i);
+			const MkDataNode& frameNode = *node.GetChildNode(currTargetName);
 
+			// frame size
+			float frameSize = 0.f;
+			if (notDefaultTheme)
+			{
+				frameNode.GetData(L"FrameSize", frameSize, 0);
+			}
+			else
+			{
+				MK_CHECK(frameNode.GetData(L"FrameSize", frameSize, 0), node.GetNodeName().GetString() + L" theme node에 FrameSize 값이 없음")
+					return false;
+			}
+			m_FrameSize[frameType] = GetMax<float>(frameSize, 0.f);
+
+			// caption text node
+			MkArray<MkHashStr> captionTextNode;
+			if (notDefaultTheme)
+			{
+				frameNode.GetDataEx(L"CaptionTextNode", captionTextNode);
+			}
+			else
+			{
+				MK_CHECK(frameNode.GetDataEx(L"CaptionTextNode", captionTextNode) && (!captionTextNode.Empty()), node.GetNodeName().GetString() + L" theme node에 CaptionTextNode 값이 없음")
+					return false;
+			}
+			
+			MK_CHECK(MK_STATIC_RES.TextNodeExist(captionTextNode), node.GetNodeName().GetString() + L" theme node에서 존재하지 않는 caption text node 지정")
+				return false;
+
+			m_CaptionTextNode[frameType] = captionTextNode;
+		}
+	}
+	
 	// regular component 등록
 	for (unsigned int i=0; i<eCT_RegularMax; ++i)
 	{
-		const MkHashStr& componentName = ComponentTypeName[i];
-		bool hasComponent = node.ChildExist(componentName);
+		const MkHashStr& currTargetName = ComponentTypeName[i];
+		bool hasNode = node.ChildExist(currTargetName);
 
 		// default theme는 모든 component를 다 가지고 있어야 함
-		MK_CHECK(notDefaultTheme || hasComponent, node.GetNodeName().GetString() + L" theme node에 " + componentName.GetString() + L" component가 없음")
+		MK_CHECK(notDefaultTheme || hasNode, node.GetNodeName().GetString() + L" theme node에 " + currTargetName.GetString() + L" component가 없음")
 			return false;
 
-		if (hasComponent)
+		if (hasNode)
 		{
 			eComponentType compType = static_cast<eComponentType>(i);
 			MkWindowThemeFormData& fd = m_RegularComponents.Create(compType);
-			MK_CHECK(fd.SetUp(&m_ImageFilePath, texture, *node.GetChildNode(componentName)), node.GetNodeName().GetString() + L" theme node의 " + componentName.GetString() + L" component 구성 실패")
+			MK_CHECK(fd.SetUp(&m_ImageFilePath, texture, *node.GetChildNode(currTargetName)), node.GetNodeName().GetString() + L" theme node의 " + currTargetName.GetString() + L" component 구성 실패")
 				return false;
 
 			// setup이 완료되었으면 form type 점검
-			MK_CHECK(fd.GetFormType() == ComponentFormType[i], node.GetNodeName().GetString() + L" theme node의 " + componentName.GetString() + L" component form type이 잘못되었음")
+			MK_CHECK(fd.GetFormType() == ComponentFormType[i], node.GetNodeName().GetString() + L" theme node의 " + currTargetName.GetString() + L" component form type이 잘못되었음")
 				return false;
 		}
 	}
@@ -229,7 +242,7 @@ float MkWindowThemeData::GetFrameSize(eFrameType frameType) const
 	return 0.f;
 }
 
-const MkHashStr& MkWindowThemeData::GetCaptionTextNode(eFrameType frameType) const
+const MkArray<MkHashStr>& MkWindowThemeData::GetCaptionTextNode(eFrameType frameType) const
 {
 	switch (frameType)
 	{
@@ -237,7 +250,7 @@ const MkHashStr& MkWindowThemeData::GetCaptionTextNode(eFrameType frameType) con
 	case eFT_Large:
 		return m_CaptionTextNode[frameType];
 	}
-	return MkHashStr::EMPTY;
+	return MkHashStr::EMPTY_ARRAY;
 }
 
 const MkWindowThemeFormData* MkWindowThemeData::GetFormData(eComponentType compType, const MkHashStr& formName) const

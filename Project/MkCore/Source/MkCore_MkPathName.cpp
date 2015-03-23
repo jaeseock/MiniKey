@@ -1025,7 +1025,7 @@ unsigned int MkPathName::_GetExtensionPosition(void) const
 	if (size == 1)
 		return 0; // °æ·Î¸í. ex> "a"
 
-	for (unsigned int i = size-2; i >= 0; --i)
+	for (unsigned int i = size-2; i != 0xffffffff; --i)
 	{
 		const wchar_t& currChar = m_Str[i];
 		if (currChar == L'\\')

@@ -16,7 +16,7 @@ bool MkCheck::ExceptionForDebug(const wchar_t* expression, const wchar_t* messag
 	msg.Reserve(1024);
 	msg += L"EXPRESSION : ";
 	msg += expression;
-	msg += L", MESSAGE : ";
+	msg += L"\nMESSAGE : ";
 	msg += message;
 
 #if (MKDEF_CHECK_EXCEPTION_BREAK)
@@ -50,9 +50,9 @@ bool MkCheck::ExceptionForRelease(const char* function, long lineNum, const wcha
 	msg += funcBuf;
 	msg += L" (";
 	msg += MkStr(lineNum);
-	msg += L"), EXPRESSION : ";
+	msg += L")\nEXPRESSION : ";
 	msg += expression;
-	msg += L", MESSAGE : ";
+	msg += L"\nMESSAGE : ";
 	msg += message;
 
 #if (MKDEF_CHECK_EXCEPTION_BREAK)

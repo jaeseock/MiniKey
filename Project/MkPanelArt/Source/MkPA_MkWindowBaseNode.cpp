@@ -145,18 +145,6 @@ void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, Mk
 	MkWindowThemedNode::SendNodeCommandTypeEvent(eventType, argument);
 }
 
-MkWindowBaseNode* MkWindowBaseNode::ConvertPathToWindowNode(const MkDeque<MkHashStr>& path)
-{
-	MkSceneNode* targetNode = ConvertPathToSceneNode(path);
-	return targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode) ? dynamic_cast<MkWindowBaseNode*>(targetNode) : NULL;
-}
-
-MkWindowBaseNode* MkWindowBaseNode::ConvertPathToWindowNode(const MkArray<MkHashStr>& path)
-{
-	MkSceneNode* targetNode = ConvertPathToSceneNode(path);
-	return targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode) ? dynamic_cast<MkWindowBaseNode*>(targetNode) : NULL;
-}
-
 //------------------------------------------------------------------------------------------------//
 
 void MkWindowBaseNode::Clear(void)

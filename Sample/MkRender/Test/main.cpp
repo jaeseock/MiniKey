@@ -83,7 +83,9 @@ public:
 		tp.SetBiggerSourceOp(MkPanel::eCutSource);
 		tp.SetPanelSize(MkFloat2(110.f, 250.f));
 		tp.SetLocalDepth(1001.f);
-		tp.SetTextNode(L"_Sample", true);
+		MkArray<MkHashStr> textName;
+		textName.PushBack(L"_Sample");
+		tp.SetTextNode(textName, true);
 
 		MkPanel& mp = mainNode->CreatePanel(L"MaskingTest", subNode, MkInt2(200, 150));
 		mp.SetLocalDepth(1000.f);
@@ -318,7 +320,12 @@ public:
 
 						if (MK_INPUT_MGR.GetKeyReleased(L'3'))
 						{
-							targetNode->SetTextName(targetNode->GetTextName().Empty() ? L"WindowTitle" : MkHashStr::EMPTY);
+							MkArray<MkHashStr> textName;
+							if (targetNode->GetTextName().Empty())
+							{
+								textName.PushBack(L"WindowTitle");
+							}
+							targetNode->SetTextName(textName);
 						}
 					}
 					else if (vpNode->GetNodeType() == ePA_SNT_WindowThemedNode)

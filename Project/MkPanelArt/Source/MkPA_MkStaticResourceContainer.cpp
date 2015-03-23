@@ -23,7 +23,7 @@ void MkStaticResourceContainer::LoadTextNode(const MkDataNode* dataNode)
 	}
 }
 
-const MkTextNode& MkStaticResourceContainer::GetTextNode(const MkHashStr& name) const
+const MkTextNode& MkStaticResourceContainer::GetTextNode(const MkArray<MkHashStr>& name) const
 {
 	return m_TextNode.ChildExist(name) ? *m_TextNode.GetChildNode(name) : m_EmptyTextNode;
 }

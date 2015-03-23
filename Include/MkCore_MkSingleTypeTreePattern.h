@@ -221,9 +221,49 @@ public:
 	// 직계 자식 노드 존재여부 반환
 	inline bool ChildExist(const MkHashStr& childNodeName) const { return m_ChildrenNode.Exist(childNodeName); }
 
+	// 경로로 자식 노드 존재여부 반환
+	inline bool ChildExist(const MkArray<MkHashStr>& path) const
+	{
+		const TargetClass* targetNode = this;
+		MK_INDEXING_LOOP(path, i)
+		{
+			targetNode = targetNode->GetChildNode(path[i]);
+			if (targetNode == NULL)
+				return false;
+		}
+		return true;
+	}
+
 	// 직계 자식 노드 포인터 반환
 	inline TargetClass* GetChildNode(const MkHashStr& childNodeName) { return (m_ChildrenNode.Exist(childNodeName)) ? m_ChildrenNode[childNodeName] : NULL; }
 	inline const TargetClass* GetChildNode(const MkHashStr& childNodeName) const { return (m_ChildrenNode.Exist(childNodeName)) ? m_ChildrenNode[childNodeName] : NULL; }
+
+	// 경로로 자식 노드 포인터 반환
+	// this->path[0]->path[1]->... 식으로 path 순방향으로 탐색해 최종 node를 반환
+	// path가 비었으면 this, 최종 node가 존재하지 않으면 NULL 반환
+	inline TargetClass* GetChildNode(const MkArray<MkHashStr>& path)
+	{
+		TargetClass* targetNode = dynamic_cast<TargetClass*>(this);
+		MK_INDEXING_LOOP(path, i)
+		{
+			targetNode = targetNode->GetChildNode(path[i]);
+			if (targetNode == NULL)
+				return NULL;
+		}
+		return targetNode;
+	}
+
+	inline const TargetClass* GetChildNode(const MkArray<MkHashStr>& path) const
+	{
+		const TargetClass* targetNode = dynamic_cast<const TargetClass*>(this);
+		MK_INDEXING_LOOP(path, i)
+		{
+			targetNode = targetNode->GetChildNode(path[i]);
+			if (targetNode == NULL)
+				return NULL;
+		}
+		return targetNode;
+	}
 
 	// 조상 노드 중 해당 이름을 가진 가장 가까운 포인터 반환
 	inline TargetClass* GetAncestorNode(const MkHashStr& nodeName)

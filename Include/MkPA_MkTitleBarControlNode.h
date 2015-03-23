@@ -43,15 +43,34 @@ public:
 	// (NOTE) 호출 전 SetTitleBar()이 올바르게 호출된 상태이어야 함
 	void SetIcon(MkWindowThemeData::eIconType iconType, const MkHashStr& imagePath = MkHashStr::EMPTY, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
 
-	// caption 설정
-	// caption이 비어 있을 경우 삭제
+	// static text node로 caption 설정
+	// textNode가 비어 있을 경우 삭제
+	// (NOTE) 호출 전 SetTitleBar()이 올바르게 호출된 상태이어야 함
+	void SetCaption(const MkArray<MkHashStr>& textNode, eRectAlignmentPosition position = eRAP_LeftCenter);
+
+	// 휘발성 caption 설정
+	// text node는 theme를 따름
 	// (NOTE) 호출 전 SetTitleBar()이 올바르게 호출된 상태이어야 함
 	void SetCaption(const MkStr& caption, eRectAlignmentPosition position = eRAP_LeftCenter);
+
+	//------------------------------------------------------------------------------------------------//
+	// event
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument);
 
 	//------------------------------------------------------------------------------------------------//
 
 	MkTitleBarControlNode(const MkHashStr& name);
 	virtual ~MkTitleBarControlNode() {}
+
+protected:
+
+	void _SetCaption(const MkArray<MkHashStr>& textNode, const MkStr& caption, eRectAlignmentPosition position);
+
+protected:
+
+	MkArray<MkHashStr> m_CaptionTextNode;
 
 public:
 

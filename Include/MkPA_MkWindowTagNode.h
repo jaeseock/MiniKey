@@ -43,12 +43,12 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// textName가 empty면 삭제
-	void SetTextName(const MkHashStr& textName);
+	void SetTextName(const MkArray<MkHashStr>& textName);
 
 	// text node를 설정하면서 바로 text를 변경
-	void SetTextName(const MkHashStr& textName, const MkStr& msg);
+	void SetTextName(const MkArray<MkHashStr>& textName, const MkStr& msg);
 
-	inline const MkHashStr& GetTextName(void) const { return m_TextName; }
+	inline const MkArray<MkHashStr>& GetTextName(void) const { return m_TextName; }
 
 	// text에 대한 휘발성 수정(저장되지 않음)을 위한 text node pointer 반환
 	MkTextNode* GetTagTextPtr(void);
@@ -101,7 +101,7 @@ protected:
 	MkHashStr m_IconSubsetOrSequenceName;
 
 	// text
-	MkHashStr m_TextName;
+	MkArray<MkHashStr> m_TextName;
 
 	// region
 	float m_LengthOfBetweenIconAndText;

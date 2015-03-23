@@ -41,7 +41,7 @@ void MkWindowTagNode::SetIconSubsetOrSequenceName(const MkHashStr& subsetOrSeque
 	}
 }
 
-void MkWindowTagNode::SetTextName(const MkHashStr& textName)
+void MkWindowTagNode::SetTextName(const MkArray<MkHashStr>& textName)
 {
 	if (textName != m_TextName)
 	{
@@ -50,7 +50,7 @@ void MkWindowTagNode::SetTextName(const MkHashStr& textName)
 	}
 }
 
-void MkWindowTagNode::SetTextName(const MkHashStr& textName, const MkStr& msg)
+void MkWindowTagNode::SetTextName(const MkArray<MkHashStr>& textName, const MkStr& msg)
 {
 	if (textName != m_TextName)
 	{
