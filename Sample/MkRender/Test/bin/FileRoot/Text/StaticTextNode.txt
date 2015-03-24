@@ -1,7 +1,7 @@
 
 Node "_Sample"
 {
-	str Type = "BigBold";
+	str Type = "LargeBold";
 	str Style = "Desc:Title";
 	int LFV = 10;
 	str Seq = "1st" / "2st";
@@ -102,10 +102,25 @@ Node "Theme"
 			str Style = "WindowTitle:Front";
 		}
 		
-		Node "Large"
+		Node "Medium"
 		{
-			str Type = "Small";
+			str Type = "Medium";
 			str Style = "WindowTitle:Front";
 		}
+		
+		Node "Large"
+		{
+			str Type = "Large";
+			str Style = "WindowTitle:Front";
+		}
+	}
+}
+
+Node "Test"
+{
+	Node "CheckBox"
+	{
+		str Type = "Small";
+		str Text = "체크박스 샘플";
 	}
 }

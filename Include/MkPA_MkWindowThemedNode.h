@@ -77,7 +77,7 @@ public:
 	// (NOTE) custom image type이거나 component의 unit type이 image일 경우 의미 없음
 	//------------------------------------------------------------------------------------------------//
 
-	void SetClientSize(const MkFloat2& clientSize);
+	virtual void SetClientSize(const MkFloat2& clientSize);
 	inline const MkFloat2& GetClientSize(void) const { return m_ClientRect.size; }
 
 	//------------------------------------------------------------------------------------------------//

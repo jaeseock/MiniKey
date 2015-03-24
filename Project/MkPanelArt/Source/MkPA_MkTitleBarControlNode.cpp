@@ -159,7 +159,6 @@ void MkTitleBarControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType
 
 MkTitleBarControlNode::MkTitleBarControlNode(const MkHashStr& name) : MkWindowBaseNode(name)
 {
-	SetAcceptInput(true);
 	SetMovableByDragging(true);
 }
 

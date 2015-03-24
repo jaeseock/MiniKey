@@ -2,13 +2,12 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// window base node
-// window system의 action part의 base class
+// window control node : title
 //
 // ex>
 //	MkTitleBarControlNode* titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBar");
 //
-//	titleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 300.f, true);
+//	titleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Medium, 300.f, true);
 //	titleBar->SetIcon(MkWindowThemeData::eIT_Notice); // system icon
 //	//titleBar->SetIcon(MkWindowThemeData::eIT_CustomTag, L"Default\\theme_default.png", L"BtnRI16N"); // custom icon
 //	titleBar->SetCaption(L"코레가 타이틀데스!!!", eRAP_LeftCenter);
@@ -40,17 +39,17 @@ public:
 	// icon 설정
 	// iconType이 eIT_None일 경우 icon 삭제
 	// iconType이 eIT_CustomTag일 경우 iconPath, iconSubsetOrSequenceName로 전용 icon 설정 가능
-	// (NOTE) 호출 전 SetTitleBar()이 올바르게 호출된 상태이어야 함
+	// (NOTE) 호출 전 SetTitleBar()가 올바르게 호출된 상태이어야 함
 	void SetIcon(MkWindowThemeData::eIconType iconType, const MkHashStr& imagePath = MkHashStr::EMPTY, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
 
 	// static text node로 caption 설정
 	// textNode가 비어 있을 경우 삭제
-	// (NOTE) 호출 전 SetTitleBar()이 올바르게 호출된 상태이어야 함
+	// (NOTE) 호출 전 SetTitleBar()가 올바르게 호출된 상태이어야 함
 	void SetCaption(const MkArray<MkHashStr>& textNode, eRectAlignmentPosition position = eRAP_LeftCenter);
 
 	// 휘발성 caption 설정
 	// text node는 theme를 따름
-	// (NOTE) 호출 전 SetTitleBar()이 올바르게 호출된 상태이어야 함
+	// (NOTE) 호출 전 SetTitleBar()가 올바르게 호출된 상태이어야 함
 	void SetCaption(const MkStr& caption, eRectAlignmentPosition position = eRAP_LeftCenter);
 
 	//------------------------------------------------------------------------------------------------//

@@ -31,6 +31,10 @@ public:
 	// (NOTE) 부모가 MkVisualPatternNode 및 파생 class instance일 경우에만 유효
 	//------------------------------------------------------------------------------------------------//
 
+	// 기준이 되는 부모의 rect가 client인지 window인지 여부 설정/반환. default는 client rect(false)
+	void SetAlignmentPivotIsWindowRect(bool enable);
+	inline bool GetAlignmentPivotIsWindowRect(void) const { return m_AlignmentPivotIsWindowRect; }
+
 	void SetAlignmentPosition(eRectAlignmentPosition position);
 	inline eRectAlignmentPosition GetAlignmentPosition(void) const { return m_AlignmentPosition; }
 
@@ -81,6 +85,7 @@ protected:
 	MkFloatRect m_WindowRect;
 
 	// align
+	bool m_AlignmentPivotIsWindowRect;
 	eRectAlignmentPosition m_AlignmentPosition;
 	MkFloat2 m_AlignmentOffset;
 

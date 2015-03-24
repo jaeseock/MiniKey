@@ -21,7 +21,11 @@ enum ePA_SceneNodeType
 	ePA_SNT_WindowThemedNode, // MkWindowThemedNode
 	ePA_SNT_WindowBaseNode, // MkWindowBaseNode
 
-	ePA_SNT_TitleBarControlNode // MkTitleBarControlNode
+	ePA_SNT_TitleBarControlNode, // MkTitleBarControlNode
+	ePA_SNT_BodyFrameControlNode, // MkBodyFrameControlNode
+	ePA_SNT_CheckBoxControlNode, // MkCheckBoxControlNode
+	ePA_SNT_ScrollBarControlNode, // MkScrollBarControlNode
+	ePA_SNT_SliderControlNode // MkSliderControlNode
 
 	//ePA_SNT_ControlWindowNodeBegin,
 
@@ -72,6 +76,10 @@ enum ePA_SceneNodeEvent
 
 	// MkTitleBarControlNode
 	ePA_SNE_CloseWindow,
+
+	// MkCheckBoxControlNode
+	ePA_SNE_CheckOn,
+	ePA_SNE_CheckOff
 };
 
 /*

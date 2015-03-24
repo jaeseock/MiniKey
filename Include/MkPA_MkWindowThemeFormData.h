@@ -64,6 +64,12 @@ public:
 	// form type 반환
 	inline eFormType GetFormType(void) const { return m_FormType; }
 
+	// margin 반환
+	inline float GetLeftMargin(void) const { return m_Margin[0]; }
+	inline float GetRightMargin(void) const { return m_Margin[1]; }
+	inline float GetTopMargin(void) const { return m_Margin[2]; }
+	inline float GetBottomMargin(void) const { return m_Margin[3]; }
+
 	//------------------------------------------------------------------------------------------------//
 	// scene node 구성용 interface
 	//------------------------------------------------------------------------------------------------//
@@ -97,6 +103,8 @@ protected:
 
 	bool _AddUnitData(const MkBaseTexture* texture, const MkArray<MkHashStr>& subsetOrSequenceNameList, bool filledUnit);
 
+	void _UpdateMargin(void);
+
 	// unit type 반환
 	// 초기화시 소속 unit들은 모두 동일 type으로 구성되어 있음을 보장하기 때문에 가능
 	MkWindowThemeUnitData::eUnitType _GetUnitType(void) const;
@@ -111,4 +119,6 @@ protected:
 	eFormType m_FormType;
 
 	MkArray<MkWindowThemeUnitData> m_UnitList;
+
+	float m_Margin[4]; // 0:left, 1:right, 2:top, 3:bottom
 };

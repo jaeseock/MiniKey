@@ -22,6 +22,7 @@ const MkHashStr MkWindowThemeData::ComponentTypeName[eCT_RegularMax] =
 	MK_VALUE_TO_STRING(eCT_NormalBtn),
 	MK_VALUE_TO_STRING(eCT_OKBtn),
 	MK_VALUE_TO_STRING(eCT_CancelBtn),
+	MK_VALUE_TO_STRING(eCT_CheckBoxBtn),
 	MK_VALUE_TO_STRING(eCT_FlatBtn),
 	MK_VALUE_TO_STRING(eCT_GuideBtn),
 	MK_VALUE_TO_STRING(eCT_GuideLine),
@@ -32,31 +33,44 @@ const MkHashStr MkWindowThemeData::ComponentTypeName[eCT_RegularMax] =
 	MK_VALUE_TO_STRING(eCT_BlueSelBtn),
 	MK_VALUE_TO_STRING(eCT_RedOutlineSelBtn),
 	MK_VALUE_TO_STRING(eCT_RedLEDBtnSmall),
+	MK_VALUE_TO_STRING(eCT_RedLEDBtnMedium),
 	MK_VALUE_TO_STRING(eCT_RedLEDBtnLarge),
 	MK_VALUE_TO_STRING(eCT_GreenLEDBtnSmall),
+	MK_VALUE_TO_STRING(eCT_GreenLEDBtnMedium),
 	MK_VALUE_TO_STRING(eCT_GreenLEDBtnLarge),
 	MK_VALUE_TO_STRING(eCT_BlueLEDBtnSmall),
+	MK_VALUE_TO_STRING(eCT_BlueLEDBtnMedium),
 	MK_VALUE_TO_STRING(eCT_BlueLEDBtnLarge),
 	MK_VALUE_TO_STRING(eCT_NoticeIconSmall),
+	MK_VALUE_TO_STRING(eCT_NoticeIconMedium),
 	MK_VALUE_TO_STRING(eCT_NoticeIconLarge),
 	MK_VALUE_TO_STRING(eCT_InformationIconSmall),
+	MK_VALUE_TO_STRING(eCT_InformationIconMedium),
 	MK_VALUE_TO_STRING(eCT_InformationIconLarge),
 	MK_VALUE_TO_STRING(eCT_WarningIconSmall),
+	MK_VALUE_TO_STRING(eCT_WarningIconMedium),
 	MK_VALUE_TO_STRING(eCT_WarningIconLarge),
 	MK_VALUE_TO_STRING(eCT_WindowIconSmall),
+	MK_VALUE_TO_STRING(eCT_WindowIconMedium),
 	MK_VALUE_TO_STRING(eCT_WindowIconLarge),
 	MK_VALUE_TO_STRING(eCT_EditModeIconSmall),
+	MK_VALUE_TO_STRING(eCT_EditModeIconMedium),
 	MK_VALUE_TO_STRING(eCT_EditModeIconLarge),
 	MK_VALUE_TO_STRING(eCT_LeftArrowIconSmall),
+	MK_VALUE_TO_STRING(eCT_LeftArrowIconMedium),
 	MK_VALUE_TO_STRING(eCT_LeftArrowIconLarge),
 	MK_VALUE_TO_STRING(eCT_RightArrowIconSmall),
+	MK_VALUE_TO_STRING(eCT_RightArrowIconMedium),
 	MK_VALUE_TO_STRING(eCT_RightArrowIconLarge),
 	MK_VALUE_TO_STRING(eCT_UpArrowIconSmall),
+	MK_VALUE_TO_STRING(eCT_UpArrowIconMedium),
 	MK_VALUE_TO_STRING(eCT_UpArrowIconLarge),
 	MK_VALUE_TO_STRING(eCT_DownArrowIconSmall),
+	MK_VALUE_TO_STRING(eCT_DownArrowIconMedium),
 	MK_VALUE_TO_STRING(eCT_DownArrowIconLarge),
-	MK_VALUE_TO_STRING(eCT_CheckArrowIconSmall),
-	MK_VALUE_TO_STRING(eCT_CheckArrowIconLarge)
+	MK_VALUE_TO_STRING(eCT_CheckMarkIconSmall),
+	MK_VALUE_TO_STRING(eCT_CheckMarkIconMedium),
+	MK_VALUE_TO_STRING(eCT_CheckMarkIconLarge)
 };
 
 const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[eCT_RegularMax] =
@@ -70,6 +84,7 @@ const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[eCT_
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_NormalBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_OKBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_CancelBtn
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_CheckBoxBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_FlatBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_GuideBtn
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_GuideLine
@@ -80,31 +95,44 @@ const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[eCT_
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueSelBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedOutlineSelBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedLEDBtnSmall
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedLEDBtnMedium
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedLEDBtnLarge
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_GreenLEDBtnSmall
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_GreenLEDBtnMedium
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_GreenLEDBtnLarge
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueLEDBtnSmall
+	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueLEDBtnMedium
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueLEDBtnLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_NoticeIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_NoticeIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_NoticeIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_InformationIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_InformationIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_InformationIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_WarningIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_WarningIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_WarningIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_WindowIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_WindowIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_WindowIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_EditModeIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_EditModeIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_EditModeIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_LeftArrowIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_LeftArrowIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_LeftArrowIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_RightArrowIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_RightArrowIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_RightArrowIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_UpArrowIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_UpArrowIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_UpArrowIconLarge
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_DownArrowIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_DownArrowIconMedium
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_DownArrowIconLarge
-	MkWindowThemeFormData::eFT_SingleUnit, // eCT_CheckArrowIconSmall
-	MkWindowThemeFormData::eFT_SingleUnit // eCT_CheckArrowIconLarge
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_CheckMarkIconSmall
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_CheckMarkIconMedium
+	MkWindowThemeFormData::eFT_SingleUnit // eCT_CheckMarkIconLarge
 };
 
 const MkHashStr MkWindowThemeData::CustomFormName(MK_VALUE_TO_STRING(eCT_CustomForm));
@@ -112,6 +140,7 @@ const MkHashStr MkWindowThemeData::CustomFormName(MK_VALUE_TO_STRING(eCT_CustomF
 const MkHashStr MkWindowThemeData::FrameTypeName[eFT_Max] =
 {
 	MK_VALUE_TO_STRING(eFT_Small),
+	MK_VALUE_TO_STRING(eFT_Medium),
 	MK_VALUE_TO_STRING(eFT_Large)
 };
 
@@ -236,6 +265,7 @@ float MkWindowThemeData::GetFrameSize(eFrameType frameType) const
 	switch (frameType)
 	{
 	case eFT_Small:
+	case eFT_Medium:
 	case eFT_Large:
 		return m_FrameSize[frameType];
 	}
@@ -247,6 +277,7 @@ const MkArray<MkHashStr>& MkWindowThemeData::GetCaptionTextNode(eFrameType frame
 	switch (frameType)
 	{
 	case eFT_Small:
+	case eFT_Medium:
 	case eFT_Large:
 		return m_CaptionTextNode[frameType];
 	}
@@ -271,6 +302,17 @@ MkWindowThemeData::eComponentType MkWindowThemeData::GetLEDButtonComponent(eFram
 			case eLED_Red: return eCT_RedLEDBtnSmall;
 			case eLED_Green: return eCT_GreenLEDBtnSmall;
 			case eLED_Blue: return eCT_BlueLEDBtnSmall;
+			}
+		}
+		break;
+
+	case eFT_Medium:
+		{
+			switch (LEDType)
+			{
+			case eLED_Red: return eCT_RedLEDBtnMedium;
+			case eLED_Green: return eCT_GreenLEDBtnMedium;
+			case eLED_Blue: return eCT_BlueLEDBtnMedium;
 			}
 		}
 		break;
@@ -306,7 +348,25 @@ MkWindowThemeData::eComponentType MkWindowThemeData::GetSystemIconComponent(eFra
 			case eIT_RightArrow: return eCT_RightArrowIconSmall;
 			case eIT_UpArrow: return eCT_UpArrowIconSmall;
 			case eIT_DownArrow: return eCT_DownArrowIconSmall;
-			case eIT_CheckArrow: return eCT_CheckArrowIconSmall;
+			case eIT_CheckMark: return eCT_CheckMarkIconSmall;
+			}
+		}
+		break;
+
+	case eFT_Medium:
+		{
+			switch (iconType)
+			{
+			case eIT_Default: return eCT_WindowIconMedium;
+			case eIT_Notice: return eCT_NoticeIconMedium;
+			case eIT_Information: return eCT_InformationIconMedium;
+			case eIT_Warning: return eCT_WarningIconMedium;
+			case eIT_EditMode: return eCT_EditModeIconMedium;
+			case eIT_LeftArrow: return eCT_LeftArrowIconMedium;
+			case eIT_RightArrow: return eCT_RightArrowIconMedium;
+			case eIT_UpArrow: return eCT_UpArrowIconMedium;
+			case eIT_DownArrow: return eCT_DownArrowIconMedium;
+			case eIT_CheckMark: return eCT_CheckMarkIconMedium;
 			}
 		}
 		break;
@@ -324,7 +384,7 @@ MkWindowThemeData::eComponentType MkWindowThemeData::GetSystemIconComponent(eFra
 			case eIT_RightArrow: return eCT_RightArrowIconLarge;
 			case eIT_UpArrow: return eCT_UpArrowIconLarge;
 			case eIT_DownArrow: return eCT_DownArrowIconLarge;
-			case eIT_CheckArrow: return eCT_CheckArrowIconLarge;
+			case eIT_CheckMark: return eCT_CheckMarkIconLarge;
 			}
 		}
 		break;
@@ -336,6 +396,7 @@ MkWindowThemeData::MkWindowThemeData()
 {
 	m_CustomForms = NULL;
 	m_FrameSize[eFT_Small] = 0.f;
+	m_FrameSize[eFT_Medium] = 0.f;
 	m_FrameSize[eFT_Large] = 0.f;
 }
 

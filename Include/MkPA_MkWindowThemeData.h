@@ -40,6 +40,7 @@ public:
 		eCT_OKBtn, // eFT_QuadUnit
 		eCT_CancelBtn, // eFT_QuadUnit
 
+		eCT_CheckBoxBtn, // eFT_QuadUnit
 		eCT_FlatBtn, // eFT_QuadUnit
 		eCT_GuideBtn, // eFT_QuadUnit
 
@@ -55,43 +56,56 @@ public:
 
 		// static. follow frame size
 		eCT_RedLEDBtnSmall, // eFT_QuadUnit
+		eCT_RedLEDBtnMedium, // eFT_QuadUnit
 		eCT_RedLEDBtnLarge, // eFT_QuadUnit
 
 		eCT_GreenLEDBtnSmall, // eFT_QuadUnit
+		eCT_GreenLEDBtnMedium, // eFT_QuadUnit
 		eCT_GreenLEDBtnLarge, // eFT_QuadUnit
 
 		eCT_BlueLEDBtnSmall, // eFT_QuadUnit
+		eCT_BlueLEDBtnMedium, // eFT_QuadUnit
 		eCT_BlueLEDBtnLarge, // eFT_QuadUnit
 
 		eCT_NoticeIconSmall, // eFT_SingleUnit
+		eCT_NoticeIconMedium, // eFT_SingleUnit
 		eCT_NoticeIconLarge, // eFT_SingleUnit
 
 		eCT_InformationIconSmall, // eFT_SingleUnit
+		eCT_InformationIconMedium, // eFT_SingleUnit
 		eCT_InformationIconLarge, // eFT_SingleUnit
 
 		eCT_WarningIconSmall, // eFT_SingleUnit
+		eCT_WarningIconMedium, // eFT_SingleUnit
 		eCT_WarningIconLarge, // eFT_SingleUnit
 
 		eCT_WindowIconSmall, // eFT_SingleUnit
+		eCT_WindowIconMedium, // eFT_SingleUnit
 		eCT_WindowIconLarge, // eFT_SingleUnit
 
 		eCT_EditModeIconSmall, // eFT_SingleUnit
+		eCT_EditModeIconMedium, // eFT_SingleUnit
 		eCT_EditModeIconLarge, // eFT_SingleUnit
 
 		eCT_LeftArrowIconSmall, // eFT_SingleUnit
+		eCT_LeftArrowIconMedium, // eFT_SingleUnit
 		eCT_LeftArrowIconLarge, // eFT_SingleUnit
 
 		eCT_RightArrowIconSmall, // eFT_SingleUnit
+		eCT_RightArrowIconMedium, // eFT_SingleUnit
 		eCT_RightArrowIconLarge, // eFT_SingleUnit
 
 		eCT_UpArrowIconSmall, // eFT_SingleUnit
+		eCT_UpArrowIconMedium, // eFT_SingleUnit
 		eCT_UpArrowIconLarge, // eFT_SingleUnit
 
 		eCT_DownArrowIconSmall, // eFT_SingleUnit
+		eCT_DownArrowIconMedium, // eFT_SingleUnit
 		eCT_DownArrowIconLarge, // eFT_SingleUnit
 
-		eCT_CheckArrowIconSmall, // eFT_SingleUnit
-		eCT_CheckArrowIconLarge, // eFT_SingleUnit
+		eCT_CheckMarkIconSmall, // eFT_SingleUnit
+		eCT_CheckMarkIconMedium, // eFT_SingleUnit
+		eCT_CheckMarkIconLarge, // eFT_SingleUnit
 
 		eCT_RegularMax,
 
@@ -108,6 +122,7 @@ public:
 		eFT_None = -1,
 
 		eFT_Small = 0,
+		eFT_Medium,
 		eFT_Large,
 
 		eFT_Max
@@ -122,7 +137,7 @@ public:
 	};
 
 	// icon type 정의
-	// eIT_Default ~ eIT_CheckArrow는 system icon, eIT_CustomTag 직접 tag 지정
+	// eIT_Default ~ eIT_CheckMark는 system icon, eIT_CustomTag 직접 tag 지정
 	enum eIconType
 	{
 		eIT_None = -1,
@@ -138,7 +153,7 @@ public:
 		eIT_UpArrow,
 		eIT_DownArrow,
 
-		eIT_CheckArrow,
+		eIT_CheckMark,
 
 		eIT_CustomTag
 	};

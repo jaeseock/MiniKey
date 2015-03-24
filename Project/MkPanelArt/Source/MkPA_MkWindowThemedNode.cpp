@@ -229,7 +229,7 @@ bool MkWindowThemedNode::__UpdateRegion(void)
 
 		if (m_WindowRect != oldWinRect)
 		{
-			m_UpdateCommand.Set(eUC_Alignment); // window rect가 변경되면 alignment도 갱신되야 함
+			m_UpdateCommand.Set(eUC_Alignment); // window rect가 변경되면 자신의 alignment도 갱신되야 함
 		}
 
 		// client rect에 변경이 발생하면 자식 visual pattern node 재정렬

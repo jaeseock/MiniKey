@@ -529,6 +529,22 @@
 								Name="Window control node"
 								>
 								<File
+									RelativePath=".\Source\MkPA_MkBodyFrameControlNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkBodyFrameControlNode.h"
+									>
+								</File>
+								<File
+									RelativePath=".\Source\MkPA_MkCheckBoxControlNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkCheckBoxControlNode.h"
+									>
+								</File>
+								<File
 									RelativePath=".\Source\MkPA_MkTitleBarControlNode.cpp"
 									>
 								</File>

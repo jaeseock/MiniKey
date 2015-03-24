@@ -7,6 +7,15 @@ const MkStr MkVisualPatternNode::NamePrefix(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX);
 
 //------------------------------------------------------------------------------------------------//
 
+void MkVisualPatternNode::SetAlignmentPivotIsWindowRect(bool enable)
+{
+	if (enable != m_AlignmentPivotIsWindowRect)
+	{
+		m_AlignmentPivotIsWindowRect = enable;
+		m_UpdateCommand.Set(eUC_Alignment);
+	}
+}
+
 void MkVisualPatternNode::SetAlignmentPosition(eRectAlignmentPosition position)
 {
 	if (position != m_AlignmentPosition)
@@ -39,18 +48,23 @@ void MkVisualPatternNode::Update(double currTime)
 
 MkVisualPatternNode::MkVisualPatternNode(const MkHashStr& name) : MkSceneNode(name)
 {
+	m_AlignmentPivotIsWindowRect = false; // client rect default
 	m_AlignmentPosition = eRAP_NonePosition;
 }
 
 
 void MkVisualPatternNode::__UpdateAlignment(const MkVisualPatternNode* parentNode)
 {
-	if ((parentNode != NULL) && parentNode->GetClientRect().SizeIsNotZero() && m_WindowRect.SizeIsNotZero())
+	if ((parentNode != NULL) && m_WindowRect.SizeIsNotZero())
 	{
-		MkFloat2 snapPos = parentNode->GetClientRect().GetSnapPosition
-			(MkFloatRect(GetLocalPosition() + m_WindowRect.position, m_WindowRect.size), m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
+		const MkFloatRect& pivotRect = (m_AlignmentPivotIsWindowRect) ? parentNode->GetWindowRect() : parentNode->GetClientRect();
+		if (pivotRect.SizeIsNotZero())
+		{
+			MkFloat2 snapPos = pivotRect.GetSnapPosition
+				(MkFloatRect(GetLocalPosition() + m_WindowRect.position, m_WindowRect.size), m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
 
-		SetLocalPosition(snapPos + m_AlignmentOffset - m_WindowRect.position);
+			SetLocalPosition(snapPos + m_AlignmentOffset - m_WindowRect.position);
+		}
 	}
 }
 

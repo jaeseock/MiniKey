@@ -31,6 +31,8 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 
 	m_ImagePathPtr = imagePath;
 
+	m_Margin[3] = m_Margin[2] = m_Margin[1] = m_Margin[0] = 0.f;
+
 	MkArray<MkHashStr> buffer[4];
 	
 	// eFT_SingleUnit
@@ -40,7 +42,12 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 			return false;
 
 		m_FormType = eFT_SingleUnit;
-		return _AddUnitData(texture, buffer[eS_Single], true);
+		bool ok = _AddUnitData(texture, buffer[eS_Single], true);
+		if (ok)
+		{
+			_UpdateMargin();
+		}
+		return ok;
 	}
 	
 	MkArray<bool> haveUD(4);
@@ -114,6 +121,10 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 				return false;
 		}
 	}
+
+	// margin ±¸¼º
+	_UpdateMargin();
+
 	return true;
 }
 
@@ -174,6 +185,8 @@ bool MkWindowThemeFormData::SetFormState(MkSceneNode* sceneNode, eState state) c
 MkWindowThemeFormData::MkWindowThemeFormData()
 {
 	m_FormType = eFT_None;
+
+	m_Margin[3] = m_Margin[2] = m_Margin[1] = m_Margin[0] = 0.f;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -182,6 +195,20 @@ bool MkWindowThemeFormData::_AddUnitData(const MkBaseTexture* texture, const MkA
 {
 	MkWindowThemeUnitData& ud = m_UnitList.PushBack();
 	return ud.SetUp(m_ImagePathPtr->GetString(), texture, subsetOrSequenceNameList, filledUnit);
+}
+
+void MkWindowThemeFormData::_UpdateMargin(void)
+{
+	MkWindowThemeUnitData::eUnitType unitType = _GetUnitType();
+	if ((unitType == MkWindowThemeUnitData::eUT_Edge) || (unitType == MkWindowThemeUnitData::eUT_Table))
+	{
+		const MkArray<MkWindowThemeUnitData::PieceData>& defData = m_UnitList[0].GetPieceData();
+
+		m_Margin[0] = defData[MkWindowThemeUnitData::eP_LC].size.x; // left
+		m_Margin[1] = defData[MkWindowThemeUnitData::eP_RC].size.x; // right
+		m_Margin[2] = defData[MkWindowThemeUnitData::eP_MT].size.y; // top
+		m_Margin[3] = defData[MkWindowThemeUnitData::eP_MB].size.y; // bottom
+	}
 }
 
 MkWindowThemeUnitData::eUnitType MkWindowThemeFormData::_GetUnitType(void) const

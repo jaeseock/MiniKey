@@ -65,6 +65,9 @@ public:
 	// root window node(window manager node에 등록된 직계 하위 node) 부터 현 node가지의 경로를 path에 넣어 반환
 	void GetWindowPath(MkArray<MkHashStr>& path) const;
 
+	// window frame type 반환
+	MkWindowThemeData::eFrameType GetWindowFrameType(void) const { return m_WindowFrameType; }
+
 	//------------------------------------------------------------------------------------------------//
 	// attribute
 	//------------------------------------------------------------------------------------------------//

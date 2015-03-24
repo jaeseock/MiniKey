@@ -33,6 +33,8 @@
 #include "MkPA_MkWindowBaseNode.h"
 #include "MkPA_MkWindowManagerNode.h"
 #include "MkPA_MkTitleBarControlNode.h"
+#include "MkPA_MkBodyFrameControlNode.h"
+#include "MkPA_MkCheckBoxControlNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -105,6 +107,32 @@ public:
 
 		titleBar->SetLocalPosition(MkFloat2(400.f, 600.f));
 		titleBar->SetLocalDepth(10.f); // tmp
+
+		// window A : body frame
+		MkBodyFrameControlNode* bodyFrame = MkBodyFrameControlNode::CreateChildNode(titleBar, L"BodyFrame");
+		bodyFrame->SetBodyFrame
+			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
+
+		// window A : check box
+		MkCheckBoxControlNode* checkBox = MkCheckBoxControlNode::CreateChildNode(bodyFrame, L"CheckBox");
+		MkArray<MkHashStr> cbTextNode;
+		cbTextNode.PushBack(L"Test");
+		cbTextNode.PushBack(L"CheckBox");
+		checkBox->SetCheckBox(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, cbTextNode, true);
+		checkBox->SetLocalPosition(MkFloat2(100.f, 100.f));
+		checkBox->SetLocalDepth(-1.f);
+		
+
+		/*
+		MkWindowBaseNode* tttNode = MkWindowBaseNode::CreateChildNode(bodyFrame, L"TTT");
+		tttNode->SetLocalDepth(-0.1f);
+		tttNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		tttNode->SetComponentType(MkWindowThemeData::eCT_GuideBtn);
+		tttNode->SetClientSize(MkFloat2(80.f, 50.f));
+		tttNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		tttNode->SetMovableByDragging(true);
+		*/
+		//
 
 		/*
 		// window A : title

@@ -156,6 +156,7 @@ void MkWindowBaseNode::Clear(void)
 
 MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(name)
 {
+	SetAcceptInput(true);
 	SetEnable(true);
 
 	m_WindowFrameType = MkWindowThemeData::eFT_None;
