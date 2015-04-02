@@ -121,20 +121,20 @@ enum eRectAlignmentPosition
 };
 
 //------------------------------------------------------------------------------------------------//
-// cursor state
+// button state
 //------------------------------------------------------------------------------------------------//
 
 // state
-enum eCursorState
+enum eButtonState
 {
-	eCS_None = -1,
+	eBS_None = -1,
 
-	eCS_Pushing = 0,
-	eCS_Pressed,
-	eCS_Released,
-	eCS_DoubleClicked,
+	eBS_Pushing = 0,
+	eBS_Pressed,
+	eBS_Released,
+	eBS_DoubleClicked,
 
-	eCS_Max
+	eBS_Max
 };
 
 //------------------------------------------------------------------------------------------------//

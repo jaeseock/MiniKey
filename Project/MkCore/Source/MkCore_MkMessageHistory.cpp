@@ -27,7 +27,7 @@ MkStr MkMessageHistory::StepBack(void)
 {
 	MkScopedCriticalSection(m_CS);
 	if (m_History.Empty())
-		return L"";
+		return MkStr::EMPTY;
 
 	if (m_CurrentPosition == 0xffffffff)
 	{

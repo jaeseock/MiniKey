@@ -44,12 +44,12 @@ public:
 	// regular component로 설정
 	void SetBodyFrame
 		(const MkHashStr& themeName, MkWindowThemeData::eComponentType componentType,
-		bool useShadow, eHangingType hangingType, const MkFloat2& clientSize = MkFloat2::Zero);
+		bool useShadow, eHangingType hangingType, const MkFloat2& clientSize);
 
 	// custom form으로 설정
 	void SetBodyFrame
 		(const MkHashStr& themeName, const MkHashStr& customFormName,
-		bool useShadow, eHangingType hangingType, const MkFloat2& clientSize = MkFloat2::Zero);
+		bool useShadow, eHangingType hangingType, const MkFloat2& clientSize);
 
 	//------------------------------------------------------------------------------------------------//
 	// region

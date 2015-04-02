@@ -72,6 +72,19 @@ const MkArray<MkHashStr>& MkWindowThemeSet::GetCaptionTextNode(const MkHashStr& 
 	return m_Themes[MkWindowThemeData::DefaultThemeName].GetCaptionTextNode(frameType);
 }
 
+const MkArray<MkHashStr>& MkWindowThemeSet::GetEditTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const
+{
+	if (m_Themes.Empty())
+		return MkHashStr::EMPTY_ARRAY;
+
+	if (m_Themes.Exist(themeName))
+	{
+		const MkArray<MkHashStr>& name = m_Themes[themeName].GetEditTextNode(frameType);
+		return name.Empty() ? m_Themes[MkWindowThemeData::DefaultThemeName].GetEditTextNode(frameType) : name;
+	}
+	return m_Themes[MkWindowThemeData::DefaultThemeName].GetEditTextNode(frameType);
+}
+
 void MkWindowThemeSet::UnloadUnusedThemeImage(void)
 {
 	if (!m_UsedThemes.Empty())

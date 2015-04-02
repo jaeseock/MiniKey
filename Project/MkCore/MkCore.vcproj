@@ -863,6 +863,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkKeywordFilter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkKeywordFilter.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkCore_MkLogManager.cpp"
 					>
 				</File>
@@ -892,14 +900,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkSharedPointerManager.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\MkCore_MkSlangFilter.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Include\MkCore_MkSlangFilter.h"
 					>
 				</File>
 				<File

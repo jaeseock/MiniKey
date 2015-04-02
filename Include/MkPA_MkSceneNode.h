@@ -177,6 +177,8 @@ protected:
 
 public:
 
+	static const MkHashStr ArgKey_DragMovement;
+
 	// class hierarchy
 	static MkTypeHierarchy<ePA_SceneNodeType> SceneNodeTypeHierarchy;
 };

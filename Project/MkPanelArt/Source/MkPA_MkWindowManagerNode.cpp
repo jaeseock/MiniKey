@@ -1,12 +1,14 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkInputManager.h"
+#include "MkCore_MkDevPanel.h"
+#include "MkCore_MkDataNode.h"
 
-#include "MkPA_MkWindowBaseNode.h"
+#include "MkPA_MkProjectDefinition.h"
+#include "MkPA_MkDeviceManager.h"
+#include "MkPA_MkScrollBarControlNode.h"
 #include "MkPA_MkWindowManagerNode.h"
 
-
-//const MkStr MkWindowManagerNode::NamePrefix(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX);
 
 //------------------------------------------------------------------------------------------------//
 
@@ -95,6 +97,30 @@ void MkWindowManagerNode::DeactivateWindow(const MkHashStr& windowName)
 
 //------------------------------------------------------------------------------------------------//
 
+const MkStr NODE_EVT_NAME[] =
+{
+	MK_VALUE_TO_STRING(ePA_SNE_DragMovement),
+	MK_VALUE_TO_STRING(ePA_SNE_ChangeTheme),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnPressed),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnReleased),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorMBtnPressed),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorMBtnReleased),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorMBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorRBtnPressed),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorRBtnReleased),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorRBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_WheelMoved),
+	MK_VALUE_TO_STRING(ePA_SNE_Activate),
+	MK_VALUE_TO_STRING(ePA_SNE_Deactivate),
+	MK_VALUE_TO_STRING(ePA_SNE_OnFocus),
+	MK_VALUE_TO_STRING(ePA_SNE_LostFocus),
+	MK_VALUE_TO_STRING(ePA_SNE_CloseWindow),
+	MK_VALUE_TO_STRING(ePA_SNE_CheckOn),
+	MK_VALUE_TO_STRING(ePA_SNE_CheckOff),
+	MK_VALUE_TO_STRING(ePA_SNE_ScrollBarMoved)
+};
+
 void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
 {
 	switch (eventType)
@@ -108,6 +134,94 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 		}
 		break;
 	}
+
+#if (MKDEF_PA_SHOW_WIN_MGR_EVENT_REPORT)
+
+	MkStr msg;
+	msg.Reserve(256);
+	msg += GetNodeName().GetString();
+	msg += L" reports ";
+	msg += NODE_EVT_NAME[eventType];
+	msg += L"(";
+	msg += path[path.GetSize()-1].GetString();
+	msg += L")";
+
+	if (argument != NULL)
+	{
+		msg += L", arg : ";
+
+		switch (eventType)
+		{
+		case ePA_SNE_DragMovement:
+			{
+				MkVec2 buffer;
+				if (argument->GetData(MkSceneNode::ArgKey_DragMovement, buffer, 0))
+				{
+					msg += buffer;
+				}
+			}
+			break;
+
+		case ePA_SNE_ChangeTheme:
+			{
+				MkArray<MkStr> buffer;
+				if (argument->GetData(MkWindowThemedNode::ArgKey_ChangeTheme, buffer))
+				{
+					msg += buffer[0];
+					msg += L" -> ";
+					msg += buffer[1];
+				}
+			}
+			break;
+
+		case ePA_SNE_CursorLBtnPressed:
+		case ePA_SNE_CursorLBtnReleased:
+		case ePA_SNE_CursorLBtnDBClicked:
+		case ePA_SNE_CursorMBtnPressed:
+		case ePA_SNE_CursorMBtnReleased:
+		case ePA_SNE_CursorMBtnDBClicked:
+		case ePA_SNE_CursorRBtnPressed:
+		case ePA_SNE_CursorRBtnReleased:
+		case ePA_SNE_CursorRBtnDBClicked:
+			{
+				MkVec2 buffer;
+				if (argument->GetData(MkWindowBaseNode::ArgKey_CursorLocalPosition, buffer, 0))
+				{
+					msg += buffer;
+				}
+			}
+			break;
+
+		case ePA_SNE_WheelMoved:
+			{
+				int buffer;
+				if (argument->GetData(MkWindowBaseNode::ArgKey_WheelDelta, buffer, 0))
+				{
+					msg += buffer;
+				}
+			}
+			break;
+
+		case ePA_SNE_ScrollBarMoved:
+			{
+				MkArray<int> buffer;
+				if (argument->GetData(MkScrollBarControlNode::ArgKey_NewItemPosOfScrollBar, buffer) && (buffer.GetSize() == 3))
+				{
+					msg += buffer[0];
+					msg += L" <- ";
+					msg += buffer[1];
+					msg += L" (";
+					msg += buffer[2];
+					msg += L")";
+				}
+			}
+			break;
+		}
+	}
+
+	MK_DEV_PANEL.MsgToLog(msg);
+
+#endif
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -116,6 +230,22 @@ void MkWindowManagerNode::Update(double currTime)
 {
 	// LOCK!!!
 	m_UpdateLock = true;
+
+	//------------------------------------------------------------------------------------------------//
+	// world position 선 반영
+	// 기본적으로 window system은 root의 world position이 변경되지 않는다고 간주하고 만들어지기 때문에
+	// [input 처리 -> child window들의 local transform 변경 -> world transform 확정] 이라는 순서가 지켜짐
+	// 만약 이 전제가 깨지고 root가 움직이면 input(cursor)과 위치가 맞지 않게 됨
+	// 따라서 먼저 root world transform을 선 계산해 변경이 감지되면 정상적인 처리 순서 이전에 하위 전체의
+	// transform을 갱신 할 필요성이 있음
+	//------------------------------------------------------------------------------------------------//
+
+	MkFloat2 oldWorldPos = m_Transform.GetWorldPosition();
+	m_Transform.Update((m_ParentNodePtr == NULL) ? NULL : m_ParentNodePtr->__GetTransformPtr());
+	if (m_Transform.GetWorldPosition() != oldWorldPos)
+	{
+		MkSceneNode::Update(currTime);
+	}
 
 	//------------------------------------------------------------------------------------------------//
 	// activation event 반영
@@ -178,17 +308,36 @@ void MkWindowManagerNode::Update(double currTime)
 	}
 
 	//------------------------------------------------------------------------------------------------//
-	// cursor input 처리
-	// snapshot(특정 시점 기준)과 event(발생 시점 기준) 중 snapshot으로 처리
-	// 이론상으로는 한 프레임에 여러번의 cursor event가 발생 할 수 있지만, 프로게이머의 apm이 최대 600정도고
-	// 60fps의 분당 모니터링 횟수는 3600회이므로 현실적으로는 한 프레임에 event 하나 발생하기도 힘들기 때문
-	// (NOTE) 중복 처리 비용을 줄일 수 있지만 낮은 프레임에서는 일부 입력이 무시될 수 있음
+	// input 처리
+	//
+	// cursor
+	//   - snapshot(특정 시점 기준)과 event(발생 시점 기준) 중 snapshot으로 처리
+	//   - 이론상으로는 한 프레임에 여러번의 cursor event가 발생 할 수 있지만, 프로게이머의 apm이 최대 600정도고
+	//     60fps의 분당 모니터링 횟수는 3600회이므로 현실적으로는 한 프레임에 event 하나 발생하기도 힘들기 때문
+	//   (NOTE) 중복 처리 비용을 줄일 수 있지만 낮은 프레임에서는 일부 입력이 무시될 수 있음
+	//
+	// key
+	//   - 모든 입력을 받아들여야 하기 때문에 snapshot이 아닌 event로 처리
 	//------------------------------------------------------------------------------------------------//
 
-	// cursor position
-	MkInt2 cursorPosition = MK_INPUT_MGR.GetAbsoluteMousePosition(true);
+	// cursor
+	// input snapshot 생성
+	MkInt2 cursorPosition = MK_INPUT_MGR.GetAbsoluteMousePosition(true) - m_InputPivotPosition;
 	MkInt2 cursorMovement = MK_INPUT_MGR.GetAbsoluteMouseMovement(true);
-	bool cursorInside = MK_INPUT_MGR.GetMousePointerAvailable();
+
+	bool cursorInside = MK_INPUT_MGR.GetMousePointerAvailable(); // device 영역 내에 있는지 체크하고
+	if (cursorInside)
+	{
+		MkIntRect regionRect(MkInt2::Zero, m_TargetRegion);
+		cursorInside = regionRect.CheckIntersection(cursorPosition); // whole region 내에 있는지도 체크
+	}
+
+	eButtonState leftBtnState = MK_INPUT_MGR.GetMouseLeftButtonState();
+	eButtonState middleBtnState = MK_INPUT_MGR.GetMouseMiddleButtonState();
+	eButtonState rightBtnState = MK_INPUT_MGR.GetMouseRightButtonState();
+
+	int wheelDelta = MK_INPUT_MGR.GetMouseWheelMovement();
+	bool leftBtnPushing = MK_INPUT_MGR.GetMouseLeftButtonPushing();
 
 	// 현 프레임에서 cursor를 소유한 window path 목록
 	MkArray< MkArray<MkHashStr> > cursorOwnedPathBuffer;
@@ -198,31 +347,28 @@ void MkWindowManagerNode::Update(double currTime)
 	{
 		// cursor가 위치한 window를 picking으로 검출
 		MkArray<MkWindowBaseNode*> nodeBuffer;
-		if (_PickWindowBaseNode(nodeBuffer, cursorOwnedPathBuffer, MkFloat2(static_cast<float>(cursorPosition.x), static_cast<float>(cursorPosition.y))))
+		MkFloat2 fCursorPos(static_cast<float>(cursorPosition.x), static_cast<float>(cursorPosition.y));
+
+		if (_PickWindowBaseNode(nodeBuffer, cursorOwnedPathBuffer, fCursorPos))
 		{
-			eCursorState leftState = MK_INPUT_MGR.GetMouseLeftButtonState();
-			eCursorState middleState = MK_INPUT_MGR.GetMouseMiddleButtonState();
-			eCursorState rightState = MK_INPUT_MGR.GetMouseRightButtonState();
-			int wheelDelta = MK_INPUT_MGR.GetMouseWheelMovement();
-			
 			MK_INDEXING_LOOP(nodeBuffer, i) // 통지
 			{
-				nodeBuffer[i]->UpdateCursorState(cursorPosition, cursorMovement, true, leftState, middleState, rightState, wheelDelta);
+				nodeBuffer[i]->UpdateCursorInput(cursorPosition, cursorMovement, true, leftBtnState, middleBtnState, rightBtnState, wheelDelta);
 			}
 
 			// 만약 어느 button이라도 입력되었으면 해당 window들을 입력 대상 window로 지정
-			if ((leftState == eCS_Pressed) || (middleState == eCS_Pressed) || (rightState == eCS_Pressed))
+			if ((leftBtnState == eBS_Pressed) || (middleBtnState == eBS_Pressed) || (rightBtnState == eBS_Pressed))
 			{
 				m_KeyInputTargetWindowPath = cursorOwnedPathBuffer;
 			}
 
 			// left button에 변화가 발생하면
-			if ((leftState != eCS_None) && (leftState != eCS_Pushing))
+			if ((leftBtnState != eBS_None) && (leftBtnState != eBS_Pushing))
 			{
 				m_LeftCursorDraggingNodePath.Clear();
 
-				// left button 입력이 감지되었다면 dragging node 저장
-				if ((leftState == eCS_Pressed) || (leftState == eCS_DoubleClicked))
+				// window base 파생 객체들은 left button 입력이 감지되었다면 여기서 dragging node 저장
+				if ((leftBtnState == eBS_Pressed) || (leftBtnState == eBS_DoubleClicked))
 				{
 					m_LeftCursorDraggingNodePath.Reserve(cursorOwnedPathBuffer.GetSize());
 
@@ -247,7 +393,7 @@ void MkWindowManagerNode::Update(double currTime)
 
 	MK_INDEXING_LOOP(nodeBuffer, i) // 통지
 	{
-		nodeBuffer[i]->UpdateCursorState(cursorPosition, cursorMovement, false, eCS_None, eCS_None, eCS_None, 0);
+		nodeBuffer[i]->UpdateCursorInput(cursorPosition, cursorMovement, false, eBS_None, eBS_None, eBS_None, 0);
 	}
 
 	m_CursorOwnedWindowPath = cursorOwnedPathBuffer; // cursor owner 갱신
@@ -255,16 +401,55 @@ void MkWindowManagerNode::Update(double currTime)
 	// left cursor dragging 적용
 	if (cursorInside)
 	{
-		if (MK_INPUT_MGR.GetMouseLeftButtonPushing() && (!m_LeftCursorDraggingNodePath.Empty()))
+		if (leftBtnPushing && (!m_LeftCursorDraggingNodePath.Empty()))
 		{
-			MkFloat2 cursorFMov(static_cast<float>(cursorMovement.x), static_cast<float>(cursorMovement.y));
+			MkFloat2 fCursorMov(static_cast<float>(cursorMovement.x), static_cast<float>(cursorMovement.y));
 
 			MkArray<MkSceneNode*> targetBuffer;
 			_UpdateSceneNodePath(m_LeftCursorDraggingNodePath, targetBuffer);
 
 			MK_INDEXING_LOOP(targetBuffer, i)
 			{
-				targetBuffer[i]->SetLocalPosition(targetBuffer[i]->GetLocalPosition() + cursorFMov);
+				MkSceneNode* targetSNode = targetBuffer[i];
+				const MkFloat2& oldLocalPos = targetSNode->GetLocalPosition();
+				MkFloat2 targetLocalPos = oldLocalPos + fCursorMov;
+
+				// MkWindowBaseNode 파생 객체면 attribute check
+				if (targetSNode->IsDerivedFrom(ePA_SNT_WindowBaseNode))
+				{
+					MkWindowBaseNode* targetWNode = dynamic_cast<MkWindowBaseNode*>(targetSNode);
+					if ((targetWNode != NULL) && targetWNode->GetMovableByDragging())
+					{
+						bool lockinClient = targetWNode->GetLockinRegionIsParentClient(); // 영역 제한 attribute 존재?
+						if (lockinClient || targetWNode->GetLockinRegionIsParentWindow())
+						{
+							// 부모 node가 client/window rect를 가지고 있어야(MkVisualPatternNode 파생 객체) 가능
+							MkSceneNode* parentSNode = targetWNode->GetParentNode();
+							if ((parentSNode != NULL) && parentSNode->IsDerivedFrom(ePA_SNT_VisualPatternNode))
+							{
+								// client area가 window area보다 작으므로 client가 우선권을 가짐
+								MkVisualPatternNode* parentVNode = dynamic_cast<MkVisualPatternNode*>(parentSNode);
+								const MkFloatRect& pivotRect = (lockinClient) ? parentVNode->GetClientRect() : parentVNode->GetWindowRect();
+
+								// 이동할 영역 제한
+								MkFloatRect targetRect(targetLocalPos, targetWNode->GetWindowRect().size);
+								targetLocalPos = pivotRect.Confine(targetRect);
+							}
+						}
+					}
+				}
+
+				MkFloat2 movement = targetLocalPos - oldLocalPos;
+				if (!movement.IsZero())
+				{
+					// 위치 조정
+					targetSNode->SetLocalPosition(targetLocalPos);
+
+					// event 통지
+					MkDataNode arg;
+					arg.CreateUnit(MkSceneNode::ArgKey_DragMovement, MkVec2(movement.x, movement.y));
+					targetSNode->StartNodeReportTypeEvent(ePA_SNE_DragMovement, &arg);
+				}
 			}
 		}
 	}
@@ -273,50 +458,40 @@ void MkWindowManagerNode::Update(double currTime)
 		m_LeftCursorDraggingNodePath.Clear();
 	}
 
-	//------------------------------------------------------------------------------------------------//
 	// key input 처리
-	// snapshot(특정 시점 기준)과 event(발생 시점 기준) 중 event로 처리
-	//------------------------------------------------------------------------------------------------//
-
 	MkArray<MkWindowBaseNode*> keyInputTargetBuffer;
 	_UpdateWindowPath(m_KeyInputTargetWindowPath, keyInputTargetBuffer);
 
 	// key 입력을 받아들일 window가 존재하면
 	if (!keyInputTargetBuffer.Empty())
 	{
-		// key event 생성
-		MkArray<MkWindowBaseNode::KeyInputEvent> keyEventList;
-
+		// key input snapshot 생성
 		MkArray<MkInputManager::InputEvent> inputEventList;
 		MK_INPUT_MGR.GetInputEvent(inputEventList);
 
+		MkArray<MkInt2> keyInputSnapshot;
 		MK_INDEXING_LOOP(inputEventList, i)
 		{
 			const MkInputManager::InputEvent& evt = inputEventList[i];
 			if (evt.eventType == MkInputManager::eKeyPress)
 			{
-				MkWindowBaseNode::KeyInputEvent& ke = keyEventList.PushBack();
-				ke.type = MkWindowBaseNode::eKIT_Press;
-				ke.keyCode = evt.arg0;
+				keyInputSnapshot.PushBack(MkInt2(1, evt.arg0));
 			}
 			else if (evt.eventType == MkInputManager::eKeyRelease)
 			{
-				MkWindowBaseNode::KeyInputEvent& ke = keyEventList.PushBack();
-				ke.type = MkWindowBaseNode::eKIT_Release;
-				ke.keyCode = evt.arg0;
+				keyInputSnapshot.PushBack(MkInt2(0, evt.arg0));
 			}
 		}
 
-		// key 입력이 존재하면
-		if (!keyEventList.Empty())
+		// key event가 존재하면 통지
+		if (!keyInputSnapshot.Empty())
 		{
 			MK_INDEXING_LOOP(keyInputTargetBuffer, i)
 			{
-				keyInputTargetBuffer[i]->UpdateKeyInput(keyEventList);
+				keyInputTargetBuffer[i]->UpdateKeyInput(keyInputSnapshot);
 			}
 		}
 	}
-	
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -350,6 +525,7 @@ void MkWindowManagerNode::Clear(void)
 MkWindowManagerNode::MkWindowManagerNode(const MkHashStr& name) : MkSceneNode(name)
 {
 	m_DepthBandwidth = 1000.f;
+	m_TargetRegion = MK_DEVICE_MGR.GetCurrentResolution();
 	
 	m_DeactivatingWindows.Reserve(256);
 	m_ActivatingWindows.Create(eLT_Low).Reserve(64);

@@ -11,7 +11,7 @@
 const MkHashStr MkWindowThemedNode::NodeNamePrefix(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Comp:");
 const MkHashStr MkWindowThemedNode::ShadowNodeName(NodeNamePrefix.GetString() + L"Shadow");
 
-const static MkHashStr CHANGE_THEME_ARG_KEY = L"ThemeName";
+const MkHashStr MkWindowThemedNode::ArgKey_ChangeTheme(L"ChangeTheme");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -84,7 +84,7 @@ void MkWindowThemedNode::ChangeThemeName(const MkHashStr& srcThemeName, const Mk
 	names.PushBack(srcThemeName);
 	names.PushBack(destThemeName);
 	MkDataNode argument;
-	argument.CreateUnitEx(CHANGE_THEME_ARG_KEY, names);
+	argument.CreateUnitEx(ArgKey_ChangeTheme, names);
 
 	SendNodeCommandTypeEvent(ePA_SNE_ChangeTheme, &argument);
 }
@@ -123,7 +123,7 @@ void MkWindowThemedNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, 
 	case ePA_SNE_ChangeTheme:
 		{
 			MkArray<MkHashStr> names;
-			if (argument->GetDataEx(CHANGE_THEME_ARG_KEY, names) && (names.GetSize() == 2))
+			if (argument->GetDataEx(ArgKey_ChangeTheme, names) && (names.GetSize() == 2))
 			{
 				if (names[0].Empty() || (names[0] == m_ThemeName))
 				{
@@ -153,6 +153,21 @@ MkWindowThemedNode::MkWindowThemedNode(const MkHashStr& name) : MkVisualPatternN
 	m_ComponentType = MkWindowThemeData::eCT_None;
 	m_UseShadow = false;
 	m_FormState = MkWindowThemeFormData::eS_None;
+}
+
+MkFloat2 MkWindowThemedNode::ConvertWindowToClientSize
+(const MkHashStr& themeName, MkWindowThemeData::eComponentType componentType, const MkHashStr& customFormName, const MkFloat2& windowSize)
+{
+	MkFloat2 clientSize = windowSize;
+	const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(themeName, componentType, customFormName);
+	if (formData != NULL)
+	{
+		clientSize.x -= formData->GetLeftMargin();
+		clientSize.x -= formData->GetRightMargin();
+		clientSize.y -= formData->GetTopMargin();
+		clientSize.y -= formData->GetBottomMargin();
+	}
+	return clientSize;
 }
 
 bool MkWindowThemedNode::__UpdateThemeComponent(void)

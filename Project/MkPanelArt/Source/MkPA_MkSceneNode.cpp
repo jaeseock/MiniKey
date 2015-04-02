@@ -7,6 +7,9 @@
 #include "MkPA_MkSceneNode.h"
 //#include "MkS2D_MkSceneNodeFamilyDefinition.h"
 
+
+const MkHashStr MkSceneNode::ArgKey_DragMovement(L"DragMovement");
+
 // class hierarchy
 MkTypeHierarchy<ePA_SceneNodeType> MkSceneNode::SceneNodeTypeHierarchy(ePA_SNT_SceneNode);
 
@@ -213,7 +216,6 @@ MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name)
 MkPanel& MkSceneNode::CreatePanel(const MkHashStr& name, const MkSceneNode* targetNode, const MkInt2& panelSize)
 {
 	MkPanel& panel = CreatePanel(name);
-	panel.__SetParentNode(this);
 	panel.SetPanelSize(MkFloat2(static_cast<float>(panelSize.x), static_cast<float>(panelSize.y)));
 	panel.SetMaskingNode(targetNode);
 	return panel;
@@ -332,6 +334,8 @@ void MkSceneNode::__BuildSceneNodeTypeHierarchy(void)
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_CheckBoxControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ScrollBarControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_SliderControlNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ScenePortalNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_EditBoxControlNode);
 }
 /*
 void MkSceneNode::__GenerateBuildingTemplate(void)

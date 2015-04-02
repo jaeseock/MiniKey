@@ -38,7 +38,7 @@ void MkCheckBoxControlNode::SetCheck(bool onCheck)
 
 void MkCheckBoxControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
 {
-	// left cursor click이고 해당 window가 자신이면 toggle check
+	// left cursor click이고 해당 window가 자신이면 toggle
 	if ((eventType == ePA_SNE_CursorLBtnReleased) && path.Empty())
 	{
 		_SetCheck(!GetCheck(), true);

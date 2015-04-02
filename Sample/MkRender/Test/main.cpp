@@ -11,7 +11,7 @@
 #include "MkCore_MkTimeState.h"
 #include "MkCore_MkWin32Application.h"
 #include "MkCore_MkProfilingManager.h"
-#include "MkCore_MkSlangFilter.h"
+#include "MkCore_MkKeywordFilter.h"
 #include "MkCore_MkFloatOp.h"
 
 #include "MkCore_MkDataNode.h"
@@ -35,6 +35,8 @@
 #include "MkPA_MkTitleBarControlNode.h"
 #include "MkPA_MkBodyFrameControlNode.h"
 #include "MkPA_MkCheckBoxControlNode.h"
+#include "MkPA_MkScrollBarControlNode.h"
+#include "MkPA_MkScenePortalNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -60,14 +62,54 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
+		//--------------------------------------------------//
+		m_SubNode = new MkSceneNode(L"Sub");
+
+		// sub window mgr
+		MkWindowManagerNode* swinMgrNode = MkWindowManagerNode::CreateChildNode(m_SubNode, L"SWinMgr");
+		swinMgrNode->SetDepthBandwidth(1000.f);
+
+		// window Sub : title bar
+		MkTitleBarControlNode* stitleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"STitleBar");
+		stitleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 0.f, true);
+		stitleBar->SetIcon(MkWindowThemeData::eIT_Notice);
+		stitleBar->SetCaption(L"서브 윈도우", eRAP_LeftCenter);
+		swinMgrNode->AttachWindow(stitleBar, MkWindowManagerNode::eLT_Normal);
+		swinMgrNode->ActivateWindow(L"STitleBar");
+		stitleBar->SetLocalPosition(MkFloat2(0.f, 180.f - 18.f));
+		stitleBar->SetLocalDepth(10.f); // tmp
+
+		// window Sub : body frame
+		MkBodyFrameControlNode* sbodyFrame = MkBodyFrameControlNode::CreateChildNode(stitleBar, L"SBodyFrame");
+		sbodyFrame->SetBodyFrame
+			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_NoticeBox, false, MkBodyFrameControlNode::eHT_UnderParentWindow, MkFloat2(244.f, 300.f));
+
+		// window Sub : ok btn
+		MkWindowBaseNode* okbtnNode = MkWindowBaseNode::CreateChildNode(sbodyFrame, L"SubOKBtn");
+		okbtnNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		okbtnNode->SetComponentType(MkWindowThemeData::eCT_OKBtn);
+		okbtnNode->SetClientSize(MkFloat2(100.f, 20.f));
+		okbtnNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		okbtnNode->SetAlignmentPosition(eRAP_LeftTop);
+		okbtnNode->SetAlignmentOffset(MkFloat2(10.f, -10.f));
+		okbtnNode->SetLocalDepth(-1.f);
+
+		// window Sub : cancel btn
+		MkWindowBaseNode* ccbtnNode = MkWindowBaseNode::CreateChildNode(sbodyFrame, L"SubCCBtn");
+		ccbtnNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		ccbtnNode->SetComponentType(MkWindowThemeData::eCT_CancelBtn);
+		ccbtnNode->SetClientSize(MkFloat2(100.f, 20.f));
+		ccbtnNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		ccbtnNode->SetAlignmentPosition(eRAP_LeftTop);
+		ccbtnNode->SetAlignmentOffset(MkFloat2(120.f, -10.f));
+		ccbtnNode->SetLocalDepth(-1.f);
+
+		//--------------------------------------------------//
+
 		m_RootNode = new MkSceneNode(L"Root");
 
 		MkSceneNode* mainNode = m_RootNode->CreateChildNode(L"Main");
 		m_TargetNode = mainNode;
-
-		MkSceneNode* subNode = m_RootNode->CreateChildNode(L"Sub");
-		subNode->CreatePanel(L"P").SetTexture(L"Image\\s03.jpg");
-		subNode->SetLocalDepth(2000.f);
 
 		MkSceneNode* bgNode = mainNode->CreateChildNode(L"BG");
 		bgNode->CreatePanel(L"P").SetTexture(L"Image\\rohan_screenshot.png");
@@ -89,10 +131,6 @@ public:
 		textName.PushBack(L"_Sample");
 		tp.SetTextNode(textName, true);
 
-		MkPanel& mp = mainNode->CreatePanel(L"MaskingTest", subNode, MkInt2(200, 150));
-		mp.SetLocalDepth(1000.f);
-		mp.SetLocalPosition(MkFloat2(120.f, 50.f));
-
 		// window mgr
 		MkWindowManagerNode* winMgrNode = MkWindowManagerNode::CreateChildNode(m_RootNode, L"WinMgr");
 		winMgrNode->SetDepthBandwidth(1000.f);
@@ -113,73 +151,14 @@ public:
 		bodyFrame->SetBodyFrame
 			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
 
-		// window A : check box
-		MkCheckBoxControlNode* checkBox = MkCheckBoxControlNode::CreateChildNode(bodyFrame, L"CheckBox");
-		MkArray<MkHashStr> cbTextNode;
-		cbTextNode.PushBack(L"Test");
-		cbTextNode.PushBack(L"CheckBox");
-		checkBox->SetCheckBox(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, cbTextNode, true);
-		checkBox->SetLocalPosition(MkFloat2(100.f, 100.f));
-		checkBox->SetLocalDepth(-1.f);
-		
-
-		/*
-		MkWindowBaseNode* tttNode = MkWindowBaseNode::CreateChildNode(bodyFrame, L"TTT");
-		tttNode->SetLocalDepth(-0.1f);
-		tttNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
-		tttNode->SetComponentType(MkWindowThemeData::eCT_GuideBtn);
-		tttNode->SetClientSize(MkFloat2(80.f, 50.f));
-		tttNode->SetFormState(MkWindowThemeFormData::eS_Default);
-		tttNode->SetMovableByDragging(true);
-		*/
 		//
-
-		/*
-		// window A : title
-		MkWindowBaseNode* winARoot = MkWindowBaseNode::CreateChildNode(NULL, L"Win A title");
-		winARoot->SetLocalPosition(MkFloat2(400.f, 600.f));
-		winARoot->SetThemeName(MkWindowThemeData::DefaultThemeName);
-		winARoot->SetComponentType(MkWindowThemeData::eCT_Title);
-		winARoot->SetShadowUsage(false);
-		winARoot->SetClientSize(MkFloat2(300.f, 22.f));
-		winARoot->SetFormState(MkWindowThemeFormData::eS_Back);
-		winARoot->SetAcceptInput(true);
-		winARoot->SetMovableByDragging(true);
-		winMgrNode->AttachWindow(winARoot, MkWindowManagerNode::eLT_Normal);
-
-		// window A : bg
-		MkWindowBaseNode* winABG = MkWindowBaseNode::CreateChildNode(winARoot, L"Win A bg");
-		winABG->SetLocalPosition(MkFloat2(500.f, 100.f));
-		winABG->SetLocalDepth(2.f);
-		winABG->SetThemeName(MkWindowThemeData::DefaultThemeName);
-		winABG->SetComponentType(MkWindowThemeData::eCT_DefaultBox);
-		winABG->SetShadowUsage(true);
-		winABG->SetClientSize(MkFloat2(300.f, 200.f));
-		winABG->SetFormState(MkWindowThemeFormData::eS_Default);
-		winABG->SetAcceptInput(true);
-		*/
+		MkScenePortalNode* scenePortal = MkScenePortalNode::CreateChildNode(bodyFrame, L"ScenePortal");
+		scenePortal->SetScenePortal(MkWindowThemeData::DefaultThemeName, MkFloat2(250.f, 180.f), swinMgrNode);
+		scenePortal->SetAlignmentPosition(eRAP_LeftBottom);
+		scenePortal->SetAlignmentOffset(MkFloat2(50.f, 30.f));
+		scenePortal->SetLocalDepth(-1.f);
 		
-		// BG
-		MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(mainNode, L"Themed BG");
-		tbgNode->SetLocalPosition(MkFloat2(500.f, 100.f));
-		tbgNode->SetLocalDepth(2.f);
-		tbgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
-		tbgNode->SetComponentType(MkWindowThemeData::eCT_DefaultBox);
-		//tbgNode->SetCustomForm(L"TestBtn01");
-		tbgNode->SetShadowUsage(true);
-		tbgNode->SetClientSize(MkFloat2(300.f, 200.f));
-		tbgNode->SetFormState(MkWindowThemeFormData::eS_Default);
-		tbgNode->SetAcceptInput(true);
-
-		// SUB
-		MkWindowThemedNode* tsubNode = MkWindowThemedNode::CreateChildNode(tbgNode, L"Themed SUB");
-		tsubNode->SetLocalDepth(-1.f);
-		tsubNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
-		tsubNode->SetComponentType(MkWindowThemeData::eCT_GuideBtn);
-		tsubNode->SetClientSize(MkFloat2(80.f, 50.f));
-		tsubNode->SetFormState(MkWindowThemeFormData::eS_Default);
-		tsubNode->SetAcceptInput(true);
-		tsubNode->SetAlignmentPosition(eRAP_LeftTop);
+		
 		
 		// tag
 		/*
@@ -440,11 +419,13 @@ public:
 	virtual void Clear(MkDataNode* sharingNode = NULL)
 	{
 		MK_DELETE(m_RootNode);
+		MK_DELETE(m_SubNode);
 	}
 
 	TestPage(const MkHashStr& name) : MkBasePage(name)
 	{
 		m_RootNode = NULL;
+		m_SubNode = NULL;
 		m_TargetNode = NULL;
 		si = 0;
 		ap = eRAP_NonePosition;
@@ -495,6 +476,7 @@ protected:
 protected:
 
 	MkSceneNode* m_RootNode;
+	MkSceneNode* m_SubNode;
 	MkSceneNode* m_TargetNode;
 	unsigned int si;
 	eRectAlignmentPosition ap;

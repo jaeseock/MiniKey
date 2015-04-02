@@ -1,8 +1,12 @@
 
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkWindowBaseNode.h"
 
+
+const MkHashStr MkWindowBaseNode::ArgKey_CursorLocalPosition(L"CursorLocalPosition");
+const MkHashStr MkWindowBaseNode::ArgKey_WheelDelta(L"WheelDelta");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -15,47 +19,54 @@ MkWindowBaseNode* MkWindowBaseNode::CreateChildNode(MkSceneNode* parentNode, con
 
 //------------------------------------------------------------------------------------------------//
 
-void MkWindowBaseNode::UpdateCursorState
-(const MkInt2& position, const MkInt2& movement, bool cursorInside, eCursorState leftCS, eCursorState middleCS, eCursorState rightCS, int wheelDelta)
+void MkWindowBaseNode::UpdateCursorInput
+(const MkInt2& position, const MkInt2& movement, bool cursorInside, eButtonState leftBS, eButtonState middleBS, eButtonState rightBS, int wheelDelta)
 {
 	if (cursorInside)
 	{
 		if (_IsQuadForm())
 		{
-			switch (leftCS)
+			switch (leftBS)
 			{
-			case eCS_None:
-			case eCS_Released:
+			case eBS_None:
+			case eBS_Released:
 				SetFormState(MkWindowThemeFormData::eS_Focus);
 				break;
 
-			case eCS_Pushing:
-			case eCS_Pressed:
-			case eCS_DoubleClicked:
+			case eBS_Pushing:
+			case eBS_Pressed:
+			case eBS_DoubleClicked:
 				SetFormState(MkWindowThemeFormData::eS_Pushing);
 				break;
 			}
 		}
 
-		switch (leftCS)
+		switch (leftBS)
 		{
-		case eCS_Released: StartNodeReportTypeEvent(ePA_SNE_CursorLBtnReleased, NULL); break;
-		case eCS_Pressed: StartNodeReportTypeEvent(ePA_SNE_CursorLBtnPressed, NULL); break;
-		case eCS_DoubleClicked: StartNodeReportTypeEvent(ePA_SNE_CursorLBtnDBClicked, NULL); break;
+		case eBS_Released: _StartCursorReport(ePA_SNE_CursorLBtnReleased, position); break;
+		case eBS_Pressed: _StartCursorReport(ePA_SNE_CursorLBtnPressed, position); break;
+		case eBS_DoubleClicked: _StartCursorReport(ePA_SNE_CursorLBtnDBClicked, position); break;
 		}
 
-		switch (middleCS)
+		switch (middleBS)
 		{
-		case eCS_Released: StartNodeReportTypeEvent(ePA_SNE_CursorMBtnReleased, NULL); break;
-		case eCS_Pressed: StartNodeReportTypeEvent(ePA_SNE_CursorMBtnPressed, NULL); break;
-		case eCS_DoubleClicked: StartNodeReportTypeEvent(ePA_SNE_CursorMBtnDBClicked, NULL); break;
+		case eBS_Released: _StartCursorReport(ePA_SNE_CursorMBtnReleased, position); break;
+		case eBS_Pressed: _StartCursorReport(ePA_SNE_CursorMBtnPressed, position); break;
+		case eBS_DoubleClicked: _StartCursorReport(ePA_SNE_CursorMBtnDBClicked, position); break;
 		}
 
-		switch (rightCS)
+		switch (rightBS)
 		{
-		case eCS_Released: StartNodeReportTypeEvent(ePA_SNE_CursorRBtnReleased, NULL); break;
-		case eCS_Pressed: StartNodeReportTypeEvent(ePA_SNE_CursorRBtnPressed, NULL); break;
-		case eCS_DoubleClicked: StartNodeReportTypeEvent(ePA_SNE_CursorRBtnDBClicked, NULL); break;
+		case eBS_Released: _StartCursorReport(ePA_SNE_CursorRBtnReleased, position); break;
+		case eBS_Pressed: _StartCursorReport(ePA_SNE_CursorRBtnPressed, position); break;
+		case eBS_DoubleClicked: _StartCursorReport(ePA_SNE_CursorRBtnDBClicked, position); break;
+		}
+
+		if (wheelDelta != 0)
+		{
+			MkDataNode arg;
+			arg.CreateUnit(MkWindowBaseNode::ArgKey_WheelDelta, wheelDelta);
+			StartNodeReportTypeEvent(ePA_SNE_WheelMoved, &arg);
 		}
 	}
 	else
@@ -160,6 +171,16 @@ MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(n
 	SetEnable(true);
 
 	m_WindowFrameType = MkWindowThemeData::eFT_None;
+}
+
+void MkWindowBaseNode::_StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position)
+{
+	MkFloat2 worldPos(static_cast<float>(position.x), static_cast<float>(position.y));
+	MkFloat2 localPos = worldPos - GetWorldPosition();
+
+	MkDataNode arg;
+	arg.CreateUnit(MkWindowBaseNode::ArgKey_CursorLocalPosition, MkVec2(localPos.x, localPos.y));
+	StartNodeReportTypeEvent(evt, &arg);
 }
 
 //------------------------------------------------------------------------------------------------//

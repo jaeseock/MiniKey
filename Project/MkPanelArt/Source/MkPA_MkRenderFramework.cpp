@@ -1,5 +1,5 @@
 
-//#include "MkS2D_MkHiddenEditBox.h"
+#include "MkPA_MkHiddenEditBox.h"
 #include "MkPA_MkResetableResourcePool.h"
 //#include "MkS2D_MkWindowResourceManager.h"
 //#include "MkS2D_MkWindowEventManager.h"
@@ -30,7 +30,7 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 	m_InstanceDeallocator.Expand(11);
 
 	// 0.
-	//m_InstanceDeallocator.RegisterInstance(new MkHiddenEditBox());
+	m_InstanceDeallocator.RegisterInstance(new MkHiddenEditBox());
 
 	// 1.
 	m_InstanceDeallocator.RegisterInstance(new MkResetableResourcePool());

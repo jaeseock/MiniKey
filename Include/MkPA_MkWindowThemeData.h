@@ -170,6 +170,7 @@ public:
 	inline const MkHashStr& GetImageFilePath(void) const { return m_ImageFilePath; }
 	float GetFrameSize(eFrameType frameType) const;
 	const MkArray<MkHashStr>& GetCaptionTextNode(eFrameType frameType) const;
+	const MkArray<MkHashStr>& GetEditTextNode(eFrameType frameType) const;
 
 	// component form data ¹ÝÈ¯
 	const MkWindowThemeFormData* GetFormData(eComponentType compType, const MkHashStr& formName) const;
@@ -189,6 +190,7 @@ protected:
 	MkHashStr m_ImageFilePath;
 	float m_FrameSize[eFT_Max];
 	MkArray<MkHashStr> m_CaptionTextNode[eFT_Max];
+	MkArray<MkHashStr> m_EditTextNode[eFT_Max];
 
 	// forms
 	MkMap<eComponentType, MkWindowThemeFormData> m_RegularComponents;

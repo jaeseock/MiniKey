@@ -277,18 +277,21 @@ Node "StaticResource"
 			{
 				float FrameSize = 12;
 				str CaptionTextNode = "Theme" / "Default" / "Small";
+				str EditTextNode = "Theme" / "Default" / "Small";
 			}
 			
 			Node "eFT_Medium"
 			{
 				float FrameSize = 16;
 				str CaptionTextNode = "Theme" / "Default" / "Medium";
+				str EditTextNode = "Theme" / "Default" / "Medium";
 			}
 			
 			Node "eFT_Large"
 			{
 				float FrameSize = 22;
 				str CaptionTextNode = "Theme" / "Default" / "Large";
+				str EditTextNode = "Theme" / "Default" / "Large";
 			}
 			
 			/*

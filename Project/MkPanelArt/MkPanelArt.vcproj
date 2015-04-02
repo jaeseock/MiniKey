@@ -269,6 +269,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkPA_MkHiddenEditBox.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkHiddenEditBox.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkPA_MkRenderer.cpp"
 					>
 				</File>
@@ -545,11 +553,39 @@
 									>
 								</File>
 								<File
+									RelativePath=".\Source\MkPA_MkEditBoxControlNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkEditBoxControlNode.h"
+									>
+								</File>
+								<File
+									RelativePath=".\Source\MkPA_MkScrollBarControlNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkScrollBarControlNode.h"
+									>
+								</File>
+								<File
 									RelativePath=".\Source\MkPA_MkTitleBarControlNode.cpp"
 									>
 								</File>
 								<File
 									RelativePath="..\..\Include\MkPA_MkTitleBarControlNode.h"
+									>
+								</File>
+							</Filter>
+							<Filter
+								Name="Scene portal node"
+								>
+								<File
+									RelativePath=".\Source\MkPA_MkScenePortalNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkScenePortalNode.h"
 									>
 								</File>
 							</Filter>

@@ -22,9 +22,16 @@ public:
 	static MkWindowManagerNode* CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName);
 
 	//------------------------------------------------------------------------------------------------//
+	// 영역 설정
+	//------------------------------------------------------------------------------------------------//
 
+	// 하위 윈도우들이 위치 할 깊이 대역폭. default는 1000.f
 	inline void SetDepthBandwidth(float depth) { m_DepthBandwidth = depth; }
 	inline float GetDepthBandwidth(void) const { return m_DepthBandwidth; }
+
+	// 해당 system이 사용할 영역. default는 display resolution
+	inline void SetTargetRegion(const MkInt2& region) { m_TargetRegion = region; }
+	inline const MkInt2& GetTargetRegion(void) const { return m_TargetRegion; }
 
 	//------------------------------------------------------------------------------------------------//
 	// window 등록/삭제
@@ -35,7 +42,7 @@ public:
 	{
 		eLT_Low = 0, // 하위 layer. 가장 밑단에 위치
 		eLT_Normal, // 일반 layer
-		eLT_High // 상위 layer. 가장 윗단에 위치
+		eLT_High // 상위 layer. modal을 제외하고 가장 윗단에 위치
 	};
 
 	bool AttachWindow(MkWindowBaseNode* windowNode, eLayerType layerType = eLT_Normal);
@@ -54,6 +61,16 @@ public:
 
 	// 다음 프레임의 비활성화 지정
 	void DeactivateWindow(const MkHashStr& windowName);
+
+	//------------------------------------------------------------------------------------------------//
+	// cursor pivot
+	// 기본적으로 window system은 root와 input 좌표계가 동일하다고 간주하고 만들어지기 때문에 cursor의
+	// world position을 그대로 사용 할 수 있지만, 만약 그렇지 않다면(서로 다른 좌표계라면) pivot을 수정해
+	// cursor의 world position을 변환 해 주어야 함
+	//------------------------------------------------------------------------------------------------//
+
+	inline void SetInputPivotPosition(const MkInt2& pivotPosition) { m_InputPivotPosition = pivotPosition; }
+	inline const MkInt2& GetInputPivotPosition(void) const { return m_InputPivotPosition; }
 
 	//------------------------------------------------------------------------------------------------//
 	// event
@@ -105,6 +122,7 @@ protected:
 	//------------------------------------------------------------------------------------------------//
 
 	float m_DepthBandwidth;
+	MkInt2 m_TargetRegion;
 	
 	// 비활성화 윈도우 목록
 	MkArray<MkHashStr> m_DeactivatingWindows;
@@ -124,6 +142,9 @@ protected:
 
 	// 다음 프레임에 반영 될 활성화/비활성화 event
 	MkArray<_ActivationEvent> m_ActivationEvent;
+
+	// input
+	MkInt2 m_InputPivotPosition;
 
 	// window path
 	// 대상 노드(MkWindowBaseNode*)를 그대로 가지고 있으면 편리하기는 하지만 하위 node들의 attach, detach시마다

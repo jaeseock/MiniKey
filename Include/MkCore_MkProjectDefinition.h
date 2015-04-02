@@ -52,7 +52,7 @@
 #define MKDEF_SENDING_PATCH_FILE_NAME L"_MkSendLog.bat"
 
 //------------------------------------------------------------------------------------------------//
-// MkSlangFilter
+// MkKeywordFilter
 //------------------------------------------------------------------------------------------------//
 
 #define MKDEF_SLANG_REPLACEMENT_TAG L'*'

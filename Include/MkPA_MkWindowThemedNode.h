@@ -110,6 +110,14 @@ public:
 	MkWindowThemedNode(const MkHashStr& name);
 	virtual ~MkWindowThemedNode() { Clear(); }
 
+	//------------------------------------------------------------------------------------------------//
+
+	// window size를 regular component/custom form margin을 반영한 client size로 변환
+	static MkFloat2 ConvertWindowToClientSize
+		(const MkHashStr& themeName, MkWindowThemeData::eComponentType componentType, const MkHashStr& customFormName, const MkFloat2& windowSize);
+
+	//------------------------------------------------------------------------------------------------//
+
 	bool __UpdateThemeComponent(void);
 
 	// (NOTE) 호출 전 유효한 theme name, component type이 설정되어 있어야 함
@@ -152,4 +160,6 @@ public:
 
 	static const MkHashStr NodeNamePrefix;
 	static const MkHashStr ShadowNodeName;
+
+	static const MkHashStr ArgKey_ChangeTheme;
 };

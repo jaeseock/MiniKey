@@ -10,7 +10,7 @@
 #include "MkCore_MkProfilingManager.h"
 #include "MkCore_MkTimeManager.h"
 #include "MkCore_MkInputManager.h"
-#include "MkCore_MkSlangFilter.h"
+#include "MkCore_MkKeywordFilter.h"
 #include "MkCore_MkDevPanel.h"
 #include "MkCore_MkBackgroundLoader.h"
 #include "MkCore_MkPageManager.h"
@@ -101,7 +101,7 @@ bool MkBaseFramework::__Start
 	m_InstanceDeallocator.RegisterInstance(new MkInputManager());
 
 	// 7.
-	m_InstanceDeallocator.RegisterInstance(new MkSlangFilter());
+	m_InstanceDeallocator.RegisterInstance(new MkKeywordFilter());
 
 	// 8.
 	m_InstanceDeallocator.RegisterInstance(new MkDevPanel(notShipping));

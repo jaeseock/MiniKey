@@ -90,19 +90,19 @@ public:
 	bool GetMouseLeftButtonPressed(void);
 	bool GetMouseLeftButtonReleased(void);
 	bool GetMouseLeftButtonDoubleClicked(void);
-	eCursorState GetMouseLeftButtonState(void);
+	eButtonState GetMouseLeftButtonState(void);
 
 	bool GetMouseMiddleButtonPushing(void);
 	bool GetMouseMiddleButtonPressed(void);
 	bool GetMouseMiddleButtonReleased(void);
 	bool GetMouseMiddleButtonDoubleClicked(void);
-	eCursorState GetMouseMiddleButtonState(void);
+	eButtonState GetMouseMiddleButtonState(void);
 
 	bool GetMouseRightButtonPushing(void);
 	bool GetMouseRightButtonPressed(void);
 	bool GetMouseRightButtonReleased(void);
 	bool GetMouseRightButtonDoubleClicked(void);
-	eCursorState GetMouseRightButtonState(void);
+	eButtonState GetMouseRightButtonState(void);
 
 	// 현재 프레임의 마우스 휠 변경값 반환
 	int GetMouseWheelMovement(void);
@@ -158,56 +158,56 @@ public:
 	class _ButtonState
 	{
 	public:
-		inline void SetState(eCursorState btnState, bool state) { m_State[btnState] = state; }
-		inline bool GetState(eCursorState btnState) const { return m_State[btnState]; }
+		inline void SetState(eButtonState btnState, bool state) { m_State[btnState] = state; }
+		inline bool GetState(eButtonState btnState) const { return m_State[btnState]; }
 
 		inline bool Pressed(void)
 		{
-			bool ok = !GetState(eCS_Pushing);
+			bool ok = !GetState(eBS_Pushing);
 			if (ok)
 			{
-				SetState(eCS_Pushing, true);
-				SetState(eCS_Pressed, true);
+				SetState(eBS_Pushing, true);
+				SetState(eBS_Pressed, true);
 			}
 			return ok;
 		}
 
 		inline void Released(void)
 		{
-			SetState(eCS_Pushing, false);
-			SetState(eCS_Released, true);
+			SetState(eBS_Pushing, false);
+			SetState(eBS_Released, true);
 		}
 
 		inline void DoubleClicked(void)
 		{
 			Pressed();
-			SetState(eCS_DoubleClicked, true);
+			SetState(eBS_DoubleClicked, true);
 		}
 
 		inline void Reset(void)
 		{
-			SetState(eCS_Pressed, false);
-			SetState(eCS_Released, false);
-			SetState(eCS_DoubleClicked, false);
+			SetState(eBS_Pressed, false);
+			SetState(eBS_Released, false);
+			SetState(eBS_DoubleClicked, false);
 		}
 
 		_ButtonState()
 		{
-			SetState(eCS_Pushing, false);
+			SetState(eBS_Pushing, false);
 			Reset();
 		}
 
 	protected:
-		bool m_State[eCS_Max];
+		bool m_State[eBS_Max];
 	};
 
 	//------------------------------------------------------------------------------------------------//
 
 	bool _GetCurrentMousePositionInClient(MkInt2& buffer) const;
 
-	bool _GetCurrentKeyState(unsigned int keyCode, eCursorState btnState);
-	bool _GetCurrentMouseState(unsigned int button, eCursorState btnState);
-	eCursorState _GetCurrentMouseState(unsigned int button);
+	bool _GetCurrentKeyState(unsigned int keyCode, eButtonState btnState);
+	bool _GetCurrentMouseState(unsigned int button, eButtonState btnState);
+	eButtonState _GetCurrentMouseState(unsigned int button);
 
 	void _RegisterKeyEvent(eInputEvent inputEvent, WPARAM wParam);
 

@@ -136,27 +136,27 @@ unsigned int MkInputManager::GetInputEvent(MkArray<InputEvent>& eventList)
 	return eventList.GetSize();
 }
 
-bool MkInputManager::GetKeyPushing(unsigned int keyCode) { return _GetCurrentKeyState(keyCode, eCS_Pushing); }
-bool MkInputManager::GetKeyPressed(unsigned int keyCode) { return _GetCurrentKeyState(keyCode, eCS_Pressed); }
-bool MkInputManager::GetKeyReleased(unsigned int keyCode) { return _GetCurrentKeyState(keyCode, eCS_Released); }
+bool MkInputManager::GetKeyPushing(unsigned int keyCode) { return _GetCurrentKeyState(keyCode, eBS_Pushing); }
+bool MkInputManager::GetKeyPressed(unsigned int keyCode) { return _GetCurrentKeyState(keyCode, eBS_Pressed); }
+bool MkInputManager::GetKeyReleased(unsigned int keyCode) { return _GetCurrentKeyState(keyCode, eBS_Released); }
 
-bool MkInputManager::GetMouseLeftButtonPushing(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eCS_Pushing); }
-bool MkInputManager::GetMouseLeftButtonPressed(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eCS_Pressed); }
-bool MkInputManager::GetMouseLeftButtonReleased(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eCS_Released); }
-bool MkInputManager::GetMouseLeftButtonDoubleClicked(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eCS_DoubleClicked); }
-eCursorState MkInputManager::GetMouseLeftButtonState(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON); }
+bool MkInputManager::GetMouseLeftButtonPushing(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eBS_Pushing); }
+bool MkInputManager::GetMouseLeftButtonPressed(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eBS_Pressed); }
+bool MkInputManager::GetMouseLeftButtonReleased(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eBS_Released); }
+bool MkInputManager::GetMouseLeftButtonDoubleClicked(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON, eBS_DoubleClicked); }
+eButtonState MkInputManager::GetMouseLeftButtonState(void) { return _GetCurrentMouseState(MKDEF_MOUSE_LEFT_BUTTON); }
 
-bool MkInputManager::GetMouseMiddleButtonPushing(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eCS_Pushing); }
-bool MkInputManager::GetMouseMiddleButtonPressed(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eCS_Pressed); }
-bool MkInputManager::GetMouseMiddleButtonReleased(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eCS_Released); }
-bool MkInputManager::GetMouseMiddleButtonDoubleClicked(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eCS_DoubleClicked); }
-eCursorState MkInputManager::GetMouseMiddleButtonState(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON); }
+bool MkInputManager::GetMouseMiddleButtonPushing(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eBS_Pushing); }
+bool MkInputManager::GetMouseMiddleButtonPressed(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eBS_Pressed); }
+bool MkInputManager::GetMouseMiddleButtonReleased(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eBS_Released); }
+bool MkInputManager::GetMouseMiddleButtonDoubleClicked(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON, eBS_DoubleClicked); }
+eButtonState MkInputManager::GetMouseMiddleButtonState(void) { return _GetCurrentMouseState(MKDEF_MOUSE_MIDDLE_BUTTON); }
 
-bool MkInputManager::GetMouseRightButtonPushing(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eCS_Pushing); }
-bool MkInputManager::GetMouseRightButtonPressed(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eCS_Pressed); }
-bool MkInputManager::GetMouseRightButtonReleased(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eCS_Released); }
-bool MkInputManager::GetMouseRightButtonDoubleClicked(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eCS_DoubleClicked); }
-eCursorState MkInputManager::GetMouseRightButtonState(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON); }
+bool MkInputManager::GetMouseRightButtonPushing(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eBS_Pushing); }
+bool MkInputManager::GetMouseRightButtonPressed(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eBS_Pressed); }
+bool MkInputManager::GetMouseRightButtonReleased(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eBS_Released); }
+bool MkInputManager::GetMouseRightButtonDoubleClicked(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON, eBS_DoubleClicked); }
+eButtonState MkInputManager::GetMouseRightButtonState(void) { return _GetCurrentMouseState(MKDEF_MOUSE_RIGHT_BUTTON); }
 
 int MkInputManager::GetMouseWheelMovement(void)
 {
@@ -432,7 +432,7 @@ void MkInputManager::__Update(void)
 					break;
 
 				case eMouseWheelMove:
-					m_WheelMovement += evt.arg0;
+					m_WheelMovement += evt.arg0 / WHEEL_DELTA;
 					m_CurrentFrameEvents.PushBack(evt);
 					break;
 
@@ -558,26 +558,26 @@ bool MkInputManager::_GetCurrentMousePositionInClient(MkInt2& buffer) const
 	return false;
 }
 
-bool MkInputManager::_GetCurrentKeyState(unsigned int keyCode, eCursorState btnState)
+bool MkInputManager::_GetCurrentKeyState(unsigned int keyCode, eButtonState btnState)
 {
 	MkScopedCriticalSection(m_SnapShotCS);
 	return m_KeyState.Exist(keyCode) ? m_KeyState[keyCode].GetState(btnState) : false;
 }
 
-bool MkInputManager::_GetCurrentMouseState(unsigned int button, eCursorState btnState)
+bool MkInputManager::_GetCurrentMouseState(unsigned int button, eButtonState btnState)
 {
 	MkScopedCriticalSection(m_SnapShotCS);
 	return m_MouseState[button].GetState(btnState);
 }
 
-eCursorState MkInputManager::_GetCurrentMouseState(unsigned int button)
+eButtonState MkInputManager::_GetCurrentMouseState(unsigned int button)
 {
 	MkScopedCriticalSection(m_SnapShotCS);
 
 	const _ButtonState& btn = m_MouseState[button];
-	return btn.GetState(eCS_Pushing) ?
-		(btn.GetState(eCS_DoubleClicked) ? eCS_DoubleClicked : (btn.GetState(eCS_Pressed) ? eCS_Pressed : eCS_Pushing)) :
-		(btn.GetState(eCS_Released) ? eCS_Released : eCS_None);
+	return btn.GetState(eBS_Pushing) ?
+		(btn.GetState(eBS_DoubleClicked) ? eBS_DoubleClicked : (btn.GetState(eBS_Pressed) ? eBS_Pressed : eBS_Pushing)) :
+		(btn.GetState(eBS_Released) ? eBS_Released : eBS_None);
 }
 
 void MkInputManager::_RegisterKeyEvent(eInputEvent inputEvent, WPARAM wParam)

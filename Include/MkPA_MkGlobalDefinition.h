@@ -25,7 +25,9 @@ enum ePA_SceneNodeType
 	ePA_SNT_BodyFrameControlNode, // MkBodyFrameControlNode
 	ePA_SNT_CheckBoxControlNode, // MkCheckBoxControlNode
 	ePA_SNT_ScrollBarControlNode, // MkScrollBarControlNode
-	ePA_SNT_SliderControlNode // MkSliderControlNode
+	ePA_SNT_SliderControlNode, // MkSliderControlNode
+	ePA_SNT_ScenePortalNode, // MkScenePortalNode
+	ePA_SNT_EditBoxControlNode // MkEditBoxControlNode
 
 	//ePA_SNT_ControlWindowNodeBegin,
 
@@ -50,25 +52,32 @@ enum ePA_SceneNodeAttribute
 
 	// MkWindowBaseNode
 	ePA_SNA_Enable,
-	ePA_SNA_MovableByDragging
+	ePA_SNA_MovableByDragging,
+	ePA_SNA_LockinRegionIsParentClient,
+	ePA_SNA_LockinRegionIsParentWindow
 };
 
 // scene node event
+// (NOTE) 변경이 생기면 디버깅을 위해 MkWindowManagerNode.cpp의 NODE_EVT_NAME, SendNodeReportTypeEvent()에 반영하기를 권장
 enum ePA_SceneNodeEvent
 {
+	// MkSceneNode
+	ePA_SNE_DragMovement = 0, // ArgKey_DragMovement : MkVec2(world x, y)
+
 	// MkWindowThemedNode
-	ePA_SNE_ChangeTheme = 0,
+	ePA_SNE_ChangeTheme, // ArgKey_ChangeTheme : MkArray<MkHashStr> src name / dest name
 
 	// MkWindowBaseNode
-	ePA_SNE_CursorLBtnPressed,
-	ePA_SNE_CursorLBtnReleased,
-	ePA_SNE_CursorLBtnDBClicked,
-	ePA_SNE_CursorMBtnPressed,
-	ePA_SNE_CursorMBtnReleased,
-	ePA_SNE_CursorMBtnDBClicked,
-	ePA_SNE_CursorRBtnPressed,
-	ePA_SNE_CursorRBtnReleased,
-	ePA_SNE_CursorRBtnDBClicked,
+	ePA_SNE_CursorLBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorLBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorLBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorMBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorMBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorMBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorRBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorRBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorRBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_WheelMoved, // ArgKey_WheelDelta : int delta
 	ePA_SNE_Activate,
 	ePA_SNE_Deactivate,
 	ePA_SNE_OnFocus,
@@ -79,7 +88,14 @@ enum ePA_SceneNodeEvent
 
 	// MkCheckBoxControlNode
 	ePA_SNE_CheckOn,
-	ePA_SNE_CheckOff
+	ePA_SNE_CheckOff,
+
+	// MkScrollBarControlNode
+	ePA_SNE_ScrollBarMoved, // ArgKey_NewItemPosOfScrollBar : int(new item pos, last item pos, total item size)
+
+	// MkEditBoxControlNode
+	ePA_SNE_TextModified, // ArgKey_Text : str
+	ePA_SNE_TextCommitted // ArgKey_Text : str
 };
 
 /*

@@ -202,6 +202,23 @@ bool MkWindowThemeData::SetUp(const MkDataNode& node)
 				return false;
 
 			m_CaptionTextNode[frameType] = captionTextNode;
+
+			// edit text node
+			MkArray<MkHashStr> editTextNode;
+			if (notDefaultTheme)
+			{
+				frameNode.GetDataEx(L"EditTextNode", editTextNode);
+			}
+			else
+			{
+				MK_CHECK(frameNode.GetDataEx(L"EditTextNode", editTextNode) && (!editTextNode.Empty()), node.GetNodeName().GetString() + L" theme node에 EditTextNode 값이 없음")
+					return false;
+			}
+			
+			MK_CHECK(MK_STATIC_RES.TextNodeExist(editTextNode), node.GetNodeName().GetString() + L" theme node에서 존재하지 않는 edit text node 지정")
+				return false;
+
+			m_EditTextNode[frameType] = editTextNode;
 		}
 	}
 	
@@ -280,6 +297,18 @@ const MkArray<MkHashStr>& MkWindowThemeData::GetCaptionTextNode(eFrameType frame
 	case eFT_Medium:
 	case eFT_Large:
 		return m_CaptionTextNode[frameType];
+	}
+	return MkHashStr::EMPTY_ARRAY;
+}
+
+const MkArray<MkHashStr>& MkWindowThemeData::GetEditTextNode(eFrameType frameType) const
+{
+	switch (frameType)
+	{
+	case eFT_Small:
+	case eFT_Medium:
+	case eFT_Large:
+		return m_EditTextNode[frameType];
 	}
 	return MkHashStr::EMPTY_ARRAY;
 }

@@ -24,34 +24,23 @@ public:
 	// window system interface
 	//------------------------------------------------------------------------------------------------//
 
-	// key input
-	enum eKeyInputType
-	{
-		eKIT_Press = 0,
-		eKIT_Release
-	};
-
-	typedef struct _KeyInputEvent
-	{
-		eKeyInputType type;
-		int keyCode;
-	}
-	KeyInputEvent;
-
-	virtual void UpdateKeyInput(const MkArray<KeyInputEvent>& eventList) {}
-
-	// cursor 상태 통지
-	// cursor를 소유하고 있거나 이전 프레임에 소유했었다면 window manager node에 의해 호출됨
-	virtual void UpdateCursorState
+	// cursor input
+	// 현 프레임에서 cursor를 소유하고 있거나 이전 프레임에 소유했었다면 window manager node에 의해 호출됨
+	virtual void UpdateCursorInput
 		(
 		const MkInt2& position, // cursor의 위치
 		const MkInt2& movement, // 이전 프레임의 cursor 위치와의 변동값(이전 프레임의 cursor 위치 = position - movement)
 		bool cursorInside, // cursor 소유여부
-		eCursorState leftCS,
-		eCursorState middleCS,
-		eCursorState rightCS,
+		eButtonState leftBS,
+		eButtonState middleBS,
+		eButtonState rightBS,
 		int wheelDelta // wheel의 변동값
 		);
+
+	// key input
+	// 해당 window system에서 key input target으로 설정되어 있으면 window manager node에 의해 호출됨
+	// x(0:released, 1:pressed), y(key code)
+	virtual void UpdateKeyInput(const MkArray<MkInt2>& eventList) {}
 
 	// activation : call by SendNodeCommandTypeEvent()
 	virtual void Activate(void);
@@ -80,6 +69,14 @@ public:
 	inline void SetMovableByDragging(bool enable) { m_Attribute.Assign(ePA_SNA_MovableByDragging, enable); }
 	inline bool GetMovableByDragging(void) const { return m_Attribute[ePA_SNA_MovableByDragging]; }
 
+	// ePA_SNA_MovableByDragging가 설정되어 있을 시 부모의 client rect 내로 제한. default는 false
+	inline void SetLockinRegionIsParentClient(bool enable) { m_Attribute.Assign(ePA_SNA_LockinRegionIsParentClient, enable); }
+	inline bool GetLockinRegionIsParentClient(void) const { return m_Attribute[ePA_SNA_LockinRegionIsParentClient]; }
+
+	// ePA_SNA_MovableByDragging가 설정되어 있을 시 부모의 window rect 내로 제한. default는 false
+	inline void SetLockinRegionIsParentWindow(bool enable) { m_Attribute.Assign(ePA_SNA_LockinRegionIsParentWindow, enable); }
+	inline bool GetLockinRegionIsParentWindow(void) const { return m_Attribute[ePA_SNA_LockinRegionIsParentWindow]; }
+
 	//------------------------------------------------------------------------------------------------//
 	// event
 	//------------------------------------------------------------------------------------------------//
@@ -98,10 +95,14 @@ protected:
 	inline bool _IsDualForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_DualUnit); }
 	inline bool _IsQuadForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_QuadUnit); }
 
+	void _StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position);
+
 protected:
 
 	MkWindowThemeData::eFrameType m_WindowFrameType;
 
 public:
-	//static const MkHashStr CaptionTagNodeName;
+
+	static const MkHashStr ArgKey_CursorLocalPosition;
+	static const MkHashStr ArgKey_WheelDelta;
 };
