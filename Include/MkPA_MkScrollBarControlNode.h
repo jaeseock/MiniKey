@@ -53,6 +53,16 @@ public:
 	void SetItemPosition(int position);
 	inline int GetItemPosition(void) const { return m_CurrentItemPosition; }
 
+	// wheel scroll
+	// 단계별 이동량은 MKDEF_WHEEL_SCROLLING_LEVEL 비율을 따름
+	void WheelScrolling(int delta);
+
+	//------------------------------------------------------------------------------------------------//
+	// attribute
+	//------------------------------------------------------------------------------------------------//
+
+	virtual const MkFloatRect* GetDraggingMovementLock(void) const { return &m_WindowRect; } // window rect
+
 	//------------------------------------------------------------------------------------------------//
 	// event
 	//------------------------------------------------------------------------------------------------//

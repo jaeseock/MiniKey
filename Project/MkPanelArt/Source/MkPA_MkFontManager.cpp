@@ -54,7 +54,7 @@ void MkFontManager::SetUp(const MkDataNode* dataNode, const MkHashStr& fontTypeN
 		_LoadFontColors(dataNode->GetChildNode(L"FontColor"));
 		_LoadFontStyles(dataNode->GetChildNode(L"FontStyle"));
 
-		MK_DEV_PANEL.MsgToLog(L"", false);
+		MK_DEV_PANEL.InsertEmptyLine();
 	}
 }
 

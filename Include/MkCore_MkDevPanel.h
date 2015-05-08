@@ -48,6 +48,9 @@ public:
 	// addTime이 true이면 출력 시간 기입
 	void MsgToLog(const MkStr& msg, bool addTime = false);
 
+	// log box에 빈 줄 하나를 삽입
+	inline void InsertEmptyLine(void) { MsgToLog(MkStr::EMPTY, false); }
+
 	// log box 비움
 	// 윈도우상 text만 초기화 하는 것으로 로그 파일에는 영향이 없음
 	void ClearLogWindow(void);

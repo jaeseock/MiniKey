@@ -2,9 +2,7 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// bitmap texture 생성, 삭제 관리자
-// - thread이슈가 사라지면(single-thread) 초기화/종료 위치에 대해 신경 쓰지 않아도 되므로 pooling만 관리하면 됨
-// - render to texture는 pooling의 필요성이 없으므로 알아서 해야 함
+// MkEditBoxControlNode에서 공용으로 사용하는 window control 관리자
 //------------------------------------------------------------------------------------------------//
 
 #include <Windows.h>
@@ -16,6 +14,7 @@
 #define MK_EDIT_BOX MkHiddenEditBox::Instance()
 
 
+class MkSceneNode;
 class MkEditBoxControlNode;
 
 class MkHiddenEditBox : public MkSingletonPattern<MkHiddenEditBox>
@@ -23,6 +22,12 @@ class MkHiddenEditBox : public MkSingletonPattern<MkHiddenEditBox>
 public:
 
 	bool SetUp(HWND parentHandle, HINSTANCE hInstance);
+
+	void SetTargetEditBoxNode(const MkSceneNode* ownerMgr, MkEditBoxControlNode* targetEditBox);
+
+	void NotifyTextChange(MkEditBoxControlNode* editBox);
+
+	void Update(const MkSceneNode* ownerMgr);
 
 	void ReturnHit(void);
 	void StepBackMsgHistory(void);
@@ -36,9 +41,15 @@ public:
 
 protected:
 
+	void _ClearTargetEditBox(bool changeInputFocus);
+	void _ApplyTargetEditBoxStateToWindowControl(void);
+
+protected:
+
 	HWND m_hWnd;
 
-	MkEditBoxControlNode* m_BindingControl;
+	MkEditBoxControlNode* m_TargetEditBox;
+	const MkSceneNode* m_TargetWindowMgr;
 
 	bool m_Modified;
 

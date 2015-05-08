@@ -534,7 +534,7 @@
 								>
 							</File>
 							<Filter
-								Name="Window control node"
+								Name="Control node"
 								>
 								<File
 									RelativePath=".\Source\MkPA_MkBodyFrameControlNode.cpp"
@@ -566,6 +566,14 @@
 								</File>
 								<File
 									RelativePath="..\..\Include\MkPA_MkScrollBarControlNode.h"
+									>
+								</File>
+								<File
+									RelativePath=".\Source\MkPA_MkSliderControlNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkSliderControlNode.h"
 									>
 								</File>
 								<File

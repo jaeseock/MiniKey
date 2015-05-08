@@ -118,8 +118,7 @@ void MkScenePortalNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, Mk
 			int delta;
 			if (argument->GetData(MkWindowBaseNode::ArgKey_WheelDelta, delta, 0))
 			{
-				int tick = vScrollBar->GetOnePageItemSize() / 8; // 대충 한 page가 8번의 wheel roll로 이동되게 잡음
-				vScrollBar->SetItemPosition(vScrollBar->GetItemPosition() - delta * tick);
+				vScrollBar->WheelScrolling(delta);
 				return;
 			}
 		}

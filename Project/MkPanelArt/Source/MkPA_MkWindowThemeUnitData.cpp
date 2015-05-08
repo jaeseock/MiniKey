@@ -97,6 +97,29 @@ bool MkWindowThemeUnitData::SetUp
 	return true;
 }
 
+const MkHashStr& MkWindowThemeUnitData::GetSubsetOrSequenceName(ePosition position) const
+{
+	return m_PieceDatas.IsValidIndex(static_cast<unsigned int>(position)) ? m_PieceDatas[position].subsetOrSequenceName : MkHashStr::EMPTY;
+}
+
+MkFloat2 MkWindowThemeUnitData::CalculateWindowSize(const MkFloat2& clientSize) const
+{
+	MkFloat2 windowSize;
+	switch (GetUnitType())
+	{
+	case eUT_Image:
+		windowSize = m_PieceDatas[0].size;
+		break;
+
+	case eUT_Edge:
+	case eUT_Table:
+		windowSize.x = m_PieceDatas[eP_LC].size.x + clientSize.x + m_PieceDatas[eP_RC].size.x;
+		windowSize.y = m_PieceDatas[eP_MB].size.y + clientSize.y + m_PieceDatas[eP_MT].size.y;
+		break;
+	}
+	return windowSize;
+}
+
 //------------------------------------------------------------------------------------------------//
 
 MkWindowThemeUnitData::eUnitType MkWindowThemeUnitData::GetUnitType(const MkSceneNode* sceneNode)

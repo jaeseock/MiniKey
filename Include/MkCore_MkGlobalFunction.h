@@ -77,9 +77,9 @@ inline DataType Clamp(const DataType& value, const DataType& min, const DataType
 }
 
 template<class DataType>
-inline DataType LinearInterpolate(const DataType& a, const DataType& b, const DataType& fraction)
+inline DataType LinearInterpolate(const DataType& a, const DataType& b, float fraction)
 {
-	return (a - fraction * (b - a)); // == (a * (1.f - fraction) + b * fraction)
+	return static_cast<DataType>(static_cast<float>(a) + fraction * static_cast<float>(b - a)); // == (a * (1.f - fraction) + b * fraction)
 }
 
 //------------------------------------------------------------------------------------------------//

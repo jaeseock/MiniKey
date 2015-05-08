@@ -28,7 +28,7 @@ bool MkWindowThemeSet::SetUp(const MkDataNode& node)
 			return false;
 	}
 
-	MK_DEV_PANEL.MsgToLog(L"", false);
+	MK_DEV_PANEL.InsertEmptyLine();
 	return true;
 }
 
@@ -83,6 +83,15 @@ const MkArray<MkHashStr>& MkWindowThemeSet::GetEditTextNode(const MkHashStr& the
 		return name.Empty() ? m_Themes[MkWindowThemeData::DefaultThemeName].GetEditTextNode(frameType) : name;
 	}
 	return m_Themes[MkWindowThemeData::DefaultThemeName].GetEditTextNode(frameType);
+}
+
+const MkHashStr& MkWindowThemeSet::GetImageFilePath(const MkHashStr& themeName) const
+{
+	if (m_Themes.Empty())
+		return MkHashStr::EMPTY;
+
+	const MkWindowThemeData& themeData = m_Themes.Exist(themeName) ? m_Themes[themeName] : m_Themes[MkWindowThemeData::DefaultThemeName];
+	return themeData.GetImageFilePath();
 }
 
 void MkWindowThemeSet::UnloadUnusedThemeImage(void)

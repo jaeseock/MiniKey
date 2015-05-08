@@ -62,6 +62,12 @@ public:
 	// data 참조 반환
 	inline const MkArray<PieceData>& GetPieceData(void) const { return m_PieceDatas; }
 
+	// 해당 position의 subset or sequence name 반환
+	const MkHashStr& GetSubsetOrSequenceName(ePosition position) const;
+
+	// client size가 반영 된 window size를 계산해 반환
+	MkFloat2 CalculateWindowSize(const MkFloat2& clientSize) const;
+
 	//------------------------------------------------------------------------------------------------//
 	// scene node 구성용 interface
 	//------------------------------------------------------------------------------------------------//

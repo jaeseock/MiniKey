@@ -64,11 +64,20 @@ public:
 	// form type 반환
 	inline eFormType GetFormType(void) const { return m_FormType; }
 
+	// unit type 반환
+	inline MkWindowThemeUnitData::eUnitType GetUnitType(void) const { return m_UnitType; }
+
 	// margin 반환
 	inline float GetLeftMargin(void) const { return m_Margin[0]; }
 	inline float GetRightMargin(void) const { return m_Margin[1]; }
 	inline float GetTopMargin(void) const { return m_Margin[2]; }
 	inline float GetBottomMargin(void) const { return m_Margin[3]; }
+
+	// 해당 state & position의 subset or sequence name 반환
+	const MkHashStr& GetSubsetOrSequenceName(eState state, MkWindowThemeUnitData::ePosition position) const;
+
+	// client size가 반영 된 window size를 계산해 반환
+	MkFloat2 CalculateWindowSize(const MkFloat2& clientSize) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// scene node 구성용 interface
@@ -105,10 +114,6 @@ protected:
 
 	void _UpdateMargin(void);
 
-	// unit type 반환
-	// 초기화시 소속 unit들은 모두 동일 type으로 구성되어 있음을 보장하기 때문에 가능
-	MkWindowThemeUnitData::eUnitType _GetUnitType(void) const;
-
 	// form type에 따른 state 유효성 점검
 	bool _CheckState(eState state) const;
 
@@ -117,6 +122,7 @@ protected:
 	const MkHashStr* m_ImagePathPtr;
 
 	eFormType m_FormType;
+	MkWindowThemeUnitData::eUnitType m_UnitType;
 
 	MkArray<MkWindowThemeUnitData> m_UnitList;
 

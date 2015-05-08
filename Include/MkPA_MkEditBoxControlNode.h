@@ -5,15 +5,8 @@
 // window control node : edit box
 //
 // ex>
-//	MkTitleBarControlNode* titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBar");
-//
-//	titleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Medium, 300.f, true);
-//	titleBar->SetIcon(MkWindowThemeData::eIT_Notice); // system icon
-//	//titleBar->SetIcon(MkWindowThemeData::eIT_CustomTag, L"Default\\theme_default.png", L"BtnRI16N"); // custom icon
-//	titleBar->SetCaption(L"코레가 타이틀데스!!!", eRAP_LeftCenter);
-//
-//	winMgrNode->AttachWindow(titleBar, MkWindowManagerNode::eLT_Normal);
-//	winMgrNode->ActivateWindow(L"TitleBar");
+//	MkEditBoxControlNode* ebNode = MkEditBoxControlNode::CreateChildNode(sbodyFrame, L"EB");
+//	ebNode->SetSingleLineEditBox(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 210.f, L"아기 다리", true);
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkMessageHistory.h"
@@ -34,32 +27,46 @@ public:
 	// control interface
 	//------------------------------------------------------------------------------------------------//
 
+	// single line edit box 설정
 	void SetSingleLineEditBox(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType, float length, const MkStr& initMsg, bool useHistory = false);
 
+	// text 설정
 	void SetText(const MkStr& msg);
+
+	// 현 text 반환
 	inline const MkStr& GetText(void) const { return m_Text; }
 
+	// 현 text로 결정 선언
+	// ePA_SNE_TextCommitted가 발생하고 history에 추가됨
 	void CommitText(void);
-
-	//------------------------------------------------------------------------------------------------//
-	// event
-	//------------------------------------------------------------------------------------------------//
-
-	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument);
 
 	//------------------------------------------------------------------------------------------------//
 
 	MkEditBoxControlNode(const MkHashStr& name);
 	virtual ~MkEditBoxControlNode() {}
 
-	bool __UpdateText(const MkStr& msg, int selStart, int selEnd);
+	void __GainInputFocus(void);
+	void __LostInputFocus(void);
 
-	bool __StepBackMsgHistory(void);
-	bool __StepForwardMsgHistory(void);
+	void __UpdateText(const MkStr& msg, int selStart, int selEnd);
+
+	void __StepBackMsgHistory(void);
+	void __StepForwardMsgHistory(void);
+
+	void __ToggleNormalCursor(void);
+
+	inline int __GetSelStart(void) const { return m_SelStart; }
+	inline int __GetSelEnd(void) const { return m_SelEnd; }
 
 protected:
 
-	float _GetTextLength(const MkHashStr& fontType, const MkStr& text, unsigned int beginPos, unsigned int endPos) const;
+	MkFloat2 _GetFormMargin(void) const;
+
+	float _GetTextLength(const MkHashStr& fontType, const MkStr& text, int beginPos, int endPos) const;
+
+	MkPanel* _SetPanelEnable(const MkHashStr& name, bool enable);
+
+	void _UpdateCursorAndSelection(void);
 
 protected:
 
@@ -72,9 +79,9 @@ protected:
 
 public:
 
+	static const MkHashStr SelectionPanelName;
 	static const MkHashStr TextPanelName;
 	static const MkHashStr CursorPanelName;
-	static const MkHashStr SelectionPanelName;
-
+	
 	static const MkHashStr ArgKey_Text;
 };

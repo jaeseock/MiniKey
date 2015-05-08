@@ -52,9 +52,7 @@ enum ePA_SceneNodeAttribute
 
 	// MkWindowBaseNode
 	ePA_SNA_Enable,
-	ePA_SNA_MovableByDragging,
-	ePA_SNA_LockinRegionIsParentClient,
-	ePA_SNA_LockinRegionIsParentWindow
+	ePA_SNA_MovableByDragging
 };
 
 // scene node event
@@ -63,11 +61,15 @@ enum ePA_SceneNodeEvent
 {
 	// MkSceneNode
 	ePA_SNE_DragMovement = 0, // ArgKey_DragMovement : MkVec2(world x, y)
+	ePA_SNE_BeginDrag,
+	ePA_SNE_EndDrag,
 
 	// MkWindowThemedNode
 	ePA_SNE_ChangeTheme, // ArgKey_ChangeTheme : MkArray<MkHashStr> src name / dest name
 
 	// MkWindowBaseNode
+	ePA_SNE_CursorEntered,
+	ePA_SNE_CursorLeft,
 	ePA_SNE_CursorLBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
 	ePA_SNE_CursorLBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
 	ePA_SNE_CursorLBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
@@ -92,6 +94,9 @@ enum ePA_SceneNodeEvent
 
 	// MkScrollBarControlNode
 	ePA_SNE_ScrollBarMoved, // ArgKey_NewItemPosOfScrollBar : int(new item pos, last item pos, total item size)
+
+	// MkSliderControlNode
+	ePA_SNE_SliderMoved, // ArgKey_SliderPos : int
 
 	// MkEditBoxControlNode
 	ePA_SNE_TextModified, // ArgKey_Text : str

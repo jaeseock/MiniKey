@@ -37,6 +37,8 @@
 #include "MkPA_MkCheckBoxControlNode.h"
 #include "MkPA_MkScrollBarControlNode.h"
 #include "MkPA_MkScenePortalNode.h"
+#include "MkPA_MkEditBoxControlNode.h"
+#include "MkPA_MkSliderControlNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -104,6 +106,20 @@ public:
 		ccbtnNode->SetAlignmentOffset(MkFloat2(120.f, -10.f));
 		ccbtnNode->SetLocalDepth(-1.f);
 
+		// window Sub : MkEditBoxControlNode
+		MkEditBoxControlNode* ebNode = MkEditBoxControlNode::CreateChildNode(sbodyFrame, L"EB");
+		ebNode->SetSingleLineEditBox(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 210.f, L"아기 다리", true);
+		ebNode->SetAlignmentPosition(eRAP_LeftTop);
+		ebNode->SetAlignmentOffset(MkFloat2(10.f, -50.f));
+		ebNode->SetLocalDepth(-1.f);
+
+		// window Sub : MkSliderControlNode
+		MkSliderControlNode* hSliderNode = MkSliderControlNode::CreateChildNode(sbodyFrame, L"Slider");
+		hSliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 210.f, 10, 90, 20);
+		hSliderNode->SetAlignmentPosition(eRAP_LeftTop);
+		hSliderNode->SetAlignmentOffset(MkFloat2(10.f, -100.f));
+		hSliderNode->SetLocalDepth(-1.f);
+
 		//--------------------------------------------------//
 
 		m_RootNode = new MkSceneNode(L"Root");
@@ -151,12 +167,28 @@ public:
 		bodyFrame->SetBodyFrame
 			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
 
-		//
-		MkScenePortalNode* scenePortal = MkScenePortalNode::CreateChildNode(bodyFrame, L"ScenePortal");
+		MkWindowThemedNode* bodyClient = MkWindowThemedNode::CreateChildNode(bodyFrame, L"BodyClient");
+		bodyClient->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		bodyClient->SetComponentType(MkWindowThemeData::eCT_StaticBox);
+		bodyClient->SetClientSize(MkFloat2(330.f, 205.f));
+		bodyClient->SetFormState(MkWindowThemeFormData::eS_Default);
+		bodyClient->SetAlignmentPosition(eRAP_MiddleBottom);
+		bodyClient->SetAlignmentOffset(MkFloat2(0.f, 10.f));
+		bodyClient->SetLocalDepth(-1.f);
+
+		// window A : scene portal
+		MkScenePortalNode* scenePortal = MkScenePortalNode::CreateChildNode(bodyClient, L"ScenePortal");
 		scenePortal->SetScenePortal(MkWindowThemeData::DefaultThemeName, MkFloat2(250.f, 180.f), swinMgrNode);
 		scenePortal->SetAlignmentPosition(eRAP_LeftBottom);
-		scenePortal->SetAlignmentOffset(MkFloat2(50.f, 30.f));
+		scenePortal->SetAlignmentOffset(MkFloat2(50.f, 10.f));
 		scenePortal->SetLocalDepth(-1.f);
+
+		// window A : MkSliderControlNode
+		MkSliderControlNode* vSliderNode = MkSliderControlNode::CreateChildNode(bodyClient, L"Slider");
+		vSliderNode->SetVerticalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 150.f, 5, 15, 12);
+		vSliderNode->SetAlignmentPosition(eRAP_LeftTop);
+		vSliderNode->SetAlignmentOffset(MkFloat2(10.f, -30.f));
+		vSliderNode->SetLocalDepth(-1.f);
 		
 		
 		

@@ -44,7 +44,6 @@ void MkTitleBarControlNode::SetTitleBar(const MkHashStr& themeName, MkWindowThem
 			node->SetThemeName(themeName);
 			node->SetComponentType(MkWindowThemeData::GetLEDButtonComponent(m_WindowFrameType, MkWindowThemeData::eLED_Red));
 			node->SetFormState(MkWindowThemeFormData::eS_Normal);
-			node->SetAcceptInput(true);
 			node->SetLocalDepth(-0.1f); // title과 겹치는 것을 피하기 위해 0.1f만큼 앞에 위치
 			node->SetAlignmentPosition(eRAP_RightCenter);
 		}

@@ -17,17 +17,17 @@ void MkRandomGenerator::SetSeed(unsigned int seed)
 	m_Seed[2] = m_Seed[0] - 271;
 }
 
-float MkRandomGenerator::GetRandomValue(void)
+double MkRandomGenerator::GetRandomValue(void)
 {
 	m_Seed[0] = (171 * m_Seed[0]) % 30269;
 	m_Seed[1] = (172 * m_Seed[1]) % 30307;
 	m_Seed[2] = (170 * m_Seed[2]) % 30323;
 
-	float f0 = static_cast<float>(m_Seed[0]) / 30269.f;
-	float f1 = static_cast<float>(m_Seed[1]) / 30307.f;
-	float f2 = static_cast<float>(m_Seed[2]) / 30323.f;
+	double v0 = static_cast<double>(m_Seed[0]) / 30269.;
+	double v1 = static_cast<double>(m_Seed[1]) / 30307.;
+	double v2 = static_cast<double>(m_Seed[2]) / 30323.;
 
-	float x = f0 + f1 + f2; // 0.f ~ 3.f
+	double x = v0 + v1 + v2; // 0. ~ 3.
 	return (x - floor(x)); // 소수부 반환
 }
 
@@ -36,7 +36,7 @@ unsigned int MkRandomGenerator::GetRandomNumber(unsigned int offset)
 	MK_CHECK(offset >= 2, L"난수 범위가 2 이상이 아님")
 		return 0;
 
-	float x = GetRandomValue() * static_cast<float>(offset);
+	double x = GetRandomValue() * static_cast<double>(offset);
 	return static_cast<unsigned int>(x);
 }
 

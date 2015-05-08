@@ -68,6 +68,11 @@ void MkWindowBaseNode::UpdateCursorInput
 			arg.CreateUnit(MkWindowBaseNode::ArgKey_WheelDelta, wheelDelta);
 			StartNodeReportTypeEvent(ePA_SNE_WheelMoved, &arg);
 		}
+
+		if (!m_CursorInside)
+		{
+			StartNodeReportTypeEvent(ePA_SNE_CursorEntered, NULL);
+		}
 	}
 	else
 	{
@@ -75,7 +80,14 @@ void MkWindowBaseNode::UpdateCursorInput
 		{
 			SetFormState(MkWindowThemeFormData::eS_Normal);
 		}
+
+		if (m_CursorInside)
+		{
+			StartNodeReportTypeEvent(ePA_SNE_CursorLeft, NULL);
+		}
 	}
+
+	m_CursorInside = cursorInside;
 }
 
 void MkWindowBaseNode::Activate(void)
@@ -161,6 +173,7 @@ void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, Mk
 void MkWindowBaseNode::Clear(void)
 {
 	m_WindowFrameType = MkWindowThemeData::eFT_None;
+	m_CursorInside = false;
 
 	MkWindowThemedNode::Clear();
 }
@@ -171,6 +184,7 @@ MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(n
 	SetEnable(true);
 
 	m_WindowFrameType = MkWindowThemeData::eFT_None;
+	m_CursorInside = false;
 }
 
 void MkWindowBaseNode::_StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position)

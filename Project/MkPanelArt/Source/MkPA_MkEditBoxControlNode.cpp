@@ -7,14 +7,17 @@
 #include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkFontManager.h"
 #include "MkPA_MkTextNode.h"
+#include "MkPA_MkHiddenEditBox.h"
 #include "MkPA_MkEditBoxControlNode.h"
 
 
+const MkHashStr MkEditBoxControlNode::SelectionPanelName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"Selection";
 const MkHashStr MkEditBoxControlNode::TextPanelName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"Text";
 const MkHashStr MkEditBoxControlNode::CursorPanelName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"Cursor";
-const MkHashStr MkEditBoxControlNode::SelectionPanelName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"Selection";
 
 const MkHashStr MkEditBoxControlNode::ArgKey_Text = L"Text";
+
+#define MKDEF_NORMAL_CURSOR_CHAR L"│"
 
 //------------------------------------------------------------------------------------------------//
 
@@ -35,7 +38,7 @@ void MkEditBoxControlNode::SetSingleLineEditBox
 	
 	// background
 	SetThemeName(themeName);
-	SetComponentType(MkWindowThemeData::eCT_DefaultBox); // eCT_NoticeBox
+	SetComponentType(MkWindowThemeData::eCT_DefaultBox);
 	SetClientSize(MkFloat2(GetMax<float>(length, frameSize), frameSize));
 	SetFormState(MkWindowThemeFormData::eS_Default);
 
@@ -46,18 +49,40 @@ void MkEditBoxControlNode::SetSingleLineEditBox
 		m_MessageHistory.SetUp(64);
 	}
 
+	// create panels
+	MkFloat2 localPos = _GetFormMargin();
+	const MkArray<MkHashStr>& editTextNode = MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_WindowFrameType);
+
+	// selection panel
+	MkPanel& selPanel = CreatePanel(SelectionPanelName);
+	selPanel.SetLocalPosition(localPos);
+	selPanel.SetLocalDepth(-0.1f); // 배경과 겹치지 않도록 0.1f만큼 앞에 위치
+	selPanel.SetSmallerSourceOp(MkPanel::eExpandSource);
+	selPanel.SetBiggerSourceOp(MkPanel::eReduceSource);
+	selPanel.SetPanelSize(GetClientRect().size);
+	selPanel.SetVisible(false);
+
+	const MkWindowThemeFormData* selZoneFD = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), MkWindowThemeData::eCT_YellowZone, MkHashStr::EMPTY);
+	selPanel.SetTexture(MK_STATIC_RES.GetWindowThemeSet().GetImageFilePath(GetThemeName()),
+		(selZoneFD == NULL) ? MkHashStr::EMPTY : selZoneFD->GetSubsetOrSequenceName(MkWindowThemeFormData::eS_Default, MkWindowThemeUnitData::eP_MC));
+
 	// text panel
 	MkPanel& textPanel = CreatePanel(TextPanelName);
-	const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), GetComponentType(), MkHashStr::EMPTY);
-	if (formData != NULL)
-	{
-		textPanel.SetLocalPosition(MkFloat2(formData->GetLeftMargin(), formData->GetBottomMargin()));
-	}
-	textPanel.SetLocalDepth(-0.1f); // 배경과 겹치지 않도록 0.1f만큼 앞에 위치
+	textPanel.SetLocalPosition(localPos);
+	textPanel.SetLocalDepth(-0.2f); // selection panel과 겹치지 않도록 0.1f만큼 앞에 위치
 	textPanel.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
 	textPanel.SetBiggerSourceOp(MkPanel::eCutSource);
 	textPanel.SetPanelSize(GetClientRect().size);
-	textPanel.SetTextNode(MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_WindowFrameType), false);
+	textPanel.SetTextNode(editTextNode, false);
+
+	// cursor panel
+	MkPanel& cursorPanel = CreatePanel(CursorPanelName);
+	cursorPanel.SetLocalPosition(localPos);
+	cursorPanel.SetLocalDepth(-0.3f); // text panel과 겹치지 않도록 0.1f만큼 앞에 위치
+	cursorPanel.SetTextNode(editTextNode, false);
+	cursorPanel.GetTextNodePtr()->SetText(MKDEF_NORMAL_CURSOR_CHAR);
+	cursorPanel.BuildAndUpdateTextCache();
+	cursorPanel.SetVisible(false);
 
 	// init
 	SetText(initMsg);
@@ -65,8 +90,10 @@ void MkEditBoxControlNode::SetSingleLineEditBox
 
 void MkEditBoxControlNode::SetText(const MkStr& msg)
 {
-	DWORD selPos = static_cast<DWORD>(msg.GetSize());
+	int selPos = static_cast<int>(msg.GetSize());
 	__UpdateText(msg, selPos, selPos);
+
+	MK_EDIT_BOX.NotifyTextChange(this);
 }
 
 void MkEditBoxControlNode::CommitText(void)
@@ -81,21 +108,6 @@ void MkEditBoxControlNode::CommitText(void)
 	}
 }
 
-void MkEditBoxControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
-{
-	/*
-	// left cursor click이고 해당 window가 close button이면 event를 ePA_SNE_CloseWindow로 바꾸어 보냄
-	if ((eventType == ePA_SNE_CursorLBtnReleased) && (path.GetSize() == 1) && (path[0] == CloseButtonNodeName))
-	{
-		StartNodeReportTypeEvent(ePA_SNE_CloseWindow, NULL);
-	}
-	else
-	{
-		MkWindowBaseNode::SendNodeReportTypeEvent(eventType, path, argument);
-	}
-	*/
-}
-
 MkEditBoxControlNode::MkEditBoxControlNode(const MkHashStr& name) : MkWindowBaseNode(name)
 {
 	m_UseHistory = false;
@@ -103,299 +115,119 @@ MkEditBoxControlNode::MkEditBoxControlNode(const MkHashStr& name) : MkWindowBase
 	m_SelEnd = 0;
 }
 
-bool MkEditBoxControlNode::__UpdateText(const MkStr& msg, int selStart, int selEnd)
+void MkEditBoxControlNode::__GainInputFocus(void)
+{
+	SetComponentType(MkWindowThemeData::eCT_NoticeBox);
+
+	_UpdateCursorAndSelection();
+}
+
+void MkEditBoxControlNode::__LostInputFocus(void)
+{
+	SetComponentType(MkWindowThemeData::eCT_DefaultBox);
+
+	_SetPanelEnable(CursorPanelName, false);
+	_SetPanelEnable(SelectionPanelName, false);
+}
+
+void MkEditBoxControlNode::__UpdateText(const MkStr& msg, int selStart, int selEnd)
 {
 	// text panel 확인
 	if (!PanelExist(TextPanelName))
-		return false;
+		return;
 
 	MkPanel* textPanel = GetPanel(TextPanelName);
-	if (textPanel == NULL)
-		return false;
-
 	MkTextNode* textNode = textPanel->GetTextNodePtr();
 	if (textNode == NULL)
-		return false;
+		return;
 
 	// 비속어 필터링
 	MkStr safeMsg;
 	MK_KEYWORD_FILTER.CheckSlang(msg, safeMsg);
 
-	// 설정 시작
-	bool newText = (safeMsg != m_Text);
-	bool proceed = (newText || (selStart != m_SelStart) || (selEnd != m_SelEnd));
-	if (proceed)
+	// text 갱신
+	if (safeMsg != m_Text)
 	{
-		// 커서 변화를 통한 기준 위치 탐색
-		int lookPos = -1; // 기준 위치
-		if (selStart == selEnd) // 일반 커서
-		{
-			if (m_SelStart == m_SelEnd)
-			{
-				if (selEnd != m_SelEnd) // 일반 커서 상태에서의 이동
-				{
-					lookPos = selEnd;
-				}
-			}
-			else // 선택 영역에서 일반 커서로 변경됨
-			{
-				lookPos = selEnd;
-			}
-		}
-		else // 선택 영역. start/end 중 변화가 있는 쪽이 기준 좌표가 됨
-		{
-			if (selStart != m_SelStart)
-			{
-				lookPos = selStart;
-			}
-			else if (selEnd != m_SelEnd)
-			{
-				lookPos = selEnd;
-			}
-		}
-		// 텍스트 크기가 윈도우 크기보다 클 수 있으므로 일정 영역(m_CharStart ~ m_CharEnd)만큼만 보여주어야 함
-		// 영역의 이동은 유저의 인풋으로 인한 커서/선택영역 변화에 따름
-
-		const MkHashStr& fontType = textNode->GetFontType();
-
-		// 이전 정보
-		float textPanelWidth = textPanel->GetPanelSize().x;
-		float lastScrollPos = textPanel->GetPixelScrollPosition().x;
-		float lastCoverage = textPanelWidth + lastScrollPos;
-		float lastTextLength = static_cast<float>(textNode->GetWholePixelSize().x);
-
-		// text 수정
 		m_Text = safeMsg;
 		textNode->SetText(m_Text);
 		textPanel->BuildAndUpdateTextCache();
 
-		// 현재 정보
-		float currTextLength = static_cast<float>(textNode->GetWholePixelSize().x);
+		// report event
+		MkDataNode arg;
+		arg.CreateUnit(ArgKey_Text, m_Text);
+		StartNodeReportTypeEvent(ePA_SNE_TextModified, &arg);
+	}
 
-		//_GetTextLength(fontType, m_Text, 0, unsigned int endPos)
-		//if (CheckInclusion<float>())
-		if (currTextLength >= lastCoverage)
+	// cursor & selection 갱신
+	if ((selStart != m_SelStart) || (selEnd != m_SelEnd))
+	{
+		// scroll position 갱신
+		float scrollPos = textPanel->GetPixelScrollPosition().x;
+		float textLength = static_cast<float>(textNode->GetWholePixelSize().x);
+		float panelWidth = textPanel->GetPanelSize().x;
+
+		// text가 panel 크기보다 클 경우 적절한 scroll position 필요
+		if (textLength > panelWidth)
 		{
-			
-		}
-		
-
-
-		float availableWidth = textPanel->GetPanelSize().x;
-		
-		
-		
-		/*
-
-		// m_CharStart 결정
-		if (lookPos != 0xffffffff)
-		{
-			// 기준 좌표가 출력 좌표보다 작을 경우 출력 좌표 이동
-			if (lookPos < m_CharStart)
+			int lookPos = -1; // 커서 변화를 통한 기준 위치 탐색
+			if (selStart == selEnd) // 현재 일반 커서
 			{
-				m_CharStart = lookPos;
-			}
-			// 기준 좌표가 출력 좌표보다 클 경우 범위에 맞는 m_CharStart을 찾음
-			else if (lookPos > m_CharStart)
-			{
-				while (true)
+				if ((m_SelStart != m_SelEnd) || (selEnd != m_SelEnd)) // 선택 영역이었거나 바뀌거나 일반 커서 상태에서 이동했으면
 				{
-					if (_GetTextWidth(m_CharStart, lookPos, safeMsg) <= availableWidth)
-						break;
+					lookPos = selEnd;
+				}
+			}
+			else // 현재 선택 영역. start/end 중 변화가 있는 쪽이 기준 위치가 됨
+			{
+				if (selStart != m_SelStart)
+				{
+					lookPos = selStart;
+				}
+				else if (selEnd != m_SelEnd)
+				{
+					lookPos = selEnd;
+				}
+			}
 
-					++m_CharStart;
+			if (lookPos >= 0) // 기준 위치 변화가 존재하면
+			{
+				float issuePos = _GetTextLength(textNode->GetFontType(), m_Text, 0, lookPos);
+
+				if (issuePos < scrollPos) // 기준 위치가 scroll pos보다 작을 경우
+				{
+					scrollPos = issuePos;
+				}
+				else if (issuePos > (scrollPos + panelWidth)) // 기준 위치가 허용 범위를 넘어갔을 경우
+				{
+					scrollPos = issuePos - panelWidth;
 				}
 			}
 		}
-
-		// 삭제는 재정렬 필요 할 수 있음
-		bool updateCharEnd = true;
-		if (safeMsg.GetSize() < m_Text.GetSize())
+		else
 		{
-			// 텍스트 크기가 작다면 리셋
-			if (_GetTextWidth(0, safeMsg.GetSize(), safeMsg) <= availableWidth)
-			{
-				m_CharStart = 0;
-				m_CharEnd = safeMsg.GetSize();
-				updateCharEnd = false;
-			}
-			else
-			{
-				// 커서가 마지막 페이지 안에 있다면 이진탐색으로 출력 좌표 역산출
-				if (_GetTextWidth(selEnd, safeMsg.GetSize(), safeMsg) <= availableWidth)
-				{
-					unsigned int beginPos = 0;
-					unsigned int endPos = safeMsg.GetSize();
-					while (true)
-					{
-						unsigned int currentPos = (beginPos + endPos) / 2;
-						if (beginPos == currentPos)
-							break;
-
-						float textWidth = _GetTextWidth(currentPos, safeMsg.GetSize(), safeMsg);
-						if (textWidth > availableWidth)
-						{
-							beginPos = currentPos;
-						}
-						else if (textWidth < availableWidth)
-						{
-							endPos = currentPos;
-						}
-						else // textWidth == availableWidth
-						{
-							beginPos = currentPos;
-							break;
-						}
-					}
-
-					if (_GetTextWidth(beginPos, safeMsg.GetSize(), safeMsg) > availableWidth)
-					{
-						++beginPos;
-					}
-
-					m_CharStart = static_cast<DWORD>(beginPos);
-					m_CharEnd = safeMsg.GetSize();
-					updateCharEnd = false;
-				}
-			}
+			scrollPos = 0.f;
 		}
 
-		// m_CharStart에 맞추어 m_CharEnd 결정
-		if (updateCharEnd)
-		{
-			if (_GetTextWidth(m_CharStart, safeMsg.GetSize(), safeMsg) > availableWidth)
-			{
-				// 출력 좌표로부터의 텍스트가 범위를 넘어갈 경우 이진탐색으로 범위 계산
-				unsigned int beginPos = m_CharStart;
-				unsigned int endPos = safeMsg.GetSize();
-				while (true)
-				{
-					unsigned int currentPos = (beginPos + endPos) / 2;
-					if (beginPos == currentPos)
-						break;
+		// offset
+		textPanel->SetPixelScrollPosition(MkFloat2(scrollPos, 0.f));
 
-					float textWidth = _GetTextWidth(m_CharStart, currentPos, safeMsg);
-					if (textWidth > availableWidth)
-					{
-						endPos = currentPos;
-					}
-					else if (textWidth < availableWidth)
-					{
-						beginPos = currentPos;
-					}
-					else // textWidth == availableWidth
-					{
-						beginPos = currentPos;
-						break;
-					}
-				}
-
-				m_CharEnd = beginPos;
-			}
-			else
-			{
-				m_CharEnd = safeMsg.GetSize();
-			}
-		}
-		*/
-		
-
-		/*
-		// 새 값 반영
-		m_Text = safeMsg;
+		// update cursor info
 		m_SelStart = selStart;
 		m_SelEnd = selEnd;
 
-		// 빈 텍스트이거나 공문자만 존재
-		if (m_Text.Empty() || (m_Text.GetFirstValidPosition() == MKDEF_ARRAY_ERROR))
-		{
-			_DeleteTextRect();
-		}
-		// 유효문자가 존재
-		else
-		{
-			MkStr textOut;
-			m_Text.GetSubStr(MkArraySection(m_CharStart, m_CharEnd - m_CharStart), textOut);
-
-			// 텍스트 출력
-			MkStr buffer;
-			if (m_SelStart == m_SelEnd)
-			{
-				MkDecoStr::Convert(_GetFontType(), _GetNormalFontState(), 0, textOut, buffer);
-			}
-			else // m_SelStart < m_SelEnd. 선택 영역이 화면에 보이지 않는 경우(m_CharStart >= m_SelEnd)는 존재하지 않음
-			{
-				MkArray<MkHashStr> fontState(3);
-				MkArray<unsigned int> statePos(3);
-
-				// 선택 영역이 온전히 출력 영역 안에 들어와 있는 경우
-				if ((m_CharStart <= m_SelStart) && (m_CharEnd >= m_SelEnd))
-				{
-					fontState.PushBack(_GetNormalFontState());
-					fontState.PushBack(_GetSelectionFontState());
-					fontState.PushBack(_GetNormalFontState());
-
-					statePos.PushBack(0);
-					statePos.PushBack(static_cast<unsigned int>(m_SelStart - m_CharStart));
-					statePos.PushBack(static_cast<unsigned int>(m_SelEnd - m_CharStart));
-				}
-				// 좌측 선택 영역이 잘려 있는 경우
-				else if ((m_CharStart > m_SelStart) && (m_CharEnd >= m_SelEnd))
-				{
-					fontState.PushBack(_GetSelectionFontState());
-					fontState.PushBack(_GetNormalFontState());
-
-					statePos.PushBack(0);
-					statePos.PushBack(static_cast<unsigned int>(m_SelEnd - m_CharStart));
-				}
-				// 우측 선택 영역이 잘려 있는 경우
-				else if ((m_CharStart <= m_SelStart) && (m_CharEnd < m_SelEnd))
-				{
-					fontState.PushBack(_GetNormalFontState());
-					fontState.PushBack(_GetSelectionFontState());
-
-					statePos.PushBack(0);
-					statePos.PushBack(static_cast<unsigned int>(m_SelStart - m_CharStart));
-				}
-
-				MkDecoStr::Convert(_GetFontType(), fontState, statePos, 0, textOut, buffer);
-			}
-
-			if (!buffer.Empty())
-			{
-				MkSRect* textRect = ExistSRect(TEXT_SRECT_NAME) ? GetSRect(TEXT_SRECT_NAME) : CreateSRect(TEXT_SRECT_NAME);
-				textRect->SetDecoString(buffer);
-				textRect->AlignRect(GetPresetComponentSize(), eRAP_LeftCenter, MkFloat2(MKDEF_TEXT_START_POSITION, 0.f), 0.f);
-				textRect->SetLocalDepth(-MKDEF_BASE_WINDOW_DEPTH_GRID);
-			}
-		}
-
 		_UpdateCursorAndSelection();
-
-		if (newText && pushEvent)
-		{
-			_PushWindowEvent(MkSceneNodeFamilyDefinition::eModifyText);
-		}
-		*/
 	}
-	
-	MkDataNode arg;
-	arg.CreateUnit(ArgKey_Text, m_Text);
-	StartNodeReportTypeEvent(ePA_SNE_TextModified, &arg);
-
-	return proceed;
 }
 
-bool MkEditBoxControlNode::__StepBackMsgHistory(void)
+void MkEditBoxControlNode::__StepBackMsgHistory(void)
 {
 	if (m_UseHistory)
 	{
 		SetText(m_MessageHistory.StepBack());
 	}
-	return m_UseHistory;
 }
 
-bool MkEditBoxControlNode::__StepForwardMsgHistory(void)
+void MkEditBoxControlNode::__StepForwardMsgHistory(void)
 {
 	if (m_UseHistory)
 	{
@@ -403,15 +235,37 @@ bool MkEditBoxControlNode::__StepForwardMsgHistory(void)
 		if (m_MessageHistory.StepForward(newMsg))
 		{
 			SetText(newMsg);
-			return true;
 		}
 	}
-	return false;
+}
+
+void MkEditBoxControlNode::__ToggleNormalCursor(void)
+{
+	if (m_SelStart == m_SelEnd)
+	{
+		MkPanel* panel = GetPanel(CursorPanelName);
+		if (panel != NULL)
+		{
+			panel->SetVisible(!panel->GetVisible());
+		}
+	}
 }
 
 //------------------------------------------------------------------------------------------------//
 
-float MkEditBoxControlNode::_GetTextLength(const MkHashStr& fontType, const MkStr& text, unsigned int beginPos, unsigned int endPos) const
+MkFloat2 MkEditBoxControlNode::_GetFormMargin(void) const
+{
+	MkFloat2 margin;
+	const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), GetComponentType(), MkHashStr::EMPTY);
+	if (formData != NULL)
+	{
+		margin.x = formData->GetLeftMargin();
+		margin.y = formData->GetBottomMargin();
+	}
+	return margin;
+}
+
+float MkEditBoxControlNode::_GetTextLength(const MkHashStr& fontType, const MkStr& text, int beginPos, int endPos) const
 {
 	if ((beginPos >= 0) && (beginPos < endPos))
 	{
@@ -420,6 +274,59 @@ float MkEditBoxControlNode::_GetTextLength(const MkHashStr& fontType, const MkSt
 		return static_cast<float>(MK_FONT_MGR.GetTextSize(fontType, subset, false).x);
 	}
 	return 0.f;
+}
+
+MkPanel* MkEditBoxControlNode::_SetPanelEnable(const MkHashStr& name, bool enable)
+{
+	MkPanel* panel = GetPanel(name);
+	if (panel != NULL)
+	{
+		panel->SetVisible(enable);
+	}
+	return panel;
+}
+
+void MkEditBoxControlNode::_UpdateCursorAndSelection(void)
+{
+	MkPanel* textPanel = GetPanel(TextPanelName);
+	if (textPanel != NULL)
+	{
+		MkTextNode* textNode = textPanel->GetTextNodePtr();
+		if (textNode != NULL)
+		{
+			const MkHashStr& fontType = textNode->GetFontType();
+			float scrollPos = textPanel->GetPixelScrollPosition().x;
+			float panelWidth = textPanel->GetPanelSize().x;
+			MkFloat2 localPos = _GetFormMargin();
+
+			// normal cursor
+			if (m_SelStart == m_SelEnd)
+			{
+				MkPanel* panel = _SetPanelEnable(CursorPanelName, true);
+				_SetPanelEnable(SelectionPanelName, false);
+
+				localPos.x += _GetTextLength(fontType, m_Text, 0, m_SelStart) - scrollPos;
+				localPos.x -= panel->GetTextureSize().x * 0.5f;
+				panel->SetLocalPosition(localPos);
+			}
+			// selection
+			else
+			{
+				_SetPanelEnable(CursorPanelName, false);
+				MkPanel* panel = _SetPanelEnable(SelectionPanelName, true);
+
+				float startPos = Clamp<float>(_GetTextLength(fontType, m_Text, 0, m_SelStart) - scrollPos, 0.f, panelWidth);
+				float endPos = Clamp<float>(_GetTextLength(fontType, m_Text, 0, m_SelEnd) - scrollPos, 0.f, panelWidth);
+
+				localPos.x += GetMin<float>(startPos, endPos);
+				panel->SetLocalPosition(localPos);
+
+				MkFloat2 size = panel->GetPanelSize();
+				size.x = GetMax<float>(startPos, endPos) - GetMin<float>(startPos, endPos);
+				panel->SetPanelSize(size);
+			}
+		}
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

@@ -35,6 +35,9 @@ public:
 	const MkArray<MkHashStr>& GetCaptionTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;
 	const MkArray<MkHashStr>& GetEditTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;
 
+	// 주어진 theme에 해당하는 image path 반환
+	const MkHashStr& GetImageFilePath(const MkHashStr& themeName) const;
+
 	// 사용되지 않는 theme를 체크해 이미지를 삭제
 	void UnloadUnusedThemeImage(void);
 

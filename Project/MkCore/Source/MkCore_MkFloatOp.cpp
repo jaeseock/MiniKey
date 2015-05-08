@@ -88,7 +88,7 @@ bool MkFloatOp::CloseToZero(float source)
 
 float MkFloatOp::LinearInterpolate(float a, float b, float fraction)
 {
-	return (a - fraction * (b - a)); // == (a * (1.f - fraction) + b * fraction)
+	return (a + fraction * (b - a)); // == (a * (1.f - fraction) + b * fraction)
 }
 
 float MkFloatOp::CosineInterpolate(float a, float b, float fraction)

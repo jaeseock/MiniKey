@@ -45,6 +45,7 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 		bool ok = _AddUnitData(texture, buffer[eS_Single], true);
 		if (ok)
 		{
+			m_UnitType = m_UnitList[0].GetUnitType();
 			_UpdateMargin();
 		}
 		return ok;
@@ -103,10 +104,10 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 	}
 
 	// 동일 unit type인지 점검
-	MkWindowThemeUnitData::eUnitType ut = m_UnitList[0].GetUnitType();
+	m_UnitType = m_UnitList[0].GetUnitType();
 	for (unsigned int i=1; i<count; ++i)
 	{
-		MK_CHECK(m_UnitList[i].GetUnitType() == ut, L"MkWindowThemeFormData에 등록된 unit들의 type이 동일하지 않음")
+		MK_CHECK(m_UnitList[i].GetUnitType() == m_UnitType, L"MkWindowThemeFormData에 등록된 unit들의 type이 동일하지 않음")
 			return false;
 	}
 
@@ -128,22 +129,32 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 	return true;
 }
 
+const MkHashStr& MkWindowThemeFormData::GetSubsetOrSequenceName(eState state, MkWindowThemeUnitData::ePosition position) const
+{
+	return ((state != eS_None) && _CheckState(state)) ? m_UnitList[state].GetSubsetOrSequenceName(position) : MkHashStr::EMPTY;
+}
+
+MkFloat2 MkWindowThemeFormData::CalculateWindowSize(const MkFloat2& clientSize) const
+{
+	// 적용된 unit의 크기가 모두 같으므로 아무 unit을 기준으로 적용해도 상관 없음
+	return m_UnitList[0].CalculateWindowSize(clientSize);
+}
+
 bool MkWindowThemeFormData::AttachForm(MkSceneNode* sceneNode, double startTime) const
 {
 	if ((sceneNode == NULL) || (GetFormType() == eFT_None))
 		return false;
 
-	MkWindowThemeUnitData::eUnitType myUnitType = _GetUnitType(); // eUT_None일 가능성은 없음(초기화 실패한 경우는 호출 자체가 안될뿐더러 위에서 걸러짐)
 	MkWindowThemeUnitData::eUnitType nodeUnitType = MkWindowThemeUnitData::GetUnitType(sceneNode);
 
 	// 노드에 적용 될 unit type과 다른 unit type이 존재하면 삭제
-	if ((nodeUnitType != MkWindowThemeUnitData::eUT_None) && (nodeUnitType != myUnitType))
+	if ((nodeUnitType != MkWindowThemeUnitData::eUT_None) && (nodeUnitType != m_UnitType))
 	{
 		MkWindowThemeUnitData::DeleteUnit(sceneNode);
 	}
 
 	// 노드에 unit type이 없거나 적용 될 unit type과 다르면 생성
-	if ((nodeUnitType == MkWindowThemeUnitData::eUT_None) || (nodeUnitType != myUnitType))
+	if ((nodeUnitType == MkWindowThemeUnitData::eUT_None) || (nodeUnitType != m_UnitType))
 	{
 		// 0번 position(eS_Single, eS_Back, eS_Normal)이 default
 		m_UnitList[0].CreateUnit(sceneNode, *m_ImagePathPtr, startTime);
@@ -185,6 +196,7 @@ bool MkWindowThemeFormData::SetFormState(MkSceneNode* sceneNode, eState state) c
 MkWindowThemeFormData::MkWindowThemeFormData()
 {
 	m_FormType = eFT_None;
+	m_UnitType = MkWindowThemeUnitData::eUT_None;
 
 	m_Margin[3] = m_Margin[2] = m_Margin[1] = m_Margin[0] = 0.f;
 }
@@ -199,8 +211,7 @@ bool MkWindowThemeFormData::_AddUnitData(const MkBaseTexture* texture, const MkA
 
 void MkWindowThemeFormData::_UpdateMargin(void)
 {
-	MkWindowThemeUnitData::eUnitType unitType = _GetUnitType();
-	if ((unitType == MkWindowThemeUnitData::eUT_Edge) || (unitType == MkWindowThemeUnitData::eUT_Table))
+	if ((m_UnitType == MkWindowThemeUnitData::eUT_Edge) || (m_UnitType == MkWindowThemeUnitData::eUT_Table))
 	{
 		const MkArray<MkWindowThemeUnitData::PieceData>& defData = m_UnitList[0].GetPieceData();
 
@@ -209,11 +220,6 @@ void MkWindowThemeFormData::_UpdateMargin(void)
 		m_Margin[2] = defData[MkWindowThemeUnitData::eP_MT].size.y; // top
 		m_Margin[3] = defData[MkWindowThemeUnitData::eP_MB].size.y; // bottom
 	}
-}
-
-MkWindowThemeUnitData::eUnitType MkWindowThemeFormData::_GetUnitType(void) const
-{
-	return m_UnitList.Empty() ? MkWindowThemeUnitData::eUT_None : m_UnitList[0].GetUnitType();
 }
 
 bool MkWindowThemeFormData::_CheckState(eState state) const

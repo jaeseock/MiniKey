@@ -23,8 +23,8 @@ public:
 	// 시드 설정(0 ~ 20000)
 	void SetSeed(unsigned int seed);
 
-	// 시드를 활용하여 0.f 이상, 1.f 미만의 난수를 반환하고 시드 갱신
-	float GetRandomValue(void);
+	// 시드를 활용하여 0 이상, 1 미만의 난수를 반환하고 시드 갱신
+	double GetRandomValue(void);
 
 	// 0 이상, offset 미만의 난수 반환
 	// offset은 2 이상이어야 함

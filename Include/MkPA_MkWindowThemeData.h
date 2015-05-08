@@ -27,7 +27,7 @@ public:
 		// regular component
 		//------------------------------------------------------------------------------------------------//
 		
-		// flexible
+		// flexible size
 		eCT_ShadowBox = 0, // eFT_SingleUnit
 		eCT_DefaultBox, // eFT_SingleUnit
 		eCT_NoticeBox, // eFT_SingleUnit
@@ -54,7 +54,7 @@ public:
 		eCT_BlueSelBtn, // eFT_QuadUnit
 		eCT_RedOutlineSelBtn, // eFT_QuadUnit
 
-		// static. follow frame size
+		// static size. follow frame size
 		eCT_RedLEDBtnSmall, // eFT_QuadUnit
 		eCT_RedLEDBtnMedium, // eFT_QuadUnit
 		eCT_RedLEDBtnLarge, // eFT_QuadUnit

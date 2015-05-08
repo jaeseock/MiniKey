@@ -12,6 +12,10 @@ const float MkScrollBarControlNode::BarWidth = 10.f;
 
 const MkHashStr MkScrollBarControlNode::ArgKey_NewItemPosOfScrollBar = L"NewItemPosOfScrollBar";
 
+// scroll bar를 wheel로 움직일 때 이동 비율(한 page를 몇 번의 이동으로 움직일지 결정)
+#define MKDEF_WHEEL_SCROLLING_LEVEL 10
+
+
 //------------------------------------------------------------------------------------------------//
 
 MkScrollBarControlNode* MkScrollBarControlNode::CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName)
@@ -56,11 +60,17 @@ void MkScrollBarControlNode::SetItemPosition(int position)
 	_SetItemPosition(position, true, true);
 }
 
+void MkScrollBarControlNode::WheelScrolling(int delta)
+{
+	int tick = m_OnePageItemSize / MKDEF_WHEEL_SCROLLING_LEVEL;
+	SetItemPosition(m_CurrentItemPosition - delta * tick);
+}
+
 void MkScrollBarControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
 {
 	// drag movement이고 해당 window가 page bar면 item position을 산출 후 event 소멸
 	// 만약 item position이 변경되었다면 ePA_SNE_ScrollBarMoved event 발생시킴
-	if ((eventType == ePA_SNE_DragMovement) && (path.GetSize() == 1) && (path[0] == PageBarNodeName) && (argument != NULL))
+	if ((eventType == ePA_SNE_DragMovement) && (path.GetSize() == 1) && (path[0] == PageBarNodeName))
 	{
 		MkWindowBaseNode* node = dynamic_cast<MkWindowBaseNode*>(GetChildNode(PageBarNodeName));
 		if (node != NULL)
@@ -87,6 +97,17 @@ void MkScrollBarControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventTyp
 			float divider = _GetPageBarPosition(GetChildNode(PageBarNodeName)) + m_PageBarLength * 0.5f; // page bar의 center
 			int newItemPos = m_CurrentItemPosition + ((hitPos < divider) ? -m_OnePageItemSize : m_OnePageItemSize); // page up/down
 			_SetItemPosition(newItemPos, true, true);
+			return;
+		}
+	}
+
+	// 수직 scroll bar인데 wheel이 움직였으면 item position 변경, event 소멸
+	if ((eventType == ePA_SNE_WheelMoved) && (!m_Horizontal) && (argument != NULL))
+	{
+		int delta;
+		if (argument->GetData(MkWindowBaseNode::ArgKey_WheelDelta, delta, 0))
+		{
+			WheelScrolling(delta);
 			return;
 		}
 	}
@@ -142,7 +163,6 @@ void MkScrollBarControlNode::_SetScrollBar
 			node->SetComponentType(MkWindowThemeData::eCT_GuideBtn);
 			node->SetFormState(MkWindowThemeFormData::eS_Normal);
 			node->SetMovableByDragging(true);
-			node->SetLockinRegionIsParentWindow(true);
 		}
 	}
 

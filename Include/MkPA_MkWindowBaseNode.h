@@ -69,13 +69,8 @@ public:
 	inline void SetMovableByDragging(bool enable) { m_Attribute.Assign(ePA_SNA_MovableByDragging, enable); }
 	inline bool GetMovableByDragging(void) const { return m_Attribute[ePA_SNA_MovableByDragging]; }
 
-	// ePA_SNA_MovableByDragging가 설정되어 있을 시 부모의 client rect 내로 제한. default는 false
-	inline void SetLockinRegionIsParentClient(bool enable) { m_Attribute.Assign(ePA_SNA_LockinRegionIsParentClient, enable); }
-	inline bool GetLockinRegionIsParentClient(void) const { return m_Attribute[ePA_SNA_LockinRegionIsParentClient]; }
-
-	// ePA_SNA_MovableByDragging가 설정되어 있을 시 부모의 window rect 내로 제한. default는 false
-	inline void SetLockinRegionIsParentWindow(bool enable) { m_Attribute.Assign(ePA_SNA_LockinRegionIsParentWindow, enable); }
-	inline bool GetLockinRegionIsParentWindow(void) const { return m_Attribute[ePA_SNA_LockinRegionIsParentWindow]; }
+	// 직계 자식들에게 ePA_SNA_MovableByDragging가 설정되어 있을 시 제한 영역. NULL이면 무시
+	virtual const MkFloatRect* GetDraggingMovementLock(void) const { return NULL; }
 
 	//------------------------------------------------------------------------------------------------//
 	// event
@@ -100,6 +95,8 @@ protected:
 protected:
 
 	MkWindowThemeData::eFrameType m_WindowFrameType;
+
+	bool m_CursorInside;
 
 public:
 

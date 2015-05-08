@@ -48,7 +48,7 @@ void MkCursorManager::SetUp(const MkDataNode* node)
 		}
 	}
 
-	MK_DEV_PANEL.MsgToLog(L"", false);
+	MK_DEV_PANEL.InsertEmptyLine();
 }
 
 bool MkCursorManager::RegisterCursor(eCursorType cursorType, const MkPathName& filePath, unsigned int hotspotX, unsigned int hotspotY)
