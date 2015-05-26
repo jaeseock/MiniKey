@@ -160,7 +160,6 @@ public:
 		winMgrNode->ActivateWindow(L"TitleBar");
 
 		titleBar->SetLocalPosition(MkFloat2(400.f, 600.f));
-		titleBar->SetLocalDepth(10.f); // tmp
 
 		// window A : body frame
 		MkBodyFrameControlNode* bodyFrame = MkBodyFrameControlNode::CreateChildNode(titleBar, L"BodyFrame");
@@ -189,6 +188,36 @@ public:
 		vSliderNode->SetAlignmentPosition(eRAP_LeftTop);
 		vSliderNode->SetAlignmentOffset(MkFloat2(10.f, -30.f));
 		vSliderNode->SetLocalDepth(-1.f);
+
+		// window B : title bar
+		titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBarB");
+		titleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 300.f, true);
+		titleBar->SetIcon(MkWindowThemeData::eIT_Notice);
+		titleBar->SetCaption(L"코레가 타이틀데스B", eRAP_LeftCenter);
+		winMgrNode->AttachWindow(titleBar, MkWindowManagerNode::eLT_Normal);
+		winMgrNode->ActivateWindow(L"TitleBarB");
+
+		titleBar->SetLocalPosition(MkFloat2(200.f, 500.f));
+
+		// window B : body frame
+		bodyFrame = MkBodyFrameControlNode::CreateChildNode(titleBar, L"BodyFrameB");
+		bodyFrame->SetBodyFrame
+			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
+
+		// window C : title bar
+		titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBarC");
+		titleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 300.f, true);
+		titleBar->SetIcon(MkWindowThemeData::eIT_Notice);
+		titleBar->SetCaption(L"코레가 타이틀데스C", eRAP_LeftCenter);
+		winMgrNode->AttachWindow(titleBar, MkWindowManagerNode::eLT_Normal);
+		winMgrNode->ActivateWindow(L"TitleBarC");
+
+		titleBar->SetLocalPosition(MkFloat2(100.f, 400.f));
+
+		// window C : body frame
+		bodyFrame = MkBodyFrameControlNode::CreateChildNode(titleBar, L"BodyFrameC");
+		bodyFrame->SetBodyFrame
+			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
 		
 		
 		

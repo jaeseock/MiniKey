@@ -22,7 +22,7 @@ public:
 	static MkWindowManagerNode* CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName);
 
 	//------------------------------------------------------------------------------------------------//
-	// 영역 설정
+	// 갱신 이전 정보 설정
 	//------------------------------------------------------------------------------------------------//
 
 	// 하위 윈도우들이 위치 할 깊이 대역폭. default는 1000.f
@@ -33,6 +33,12 @@ public:
 	inline void SetTargetRegion(const MkInt2& region) { m_TargetRegion = region; }
 	inline const MkInt2& GetTargetRegion(void) const { return m_TargetRegion; }
 
+	// scene portal node 하위 manager 여부
+	inline void SetScenePortalBind(bool enable) { m_ScenePortalBind = enable; }
+
+	// 해당 프레임 input 관련 갱신 금지
+	inline void ValidateInputAtThisFrame(void) { m_ValidInputAtThisFrame = true; }
+
 	//------------------------------------------------------------------------------------------------//
 	// window 등록/삭제
 	// (NOTE) Update()중 호출 금지
@@ -42,7 +48,9 @@ public:
 	{
 		eLT_Low = 0, // 하위 layer. 가장 밑단에 위치
 		eLT_Normal, // 일반 layer
-		eLT_High // 상위 layer. modal을 제외하고 가장 윗단에 위치
+		eLT_High, // 상위 layer. modal을 제외하고 가장 윗단에 위치
+
+		eLT_Max
 	};
 
 	bool AttachWindow(MkWindowBaseNode* windowNode, eLayerType layerType = eLT_Normal);
@@ -56,7 +64,8 @@ public:
 	// 현재 프레임의 활성화 여부 반환
 	bool IsActivating(const MkHashStr& windowName) const;
 
-	// 다음 프레임의 활성화 지정. modal 선언 가능
+	// 다음 프레임의 활성화 지정
+	// modal 선언 가능. 단 이미 동작중인 modal window가 있을 경우 무시됨
 	void ActivateWindow(const MkHashStr& windowName, bool modal = false);
 
 	// 다음 프레임의 비활성화 지정
@@ -109,13 +118,15 @@ protected:
 	void _UpdateSceneNodePath(MkArray< MkArray<MkHashStr> >& targetPath, MkArray<MkSceneNode*>& nodeBuffer);
 	void _UpdateWindowPath(MkArray< MkArray<MkHashStr> >& targetPath, MkArray<MkWindowBaseNode*>& nodeBuffer);
 
-	// 자신과 하위 모든 node들 중 ePA_SNA_AcceptInput 속성을 가진 node들을 대상으로 picking을 실행해 검출된 node/path를
+	// targetNode 및 하위 모든 node들 중 ePA_SNA_AcceptInput 속성을 가진 node들을 대상으로 picking을 실행해 검출된 node/path를
 	// 소유하고 있는 MkWindowBaseNode들을 반환
 	// (NOTE) 규칙 및 argument 설명은 MkSceneNode::PickPanel() 참조
-	bool _PickWindowBaseNode(MkArray<MkWindowBaseNode*>& buffer, const MkFloat2& worldPoint) const;
-	bool _PickWindowBaseNode(MkArray<MkWindowBaseNode*>& nodeBuffer, MkArray< MkArray<MkHashStr> >& pathBuffer, const MkFloat2& worldPoint) const;
+	bool _PickWindowBaseNode(const MkSceneNode* targetNode, MkArray<MkWindowBaseNode*>& buffer, const MkFloat2& worldPoint) const;
+	bool _PickWindowBaseNode(const MkSceneNode* targetNode, MkArray<MkWindowBaseNode*>& nodeBuffer, MkArray< MkArray<MkHashStr> >& pathBuffer, const MkFloat2& worldPoint) const;
 
 	void _SendCursorDraggingEvent(MkArray< MkArray<MkHashStr> >& pathBuffer, int type); // type : 0(begin), 1(end)
+
+	void _UpdateWindowDepth(bool update, eLayerType layerType);
 
 protected:
 
@@ -130,8 +141,9 @@ protected:
 	MkArray<MkHashStr> m_DeactivatingWindows;
 
 	// 활성화 윈도우 목록
-	MkMap<eLayerType, MkArray<MkHashStr> > m_ActivatingWindows;
+	MkArray<MkHashStr> m_ActivatingWindows[eLT_Max]; // front(0), ... rear 순으로 정렬
 	MkHashStr m_ModalWindow;
+	MkHashStr m_CurrentFocusWindow;
 
 	// 등록된 root window list
 	MkHashMap<MkHashStr, _RootWindowInfo> m_RootWindowList;
@@ -141,6 +153,12 @@ protected:
 	//------------------------------------------------------------------------------------------------//
 
 	bool m_UpdateLock;
+
+	// scene portal node 하위 manager인지 여부
+	bool m_ScenePortalBind;
+
+	// scene portal node 하위 manager이면 갱신시 input 처리 여부
+	bool m_ValidInputAtThisFrame;
 
 	// 다음 프레임에 반영 될 활성화/비활성화 event
 	MkArray<_ActivationEvent> m_ActivationEvent;

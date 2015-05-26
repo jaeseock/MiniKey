@@ -58,10 +58,25 @@ bool MkWindowManagerNode::DeleteWindow(const MkHashStr& windowName)
 	if (ok)
 	{
 		m_DeactivatingWindows.EraseFirstInclusion(MkArraySection(0), windowName);
-		m_ActivatingWindows[m_RootWindowList[windowName].layerType].EraseFirstInclusion(MkArraySection(0), windowName);
+		MkArray<MkHashStr>& activatingLayer = m_ActivatingWindows[m_RootWindowList[windowName].layerType];
+		activatingLayer.EraseFirstInclusion(MkArraySection(0), windowName);
+
 		if (windowName == m_ModalWindow)
 		{
 			m_ModalWindow.Clear();
+		}
+
+		if (windowName == m_CurrentFocusWindow)
+		{
+			if (activatingLayer.Empty())
+			{
+				m_CurrentFocusWindow.Clear();
+			}
+			else
+			{
+				m_CurrentFocusWindow = activatingLayer[0];
+				m_RootWindowList[m_CurrentFocusWindow].node->SendNodeCommandTypeEvent(ePA_SNE_OnFocus, NULL);
+			}
 		}
 
 		m_RootWindowList.Erase(windowName);
@@ -286,6 +301,15 @@ void MkWindowManagerNode::Update(double currTime)
 	// activation event 반영
 	//------------------------------------------------------------------------------------------------//
 
+	// 현 프레임에서 focusing 지정된 window
+	// eLT_Normal, modal window 대상으로 active window들의 순서가 변경될 때 지정
+	MkHashStr focusWindowName;
+	bool clearAllFocus = false; // cursor click이 window 영역 외를 지정했을 경우
+
+	// layer별 window depth 재설정 여부. deactive는 무시하고 active일때만 설정
+	bool updateLayerDepth[eLT_Max] = { false, false, false };
+	bool updateModalDepth = false;
+
 	if (!m_ActivationEvent.Empty())
 	{
 		MK_INDEXING_LOOP(m_ActivationEvent, i)
@@ -293,54 +317,65 @@ void MkWindowManagerNode::Update(double currTime)
 			const _ActivationEvent& evt = m_ActivationEvent[i];
 			const MkHashStr& windowName = evt.windowName;
 
-			if (m_RootWindowList.Exist(windowName))
+			unsigned int deactIndex = m_DeactivatingWindows.FindFirstInclusion(MkArraySection(0), windowName);
+			_RootWindowInfo& winInfo = m_RootWindowList[windowName];
+
+			MkArray<MkHashStr>& activatingLayer = m_ActivatingWindows[winInfo.layerType];
+			activatingLayer.EraseFirstInclusion(MkArraySection(0), windowName);
+
+			winInfo.node->SetVisible(evt.activate);
+
+			if (evt.activate) // 활성화. active/deactive -> active 가능(순서 변경)
 			{
-				unsigned int deactIndex = m_DeactivatingWindows.FindFirstInclusion(MkArraySection(0), windowName);
-				_RootWindowInfo& winInfo = m_RootWindowList[windowName];
-
-				MkArray<MkHashStr>& activatingLayer = m_ActivatingWindows[winInfo.layerType];
-				activatingLayer.EraseFirstInclusion(MkArraySection(0), windowName);
-
-				winInfo.node->SetVisible(evt.activate);
-
-				if (evt.activate) // 활성화. // active/deactive -> active 가능(순서 변경)
+				if (deactIndex != MKDEF_ARRAY_ERROR)
 				{
-					if (deactIndex != MKDEF_ARRAY_ERROR)
+					m_DeactivatingWindows.Erase(MkArraySection(deactIndex, 1));
+				}
+
+				if (evt.modal && m_ModalWindow.Empty()) // modal
+				{
+					m_ModalWindow = windowName;
+
+					updateModalDepth = true;
+					focusWindowName = windowName;
+				}
+				else // modaless
+				{
+					if (windowName == m_ModalWindow)
 					{
-						m_DeactivatingWindows.Erase(MkArraySection(deactIndex, 1));
+						m_ModalWindow.Clear();
+					}
+					
+					activatingLayer.Insert(0, windowName); // 0번 위치에 집어넣음
+
+					updateLayerDepth[winInfo.layerType] = true;
+					if (m_ModalWindow.Empty() && (winInfo.layerType == eLT_Normal)) // 이미 modal window가 존재하면 무시
+					{
+						focusWindowName = windowName;
+					}
+				}
+
+				// send command
+				winInfo.node->SendNodeCommandTypeEvent(ePA_SNE_Activate, NULL);
+			}
+			else // 비활성화. active -> deactive만 허용
+			{
+				if (deactIndex == MKDEF_ARRAY_ERROR)
+				{
+					m_DeactivatingWindows.PushBack(windowName);
+
+					if (windowName == m_ModalWindow)
+					{
+						m_ModalWindow.Clear();
 					}
 
-					if (evt.modal) // modal
+					if (m_ModalWindow.Empty() && (winInfo.layerType == eLT_Normal) && (!activatingLayer.Empty()))
 					{
-						m_ModalWindow = windowName;
-					}
-					else // modaless
-					{
-						if (windowName == m_ModalWindow)
-						{
-							m_ModalWindow.Clear();
-						}
-
-						activatingLayer.PushBack(windowName);
+						focusWindowName = activatingLayer[0];
 					}
 
 					// send command
-					winInfo.node->SendNodeCommandTypeEvent(ePA_SNE_Activate, NULL);
-				}
-				else // 비활성화. active -> deactive만 허용
-				{
-					if (deactIndex == MKDEF_ARRAY_ERROR)
-					{
-						m_DeactivatingWindows.PushBack(windowName);
-
-						if (windowName == m_ModalWindow)
-						{
-							m_ModalWindow.Clear();
-						}
-
-						// send command
-						winInfo.node->SendNodeCommandTypeEvent(ePA_SNE_Deactivate, NULL);
-					}
+					winInfo.node->SendNodeCommandTypeEvent(ePA_SNE_Deactivate, NULL);
 				}
 			}
 		}
@@ -370,11 +405,21 @@ void MkWindowManagerNode::Update(double currTime)
 	eButtonState middleBtnState = MK_INPUT_MGR.GetMouseMiddleButtonState();
 	eButtonState rightBtnState = MK_INPUT_MGR.GetMouseRightButtonState();
 
-	bool cursorInside = MK_INPUT_MGR.GetMousePointerAvailable(); // device 영역 내에 있는지 체크하고
+	// device 영역 내에 있는지 체크
+	bool cursorInside = MK_INPUT_MGR.GetMousePointerAvailable();
+
+	// scene portal 하위면 갱신 가능여부 체크
+	if (cursorInside && m_ScenePortalBind)
+	{
+		cursorInside = m_ValidInputAtThisFrame;
+		m_ValidInputAtThisFrame = false;
+	}
+	
+	// whole region 내에 있는지 체크
 	if (cursorInside)
 	{
 		MkIntRect regionRect(MkInt2::Zero, m_TargetRegion);
-		cursorInside = regionRect.CheckIntersection(cursorPosition); // whole region 내에 있는지도 체크
+		cursorInside = regionRect.CheckIntersection(cursorPosition);
 	}
 
 	bool anyBtnPressed = (leftBtnState == eBS_Pressed) || (middleBtnState == eBS_Pressed) || (rightBtnState == eBS_Pressed);
@@ -390,8 +435,15 @@ void MkWindowManagerNode::Update(double currTime)
 	// cursor가 client 영역 안에 존재하면 cursor가 위치한 window를 picking으로 검출
 	if (cursorInside)
 	{
+		// modal이 존재하면 해당 window만, 없으면 하위 전체 대상
+		const MkSceneNode* pickTarget = this;
+		if (!m_ModalWindow.Empty())
+		{
+			pickTarget = m_RootWindowList[m_ModalWindow].node;
+		}
+
 		MkFloat2 fCursorPos(static_cast<float>(cursorPosition.x), static_cast<float>(cursorPosition.y));
-		_PickWindowBaseNode(cursorOwnedNodeBuffer, cursorOwnedPathBuffer, fCursorPos);
+		_PickWindowBaseNode(pickTarget, cursorOwnedNodeBuffer, cursorOwnedPathBuffer, fCursorPos);
 	}
 
 	// 이전 프레임의 cursor owner 중 현재 프레임에 cursor를 잃은 window를 추출해 cursor lost 통지
@@ -413,26 +465,50 @@ void MkWindowManagerNode::Update(double currTime)
 		cursorDraggingNodePath = m_LeftCursorDraggingNodePath;
 	}
 
+	// 현재 프레임에 cursor owner가 없으면
+	if (cursorOwnedNodeBuffer.Empty())
+	{
+		clearAllFocus = anyBtnPressed;
+	}
 	// 현재 프레임에 cursor owner가 존재하면
-	if (!cursorOwnedNodeBuffer.Empty())
+	else
 	{
 		MK_INDEXING_LOOP(cursorOwnedNodeBuffer, i) // 통지
 		{
 			cursorOwnedNodeBuffer[i]->UpdateCursorInput(cursorPosition, cursorMovement, true, leftBtnState, middleBtnState, rightBtnState, wheelDelta);
 		}
 
-		// 만약 어느 button이라도 입력되었으면 해당 window들을 입력 대상 window로 지정
+		// 만약 어느 button이라도 입력되었으면
 		if (anyBtnPressed)
 		{
+			// 해당 window들을 입력 대상 window로 지정
 			m_KeyInputTargetWindowPath = cursorOwnedPathBuffer;
 
-			// 입력된 node가 edit box 계열일 경우 대상 지정
+			// 입력된 node가 edit box 계열일 경우 edit 대상 지정
 			MK_INDEXING_LOOP(cursorOwnedNodeBuffer, i)
 			{
 				if (cursorOwnedNodeBuffer[i]->IsDerivedFrom(ePA_SNT_EditBoxControlNode))
 				{
 					targetEditBoxNode = dynamic_cast<MkEditBoxControlNode*>(cursorOwnedNodeBuffer[i]);
 					break; // 최초 하나만 대상
+				}
+			}
+
+			// picking된 node의 root window를 front로 올림. 최초 하나만 대상
+			const MkHashStr& targetRootWindowName = cursorOwnedPathBuffer[0][0];
+			if (m_RootWindowList.Exist(targetRootWindowName) && (targetRootWindowName != m_ModalWindow)) // modal window는 이미 가장 앞에 위치하고 있으므로 무시
+			{
+				_RootWindowInfo& winInfo = m_RootWindowList[targetRootWindowName];
+				MkArray<MkHashStr>& activatingLayer = m_ActivatingWindows[winInfo.layerType];
+
+				// 이미 active 상태인 window들을 대상으로 picking된 결과이기 때문에 activatingLayer가 비어 있을 경우는 없음
+				if (targetRootWindowName != activatingLayer[0]) // front window가 아니면 갱신
+				{
+					activatingLayer.EraseFirstInclusion(MkArraySection(0), targetRootWindowName);
+					activatingLayer.Insert(0, targetRootWindowName);
+
+					updateLayerDepth[winInfo.layerType] = true;
+					focusWindowName = targetRootWindowName;
 				}
 			}
 		}
@@ -581,6 +657,63 @@ void MkWindowManagerNode::Update(double currTime)
 	}
 
 	//------------------------------------------------------------------------------------------------//
+	// focus window 갱신
+	//------------------------------------------------------------------------------------------------//
+
+	bool clearFocusingWindow = false;
+	bool giveFocusToTarget = false;
+
+	// 1st. modal window가 지정 됨
+	if ((!focusWindowName.Empty()) && (focusWindowName == m_ModalWindow))
+	{
+		clearFocusingWindow = true;
+		giveFocusToTarget = true;
+	}
+	// modal window가 존재하면 focus event는 무시됨
+	else if (m_ModalWindow.Empty())
+	{
+		// 2nd. click으로 인한 focus 해제
+		if (clearAllFocus)
+		{
+			clearFocusingWindow = true;
+		}
+		// 3rd. normal window 순서 변경으로 인한 지정
+		else if (!focusWindowName.Empty())
+		{
+			clearFocusingWindow = true;
+			giveFocusToTarget = true;
+		}
+	}
+
+	if (clearFocusingWindow)
+	{
+		if ((!m_CurrentFocusWindow.Empty()) && m_RootWindowList.Exist(m_CurrentFocusWindow))
+		{
+			m_RootWindowList[m_CurrentFocusWindow].node->SendNodeCommandTypeEvent(ePA_SNE_LostFocus, NULL);
+		}
+		m_CurrentFocusWindow.Clear();
+	}
+
+	if (giveFocusToTarget)
+	{
+		m_CurrentFocusWindow = focusWindowName;
+		m_RootWindowList[m_CurrentFocusWindow].node->SendNodeCommandTypeEvent(ePA_SNE_OnFocus, NULL);
+	}
+
+	//------------------------------------------------------------------------------------------------//
+	// layer에 따른 깊이 대역폭 내 정렬
+	//------------------------------------------------------------------------------------------------//
+
+	_UpdateWindowDepth(updateLayerDepth[eLT_Low], eLT_Low);
+	_UpdateWindowDepth(updateLayerDepth[eLT_Normal], eLT_Normal);
+	_UpdateWindowDepth(updateLayerDepth[eLT_High], eLT_High);
+
+	if (updateModalDepth)
+	{
+		m_RootWindowList[m_ModalWindow].node->SetLocalDepth(m_DepthBandwidth * 0.05f); // 5%
+	}
+	
+	//------------------------------------------------------------------------------------------------//
 
 	MkSceneNode::Update(currTime);
 
@@ -595,12 +728,19 @@ void MkWindowManagerNode::Clear(void)
 	m_ActivatingWindows[eLT_Normal].Flush();
 	m_ActivatingWindows[eLT_High].Flush();
 	m_ModalWindow.Clear();
+	m_CurrentFocusWindow.Clear();
 
 	m_ActivationEvent.Clear();
 
+	MkHashMapLooper<MkHashStr, _RootWindowInfo> looper(m_RootWindowList);
+	MK_STL_LOOP(looper)
+	{
+		RemoveChildNode(looper.GetCurrentKey());
+	}
 	m_RootWindowList.Clear();
 
 	m_UpdateLock = false;
+	m_ValidInputAtThisFrame = false;
 	m_ActivationEvent.Clear();
 	m_CursorOwnedWindowPath.Clear();
 	m_KeyInputTargetWindowPath.Clear();
@@ -615,11 +755,13 @@ MkWindowManagerNode::MkWindowManagerNode(const MkHashStr& name) : MkSceneNode(na
 	m_TargetRegion = MK_DEVICE_MGR.GetCurrentResolution();
 	
 	m_DeactivatingWindows.Reserve(256);
-	m_ActivatingWindows.Create(eLT_Low).Reserve(64);
-	m_ActivatingWindows.Create(eLT_Normal).Reserve(256);
-	m_ActivatingWindows.Create(eLT_High).Reserve(64);
+	m_ActivatingWindows[eLT_Low].Reserve(64);
+	m_ActivatingWindows[eLT_Normal].Reserve(256);
+	m_ActivatingWindows[eLT_High].Reserve(64);
 
 	m_UpdateLock = false;
+	m_ScenePortalBind = false;
+	m_ValidInputAtThisFrame = false;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -668,7 +810,7 @@ void MkWindowManagerNode::_UpdateWindowPath(MkArray< MkArray<MkHashStr> >& targe
 	targetPath.Erase(killList);
 }
 
-bool MkWindowManagerNode::_PickWindowBaseNode(MkArray<MkWindowBaseNode*>& nodeBuffer, const MkFloat2& worldPoint) const
+bool MkWindowManagerNode::_PickWindowBaseNode(const MkSceneNode* targetNode, MkArray<MkWindowBaseNode*>& nodeBuffer, const MkFloat2& worldPoint) const
 {
 	nodeBuffer.Clear();
 
@@ -677,17 +819,17 @@ bool MkWindowManagerNode::_PickWindowBaseNode(MkArray<MkWindowBaseNode*>& nodeBu
 	filterAttr.Set(ePA_SNA_AcceptInput); // input을 받아들이는 node만 대상으로 함
 
 	// panel picking
-	if (PickPanel(panelBuffer, worldPoint, GetWorldDepth(), filterAttr))
+	if (targetNode->PickPanel(panelBuffer, worldPoint, GetWorldDepth(), filterAttr))
 	{
 		nodeBuffer.Reserve(panelBuffer.GetSize());
 
 		MK_INDEXING_LOOP(panelBuffer, i)
 		{
 			// MkWindowBaseNode 파생 객체만 대상으로 함
-			MkSceneNode* targetNode = panelBuffer[i]->GetParentNode()->FindNearestDerivedNode(ePA_SNT_WindowBaseNode);
-			if (targetNode != NULL)
+			MkSceneNode* sceneNode = panelBuffer[i]->GetParentNode()->FindNearestDerivedNode(ePA_SNT_WindowBaseNode);
+			if (sceneNode != NULL)
 			{
-				MkWindowBaseNode* winBaseNode = dynamic_cast<MkWindowBaseNode*>(targetNode);
+				MkWindowBaseNode* winBaseNode = dynamic_cast<MkWindowBaseNode*>(sceneNode);
 				if ((winBaseNode != NULL) && (nodeBuffer.FindFirstInclusion(MkArraySection(0), winBaseNode) == MKDEF_ARRAY_ERROR))
 				{
 					nodeBuffer.PushBack(winBaseNode);
@@ -698,11 +840,12 @@ bool MkWindowManagerNode::_PickWindowBaseNode(MkArray<MkWindowBaseNode*>& nodeBu
 	return !nodeBuffer.Empty();
 }
 
-bool MkWindowManagerNode::_PickWindowBaseNode(MkArray<MkWindowBaseNode*>& nodeBuffer, MkArray< MkArray<MkHashStr> >& pathBuffer, const MkFloat2& worldPoint) const
+bool MkWindowManagerNode::_PickWindowBaseNode
+(const MkSceneNode* targetNode, MkArray<MkWindowBaseNode*>& nodeBuffer, MkArray< MkArray<MkHashStr> >& pathBuffer, const MkFloat2& worldPoint) const
 {
 	pathBuffer.Clear();
 
-	if (_PickWindowBaseNode(nodeBuffer, worldPoint))
+	if (_PickWindowBaseNode(targetNode, nodeBuffer, worldPoint))
 	{
 		pathBuffer.Reserve(nodeBuffer.GetSize());
 
@@ -728,6 +871,45 @@ void MkWindowManagerNode::_SendCursorDraggingEvent(MkArray< MkArray<MkHashStr> >
 			{
 			case 0: targetNodes[i]->StartNodeReportTypeEvent(ePA_SNE_BeginDrag, NULL); break;
 			case 1: targetNodes[i]->StartNodeReportTypeEvent(ePA_SNE_EndDrag, NULL); break;
+			}
+		}
+	}
+}
+
+void MkWindowManagerNode::_UpdateWindowDepth(bool update, eLayerType layerType)
+{
+	if (update)
+	{
+		MkArray<MkHashStr>& activatingLayer = m_ActivatingWindows[layerType];
+		if (!activatingLayer.Empty())
+		{
+			float frontDepth = m_DepthBandwidth * 0.1f;
+			float rearDepth = m_DepthBandwidth * 0.95f;
+
+			switch (layerType)
+			{
+			case eLT_Low: // 85% ~ 95%
+				frontDepth = m_DepthBandwidth * 0.85f;
+				rearDepth = m_DepthBandwidth * 0.95f;
+				break;
+			case eLT_Normal: // 25% ~ 80%
+				frontDepth = m_DepthBandwidth * 0.25f;
+				rearDepth = m_DepthBandwidth * 0.8f;
+				break;
+			case eLT_High: // 10% ~ 20%
+				frontDepth = m_DepthBandwidth * 0.1f;
+				rearDepth = m_DepthBandwidth * 0.2f;
+				break;
+			}
+
+			float gridPerWindow = (rearDepth - frontDepth) / static_cast<float>(activatingLayer.GetSize()); // root window간 깊이차
+			float targetDepth = frontDepth;
+
+			MK_INDEXING_LOOP(activatingLayer, i)
+			{
+				_RootWindowInfo& winInfo = m_RootWindowList[activatingLayer[i]];
+				winInfo.node->SetLocalDepth(targetDepth);
+				targetDepth += gridPerWindow;
 			}
 		}
 	}

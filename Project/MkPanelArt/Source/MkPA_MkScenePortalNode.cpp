@@ -78,6 +78,7 @@ void MkScenePortalNode::SetDestinationNode(MkSceneNode* destNode)
 			if (mgrNode != NULL)
 			{
 				mgrNode->SetTargetRegion(iRegion);
+				mgrNode->SetScenePortalBind(true);
 			}
 		}
 	}
@@ -143,6 +144,12 @@ void MkScenePortalNode::Update(double currTime)
 
 				// input pivot으로 자신의 world position을 설정
 				mgrNode->SetInputPivotPosition(MkInt2(static_cast<int>(worldPos.x), static_cast<int>(worldPos.y)));
+
+				// cursor를 가지고 있을 경우만 input update 허용
+				if (m_CursorInside)
+				{
+					mgrNode->ValidateInputAtThisFrame();
+				}
 			}
 		}
 
