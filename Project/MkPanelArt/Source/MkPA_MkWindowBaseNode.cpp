@@ -24,7 +24,7 @@ void MkWindowBaseNode::UpdateCursorInput
 {
 	if (cursorInside)
 	{
-		if (_IsQuadForm())
+		if (IsQuadForm())
 		{
 			switch (leftBS)
 			{
@@ -76,7 +76,7 @@ void MkWindowBaseNode::UpdateCursorInput
 	}
 	else
 	{
-		if (_IsQuadForm())
+		if (IsQuadForm())
 		{
 			SetFormState(MkWindowThemeFormData::eS_Normal);
 		}
@@ -102,7 +102,7 @@ void MkWindowBaseNode::Deactivate(void)
 
 void MkWindowBaseNode::OnFocus(void)
 {
-	if (_IsDualForm())
+	if (IsDualForm())
 	{
 		SetFormState(MkWindowThemeFormData::eS_Front);
 	}
@@ -110,7 +110,7 @@ void MkWindowBaseNode::OnFocus(void)
 
 void MkWindowBaseNode::LostFocus(void)
 {
-	if (_IsDualForm())
+	if (IsDualForm())
 	{
 		SetFormState(MkWindowThemeFormData::eS_Back);
 	}
@@ -139,7 +139,7 @@ void MkWindowBaseNode::GetWindowPath(MkArray<MkHashStr>& path) const
 
 void MkWindowBaseNode::SetEnable(bool enable)
 {
-	if (_IsQuadForm())
+	if (IsQuadForm())
 	{
 		bool oldEnable = GetEnable();
 		if (oldEnable && (!enable)) // turn off

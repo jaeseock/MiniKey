@@ -28,6 +28,8 @@ Node "NotT_" : "T_Table" { int2 Position = (10, 61); }
 Node "SttT_" : "T_Table" { int2 Position = (20, 61); }
 Node "GuiE_" : "T_Table" { int2 Position = (30, 61); }
 
+Node "EmptyT_" : "T_Table" { int2 Position = (40, 61); } // empty
+
 Node "TtlTB_" : "T_Table" { int2 Position = (0, 71); }
 Node "TtlTF_" : "T_Table" { int2 Position = (10, 71); }
 

@@ -62,7 +62,7 @@ void MkScrollBarControlNode::SetItemPosition(int position)
 
 void MkScrollBarControlNode::WheelScrolling(int delta)
 {
-	int tick = m_OnePageItemSize / MKDEF_WHEEL_SCROLLING_LEVEL;
+	int tick = (m_WheelScrollLevel <= 0) ? 1 : (m_OnePageItemSize / m_WheelScrollLevel);
 	SetItemPosition(m_CurrentItemPosition - delta * tick);
 }
 
@@ -121,6 +121,7 @@ MkScrollBarControlNode::MkScrollBarControlNode(const MkHashStr& name) : MkWindow
 	m_OnePageItemSize = 0;
 	m_TotalBarLength = 0.f;
 	m_Horizontal = false;
+	m_WheelScrollLevel = MKDEF_WHEEL_SCROLLING_LEVEL;
 	m_PageBarLength = 0.f;
 	m_CurrentItemPosition = 0;
 }

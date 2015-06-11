@@ -561,6 +561,14 @@
 									>
 								</File>
 								<File
+									RelativePath=".\Source\MkPA_MkListBoxControlNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkListBoxControlNode.h"
+									>
+								</File>
+								<File
 									RelativePath=".\Source\MkPA_MkScrollBarControlNode.cpp"
 									>
 								</File>

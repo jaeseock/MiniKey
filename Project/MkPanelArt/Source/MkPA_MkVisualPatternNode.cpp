@@ -12,7 +12,16 @@ void MkVisualPatternNode::SetAlignmentPivotIsWindowRect(bool enable)
 	if (enable != m_AlignmentPivotIsWindowRect)
 	{
 		m_AlignmentPivotIsWindowRect = enable;
-		m_UpdateCommand.Set(eUC_Alignment);
+		SetAlignmentCommand();
+	}
+}
+
+void MkVisualPatternNode::SetAlignmentTargetIsWindowRect(bool enable)
+{
+	if (enable != m_AlignmentTargetIsWindowRect)
+	{
+		m_AlignmentTargetIsWindowRect = enable;
+		SetAlignmentCommand();
 	}
 }
 
@@ -21,7 +30,7 @@ void MkVisualPatternNode::SetAlignmentPosition(eRectAlignmentPosition position)
 	if (position != m_AlignmentPosition)
 	{
 		m_AlignmentPosition = position;
-		m_UpdateCommand.Set(eUC_Alignment);
+		SetAlignmentCommand();
 	}
 }
 
@@ -30,7 +39,7 @@ void MkVisualPatternNode::SetAlignmentOffset(const MkFloat2& offset)
 	if (offset != m_AlignmentOffset)
 	{
 		m_AlignmentOffset = offset;
-		m_UpdateCommand.Set(eUC_Alignment);
+		SetAlignmentCommand();
 	}
 }
 
@@ -49,33 +58,27 @@ void MkVisualPatternNode::Update(double currTime)
 MkVisualPatternNode::MkVisualPatternNode(const MkHashStr& name) : MkSceneNode(name)
 {
 	m_AlignmentPivotIsWindowRect = false; // client rect default
+	m_AlignmentTargetIsWindowRect = true; // window rect default
 	m_AlignmentPosition = eRAP_NonePosition;
 }
 
-
-void MkVisualPatternNode::__UpdateAlignment(const MkVisualPatternNode* parentNode)
+void MkVisualPatternNode::_UpdateAlignment(void)
 {
-	if ((parentNode != NULL) && m_WindowRect.SizeIsNotZero())
+	const MkFloatRect& targetRect = (m_AlignmentTargetIsWindowRect) ? this->GetWindowRect() : this->GetClientRect();
+	if (targetRect.SizeIsNotZero() && (m_ParentNodePtr != NULL) && m_ParentNodePtr->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 	{
-		const MkFloatRect& pivotRect = (m_AlignmentPivotIsWindowRect) ? parentNode->GetWindowRect() : parentNode->GetClientRect();
-		if (pivotRect.SizeIsNotZero())
+		const MkVisualPatternNode* parentVPNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
+		if (parentVPNode != NULL)
 		{
-			MkFloat2 snapPos = pivotRect.GetSnapPosition
-				(MkFloatRect(GetLocalPosition() + m_WindowRect.position, m_WindowRect.size), m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
+			const MkFloatRect& pivotRect = (m_AlignmentPivotIsWindowRect) ? parentVPNode->GetWindowRect() : parentVPNode->GetClientRect();
+			if (pivotRect.SizeIsNotZero())
+			{
+				MkFloat2 snapPos = pivotRect.GetSnapPosition
+					(MkFloatRect(GetLocalPosition() + targetRect.position, targetRect.size), m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
 
-			SetLocalPosition(snapPos + m_AlignmentOffset - m_WindowRect.position);
+				SetLocalPosition(snapPos + m_AlignmentOffset - targetRect.position);
+			}
 		}
-	}
-}
-
-void MkVisualPatternNode::__UpdateAlignment(void)
-{
-	m_UpdateCommand.Clear(eUC_Alignment);
-
-	if ((m_ParentNodePtr != NULL) && m_ParentNodePtr->IsDerivedFrom(ePA_SNT_VisualPatternNode))
-	{
-		const MkVisualPatternNode* parentNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
-		__UpdateAlignment(parentNode);
 	}
 }
 
@@ -83,7 +86,7 @@ void MkVisualPatternNode::_ExcuteUpdateCommand(void)
 {
 	if (m_UpdateCommand[eUC_Alignment])
 	{
-		__UpdateAlignment();
+		_UpdateAlignment();
 	}
 }
 

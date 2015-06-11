@@ -71,13 +71,11 @@ public:
 	MkWindowTagNode(const MkHashStr& name);
 	virtual ~MkWindowTagNode() { Clear(); }
 
-	bool __UpdateIcon(void);
-	bool __UpdateText(void);
-
-	// (NOTE) 호출 전 icon과 text 중 최소 하나는 존재해야 함
-	bool __UpdateRegion(void);
-
 protected:
+
+	bool _UpdateIcon(void);
+	bool _UpdateText(void);
+	bool _UpdateRegion(void); // (NOTE) 호출 전 icon과 text 중 최소 하나는 존재해야 함
 
 	//------------------------------------------------------------------------------------------------//
 	// update command

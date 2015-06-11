@@ -35,11 +35,20 @@ public:
 	void SetAlignmentPivotIsWindowRect(bool enable);
 	inline bool GetAlignmentPivotIsWindowRect(void) const { return m_AlignmentPivotIsWindowRect; }
 
+	// 대상이 되는 자신의 rect가 client인지 window인지 여부 설정/반환. default는 window rect(true)
+	void SetAlignmentTargetIsWindowRect(bool enable);
+	inline bool GetAlignmentTargetIsWindowRect(void) const { return m_AlignmentTargetIsWindowRect; }
+
+	// 정렬 방식
 	void SetAlignmentPosition(eRectAlignmentPosition position);
 	inline eRectAlignmentPosition GetAlignmentPosition(void) const { return m_AlignmentPosition; }
 
+	// 정렬 후 추가 position offset
 	void SetAlignmentOffset(const MkFloat2& offset);
 	inline const MkFloat2& GetAlignmentOffset(void) const { return m_AlignmentOffset; }
+
+	// Update()시 정렬 명령
+	inline void SetAlignmentCommand(void) { m_UpdateCommand.Set(eUC_Alignment); }
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute
@@ -58,22 +67,19 @@ public:
 	MkVisualPatternNode(const MkHashStr& name);
 	virtual ~MkVisualPatternNode() {}
 
-	// 설정된 position, offset으로 parentNode의 client rect에 대한 정렬 실행
-	// (NOTE) parentNode의 client rect, 자신의 window rect는 유효해야 함
-	void __UpdateAlignment(const MkVisualPatternNode* parentNode);
-	void __UpdateAlignment(void);
+protected:
+
+	void _UpdateAlignment(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// update command
 	//------------------------------------------------------------------------------------------------//
 
-protected:
-
 	enum eVisualPatternNodeUpdateCommand
 	{
 		eUC_Alignment = 0,
 
-		eUC_VisualPatternNodeBandwidth,
+		eUC_VisualPatternNodeBandwidth
 	};
 
 	virtual void _ExcuteUpdateCommand(void);
@@ -86,6 +92,7 @@ protected:
 
 	// align
 	bool m_AlignmentPivotIsWindowRect;
+	bool m_AlignmentTargetIsWindowRect;
 	eRectAlignmentPosition m_AlignmentPosition;
 	MkFloat2 m_AlignmentOffset;
 

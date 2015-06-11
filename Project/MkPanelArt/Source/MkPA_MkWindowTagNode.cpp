@@ -59,7 +59,7 @@ void MkWindowTagNode::SetTextName(const MkArray<MkHashStr>& textName, const MkSt
 
 	MkPanel* textPanel = GetPanel(TextPanelName);
 
-	if ((textPanel == NULL) && __UpdateText()) // panel이 없으면 바로 caption을 세팅해야되므로 즉각 반영
+	if ((textPanel == NULL) && _UpdateText()) // panel이 없으면 바로 caption을 세팅해야되므로 즉각 반영
 	{
 		textPanel = GetPanel(TextPanelName);
 	}
@@ -116,9 +116,8 @@ MkWindowTagNode::MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(na
 	m_LengthOfBetweenIconAndText = 4.f;
 }
 
-bool MkWindowTagNode::__UpdateIcon(void)
+bool MkWindowTagNode::_UpdateIcon(void)
 {
-	m_UpdateCommand.Clear(eUC_Icon);
 	m_UpdateCommand.Set(eUC_Region); // icon이 변경되면 region도 갱신되어야 함
 	
 	if (!m_IconPath.Empty())
@@ -139,9 +138,8 @@ bool MkWindowTagNode::__UpdateIcon(void)
 	return false;
 }
 
-bool MkWindowTagNode::__UpdateText(void)
+bool MkWindowTagNode::_UpdateText(void)
 {
-	m_UpdateCommand.Clear(eUC_Text);
 	m_UpdateCommand.Set(eUC_Region); // text가 변경되면 region도 갱신되어야 함
 
 	if ((!m_TextName.Empty()) && MK_STATIC_RES.TextNodeExist(m_TextName))
@@ -155,9 +153,8 @@ bool MkWindowTagNode::__UpdateText(void)
 	return false;
 }
 
-bool MkWindowTagNode::__UpdateRegion(void)
+bool MkWindowTagNode::_UpdateRegion(void)
 {
-	m_UpdateCommand.Clear(eUC_Region);
 	m_UpdateCommand.Set(eUC_Alignment); // region이 변경되면 alignment도 갱신되야 함
 
 	MkPanel* iconPanel = GetPanel(IconPanelName);
@@ -213,15 +210,15 @@ void MkWindowTagNode::_ExcuteUpdateCommand(void)
 {
 	if (m_UpdateCommand[eUC_Icon])
 	{
-		__UpdateIcon();
+		_UpdateIcon();
 	}
 	if (m_UpdateCommand[eUC_Text])
 	{
-		__UpdateText();
+		_UpdateText();
 	}
 	if (m_UpdateCommand[eUC_Region])
 	{
-		__UpdateRegion();
+		_UpdateRegion();
 	}
 
 	MkVisualPatternNode::_ExcuteUpdateCommand();

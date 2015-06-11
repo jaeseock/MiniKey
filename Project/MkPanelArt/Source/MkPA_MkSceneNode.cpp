@@ -336,6 +336,7 @@ void MkSceneNode::__BuildSceneNodeTypeHierarchy(void)
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_SliderControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ScenePortalNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_EditBoxControlNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ListBoxControlNode);
 }
 /*
 void MkSceneNode::__GenerateBuildingTemplate(void)

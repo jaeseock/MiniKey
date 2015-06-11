@@ -84,6 +84,25 @@ void MkScenePortalNode::SetDestinationNode(MkSceneNode* destNode)
 	}
 }
 
+MkWindowManagerNode* MkScenePortalNode::SetScenePortal(const MkHashStr& themeName, const MkFloat2& region)
+{
+	SetScenePortal(themeName, region, NULL);
+	return CreateWindowManagerAsDestinationNode();
+}
+
+MkWindowManagerNode* MkScenePortalNode::CreateWindowManagerAsDestinationNode(void)
+{
+	// window mgr/destination node가 존재하면 삭제 및 초기화
+	MK_DELETE(m_DestWindowManagerNode);
+	SetDestinationNode(NULL);
+
+	// 생성 및 지정
+	m_DestWindowManagerNode = MkWindowManagerNode::CreateChildNode(NULL, MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + MkStr(L"DM:") + GetNodeName().GetString());
+	SetDestinationNode(m_DestWindowManagerNode);
+
+	return m_DestWindowManagerNode;
+}
+
 void MkScenePortalNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
 {
 	// scroll bar가 이동되었으면 destination node에 반영 후 event 소멸
@@ -110,17 +129,21 @@ void MkScenePortalNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, Mk
 		}
 	}
 
-	// wheel이 움직였고 해당 window가 자신이면 vertical scroll bar에 통지, event 소멸
+	// wheel이 움직였고 해당 window가 자신이고 현재 vertical scroll bar가 보이고 있으면 통지, event 소멸
 	if ((eventType == ePA_SNE_WheelMoved) && path.Empty() && ChildExist(VScrollBarName))
 	{
-		MkScrollBarControlNode* vScrollBar = dynamic_cast<MkScrollBarControlNode*>(GetChildNode(VScrollBarName));
-		if (vScrollBar != NULL)
+		MkSceneNode* vsbNode = GetChildNode(VScrollBarName);
+		if (vsbNode->GetVisible())
 		{
-			int delta;
-			if (argument->GetData(MkWindowBaseNode::ArgKey_WheelDelta, delta, 0))
+			MkScrollBarControlNode* vScrollBar = dynamic_cast<MkScrollBarControlNode*>(vsbNode);
+			if (vScrollBar != NULL)
 			{
-				vScrollBar->WheelScrolling(delta);
-				return;
+				int delta;
+				if (argument->GetData(MkWindowBaseNode::ArgKey_WheelDelta, delta, 0))
+				{
+					vScrollBar->WheelScrolling(delta);
+					return;
+				}
 			}
 		}
 	}
@@ -188,6 +211,7 @@ void MkScenePortalNode::Update(double currTime)
 void MkScenePortalNode::Clear(void)
 {
 	m_DestinationNode = NULL;
+	MK_DELETE(m_DestWindowManagerNode);
 
 	MkWindowBaseNode::Clear();
 }
@@ -195,6 +219,7 @@ void MkScenePortalNode::Clear(void)
 MkScenePortalNode::MkScenePortalNode(const MkHashStr& name) : MkWindowBaseNode(name)
 {
 	m_DestinationNode = NULL;
+	m_DestWindowManagerNode = NULL;
 }
 
 void MkScenePortalNode::_UpdateScrollBar(MkScrollBarControlNode* node, int destSize)

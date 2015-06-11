@@ -27,7 +27,8 @@ enum ePA_SceneNodeType
 	ePA_SNT_ScrollBarControlNode, // MkScrollBarControlNode
 	ePA_SNT_SliderControlNode, // MkSliderControlNode
 	ePA_SNT_ScenePortalNode, // MkScenePortalNode
-	ePA_SNT_EditBoxControlNode // MkEditBoxControlNode
+	ePA_SNT_EditBoxControlNode, // MkEditBoxControlNode
+	ePA_SNT_ListBoxControlNode // MkListBoxControlNode
 
 	//ePA_SNT_ControlWindowNodeBegin,
 
@@ -100,7 +101,20 @@ enum ePA_SceneNodeEvent
 
 	// MkEditBoxControlNode
 	ePA_SNE_TextModified, // ArgKey_Text : str
-	ePA_SNE_TextCommitted // ArgKey_Text : str
+	ePA_SNE_TextCommitted, // ArgKey_Text : str
+
+	// MkListBoxControlNode. ArgKey_Item : hash str
+	ePA_SNE_ItemEntered,
+	ePA_SNE_ItemLeft,
+	ePA_SNE_ItemLBtnPressed,
+	ePA_SNE_ItemLBtnReleased,
+	ePA_SNE_ItemLBtnDBClicked,
+	ePA_SNE_ItemMBtnPressed,
+	ePA_SNE_ItemMBtnReleased,
+	ePA_SNE_ItemMBtnDBClicked,
+	ePA_SNE_ItemRBtnPressed,
+	ePA_SNE_ItemRBtnReleased,
+	ePA_SNE_ItemRBtnDBClicked
 };
 
 /*

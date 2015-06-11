@@ -33,6 +33,7 @@ public:
 		eCT_NoticeBox, // eFT_SingleUnit
 		eCT_StaticBox, // eFT_SingleUnit
 		eCT_GuideBox, // eFT_SingleUnit
+		eCT_FlatBox, // eFT_SingleUnit
 
 		eCT_Title, // eFT_DualUnit
 

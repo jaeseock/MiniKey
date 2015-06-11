@@ -10,6 +10,7 @@
 #include "MkPA_MkScrollBarControlNode.h"
 #include "MkPA_MkSliderControlNode.h"
 #include "MkPA_MkEditBoxControlNode.h"
+#include "MkPA_MkListBoxControlNode.h"
 #include "MkPA_MkWindowManagerNode.h"
 
 
@@ -145,7 +146,18 @@ const MkStr NODE_EVT_NAME[] =
 	MK_VALUE_TO_STRING(ePA_SNE_ScrollBarMoved),
 	MK_VALUE_TO_STRING(ePA_SNE_SliderMoved),
 	MK_VALUE_TO_STRING(ePA_SNE_TextModified),
-	MK_VALUE_TO_STRING(ePA_SNE_TextCommitted)
+	MK_VALUE_TO_STRING(ePA_SNE_TextCommitted),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemEntered),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemLeft),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemLBtnPressed),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemLBtnReleased),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemLBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemMBtnPressed),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemMBtnReleased),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemMBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemRBtnPressed),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemRBtnReleased),
+	MK_VALUE_TO_STRING(ePA_SNE_ItemRBtnDBClicked)
 };
 
 #endif
@@ -263,6 +275,26 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 				if (argument->GetData(MkEditBoxControlNode::ArgKey_Text, buffer, 0))
 				{
 					msg += buffer;
+				}
+			}
+			break;
+
+		case ePA_SNE_ItemEntered:
+		case ePA_SNE_ItemLeft:
+		case ePA_SNE_ItemLBtnPressed:
+		case ePA_SNE_ItemLBtnReleased:
+		case ePA_SNE_ItemLBtnDBClicked:
+		case ePA_SNE_ItemMBtnPressed:
+		case ePA_SNE_ItemMBtnReleased:
+		case ePA_SNE_ItemMBtnDBClicked:
+		case ePA_SNE_ItemRBtnPressed:
+		case ePA_SNE_ItemRBtnReleased:
+		case ePA_SNE_ItemRBtnDBClicked:
+			{
+				MkHashStr buffer;
+				if (argument->GetDataEx(MkListBoxControlNode::ArgKey_Item, buffer, 0))
+				{
+					msg += buffer.GetString();
 				}
 			}
 			break;

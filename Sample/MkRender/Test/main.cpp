@@ -39,6 +39,7 @@
 #include "MkPA_MkScenePortalNode.h"
 #include "MkPA_MkEditBoxControlNode.h"
 #include "MkPA_MkSliderControlNode.h"
+#include "MkPA_MkListBoxControlNode.h"
 //#include "MkS2D_MkBaseWindowNode.h"
 //#include "MkS2D_MkSpreadButtonNode.h"
 //#include "MkS2D_MkCheckButtonNode.h"
@@ -203,6 +204,21 @@ public:
 		bodyFrame = MkBodyFrameControlNode::CreateChildNode(titleBar, L"BodyFrameB");
 		bodyFrame->SetBodyFrame
 			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
+
+		MkListBoxControlNode* lbNode = MkListBoxControlNode::CreateChildNode(bodyFrame, L"ListBox");
+		lbNode->SetListBox(MkWindowThemeData::DefaultThemeName, 6, 200.f);
+		lbNode->SetAlignmentPosition(eRAP_LeftTop);
+		lbNode->SetAlignmentOffset(MkFloat2(10.f, -30.f));
+		lbNode->SetLocalDepth(-1.f);
+		lbNode->AddItem(L"가나다", L"가나다");
+		lbNode->AddItem(L"가고파", L"가고파");
+		lbNode->AddItem(L"도나도나", L"도나도나");
+		lbNode->AddItem(L"웁스", L"웁스");
+		lbNode->AddItem(L"도나", L"도나");
+		lbNode->AddItem(L"aaa", L"aaa");
+		lbNode->AddItem(L"bbb", L"bbb");
+		lbNode->AddItem(L"ccc", L"ccc");
+		lbNode->SortItemSequenceInAscendingOrder();
 
 		// window C : title bar
 		titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBarC");

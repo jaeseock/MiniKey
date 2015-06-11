@@ -18,6 +18,7 @@ const MkHashStr MkWindowThemeData::ComponentTypeName[eCT_RegularMax] =
 	MK_VALUE_TO_STRING(eCT_NoticeBox),
 	MK_VALUE_TO_STRING(eCT_StaticBox),
 	MK_VALUE_TO_STRING(eCT_GuideBox),
+	MK_VALUE_TO_STRING(eCT_FlatBox),
 	MK_VALUE_TO_STRING(eCT_Title),
 	MK_VALUE_TO_STRING(eCT_NormalBtn),
 	MK_VALUE_TO_STRING(eCT_OKBtn),
@@ -80,6 +81,7 @@ const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[eCT_
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_NoticeBox
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_StaticBox
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_GuideBox
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_FlatBox
 	MkWindowThemeFormData::eFT_DualUnit, // eCT_Title
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_NormalBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_OKBtn

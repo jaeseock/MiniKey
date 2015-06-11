@@ -118,17 +118,17 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 
-	bool __UpdateThemeComponent(void);
+protected:
+
+	bool _UpdateThemeComponent(void);
 
 	// (NOTE) 호출 전 유효한 theme name, component type이 설정되어 있어야 함
 	// (NOTE) 적용중인 component의 unit type이 image일 경우 client size는 source size로 고정 됨
 	// 자세한 설명은 MkWindowThemeUnitData::SetClientSize() 참조
-	bool __UpdateRegion(void);
+	bool _UpdateRegion(void);
 
 	// (NOTE) 호출 전 유효한 theme name, component type이 설정되어 있어야 함
-	bool __UpdateFormState(void);
-
-protected:
+	bool _UpdateFormState(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// update command
@@ -140,7 +140,7 @@ protected:
 		eUC_Region,
 		eUC_FormState,
 
-		eUC_WindowThemedNodeBandwidth,
+		eUC_WindowThemedNodeBandwidth
 	};
 
 	virtual void _ExcuteUpdateCommand(void);

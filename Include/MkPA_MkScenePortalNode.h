@@ -8,6 +8,7 @@
 // dest node가 MkWindowManagerNode 파생 객체일 경우 독자적인 window system 동작 보장
 // (NOTE) dest node는 scene portal node가 속한 scene graph와 독립적인 node이어야 함
 //
+//------------------------------------------------------------------------------------------------//
 // ex>
 //	// window A 생성
 //	MkTitleBarControlNode* winA = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBar");
@@ -29,10 +30,31 @@
 //	MkScenePortalNode* scenePortal = MkScenePortalNode::CreateChildNode(bodyFrame, L"ScenePortal");
 //	scenePortal->SetScenePortal(MkWindowThemeData::DefaultThemeName, MkFloat2(250.f, 180.f), subWinMgr);
 //------------------------------------------------------------------------------------------------//
+// ex> 위의 예는 아래와 동일
+//	// main window system 생성해 window들을 마구마구 만들어 등록
+//	// 그 중 bodyFrame이라는 node가 있다고 가정
+//	MkWindowManagerNode* mainWinMgr = MkWindowManagerNode::CreateChildNode(NULL, L"WinMgr");
+//	...
+//
+//	// scene portal node 생성해 subWinMgr을 생성해 대상으로 지정하고 반환
+//	MkScenePortalNode* scenePortal = MkScenePortalNode::CreateChildNode(bodyFrame, L"ScenePortal");
+//	MkWindowManagerNode* subWinMgr = scenePortal->SetScenePortal(MkWindowThemeData::DefaultThemeName, MkFloat2(250.f, 180.f));
+//
+//	// window A 생성
+//	MkTitleBarControlNode* winA = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBar");
+//	winA->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 0.f, true);
+//	winA->SetIcon(MkWindowThemeData::eIT_Notice);
+//	...
+//
+//	// subWinMgr에 window A 등록
+//	subWinMgr->AttachWindow(winA, MkWindowManagerNode::eLT_Normal);
+//	subWinMgr->ActivateWindow(L"TitleBar");
+//------------------------------------------------------------------------------------------------//
 
 #include "MkPA_MkWindowBaseNode.h"
 
 
+class MkWindowManagerNode;
 class MkScrollBarControlNode;
 
 class MkScenePortalNode : public MkWindowBaseNode
@@ -49,6 +71,7 @@ public:
 	// portal interface
 	//------------------------------------------------------------------------------------------------//
 
+	// 대상 node를 지정해 초기화
 	void SetScenePortal(const MkHashStr& themeName, const MkFloat2& region, MkSceneNode* destNode);
 
 	// 대상 node를 지정
@@ -59,6 +82,17 @@ public:
 	// (NOTE) 호출 전 SetScenePortal()가 올바르게 호출된 상태이어야 함
 	// (NOTE) destNode는 scene portal node가 속한 scene graph와 독립적인 node이어야 함
 	void SetDestinationNode(MkSceneNode* destNode);
+
+	// 독자적인 window manager를 만들어 초기화 후 반환
+	MkWindowManagerNode* SetScenePortal(const MkHashStr& themeName, const MkFloat2& region);
+
+	// 독자적인 window manager를 만들어 대상 node로 지정
+	// (NOTE) 호출 전 SetScenePortal()가 올바르게 호출된 상태이어야 함
+	// (NOTE) 호출 전 window mgr/destination node가 존재하면 삭제(window mgr), 초기화(destination node) 후 재생성
+	MkWindowManagerNode* CreateWindowManagerAsDestinationNode(void);
+
+	// destination window manager 반환
+	inline MkWindowManagerNode* GetDestWindowManagerNode(void) { return m_DestWindowManagerNode; }
 
 	//------------------------------------------------------------------------------------------------//
 	// event
@@ -84,6 +118,8 @@ protected:
 protected:
 
 	MkSceneNode* m_DestinationNode;
+
+	MkWindowManagerNode* m_DestWindowManagerNode;
 
 public:
 

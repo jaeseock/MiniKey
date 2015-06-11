@@ -170,9 +170,8 @@ MkFloat2 MkWindowThemedNode::ConvertWindowToClientSize
 	return clientSize;
 }
 
-bool MkWindowThemedNode::__UpdateThemeComponent(void)
+bool MkWindowThemedNode::_UpdateThemeComponent(void)
 {
-	m_UpdateCommand.Clear(eUC_ThemeComponent);
 	m_UpdateCommand.Set(eUC_Region); // theme, component, shadow가 변경되면 region도 갱신되야 함
 
 	const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ThemeName, m_ComponentType, m_CustomFormName);
@@ -201,10 +200,8 @@ bool MkWindowThemedNode::__UpdateThemeComponent(void)
 						shadowNode->SetThemeName(m_ThemeName);
 						shadowNode->SetComponentType(MkWindowThemeData::eCT_ShadowBox);
 						shadowNode->SetFormState(MkWindowThemeFormData::eS_Default);
-
-						// shadow는 __UpdateRegion()에서 바로 영역 계산을 요구하기때문에 정상적인 Update()라인을 통한
-						// 생성을 따르지 않고 바로 panel들을 만듬
-						shadowNode->__UpdateThemeComponent();
+						shadowNode->SetAlignmentTargetIsWindowRect(false); // 자신과 shadow node의 client rect끼리 정렬
+						shadowNode->SetAlignmentPosition(eRAP_LeftBottom); // client size를 동일하게 맞출 것이므로 아무거나 상관 없음
 					}
 				}
 			}
@@ -217,10 +214,8 @@ bool MkWindowThemedNode::__UpdateThemeComponent(void)
 	return false;
 }
 
-bool MkWindowThemedNode::__UpdateFormState(void)
+bool MkWindowThemedNode::_UpdateFormState(void)
 {
-	m_UpdateCommand.Clear(eUC_FormState);
-
 	if (m_FormState != MkWindowThemeFormData::eS_None)
 	{
 		const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ThemeName, m_ComponentType, m_CustomFormName);
@@ -229,10 +224,8 @@ bool MkWindowThemedNode::__UpdateFormState(void)
 	return false;
 }
 
-bool MkWindowThemedNode::__UpdateRegion(void)
+bool MkWindowThemedNode::_UpdateRegion(void)
 {
-	m_UpdateCommand.Clear(eUC_Region);
-
 	const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ThemeName, m_ComponentType, m_CustomFormName);
 	bool ok = (formData != NULL);
 	if (ok)
@@ -247,8 +240,7 @@ bool MkWindowThemedNode::__UpdateRegion(void)
 			m_UpdateCommand.Set(eUC_Alignment); // window rect가 변경되면 자신의 alignment도 갱신되야 함
 		}
 
-		// client rect에 변경이 발생하면 자식 visual pattern node 재정렬
-		// local transform만 갱신하는 것이므로 node간 선후는 관계 없음(자식들 먼저 갱신하고 부모는 나중에 해도 됨)
+		// client rect에 변경이 발생하면 자식 visual pattern 파생 객체들에게 재정렬 명령
 		if ((!m_ChildrenNode.Empty()) && (m_ClientRect != oldCliRect))
 		{
 			MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
@@ -256,18 +248,13 @@ bool MkWindowThemedNode::__UpdateRegion(void)
 			{
 				if (looper.GetCurrentField()->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 				{
-					// shadow node
+					// shadow node. client size를 동기화
 					if (looper.GetCurrentField()->GetNodeName() == ShadowNodeName)
 					{
 						MkWindowThemedNode* shadowNode = dynamic_cast<MkWindowThemedNode*>(looper.GetCurrentField());
 						if (shadowNode != NULL)
 						{
 							shadowNode->SetClientSize(m_ClientRect.size);
-							shadowNode->__UpdateRegion(); // 바로 계산
-
-							// component와 shadow의 client rect를 동일하게 맞춤
-							MkFloat2 offset = m_ClientRect.position - shadowNode->GetClientRect().position;
-							shadowNode->SetLocalPosition(offset);
 						}
 					}
 					// etc
@@ -276,7 +263,7 @@ bool MkWindowThemedNode::__UpdateRegion(void)
 						MkVisualPatternNode* etcNode = dynamic_cast<MkVisualPatternNode*>(looper.GetCurrentField());
 						if (etcNode != NULL)
 						{
-							etcNode->__UpdateAlignment(this);
+							etcNode->SetAlignmentCommand();
 						}
 					}
 				}
@@ -290,15 +277,15 @@ void MkWindowThemedNode::_ExcuteUpdateCommand(void)
 {
 	if (m_UpdateCommand[eUC_ThemeComponent])
 	{
-		__UpdateThemeComponent();
+		_UpdateThemeComponent();
 	}
 	if (m_UpdateCommand[eUC_Region])
 	{
-		__UpdateRegion();
+		_UpdateRegion();
 	}
 	if (m_UpdateCommand[eUC_FormState])
 	{
-		__UpdateFormState();
+		_UpdateFormState();
 	}
 
 	MkVisualPatternNode::_ExcuteUpdateCommand();

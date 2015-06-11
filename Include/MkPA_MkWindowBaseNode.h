@@ -57,6 +57,10 @@ public:
 	// window frame type 반환
 	MkWindowThemeData::eFrameType GetWindowFrameType(void) const { return m_WindowFrameType; }
 
+	// 특정 form type 여부 반환
+	inline bool IsDualForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_DualUnit); }
+	inline bool IsQuadForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_QuadUnit); }
+
 	//------------------------------------------------------------------------------------------------//
 	// attribute
 	//------------------------------------------------------------------------------------------------//
@@ -86,9 +90,6 @@ public:
 	virtual ~MkWindowBaseNode() { Clear(); }
 
 protected:
-
-	inline bool _IsDualForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_DualUnit); }
-	inline bool _IsQuadForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_QuadUnit); }
 
 	void _StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position);
 

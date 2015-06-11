@@ -347,6 +347,11 @@ Node "StaticResource"
 				str eS_Single = "~" / "GuiE_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
+			Node "eCT_FlatBox" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "BtnFlatT_" / "0" / "8"; // eUT_Table
+			}
+			
 			Node "eCT_Title" // eFT_DualUnit
 			{
 				str eS_Back = "~" / "TtlTB_" / "0" / "8"; // eUT_Table
@@ -423,24 +428,24 @@ Node "StaticResource"
 			
 			Node "eCT_YellowSelBtn" // eFT_QuadUnit
 			{
-				str eS_Normal = "";
-				str eS_Focus = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
+				str eS_Normal = "~" / "EmptyT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "SelYeT_" / "0" / "8";
 				str eS_Pushing = "~" / "SelYeT_" / "0" / "8";
 				str eS_Disable = "~" / "SelDT_" / "0" / "8";
 			}
 			
 			Node "eCT_BlueSelBtn" // eFT_QuadUnit
 			{
-				str eS_Normal = "";
-				str eS_Focus = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
+				str eS_Normal = "~" / "EmptyT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "SelBlT_" / "0" / "8";
 				str eS_Pushing = "~" / "SelBlT_" / "0" / "8";
 				str eS_Disable = "~" / "SelDT_" / "0" / "8";
 			}
 			
 			Node "eCT_RedOutlineSelBtn" // eFT_QuadUnit
 			{
-				str eS_Normal = "";
-				str eS_Focus = "~" / "SelRgT_" / "0" / "8"; // eUT_Table
+				str eS_Normal = "~" / "EmptyT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "SelRgT_" / "0" / "8";
 				str eS_Pushing = "~" / "SelRgT_" / "0" / "8";
 				str eS_Disable = "~" / "SelDT_" / "0" / "8";
 			}

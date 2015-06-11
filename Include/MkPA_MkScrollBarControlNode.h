@@ -53,8 +53,13 @@ public:
 	void SetItemPosition(int position);
 	inline int GetItemPosition(void) const { return m_CurrentItemPosition; }
 
+	// wheel scroll level 설정/반환
+	// WheelScrolling() 호출 시 한 페이지를 이동하기 위해 필요 한 delta 값. 기본 값은 MKDEF_WHEEL_SCROLLING_LEVEL
+	// 0 이하면 delta 값을 그대로 반영
+	inline void SetWheelScrollLevel(int level) { m_WheelScrollLevel = level; }
+	inline int GetWheelScrollLevel(void) const { return m_WheelScrollLevel; }
+
 	// wheel scroll
-	// 단계별 이동량은 MKDEF_WHEEL_SCROLLING_LEVEL 비율을 따름
 	void WheelScrolling(int delta);
 
 	//------------------------------------------------------------------------------------------------//
@@ -89,6 +94,7 @@ protected:
 	int m_OnePageItemSize;
 	float m_TotalBarLength;
 	bool m_Horizontal;
+	int m_WheelScrollLevel;
 	float m_PageBarLength;
 	int m_CurrentItemPosition;
 
