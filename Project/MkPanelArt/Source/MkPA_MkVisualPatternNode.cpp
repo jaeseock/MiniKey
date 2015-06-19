@@ -1,26 +1,39 @@
 
+#include "MkCore_MkCheck.h"
+#include "MkCore_MkDataNode.h"
+
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkVisualPatternNode.h"
 
 
-const MkStr MkVisualPatternNode::NamePrefix(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX);
+const MkHashStr MkVisualPatternNode::ObjKey_AlignPosition(L"AlignPosition");
+const MkHashStr MkVisualPatternNode::ObjKey_AlignOffset(L"AlignOffset");
+
+//------------------------------------------------------------------------------------------------//
+
+MkVisualPatternNode* MkVisualPatternNode::CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName)
+{
+	MkVisualPatternNode* node = __TSI_SceneNodeDerivedInstanceOp<MkVisualPatternNode>::Alloc(parentNode, childNodeName);
+	MK_CHECK(node != NULL, childNodeName.GetString() + L" MkVisualPatternNode 생성 실패") {}
+	return node;
+}
 
 //------------------------------------------------------------------------------------------------//
 
 void MkVisualPatternNode::SetAlignmentPivotIsWindowRect(bool enable)
 {
-	if (enable != m_AlignmentPivotIsWindowRect)
+	if (enable != GetAlignmentPivotIsWindowRect())
 	{
-		m_AlignmentPivotIsWindowRect = enable;
+		m_Attribute.Assign(ePA_SNA_AlignmentPivotIsWindowRect, enable);
 		SetAlignmentCommand();
 	}
 }
 
 void MkVisualPatternNode::SetAlignmentTargetIsWindowRect(bool enable)
 {
-	if (enable != m_AlignmentTargetIsWindowRect)
+	if (enable != GetAlignmentTargetIsWindowRect())
 	{
-		m_AlignmentTargetIsWindowRect = enable;
+		m_Attribute.Assign(ePA_SNA_AlignmentTargetIsWindowRect, enable);
 		SetAlignmentCommand();
 	}
 }
@@ -55,22 +68,62 @@ void MkVisualPatternNode::Update(double currTime)
 	MkSceneNode::Update(currTime);
 }
 
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkVisualPatternNode);
+
+void MkVisualPatternNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkSceneNode::SetObjectTemplate(node);
+
+	// update attribute
+	MkBitField32 attr;
+	node.GetData(ObjKey_Attribute, attr.m_Field, 0);
+	attr.Assign(ePA_SNA_AlignmentTargetIsWindowRect, true);
+	node.SetData(ObjKey_Attribute, attr.m_Field, 0);
+
+	// alignment
+	node.CreateUnit(ObjKey_AlignPosition, static_cast<int>(eRAP_NonePosition));
+	node.CreateUnitEx(ObjKey_AlignOffset, MkFloat2::Zero);
+}
+
+void MkVisualPatternNode::LoadObject(const MkDataNode& node)
+{
+	MkSceneNode::LoadObject(node);
+
+	// alignment
+	int alignPos;
+	node.GetData(ObjKey_AlignPosition, alignPos, 0);
+	SetAlignmentPosition(static_cast<eRectAlignmentPosition>(alignPos));
+
+	MkFloat2 alignOffset;
+	node.GetDataEx(ObjKey_AlignOffset, alignOffset, 0);
+	SetAlignmentOffset(alignOffset);
+}
+
+void MkVisualPatternNode::SaveObject(MkDataNode& node) const
+{
+	MkSceneNode::SaveObject(node);
+
+	// alignment
+	node.SetData(ObjKey_AlignPosition, static_cast<int>(m_AlignmentPosition), 0);
+	node.SetDataEx(ObjKey_AlignOffset, m_AlignmentOffset, 0);
+}
+
 MkVisualPatternNode::MkVisualPatternNode(const MkHashStr& name) : MkSceneNode(name)
 {
-	m_AlignmentPivotIsWindowRect = false; // client rect default
-	m_AlignmentTargetIsWindowRect = true; // window rect default
+	m_Attribute.Assign(ePA_SNA_AlignmentPivotIsWindowRect, false); // client rect default
+	m_Attribute.Assign(ePA_SNA_AlignmentTargetIsWindowRect, true); // window rect default
 	m_AlignmentPosition = eRAP_NonePosition;
 }
 
 void MkVisualPatternNode::_UpdateAlignment(void)
 {
-	const MkFloatRect& targetRect = (m_AlignmentTargetIsWindowRect) ? this->GetWindowRect() : this->GetClientRect();
+	const MkFloatRect& targetRect = GetAlignmentTargetIsWindowRect() ? this->GetWindowRect() : this->GetClientRect();
 	if (targetRect.SizeIsNotZero() && (m_ParentNodePtr != NULL) && m_ParentNodePtr->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 	{
 		const MkVisualPatternNode* parentVPNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
 		if (parentVPNode != NULL)
 		{
-			const MkFloatRect& pivotRect = (m_AlignmentPivotIsWindowRect) ? parentVPNode->GetWindowRect() : parentVPNode->GetClientRect();
+			const MkFloatRect& pivotRect = GetAlignmentPivotIsWindowRect() ? parentVPNode->GetWindowRect() : parentVPNode->GetClientRect();
 			if (pivotRect.SizeIsNotZero())
 			{
 				MkFloat2 snapPos = pivotRect.GetSnapPosition

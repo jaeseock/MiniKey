@@ -8,14 +8,13 @@
 
 #include "MkCore_MkSingleTypeTreePattern.h"
 #include "MkCore_MkPairArray.h"
-#include "MkCore_MkTypeHierarchy.h"
 
 #include "MkPA_MkPanel.h"
 
 
 class MkDataNode;
 
-class MkSceneNode : public MkSingleTypeTreePattern<MkSceneNode>
+class MkSceneNode : public MkSingleTypeTreePattern<MkSceneNode>, public MkSceneObject
 {
 public:
 
@@ -28,14 +27,6 @@ public:
 
 	// 자신 혹은 조상들 중에서 nodeType 파생을 만족시키는 가장 가까운 객체를 반환
 	MkSceneNode* FindNearestDerivedNode(ePA_SceneNodeType nodeType);
-
-	// MkDataNode로 구성. 기존 설정값이 존재하면 덮어씀
-	// 기존 객체 중 이름이 겹치지 않는 독자적인 객체는 그대로 놔둠(transform, alpha 등 자식에게 영향을 주는 요소는 적용 됨)
-	// 완전한 적용을 위해서는 Update() 호출 필요
-	//virtual void Load(const MkDataNode& node);
-
-	// MkDataNode로 출력
-	//virtual void Save(MkDataNode& node);
 
 	//------------------------------------------------------------------------------------------------//
 	// transform
@@ -90,6 +81,7 @@ public:
 
 	// panel 반환. 없으면 NULL 반환
 	inline MkPanel* GetPanel(const MkHashStr& name) { return m_Panels.Exist(name) ? &m_Panels[name] : NULL; }
+	inline const MkPanel* GetPanel(const MkHashStr& name) const { return m_Panels.Exist(name) ? &m_Panels[name] : NULL; }
 
 	// panel 이름 리스트 반환
 	inline unsigned int GetPanelNameList(MkArray<MkHashStr>& buffer) const { return m_Panels.GetKeyList(buffer); }
@@ -104,9 +96,6 @@ public:
 	// startDepth이상의 거리에서 startDepth와 가장 가깝고 worldPoint와 충돌하는 MkPanel을 buffer에 넣어 반환
 	// (NOTE) 대상 노드(자신)는 최소한 한 번 이상 Update()를 통해 world transform이 갱신된 상태이어야 함
 	bool PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth = 0.f, const MkBitField32& attrCondition = MkBitField32::EMPTY) const;
-	
-	// 기존 설정된 deco string이 있다면 재로딩
-	//void RestoreDecoString(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute
@@ -140,16 +129,21 @@ public:
 	// 해제
 	virtual void Clear(void);
 
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Load(const MkDataNode& node);
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
+
+	//------------------------------------------------------------------------------------------------//
+
 	MkSceneNode(const MkHashStr& name);
 	virtual ~MkSceneNode() { Clear(); }
 
 public:
-
-	//------------------------------------------------------------------------------------------------//
-
-	static void __BuildSceneNodeTypeHierarchy(void);
-
-	//static void __GenerateBuildingTemplate(void);
 
 	const MkSceneTransform* __GetTransformPtr(void) const { return &m_Transform; }
 
@@ -157,30 +151,35 @@ public:
 
 protected:
 
-	//------------------------------------------------------------------------------------------------//
-
-	//void _ApplyBuildingTemplateToSave(MkDataNode& node, const MkHashStr& templateName);
+	static void _AddExceptionList(MkDataNode& node, const MkHashStr& expKey, const MkArray<MkHashStr>& expList);
 
 protected:
 
-	//------------------------------------------------------------------------------------------------//
+	// flag
+	MkBitField32 m_Attribute;
 
+	// transform
 	MkSceneTransform m_Transform;
 
+	// axis aligned bounding box
 	MkFloatRect m_PanelAABR; // 직계 panel들만 대상
 	MkFloatRect m_TotalAABR; // m_PanelAABR + 하위 모든 자식 노드들의 AABR 합산
 
+	// sub panels
 	MkHashMap<MkHashStr, MkPanel> m_Panels; // name, panel
-
-	// flag
-	MkBitField32 m_Attribute;
 
 public:
 
 	static const MkHashStr ArgKey_DragMovement;
 
-	// class hierarchy
-	static MkTypeHierarchy<ePA_SceneNodeType> SceneNodeTypeHierarchy;
+	// save control 용 key
+	static const MkHashStr SystemKey_PanelExceptions; // 해당 리스트를 panel 출력 대상에서 제외
+	static const MkHashStr SystemKey_NodeExceptions; // 해당 리스트를 node 출력 대상에서 제외
+
+	static const MkHashStr RootKey_Panels;
+	static const MkHashStr RootKey_SubNodes;
+
+	static const MkHashStr ObjKey_Attribute;
 };
 
 //------------------------------------------------------------------------------------------------//

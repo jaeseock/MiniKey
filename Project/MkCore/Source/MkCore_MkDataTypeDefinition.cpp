@@ -69,6 +69,9 @@ const MkStr MkStr::LF(L"\n");
 const MkStr MkStr::CR(L"\r");
 const MkStr MkStr::SPACE(L" ");
 const MkStr MkStr::CRLF(L"\r\n");
+const MkStr MkStr::TAG_CR(L"<CR>");
+const MkStr MkStr::TAG_LF(L"<LF>");
+const MkStr MkStr::TAG_CRLF(L"<CR><LF>");
 
 // MkHashStr
 const MkHashStr MkHashStr::EMPTY(MkStr::EMPTY);

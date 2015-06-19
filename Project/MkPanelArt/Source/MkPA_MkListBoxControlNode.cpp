@@ -14,6 +14,12 @@ const MkHashStr MkListBoxControlNode::VScrollBarName(MkStr(MKDEF_PA_WIN_CONTROL_
 
 const MkHashStr MkListBoxControlNode::ArgKey_Item = L"ItemKey";
 
+const MkHashStr MkListBoxControlNode::ObjKey_OnePageItemSize = L"OnePageItemSize";
+const MkHashStr MkListBoxControlNode::ObjKey_ItemWidth = L"ItemWidth";
+const MkHashStr MkListBoxControlNode::ObjKey_ItemKeyList = L"ItemKeyList";
+const MkHashStr MkListBoxControlNode::ObjKey_ItemMsgList = L"ItemMsgList";
+const MkHashStr MkListBoxControlNode::ObjKey_ItemSequence = L"ItemSequence";
+
 #define MKDEF_UNSHOWING_TAG_INDEX -1
 
 //------------------------------------------------------------------------------------------------//
@@ -319,6 +325,103 @@ void MkListBoxControlNode::Clear(void)
 	m_ButtonPoolData.Clear();
 
 	MkWindowBaseNode::Clear();
+}
+
+void MkListBoxControlNode::Save(MkDataNode& node) const
+{
+	// scroll bar, item btn Á¦¿Ü
+	MkArray<MkHashStr> exceptions(1 + m_ButtonPoolData.GetSize());
+	if (exceptions.Empty())
+	{
+		exceptions.PushBack(VScrollBarName);
+
+		MK_INDEXING_LOOP(m_ButtonPoolData, i)
+		{
+			exceptions.PushBack(m_ButtonPoolData[i].btnName);
+		}
+	}
+	_AddExceptionList(node, SystemKey_NodeExceptions, exceptions);
+
+	// run
+	MkWindowBaseNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkListBoxControlNode);
+
+void MkListBoxControlNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowBaseNode::SetObjectTemplate(node);
+
+	node.CreateUnit(ObjKey_OnePageItemSize, static_cast<int>(0));
+	node.CreateUnit(ObjKey_ItemWidth, 0.f);
+	// ObjKey_ItemKeyList
+	// ObjKey_ItemMsgList
+	// ObjKey_ItemSequence
+}
+
+void MkListBoxControlNode::LoadObject(const MkDataNode& node)
+{
+	MkWindowBaseNode::LoadObject(node);
+
+	// frame
+	node.GetData(ObjKey_ItemWidth, m_ItemWidth, 0);
+
+	int onePageItemSize;
+	if (node.GetData(ObjKey_OnePageItemSize, onePageItemSize, 0))
+	{
+		SetOnePageItemSize(onePageItemSize);
+	}
+
+	// item
+	MkArray<MkHashStr> keyList;
+	MkArray<MkStr> msgList;
+	if (node.GetDataEx(ObjKey_ItemKeyList, keyList) && node.GetData(ObjKey_ItemMsgList, msgList) && (keyList.GetSize() == msgList.GetSize()))
+	{
+		MK_INDEXING_LOOP(keyList, i)
+		{
+			AddItem(keyList[i], msgList[i]);
+		}
+	}
+
+	// sequence
+	MkArray<MkHashStr> sequence;
+	if (node.GetDataEx(ObjKey_ItemSequence, sequence))
+	{
+		SetItemSequence(sequence);
+	}
+}
+
+void MkListBoxControlNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowBaseNode::SaveObject(node);
+
+	// frame
+	node.SetData(ObjKey_OnePageItemSize, m_OnePageItemSize, 0);
+	node.SetData(ObjKey_ItemWidth, m_ItemWidth, 0);
+
+	// item
+	unsigned int itemSize = m_ItemData.GetSize();
+	if (itemSize > 0)
+	{
+		MkArray<MkStr> keyList(m_ItemData.GetSize());
+		MkArray<MkStr> msgList(m_ItemData.GetSize());
+
+		MkConstHashMapLooper<MkHashStr, _ItemData> looper(m_ItemData);
+		MK_STL_LOOP(looper)
+		{
+			const MkHashStr& key = looper.GetCurrentKey();
+			keyList.PushBack(key.GetString());
+
+			const MkStr& msg = looper.GetCurrentField().tagNode->GetTagTextPtr()->GetText();
+			msgList.PushBack(msg);
+		}
+
+		node.CreateUnit(ObjKey_ItemKeyList, keyList);
+		node.CreateUnit(ObjKey_ItemMsgList, msgList);
+	}
+
+	// sequence
+	node.CreateUnitEx(ObjKey_ItemSequence, m_ItemSequence);
 }
 
 MkListBoxControlNode::MkListBoxControlNode(const MkHashStr& name) : MkWindowBaseNode(name)

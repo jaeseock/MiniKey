@@ -1,6 +1,5 @@
 
 #include "MkCore_MkCheck.h"
-#include "MkCore_MkTimeManager.h"
 #include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkProjectDefinition.h"
@@ -8,10 +7,15 @@
 #include "MkPA_MkWindowThemedNode.h"
 
 
-const MkHashStr MkWindowThemedNode::NodeNamePrefix(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Comp:");
-const MkHashStr MkWindowThemedNode::ShadowNodeName(NodeNamePrefix.GetString() + L"Shadow");
+const MkHashStr MkWindowThemedNode::ShadowNodeName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Shadow");
 
 const MkHashStr MkWindowThemedNode::ArgKey_ChangeTheme(L"ChangeTheme");
+
+const MkHashStr MkWindowThemedNode::ObjKey_ThemeName(L"ThemeName");
+const MkHashStr MkWindowThemedNode::ObjKey_ComponentType(L"ComponentType");
+const MkHashStr MkWindowThemedNode::ObjKey_CustomFormName(L"CustomFormName");
+const MkHashStr MkWindowThemedNode::ObjKey_UseShadow(L"UseShadow");
+const MkHashStr MkWindowThemedNode::ObjKey_ClientSize(L"ClientSize");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -148,6 +152,116 @@ void MkWindowThemedNode::Clear(void)
 	MkVisualPatternNode::Clear();
 }
 
+void MkWindowThemedNode::Save(MkDataNode& node) const
+{
+	// component panel 제외
+	static MkArray<MkHashStr> panelExceptions(10);
+	if (panelExceptions.Empty())
+	{
+		panelExceptions.PushBack(MkWindowThemeUnitData::ImagePositionName);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_LT]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_MT]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_RT]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_LC]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_MC]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_RC]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_LB]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_MB]);
+		panelExceptions.PushBack(MkWindowThemeUnitData::EdgeAndTablePositionName[MkWindowThemeUnitData::eP_RB]);
+	}
+	_AddExceptionList(node, SystemKey_PanelExceptions, panelExceptions);
+
+	// shadow node 제외
+	static MkArray<MkHashStr> nodeExceptions;
+	if (nodeExceptions.Empty())
+	{
+		nodeExceptions.PushBack(ShadowNodeName);
+	}
+	_AddExceptionList(node, SystemKey_NodeExceptions, nodeExceptions);
+
+	// run
+	MkVisualPatternNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkWindowThemedNode);
+
+void MkWindowThemedNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkVisualPatternNode::SetObjectTemplate(node);
+
+	node.CreateUnit(ObjKey_ThemeName, MkStr::EMPTY);
+	node.CreateUnit(ObjKey_ComponentType, MkStr::EMPTY);
+	node.CreateUnit(ObjKey_CustomFormName, MkStr::EMPTY);
+	node.CreateUnit(ObjKey_UseShadow, false);
+	node.CreateUnitEx(ObjKey_ClientSize, MkFloat2::Zero);
+	
+}
+
+void MkWindowThemedNode::LoadObject(const MkDataNode& node)
+{
+	MkVisualPatternNode::LoadObject(node);
+
+	// theme name
+	MkHashStr themeName;
+	if (node.GetDataEx(ObjKey_ThemeName, themeName, 0) && (!themeName.Empty()))
+	{
+		SetThemeName(themeName);
+	}
+
+	// component
+	MkHashStr componentBuffer;
+	if (node.GetDataEx(ObjKey_ComponentType, componentBuffer, 0) && (!componentBuffer.Empty()))
+	{
+		SetComponentType(MkWindowThemeData::ConvertComponentNameToType(componentBuffer));
+	}
+	else if (node.GetDataEx(ObjKey_CustomFormName, componentBuffer, 0) && (!componentBuffer.Empty()))
+	{
+		SetComponentType(MkWindowThemeData::eCT_CustomForm);
+		SetCustomForm(componentBuffer);
+	}
+
+	// shadow
+	bool useShadow;
+	if (node.GetData(ObjKey_UseShadow, useShadow, 0))
+	{
+		SetShadowUsage(useShadow);
+	}
+
+	// client size
+	MkFloat2 clientSize;
+	if (node.GetDataEx(ObjKey_ClientSize, clientSize, 0))
+	{
+		SetClientSize(clientSize);
+	}
+
+	// form state -> default
+	SetFormState(MkWindowThemeFormData::eS_Default);
+}
+
+void MkWindowThemedNode::SaveObject(MkDataNode& node) const
+{
+	MkVisualPatternNode::SaveObject(node);
+
+	// theme name
+	node.SetDataEx(ObjKey_ThemeName, m_ThemeName, 0);
+	
+	// component
+	if ((m_ComponentType > MkWindowThemeData::eCT_None) && (m_ComponentType < MkWindowThemeData::eCT_RegularMax))
+	{
+		node.SetDataEx(ObjKey_ComponentType, MkWindowThemeData::ComponentTypeName[m_ComponentType], 0);
+	}
+	else if (m_ComponentType == MkWindowThemeData::eCT_CustomForm)
+	{
+		node.SetDataEx(ObjKey_CustomFormName, m_CustomFormName, 0);
+	}
+
+	// use shadow
+	node.SetData(ObjKey_UseShadow, m_UseShadow, 0);
+
+	// client size
+	node.SetDataEx(ObjKey_ClientSize, m_ClientRect.size, 0);
+}
+
 MkWindowThemedNode::MkWindowThemedNode(const MkHashStr& name) : MkVisualPatternNode(name)
 {
 	m_ComponentType = MkWindowThemeData::eCT_None;
@@ -175,38 +289,33 @@ bool MkWindowThemedNode::_UpdateThemeComponent(void)
 	m_UpdateCommand.Set(eUC_Region); // theme, component, shadow가 변경되면 region도 갱신되야 함
 
 	const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(m_ThemeName, m_ComponentType, m_CustomFormName);
-	if (formData != NULL)
+	if ((formData != NULL) && formData->AttachForm(this))
 	{
-		MkTimeState ts;
-		MK_TIME_MGR.GetCurrentTimeState(ts);
-		if (formData->AttachForm(this, ts.fullTime))
+		if (m_UseShadow)
 		{
-			if (m_UseShadow)
+			if (ChildExist(ShadowNodeName))
 			{
-				if (ChildExist(ShadowNodeName))
+				MkWindowThemedNode* shadowNode = dynamic_cast<MkWindowThemedNode*>(GetChildNode(ShadowNodeName));
+				if (shadowNode != NULL)
 				{
-					MkWindowThemedNode* shadowNode = dynamic_cast<MkWindowThemedNode*>(GetChildNode(ShadowNodeName));
-					if (shadowNode != NULL)
-					{
-						shadowNode->SetThemeName(m_ThemeName);
-					}
-				}
-				else
-				{
-					MkWindowThemedNode* shadowNode = CreateChildNode(this, ShadowNodeName);
-					if (shadowNode != NULL)
-					{
-						shadowNode->SetLocalDepth(0.1f); // form panel들과 겹치는 것을 피하기 위해 0.1f만큼 뒤에 위치
-						shadowNode->SetThemeName(m_ThemeName);
-						shadowNode->SetComponentType(MkWindowThemeData::eCT_ShadowBox);
-						shadowNode->SetFormState(MkWindowThemeFormData::eS_Default);
-						shadowNode->SetAlignmentTargetIsWindowRect(false); // 자신과 shadow node의 client rect끼리 정렬
-						shadowNode->SetAlignmentPosition(eRAP_LeftBottom); // client size를 동일하게 맞출 것이므로 아무거나 상관 없음
-					}
+					shadowNode->SetThemeName(m_ThemeName);
 				}
 			}
-			return true;
+			else
+			{
+				MkWindowThemedNode* shadowNode = CreateChildNode(this, ShadowNodeName);
+				if (shadowNode != NULL)
+				{
+					shadowNode->SetLocalDepth(0.1f); // form panel들과 겹치는 것을 피하기 위해 0.1f만큼 뒤에 위치
+					shadowNode->SetThemeName(m_ThemeName);
+					shadowNode->SetComponentType(MkWindowThemeData::eCT_ShadowBox);
+					shadowNode->SetFormState(MkWindowThemeFormData::eS_Default);
+					shadowNode->SetAlignmentTargetIsWindowRect(false); // 자신과 shadow node의 client rect끼리 정렬
+					shadowNode->SetAlignmentPosition(eRAP_LeftBottom); // client size를 동일하게 맞출 것이므로 아무거나 상관 없음
+				}
+			}
 		}
+		return true;
 	}
 
 	MkWindowThemeFormData::RemoveForm(this);
@@ -237,7 +346,7 @@ bool MkWindowThemedNode::_UpdateRegion(void)
 
 		if (m_WindowRect != oldWinRect)
 		{
-			m_UpdateCommand.Set(eUC_Alignment); // window rect가 변경되면 자신의 alignment도 갱신되야 함
+			SetAlignmentCommand(); // window rect가 변경되면 자신의 alignment도 갱신되야 함
 		}
 
 		// client rect에 변경이 발생하면 자식 visual pattern 파생 객체들에게 재정렬 명령

@@ -426,6 +426,11 @@ Node "StaticResource"
 				str eS_Single = "~" / "SelRgT_" / "0" / "3" / "5" / "8"; // eUT_Edge
 			}
 			
+			Node "eCT_DarkZone" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "DknT_" / "0" / "8"; // eUT_Table
+			}
+			
 			Node "eCT_YellowSelBtn" // eFT_QuadUnit
 			{
 				str eS_Normal = "~" / "EmptyT_" / "0" / "8"; // eUT_Table

@@ -50,6 +50,8 @@ enum ePA_SceneNodeAttribute
 
 	// MkVisualPatternNode
 	ePA_SNA_AcceptInput,
+	ePA_SNA_AlignmentPivotIsWindowRect,
+	ePA_SNA_AlignmentTargetIsWindowRect,
 
 	// MkWindowBaseNode
 	ePA_SNA_Enable,

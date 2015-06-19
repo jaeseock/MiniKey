@@ -86,6 +86,8 @@ public:
 
 	virtual void Clear(void);
 
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER; // MkSceneObject
+
 	MkWindowBaseNode(const MkHashStr& name);
 	virtual ~MkWindowBaseNode() { Clear(); }
 
@@ -103,4 +105,6 @@ public:
 
 	static const MkHashStr ArgKey_CursorLocalPosition;
 	static const MkHashStr ArgKey_WheelDelta;
+
+	static const MkHashStr ObjKey_WindowFrameType;
 };

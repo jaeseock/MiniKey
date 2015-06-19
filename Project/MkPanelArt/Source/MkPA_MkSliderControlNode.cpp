@@ -13,6 +13,12 @@ const MkHashStr MkSliderControlNode::ValueTagName = MkStr(MKDEF_PA_WIN_CONTROL_P
 
 const MkHashStr MkSliderControlNode::ArgKey_SliderPos = L"SliderPos";
 
+const MkHashStr MkSliderControlNode::ObjKey_LineLength = L"LineLength";
+const MkHashStr MkSliderControlNode::ObjKey_Horizontal = L"Horizontal";
+const MkHashStr MkSliderControlNode::ObjKey_BeginValue = L"BeginValue";
+const MkHashStr MkSliderControlNode::ObjKey_ValueSize = L"ValueSize";
+const MkHashStr MkSliderControlNode::ObjKey_CurrentValue = L"CurrentValue";
+const MkHashStr MkSliderControlNode::ObjKey_ShowValue = L"ShowValue";
 
 // button과 value tag간 거리
 #define MKDEF_VALUE_TAG_OFFSET 1.f
@@ -190,6 +196,67 @@ void MkSliderControlNode::Clear(void)
 	m_ValueTagTimeStamp = 0.;
 
 	MkWindowBaseNode::Clear();
+}
+
+void MkSliderControlNode::Save(MkDataNode& node) const
+{
+	// btn/value 제외
+	static MkArray<MkHashStr> exceptions;
+	if (exceptions.Empty())
+	{
+		exceptions.PushBack(BtnNodeName); // ValueTagName도 종속
+	}
+	_AddExceptionList(node, SystemKey_NodeExceptions, exceptions);
+
+	// run
+	MkWindowBaseNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkSliderControlNode);
+
+void MkSliderControlNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowBaseNode::SetObjectTemplate(node);
+
+	node.CreateUnit(ObjKey_LineLength, 0.f);
+	node.CreateUnit(ObjKey_Horizontal, false);
+	node.CreateUnit(ObjKey_BeginValue, static_cast<int>(0));
+	node.CreateUnit(ObjKey_ValueSize, static_cast<int>(0));
+	node.CreateUnit(ObjKey_CurrentValue, static_cast<int>(0));
+	node.CreateUnit(ObjKey_ShowValue, false);
+}
+
+void MkSliderControlNode::LoadObject(const MkDataNode& node)
+{
+	MkWindowBaseNode::LoadObject(node);
+
+	float lineLength;
+	bool horizontal;
+	int beginValue;
+	int valueSize;
+	int currentValue;
+	bool showValue;
+	if (node.GetData(ObjKey_LineLength, lineLength, 0) &&
+		node.GetData(ObjKey_Horizontal, horizontal, 0) &&
+		node.GetData(ObjKey_BeginValue, beginValue, 0) &&
+		node.GetData(ObjKey_ValueSize, valueSize, 0) &&
+		node.GetData(ObjKey_CurrentValue, currentValue, 0) &&
+		node.GetData(ObjKey_ShowValue, showValue, 0))
+	{
+		_SetSlider(GetThemeName(), m_WindowFrameType, lineLength, beginValue, valueSize, currentValue, showValue, horizontal);
+	}
+}
+
+void MkSliderControlNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowBaseNode::SaveObject(node);
+
+	node.SetData(ObjKey_LineLength, m_LineLength, 0);
+	node.SetData(ObjKey_Horizontal, m_Horizontal, 0);
+	node.SetData(ObjKey_BeginValue, m_BeginValue, 0);
+	node.SetData(ObjKey_ValueSize, m_ValueSize, 0);
+	node.SetData(ObjKey_CurrentValue, m_CurrentValue, 0);
+	node.SetData(ObjKey_ShowValue, ChildExist(BtnNodeName) && GetChildNode(BtnNodeName)->ChildExist(ValueTagName), 0);
 }
 
 MkSliderControlNode::MkSliderControlNode(const MkHashStr& name) : MkWindowBaseNode(name)

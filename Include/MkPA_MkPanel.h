@@ -21,22 +21,16 @@
 #include "MkCore_MkBitField32.h"
 #include "MkPA_MkSceneTransform.h"
 #include "MkPA_MkBaseTexture.h"
+#include "MkPA_MkSceneObject.h"
 
 
 class MkDrawStepInterface;
 class MkTextNode;
 class MkSceneNode;
 
-class MkPanel
+class MkPanel : public MkSceneObject
 {
 public:
-
-	//enum eSrcType
-	//{
-	//	eNone = 0,
-	//	eStaticImage,
-	//	eRenderToTexture
-	//};
 
 	// source의 크기가 panel의 크기보다 작을 때의 동작
 	enum eSmallerSourceOp
@@ -55,12 +49,6 @@ public:
 	};
 
 public:
-
-	// MkDataNode로 구성. 기존 설정값이 존재하면 덮어씀
-	//void Load(const MkDataNode& node);
-
-	// MkDataNode로 출력
-	//void Save(MkDataNode& node);
 
 	//------------------------------------------------------------------------------------------------//
 	// transform
@@ -117,14 +105,14 @@ public:
 	inline void SetPixelScrollPosition(const MkFloat2& position) { m_PixelScrollPosition = position; }
 	inline const MkFloat2& GetPixelScrollPosition(void) const { return m_PixelScrollPosition; }
 
-	// uv reflection
+	// uv reflection. default는 false
 	void SetHorizontalReflection(bool enable);
 	bool GetHorizontalReflection(void) const;
 
 	void SetVerticalReflection(bool enable);
 	bool GetVerticalReflection(void) const;
 
-	// visible
+	// visible. default는 true
 	void SetVisible(bool visible);
 	bool GetVisible(void) const;
 
@@ -138,16 +126,18 @@ public:
 	// texture 설정
 	// sequence 지정의 경우 startTime은 현재 시간, initTime은 sequence 내부에서의 시작 시간을 의미
 	// (NOTE) SetTextNode(), SetMaskingNode()와 배타적
-	bool SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
-	bool SetTexture(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double startTime = 0., double initTime = 0.);
+	bool SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double timeOffset = 0.);
+	bool SetTexture(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY, double timeOffset = 0.);
 
 	// image info
 	// (NOTE) 호출 전 texture가 설정되어 있어야 함
-	bool SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double startTime = 0., double initTime = 0.);
+	bool SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double timeOffset = 0.);
 	inline const MkHashStr& GetSubsetOrSequenceName(void) const { return m_SubsetOrSequenceName; }
 	unsigned int GetAllSubsets(MkArray<MkHashStr>& keyList) const;
 	unsigned int GetAllSequences(MkArray<MkHashStr>& keyList) const;
-	inline double GetSequenceStartTime(void) const { return m_SequenceStartTime; }
+
+	inline void SetSequenceTimeOffset(double offset) { m_SequenceTimeOffset = offset; }
+	inline double GetSequenceTimeOffset(void) const { return m_SequenceTimeOffset; }
 
 	// text node 설정
 	// 호출시 Build() 수행
@@ -155,7 +145,7 @@ public:
 	// deep copy로 자체적인 객체를 소유. 이는 GetTextNodePtr()로 얻은 객체의 변경이 원본 손상 없이 가능함을 의미(수정 후 추가적인 Build() 필요)
 	// restrictToPanelWidth가 true인 경우 panel size의 x로 가로 폭 제한
 	// (NOTE) SetTexture(), SetMaskingNode()와 배타적
-	// (NOTE) 기존 GetTextNodePtr() / BuildAndUpdateTextCache()로 세팅된 휘발성 정보는 모두 사라짐
+	// (NOTE) 저장시 text node 내용을 그대로 출력. 용량이 크기 때문에 수정 내용을 반영할 필요가 없다면 가급적 이름으로 사용하길 권장
 	// (TIP) 장문의 경우 restrictToPanelWidth = true, eAttachToLeftTop, eCutSource와 조합하면 일반적인 세로 스크롤 출력이 됨
 	void SetTextNode(const MkTextNode& source, bool restrictToPanelWidth = false);
 
@@ -178,9 +168,6 @@ public:
 	//	panel->BuildAndUpdateTextCache();
 	void BuildAndUpdateTextCache(void);
 
-	// 기존 설정된 deco string이 있다면 재로딩
-	//void RestoreDecoString(void);
-
 	// mask panel 설정
 	// (NOTE) SetTexture(), SetTextNode()와 배타적
 	// (NOTE) 호출 전 반드시 유효한 panel size가 설정되어 있어야 함
@@ -193,11 +180,17 @@ public:
 
 	inline MkSceneNode* GetParentNode(void) const { return m_ParentNode; }
 
-	// 정렬
-	//void AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset);
-
 	// 해제
 	void Clear(void);
+
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Load(const MkDataNode& node);
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
 
 public:
 
@@ -227,8 +220,6 @@ public:
 
 	inline void __SetParentNode(MkSceneNode* parentNode) { m_ParentNode = parentNode; }
 
-	//static void __GenerateBuildingTemplate(void);
-
 	// 활성화 여부 반환
 	bool __CheckDrawable(void) const;
 	bool __CheckDrawable(const MkFloatRect& cameraAABR) const;
@@ -244,8 +235,6 @@ public:
 	void __AffectTexture(void) const;
 
 	bool __CheckWorldIntersection(const MkFloat2& worldPoint) const;
-
-	//eSrcType __GetSrcInfo(MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) const;
 
 	MkPanel(void);
 	virtual ~MkPanel() { Clear(); }
@@ -279,6 +268,9 @@ protected:
 	// parent
 	MkSceneNode* m_ParentNode;
 
+	// flag
+	MkBitField32 m_Attribute;
+
 	// transform
 	MkSceneTransform m_Transform;
 
@@ -295,7 +287,7 @@ protected:
 	MkBaseTexturePtr m_Texture;
 	MkHashStr m_SubsetOrSequenceName;
 	double m_SequenceStartTime;
-	double m_SequenceInitTime;
+	double m_SequenceTimeOffset;
 	MaterialKey m_MaterialKey;
 	MkFloat2 m_TextureSize;
 
@@ -303,14 +295,20 @@ protected:
 	MkArray<MkHashStr> m_TargetTextNodeName;
 	MkTextNode* m_TargetTextNodePtr;
 
-	// masking node
-	const MkSceneNode* m_TargetMaskingNodePtr;
-
 	// custom draw step
 	MkDrawStepInterface* m_DrawStep;
 
-	// flag
-	MkBitField32 m_Attribute;
+public:
+
+	static const MkHashStr ObjKey_Attribute;
+	static const MkHashStr ObjKey_PanelSize;
+	static const MkHashStr ObjKey_PixelScrollPosition;
+	static const MkHashStr ObjKey_ImagePath;
+	static const MkHashStr ObjKey_SubsetOrSequenceName;
+	static const MkHashStr ObjKey_SequenceTimeOffset;
+	static const MkHashStr ObjKey_TextNodeName;
+	static const MkHashStr ObjKey_TextNodeData;
+	static const MkHashStr ObjKey_TextNodeWidthRestriction;
 };
 
 MKDEF_DECLARE_FIXED_SIZE_TYPE(MkPanel::VertexData)

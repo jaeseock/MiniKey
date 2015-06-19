@@ -1,178 +1,28 @@
 
 #include "MkCore_MkCheck.h"
-//#include "MkCore_MkGlobalFunction.h"
-//#include "MkCore_MkDataNode.h"
+#include "MkCore_MkDataNode.h"
+#include "MkCore_MkTimeManager.h"
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkBitmapPool.h"
-//#include "MkS2D_MkFontManager.h"
-//#include "MkS2D_MkWindowResourceManager.h"
 #include "MkPA_MkDrawTextNodeStep.h"
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkSceneNode.h"
 #include "MkPA_MkPanel.h"
 
 
-//const static MkHashStr TEMPLATE_NAME = MKDEF_S2D_BT_SRECT_TEMPLATE_NAME;
-
-// MkVec2
-//const static MkHashStr POSITION_KEY = L"Position";
-
-// MkVec2
-//const static MkHashStr SIZE_KEY = L"Size";
-
-// float
-//const static MkHashStr DEPTH_KEY = L"Depth";
-
-// MkStr
-//const static MkHashStr FORCED_FONT_STATE_KEY = L"FontState";
-
-// MkArray<MkStr>
-//const static MkHashStr RESOURCE_KEY = L"Resource";
-
-// map : MkStr 3개
-// - tag(MAP_TAG)
-// - bitmap file path
-// - subset name
-//const static MkStr MAP_TAG = L"map";
-
-// original deco text : MkStr 2개
-// - tag(TEXT_O_TAG)
-// - deco text
-//const static MkStr TEXT_O_TAG = L"odt";
-
-// scene deco text : MkStr 1 + n개
-// - tag(TEXT_S_TAG)
-// - MK_WIN_RES_MGR에 등록되어 있는 deco text node name & key
-//const static MkStr TEXT_S_TAG = L"sdt";
-
-// unsigned int
-//const static MkHashStr ALPHA_KEY = L"Alpha";
-
-// bool(horizontal), bool(vertical)
-//const static MkHashStr REFLECTION_KEY = L"Reflection";
-
-// bool
-//const static MkHashStr VISIBLE_KEY = L"Visible";
+const MkHashStr MkPanel::ObjKey_Attribute(L"Attribute");
+const MkHashStr MkPanel::ObjKey_PanelSize(L"PanelSize");
+const MkHashStr MkPanel::ObjKey_PixelScrollPosition(L"PScrollPos");
+const MkHashStr MkPanel::ObjKey_ImagePath(L"ImagePath");
+const MkHashStr MkPanel::ObjKey_SubsetOrSequenceName(L"SOSName");
+const MkHashStr MkPanel::ObjKey_SequenceTimeOffset(L"STimeOffset");
+const MkHashStr MkPanel::ObjKey_TextNodeName(L"TextNodeName");
+const MkHashStr MkPanel::ObjKey_TextNodeData(L"TextNodeData");
+const MkHashStr MkPanel::ObjKey_TextNodeWidthRestriction(L"TextNodeWR");
 
 //------------------------------------------------------------------------------------------------//
-/*
-void MkPanel::Load(const MkDataNode& node)
-{
-	Clear();
-
-	// position
-	MkVec2 position;
-	node.GetData(POSITION_KEY, position, 0);
-	SetLocalPosition(MkFloat2(position.x, position.y));
-
-	// depth
-	float depth = 0.f;
-	node.GetData(DEPTH_KEY, depth, 0);
-	SetLocalDepth(depth);
-
-	// resource
-	MkArray<MkStr> resBuf;
-	node.GetData(RESOURCE_KEY, resBuf);
-	if (!resBuf.Empty())
-	{
-		MkStr tag = resBuf[0];
-		tag.ToLower();
-		if ((tag == MAP_TAG) && (resBuf.GetSize() == 3)) // map
-		{
-			SetTexture(resBuf[1], resBuf[2]);
-		}
-		else if ((tag == TEXT_O_TAG) && (resBuf.GetSize() == 2)) // original deco text
-		{
-			SetDecoString(resBuf[1]);
-		}
-		else if ((tag == TEXT_S_TAG) && (resBuf.GetSize() >= 2)) // scene deco text
-		{
-			MkArray<MkHashStr> nodeNameAndKey(resBuf.GetSize() - 1);
-			for (unsigned int counter = resBuf.GetSize(), i = 1; i < counter; ++i)
-			{
-				nodeNameAndKey.PushBack() = resBuf[i];
-			}
-
-			SetDecoString(nodeNameAndKey);
-		}
-	}
-
-	// size
-	MkVec2 size;
-	node.GetData(SIZE_KEY, size, 0);
-	SetLocalSize(MkFloat2(size.x, size.y));
-
-	// alpha
-	unsigned int alpha = 255;
-	node.GetData(ALPHA_KEY, alpha, 0);
-	m_MaterialKey.m_ObjectAlpha = static_cast<DWORD>(alpha);
-	
-	// horizontal reflection
-	bool hr = false;
-	node.GetData(REFLECTION_KEY, hr, 0);
-	SetHorizontalReflection(hr);
-
-	// vertical reflection
-	bool vr = false;
-	node.GetData(REFLECTION_KEY, vr, 1);
-	SetVerticalReflection(vr);
-
-	// visible
-	bool visible = true;
-	node.GetData(VISIBLE_KEY, visible, 0);
-	SetVisible(visible);
-}
-
-void MkPanel::Save(MkDataNode& node) // Load의 역
-{
-	node.Clear();
-	node.ApplyTemplate(TEMPLATE_NAME);
-
-	node.SetData(POSITION_KEY, MkVec2(m_LocalRect.position.x, m_LocalRect.position.y), 0);
-	node.SetData(SIZE_KEY, MkVec2(m_LocalRect.size.x, m_LocalRect.size.y), 0);
-	node.SetData(DEPTH_KEY, m_LocalDepth, 0);
-	
-	if (m_Texture != NULL)
-	{
-		MkArray<MkStr> resBuf;
-
-		if (m_SceneDecoTextNodeNameAndKey.Empty())
-		{
-			if (m_OriginalDecoStr.Empty()) // map
-			{
-				resBuf.Reserve(3);
-				resBuf.PushBack(MAP_TAG);
-				resBuf.PushBack(m_Texture->GetPoolKey().GetString());
-				resBuf.PushBack(m_SubsetOrSequenceName.GetString());
-			}
-			else // original deco text
-			{
-				resBuf.Reserve(2);
-				resBuf.PushBack(TEXT_O_TAG);
-				resBuf.PushBack(m_OriginalDecoStr);
-			}
-		}
-		else // scene deco text
-		{
-			resBuf.Reserve(1 + m_SceneDecoTextNodeNameAndKey.GetSize());
-			resBuf.PushBack(TEXT_S_TAG);
-			MK_INDEXING_LOOP(m_SceneDecoTextNodeNameAndKey, i)
-			{
-				resBuf.PushBack(m_SceneDecoTextNodeNameAndKey[i].GetString());
-			}
-		}
-
-		node.SetData(RESOURCE_KEY, resBuf);
-	}
-
-	node.SetData(ALPHA_KEY, static_cast<unsigned int>(m_MaterialKey.m_ObjectAlpha), 0);
-	node.SetData(REFLECTION_KEY, m_HorizontalReflection, 0);
-	node.SetData(REFLECTION_KEY, m_VerticalReflection, 1);
-	node.SetData(VISIBLE_KEY, m_Visible, 0);
-}
-*/
 
 void MkPanel::SetSmallerSourceOp(eSmallerSourceOp op)
 {
@@ -224,7 +74,7 @@ bool MkPanel::GetVisible(void) const
 	return m_Attribute[eVisible];
 }
 
-bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
+bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName, double timeOffset)
 {
 	Clear();
 
@@ -233,24 +83,27 @@ bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOr
 
 	m_Texture = const_cast<MkBaseTexture*>(texture); // ref++
 	m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
-	return SetSubsetOrSequenceName(subsetOrSequenceName, startTime, initTime);
+	return SetSubsetOrSequenceName(subsetOrSequenceName, timeOffset);
 }
 
-bool MkPanel::SetTexture(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
+bool MkPanel::SetTexture(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, double timeOffset)
 {
-	return SetTexture(imagePath.Empty() ? NULL : MK_BITMAP_POOL.GetBitmapTexture(imagePath), subsetOrSequenceName, startTime, initTime);
+	return SetTexture(imagePath.Empty() ? NULL : MK_BITMAP_POOL.GetBitmapTexture(imagePath), subsetOrSequenceName, timeOffset);
 }
 
-bool MkPanel::SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double startTime, double initTime)
+bool MkPanel::SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double timeOffset)
 {
 	bool ok = ((m_Texture != NULL) && m_Texture->GetImageInfo().IsValidName(subsetOrSequenceName));
 	if (ok)
 	{
 		m_SubsetOrSequenceName = subsetOrSequenceName;
-		m_SequenceStartTime = startTime;
-		m_SequenceInitTime = initTime;
+		m_SequenceTimeOffset = timeOffset;
 
-		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, m_SequenceInitTime);
+		MkTimeState ts;
+		MK_TIME_MGR.GetCurrentTimeState(ts);
+		m_SequenceStartTime = ts.fullTime;
+
+		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, m_SequenceTimeOffset);
 		m_TextureSize = ssPtr->rectSize;
 
 		if (((m_PanelSize.x > m_TextureSize.x) && (GetSmallerSourceOp() == eReducePanel)) ||
@@ -347,21 +200,6 @@ void MkPanel::BuildAndUpdateTextCache(void)
 		}
 	}
 }
-/*
-void MkPanel::RestoreDecoString(void)
-{
-	if (!m_OriginalDecoStr.Empty())
-	{
-		MkStr backup = m_OriginalDecoStr;
-		SetDecoString(backup);
-	}
-	else if (!m_SceneDecoTextNodeNameAndKey.Empty())
-	{
-		MkArray<MkHashStr> backup = m_SceneDecoTextNodeNameAndKey;
-		SetDecoString(backup);
-	}
-}
-*/
 
 void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 {
@@ -395,17 +233,7 @@ void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 		MK_DELETE(m_DrawStep);
 	}
 }
-/*
-void MkPanel::AlignRect(const MkFloat2& anchorSize, eRectAlignmentPosition alignment, const MkFloat2& border, float heightOffset)
-{
-	if (!anchorSize.IsZero() && m_LocalRect.SizeIsNotZero() && (alignment != eRAP_NonePosition))
-	{
-		MkFloat2 localPos =	MkFloatRect(anchorSize).GetSnapPosition(m_LocalRect, alignment, border);
-		localPos.y += heightOffset;
-		SetLocalPosition(localPos);
-	}
-}
-*/
+
 void MkPanel::Clear(void)
 {
 	m_PixelScrollPosition.Clear();
@@ -417,28 +245,146 @@ void MkPanel::Clear(void)
 	MK_DELETE(m_TargetTextNodePtr);
 	MK_DELETE(m_DrawStep);
 }
-/*
-void MkPanel::__GenerateBuildingTemplate(void)
+
+void MkPanel::Load(const MkDataNode& node)
 {
-	MkDataNode node;
-	MkDataNode* tNode = node.CreateChildNode(TEMPLATE_NAME);
-	MK_CHECK(tNode != NULL, TEMPLATE_NAME.GetString() + L" template node alloc 실패")
-		return;
-
-	tNode->CreateUnit(POSITION_KEY, MkVec2::Zero);
-	tNode->CreateUnit(SIZE_KEY, MkVec2::Zero);
-	tNode->CreateUnit(DEPTH_KEY, 0.f);
-	tNode->CreateUnit(FORCED_FONT_STATE_KEY, MkStr::Null);
-	tNode->CreateUnit(RESOURCE_KEY, MkStr::Null);
-	tNode->CreateUnit(ALPHA_KEY, static_cast<unsigned int>(255));
-	MkArray<bool> refBuf;
-	refBuf.Fill(2, false);
-	tNode->CreateUnit(REFLECTION_KEY, refBuf);
-	tNode->CreateUnit(VISIBLE_KEY, true);
-
-	tNode->DeclareToTemplate(true);
+	MK_CHECK(false, GetSceneClassKey().GetString() + L" object는 독자적인 Load를 할 수 없음") {}
 }
-*/
+
+void MkPanel::Save(MkDataNode& node) const
+{
+	MK_CHECK(false, GetSceneClassKey().GetString() + L" object는 독자적인 Save를 할 수 없음") {}
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkPanel);
+
+void MkPanel::SetObjectTemplate(MkDataNode& node)
+{
+	// attribute
+	MkBitField32 attr;
+	attr.Assign(eVisible, true);
+	node.CreateUnit(ObjKey_Attribute, attr.m_Field);
+
+	// transform
+	MkSceneTransform::SetObjectTemplate(node);
+
+	// panel size
+	node.CreateUnitEx(ObjKey_PanelSize, MkFloat2::Zero);
+	node.CreateUnitEx(ObjKey_PixelScrollPosition, MkFloat2::Zero);
+
+	// texture image
+	node.CreateUnit(ObjKey_ImagePath, MkStr::EMPTY);
+	node.CreateUnit(ObjKey_SubsetOrSequenceName, MkStr::EMPTY);
+	node.CreateUnit(ObjKey_SequenceTimeOffset, 0.f);
+
+	// text node
+	//ObjKey_TextNodeName
+	//ObjKey_TextNodeData
+	node.CreateUnit(ObjKey_TextNodeWidthRestriction, false);
+}
+
+void MkPanel::LoadObject(const MkDataNode& node)
+{
+	// attribute
+	node.GetData(ObjKey_Attribute, m_Attribute.m_Field, 0);
+
+	// transform
+	m_Transform.Load(node);
+
+	// panel size
+	node.GetDataEx(ObjKey_PanelSize, m_PanelSize, 0);
+	node.GetDataEx(ObjKey_PixelScrollPosition, m_PixelScrollPosition, 0);
+
+	do
+	{
+		// texture image
+		MkStr imagePath;
+		node.GetData(ObjKey_ImagePath, imagePath, 0);
+		if (!imagePath.Empty())
+		{
+			MkStr subsetOrSeqName;
+			node.GetData(ObjKey_SubsetOrSequenceName, subsetOrSeqName, 0);
+
+			float stOffset = 0.f;
+			node.GetData(ObjKey_SequenceTimeOffset, stOffset, 0);
+
+			SetTexture(imagePath, subsetOrSeqName, static_cast<double>(stOffset));
+			break;
+		}
+
+		// text node
+		MkArray<MkHashStr> textNodeName;
+		if ((node.GetDataEx(ObjKey_TextNodeName, textNodeName) || node.ChildExist(ObjKey_TextNodeData)))
+		{
+			bool widthRestriction;
+			node.GetData(ObjKey_TextNodeWidthRestriction, widthRestriction, 0);
+
+			if (textNodeName.Empty()) // dynamic
+			{
+				MkTextNode textNode;
+				textNode.SetUp(*node.GetChildNode(ObjKey_TextNodeData));
+				SetTextNode(textNode, widthRestriction);
+			}
+			else // static
+			{
+				SetTextNode(textNodeName, widthRestriction);
+			}
+			break;
+		}
+	}
+	while (false);
+}
+
+void MkPanel::SaveObject(MkDataNode& node) const
+{
+	// attribute
+	node.SetData(ObjKey_Attribute, m_Attribute.m_Field, 0);
+
+	// transform
+	m_Transform.Save(node);
+
+	// panel size
+	node.SetDataEx(ObjKey_PanelSize, m_PanelSize, 0);
+	node.SetDataEx(ObjKey_PixelScrollPosition, m_PixelScrollPosition, 0);
+
+	if (m_Texture != NULL)
+	{
+		do
+		{
+			// texture image
+			const MkHashStr& poolKey = m_Texture->GetPoolKey();
+			if (!poolKey.Empty())
+			{
+				node.SetData(ObjKey_ImagePath, poolKey.GetString(), 0);
+				node.SetData(ObjKey_SubsetOrSequenceName, m_SubsetOrSequenceName.GetString(), 0);
+				node.SetData(ObjKey_SequenceTimeOffset, static_cast<float>(m_SequenceTimeOffset), 0);
+				break;
+			}
+
+			// text node
+			if (m_TargetTextNodePtr != NULL)
+			{
+				node.SetData(ObjKey_TextNodeWidthRestriction, m_TargetTextNodePtr->GetWidthRestriction() > 0, 0);
+
+				if (m_TargetTextNodeName.Empty()) // dynamic
+				{
+					MkDataNode* textNode = node.CreateChildNode(ObjKey_TextNodeData);
+					if (textNode != NULL)
+					{
+						m_TargetTextNodePtr->Export(*textNode);
+					}
+				}
+				else // static
+				{
+					node.CreateUnitEx(ObjKey_TextNodeName, m_TargetTextNodeName);
+				}
+				break;
+			}
+		}
+		while (false);
+	}
+}
+
 void MkPanel::__ExcuteCustomDrawStep(void)
 {
 	if (m_DrawStep != NULL)
@@ -473,7 +419,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 	// world vertex and uv
 	if (m_Texture != NULL)
 	{
-		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, currTime - m_SequenceStartTime + m_SequenceInitTime);
+		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, currTime - m_SequenceStartTime + m_SequenceTimeOffset);
 		if (ssPtr == NULL)
 		{
 			m_WorldVertice[MkFloatRect::eLeftTop] = m_Transform.GetWorldPosition();
@@ -671,38 +617,8 @@ bool MkPanel::__CheckWorldIntersection(const MkFloat2& worldPoint) const
 		return false;
 	return true;
 }
-/*
-MkPanel::eSrcType MkPanel::__GetSrcInfo(MkPathName& imagePath, MkHashStr& subsetName, MkStr& decoStr, MkArray<MkHashStr>& nodeNameAndKey) const
-{
-	if (m_Texture != NULL)
-	{
-		const MkHashStr& imgPath = m_Texture->GetPoolKey();
 
-		// deco str
-		if (imgPath.Empty())
-		{
-			if (!m_OriginalDecoStr.Empty())
-			{
-				decoStr = m_OriginalDecoStr;
-				return eCustomDecoStr;
-			}
-			else if (!m_SceneDecoTextNodeNameAndKey.Empty())
-			{
-				nodeNameAndKey = m_SceneDecoTextNodeNameAndKey;
-				return eSceneDecoStr;
-			}
-			else
-				return eRenderToTexture;
-		}
-
-		imagePath = imgPath.GetString();
-		subsetName = m_SubsetOrSequenceName;
-		return eStaticImage;
-	}
-	return eNone;
-}
-*/
-MkPanel::MkPanel(void)
+MkPanel::MkPanel(void) : MkSceneObject()
 {
 	m_ParentNode = NULL;
 
@@ -710,7 +626,7 @@ MkPanel::MkPanel(void)
 	SetBiggerSourceOp(eExpandPanel);
 
 	m_SequenceStartTime = 0.;
-	m_SequenceInitTime = 0.;
+	m_SequenceTimeOffset = 0.;
 	m_MaterialKey.m_TextureID = 0;
 
 	m_Attribute.Clear();

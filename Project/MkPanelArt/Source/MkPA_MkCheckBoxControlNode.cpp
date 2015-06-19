@@ -1,5 +1,6 @@
 
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkStaticResourceContainer.h"
@@ -9,6 +10,10 @@
 
 const MkHashStr MkCheckBoxControlNode::CaptionNodeName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"Caption";
 const MkHashStr MkCheckBoxControlNode::CheckIconName = MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"CheckIcon";
+
+const MkHashStr MkCheckBoxControlNode::ObjKey_CaptionTextName(L"CaptionTextName");
+const MkHashStr MkCheckBoxControlNode::ObjKey_CaptionString(L"CaptionString");
+const MkHashStr MkCheckBoxControlNode::ObjKey_OnCheck(L"OnCheck");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -49,6 +54,73 @@ void MkCheckBoxControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType
 	}
 }
 
+void MkCheckBoxControlNode::Save(MkDataNode& node) const
+{
+	// caption, on icon Á¦¿Ü
+	static MkArray<MkHashStr> exceptions(2);
+	if (exceptions.Empty())
+	{
+		exceptions.PushBack(CaptionNodeName);
+		exceptions.PushBack(CheckIconName);
+	}
+	_AddExceptionList(node, SystemKey_NodeExceptions, exceptions);
+
+	// run
+	MkWindowBaseNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkCheckBoxControlNode);
+
+void MkCheckBoxControlNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowBaseNode::SetObjectTemplate(node);
+
+	// ObjKey_CaptionTextName
+	node.CreateUnit(ObjKey_CaptionString, MkStr::EMPTY);
+	node.CreateUnit(ObjKey_OnCheck, false);
+}
+
+void MkCheckBoxControlNode::LoadObject(const MkDataNode& node)
+{
+	MkWindowBaseNode::LoadObject(node);
+
+	// caption
+	MkArray<MkHashStr> textName;
+	if (node.GetDataEx(ObjKey_CaptionTextName, textName) && (!textName.Empty()))
+	{
+		MkStr caption;
+		node.GetData(ObjKey_CaptionString, caption, 0);
+
+		_SetCaption(textName, caption);
+	}
+
+	// check
+	bool onCheck;
+	if (node.GetData(ObjKey_OnCheck, onCheck, 0))
+	{
+		SetCheck(onCheck);
+	}
+}
+
+void MkCheckBoxControlNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowBaseNode::SaveObject(node);
+
+	// caption
+	if (ChildExist(CaptionNodeName))
+	{
+		const MkWindowTagNode* captionNode = dynamic_cast<const MkWindowTagNode*>(GetChildNode(CaptionNodeName));
+		if (captionNode != NULL)
+		{
+			node.CreateUnitEx(ObjKey_CaptionTextName, captionNode->GetTextName());
+			node.SetData(ObjKey_CaptionString, m_CaptionString, 0);
+		}
+	}
+
+	// check
+	node.SetData(ObjKey_OnCheck, m_OnCheck, 0);
+}
+
 MkCheckBoxControlNode::MkCheckBoxControlNode(const MkHashStr& name) : MkWindowBaseNode(name)
 {
 	m_OnCheck = false;
@@ -78,6 +150,7 @@ void MkCheckBoxControlNode::_SetCaption(const MkArray<MkHashStr>& textNode, cons
 	if (textNode.Empty() || (!MK_STATIC_RES.TextNodeExist(textNode)))
 	{
 		RemoveChildNode(CaptionNodeName);
+		m_CaptionString.Clear();
 		return;
 	}
 
@@ -100,6 +173,7 @@ void MkCheckBoxControlNode::_SetCaption(const MkArray<MkHashStr>& textNode, cons
 
 	if (node != NULL)
 	{
+		m_CaptionString = caption;
 		if (caption.Empty())
 		{
 			node->SetTextName(textNode);

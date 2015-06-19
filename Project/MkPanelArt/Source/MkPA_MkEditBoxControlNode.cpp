@@ -17,6 +17,9 @@ const MkHashStr MkEditBoxControlNode::CursorPanelName = MkStr(MKDEF_PA_WIN_CONTR
 
 const MkHashStr MkEditBoxControlNode::ArgKey_Text = L"Text";
 
+const MkHashStr MkEditBoxControlNode::ObjKey_History = L"History";
+const MkHashStr MkEditBoxControlNode::ObjKey_TextString = L"TextString";
+
 #define MKDEF_NORMAL_CURSOR_CHAR L"│"
 
 //------------------------------------------------------------------------------------------------//
@@ -42,47 +45,8 @@ void MkEditBoxControlNode::SetSingleLineEditBox
 	SetClientSize(MkFloat2(GetMax<float>(length, frameSize), frameSize));
 	SetFormState(MkWindowThemeFormData::eS_Default);
 
-	// history
-	m_UseHistory = useHistory;
-	if (m_UseHistory)
-	{
-		m_MessageHistory.SetUp(64);
-	}
-
-	// create panels
-	MkFloat2 localPos = _GetFormMargin();
-	const MkArray<MkHashStr>& editTextNode = MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_WindowFrameType);
-
-	// selection panel
-	MkPanel& selPanel = CreatePanel(SelectionPanelName);
-	selPanel.SetLocalPosition(localPos);
-	selPanel.SetLocalDepth(-0.1f); // 배경과 겹치지 않도록 0.1f만큼 앞에 위치
-	selPanel.SetSmallerSourceOp(MkPanel::eExpandSource);
-	selPanel.SetBiggerSourceOp(MkPanel::eReduceSource);
-	selPanel.SetPanelSize(GetClientRect().size);
-	selPanel.SetVisible(false);
-
-	const MkWindowThemeFormData* selZoneFD = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), MkWindowThemeData::eCT_YellowZone, MkHashStr::EMPTY);
-	selPanel.SetTexture(MK_STATIC_RES.GetWindowThemeSet().GetImageFilePath(GetThemeName()),
-		(selZoneFD == NULL) ? MkHashStr::EMPTY : selZoneFD->GetSubsetOrSequenceName(MkWindowThemeFormData::eS_Default, MkWindowThemeUnitData::eP_MC));
-
-	// text panel
-	MkPanel& textPanel = CreatePanel(TextPanelName);
-	textPanel.SetLocalPosition(localPos);
-	textPanel.SetLocalDepth(-0.2f); // selection panel과 겹치지 않도록 0.1f만큼 앞에 위치
-	textPanel.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
-	textPanel.SetBiggerSourceOp(MkPanel::eCutSource);
-	textPanel.SetPanelSize(GetClientRect().size);
-	textPanel.SetTextNode(editTextNode, false);
-
-	// cursor panel
-	MkPanel& cursorPanel = CreatePanel(CursorPanelName);
-	cursorPanel.SetLocalPosition(localPos);
-	cursorPanel.SetLocalDepth(-0.3f); // text panel과 겹치지 않도록 0.1f만큼 앞에 위치
-	cursorPanel.SetTextNode(editTextNode, false);
-	cursorPanel.GetTextNodePtr()->SetText(MKDEF_NORMAL_CURSOR_CHAR);
-	cursorPanel.BuildAndUpdateTextCache();
-	cursorPanel.SetVisible(false);
+	// default
+	_DefaultSetUp(useHistory);
 
 	// init
 	SetText(initMsg);
@@ -106,6 +70,57 @@ void MkEditBoxControlNode::CommitText(void)
 	{
 		m_MessageHistory.Record(m_Text);
 	}
+}
+
+void MkEditBoxControlNode::Save(MkDataNode& node) const
+{
+	// text/cursor/seletion panel 제외
+	static MkArray<MkHashStr> exceptions(3);
+	if (exceptions.Empty())
+	{
+		exceptions.PushBack(SelectionPanelName);
+		exceptions.PushBack(TextPanelName);
+		exceptions.PushBack(CursorPanelName);
+	}
+	_AddExceptionList(node, SystemKey_PanelExceptions, exceptions);
+
+	// run
+	MkWindowBaseNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkEditBoxControlNode);
+
+void MkEditBoxControlNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowBaseNode::SetObjectTemplate(node);
+
+	node.CreateUnit(ObjKey_History, false);
+	node.CreateUnit(ObjKey_TextString, MkStr::EMPTY);
+}
+
+void MkEditBoxControlNode::LoadObject(const MkDataNode& node)
+{
+	MkWindowBaseNode::LoadObject(node);
+
+	// default
+	bool useHistory = false;
+	node.GetData(ObjKey_History, useHistory, 0);
+	_DefaultSetUp(useHistory);
+
+	// text
+	MkStr text;
+	if (node.GetData(ObjKey_TextString, text, 0))
+	{
+		SetText(text);
+	}
+}
+
+void MkEditBoxControlNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowBaseNode::SaveObject(node);
+
+	node.SetData(ObjKey_History, m_UseHistory, 0);
+	node.SetData(ObjKey_TextString, m_Text, 0);
 }
 
 MkEditBoxControlNode::MkEditBoxControlNode(const MkHashStr& name) : MkWindowBaseNode(name)
@@ -252,6 +267,51 @@ void MkEditBoxControlNode::__ToggleNormalCursor(void)
 }
 
 //------------------------------------------------------------------------------------------------//
+
+void MkEditBoxControlNode::_DefaultSetUp(bool useHistory)
+{
+	// history
+	m_UseHistory = useHistory;
+	if (m_UseHistory)
+	{
+		m_MessageHistory.SetUp(64);
+	}
+
+	// create panels
+	MkFloat2 localPos = _GetFormMargin();
+	const MkArray<MkHashStr>& editTextNode = MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_WindowFrameType);
+
+	// selection panel
+	MkPanel& selPanel = CreatePanel(SelectionPanelName);
+	selPanel.SetLocalPosition(localPos);
+	selPanel.SetLocalDepth(-0.1f); // 배경과 겹치지 않도록 0.1f만큼 앞에 위치
+	selPanel.SetSmallerSourceOp(MkPanel::eExpandSource);
+	selPanel.SetBiggerSourceOp(MkPanel::eReduceSource);
+	selPanel.SetPanelSize(GetClientRect().size);
+	selPanel.SetVisible(false);
+
+	const MkWindowThemeFormData* selZoneFD = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), MkWindowThemeData::eCT_YellowZone, MkHashStr::EMPTY);
+	selPanel.SetTexture(MK_STATIC_RES.GetWindowThemeSet().GetImageFilePath(GetThemeName()),
+		(selZoneFD == NULL) ? MkHashStr::EMPTY : selZoneFD->GetSubsetOrSequenceName(MkWindowThemeFormData::eS_Default, MkWindowThemeUnitData::eP_MC));
+
+	// text panel
+	MkPanel& textPanel = CreatePanel(TextPanelName);
+	textPanel.SetLocalPosition(localPos);
+	textPanel.SetLocalDepth(-0.2f); // selection panel과 겹치지 않도록 0.1f만큼 앞에 위치
+	textPanel.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
+	textPanel.SetBiggerSourceOp(MkPanel::eCutSource);
+	textPanel.SetPanelSize(GetClientRect().size);
+	textPanel.SetTextNode(editTextNode, false);
+
+	// cursor panel
+	MkPanel& cursorPanel = CreatePanel(CursorPanelName);
+	cursorPanel.SetLocalPosition(localPos);
+	cursorPanel.SetLocalDepth(-0.3f); // text panel과 겹치지 않도록 0.1f만큼 앞에 위치
+	cursorPanel.SetTextNode(editTextNode, false);
+	cursorPanel.GetTextNodePtr()->SetText(MKDEF_NORMAL_CURSOR_CHAR);
+	cursorPanel.BuildAndUpdateTextCache();
+	cursorPanel.SetVisible(false);
+}
 
 MkFloat2 MkEditBoxControlNode::_GetFormMargin(void) const
 {

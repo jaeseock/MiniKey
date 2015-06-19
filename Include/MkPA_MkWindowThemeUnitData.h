@@ -76,7 +76,7 @@ public:
 	static eUnitType GetUnitType(const MkSceneNode* sceneNode);
 
 	// 현 data가 적용된 unit type panel들을 sceneNode에 생성
-	void CreateUnit(MkSceneNode* sceneNode, const MkHashStr& imagePath, double startTime) const;
+	void CreateUnit(MkSceneNode* sceneNode, const MkHashStr& imagePath, double timeOffset) const;
 
 	// scene node에 적용된 unit type panel들을 현 data로 변경
 	void SetUnit(MkSceneNode* sceneNode, const MkHashStr& imagePath) const;
@@ -103,7 +103,7 @@ protected:
 
 	static void _SetImageToPiece
 		(MkSceneNode* sceneNode, bool createOrGet, const MkHashStr& pieceName,
-		const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, bool keepSrcSize, double startTime);
+		const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, bool keepSrcSize, double timeOffset);
 
 	static void _SetPiecePosition(MkSceneNode* sceneNode, ePosition piecePosition, const MkFloat2& panelPosition);
 	static void _SetPieceSizeAndPosition(MkSceneNode* sceneNode, ePosition piecePosition, const MkFloat2& size, const MkFloat2& panelPosition);

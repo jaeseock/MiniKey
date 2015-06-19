@@ -36,6 +36,9 @@ public:
 	// title bar 설정
 	void SetTitleBar(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType, float length, bool useCloseBtn);
 
+	// close button 사용 설정
+	void UseCloseButton(bool enable);
+
 	// icon 설정
 	// iconType이 eIT_None일 경우 icon 삭제
 	// iconType이 eIT_CustomTag일 경우 iconPath, iconSubsetOrSequenceName로 전용 icon 설정 가능
@@ -47,8 +50,7 @@ public:
 	// (NOTE) 호출 전 SetTitleBar()가 올바르게 호출된 상태이어야 함
 	void SetCaption(const MkArray<MkHashStr>& textNode, eRectAlignmentPosition position = eRAP_LeftCenter);
 
-	// 휘발성 caption 설정
-	// text node는 theme를 따름
+	// text node는 theme를 따르고 caption을 삽입
 	// (NOTE) 호출 전 SetTitleBar()가 올바르게 호출된 상태이어야 함
 	void SetCaption(const MkStr& caption, eRectAlignmentPosition position = eRAP_LeftCenter);
 
@@ -58,7 +60,17 @@ public:
 
 	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument);
 
+
 	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
+
+	// 해제
+	virtual void Clear(void);
 
 	MkTitleBarControlNode(const MkHashStr& name);
 	virtual ~MkTitleBarControlNode() {}
@@ -69,11 +81,21 @@ protected:
 
 protected:
 
-	MkArray<MkHashStr> m_CaptionTextNode;
+	MkWindowThemeData::eIconType m_IconType;
+
+	MkStr m_CaptionString;
 
 public:
 
 	static const MkHashStr CloseButtonNodeName;
 	static const MkHashStr IconNodeName;
 	static const MkHashStr CaptionNodeName;
+
+	static const MkHashStr ObjKey_UseCloseBtn;
+	static const MkHashStr ObjKey_IconType;
+	static const MkHashStr ObjKey_IconPath;
+	static const MkHashStr ObjKey_IconSOSName;
+	static const MkHashStr ObjKey_CaptionTextName;
+	static const MkHashStr ObjKey_CaptionString;
+	static const MkHashStr ObjKey_CaptionAlignPos;
 };

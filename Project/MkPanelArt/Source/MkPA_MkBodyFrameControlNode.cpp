@@ -1,10 +1,13 @@
 
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkTitleBarControlNode.h"
 #include "MkPA_MkBodyFrameControlNode.h"
 
+
+const MkHashStr MkBodyFrameControlNode::ObjKey_HangingType(L"HangingType");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -55,6 +58,32 @@ void MkBodyFrameControlNode::SetClientSize(const MkFloat2& clientSize)
 			parentNode->SetClientSize(MkFloat2(titleLength, frameSize));
 		}
 	}
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkBodyFrameControlNode);
+
+void MkBodyFrameControlNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowBaseNode::SetObjectTemplate(node);
+
+	node.CreateUnit(ObjKey_HangingType, static_cast<int>(eHT_None));
+}
+
+void MkBodyFrameControlNode::LoadObject(const MkDataNode& node)
+{
+	// SetClientSize() 호출 전 hanging type이 세팅되어 있어야 함
+	int hangingType = static_cast<int>(eHT_None);
+	node.GetData(ObjKey_HangingType, hangingType, 0);
+	m_HangingType = static_cast<eHangingType>(hangingType);
+
+	MkWindowBaseNode::LoadObject(node);
+}
+
+void MkBodyFrameControlNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowBaseNode::SaveObject(node);
+
+	node.SetData(ObjKey_HangingType, static_cast<int>(m_HangingType), 0);
 }
 
 MkBodyFrameControlNode::MkBodyFrameControlNode(const MkHashStr& name) : MkWindowBaseNode(name)

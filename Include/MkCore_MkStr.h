@@ -595,6 +595,11 @@ public:
 
 	// window style line feed(CR + LF)
 	static const MkStr CRLF;
+
+	// text tag
+	static const MkStr TAG_CR;
+	static const MkStr TAG_LF;
+	static const MkStr TAG_CRLF;
 };
 
 //------------------------------------------------------------------------------------------------//

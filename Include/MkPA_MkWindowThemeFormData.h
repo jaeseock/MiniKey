@@ -84,7 +84,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// scene node에 default position의 form 적용
-	bool AttachForm(MkSceneNode* sceneNode, double startTime = 0.) const;
+	bool AttachForm(MkSceneNode* sceneNode) const;
 
 	// scene node에 적용된 form 삭제
 	static void RemoveForm(MkSceneNode* sceneNode);

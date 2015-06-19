@@ -127,6 +127,7 @@ public:
 	bool CreateUnit(const MkHashStr& key, const MkVec2& value);
 	bool CreateUnit(const MkHashStr& key, const MkVec3& value);
 	bool CreateUnit(const MkHashStr& key, const MkStr& value);
+	bool CreateUnitEx(const MkHashStr& key, const MkFloat2& value);
 	bool CreateUnitEx(const MkHashStr& key, const MkHashStr& value);
 
 	// data array로 data unit 생성
@@ -139,6 +140,7 @@ public:
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkVec2>& values);
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkVec3>& values);
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkStr>& values);
+	bool CreateUnitEx(const MkHashStr& key, const MkArray<MkFloat2>& values);
 	bool CreateUnitEx(const MkHashStr& key, const MkArray<MkHashStr>& values);
 
 	// 존재하는 unit의 data 크기를 size만큼 확장
@@ -155,6 +157,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkVec2& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkVec3& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkStr& value, unsigned int index);
+	bool SetDataEx(const MkHashStr& key, const MkFloat2& value, unsigned int index);
 	bool SetDataEx(const MkHashStr& key, const MkHashStr& value, unsigned int index);
 
 	// data array 할당 (dynamic cast 1회)
@@ -167,6 +170,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkArray<MkVec2>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkVec3>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkStr>& values);
+	bool SetDataEx(const MkHashStr& key, const MkArray<MkFloat2>& values);
 	bool SetDataEx(const MkHashStr& key, const MkArray<MkHashStr>& values);
 
 	// single data 반환 (dynamic cast 1회)
@@ -179,6 +183,7 @@ public:
 	bool GetData(const MkHashStr& key, MkVec2& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkVec3& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkStr& buffer, unsigned int index) const;
+	bool GetDataEx(const MkHashStr& key, MkFloat2& buffer, unsigned int index) const;
 	bool GetDataEx(const MkHashStr& key, MkHashStr& buffer, unsigned int index) const;
 
 	// data array 반환 (dynamic cast 1회)
@@ -191,6 +196,7 @@ public:
 	bool GetData(const MkHashStr& key, MkArray<MkVec2>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkVec3>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkStr>& buffers) const;
+	bool GetDataEx(const MkHashStr& key, MkArray<MkFloat2>& buffers) const;
 	bool GetDataEx(const MkHashStr& key, MkArray<MkHashStr>& buffers) const;
 
 	// unit 제거하고 성공여부 반환
@@ -201,6 +207,9 @@ public:
 	// 존재하는 유일한 값(0번 index)이 삭제되었다면 unit 제거(RemoveUnit()과 동일)
 	// (NOTE) read-only 상태이거나 템플릿에 의해 선 정의된 unit일 경우 존재하는 유일한 값이 삭제되는 케이스는 실패
 	bool RemoveData(const MkHashStr& key, unsigned int index);
+
+	// unit & child node가 전혀 없는지 여부 반환
+	bool Empty(void) const;
 
 	// 검색 최적화
 	// unit, 하위 노드의 삭제/추가가 완료되어 변동이 없을 경우 호출

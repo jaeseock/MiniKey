@@ -41,6 +41,12 @@ public:
 	void CommitText(void);
 
 	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
 
 	MkEditBoxControlNode(const MkHashStr& name);
 	virtual ~MkEditBoxControlNode() {}
@@ -59,6 +65,8 @@ public:
 	inline int __GetSelEnd(void) const { return m_SelEnd; }
 
 protected:
+
+	void _DefaultSetUp(bool useHistory);
 
 	MkFloat2 _GetFormMargin(void) const;
 
@@ -84,4 +92,7 @@ public:
 	static const MkHashStr CursorPanelName;
 	
 	static const MkHashStr ArgKey_Text;
+
+	static const MkHashStr ObjKey_History;
+	static const MkHashStr ObjKey_TextString;
 };

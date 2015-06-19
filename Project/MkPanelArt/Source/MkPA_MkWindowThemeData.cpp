@@ -30,6 +30,7 @@ const MkHashStr MkWindowThemeData::ComponentTypeName[eCT_RegularMax] =
 	MK_VALUE_TO_STRING(eCT_YellowZone),
 	MK_VALUE_TO_STRING(eCT_BlueZone),
 	MK_VALUE_TO_STRING(eCT_RedOutlineZone),
+	MK_VALUE_TO_STRING(eCT_DarkZone),
 	MK_VALUE_TO_STRING(eCT_YellowSelBtn),
 	MK_VALUE_TO_STRING(eCT_BlueSelBtn),
 	MK_VALUE_TO_STRING(eCT_RedOutlineSelBtn),
@@ -93,6 +94,7 @@ const MkWindowThemeFormData::eFormType MkWindowThemeData::ComponentFormType[eCT_
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_YellowZone
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_BlueZone
 	MkWindowThemeFormData::eFT_SingleUnit, // eCT_RedOutlineZone
+	MkWindowThemeFormData::eFT_SingleUnit, // eCT_DarkZone
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_YellowSelBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_BlueSelBtn
 	MkWindowThemeFormData::eFT_QuadUnit, // eCT_RedOutlineSelBtn
@@ -320,6 +322,34 @@ const MkWindowThemeFormData* MkWindowThemeData::GetFormData(eComponentType compT
 	return ((compType == eCT_CustomForm) && (m_CustomForms != NULL)) ?
 		(m_CustomForms->Exist(formName) ? &(*m_CustomForms)[formName] : NULL) :
 		(m_RegularComponents.Exist(compType) ? &m_RegularComponents[compType] : NULL);
+}
+
+MkWindowThemeData::eComponentType MkWindowThemeData::ConvertComponentNameToType(const MkHashStr& componentName)
+{
+	static MkHashMap<MkHashStr, eComponentType> table;
+	if (table.Empty())
+	{
+		for (int i=0; i<eCT_RegularMax; ++i)
+		{
+			table.Create(ComponentTypeName[i], static_cast<eComponentType>(i));
+		}
+		table.Rehash();
+	}
+	return table.Exist(componentName) ? table[componentName] : eCT_None;
+}
+
+MkWindowThemeData::eFrameType MkWindowThemeData::ConvertFrameNameToType(const MkHashStr& frameName)
+{
+	static MkHashMap<MkHashStr, eFrameType> table;
+	if (table.Empty())
+	{
+		for (int i=0; i<eFT_Max; ++i)
+		{
+			table.Create(FrameTypeName[i], static_cast<eFrameType>(i));
+		}
+		table.Rehash();
+	}
+	return table.Exist(frameName) ? table[frameName] : eFT_None;
 }
 
 MkWindowThemeData::eComponentType MkWindowThemeData::GetLEDButtonComponent(eFrameType frameType, eLEDType LEDType)

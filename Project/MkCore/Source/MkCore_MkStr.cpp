@@ -620,16 +620,22 @@ void MkStr::ReplaceKeyword(const MkArraySection& section, const MkStr& keywordFr
 
 void MkStr::ReplaceCRLFtoTag(void)
 {
-	ReplaceKeyword(MkStr::CRLF, L"\\r\\n");
-	ReplaceKeyword(L"\r", L"\\r");
-	ReplaceKeyword(MkStr::LF, L"\\n");
+	//ReplaceKeyword(MkStr::CRLF, L"\\r\\n");
+	//ReplaceKeyword(MkStr::CR, L"\\r");
+	//ReplaceKeyword(MkStr::LF, L"\\n");
+	ReplaceKeyword(MkStr::CRLF, MkStr::TAG_CRLF);
+	ReplaceKeyword(MkStr::CR, MkStr::TAG_CR);
+	ReplaceKeyword(MkStr::LF, MkStr::TAG_LF);
 }
 
 void MkStr::ReplaceTagtoCRLF(void)
 {
-	ReplaceKeyword(L"\\r\\n", MkStr::CRLF);
-	ReplaceKeyword(L"\\r", L"\r");
-	ReplaceKeyword(L"\\n", MkStr::LF);
+	//ReplaceKeyword(L"\\r\\n", MkStr::CRLF);
+	//ReplaceKeyword(L"\\r", MkStr::CR);
+	//ReplaceKeyword(L"\\n", MkStr::LF);
+	ReplaceKeyword(MkStr::TAG_CRLF, MkStr::CRLF);
+	ReplaceKeyword(MkStr::TAG_CR, MkStr::CR);
+	ReplaceKeyword(MkStr::TAG_LF, MkStr::LF);
 }
 
 void MkStr::RemoveKeyword(const MkStr& keyword)

@@ -16,6 +16,9 @@ public:
 	// node type
 	virtual ePA_SceneNodeType GetNodeType(void) const { return ePA_SNT_VisualPatternNode; }
 
+	// alloc child instance
+	static MkVisualPatternNode* CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName);
+
 	//------------------------------------------------------------------------------------------------//
 	// region
 	//------------------------------------------------------------------------------------------------//
@@ -33,11 +36,11 @@ public:
 
 	// 기준이 되는 부모의 rect가 client인지 window인지 여부 설정/반환. default는 client rect(false)
 	void SetAlignmentPivotIsWindowRect(bool enable);
-	inline bool GetAlignmentPivotIsWindowRect(void) const { return m_AlignmentPivotIsWindowRect; }
+	inline bool GetAlignmentPivotIsWindowRect(void) const { return m_Attribute[ePA_SNA_AlignmentPivotIsWindowRect]; }
 
 	// 대상이 되는 자신의 rect가 client인지 window인지 여부 설정/반환. default는 window rect(true)
 	void SetAlignmentTargetIsWindowRect(bool enable);
-	inline bool GetAlignmentTargetIsWindowRect(void) const { return m_AlignmentTargetIsWindowRect; }
+	inline bool GetAlignmentTargetIsWindowRect(void) const { return m_Attribute[ePA_SNA_AlignmentTargetIsWindowRect]; }
 
 	// 정렬 방식
 	void SetAlignmentPosition(eRectAlignmentPosition position);
@@ -63,6 +66,8 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	virtual void Update(double currTime = 0.);
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER; // MkSceneObject
 
 	MkVisualPatternNode(const MkHashStr& name);
 	virtual ~MkVisualPatternNode() {}
@@ -91,8 +96,6 @@ protected:
 	MkFloatRect m_WindowRect;
 
 	// align
-	bool m_AlignmentPivotIsWindowRect;
-	bool m_AlignmentTargetIsWindowRect;
 	eRectAlignmentPosition m_AlignmentPosition;
 	MkFloat2 m_AlignmentOffset;
 
@@ -101,5 +104,6 @@ protected:
 
 public:
 
-	static const MkStr NamePrefix;
+	static const MkHashStr ObjKey_AlignPosition;
+	static const MkHashStr ObjKey_AlignOffset;
 };

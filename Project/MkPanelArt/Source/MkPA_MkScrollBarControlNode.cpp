@@ -12,6 +12,13 @@ const float MkScrollBarControlNode::BarWidth = 10.f;
 
 const MkHashStr MkScrollBarControlNode::ArgKey_NewItemPosOfScrollBar = L"NewItemPosOfScrollBar";
 
+const MkHashStr MkScrollBarControlNode::ObjKey_TotalItemSize = L"TotalItemSize";
+const MkHashStr MkScrollBarControlNode::ObjKey_OnePageItemSize = L"OnePageItemSize";
+const MkHashStr MkScrollBarControlNode::ObjKey_TotalBarLength = L"TotalBarLength";
+const MkHashStr MkScrollBarControlNode::ObjKey_Horizontal = L"Horizontal";
+const MkHashStr MkScrollBarControlNode::ObjKey_ItemPosition = L"ItemPosition";
+const MkHashStr MkScrollBarControlNode::ObjKey_WheelScrollLevel = L"WheelScrollLevel";
+
 // scroll bar를 wheel로 움직일 때 이동 비율(한 page를 몇 번의 이동으로 움직일지 결정)
 #define MKDEF_WHEEL_SCROLLING_LEVEL 10
 
@@ -29,12 +36,12 @@ MkScrollBarControlNode* MkScrollBarControlNode::CreateChildNode(MkSceneNode* par
 
 void MkScrollBarControlNode::SetHorizontalScrollBar(const MkHashStr& themeName, int totalItemSize, int onePageItemSize, float length)
 {
-	_SetScrollBar(themeName, GetMax<int>(totalItemSize, 1), GetMax<int>(onePageItemSize, 1), length, true, true);
+	_SetScrollBar(themeName, GetMax<int>(totalItemSize, 1), GetMax<int>(onePageItemSize, 1), length, true, true, 0);
 }
 
 void MkScrollBarControlNode::SetVerticalScrollBar(const MkHashStr& themeName, int totalItemSize, int onePageItemSize, float length)
 {
-	_SetScrollBar(themeName, GetMax<int>(totalItemSize, 1), GetMax<int>(onePageItemSize, 1), length, false, true);
+	_SetScrollBar(themeName, GetMax<int>(totalItemSize, 1), GetMax<int>(onePageItemSize, 1), length, false, true, 0);
 }
 
 void MkScrollBarControlNode::SetTotalItemSize(int totalItemSize)
@@ -42,7 +49,7 @@ void MkScrollBarControlNode::SetTotalItemSize(int totalItemSize)
 	totalItemSize = GetMax<int>(totalItemSize, 1);
 	if (totalItemSize != m_TotalItemSize)
 	{
-		_SetScrollBar(GetThemeName(), GetMax<int>(totalItemSize, 1), GetOnePageItemSize(), m_TotalBarLength, m_Horizontal, false);
+		_SetScrollBar(GetThemeName(), GetMax<int>(totalItemSize, 1), GetOnePageItemSize(), m_TotalBarLength, m_Horizontal, false, 0);
 	}
 }
 
@@ -51,7 +58,7 @@ void MkScrollBarControlNode::SetOnePageItemSize(int onePageItemSize)
 	onePageItemSize = GetMax<int>(onePageItemSize, 1);
 	if (onePageItemSize != m_OnePageItemSize)
 	{
-		_SetScrollBar(GetThemeName(), GetTotalItemSize(), GetMax<int>(onePageItemSize, 1), m_TotalBarLength, m_Horizontal, false);
+		_SetScrollBar(GetThemeName(), GetTotalItemSize(), GetMax<int>(onePageItemSize, 1), m_TotalBarLength, m_Horizontal, false, 0);
 	}
 }
 
@@ -115,6 +122,72 @@ void MkScrollBarControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventTyp
 	MkWindowBaseNode::SendNodeReportTypeEvent(eventType, path, argument);
 }
 
+void MkScrollBarControlNode::Save(MkDataNode& node) const
+{
+	// page bar 제외
+	static MkArray<MkHashStr> exceptions;
+	if (exceptions.Empty())
+	{
+		exceptions.PushBack(PageBarNodeName);
+	}
+	_AddExceptionList(node, SystemKey_NodeExceptions, exceptions);
+
+	// run
+	MkWindowBaseNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkScrollBarControlNode);
+
+void MkScrollBarControlNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowBaseNode::SetObjectTemplate(node);
+
+	node.CreateUnit(ObjKey_TotalItemSize, static_cast<int>(0));
+	node.CreateUnit(ObjKey_OnePageItemSize, static_cast<int>(0));
+	node.CreateUnit(ObjKey_TotalBarLength, 0.f);
+	node.CreateUnit(ObjKey_Horizontal, false);
+	node.CreateUnit(ObjKey_ItemPosition, static_cast<int>(0));
+	node.CreateUnit(ObjKey_WheelScrollLevel, static_cast<int>(MKDEF_WHEEL_SCROLLING_LEVEL));
+}
+
+void MkScrollBarControlNode::LoadObject(const MkDataNode& node)
+{
+	MkWindowBaseNode::LoadObject(node);
+
+	int totalItemSize;
+	int onePageItemSize;
+	float totalBarLength;
+	bool horizontal;
+	int itemPosition;
+	if (node.GetData(ObjKey_TotalItemSize, totalItemSize, 0) &&
+		node.GetData(ObjKey_OnePageItemSize, onePageItemSize, 0) &&
+		node.GetData(ObjKey_TotalBarLength, totalBarLength, 0) &&
+		node.GetData(ObjKey_Horizontal, horizontal, 0) &&
+		node.GetData(ObjKey_ItemPosition, itemPosition, 0))
+	{
+		_SetScrollBar(GetThemeName(), totalItemSize, onePageItemSize, totalBarLength, horizontal, false, itemPosition);
+	}
+
+	// wheel scroll level
+	int wheelScrollLevel;
+	if (node.GetData(ObjKey_WheelScrollLevel, wheelScrollLevel, 0))
+	{
+		SetWheelScrollLevel(wheelScrollLevel);
+	}
+}
+
+void MkScrollBarControlNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowBaseNode::SaveObject(node);
+
+	node.SetData(ObjKey_TotalItemSize, m_TotalItemSize, 0);
+	node.SetData(ObjKey_OnePageItemSize, m_OnePageItemSize, 0);
+	node.SetData(ObjKey_TotalBarLength, m_TotalBarLength, 0);
+	node.SetData(ObjKey_Horizontal, m_Horizontal, 0);
+	node.SetData(ObjKey_ItemPosition, m_CurrentItemPosition, 0);
+	node.SetData(ObjKey_WheelScrollLevel, m_WheelScrollLevel, 0);
+}
+
 MkScrollBarControlNode::MkScrollBarControlNode(const MkHashStr& name) : MkWindowBaseNode(name)
 {
 	m_TotalItemSize = 0;
@@ -127,7 +200,7 @@ MkScrollBarControlNode::MkScrollBarControlNode(const MkHashStr& name) : MkWindow
 }
 
 void MkScrollBarControlNode::_SetScrollBar
-(const MkHashStr& themeName, int totalItemSize, int onePageItemSize, float length, bool horizontal, bool updateTotalBar)
+(const MkHashStr& themeName, int totalItemSize, int onePageItemSize, float length, bool horizontal, bool updateTotalBar, int itemPos)
 {
 	if (length <= 0.f)
 		return;
@@ -144,7 +217,7 @@ void MkScrollBarControlNode::_SetScrollBar
 
 		SetThemeName(themeName);
 		SetComponentType(MkWindowThemeData::eCT_FlatBtn);
-		SetClientSize(ConvertWindowToClientSize(themeName, MkWindowThemeData::eCT_FlatBtn, MkHashStr::EMPTY, totalBarCS));
+		SetClientSize(ConvertWindowToClientSize(GetThemeName(), MkWindowThemeData::eCT_FlatBtn, MkHashStr::EMPTY, totalBarCS));
 		SetFormState(MkWindowThemeFormData::eS_Normal);
 	}
 
@@ -173,11 +246,12 @@ void MkScrollBarControlNode::_SetScrollBar
 		m_PageBarLength = pageRate * m_TotalBarLength;
 		MkFloat2 pageBarCS((m_Horizontal) ? m_PageBarLength : BarWidth, (m_Horizontal) ? BarWidth : m_PageBarLength);
 
-		node->SetClientSize(ConvertWindowToClientSize(themeName, MkWindowThemeData::eCT_GuideBtn, MkHashStr::EMPTY, pageBarCS));
+		node->SetClientSize(ConvertWindowToClientSize(GetThemeName(), MkWindowThemeData::eCT_GuideBtn, MkHashStr::EMPTY, pageBarCS));
 	}
-
-	m_CurrentItemPosition = -1;
-	_SetItemPosition(0, false, true);
+	
+	// item position
+	m_CurrentItemPosition = itemPos - 1; // itemPos와 다르기만 하면 됨
+	_SetItemPosition(itemPos, false, true);
 }
 
 void MkScrollBarControlNode::_SetItemPosition(int position, bool filter, bool modifyLocalPos)

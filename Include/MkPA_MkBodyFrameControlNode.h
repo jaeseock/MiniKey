@@ -60,6 +60,8 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER; // MkSceneObject
+
 	MkBodyFrameControlNode(const MkHashStr& name);
 	virtual ~MkBodyFrameControlNode() {}
 
@@ -74,4 +76,8 @@ protected:
 protected:
 
 	eHangingType m_HangingType;
+
+public:
+
+	static const MkHashStr ObjKey_HangingType;
 };

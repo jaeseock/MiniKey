@@ -50,6 +50,7 @@ public:
 		eCT_YellowZone, // eFT_SingleUnit
 		eCT_BlueZone, // eFT_SingleUnit
 		eCT_RedOutlineZone, // eFT_SingleUnit
+		eCT_DarkZone, // eFT_SingleUnit
 
 		eCT_YellowSelBtn, // eFT_QuadUnit
 		eCT_BlueSelBtn, // eFT_QuadUnit
@@ -114,7 +115,7 @@ public:
 		// custom component
 		//------------------------------------------------------------------------------------------------//
 
-		eCT_CustomForm = eCT_RegularMax
+		eCT_CustomForm = 2000000000
 	};
 
 	// frame type 정의. size 결정
@@ -156,7 +157,7 @@ public:
 
 		eIT_CheckMark,
 
-		eIT_CustomTag
+		eIT_CustomTag = 2000000000
 	};
 
 public:
@@ -175,6 +176,13 @@ public:
 
 	// component form data 반환
 	const MkWindowThemeFormData* GetFormData(eComponentType compType, const MkHashStr& formName) const;
+
+	// component type name에 맞는 eComponentType 반환. regular component만 대상으로 함
+	// 실패하면 eCT_None 반환
+	static eComponentType ConvertComponentNameToType(const MkHashStr& componentName);
+
+	// frame type name에 맞는 eFrameType 반환. 실패하면 eFT_None 반환
+	static eFrameType ConvertFrameNameToType(const MkHashStr& frameName);
 
 	// frame type에 맞는 LED button 반환
 	static eComponentType GetLEDButtonComponent(eFrameType frameType, eLEDType LEDType);

@@ -45,6 +45,12 @@ public:
 	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument);
 
 	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
 
 	MkCheckBoxControlNode(const MkHashStr& name);
 	virtual ~MkCheckBoxControlNode() {}
@@ -57,10 +63,15 @@ protected:
 
 protected:
 
+	MkStr m_CaptionString;
 	bool m_OnCheck;
 
 public:
 
 	static const MkHashStr CaptionNodeName;
 	static const MkHashStr CheckIconName;
+
+	static const MkHashStr ObjKey_CaptionTextName;
+	static const MkHashStr ObjKey_CaptionString;
+	static const MkHashStr ObjKey_OnCheck;
 };

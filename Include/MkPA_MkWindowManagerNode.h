@@ -44,16 +44,7 @@ public:
 	// (NOTE) Update()중 호출 금지
 	//------------------------------------------------------------------------------------------------//
 
-	enum eLayerType
-	{
-		eLT_Low = 0, // 하위 layer. 가장 밑단에 위치
-		eLT_Normal, // 일반 layer
-		eLT_High, // 상위 layer. modal을 제외하고 가장 윗단에 위치
-
-		eLT_Max
-	};
-
-	bool AttachWindow(MkWindowBaseNode* windowNode, eLayerType layerType = eLT_Normal);
+	bool AttachWindow(MkWindowBaseNode* windowNode);
 	bool DeleteWindow(const MkHashStr& windowName);
 
 	//------------------------------------------------------------------------------------------------//
@@ -95,17 +86,20 @@ public:
 
 	virtual void Clear(void);
 
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
+
+	virtual void LoadComplete(const MkDataNode& node);
+
 	MkWindowManagerNode(const MkHashStr& name);
 	virtual ~MkWindowManagerNode() { Clear(); }
 
 protected:
-
-	typedef struct __RootWindowInfo
-	{
-		MkWindowBaseNode* node;
-		eLayerType layerType;
-	}
-	_RootWindowInfo;
 
 	typedef struct __ActivationEvent
 	{
@@ -126,7 +120,7 @@ protected:
 
 	void _SendCursorDraggingEvent(MkArray< MkArray<MkHashStr> >& pathBuffer, int type); // type : 0(begin), 1(end)
 
-	void _UpdateWindowDepth(bool update, eLayerType layerType);
+	void _CheckAndRegisterWindowNode(const MkHashStr& name);
 
 protected:
 
@@ -134,25 +128,24 @@ protected:
 	// 설정 정보
 	//------------------------------------------------------------------------------------------------//
 
+	// 깊이 대역폭
 	float m_DepthBandwidth;
-	MkInt2 m_TargetRegion;
 	
-	// 비활성화 윈도우 목록
-	MkArray<MkHashStr> m_DeactivatingWindows;
-
 	// 활성화 윈도우 목록
-	MkArray<MkHashStr> m_ActivatingWindows[eLT_Max]; // front(0), ... rear 순으로 정렬
+	MkArray<MkHashStr> m_ActivatingWindows; // front(0), ... rear 순으로 정렬
 	MkHashStr m_ModalWindow;
-	MkHashStr m_CurrentFocusWindow;
-
+	
 	// 등록된 root window list
-	MkHashMap<MkHashStr, _RootWindowInfo> m_RootWindowList;
+	MkHashMap<MkHashStr, MkWindowBaseNode*> m_RootWindowList;
 
 	//------------------------------------------------------------------------------------------------//
 	// 휘발성 정보
 	//------------------------------------------------------------------------------------------------//
 
 	bool m_UpdateLock;
+
+	// 대상 영역 지정
+	MkInt2 m_TargetRegion;
 
 	// scene portal node 하위 manager인지 여부
 	bool m_ScenePortalBind;
@@ -166,6 +159,9 @@ protected:
 	// input
 	MkInt2 m_InputPivotPosition;
 
+	// 현 최상단 윈도우
+	MkHashStr m_CurrentFocusWindow;
+
 	// window path
 	// 대상 노드(MkWindowBaseNode*)를 그대로 가지고 있으면 편리하기는 하지만 하위 node들의 attach, detach시마다
 	// 모니터링을 통해 정보를 갱신해 주어야 함. 따라서 Update()시에만 사용하는 휘발성 참조이므로 path를 통해
@@ -176,5 +172,10 @@ protected:
 
 public:
 
-	//static const MkStr NamePrefix;
+	static const MkHashStr ModalEffectNodeName;
+
+	static const MkHashStr ObjKey_DepthBandwidth;
+	static const MkHashStr ObjKey_DeactivatingWindows;
+	static const MkHashStr ObjKey_ActivatingWindows;
+	static const MkHashStr ObjKey_ModalWindow;
 };

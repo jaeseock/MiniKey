@@ -1,16 +1,21 @@
 
 #include "MkCore_MkCheck.h"
-#include "MkCore_MkTimeManager.h"
+#include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkWindowTagNode.h"
 
 
-const MkHashStr MkWindowTagNode::NodeNamePrefix(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Tag:");
-
 const MkHashStr MkWindowTagNode::IconPanelName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Icon");
 const MkHashStr MkWindowTagNode::TextPanelName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Text");
+
+const MkHashStr MkWindowTagNode::ObjKey_IconPath(L"IconPath");
+const MkHashStr MkWindowTagNode::ObjKey_IconSOSName(L"IconSOSName");
+const MkHashStr MkWindowTagNode::ObjKey_TextName(L"TextName");
+const MkHashStr MkWindowTagNode::ObjKey_LengthOfBetweenIT(L"LengthOfBetweenIT");
+
+#define MKDEF_DEFAULT_LENGTH_OF_GAP 4.f
 
 //------------------------------------------------------------------------------------------------//
 
@@ -111,9 +116,81 @@ void MkWindowTagNode::Clear(void)
 	MkVisualPatternNode::Clear();
 }
 
+void MkWindowTagNode::Save(MkDataNode& node) const
+{
+	// icon/text panel 제외
+	static MkArray<MkHashStr> exceptions(2);
+	if (exceptions.Empty())
+	{
+		exceptions.PushBack(IconPanelName);
+		exceptions.PushBack(TextPanelName);
+	}
+	_AddExceptionList(node, SystemKey_PanelExceptions, exceptions);
+
+	// run
+	MkVisualPatternNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkWindowTagNode);
+
+void MkWindowTagNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkVisualPatternNode::SetObjectTemplate(node);
+
+	node.CreateUnit(ObjKey_IconPath, MkStr::EMPTY);
+	node.CreateUnit(ObjKey_IconSOSName, MkStr::EMPTY);
+	// ObjKey_TextName
+	node.CreateUnit(ObjKey_LengthOfBetweenIT, MKDEF_DEFAULT_LENGTH_OF_GAP);
+}
+
+void MkWindowTagNode::LoadObject(const MkDataNode& node)
+{
+	MkVisualPatternNode::LoadObject(node);
+
+	// icon
+	MkHashStr path;
+	if (node.GetDataEx(ObjKey_IconPath, path, 0) && (!path.Empty()))
+	{
+		SetIconPath(path);
+
+		MkHashStr sosName;
+		node.GetDataEx(ObjKey_IconSOSName, sosName, 0);
+		SetIconSubsetOrSequenceName(sosName);
+	}
+
+	// text
+	MkArray<MkHashStr> textName;
+	if (node.GetDataEx(ObjKey_TextName, textName))
+	{
+		SetTextName(textName);
+	}
+
+	// gap
+	float lengthOfBetweenIconAndText;
+	if (node.GetData(ObjKey_LengthOfBetweenIT, lengthOfBetweenIconAndText, 0))
+	{
+		SetLengthOfBetweenIconAndText(lengthOfBetweenIconAndText);
+	}
+}
+
+void MkWindowTagNode::SaveObject(MkDataNode& node) const
+{
+	MkVisualPatternNode::SaveObject(node);
+
+	node.SetDataEx(ObjKey_IconPath, m_IconPath, 0);
+	node.SetDataEx(ObjKey_IconSOSName, m_IconSubsetOrSequenceName, 0);
+
+	if (!m_TextName.Empty())
+	{
+		node.CreateUnitEx(ObjKey_TextName, m_TextName);
+	}
+
+	node.SetDataEx(ObjKey_LengthOfBetweenIT, m_LengthOfBetweenIconAndText, 0);
+}
+
 MkWindowTagNode::MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(name)
 {
-	m_LengthOfBetweenIconAndText = 4.f;
+	m_LengthOfBetweenIconAndText = MKDEF_DEFAULT_LENGTH_OF_GAP;
 }
 
 bool MkWindowTagNode::_UpdateIcon(void)
@@ -123,11 +200,7 @@ bool MkWindowTagNode::_UpdateIcon(void)
 	if (!m_IconPath.Empty())
 	{
 		MkPanel* panel = PanelExist(IconPanelName) ? GetPanel(IconPanelName) : &CreatePanel(IconPanelName);
-
-		MkTimeState ts;
-		MK_TIME_MGR.GetCurrentTimeState(ts);
-
-		if (panel->SetTexture(m_IconPath, m_IconSubsetOrSequenceName, ts.fullTime, 0.))
+		if (panel->SetTexture(m_IconPath, m_IconSubsetOrSequenceName, 0.))
 		{
 			if (panel->GetTextureSize().IsPositive()) // 빈 icon은 허용하지 않음
 				return true;
@@ -155,7 +228,7 @@ bool MkWindowTagNode::_UpdateText(void)
 
 bool MkWindowTagNode::_UpdateRegion(void)
 {
-	m_UpdateCommand.Set(eUC_Alignment); // region이 변경되면 alignment도 갱신되야 함
+	SetAlignmentCommand(); // region이 변경되면 alignment도 갱신되야 함
 
 	MkPanel* iconPanel = GetPanel(IconPanelName);
 	MkPanel* textPanel = GetPanel(TextPanelName);

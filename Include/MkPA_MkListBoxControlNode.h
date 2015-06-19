@@ -57,20 +57,25 @@ public:
 	// 해당 item의 tag node 반환
 	MkWindowTagNode* GetItemTag(const MkHashStr& uniqueKey) const;
 
-	// 모든 item 갯수 반환
+	// 모든 item의 갯수 반환
 	inline unsigned int GetItemCount(void) const { return m_ItemData.GetSize(); }
 
-	// 표시 할 item 순서 설정/반환(filter로도 활용 가능)
+	// 모든 item의 key 반환
+	inline unsigned int GetItemKeyList(MkArray<MkHashStr>& keyList) const { return m_ItemData.GetKeyList(keyList); }
+
+	// 표시 할 item 순서 설정/반환
+	// (NOTE) keyList안의 key는 이미 존재하고 있는 item이어야 함
+	// (NOTE) 반대로 이미 존재하고 있는 item이지만 keyList에는 포함되지 않을 수 있음(filter로도 활용 가능)
 	void SetItemSequence(const MkArray<MkHashStr>& keyList);
 	const MkArray<MkHashStr>& GetItemSequence(void) const { return m_ItemSequence; }
 
-	// 현재 sequence를 정렬
+	// 현재 sequence를 key 기준 정렬
 	void SortItemSequenceInAscendingOrder(void); // 오름차순 (ex> 1, 2, 3, ...)
 	void SortItemSequenceInDescendingOrder(void); // 내림차순 (ex> 10, 9, 8, ...)
 
 	// 모든 item을 대상으로 key prefix filtering
 	// (NOTE) 기존 sequence는 무시 됨
-	// (NOTE) 정렬되지 않은 상태
+	// (NOTE) 결과는 정렬되지 않은 상태이므로 추가 정렬을 원할 경우 별도의 정렬 필요
 	void UpdateItemSequenceByKeyPrefix(const MkStr& prefix);
 
 	//------------------------------------------------------------------------------------------------//
@@ -84,6 +89,14 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	virtual void Clear(void);
+
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
 
 	MkListBoxControlNode(const MkHashStr& name);
 	virtual ~MkListBoxControlNode() { Clear(); }
@@ -155,4 +168,10 @@ public:
 	static const MkHashStr VScrollBarName;
 
 	static const MkHashStr ArgKey_Item;
+
+	static const MkHashStr ObjKey_OnePageItemSize;
+	static const MkHashStr ObjKey_ItemWidth;
+	static const MkHashStr ObjKey_ItemKeyList;
+	static const MkHashStr ObjKey_ItemMsgList;
+	static const MkHashStr ObjKey_ItemSequence;
 };

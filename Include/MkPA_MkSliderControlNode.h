@@ -76,6 +76,14 @@ public:
 
 	virtual void Clear(void);
 
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
+
 	MkSliderControlNode(const MkHashStr& name);
 	virtual ~MkSliderControlNode() {}
 
@@ -93,12 +101,11 @@ protected:
 protected:
 
 	float m_LineLength;
+	bool m_Horizontal;
 
 	int m_BeginValue;
 	int m_ValueSize;
 	int m_CurrentValue;
-
-	bool m_Horizontal;
 
 	bool m_CursorFocusing;
 	bool m_ButtonDragging;
@@ -112,4 +119,11 @@ public:
 	static const MkHashStr ValueTagName;
 
 	static const MkHashStr ArgKey_SliderPos;
+
+	static const MkHashStr ObjKey_LineLength;
+	static const MkHashStr ObjKey_Horizontal;
+	static const MkHashStr ObjKey_BeginValue;
+	static const MkHashStr ObjKey_ValueSize;
+	static const MkHashStr ObjKey_CurrentValue;
+	static const MkHashStr ObjKey_ShowValue;
 };

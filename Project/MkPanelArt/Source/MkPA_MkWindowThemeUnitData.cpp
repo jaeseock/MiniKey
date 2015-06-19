@@ -139,9 +139,9 @@ MkWindowThemeUnitData::eUnitType MkWindowThemeUnitData::GetUnitType(const MkScen
 	return unitType;
 }
 
-void MkWindowThemeUnitData::CreateUnit(MkSceneNode* sceneNode, const MkHashStr& imagePath, double startTime) const
+void MkWindowThemeUnitData::CreateUnit(MkSceneNode* sceneNode, const MkHashStr& imagePath, double timeOffset) const
 {
-	_ApplyUnit(sceneNode, true, imagePath, startTime);
+	_ApplyUnit(sceneNode, true, imagePath, timeOffset);
 }
 
 void MkWindowThemeUnitData::SetUnit(MkSceneNode* sceneNode, const MkHashStr& imagePath) const
@@ -211,31 +211,31 @@ MkWindowThemeUnitData::MkWindowThemeUnitData()
 
 //------------------------------------------------------------------------------------------------//
 
-void MkWindowThemeUnitData::_ApplyUnit(MkSceneNode* sceneNode, bool createOrGet, const MkHashStr& imagePath, double startTime) const
+void MkWindowThemeUnitData::_ApplyUnit(MkSceneNode* sceneNode, bool createOrGet, const MkHashStr& imagePath, double timeOffset) const
 {
 	switch (GetUnitType())
 	{
 	case eUT_Image:
-		_SetImageToPiece(sceneNode, createOrGet, ImagePositionName, imagePath, m_PieceDatas[0].subsetOrSequenceName, false, startTime);
+		_SetImageToPiece(sceneNode, createOrGet, ImagePositionName, imagePath, m_PieceDatas[0].subsetOrSequenceName, false, timeOffset);
 		break;
 
 	case eUT_Table:
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MC], imagePath, m_PieceDatas[eP_MC].subsetOrSequenceName, false, startTime);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MC], imagePath, m_PieceDatas[eP_MC].subsetOrSequenceName, false, timeOffset);
 	case eUT_Edge:
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_LT], imagePath, m_PieceDatas[eP_LT].subsetOrSequenceName, true, startTime);
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MT], imagePath, m_PieceDatas[eP_MT].subsetOrSequenceName, false, startTime);
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_RT], imagePath, m_PieceDatas[eP_RT].subsetOrSequenceName, true, startTime);
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_LC], imagePath, m_PieceDatas[eP_LC].subsetOrSequenceName, false, startTime);
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_RC], imagePath, m_PieceDatas[eP_RC].subsetOrSequenceName, false, startTime);
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_LB], imagePath, m_PieceDatas[eP_LB].subsetOrSequenceName, true, startTime);
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MB], imagePath, m_PieceDatas[eP_MB].subsetOrSequenceName, false, startTime);
-		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_RB], imagePath, m_PieceDatas[eP_RB].subsetOrSequenceName, true, startTime);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_LT], imagePath, m_PieceDatas[eP_LT].subsetOrSequenceName, true, timeOffset);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MT], imagePath, m_PieceDatas[eP_MT].subsetOrSequenceName, false, timeOffset);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_RT], imagePath, m_PieceDatas[eP_RT].subsetOrSequenceName, true, timeOffset);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_LC], imagePath, m_PieceDatas[eP_LC].subsetOrSequenceName, false, timeOffset);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_RC], imagePath, m_PieceDatas[eP_RC].subsetOrSequenceName, false, timeOffset);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_LB], imagePath, m_PieceDatas[eP_LB].subsetOrSequenceName, true, timeOffset);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_MB], imagePath, m_PieceDatas[eP_MB].subsetOrSequenceName, false, timeOffset);
+		_SetImageToPiece(sceneNode, createOrGet, EdgeAndTablePositionName[eP_RB], imagePath, m_PieceDatas[eP_RB].subsetOrSequenceName, true, timeOffset);
 		break;
 	}
 }
 
 void MkWindowThemeUnitData::_SetImageToPiece
-(MkSceneNode* sceneNode, bool createOrGet, const MkHashStr& pieceName, const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, bool keepSrcSize, double startTime)
+(MkSceneNode* sceneNode, bool createOrGet, const MkHashStr& pieceName, const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName, bool keepSrcSize, double timeOffset)
 {
 	MkPanel* panel = sceneNode->PanelExist(pieceName) ?
 		(createOrGet ? NULL : sceneNode->GetPanel(pieceName)) : // create
@@ -244,8 +244,8 @@ void MkWindowThemeUnitData::_SetImageToPiece
 	if (panel != NULL)
 	{
 		// subsetOrSequenceName이 비었을 경우 null texture 설정(panel 정보는 유지되지만 그려지지는 않음)
-		// get일 경우 start time은 이전 값을 그대로 계승
-		panel->SetTexture(subsetOrSequenceName.Empty() ? MkHashStr::EMPTY : imagePath, subsetOrSequenceName, createOrGet ? startTime : panel->GetSequenceStartTime(), 0.);
+		// get일 경우 time offset은 이전 값을 그대로 계승
+		panel->SetTexture(subsetOrSequenceName.Empty() ? MkHashStr::EMPTY : imagePath, subsetOrSequenceName, createOrGet ? timeOffset : panel->GetSequenceTimeOffset());
 		panel->SetSmallerSourceOp(keepSrcSize ? MkPanel::eReducePanel : MkPanel::eExpandSource);
 		panel->SetBiggerSourceOp(keepSrcSize ? MkPanel::eExpandPanel : MkPanel::eReduceSource);
 	}

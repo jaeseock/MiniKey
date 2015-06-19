@@ -8,6 +8,9 @@
 const MkHashStr MkWindowBaseNode::ArgKey_CursorLocalPosition(L"CursorLocalPosition");
 const MkHashStr MkWindowBaseNode::ArgKey_WheelDelta(L"WheelDelta");
 
+const MkHashStr MkWindowBaseNode::ObjKey_WindowFrameType(L"WinFrameType");
+
+
 //------------------------------------------------------------------------------------------------//
 
 MkWindowBaseNode* MkWindowBaseNode::CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName)
@@ -176,6 +179,46 @@ void MkWindowBaseNode::Clear(void)
 	m_CursorInside = false;
 
 	MkWindowThemedNode::Clear();
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkWindowBaseNode);
+
+void MkWindowBaseNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowThemedNode::SetObjectTemplate(node);
+
+	// update attribute
+	MkBitField32 attr;
+	node.GetData(ObjKey_Attribute, attr.m_Field, 0);
+	attr.Assign(ePA_SNA_AcceptInput, true);
+	attr.Assign(ePA_SNA_Enable, true);
+	node.SetData(ObjKey_Attribute, attr.m_Field, 0);
+
+	// frame type
+	node.CreateUnit(ObjKey_WindowFrameType, MkStr::EMPTY);
+}
+
+void MkWindowBaseNode::LoadObject(const MkDataNode& node)
+{
+	MkWindowThemedNode::LoadObject(node);
+
+	// frame type
+	MkHashStr frameTypeName;
+	if (node.GetDataEx(ObjKey_WindowFrameType, frameTypeName, 0) && (!frameTypeName.Empty()))
+	{
+		m_WindowFrameType = MkWindowThemeData::ConvertFrameNameToType(frameTypeName);
+	}
+}
+
+void MkWindowBaseNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowThemedNode::SaveObject(node);
+
+	// frame type
+	if ((m_WindowFrameType > MkWindowThemeData::eFT_None) && (m_WindowFrameType < MkWindowThemeData::eFT_Max))
+	{
+		node.SetDataEx(ObjKey_WindowFrameType, MkWindowThemeData::FrameTypeName[m_WindowFrameType], 0);
+	}
 }
 
 MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(name)

@@ -75,13 +75,19 @@ public:
 	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument);
 
 	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
 
 	MkScrollBarControlNode(const MkHashStr& name);
 	virtual ~MkScrollBarControlNode() {}
 
 protected:
 
-	void _SetScrollBar(const MkHashStr& themeName, int totalItemSize, int onePageItemSize, float length, bool horizontal, bool updateTotalBar);
+	void _SetScrollBar(const MkHashStr& themeName, int totalItemSize, int onePageItemSize, float length, bool horizontal, bool updateTotalBar, int itemPos);
 
 	void _SetItemPosition(int position, bool filter, bool modifyLocalPos);
 	int _ItemPositionFilter(int position) const;
@@ -94,9 +100,10 @@ protected:
 	int m_OnePageItemSize;
 	float m_TotalBarLength;
 	bool m_Horizontal;
-	int m_WheelScrollLevel;
-	float m_PageBarLength;
 	int m_CurrentItemPosition;
+	int m_WheelScrollLevel;
+	
+	float m_PageBarLength;
 
 public:
 
@@ -104,4 +111,11 @@ public:
 	static const float BarWidth;
 
 	static const MkHashStr ArgKey_NewItemPosOfScrollBar;
+
+	static const MkHashStr ObjKey_TotalItemSize;
+	static const MkHashStr ObjKey_OnePageItemSize;
+	static const MkHashStr ObjKey_TotalBarLength;
+	static const MkHashStr ObjKey_Horizontal;
+	static const MkHashStr ObjKey_ItemPosition;
+	static const MkHashStr ObjKey_WheelScrollLevel;
 };

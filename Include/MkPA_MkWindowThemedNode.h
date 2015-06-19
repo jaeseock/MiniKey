@@ -107,6 +107,14 @@ public:
 	// «ÿ¡¶
 	virtual void Clear(void);
 
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
+
 	MkWindowThemedNode(const MkHashStr& name);
 	virtual ~MkWindowThemedNode() { Clear(); }
 
@@ -158,8 +166,13 @@ protected:
 
 public:
 
-	static const MkHashStr NodeNamePrefix;
 	static const MkHashStr ShadowNodeName;
 
 	static const MkHashStr ArgKey_ChangeTheme;
+
+	static const MkHashStr ObjKey_ThemeName;
+	static const MkHashStr ObjKey_ComponentType;
+	static const MkHashStr ObjKey_CustomFormName;
+	static const MkHashStr ObjKey_UseShadow;
+	static const MkHashStr ObjKey_ClientSize;
 };

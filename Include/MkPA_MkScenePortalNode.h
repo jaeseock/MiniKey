@@ -38,7 +38,7 @@
 //
 //	// scene portal node 생성해 subWinMgr을 생성해 대상으로 지정하고 반환
 //	MkScenePortalNode* scenePortal = MkScenePortalNode::CreateChildNode(bodyFrame, L"ScenePortal");
-//	MkWindowManagerNode* subWinMgr = scenePortal->SetScenePortal(MkWindowThemeData::DefaultThemeName, MkFloat2(250.f, 180.f));
+//	MkWindowManagerNode* subWinMgr = scenePortal->CreateScenePortal(MkWindowThemeData::DefaultThemeName, MkFloat2(250.f, 180.f));
 //
 //	// window A 생성
 //	MkTitleBarControlNode* winA = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBar");
@@ -72,6 +72,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// 대상 node를 지정해 초기화
+	// (NOTE) destNode의 주의사항은 SetDestinationNode()의 주의사항 참조
 	void SetScenePortal(const MkHashStr& themeName, const MkFloat2& region, MkSceneNode* destNode);
 
 	// 대상 node를 지정
@@ -81,17 +82,19 @@ public:
 	// - 그 외는 total AABR의 size
 	// (NOTE) 호출 전 SetScenePortal()가 올바르게 호출된 상태이어야 함
 	// (NOTE) destNode는 scene portal node가 속한 scene graph와 독립적인 node이어야 함
+	// (NOTE) 이전 CreateScenePortal()로 만들어진 자체적인 window mgr을 가지고 있었다면 삭제 됨
+	// (NOTE) 출력/저장 시 destNode 관련 정보는 입출력되지 않음(로딩시 별도로 SetDestinationNode()을 호출해 주어야 함)
 	void SetDestinationNode(MkSceneNode* destNode);
 
-	// 독자적인 window manager를 만들어 초기화 후 반환
-	MkWindowManagerNode* SetScenePortal(const MkHashStr& themeName, const MkFloat2& region);
+	// 대상 node 반환
+	inline MkSceneNode* GetDestinationNode(void) { return m_DestinationNode; }
 
-	// 독자적인 window manager를 만들어 대상 node로 지정
-	// (NOTE) 호출 전 SetScenePortal()가 올바르게 호출된 상태이어야 함
+	// 자체적인 window manager를 만들어 대상 node 지정 후 반환
 	// (NOTE) 호출 전 window mgr/destination node가 존재하면 삭제(window mgr), 초기화(destination node) 후 재생성
-	MkWindowManagerNode* CreateWindowManagerAsDestinationNode(void);
+	// (NOTE) 출력/저장 시 자체 window manager 정보까지 모두 입출력됨
+	MkWindowManagerNode* CreateScenePortal(const MkHashStr& themeName, const MkFloat2& region);
 
-	// destination window manager 반환
+	// 자체 window manager 반환
 	inline MkWindowManagerNode* GetDestWindowManagerNode(void) { return m_DestWindowManagerNode; }
 
 	//------------------------------------------------------------------------------------------------//
@@ -107,6 +110,14 @@ public:
 	virtual void Update(double currTime = 0.);
 
 	virtual void Clear(void);
+
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
 
 	MkScenePortalNode(const MkHashStr& name);
 	virtual ~MkScenePortalNode() { Clear(); }
@@ -124,7 +135,10 @@ protected:
 public:
 
 	static const MkHashStr MaskingPanelName;
+	static const MkHashStr SampleBackgroundName;
 
 	static const MkHashStr HScrollBarName;
 	static const MkHashStr VScrollBarName;
+
+	static const MkHashStr ObjKey_DestWindowMgr;
 };

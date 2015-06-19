@@ -140,7 +140,7 @@ MkFloat2 MkWindowThemeFormData::CalculateWindowSize(const MkFloat2& clientSize) 
 	return m_UnitList[0].CalculateWindowSize(clientSize);
 }
 
-bool MkWindowThemeFormData::AttachForm(MkSceneNode* sceneNode, double startTime) const
+bool MkWindowThemeFormData::AttachForm(MkSceneNode* sceneNode) const
 {
 	if ((sceneNode == NULL) || (GetFormType() == eFT_None))
 		return false;
@@ -157,7 +157,7 @@ bool MkWindowThemeFormData::AttachForm(MkSceneNode* sceneNode, double startTime)
 	if ((nodeUnitType == MkWindowThemeUnitData::eUT_None) || (nodeUnitType != m_UnitType))
 	{
 		// 0번 position(eS_Single, eS_Back, eS_Normal)이 default
-		m_UnitList[0].CreateUnit(sceneNode, *m_ImagePathPtr, startTime);
+		m_UnitList[0].CreateUnit(sceneNode, *m_ImagePathPtr, 0.);
 	}
 	// 같은 unit type이면 theme 변경일 가능성이 있으므로 set
 	else

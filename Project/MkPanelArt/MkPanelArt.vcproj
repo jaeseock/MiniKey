@@ -426,6 +426,14 @@
 			Name="Scene object"
 			>
 			<File
+				RelativePath=".\Source\MkPA_MkSceneObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\Include\MkPA_MkSceneObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Source\MkPA_MkSceneTransform.cpp"
 				>
 			</File>

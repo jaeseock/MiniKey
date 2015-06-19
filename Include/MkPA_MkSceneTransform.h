@@ -11,7 +11,10 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkRect.h"
+#include "MkCore_MkHashStr.h"
 
+
+class MkDataNode;
 
 class MkSceneTransform
 {
@@ -49,6 +52,11 @@ public:
 	// local rect -> world rect vertices
 	void GetWorldRectVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const;
 
+	// in & out
+	static void SetObjectTemplate(MkDataNode& node);
+	void Load(const MkDataNode& node);
+	void Save(MkDataNode& node) const;
+
 	MkSceneTransform();
 	~MkSceneTransform() {}
 
@@ -65,4 +73,12 @@ protected:
 	float m_WorldRotation;
 	float m_WorldScale;
 	float m_WorldAlpha;
+
+public:
+
+	static const MkHashStr ObjKey_LocalPosition;
+	static const MkHashStr ObjKey_LocalDepth;
+	static const MkHashStr ObjKey_LocalRotation;
+	static const MkHashStr ObjKey_LocalScale;
+	static const MkHashStr ObjKey_LocalAlpha;
 };

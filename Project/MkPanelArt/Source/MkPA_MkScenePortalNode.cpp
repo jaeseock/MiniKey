@@ -9,9 +9,12 @@
 
 
 const MkHashStr MkScenePortalNode::MaskingPanelName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Mask");
+const MkHashStr MkScenePortalNode::SampleBackgroundName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX) + L"Sample");
 
 const MkHashStr MkScenePortalNode::HScrollBarName(MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"HSB");
 const MkHashStr MkScenePortalNode::VScrollBarName(MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + L"VSB");
+
+const MkHashStr MkScenePortalNode::ObjKey_DestWindowMgr(L"DestWindowMgr");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -26,7 +29,9 @@ MkScenePortalNode* MkScenePortalNode::CreateChildNode(MkSceneNode* parentNode, c
 
 void MkScenePortalNode::SetScenePortal(const MkHashStr& themeName, const MkFloat2& region, MkSceneNode* destNode)
 {
-	m_WindowRect.size = m_ClientRect.size = region;
+	SetThemeName(themeName);
+
+	m_ClientRect.size = region;
 	
 	// destination
 	SetDestinationNode(destNode);
@@ -39,7 +44,7 @@ void MkScenePortalNode::SetScenePortal(const MkHashStr& themeName, const MkFloat
 
 	if (hScrollBar != NULL)
 	{
-		hScrollBar->SetHorizontalScrollBar(themeName, 1, static_cast<int>(m_WindowRect.size.x), region.x);
+		hScrollBar->SetHorizontalScrollBar(GetThemeName(), 1, static_cast<int>(m_WindowRect.size.x), region.x);
 		hScrollBar->SetAlignmentPosition(eRAP_LeftUnder);
 		hScrollBar->SetVisible(false);
 	}
@@ -49,7 +54,7 @@ void MkScenePortalNode::SetScenePortal(const MkHashStr& themeName, const MkFloat
 
 	if (vScrollBar != NULL)
 	{
-		vScrollBar->SetVerticalScrollBar(themeName, 1, static_cast<int>(m_WindowRect.size.y), region.y);
+		vScrollBar->SetVerticalScrollBar(GetThemeName(), 1, static_cast<int>(m_WindowRect.size.y), region.y);
 		vScrollBar->SetAlignmentPosition(eRAP_RMostBottom);
 		vScrollBar->SetVisible(false);
 	}
@@ -57,15 +62,40 @@ void MkScenePortalNode::SetScenePortal(const MkHashStr& themeName, const MkFloat
 
 void MkScenePortalNode::SetDestinationNode(MkSceneNode* destNode)
 {
+	// 기존 자체 window mgr 삭제
+	if (destNode != m_DestWindowManagerNode)
+	{
+		MK_DELETE(m_DestWindowManagerNode);
+	}
+
+	// 새 target 반영
 	m_DestinationNode = destNode;
 
+	// client size가 존재 하면 window size로 함(MaskingPanelName이 없을 수 있으므로 자동계산은 불가)
+	if (!m_ClientRect.size.IsZero())
+	{
+		m_WindowRect.size = m_ClientRect.size;
+	}
+
+	// panel 처리
 	if (m_DestinationNode == NULL)
 	{
 		DeletePanel(MaskingPanelName);
+
+		// masking panel이 없으면 아무것도 보이지 않으므로 예시용 sample을 넣어 줌
+		MkWindowThemedNode* sampleNode = MkWindowThemedNode::CreateChildNode(this, SampleBackgroundName);
+		if (sampleNode != NULL)
+		{
+			sampleNode->SetThemeName(GetThemeName());
+			sampleNode->SetComponentType(MkWindowThemeData::eCT_RedOutlineZone);
+			sampleNode->SetClientSize(ConvertWindowToClientSize(GetThemeName(), MkWindowThemeData::eCT_RedOutlineZone, MkHashStr::EMPTY, m_WindowRect.size));
+			sampleNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		}
 	}
 	else
 	{
-		MkInt2 iRegion(static_cast<int>(m_WindowRect.size.x), static_cast<int>(m_WindowRect.size.y));
+		// 영역 설정
+		MkInt2 iRegion = MkInt2(static_cast<int>(m_WindowRect.size.x), static_cast<int>(m_WindowRect.size.y));
 
 		// masking panel 생성
 		MkPanel& panel = CreatePanel(MaskingPanelName, m_DestinationNode, iRegion);
@@ -81,20 +111,16 @@ void MkScenePortalNode::SetDestinationNode(MkSceneNode* destNode)
 				mgrNode->SetScenePortalBind(true);
 			}
 		}
+
+		// sample bg 삭제
+		RemoveChildNode(SampleBackgroundName);
 	}
 }
 
-MkWindowManagerNode* MkScenePortalNode::SetScenePortal(const MkHashStr& themeName, const MkFloat2& region)
+MkWindowManagerNode* MkScenePortalNode::CreateScenePortal(const MkHashStr& themeName, const MkFloat2& region)
 {
+	// 기존 portal 정보 삭제 및 재구성
 	SetScenePortal(themeName, region, NULL);
-	return CreateWindowManagerAsDestinationNode();
-}
-
-MkWindowManagerNode* MkScenePortalNode::CreateWindowManagerAsDestinationNode(void)
-{
-	// window mgr/destination node가 존재하면 삭제 및 초기화
-	MK_DELETE(m_DestWindowManagerNode);
-	SetDestinationNode(NULL);
 
 	// 생성 및 지정
 	m_DestWindowManagerNode = MkWindowManagerNode::CreateChildNode(NULL, MkStr(MKDEF_PA_WIN_CONTROL_PREFIX) + MkStr(L"DM:") + GetNodeName().GetString());
@@ -214,6 +240,73 @@ void MkScenePortalNode::Clear(void)
 	MK_DELETE(m_DestWindowManagerNode);
 
 	MkWindowBaseNode::Clear();
+}
+
+void MkScenePortalNode::Save(MkDataNode& node) const
+{
+	// masking panel 제외
+	static MkArray<MkHashStr> panelExceptions;
+	if (panelExceptions.Empty())
+	{
+		panelExceptions.PushBack(MaskingPanelName);
+	}
+	_AddExceptionList(node, SystemKey_PanelExceptions, panelExceptions);
+
+	// sample bg, v/h scroll bar 제외
+	static MkArray<MkHashStr> nodeExceptions;
+	if (nodeExceptions.Empty())
+	{
+		nodeExceptions.PushBack(SampleBackgroundName);
+		nodeExceptions.PushBack(HScrollBarName);
+		nodeExceptions.PushBack(VScrollBarName);
+	}
+	_AddExceptionList(node, SystemKey_NodeExceptions, nodeExceptions);
+
+	// run
+	MkWindowBaseNode::Save(node);
+}
+
+MKDEF_DECLARE_SCENE_CLASS_KEY_IMPLEMENTATION(MkScenePortalNode);
+
+void MkScenePortalNode::SetObjectTemplate(MkDataNode& node)
+{
+	MkWindowBaseNode::SetObjectTemplate(node);
+}
+
+void MkScenePortalNode::LoadObject(const MkDataNode& node)
+{
+	MkWindowBaseNode::LoadObject(node);
+
+	// 자체 window mgr이 존재하면 구성
+	if (node.ChildExist(ObjKey_DestWindowMgr))
+	{
+		MkWindowManagerNode* windowMgr = CreateScenePortal(GetThemeName(), MkFloat2(m_ClientRect.size));
+		if (windowMgr != NULL)
+		{
+			windowMgr->Load(*node.GetChildNode(ObjKey_DestWindowMgr));
+		}
+	}
+
+	// 아니면 기본 frame 구성
+	if (m_DestWindowManagerNode == NULL)
+	{
+		SetScenePortal(GetThemeName(), MkFloat2(m_ClientRect.size), NULL);
+	}
+}
+
+void MkScenePortalNode::SaveObject(MkDataNode& node) const
+{
+	MkWindowBaseNode::SaveObject(node);
+
+	// 자체 window mgr이 존재하면 출력
+	if (m_DestWindowManagerNode != NULL)
+	{
+		MkDataNode* destNode = node.CreateChildNode(ObjKey_DestWindowMgr);
+		if (destNode != NULL)
+		{
+			m_DestWindowManagerNode->Save(*destNode);
+		}
+	}
 }
 
 MkScenePortalNode::MkScenePortalNode(const MkHashStr& name) : MkWindowBaseNode(name)

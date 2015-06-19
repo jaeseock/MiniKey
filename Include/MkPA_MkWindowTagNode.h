@@ -68,6 +68,14 @@ public:
 	// «ÿ¡¶
 	virtual void Clear(void);
 
+	//------------------------------------------------------------------------------------------------//
+	// MkSceneObject
+	//------------------------------------------------------------------------------------------------//
+
+	virtual void Save(MkDataNode& node) const;
+
+	MKDEF_DECLARE_SCENE_OBJECT_HEADER;
+
 	MkWindowTagNode(const MkHashStr& name);
 	virtual ~MkWindowTagNode() { Clear(); }
 
@@ -106,8 +114,11 @@ protected:
 
 public:
 
-	static const MkHashStr NodeNamePrefix;
-
 	static const MkHashStr IconPanelName;
 	static const MkHashStr TextPanelName;
+
+	static const MkHashStr ObjKey_IconPath;
+	static const MkHashStr ObjKey_IconSOSName;
+	static const MkHashStr ObjKey_TextName;
+	static const MkHashStr ObjKey_LengthOfBetweenIT;
 };
