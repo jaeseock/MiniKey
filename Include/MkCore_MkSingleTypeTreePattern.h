@@ -296,6 +296,22 @@ public:
 		}
 	}
 
+	// 직계 조상 여부 반환
+	inline bool IsAncestorNode(const TargetClass* node) const
+	{
+		TargetClass* parentNode = m_ParentNodePtr;
+		while (true)
+		{
+			if (parentNode == NULL)
+				return false;
+
+			if (parentNode == node)
+				return true;
+
+			parentNode = parentNode->GetParentNode();
+		}
+	}
+
 	// 자손 노드 포인터 반환. 직계만이 아니라 하위 모든 노드를 대상으로 탐색
 	// (NOTE) 이름 규칙이 형제들 사이만이 아닌 하위 전체에서 유일해야 신뢰성이 보장 됨
 	inline TargetClass* GetDecendentNode(const MkHashStr& childNodeName)

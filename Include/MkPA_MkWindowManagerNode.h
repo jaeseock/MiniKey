@@ -55,6 +55,9 @@ public:
 	// 현재 프레임의 활성화 여부 반환
 	bool IsActivating(const MkHashStr& windowName) const;
 
+	// 최상위 윈도우 여부 반환(modal 이거나 첫번째 activating window)
+	bool IsFrontWindow(const MkHashStr& windowName) const;
+
 	// 다음 프레임의 활성화 지정
 	// modal 선언 가능. 단 이미 동작중인 modal window가 있을 경우 무시됨
 	void ActivateWindow(const MkHashStr& windowName, bool modal = false);
@@ -122,6 +125,8 @@ protected:
 
 	void _CheckAndRegisterWindowNode(const MkHashStr& name);
 
+	void _CloseExclusiveOpenningWindow(void);
+
 protected:
 
 	//------------------------------------------------------------------------------------------------//
@@ -166,9 +171,12 @@ protected:
 	// 대상 노드(MkWindowBaseNode*)를 그대로 가지고 있으면 편리하기는 하지만 하위 node들의 attach, detach시마다
 	// 모니터링을 통해 정보를 갱신해 주어야 함. 따라서 Update()시에만 사용하는 휘발성 참조이므로 path를 통해
 	// 유효성을 갱신해 사용하기로 함
-	MkArray< MkArray<MkHashStr> > m_CursorOwnedWindowPath;
-	MkArray< MkArray<MkHashStr> > m_KeyInputTargetWindowPath;
-	MkArray< MkArray<MkHashStr> > m_LeftCursorDraggingNodePath;
+	MkArray< MkArray<MkHashStr> > m_CursorOwnedWindowPath; // 현재 cursor를 가지고 있는 윈도우 리스트
+	MkArray< MkArray<MkHashStr> > m_KeyInputTargetWindowPath; // key 입력이 적용 될 윈도우 리스트
+	MkArray< MkArray<MkHashStr> > m_LeftCursorDraggingNodePath; // left cursor dragging 중인 윈도우 리스트
+
+	MkArray<MkHashStr> m_ExclusiveOpenningWindow; // 배타적 열림상태인 윈도우
+	MkArray<MkHashStr> m_ExclusiveWindowException; // 배타적 열림상태인 윈도우 닫힘 점검시 예외 경로
 
 public:
 

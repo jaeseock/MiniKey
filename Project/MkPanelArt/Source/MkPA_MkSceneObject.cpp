@@ -16,6 +16,7 @@
 #include "MkPA_MkScrollBarControlNode.h"
 #include "MkPA_MkSliderControlNode.h"
 #include "MkPA_MkTitleBarControlNode.h"
+#include "MkPA_MkDropDownListControlNode.h"
 #include "MkPA_MkScenePortalNode.h"
 
 //------------------------------------------------------------------------------------------------//
@@ -68,6 +69,7 @@ void MkSceneObject::InitSceneObject(void)
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ScenePortalNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_EditBoxControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ListBoxControlNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_DropDownListControlNode);
 
 	// template
 	__TSI_ObjectOp<MkPanel>::SetTemplate();
@@ -84,6 +86,7 @@ void MkSceneObject::InitSceneObject(void)
 	__TSI_ObjectOp<MkScrollBarControlNode>::SetTemplate();
 	__TSI_ObjectOp<MkSliderControlNode>::SetTemplate();
 	__TSI_ObjectOp<MkTitleBarControlNode>::SetTemplate();
+	__TSI_ObjectOp<MkDropDownListControlNode>::SetTemplate();
 	__TSI_ObjectOp<MkScenePortalNode>::SetTemplate();
 }
 
@@ -102,6 +105,7 @@ bool MkSceneObject::IsNodeClassKey(const MkHashStr& classKey)
 		(classKey == MkScrollBarControlNode::SceneClassKey()) ||
 		(classKey == MkSliderControlNode::SceneClassKey()) ||
 		(classKey == MkTitleBarControlNode::SceneClassKey()) ||
+		(classKey == MkDropDownListControlNode::SceneClassKey()) ||
 		(classKey == MkScenePortalNode::SceneClassKey()));
 }
 
@@ -122,6 +126,7 @@ MkSceneNode* MkSceneObject::CreateNodeInstance(const MkHashStr& classKey, const 
 	else if (classKey == MkScrollBarControlNode::SceneClassKey()) { node = new MkScrollBarControlNode(name); }
 	else if (classKey == MkSliderControlNode::SceneClassKey()) { node = new MkSliderControlNode(name); }
 	else if (classKey == MkTitleBarControlNode::SceneClassKey()) { node = new MkTitleBarControlNode(name); }
+	else if (classKey == MkDropDownListControlNode::SceneClassKey()) { node = new MkDropDownListControlNode(name); }
 	else if (classKey == MkScenePortalNode::SceneClassKey()) { node = new MkScenePortalNode(name); }
 
 	return node;

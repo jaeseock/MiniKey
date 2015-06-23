@@ -6,7 +6,7 @@
 //
 // ex>
 //	MkListBoxControlNode* lbNode = MkListBoxControlNode::CreateChildNode(bodyFrame, L"ListBox");
-//	lbNode->SetListBox(MkWindowThemeData::DefaultThemeName, 6, 200.f);
+//	lbNode->SetListBox(MkWindowThemeData::DefaultThemeName, 6, 200.f, MkWindowThemeData::eFT_Small);
 //	lbNode->SetAlignmentPosition(eRAP_LeftTop);
 //	lbNode->SetAlignmentOffset(MkFloat2(10.f, -30.f));
 //	lbNode->SetLocalDepth(-1.f);
@@ -35,7 +35,7 @@ public:
 	// list box interface
 	//------------------------------------------------------------------------------------------------//
 
-	void SetListBox(const MkHashStr& themeName, int onePageItemSize, float itemWidth, MkWindowThemeData::eFrameType frameType = MkWindowThemeData::eFT_Small);
+	void SetListBox(const MkHashStr& themeName, int onePageItemSize, float itemWidth, MkWindowThemeData::eFrameType frameType);
 
 	void SetOnePageItemSize(int onePageItemSize);
 
@@ -74,7 +74,8 @@ public:
 	void SortItemSequenceInDescendingOrder(void); // 내림차순 (ex> 10, 9, 8, ...)
 
 	// 모든 item을 대상으로 key prefix filtering
-	// (NOTE) 기존 sequence는 무시 됨
+	// prefix가 MkStr::EMPTY면 모든 item을 대상 지정
+	// (NOTE) 기존 sequence는 소멸됨
 	// (NOTE) 결과는 정렬되지 않은 상태이므로 추가 정렬을 원할 경우 별도의 정렬 필요
 	void UpdateItemSequenceByKeyPrefix(const MkStr& prefix);
 

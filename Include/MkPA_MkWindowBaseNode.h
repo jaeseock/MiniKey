@@ -105,6 +105,8 @@ public:
 
 	static const MkHashStr ArgKey_CursorLocalPosition;
 	static const MkHashStr ArgKey_WheelDelta;
+	static const MkHashStr ArgKey_ExclusiveWindow;
+	static const MkHashStr ArgKey_ExclusiveException;
 
 	static const MkHashStr ObjKey_WindowFrameType;
 };

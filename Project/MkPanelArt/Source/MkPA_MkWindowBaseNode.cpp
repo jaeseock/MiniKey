@@ -7,6 +7,8 @@
 
 const MkHashStr MkWindowBaseNode::ArgKey_CursorLocalPosition(L"CursorLocalPosition");
 const MkHashStr MkWindowBaseNode::ArgKey_WheelDelta(L"WheelDelta");
+const MkHashStr MkWindowBaseNode::ArgKey_ExclusiveWindow(L"ExclusiveWindow");
+const MkHashStr MkWindowBaseNode::ArgKey_ExclusiveException(L"ExclusiveException");
 
 const MkHashStr MkWindowBaseNode::ObjKey_WindowFrameType(L"WinFrameType");
 

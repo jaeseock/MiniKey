@@ -239,7 +239,7 @@ void MkListBoxControlNode::UpdateItemSequenceByKeyPrefix(const MkStr& prefix)
 	MK_STL_LOOP(looper)
 	{
 		const MkStr& itemKey = looper.GetCurrentKey().GetString();
-		if (itemKey.CheckPrefix(prefix))
+		if (prefix.Empty() || itemKey.CheckPrefix(prefix))
 		{
 			m_ItemSequence.PushBack(itemKey);
 		}
@@ -421,7 +421,10 @@ void MkListBoxControlNode::SaveObject(MkDataNode& node) const
 	}
 
 	// sequence
-	node.CreateUnitEx(ObjKey_ItemSequence, m_ItemSequence);
+	if (!m_ItemSequence.Empty())
+	{
+		node.CreateUnitEx(ObjKey_ItemSequence, m_ItemSequence);
+	}
 }
 
 MkListBoxControlNode::MkListBoxControlNode(const MkHashStr& name) : MkWindowBaseNode(name)

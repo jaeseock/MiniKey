@@ -40,20 +40,12 @@
 #include "MkPA_MkEditBoxControlNode.h"
 #include "MkPA_MkSliderControlNode.h"
 #include "MkPA_MkListBoxControlNode.h"
-//#include "MkS2D_MkBaseWindowNode.h"
-//#include "MkS2D_MkSpreadButtonNode.h"
-//#include "MkS2D_MkCheckButtonNode.h"
-//#include "MkS2D_MkScrollBarNode.h"
-//#include "MkS2D_MkEditBoxNode.h"
-//#include "MkS2D_MkTabWindowNode.h"
+#include "MkPA_MkDropDownListControlNode.h"
 
 #include "MkPA_MkWindowOpHelper.h"
 
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkStaticResourceContainer.h"
-//#include "MkS2D_MkWindowEventManager.h"
-
-//#include "MkCore_MkNameSelection.h"
 
 #include "MkCore_MkDevPanel.h"
 
@@ -158,7 +150,7 @@ public:
 			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
 
 		MkListBoxControlNode* lbNode = MkListBoxControlNode::CreateChildNode(bodyFrame, L"ListBox");
-		lbNode->SetListBox(MkWindowThemeData::DefaultThemeName, 6, 200.f);
+		lbNode->SetListBox(MkWindowThemeData::DefaultThemeName, 6, 200.f, MkWindowThemeData::eFT_Small);
 		lbNode->SetAlignmentPosition(eRAP_LeftTop);
 		lbNode->SetAlignmentOffset(MkFloat2(10.f, -30.f));
 		lbNode->SetLocalDepth(-1.f);
@@ -189,8 +181,25 @@ public:
 
 		MkCheckBoxControlNode* checkBox = MkCheckBoxControlNode::CreateChildNode(bodyFrame, L"CheckBox");
 		checkBox->SetCheckBox(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, L"체크박스 샘플", true);
+		checkBox->SetLocalDepth(-1.f);
 		checkBox->SetAlignmentPosition(eRAP_LeftTop);
 		checkBox->SetAlignmentOffset(MkFloat2(10.f, -30.f));
+
+		MkDropDownListControlNode* ddList = MkDropDownListControlNode::CreateChildNode(bodyFrame, L"DropDown");
+		ddList->SetDropDownList(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, 6);
+		ddList->SetLocalDepth(-1.f);
+		ddList->SetAlignmentPosition(eRAP_LeftTop);
+		ddList->SetAlignmentOffset(MkFloat2(10.f, -55.f));
+
+		ddList->AddItem(L"0", L"아도~ 겐!");
+		ddList->AddItem(L"1", L"아따따따류~ 겐!");
+		ddList->AddItem(L"2", L"꺕꺕꺕꺕꺕, 꺕꺕!");
+		ddList->AddItem(L"3", L"이기이기");
+		ddList->AddItem(L"4", L"~(-_-)~");
+		ddList->AddItem(L"5", L"노동 1호");
+		ddList->AddItem(L"6", L"우히히");
+		ddList->AddItem(L"7", L"다다다 나나나");
+		ddList->SetTargetItemKey(L"6");
 
 		//--------------------------------------------------//
 		// sub window mgr

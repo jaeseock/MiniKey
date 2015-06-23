@@ -88,6 +88,12 @@ MkTextNode* MkWindowTagNode::GetTagTextPtr(void)
 	return (textPanel == NULL) ? NULL : textPanel->GetTextNodePtr();
 }
 
+const MkTextNode* MkWindowTagNode::GetTagTextPtr(void) const
+{
+	const MkPanel* textPanel = GetPanel(TextPanelName);
+	return (textPanel == NULL) ? NULL : textPanel->GetTextNodePtr();
+}
+
 void MkWindowTagNode::CommitTagText(void)
 {
 	MkPanel* textPanel = GetPanel(TextPanelName);

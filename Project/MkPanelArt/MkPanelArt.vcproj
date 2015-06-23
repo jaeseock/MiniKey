@@ -561,6 +561,14 @@
 									>
 								</File>
 								<File
+									RelativePath=".\Source\MkPA_MkDropDownListControlNode.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkDropDownListControlNode.h"
+									>
+								</File>
+								<File
 									RelativePath=".\Source\MkPA_MkEditBoxControlNode.cpp"
 									>
 								</File>

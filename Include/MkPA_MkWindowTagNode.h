@@ -53,6 +53,9 @@ public:
 	// text에 대한 휘발성 수정(저장되지 않음)을 위한 text node pointer 반환
 	MkTextNode* GetTagTextPtr(void);
 
+	// text에 대한 참조를 위한 text node pointer 반환
+	const MkTextNode* GetTagTextPtr(void) const;
+
 	// text 수정 사항 반영
 	void CommitTagText(void);
 

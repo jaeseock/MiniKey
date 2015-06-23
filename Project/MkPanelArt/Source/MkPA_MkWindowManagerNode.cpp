@@ -83,6 +83,12 @@ bool MkWindowManagerNode::DeleteWindow(const MkHashStr& windowName)
 			}
 		}
 
+		if ((!m_ExclusiveOpenningWindow.Empty()) && (windowName == m_ExclusiveOpenningWindow[0]))
+		{
+			m_ExclusiveOpenningWindow.Clear();
+			m_ExclusiveWindowException.Clear();
+		}
+
 		m_RootWindowList.Erase(windowName);
 
 		RemoveChildNode(windowName);
@@ -93,7 +99,13 @@ bool MkWindowManagerNode::DeleteWindow(const MkHashStr& windowName)
 bool MkWindowManagerNode::IsActivating(const MkHashStr& windowName) const
 {
 	return m_RootWindowList.Exist(windowName) ?
-		((m_ActivatingWindows.FindFirstInclusion(MkArraySection(0), windowName) != MKDEF_ARRAY_ERROR) || (windowName == m_ModalWindow)): false;
+		((m_ActivatingWindows.FindFirstInclusion(MkArraySection(0), windowName) != MKDEF_ARRAY_ERROR) || (windowName == m_ModalWindow)) : false;
+}
+
+bool MkWindowManagerNode::IsFrontWindow(const MkHashStr& windowName) const
+{
+	return m_RootWindowList.Exist(windowName) ?
+		(((!m_ActivatingWindows.Empty()) && (windowName == m_ActivatingWindows[0])) || (windowName == m_ModalWindow)) : false;
 }
 
 void MkWindowManagerNode::ActivateWindow(const MkHashStr& windowName, bool modal)
@@ -144,6 +156,7 @@ const MkStr NODE_EVT_NAME[] =
 	MK_VALUE_TO_STRING(ePA_SNE_Deactivate),
 	MK_VALUE_TO_STRING(ePA_SNE_OnFocus),
 	MK_VALUE_TO_STRING(ePA_SNE_LostFocus),
+	MK_VALUE_TO_STRING(ePA_SNE_ToggleExclusiveWindow),
 	MK_VALUE_TO_STRING(ePA_SNE_CloseWindow),
 	MK_VALUE_TO_STRING(ePA_SNE_CheckOn),
 	MK_VALUE_TO_STRING(ePA_SNE_CheckOff),
@@ -161,7 +174,8 @@ const MkStr NODE_EVT_NAME[] =
 	MK_VALUE_TO_STRING(ePA_SNE_ItemMBtnDBClicked),
 	MK_VALUE_TO_STRING(ePA_SNE_ItemRBtnPressed),
 	MK_VALUE_TO_STRING(ePA_SNE_ItemRBtnReleased),
-	MK_VALUE_TO_STRING(ePA_SNE_ItemRBtnDBClicked)
+	MK_VALUE_TO_STRING(ePA_SNE_ItemRBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_DropDownItemSet)
 };
 
 #endif
@@ -175,6 +189,50 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 			if (!path.Empty())
 			{
 				DeactivateWindow(path[0]); // path의 root를 닫음
+			}
+		}
+		break;
+
+	case ePA_SNE_ToggleExclusiveWindow:
+		{
+			MkArray<MkHashStr> targetPath;
+			MkArray<MkHashStr> exceptionPath;
+			if (argument != NULL)
+			{
+				MkArray<MkHashStr> buffer;
+				if (argument->GetDataEx(MkWindowBaseNode::ArgKey_ExclusiveWindow, buffer))
+				{
+					targetPath = path;
+					targetPath += buffer; // path에 추가 하위 경로를 더해 최종 경로를 만듬
+				}
+
+				buffer.Clear();
+				if (argument->GetDataEx(MkWindowBaseNode::ArgKey_ExclusiveException, buffer))
+				{
+					exceptionPath = path;
+					exceptionPath += buffer; // path에 추가 하위 경로를 더해 최종 경로를 만듬
+				}
+			}
+
+			if ((!targetPath.Empty()) && (targetPath.GetSize() > 1)) // window manager나 root window가 아니고
+			{
+				MkSceneNode* targetNode = GetChildNode(targetPath);
+				if ((targetNode != NULL) && targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode)) // window base 파생 객체면
+				{
+					bool newOpen = (m_ExclusiveOpenningWindow.Empty() || (targetPath != m_ExclusiveOpenningWindow));
+
+					if (!m_ExclusiveOpenningWindow.Empty())
+					{
+						_CloseExclusiveOpenningWindow();
+					}
+
+					if (newOpen)
+					{
+						targetNode->SetVisible(true);
+						m_ExclusiveOpenningWindow = targetPath;
+						m_ExclusiveWindowException = exceptionPath;
+					}
+				}
 			}
 		}
 		break;
@@ -247,6 +305,37 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 			}
 			break;
 
+		case ePA_SNE_ToggleExclusiveWindow:
+			{
+				MkArray<MkHashStr> buffer;
+				argument->GetDataEx(MkWindowBaseNode::ArgKey_ExclusiveWindow, buffer);
+				// ArgKey_ExclusiveException 정보는 표시하지 않음
+
+				MK_INDEXING_LOOP(path, i)
+				{
+					if (i > 0)
+					{
+						msg += L".";
+					}
+					msg += path[i].GetString();
+				}
+
+				if ((!path.Empty()) && (!buffer.Empty()))
+				{
+					msg += L".";
+				}
+
+				MK_INDEXING_LOOP(buffer, i)
+				{
+					if (i > 0)
+					{
+						msg += L".";
+					}
+					msg += buffer[i].GetString();
+				}
+			}
+			break;
+
 		case ePA_SNE_ScrollBarMoved:
 			{
 				MkArray<int> buffer;
@@ -294,6 +383,7 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 		case ePA_SNE_ItemRBtnPressed:
 		case ePA_SNE_ItemRBtnReleased:
 		case ePA_SNE_ItemRBtnDBClicked:
+		case ePA_SNE_DropDownItemSet:
 			{
 				MkHashStr buffer;
 				if (argument->GetDataEx(MkListBoxControlNode::ArgKey_Item, buffer, 0))
@@ -479,6 +569,48 @@ void MkWindowManagerNode::Update(double currTime)
 
 		MkFloat2 fCursorPos(static_cast<float>(cursorPosition.x), static_cast<float>(cursorPosition.y));
 		_PickWindowBaseNode(pickTarget, cursorOwnedNodeBuffer, cursorOwnedPathBuffer, fCursorPos);
+	}
+
+	// 배타적 열림 상태 윈도우가 존재 할 경우 유지 조건을 만족시키지 못하면 닫음
+	if (!m_ExclusiveOpenningWindow.Empty())
+	{
+		bool closeExclusiveOpenningWindow = true;
+		if (IsFrontWindow(m_ExclusiveOpenningWindow[0])) // 소속 window가 front면
+		{
+			if (anyBtnPressed)
+			{
+				if (cursorInside && (!cursorOwnedNodeBuffer.Empty())) // 영역 안에서 hit가 발생했으면
+				{
+					MkSceneNode* targetNode = GetChildNode(m_ExclusiveOpenningWindow);
+					MkSceneNode* exceptionNode = m_ExclusiveWindowException.Empty() ? NULL : GetChildNode(m_ExclusiveWindowException);
+					
+					if (targetNode != NULL)
+					{
+						MK_INDEXING_LOOP(cursorOwnedNodeBuffer, i)
+						{
+							MkSceneNode* hitNode = cursorOwnedNodeBuffer[i];
+
+							// 대상/예외 node가 hit node 혹은 hit node의 조상이면 유지
+							if (((targetNode == hitNode) || hitNode->IsAncestorNode(targetNode)) ||
+								((exceptionNode != NULL) && ((exceptionNode == hitNode) || hitNode->IsAncestorNode(exceptionNode))))
+							{
+								closeExclusiveOpenningWindow = false; 
+								break;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				closeExclusiveOpenningWindow = false; // btn 입력이 없으면 유지
+			}
+		}
+
+		if (closeExclusiveOpenningWindow)
+		{
+			_CloseExclusiveOpenningWindow();
+		}
 	}
 
 	// 이전 프레임의 cursor owner 중 현재 프레임에 cursor를 잃은 window를 추출해 cursor lost 통지
@@ -814,6 +946,8 @@ void MkWindowManagerNode::Clear(void)
 	m_CursorOwnedWindowPath.Clear();
 	m_KeyInputTargetWindowPath.Clear();
 	m_LeftCursorDraggingNodePath.Clear();
+	m_ExclusiveOpenningWindow.Clear();
+	m_ExclusiveWindowException.Clear();
 	
 	MkSceneNode::Clear();
 }
@@ -1064,6 +1198,21 @@ void MkWindowManagerNode::_CheckAndRegisterWindowNode(const MkHashStr& name)
 		return;
 
 	m_RootWindowList.Create(name, winNode);
+}
+
+void MkWindowManagerNode::_CloseExclusiveOpenningWindow(void)
+{
+	if (!m_ExclusiveOpenningWindow.Empty())
+	{
+		MkSceneNode* targetNode = GetChildNode(m_ExclusiveOpenningWindow);
+		if (targetNode != NULL)
+		{
+			targetNode->SetVisible(false);
+		}
+
+		m_ExclusiveOpenningWindow.Clear();
+		m_ExclusiveWindowException.Clear();
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

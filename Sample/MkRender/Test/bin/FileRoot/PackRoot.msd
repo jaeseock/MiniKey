@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2015.06.19 (18:27:37)
+//   - time stamp : 2015.06.23 (18:26:09)
 //   - exporter   : client (Test)
 //--------------------------------------------------------------------//
 
@@ -440,10 +440,69 @@ Node "[SUBNODES]"
 									"Small";
 								vec2 ClientSize = (12.000, 12.000);
 								str ComponentType = "eCT_CheckBoxBtn";
+								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 205.000);
 								bool OnCheck = Yes;
 								str ThemeName = "Default";
 								str WinFrameType = "eFT_Small";
+							}
+
+							Node "DropDown" : "MkDropDownListControlNode"
+							{
+								vec2 AlignOffset = (10.000, -55.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (200.000, 12.000);
+								str ComponentType = "eCT_DefaultBox";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 180.000);
+								int MaxOnePageItemSize = 6;
+								str TargetItemKey = "6";
+								str ThemeName = "Default";
+								str WinFrameType = "eFT_Small";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:ListBox" : "MkListBoxControlNode"
+									{
+										int AlignPosition = 82;
+										uint Attribute = 30;
+										vec2 ClientSize = (200.000, 108.000);
+										str ComponentType = "eCT_DefaultBox";
+										str ItemKeyList = // [8]
+											"0" /
+											"1" /
+											"2" /
+											"3" /
+											"4" /
+											"5" /
+											"6" /
+											"7";
+										str ItemMsgList = // [8]
+											"아도~ 겐!" /
+											"아따따따류~ 겐!" /
+											"꺕꺕꺕꺕꺕, 꺕꺕!" /
+											"이기이기" /
+											"~(-_-)~" /
+											"노동 1호" /
+											"우히히" /
+											"다다다 나나나";
+										str ItemSequence = // [8]
+											"0" /
+											"1" /
+											"2" /
+											"3" /
+											"4" /
+											"5" /
+											"6" /
+											"7";
+										float ItemWidth = 194.000;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (0.000, -114.000);
+										int OnePageItemSize = 6;
+										str ThemeName = "Default";
+										str WinFrameType = "eFT_Small";
+									}
+								}
 							}
 						}
 					}
