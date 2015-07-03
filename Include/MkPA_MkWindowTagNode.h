@@ -98,7 +98,7 @@ protected:
 		eUC_Text,
 		eUC_Region,
 
-		eUC_WindowTagNodeBandwidth,
+		eUC_WindowTagNodeBandwidth
 	};
 
 	virtual void _ExcuteUpdateCommand(void);

@@ -1,6 +1,7 @@
 
 #include "MkCore_MkBitField32.h"
 #include "MkCore_MkType2.h"
+#include "MkCore_MkRect.h"
 #include "MkCore_MkColor.h"
 #include "MkCore_MkMat3.h"
 #include "MkCore_MkQuaternion.h"
@@ -25,6 +26,12 @@ const MkInt642 MkInt642::Zero(0, 0);
 const MkUInt642 MkUInt642::Zero(0, 0);
 const MkFloat2 MkFloat2::Zero(0.f, 0.f);
 const MkDouble2 MkDouble2::Zero(0., 0.);
+
+// MkRect
+const MkIntRect MkIntRect::EMPTY(MkInt2::Zero, MkInt2::Zero);
+const MkInt64Rect MkInt64Rect::EMPTY(MkInt642::Zero, MkInt642::Zero);
+const MkFloatRect MkFloatRect::EMPTY(MkFloat2::Zero, MkFloat2::Zero);
+const MkDoubleRect MkDoubleRect::EMPTY(MkDouble2::Zero, MkDouble2::Zero);
 
 // MkVec2
 const MkVec2 MkVec2::Zero(0.f, 0.f);

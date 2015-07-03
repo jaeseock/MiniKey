@@ -31,6 +31,7 @@ public:
 	const MkWindowThemeFormData* GetFormData(const MkHashStr& themeName, MkWindowThemeData::eComponentType compType, const MkHashStr& formName);
 
 	// theme setting
+	inline bool IsValidTheme(const MkHashStr& themeName) const { return m_Themes.Exist(themeName); }
 	float GetFrameSize(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;
 	const MkArray<MkHashStr>& GetCaptionTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;
 	const MkArray<MkHashStr>& GetEditTextNode(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType) const;

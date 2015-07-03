@@ -240,6 +240,8 @@ public:
 
 	MkType2<DataType> position;
 	MkType2<DataType> size;
+
+	static const MkRect<DataType> EMPTY;
 };
 
 //------------------------------------------------------------------------------------------------//

@@ -284,6 +284,26 @@ MkFloat2 MkWindowThemedNode::ConvertWindowToClientSize
 	return clientSize;
 }
 
+MkFloat2 MkWindowThemedNode::ConvertClientToWindowSize
+(const MkHashStr& themeName, MkWindowThemeData::eComponentType componentType, const MkHashStr& customFormName, const MkFloat2& clientSize)
+{
+	MkFloat2 windowSize = clientSize;
+	const MkWindowThemeFormData* formData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(themeName, componentType, customFormName);
+	if (formData != NULL)
+	{
+		windowSize.x += formData->GetLeftMargin();
+		windowSize.x += formData->GetRightMargin();
+		windowSize.y += formData->GetTopMargin();
+		windowSize.y += formData->GetBottomMargin();
+	}
+	return windowSize;
+}
+
+MkFloat2 MkWindowThemedNode::CalculateWindowSize(void) const
+{
+	return ConvertClientToWindowSize(GetThemeName(), GetComponentType(), GetCustomForm(), GetClientSize());
+}
+
 bool MkWindowThemedNode::_UpdateThemeComponent(void)
 {
 	m_UpdateCommand.Set(eUC_Region); // theme, component, shadow가 변경되면 region도 갱신되야 함

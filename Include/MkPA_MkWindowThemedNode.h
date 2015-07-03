@@ -124,6 +124,15 @@ public:
 	static MkFloat2 ConvertWindowToClientSize
 		(const MkHashStr& themeName, MkWindowThemeData::eComponentType componentType, const MkHashStr& customFormName, const MkFloat2& windowSize);
 
+	// client size를 regular component/custom form margin을 반영한 window size로 변환
+	static MkFloat2 ConvertClientToWindowSize
+		(const MkHashStr& themeName, MkWindowThemeData::eComponentType componentType, const MkHashStr& customFormName, const MkFloat2& clientSize);
+
+	// 현 객체에 세팅된 theme 및 client size를 기준으로 예상되는 window size를 계산해 반환
+	// 일반적인 객체는 Update() 호출 이후에 window size가 갱신되기 때문에 미리 필요할 경우에 사용
+	// (NOTE) theme name, component type(custom form), client size가 세팅되어 있어야 함
+	MkFloat2 CalculateWindowSize(void) const;
+
 	//------------------------------------------------------------------------------------------------//
 
 protected:

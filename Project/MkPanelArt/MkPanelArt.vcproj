@@ -533,14 +533,6 @@
 								RelativePath="..\..\Include\MkPA_MkWindowBaseNode.h"
 								>
 							</File>
-							<File
-								RelativePath=".\Source\MkPA_MkWindowOpHelper.cpp"
-								>
-							</File>
-							<File
-								RelativePath="..\..\Include\MkPA_MkWindowOpHelper.h"
-								>
-							</File>
 							<Filter
 								Name="Control node"
 								>
@@ -618,6 +610,26 @@
 								</File>
 								<File
 									RelativePath="..\..\Include\MkPA_MkScenePortalNode.h"
+									>
+								</File>
+							</Filter>
+							<Filter
+								Name="Helper"
+								>
+								<File
+									RelativePath=".\Source\MkPA_MkWindowDispositioner.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkWindowDispositioner.h"
+									>
+								</File>
+								<File
+									RelativePath=".\Source\MkPA_MkWindowFactory.cpp"
+									>
+								</File>
+								<File
+									RelativePath="..\..\Include\MkPA_MkWindowFactory.h"
 									>
 								</File>
 							</Filter>

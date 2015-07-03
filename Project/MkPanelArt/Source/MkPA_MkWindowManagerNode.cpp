@@ -1,5 +1,6 @@
 
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkPairArray.h"
 #include "MkCore_MkInputManager.h"
 #include "MkCore_MkDevPanel.h"
 #include "MkCore_MkDataNode.h"
@@ -40,7 +41,7 @@ bool MkWindowManagerNode::AttachWindow(MkWindowBaseNode* windowNode)
 		return false;
 
 	const MkHashStr& windowName = windowNode->GetNodeName();
-	MK_CHECK(!m_UpdateLock, L"MkWindowManagerNode Update() 중에 " + windowName.GetString() + " window 등록 시도")
+	MK_CHECK(!m_AttachWindowLock, L"MkSceneNode::Update() 중에 " + windowName.GetString() + " window 등록 시도")
 		return false;
 
 	MK_CHECK(!ChildExist(windowName), L"MkWindowManagerNode에 이미 존재하는 " + windowName.GetString() + " window 등록 시도")
@@ -50,6 +51,8 @@ bool MkWindowManagerNode::AttachWindow(MkWindowBaseNode* windowNode)
 	if (ok)
 	{
 		windowNode->SetVisible(false);
+		windowNode->SetSkipUpdateWhileInvisible(true); // visible이 아니면 update 하지 않음
+
 		m_RootWindowList.Create(windowName, windowNode);
 	}
 	return ok;
@@ -57,41 +60,47 @@ bool MkWindowManagerNode::AttachWindow(MkWindowBaseNode* windowNode)
 
 bool MkWindowManagerNode::DeleteWindow(const MkHashStr& windowName)
 {
-	MK_CHECK(!m_UpdateLock, L"MkWindowManagerNode Update() 중에 " + windowName.GetString() + " window 삭제 시도")
-		return false;
-
 	bool ok = m_RootWindowList.Exist(windowName);
 	if (ok)
 	{
-		m_ActivatingWindows.EraseFirstInclusion(MkArraySection(0), windowName);
-
-		if (windowName == m_ModalWindow)
+		// 현재 lock이 걸려 있으면 다음 Update()시 삭제
+		if (m_DeleteWindowLock)
 		{
-			m_ModalWindow.Clear();
+			m_DeletingWindow.PushBack(windowName);
 		}
-
-		if (windowName == m_CurrentFocusWindow)
+		// 그렇지 않으면 바로 반영
+		else
 		{
-			if (m_ActivatingWindows.Empty())
+			m_ActivatingWindows.EraseFirstInclusion(MkArraySection(0), windowName);
+
+			if (windowName == m_ModalWindow)
 			{
-				m_CurrentFocusWindow.Clear();
+				m_ModalWindow.Clear();
 			}
-			else
+
+			if (windowName == m_CurrentFocusWindow)
 			{
-				m_CurrentFocusWindow = m_ActivatingWindows[0];
-				m_RootWindowList[m_CurrentFocusWindow]->SendNodeCommandTypeEvent(ePA_SNE_OnFocus, NULL);
+				if (m_ActivatingWindows.Empty())
+				{
+					m_CurrentFocusWindow.Clear();
+				}
+				else
+				{
+					m_CurrentFocusWindow = m_ActivatingWindows[0];
+					m_RootWindowList[m_CurrentFocusWindow]->SendNodeCommandTypeEvent(ePA_SNE_OnFocus, NULL);
+				}
 			}
+
+			if ((!m_ExclusiveOpenningWindow.Empty()) && (windowName == m_ExclusiveOpenningWindow[0]))
+			{
+				m_ExclusiveOpenningWindow.Clear();
+				m_ExclusiveWindowException.Clear();
+			}
+
+			m_RootWindowList.Erase(windowName);
+
+			RemoveChildNode(windowName);
 		}
-
-		if ((!m_ExclusiveOpenningWindow.Empty()) && (windowName == m_ExclusiveOpenningWindow[0]))
-		{
-			m_ExclusiveOpenningWindow.Clear();
-			m_ExclusiveWindowException.Clear();
-		}
-
-		m_RootWindowList.Erase(windowName);
-
-		RemoveChildNode(windowName);
 	}
 	return ok;
 }
@@ -404,8 +413,19 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 
 void MkWindowManagerNode::Update(double currTime)
 {
-	// LOCK!!!
-	m_UpdateLock = true;
+	//------------------------------------------------------------------------------------------------//
+	// reserved deletion
+	//------------------------------------------------------------------------------------------------//
+
+	if (!m_DeletingWindow.Empty())
+	{
+		MK_INDEXING_LOOP(m_DeletingWindow, i)
+		{
+			DeleteWindow(m_DeletingWindow[i]);
+		}
+
+		m_DeletingWindow.Clear();
+	}
 
 	//------------------------------------------------------------------------------------------------//
 	// world position 선 반영
@@ -439,6 +459,8 @@ void MkWindowManagerNode::Update(double currTime)
 
 	if (!m_ActivationEvent.Empty())
 	{
+		MkPairArray<MkWindowBaseNode*, bool> commandTarget(m_ActivationEvent.GetSize());
+
 		MK_INDEXING_LOOP(m_ActivationEvent, i)
 		{
 			const _ActivationEvent& evt = m_ActivationEvent[i];
@@ -477,8 +499,7 @@ void MkWindowManagerNode::Update(double currTime)
 					}
 				}
 
-				// send command
-				winNode->SendNodeCommandTypeEvent(ePA_SNE_Activate, NULL);
+				commandTarget.PushBack(winNode, true);
 			}
 			else // 비활성화. active -> deactive만 허용
 			{
@@ -499,13 +520,18 @@ void MkWindowManagerNode::Update(double currTime)
 						focusWindowName = m_ActivatingWindows[0];
 					}
 
-					// send command
-					winNode->SendNodeCommandTypeEvent(ePA_SNE_Deactivate, NULL);
+					commandTarget.PushBack(winNode, false);
 				}
 			}
 		}
 
 		m_ActivationEvent.Clear();
+
+		// send command
+		MK_INDEXING_LOOP(commandTarget, i)
+		{
+			commandTarget.GetKeyAt(i)->SendNodeCommandTypeEvent(commandTarget.GetFieldAt(i) ? ePA_SNE_Activate : ePA_SNE_Deactivate, NULL);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------//
@@ -556,6 +582,9 @@ void MkWindowManagerNode::Update(double currTime)
 	// 현 프레임에서 cursor를 소유한 window 목록
 	MkArray<MkWindowBaseNode*> cursorOwnedNodeBuffer;
 	MkArray< MkArray<MkHashStr> > cursorOwnedPathBuffer;
+
+	// LOCK!!!
+	m_DeleteWindowLock = true;
 
 	// cursor가 client 영역 안에 존재하면 cursor가 위치한 window를 picking으로 검출
 	if (cursorInside)
@@ -615,7 +644,7 @@ void MkWindowManagerNode::Update(double currTime)
 
 	// 이전 프레임의 cursor owner 중 현재 프레임에 cursor를 잃은 window를 추출해 cursor lost 통지
 	MkArray< MkArray<MkHashStr> > diffSets;
-	m_CursorOwnedWindowPath.GetDefferenceOfSets(cursorOwnedPathBuffer, diffSets); // diffSets = m_CursorOwnedWindowPath - cursorOwnedPathBuffer
+	m_CursorOwnedWindowPath.GetDifferenceOfSets(cursorOwnedPathBuffer, diffSets); // diffSets = m_CursorOwnedWindowPath - cursorOwnedPathBuffer
 
 	MkArray<MkWindowBaseNode*> cursorLostNodeBuffer;
 	_UpdateWindowPath(diffSets, cursorLostNodeBuffer);
@@ -896,6 +925,7 @@ void MkWindowManagerNode::Update(double currTime)
 				effectNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
 				effectNode->SetComponentType(MkWindowThemeData::eCT_DarkZone);
 				effectNode->SetFormState(MkWindowThemeFormData::eS_Default);
+				effectNode->SetSkipUpdateWhileInvisible(true);
 			}
 		}
 
@@ -919,10 +949,15 @@ void MkWindowManagerNode::Update(double currTime)
 	
 	//------------------------------------------------------------------------------------------------//
 
+	// LOCK!!!
+	m_AttachWindowLock = true;
+
+	// update
 	MkSceneNode::Update(currTime);
 
 	// LOCK!!!
-	m_UpdateLock = false;
+	m_AttachWindowLock = false;
+	m_DeleteWindowLock = false;
 }
 
 void MkWindowManagerNode::Clear(void)
@@ -931,6 +966,7 @@ void MkWindowManagerNode::Clear(void)
 	m_ModalWindow.Clear();
 	m_CurrentFocusWindow.Clear();
 
+	m_DeletingWindow.Clear();
 	m_ActivationEvent.Clear();
 
 	MkHashMapLooper<MkHashStr, MkWindowBaseNode*> looper(m_RootWindowList);
@@ -940,7 +976,8 @@ void MkWindowManagerNode::Clear(void)
 	}
 	m_RootWindowList.Clear();
 
-	m_UpdateLock = false;
+	m_AttachWindowLock = false;
+	m_DeleteWindowLock = false;
 	m_ValidInputAtThisFrame = false;
 	m_ActivationEvent.Clear();
 	m_CursorOwnedWindowPath.Clear();
@@ -1067,7 +1104,8 @@ MkWindowManagerNode::MkWindowManagerNode(const MkHashStr& name) : MkSceneNode(na
 	
 	m_ActivatingWindows.Reserve(256);
 
-	m_UpdateLock = false;
+	m_AttachWindowLock = false;
+	m_DeleteWindowLock = false;
 	m_ScenePortalBind = false;
 	m_ValidInputAtThisFrame = false;
 }

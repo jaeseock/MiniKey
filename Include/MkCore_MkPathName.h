@@ -173,6 +173,12 @@ public:
 	// 경로 수정
 	//------------------------------------------------------------------------------------------------//
 
+	// 파일명 수정
+	// 경로명에 파일명이 존재하는 경우 name으로 교체
+	// return : 성공 여부. 디렉토리 경로의 경우 항상 false
+	// ex> (L"D:\\test\\test.exe").ChangeFileName(L"newtest") -> L"D:\\test\\newtest.exe"
+	bool ChangeFileName(const MkStr& name);
+
 	// 확장자 수정
 	// 경로명에 확장자가 존재하는 경우 extension으로 교체
 	// return : 성공 여부. 디렉토리 경로의 경우 항상 false

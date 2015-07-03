@@ -105,6 +105,10 @@ public:
 	inline void SetVisible(bool visible) { m_Attribute.Assign(ePA_SNA_Visible, visible); }
 	inline bool GetVisible(void) const { return m_Attribute[ePA_SNA_Visible]; }
 
+	// invisible 상태에서는 Update() 넘김 설정. default는 false
+	inline void SetSkipUpdateWhileInvisible(bool enable) { m_Attribute.Assign(ePA_SNA_SkipUpdateWhileInvisible, enable); }
+	inline bool GetSkipUpdateWhileInvisible(void) const { return m_Attribute[ePA_SNA_SkipUpdateWhileInvisible]; }
+
 	//------------------------------------------------------------------------------------------------//
 	// event
 	//------------------------------------------------------------------------------------------------//

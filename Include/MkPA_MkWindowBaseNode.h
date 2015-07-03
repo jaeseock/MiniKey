@@ -10,6 +10,8 @@
 #include "MkPA_MkWindowThemedNode.h"
 
 
+class MkWindowManagerNode;
+
 class MkWindowBaseNode : public MkWindowThemedNode
 {
 public:
@@ -19,6 +21,9 @@ public:
 
 	// alloc child instance
 	static MkWindowBaseNode* CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName);
+
+	// 등록되어 있는 window manager instance 반환
+	MkWindowManagerNode* GetWindowManagerNode(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// window system interface
@@ -62,6 +67,20 @@ public:
 	inline bool IsQuadForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_QuadUnit); }
 
 	//------------------------------------------------------------------------------------------------//
+	// call back
+	// cursor click event 발생시 대상 window에 통지 : ePA_SNE_Cursor(L/M/R)Btn(Pressed/Released/DBClicked)
+	// 호출 시점은 SendNodeReportTypeEvent(cursor event) 호출 직후
+	// (NOTE) call back target과 caller는 같은 window manager에 등록되어 있어야 함
+	//------------------------------------------------------------------------------------------------//
+
+	// 대상 window 경로 지정/반환
+	inline void SetCallBackTargetWindowPath(const MkArray<MkHashStr>& targetPath) { m_CallBackTargetWindowPath = targetPath; }
+	inline const MkArray<MkHashStr>& GetCallBackTargetWindowPath(void) const { return m_CallBackTargetWindowPath; }
+
+	// cursor click event 발생 통지
+	virtual void CallBackOperation(ePA_SceneNodeEvent evt, const MkArray<MkHashStr>& callerPath) {}
+
+	//------------------------------------------------------------------------------------------------//
 	// attribute
 	//------------------------------------------------------------------------------------------------//
 
@@ -97,9 +116,13 @@ protected:
 
 protected:
 
+	// 설정 정보
 	MkWindowThemeData::eFrameType m_WindowFrameType;
 
+	// 휘발성 정보
 	bool m_CursorInside;
+
+	MkArray<MkHashStr> m_CallBackTargetWindowPath;
 
 public:
 

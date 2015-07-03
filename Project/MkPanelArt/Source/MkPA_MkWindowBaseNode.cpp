@@ -2,6 +2,7 @@
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkDataNode.h"
 
+#include "MkPA_MkWindowManagerNode.h"
 #include "MkPA_MkWindowBaseNode.h"
 
 
@@ -20,6 +21,12 @@ MkWindowBaseNode* MkWindowBaseNode::CreateChildNode(MkSceneNode* parentNode, con
 	MkWindowBaseNode* node = __TSI_SceneNodeDerivedInstanceOp<MkWindowBaseNode>::Alloc(parentNode, childNodeName);
 	MK_CHECK(node != NULL, childNodeName.GetString() + L" MkWindowBaseNode 생성 실패") {}
 	return node;
+}
+
+MkWindowManagerNode* MkWindowBaseNode::GetWindowManagerNode(void)
+{
+	MkSceneNode* mgrNode = FindNearestDerivedNode(ePA_SNT_WindowManagerNode);
+	return (mgrNode == NULL) ? NULL : dynamic_cast<MkWindowManagerNode*>(mgrNode);
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -179,6 +186,7 @@ void MkWindowBaseNode::Clear(void)
 {
 	m_WindowFrameType = MkWindowThemeData::eFT_None;
 	m_CursorInside = false;
+	m_CallBackTargetWindowPath.Clear();
 
 	MkWindowThemedNode::Clear();
 }
@@ -234,12 +242,40 @@ MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(n
 
 void MkWindowBaseNode::_StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position)
 {
+	// report
 	MkFloat2 worldPos(static_cast<float>(position.x), static_cast<float>(position.y));
 	MkFloat2 localPos = worldPos - GetWorldPosition();
 
 	MkDataNode arg;
 	arg.CreateUnit(MkWindowBaseNode::ArgKey_CursorLocalPosition, MkVec2(localPos.x, localPos.y));
 	StartNodeReportTypeEvent(evt, &arg);
+
+	// call back
+	if (!m_CallBackTargetWindowPath.Empty())
+	{
+		do
+		{
+			MkSceneNode* mgrNode = FindNearestDerivedNode(ePA_SNT_WindowManagerNode); // 소속 window mananger
+			if (mgrNode == NULL)
+				break;
+
+			MkSceneNode* targetNode = mgrNode->GetChildNode(m_CallBackTargetWindowPath); // call back을 호출 할 node
+			if ((targetNode == NULL) || (!targetNode->IsDerivedFrom(ePA_SNT_WindowBaseNode)))
+				break;
+
+			MkWindowBaseNode* winBase = dynamic_cast<MkWindowBaseNode*>(targetNode);
+			if (winBase == NULL)
+				break;
+
+			MkArray<MkHashStr> myPath;
+			GetWindowPath(myPath);
+			winBase->CallBackOperation(evt, myPath);
+			return;
+		}
+		while (false);
+
+		m_CallBackTargetWindowPath.Clear(); // 부정 경로. 초기화
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

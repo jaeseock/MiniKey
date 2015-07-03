@@ -104,6 +104,9 @@ bool MkSceneNode::PickPanel
 
 void MkSceneNode::Update(double currTime)
 {
+	if (GetSkipUpdateWhileInvisible() && (!GetVisible()))
+		return;
+
 	// transform
 	m_Transform.Update((m_ParentNodePtr == NULL) ? NULL : m_ParentNodePtr->__GetTransformPtr());
 
@@ -132,11 +135,14 @@ void MkSceneNode::Update(double currTime)
 		MK_STL_LOOP(looper)
 		{
 			MkSceneNode* node = looper.GetCurrentField();
-			node->Update(currTime);
-
-			if (node->GetVisible())
+			if (node->GetVisible() || (!node->GetSkipUpdateWhileInvisible()))
 			{
-				m_TotalAABR.UpdateToUnion(node->GetTotalAABR());
+				node->Update(currTime);
+
+				if (node->GetVisible())
+				{
+					m_TotalAABR.UpdateToUnion(node->GetTotalAABR());
+				}
 			}
 		}
 	}
@@ -230,7 +236,7 @@ void MkSceneNode::Save(MkDataNode& node) const
 		if (!panelExceptions.Empty())
 		{
 			MkArray<MkHashStr> diffs;
-			targets.GetDefferenceOfSets(panelExceptions, diffs); // diffs = target - exceptions
+			targets.GetDifferenceOfSets(panelExceptions, diffs); // diffs = target - exceptions
 			targets = diffs;
 		}
 
@@ -269,7 +275,7 @@ void MkSceneNode::Save(MkDataNode& node) const
 		if (!nodeExceptions.Empty())
 		{
 			MkArray<MkHashStr> diffs;
-			targets.GetDefferenceOfSets(nodeExceptions, diffs); // diffs = target - exceptions
+			targets.GetDifferenceOfSets(nodeExceptions, diffs); // diffs = target - exceptions
 			targets = diffs;
 		}
 

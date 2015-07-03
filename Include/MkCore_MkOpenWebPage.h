@@ -11,7 +11,7 @@ class MkOpenWebPage
 {
 public:
 	// 인터넷 익스플로어에서 웹 페이지 열기
-	static void Open(const MkStr& pageUrl, int posX, int posY, int width, int height);
+	static HWND Open(const MkStr& pageUrl, int posX, int posY, int width, int height);
 };
 
 #endif

@@ -633,6 +633,22 @@ unsigned int MkPathName::GetWrittenTime(void) const
 
 //------------------------------------------------------------------------------------------------//
 
+bool MkPathName::ChangeFileName(const MkStr& name)
+{
+	assert(!name.Empty());
+
+	MkPathName tmpPath;
+	MkStr tmpName, tmpExt;
+	SplitPath(tmpPath, tmpName, tmpExt);
+	if (tmpExt.Empty())
+		return false;
+
+	*this = tmpPath;
+	*this += name;
+	*this += tmpExt;
+	return true;
+}
+
 bool MkPathName::ChangeFileExtension(const MkStr& extension)
 {
 	assert(!extension.Empty());

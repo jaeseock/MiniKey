@@ -29,6 +29,13 @@
 // window system에서 control에 해당 하는 node, panel name prefix
 #define MKDEF_PA_WIN_CONTROL_PREFIX L"__#WC:"
 
+// window system에서 각 component간 기본 x, y 거리
+#define MKDEF_PA_DEFAULT_LENGTH_BETWEEN_WIN_COMPONENT_X 6.f
+#define MKDEF_PA_DEFAULT_LENGTH_BETWEEN_WIN_COMPONENT_Y 8.f
+
+// window system에서 body frame의 기본 margin(x, y)
+#define MKDEF_PA_DEFAULT_WIN_FRAME_MARGIN 4.f
+
 //------------------------------------------------------------------------------------------------//
 
 

@@ -41,15 +41,14 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// window 등록/삭제
-	// (NOTE) Update()중 호출 금지
 	//------------------------------------------------------------------------------------------------//
 
 	bool AttachWindow(MkWindowBaseNode* windowNode);
+
 	bool DeleteWindow(const MkHashStr& windowName);
 
 	//------------------------------------------------------------------------------------------------//
 	// 활성화/비활성화
-	// (NOTE) 지정은 다음 프레임때 반영 됨. Update()중 호출 될 수도 있기 때문
 	//------------------------------------------------------------------------------------------------//
 
 	// 현재 프레임의 활성화 여부 반환
@@ -58,11 +57,13 @@ public:
 	// 최상위 윈도우 여부 반환(modal 이거나 첫번째 activating window)
 	bool IsFrontWindow(const MkHashStr& windowName) const;
 
-	// 다음 프레임의 활성화 지정
+	// 활성화 지정
 	// modal 선언 가능. 단 이미 동작중인 modal window가 있을 경우 무시됨
+	// (NOTE) 다음 Update() 호출 시 반영
 	void ActivateWindow(const MkHashStr& windowName, bool modal = false);
 
-	// 다음 프레임의 비활성화 지정
+	// 비활성화 지정
+	// (NOTE) 다음 Update() 호출 시 반영
 	void DeactivateWindow(const MkHashStr& windowName);
 
 	//------------------------------------------------------------------------------------------------//
@@ -147,7 +148,8 @@ protected:
 	// 휘발성 정보
 	//------------------------------------------------------------------------------------------------//
 
-	bool m_UpdateLock;
+	bool m_AttachWindowLock;
+	bool m_DeleteWindowLock;
 
 	// 대상 영역 지정
 	MkInt2 m_TargetRegion;
@@ -157,6 +159,9 @@ protected:
 
 	// scene portal node 하위 manager이면 갱신시 input 처리 여부
 	bool m_ValidInputAtThisFrame;
+
+	// 다음 프레임에 삭제 될 window
+	MkArray<MkHashStr> m_DeletingWindow;
 
 	// 다음 프레임에 반영 될 활성화/비활성화 event
 	MkArray<_ActivationEvent> m_ActivationEvent;

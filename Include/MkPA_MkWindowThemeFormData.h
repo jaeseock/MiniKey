@@ -64,6 +64,11 @@ public:
 	// form type 반환
 	inline eFormType GetFormType(void) const { return m_FormType; }
 
+	// 특수목적형 form type 여부 반환
+	inline bool IsStaticFormType(void) const { return (m_FormType == eFT_SingleUnit); }
+	inline bool IsTitleFormType(void) const { return (m_FormType == eFT_DualUnit); }
+	inline bool IsButtonFormType(void) const { return (m_FormType == eFT_QuadUnit); }
+
 	// unit type 반환
 	inline MkWindowThemeUnitData::eUnitType GetUnitType(void) const { return m_UnitType; }
 

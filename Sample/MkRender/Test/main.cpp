@@ -42,12 +42,12 @@
 #include "MkPA_MkListBoxControlNode.h"
 #include "MkPA_MkDropDownListControlNode.h"
 
-#include "MkPA_MkWindowOpHelper.h"
-
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkStaticResourceContainer.h"
 
 #include "MkCore_MkDevPanel.h"
+
+#include "MkPA_MkWindowFactory.h"
 
 //------------------------------------------------------------------------------------------------//
 
@@ -57,16 +57,6 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
-		MkDataNode tt1;
-		tt1.CreateUnit(L"T", MkStr(L"a\\a"));
-		tt1.SaveToText(L"tt.txt");
-		MkDataNode tt2;
-		tt2.Load(L"tt.txt");
-		MkStr tmptmp;
-		tt2.GetData(L"T", tmptmp, 0);
-
-		//----------------------------------------------//
-
 		m_RootNode = new MkSceneNode(L"Root");
 
 		MkSceneNode* mainNode = m_RootNode->CreateChildNode(L"Main");
@@ -140,7 +130,7 @@ public:
 		titleBar->SetIcon(MkWindowThemeData::eIT_Notice);
 		titleBar->SetCaption(L"코레가 타이틀데스B", eRAP_LeftCenter);
 		winMgrNode->AttachWindow(titleBar);
-		winMgrNode->ActivateWindow(L"TitleBarB", true);
+		winMgrNode->ActivateWindow(L"TitleBarB");
 
 		titleBar->SetLocalPosition(MkFloat2(200.f, 500.f));
 
@@ -200,6 +190,26 @@ public:
 		ddList->AddItem(L"6", L"우히히");
 		ddList->AddItem(L"7", L"다다다 나나나");
 		ddList->SetTargetItemKey(L"6");
+
+		MkWindowFactory wndFactory;
+		MkWindowBaseNode* btnInst = wndFactory.CreateNormalButtonNode(L"BtnNormal", L"아재 아재 어따대고 시비여?\n 바라아제");
+		btnInst->SetAlignmentPosition(eRAP_LeftTop);
+		btnInst->SetAlignmentOffset(MkFloat2(10.f, -80.f));
+		bodyFrame->AttachChildNode(btnInst);
+		MkWindowBaseNode* btnOk = wndFactory.CreateOkButtonNode();
+		btnOk->SetAlignmentPosition(eRAP_LeftTop);
+		btnOk->SetAlignmentOffset(MkFloat2(10.f, -80.f - 60.f));
+		bodyFrame->AttachChildNode(btnOk);
+		MkWindowBaseNode* btnCancel = wndFactory.CreateCancelButtonNode();
+		btnCancel->SetAlignmentPosition(eRAP_LeftTop);
+		btnCancel->SetAlignmentOffset(MkFloat2(10.f, -80.f - 120.f));
+		bodyFrame->AttachChildNode(btnCancel);
+
+		MkWindowBaseNode* msgBoxNode = wndFactory.CreateMessageBox
+			(L"MsgBox", L"캡션입니당", L"너무너무 잘생겨서\n어케 할지를 모르겠으용\n~(-_-)~", NULL, MkWindowFactory::eMBT_Warning, MkWindowFactory::eMBB_OkCancel);
+		msgBoxNode->SetLocalPosition(MkFloat2(500.f, 300.f));
+		winMgrNode->AttachWindow(msgBoxNode);
+		winMgrNode->ActivateWindow(L"MsgBox", false);
 
 		//--------------------------------------------------//
 		// sub window mgr

@@ -20,16 +20,15 @@ enum ePA_SceneNodeType
 	ePA_SNT_WindowTagNode, // MkWindowTagNode
 	ePA_SNT_WindowThemedNode, // MkWindowThemedNode
 	ePA_SNT_WindowBaseNode, // MkWindowBaseNode
-
 	ePA_SNT_TitleBarControlNode, // MkTitleBarControlNode
 	ePA_SNT_BodyFrameControlNode, // MkBodyFrameControlNode
 	ePA_SNT_CheckBoxControlNode, // MkCheckBoxControlNode
 	ePA_SNT_ScrollBarControlNode, // MkScrollBarControlNode
 	ePA_SNT_SliderControlNode, // MkSliderControlNode
-	ePA_SNT_ScenePortalNode, // MkScenePortalNode
 	ePA_SNT_EditBoxControlNode, // MkEditBoxControlNode
 	ePA_SNT_ListBoxControlNode, // MkListBoxControlNode
-	ePA_SNT_DropDownListControlNode // M_DropDownListControlNode
+	ePA_SNT_DropDownListControlNode, // M_DropDownListControlNode
+	ePA_SNT_ScenePortalNode // MkScenePortalNode
 };
 
 // scene node attribute
@@ -38,15 +37,24 @@ enum ePA_SceneNodeAttribute
 {
 	// MkSceneNode
 	ePA_SNA_Visible = 0,
+	ePA_SNA_SkipUpdateWhileInvisible,
+
+	ePA_SNA_SceneNodeBandwidth = 8, // 대역폭 8개 확보
 
 	// MkVisualPatternNode
-	ePA_SNA_AcceptInput,
+	ePA_SNA_AcceptInput = ePA_SNA_SceneNodeBandwidth,
 	ePA_SNA_AlignmentPivotIsWindowRect,
 	ePA_SNA_AlignmentTargetIsWindowRect,
 
+	ePA_SNA_VisualPatternNodeBandwidth = ePA_SNA_SceneNodeBandwidth + 8, // 대역폭 8개 확보
+
 	// MkWindowBaseNode
-	ePA_SNA_Enable,
-	ePA_SNA_MovableByDragging
+	ePA_SNA_Enable = ePA_SNA_VisualPatternNodeBandwidth,
+	ePA_SNA_MovableByDragging,
+
+	ePA_SNA_WindowBaseNodeBandwidth = ePA_SNA_VisualPatternNodeBandwidth + 8, // 대역폭 8개 확보
+
+	ePA_SNA_EndOfBandwidth = 32 // attribute 최대 값. bit flag가 32bit이기 때문에 제한이 걸림
 };
 
 // scene node event

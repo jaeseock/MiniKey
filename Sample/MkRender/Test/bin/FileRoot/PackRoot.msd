@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2015.06.23 (18:26:09)
+//   - time stamp : 2015.07.03 (15:01:16)
 //   - exporter   : client (Test)
 //--------------------------------------------------------------------//
 
@@ -132,16 +132,117 @@ Node "[SUBNODES]"
 
 	Node "WinMgr" : "MkWindowManagerNode"
 	{
-		str ActivateWins = // [2]
+		str ActivateWins = // [4]
+			"MsgBox" /
 			"TitleBarC" /
+			"TitleBarB" /
 			"TitleBar";
-		str Modal = "TitleBarB";
 
 		Node "[SUBNODES]"
 		{
+			Node "MsgBox" : "MkTitleBarControlNode"
+			{
+				uint Attribute = 197891;
+				int CaptionAlignPos = 50;
+				str CaptionString = "캡션입니당";
+				str CaptionTextName = // [3]
+					"Theme" /
+					"Default" /
+					"Small";
+				vec2 ClientSize = (180.000, 12.000);
+				str ComponentType = "eCT_Title";
+				int IconType = 3;
+				float LocalDepth = 200.000;
+				vec2 LocalPosition = (500.000, 300.000);
+				str ThemeName = "Default";
+				bool UseCloseBtn = No;
+				str WinFrameType = "eFT_Small";
+
+				Node "[SUBNODES]"
+				{
+					Node "__#WC:BodyFrame" : "MkBodyFrameControlNode"
+					{
+						int AlignPosition = 34;
+						uint Attribute = 66305;
+						vec2 ClientSize = (186.000, 96.000);
+						str ComponentType = "eCT_NoticeBox";
+						int HangingType = 3;
+						float LocalDepth = 0.100;
+						vec2 LocalPosition = (-3.000, -81.000);
+						str ThemeName = "Default";
+						bool UseShadow = Yes;
+
+						Node "[SUBNODES]"
+						{
+							Node "__#WC:Cancel" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (96.000, 4.000);
+								int AlignPosition = 66;
+								vec2 ClientSize = (80.000, 12.000);
+								str ComponentType = "eCT_CancelBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (99.000, 7.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (23.000, 3.000);
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
+									}
+								}
+							}
+
+							Node "__#WC:OAOTag" : "MkWindowTagNode"
+							{
+								vec2 AlignOffset = (29.000, 30.000);
+								int AlignPosition = 66;
+								float LocalDepth = -0.100;
+								vec2 LocalPosition = (32.000, 33.000);
+								str TextName = // [3]
+									"Theme" /
+									"Default" /
+									"Small";
+							}
+
+							Node "__#WC:Ok" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (4.000, 4.000);
+								int AlignPosition = 66;
+								vec2 ClientSize = (80.000, 12.000);
+								str ComponentType = "eCT_OKBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (7.000, 7.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (34.500, 3.000);
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
 			Node "TitleBar" : "MkTitleBarControlNode"
 			{
-				uint Attribute = 59;
+				uint Attribute = 197891;
 				int CaptionAlignPos = 50;
 				str CaptionString = "코레가 타이틀데스!!!";
 				str CaptionTextName = // [3]
@@ -151,7 +252,7 @@ Node "[SUBNODES]"
 				vec2 ClientSize = (344.000, 12.000);
 				str ComponentType = "eCT_Title";
 				int IconType = 1;
-				float LocalDepth = 600.000;
+				float LocalDepth = 800.000;
 				vec2 LocalPosition = (400.000, 600.000);
 				str ThemeName = "Default";
 				str WinFrameType = "eFT_Small";
@@ -160,9 +261,8 @@ Node "[SUBNODES]"
 				{
 					Node "BodyFrame" : "MkBodyFrameControlNode"
 					{
-						vec2 AlignOffset = (-3.000, 3.000);
 						int AlignPosition = 34;
-						uint Attribute = 31;
+						uint Attribute = 66305;
 						vec2 ClientSize = (350.000, 250.000);
 						str ComponentType = "eCT_DefaultBox";
 						int HangingType = 3;
@@ -202,7 +302,7 @@ Node "[SUBNODES]"
 											{
 												Node "STitleBar" : "MkTitleBarControlNode"
 												{
-													uint Attribute = 59;
+													uint Attribute = 197891;
 													int CaptionAlignPos = 50;
 													str CaptionString = "서브 윈도우";
 													str CaptionTextName = // [3]
@@ -222,7 +322,7 @@ Node "[SUBNODES]"
 														Node "SBodyFrame" : "MkBodyFrameControlNode"
 														{
 															int AlignPosition = 82;
-															uint Attribute = 31;
+															uint Attribute = 67329;
 															vec2 ClientSize = (244.000, 300.000);
 															str ComponentType = "eCT_NoticeBox";
 															int HangingType = 2;
@@ -318,7 +418,7 @@ Node "[SUBNODES]"
 
 			Node "TitleBarB" : "MkTitleBarControlNode"
 			{
-				uint Attribute = 59;
+				uint Attribute = 197891;
 				int CaptionAlignPos = 50;
 				str CaptionString = "코레가 타이틀데스B";
 				str CaptionTextName = // [3]
@@ -328,7 +428,7 @@ Node "[SUBNODES]"
 				vec2 ClientSize = (344.000, 12.000);
 				str ComponentType = "eCT_Title";
 				int IconType = 1;
-				float LocalDepth = 100.000;
+				float LocalDepth = 600.000;
 				vec2 LocalPosition = (200.000, 500.000);
 				str ThemeName = "Default";
 				str WinFrameType = "eFT_Small";
@@ -337,9 +437,8 @@ Node "[SUBNODES]"
 				{
 					Node "BodyFrameB" : "MkBodyFrameControlNode"
 					{
-						vec2 AlignOffset = (-3.000, 3.000);
 						int AlignPosition = 34;
-						uint Attribute = 31;
+						uint Attribute = 66305;
 						vec2 ClientSize = (350.000, 250.000);
 						str ComponentType = "eCT_DefaultBox";
 						int HangingType = 3;
@@ -397,7 +496,7 @@ Node "[SUBNODES]"
 
 			Node "TitleBarC" : "MkTitleBarControlNode"
 			{
-				uint Attribute = 59;
+				uint Attribute = 197891;
 				int CaptionAlignPos = 50;
 				str CaptionString = "코레가 타이틀데스C";
 				str CaptionTextName = // [3]
@@ -407,7 +506,7 @@ Node "[SUBNODES]"
 				vec2 ClientSize = (344.000, 12.000);
 				str ComponentType = "eCT_Title";
 				int IconType = 1;
-				float LocalDepth = 200.000;
+				float LocalDepth = 400.000;
 				vec2 LocalPosition = (100.000, 400.000);
 				str ThemeName = "Default";
 				str WinFrameType = "eFT_Small";
@@ -416,9 +515,8 @@ Node "[SUBNODES]"
 				{
 					Node "BodyFrameC" : "MkBodyFrameControlNode"
 					{
-						vec2 AlignOffset = (-3.000, 3.000);
 						int AlignPosition = 34;
-						uint Attribute = 31;
+						uint Attribute = 66305;
 						vec2 ClientSize = (350.000, 250.000);
 						str ComponentType = "eCT_DefaultBox";
 						int HangingType = 3;
@@ -429,6 +527,31 @@ Node "[SUBNODES]"
 
 						Node "[SUBNODES]"
 						{
+							Node "BtnNormal" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (10.000, -80.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (150.000, 24.000);
+								str ComponentType = "eCT_NormalBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 143.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (3.000, 3.000);
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
+									}
+								}
+							}
+
 							Node "CheckBox" : "MkCheckBoxControlNode"
 							{
 								vec2 AlignOffset = (10.000, -30.000);
@@ -465,7 +588,7 @@ Node "[SUBNODES]"
 									Node "__#WC:ListBox" : "MkListBoxControlNode"
 									{
 										int AlignPosition = 82;
-										uint Attribute = 30;
+										uint Attribute = 67328;
 										vec2 ClientSize = (200.000, 108.000);
 										str ComponentType = "eCT_DefaultBox";
 										str ItemKeyList = // [8]
@@ -501,6 +624,56 @@ Node "[SUBNODES]"
 										int OnePageItemSize = 6;
 										str ThemeName = "Default";
 										str WinFrameType = "eFT_Small";
+									}
+								}
+							}
+
+							Node "__#WC:Cancel" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (10.000, -200.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (80.000, 12.000);
+								str ComponentType = "eCT_CancelBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 35.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (23.000, 3.000);
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
+									}
+								}
+							}
+
+							Node "__#WC:Ok" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (10.000, -140.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (80.000, 12.000);
+								str ComponentType = "eCT_OKBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 95.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (34.500, 3.000);
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
 									}
 								}
 							}

@@ -15,8 +15,6 @@ const MkHashStr MkWindowTagNode::ObjKey_IconSOSName(L"IconSOSName");
 const MkHashStr MkWindowTagNode::ObjKey_TextName(L"TextName");
 const MkHashStr MkWindowTagNode::ObjKey_LengthOfBetweenIT(L"LengthOfBetweenIT");
 
-#define MKDEF_DEFAULT_LENGTH_OF_GAP 4.f
-
 //------------------------------------------------------------------------------------------------//
 
 MkWindowTagNode* MkWindowTagNode::CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName)
@@ -146,7 +144,7 @@ void MkWindowTagNode::SetObjectTemplate(MkDataNode& node)
 	node.CreateUnit(ObjKey_IconPath, MkStr::EMPTY);
 	node.CreateUnit(ObjKey_IconSOSName, MkStr::EMPTY);
 	// ObjKey_TextName
-	node.CreateUnit(ObjKey_LengthOfBetweenIT, MKDEF_DEFAULT_LENGTH_OF_GAP);
+	node.CreateUnit(ObjKey_LengthOfBetweenIT, MKDEF_PA_DEFAULT_LENGTH_BETWEEN_WIN_COMPONENT_X);
 }
 
 void MkWindowTagNode::LoadObject(const MkDataNode& node)
@@ -196,7 +194,7 @@ void MkWindowTagNode::SaveObject(MkDataNode& node) const
 
 MkWindowTagNode::MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(name)
 {
-	m_LengthOfBetweenIconAndText = MKDEF_DEFAULT_LENGTH_OF_GAP;
+	m_LengthOfBetweenIconAndText = MKDEF_PA_DEFAULT_LENGTH_BETWEEN_WIN_COMPONENT_X;
 }
 
 bool MkWindowTagNode::_UpdateIcon(void)

@@ -36,6 +36,8 @@ MkArray<MkPathName> gDraggedFilePathList;
 // set cursor msg
 bool gRecieveCursorMsg = false;
 
+// main window
+MkListeningWindow* gMainWindowPtr = NULL;
 
 //------------------------------------------------------------------------------------------------//
 
@@ -47,6 +49,11 @@ MkBaseThreadUnit* MkBaseFramework::CreateLogicThreadUnit(const MkHashStr& thread
 MkBaseThreadUnit* MkBaseFramework::CreateLoadingThreadUnit(const MkHashStr& threadName) const
 {
 	return new MkLoadingThreadUnit(threadName);
+}
+
+MkListeningWindow* MkBaseFramework::GetMainWindowPtr(void)
+{
+	return gMainWindowPtr;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -115,9 +122,15 @@ bool MkBaseFramework::__Start
 	// start!!!
 	MK_DEV_PANEL.MsgToLog(L"Application start" + MkStr::CRLF, true);
 
+	// main window
+	MK_CHECK(gMainWindowPtr == NULL, L"main window가 이미 존재")
+		return false;
+
 	// 메인 윈도우 생성
 	if (!m_MainWindow.SetUpByWindowCreation(hInstance, (wndProc == NULL) ? WndProc : wndProc, NULL, title, sysWinProp, MkInt2(x, y), MkInt2(clientWidth, clientHeight)))
 		return false;
+
+	gMainWindowPtr = &m_MainWindow;
 
 	// 후커에 등록
 	gMainWindowTitleBarHooker.SetUp(&m_MainWindow, true);

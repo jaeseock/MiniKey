@@ -66,10 +66,10 @@ void MkSceneObject::InitSceneObject(void)
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_CheckBoxControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ScrollBarControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_SliderControlNode);
-	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ScenePortalNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_EditBoxControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ListBoxControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_DropDownListControlNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_ScenePortalNode);
 
 	// template
 	__TSI_ObjectOp<MkPanel>::SetTemplate();

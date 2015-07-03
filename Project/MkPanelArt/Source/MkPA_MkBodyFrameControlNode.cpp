@@ -120,8 +120,8 @@ void MkBodyFrameControlNode::_SetBodyFrame
 void MkBodyFrameControlNode::_ApplyHangingType(void)
 {
 	bool pivotIsWindowRect = false;
+	bool targetIsWindowRect = true;
 	eRectAlignmentPosition alignPos = eRAP_NonePosition;
-	MkFloat2 alignOffset;
 
 	if (m_HangingType != eHT_None)
 	{
@@ -147,14 +147,14 @@ void MkBodyFrameControlNode::_ApplyHangingType(void)
 					{
 					case eHT_IncludeParentAtTop:
 						pivotIsWindowRect = true;
+						targetIsWindowRect = false;
 						alignPos = eRAP_LeftTop;
-						alignOffset = MkFloat2(-formData->GetLeftMargin(), formData->GetTopMargin());
 						break;
 
 					case eHT_IncludeParentAtBottom:
 						pivotIsWindowRect = true;
+						targetIsWindowRect = false;
 						alignPos = eRAP_LeftBottom;
-						alignOffset = MkFloat2(-formData->GetLeftMargin(), -formData->GetBottomMargin());
 						break;
 					}
 				}
@@ -164,8 +164,8 @@ void MkBodyFrameControlNode::_ApplyHangingType(void)
 	}
 
 	SetAlignmentPivotIsWindowRect(pivotIsWindowRect);
+	SetAlignmentTargetIsWindowRect(targetIsWindowRect);
 	SetAlignmentPosition(alignPos);
-	SetAlignmentOffset(alignOffset);
 }
 
 //------------------------------------------------------------------------------------------------//

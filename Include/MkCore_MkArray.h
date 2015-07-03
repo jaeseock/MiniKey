@@ -264,7 +264,7 @@ public:
 	}
 
 	// 차집합만 필요한 경우(source - targets)
-	inline void GetDefferenceOfSets(const MkArray<DataType>& targets, MkArray<DataType>& sourceOnly) const
+	inline void GetDifferenceOfSets(const MkArray<DataType>& targets, MkArray<DataType>& sourceOnly) const
 	{
 		if (m_ValueSize == 0)
 			return;

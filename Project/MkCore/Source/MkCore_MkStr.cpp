@@ -1163,7 +1163,7 @@ unsigned int MkStr::ToUnsignedInteger(void) const
 {
 	MkStr tmpBuf = *this;
 	tmpBuf.RemoveBlank();
-	wchar_t* tmp;
+	wchar_t* tmp = NULL;
 	return static_cast<unsigned int>(wcstoul(tmpBuf, &tmp, 10));
 }
 
@@ -1214,7 +1214,7 @@ MkUInt2 MkStr::ToUInt2(void) const
 	MkArray<MkStr> token;
 	if (tmpBuf.Tokenize(token, L",") == 2)
 	{
-		wchar_t* tmp;
+		wchar_t* tmp = NULL;
 		result.x = static_cast<unsigned int>(wcstoul(token[0], &tmp, 10));
 		result.y = static_cast<unsigned int>(wcstoul(token[1], &tmp, 10));
 	}
