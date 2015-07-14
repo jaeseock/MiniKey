@@ -30,8 +30,8 @@ MkDropDownListControlNode* MkDropDownListControlNode::CreateChildNode(MkSceneNod
 
 void MkDropDownListControlNode::SetDropDownList(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType, float length, int onePageItemSize)
 {
-	m_WindowFrameType = frameType;
-	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_WindowFrameType);
+	m_FrameType = frameType;
+	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_FrameType);
 	length = GetMax<float>(length, frameSize);
 
 	// background
@@ -56,7 +56,7 @@ void MkDropDownListControlNode::SetDropDownList(const MkHashStr& themeName, MkWi
 			length -= formData->GetRightMargin();
 		}
 
-		m_ListBoxControlNode->SetListBox(GetThemeName(), onePageItemSize, length, m_WindowFrameType);
+		m_ListBoxControlNode->SetListBox(GetThemeName(), onePageItemSize, length, m_FrameType);
 		m_ListBoxControlNode->SetLocalDepth(-0.1f); // 하위 layer와 겹치는 것을 피하기 위해 0.1f만큼 앞에 위치
 		m_ListBoxControlNode->SetAlignmentPivotIsWindowRect(true); // wndow rect 기준
 		m_ListBoxControlNode->SetAlignmentPosition(eRAP_LeftUnder);
@@ -281,7 +281,7 @@ void MkDropDownListControlNode::_BuildSelectionAndDropDownButton(void)
 	if (tagNode != NULL)
 	{
 		tagNode->SetLocalDepth(-0.1f); // bg와 겹치는 것을 피하기 위해 0.1f만큼 앞에 위치
-		tagNode->SetTextName(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_WindowFrameType), MkStr::EMPTY);
+		tagNode->SetTextName(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_FrameType), MkStr::EMPTY);
 		tagNode->SetAlignmentPosition(eRAP_LeftCenter);
 	}
 
@@ -292,7 +292,7 @@ void MkDropDownListControlNode::_BuildSelectionAndDropDownButton(void)
 	if (btnNode != NULL)
 	{
 		btnNode->SetThemeName(GetThemeName());
-		btnNode->SetComponentType(MkWindowThemeData::GetLEDButtonComponent(m_WindowFrameType, MkWindowThemeData::eLED_Blue));
+		btnNode->SetComponentType(MkWindowThemeData::GetLEDButtonComponent(m_FrameType, MkWindowThemeData::eLED_Blue));
 		btnNode->SetFormState(MkWindowThemeFormData::eS_Default);
 		btnNode->SetLocalDepth(-0.1f); // bg와 겹치는 것을 피하기 위해 0.1f만큼 앞에 위치
 		btnNode->SetAlignmentPosition(eRAP_RightCenter);

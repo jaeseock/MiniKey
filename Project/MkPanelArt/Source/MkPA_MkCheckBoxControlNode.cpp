@@ -129,8 +129,8 @@ MkCheckBoxControlNode::MkCheckBoxControlNode(const MkHashStr& name) : MkWindowBa
 void MkCheckBoxControlNode::_SetCheckBox
 (const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType, const MkArray<MkHashStr>& textNode, const MkStr& caption, bool onCheck)
 {
-	m_WindowFrameType = frameType;
-	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_WindowFrameType);
+	m_FrameType = frameType;
+	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_FrameType);
 
 	// check box
 	SetThemeName(themeName);
@@ -198,7 +198,7 @@ void MkCheckBoxControlNode::_SetCheck(bool onCheck, bool makeEvent)
 		}
 		else
 		{
-			MkWindowThemeData::eComponentType iconCT = MkWindowThemeData::GetSystemIconComponent(m_WindowFrameType, MkWindowThemeData::eIT_CheckMark);
+			MkWindowThemeData::eComponentType iconCT = MkWindowThemeData::GetSystemIconComponent(m_FrameType, MkWindowThemeData::eIT_CheckMark);
 			if (iconCT != MkWindowThemeData::eCT_None)
 			{
 				node = MkWindowThemedNode::CreateChildNode(this, CheckIconName);

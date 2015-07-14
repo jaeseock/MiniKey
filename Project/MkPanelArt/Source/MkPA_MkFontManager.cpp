@@ -43,13 +43,13 @@ const MkHashStr MkFontManager::OrangeS(L"OrangeS");
 
 //------------------------------------------------------------------------------------------------//
 
-void MkFontManager::SetUp(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey)
+void MkFontManager::SetUp(const MkDataNode* dataNode)
 {
 	if (dataNode != NULL)
 	{
 		MK_DEV_PANEL.MsgToLog(L"< Font >", false);
 
-		ChangeFontType(dataNode, fontTypeNodeKey);
+		ChangeFontType(dataNode, MkHashStr::EMPTY);
 
 		_LoadFontColors(dataNode->GetChildNode(L"FontColor"));
 		_LoadFontStyles(dataNode->GetChildNode(L"FontStyle"));
@@ -58,20 +58,30 @@ void MkFontManager::SetUp(const MkDataNode* dataNode, const MkHashStr& fontTypeN
 	}
 }
 
-void MkFontManager::ChangeFontType(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey)
+bool MkFontManager::ChangeFontType(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey)
 {
 	if (dataNode != NULL)
 	{
 		const MkDataNode* fontTypeNode = dataNode->GetChildNode(L"FontType");
 		MK_CHECK(fontTypeNode != NULL, L"폰트 타입 설정 data node에 FontType 노드가 없음")
-			return;
+			return false;
 
-		const MkDataNode* targetNode = fontTypeNode->GetChildNode(fontTypeNodeKey);
-		MK_CHECK(targetNode != NULL, L"FontType data node에 " + fontTypeNodeKey.GetString() + L" 노드가 없음")
-			return;
+		MkHashStr targetType = fontTypeNodeKey;
+		if (targetType.Empty())
+		{
+			fontTypeNode->GetDataEx(L"DefaultType", targetType, 0);
+			MK_CHECK(!targetType.Empty(), L"FontType data node에 DefaultType이 없음")
+				return false;
+		}
+
+		const MkDataNode* targetNode = fontTypeNode->GetChildNode(targetType);
+		MK_CHECK(targetNode != NULL, L"FontType data node에 " + targetType.GetString() + L" 노드가 없음")
+			return false;
 
 		_LoadFontTypes(targetNode);
+		return true;
 	}
+	return false;
 }
 
 bool MkFontManager::LoadFontResource(const MkPathName& filePath)
@@ -589,29 +599,47 @@ bool MkFontManager::_DrawMessage
 			tRect.right = rect.right;
 			tRect.top = rect.top - 1;
 			tRect.bottom = rect.bottom - 1;
-			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor);
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // m-t
 
-			tRect.top = rect.top + 1;
-			tRect.bottom = rect.bottom + 1;
-			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor);
+			++tRect.left;
+			++tRect.right;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // r-t
 
-			tRect.left = rect.left - 1;
-			tRect.right = rect.right - 1;
-			tRect.top = rect.top;
-			tRect.bottom = rect.bottom;
-			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor);
+			++tRect.top;
+			++tRect.bottom;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // r-c
 
-			tRect.left = rect.left + 1;
-			tRect.right = rect.right + 1;
-			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor);
+			++tRect.top;
+			++tRect.bottom;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // r-b
+
+			--tRect.left;
+			--tRect.right;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // m-b
+
+			--tRect.left;
+			--tRect.right;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // m-l
+
+			--tRect.top;
+			--tRect.bottom;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // r-c
+
+			--tRect.top;
+			--tRect.bottom;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor); // r-t
 		}
 		else if (outputMode == eShadow)
 		{
 			RECT tRect;
-			tRect.left = rect.left + 1;
-			tRect.right = rect.right + 1;
+			tRect.left = rect.left;
+			tRect.right = rect.right;
 			tRect.top = rect.top + 1;
 			tRect.bottom = rect.bottom + 1;
+			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor);
+
+			++tRect.left;
+			++tRect.right;
 			fontPtr->DrawTextW(NULL, msgPtr, size, &tRect, flag, modeColor);
 
 			++tRect.top;

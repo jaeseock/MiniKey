@@ -12,45 +12,61 @@
 #endif
 
 
+const static DWORD FullModeStyle = (WS_EX_TOPMOST | WS_POPUP);
+
 //------------------------------------------------------------------------------------------------//
 
 bool MkBaseWindow::SetUpByWindowCreation
 (HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp,
- const MkInt2& position, const MkInt2& clientSize)
+ const MkInt2& position, const MkInt2& clientSize, bool fullScreen)
 {
 	// 윈도우 스타일
-	m_WindowStyle = (WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION);
+	m_WindowModeStyle = (WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION);
 	if (MK_FLAG_EXIST(sysWinProp, eSWP_Minimize))
 	{
-		m_WindowStyle |= WS_MINIMIZEBOX;
+		m_WindowModeStyle |= WS_MINIMIZEBOX;
 	}
 	if (MK_FLAG_EXIST(sysWinProp, eSWP_Maximize))
 	{
-		m_WindowStyle |= WS_MAXIMIZEBOX;
+		m_WindowModeStyle |= WS_MAXIMIZEBOX;
 	}
 	if (MK_FLAG_EXIST(sysWinProp, eSWP_Close))
 	{
-		m_WindowStyle |= WS_SYSMENU;
+		m_WindowModeStyle |= WS_SYSMENU;
 	}
+
+	m_CurrentWindowStyle = (fullScreen) ? FullModeStyle : m_WindowModeStyle;
 
 	// 윈도우 위치 및 크기 재설정
 	MkInt2 windowPos = position;
 	MkInt2 windowSize = clientSize;
-	if ((windowSize.x <= 0) || (windowSize.y <= 0))
+	
+	if (fullScreen)
 	{
-		windowSize = GetWorkspaceSize();
-		if (windowSize == MkInt2::Zero)
-			return false;
-
+		if ((windowSize.x <= 0) || (windowSize.y <= 0))
+		{
+			windowSize = MK_SYS_ENV.GetBackgroundResolution();
+		}
 		windowPos = MkInt2::Zero;
 	}
 	else
 	{
-		windowSize = ConvertClientToWindowSize(clientSize);
+		if ((windowSize.x <= 0) || (windowSize.y <= 0))
+		{
+			windowSize = GetWorkspaceSize();
+			if (windowSize == MkInt2::Zero)
+				return false;
+
+			windowPos = MkInt2::Zero;
+		}
+		else
+		{
+			windowSize = ConvertClientToWindowSize(clientSize);
+		}
 	}
 
 	// 윈도우 생성
-	return _CreateWindow(hInstance, wndProc, hParent, title, windowPos, windowSize);
+	return _CreateWindow(hInstance, wndProc, hParent, title, windowPos, windowSize, fullScreen);
 }
 
 bool MkBaseWindow::SetUpByOuterWindow(HWND hWnd)
@@ -61,7 +77,7 @@ bool MkBaseWindow::SetUpByOuterWindow(HWND hWnd)
 	m_hWnd = hWnd;
 	m_hParent = GetParent(m_hWnd);
 	m_ClassName.Clear(); // 클래스 이름이 비었으므로 종료시 클래스 해제하지 않음(외부에 의존)
-	m_WindowStyle = static_cast<DWORD>(GetWindowLong(m_hWnd, GWL_STYLE));
+	m_CurrentWindowStyle = m_WindowModeStyle = static_cast<DWORD>(GetWindowLongPtr(m_hWnd, GWL_STYLE));
 	m_hInstance = GetInstanceHandle();
 	return true;
 }
@@ -172,9 +188,9 @@ unsigned int MkBaseWindow::GetShowCmd(void) const
 
 void MkBaseWindow::Clear(void)
 {
-	if ((!m_ClassName.Empty()) && (m_hInstance != NULL) && (m_hWnd != NULL))
+	if ((!m_ClassName.Empty()) && (m_hInstance != NULL))
 	{
-		MK_CHECK(UnregisterClass(m_ClassName.GetPtr(), m_hInstance) != 0, m_ClassName + L" 윈도우 클래스 해제 실패") {}
+		UnregisterClass(m_ClassName.GetPtr(), m_hInstance);
 	}
 	m_ClassName.Clear();
 	m_hInstance = NULL;
@@ -189,6 +205,33 @@ void MkBaseWindow::SetWindowTitle(const MkStr& title)
 	}
 }
 
+DWORD MkBaseWindow::GetWindowStyle(void) const
+{
+	return (m_hWnd == NULL) ? 0 : static_cast<DWORD>(::GetWindowLongPtr(m_hWnd, GWL_STYLE));
+}
+
+void MkBaseWindow::ChangeToWindowModeStyle(void)
+{
+	if (m_hWnd != NULL)
+	{
+		m_CurrentWindowStyle = m_WindowModeStyle;
+
+		::SetWindowLongPtr(m_hWnd, GWL_STYLE, m_WindowModeStyle);
+		::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
+	}
+}
+
+void MkBaseWindow::ChangeToFullModeStyle(void)
+{
+	if (m_hWnd != NULL)
+	{
+		m_CurrentWindowStyle = FullModeStyle;
+
+		::SetWindowLongPtr(m_hWnd, GWL_STYLE, m_WindowModeStyle);
+		::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
+	}
+}
+
 MkInt2 MkBaseWindow::ConvertClientToWindowSize(const MkInt2& clientSize) const
 {
 	RECT rect;
@@ -196,7 +239,7 @@ MkInt2 MkBaseWindow::ConvertClientToWindowSize(const MkInt2& clientSize) const
 	rect.top = 0;
 	rect.right = clientSize.x;
 	rect.bottom = clientSize.y;
-	AdjustWindowRect(&rect, m_WindowStyle, FALSE);
+	AdjustWindowRect(&rect, m_CurrentWindowStyle, FALSE);
 	return MkInt2(static_cast<int>(rect.right - rect.left), static_cast<int>(rect.bottom - rect.top));
 }
 
@@ -207,7 +250,7 @@ MkInt2 MkBaseWindow::ConvertWindowToClientSize(const MkInt2& windowSize) const
 
 HINSTANCE MkBaseWindow::GetInstanceHandle(void) const
 {
-	return (m_hWnd == NULL) ? NULL : reinterpret_cast<HINSTANCE>(GetWindowLong(m_hWnd, GWL_HINSTANCE));
+	return (m_hWnd == NULL) ? NULL : reinterpret_cast<HINSTANCE>(GetWindowLongPtr(m_hWnd, GWL_HINSTANCE));
 }
 
 MkInt2 MkBaseWindow::GetWorkspaceSize(void)
@@ -267,7 +310,7 @@ MkBaseWindow::MkBaseWindow()
 //------------------------------------------------------------------------------------------------//
 
 bool MkBaseWindow::_CreateWindow
-(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, const MkInt2& position, const MkInt2& windowSize)
+(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, const MkInt2& position, const MkInt2& windowSize, bool fullScreen)
 {
 	MK_CHECK((m_hWnd == NULL) && (m_ClassName.Empty()), L"이미 초기화된 윈도우임")
 		return false;
@@ -297,7 +340,8 @@ bool MkBaseWindow::_CreateWindow
 	RegisterClass(&wc);
 
 	// 윈도우 등록
-	m_hWnd = CreateWindowEx(NULL, title.GetPtr(), title.GetPtr(), m_WindowStyle, position.x, position.y, windowSize.x, windowSize.y, hParent, NULL, m_hInstance, NULL);
+	m_hWnd = CreateWindowEx(NULL, title.GetPtr(), title.GetPtr(), m_CurrentWindowStyle,
+		position.x, position.y, windowSize.x, windowSize.y, hParent, NULL, m_hInstance, NULL);
 	MK_CHECK(m_hWnd != NULL, title + L" 윈도우 생성 실패")
 		return false;
 

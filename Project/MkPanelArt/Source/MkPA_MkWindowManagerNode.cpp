@@ -7,6 +7,7 @@
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkDeviceManager.h"
+#include "MkPA_MkRenderer.h"
 #include "MkPA_MkHiddenEditBox.h"
 #include "MkPA_MkScrollBarControlNode.h"
 #include "MkPA_MkSliderControlNode.h"
@@ -547,37 +548,48 @@ void MkWindowManagerNode::Update(double currTime)
 	//   - 모든 입력을 받아들여야 하기 때문에 snapshot이 아닌 event로 처리
 	//------------------------------------------------------------------------------------------------//
 
-	// cursor
-	// input snapshot 생성
-	MkInt2 cursorPosition = MK_INPUT_MGR.GetAbsoluteMousePosition(true) - m_InputPivotPosition;
+	// scene portal legacy를 받지 않았으면 영역 갱신
+	if (!m_HasScenePortalLegacy)
+	{
+		m_SystemRect.position.Clear();
+		m_SystemRect.size = MK_DEVICE_MGR.GetCurrentResolution();
+	}
+
+	// cursor snapshot 생성
+	MkInt2 cursorPosition = MK_INPUT_MGR.GetAbsoluteMousePosition(true) - m_SystemRect.position;
 	MkInt2 cursorMovement = MK_INPUT_MGR.GetAbsoluteMouseMovement(true);
 
 	eButtonState leftBtnState = MK_INPUT_MGR.GetMouseLeftButtonState();
 	eButtonState middleBtnState = MK_INPUT_MGR.GetMouseMiddleButtonState();
 	eButtonState rightBtnState = MK_INPUT_MGR.GetMouseRightButtonState();
 
-	// device 영역 내에 있는지 체크
+	bool anyBtnPressed = (leftBtnState == eBS_Pressed) || (middleBtnState == eBS_Pressed) || (rightBtnState == eBS_Pressed);
+	bool leftBtnPushing = MK_INPUT_MGR.GetMouseLeftButtonPushing();
+	int wheelDelta = MK_INPUT_MGR.GetMouseWheelMovement();
+
+	// system 영역 내에 있는지 여부 검사
 	bool cursorInside = MK_INPUT_MGR.GetMousePointerAvailable();
 
-	// scene portal 하위면 갱신 가능여부 체크
-	if (cursorInside && m_ScenePortalBind)
+	if (cursorInside && m_HasScenePortalLegacy) // scene portal legacy를 받았으면 입력 갱신 가능여부 체크
 	{
-		cursorInside = m_ValidInputAtThisFrame;
-		m_ValidInputAtThisFrame = false;
+		cursorInside = m_CursorIsInsideOfScenePortal;
+		m_CursorIsInsideOfScenePortal = false;
 	}
 	
-	// whole region 내에 있는지 체크
-	if (cursorInside)
+	if (cursorInside) // whole region 내에 있는지 체크
 	{
-		MkIntRect regionRect(MkInt2::Zero, m_TargetRegion);
+		MkIntRect regionRect(MkInt2::Zero, m_SystemRect.size);
 		cursorInside = regionRect.CheckIntersection(cursorPosition);
 	}
 
-	bool anyBtnPressed = (leftBtnState == eBS_Pressed) || (middleBtnState == eBS_Pressed) || (rightBtnState == eBS_Pressed);
-	MkEditBoxControlNode* targetEditBoxNode = NULL;
+	if (cursorInside && (MK_RENDERER.GetWebDialog() != NULL)) // renderer의 dialog 영역은 제외
+	{
+		const RECT& dr = MK_RENDERER.GetDialogRect(); // dialog 영역(top-down 좌표계)
+		MkInt2 cp = MK_INPUT_MGR.GetAbsoluteMousePosition(false); // top-down 좌표계의 cursor position
+		cursorInside = ((cp.x < dr.left) || (cp.x > dr.right) || (cp.y < dr.top) || (cp.x > dr.bottom));
+	}
 
-	int wheelDelta = MK_INPUT_MGR.GetMouseWheelMovement();
-	bool leftBtnPushing = MK_INPUT_MGR.GetMouseLeftButtonPushing();
+	m_HasScenePortalLegacy = false;
 
 	// 현 프레임에서 cursor를 소유한 window 목록
 	MkArray<MkWindowBaseNode*> cursorOwnedNodeBuffer;
@@ -661,6 +673,8 @@ void MkWindowManagerNode::Update(double currTime)
 		cursorDraggingNodePath = m_LeftCursorDraggingNodePath;
 	}
 
+	MkEditBoxControlNode* targetEditBoxNode = NULL;
+
 	// 현재 프레임에 cursor owner가 없으면
 	if (cursorOwnedNodeBuffer.Empty())
 	{
@@ -693,11 +707,13 @@ void MkWindowManagerNode::Update(double currTime)
 			// picking된 node의 root window를 front로 올림. 최초 하나만 대상
 			const MkHashStr& targetRootWindowName = cursorOwnedPathBuffer[0][0];
 			if (m_RootWindowList.Exist(targetRootWindowName) &&
-				(targetRootWindowName != m_ModalWindow) && // modal window는 이미 가장 앞에 위치하고 있으므로 무시
-				(targetRootWindowName != m_ActivatingWindows[0])) // front window가 아니면 갱신
+				(targetRootWindowName != m_ModalWindow)) // modal window는 이미 가장 앞에 위치하고 있으므로 무시
 			{
-				m_ActivatingWindows.EraseFirstInclusion(MkArraySection(0), targetRootWindowName);
-				m_ActivatingWindows.Insert(0, targetRootWindowName);
+				if (targetRootWindowName != m_ActivatingWindows[0])
+				{
+					m_ActivatingWindows.EraseFirstInclusion(MkArraySection(0), targetRootWindowName);
+					m_ActivatingWindows.Insert(0, targetRootWindowName);
+				}
 
 				updateWindowDepth = true;
 				focusWindowName = targetRootWindowName;
@@ -732,6 +748,17 @@ void MkWindowManagerNode::Update(double currTime)
 	if (anyBtnPressed)
 	{
 		MK_EDIT_BOX.SetTargetEditBoxNode(this, targetEditBoxNode);
+
+		// 영역 안 유효클릭 발생했는데 edit box가 아니면 focus 지정
+		// renderer의 dialog window가 focus를 가지고 있을 경우 여기서 복원 됨
+		if (cursorInside && (!MK_EDIT_BOX.IsBinding()))
+		{
+			HWND mainHandle = MK_DEVICE_MGR.GetTargetWindow()->GetWindowHandle();
+			if (mainHandle != GetFocus())
+			{
+				::SetFocus(mainHandle);
+			}
+		}
 	}
 
 	// 하위 node중 대상 지정된 edit box가 존재하면 갱신
@@ -935,7 +962,7 @@ void MkWindowManagerNode::Update(double currTime)
 			effectNode->SetVisible(enable);
 			if (enable)
 			{
-				effectNode->SetClientSize(MkFloat2(static_cast<float>(m_TargetRegion.x), static_cast<float>(m_TargetRegion.y)));
+				effectNode->SetClientSize(MkFloat2(static_cast<float>(m_SystemRect.size.x), static_cast<float>(m_SystemRect.size.y)));
 				effectNode->SetLocalDepth(m_DepthBandwidth * 0.15f); // 15%
 			}
 		}
@@ -978,7 +1005,7 @@ void MkWindowManagerNode::Clear(void)
 
 	m_AttachWindowLock = false;
 	m_DeleteWindowLock = false;
-	m_ValidInputAtThisFrame = false;
+	m_CursorIsInsideOfScenePortal = false;
 	m_ActivationEvent.Clear();
 	m_CursorOwnedWindowPath.Clear();
 	m_KeyInputTargetWindowPath.Clear();
@@ -1100,15 +1127,21 @@ void MkWindowManagerNode::SaveObject(MkDataNode& node) const
 MkWindowManagerNode::MkWindowManagerNode(const MkHashStr& name) : MkSceneNode(name)
 {
 	m_DepthBandwidth = MKDEF_DEAULT_DEPTH_BANDWIDTH;
-	m_TargetRegion = MK_DEVICE_MGR.GetCurrentResolution();
 	
 	m_ActivatingWindows.Reserve(256);
 
 	m_AttachWindowLock = false;
 	m_DeleteWindowLock = false;
-	m_ScenePortalBind = false;
-	m_ValidInputAtThisFrame = false;
+	m_HasScenePortalLegacy = false;
+	m_CursorIsInsideOfScenePortal = false;
 }
+
+void MkWindowManagerNode::__SetScenePortalLegacy(bool cursorInside, const MkIntRect& systemRect)
+{
+	m_HasScenePortalLegacy = true;
+	m_CursorIsInsideOfScenePortal = cursorInside;
+	m_SystemRect = systemRect;
+}	
 
 //------------------------------------------------------------------------------------------------//
 

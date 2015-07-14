@@ -36,6 +36,9 @@ MkArray<MkPathName> gDraggedFilePathList;
 // set cursor msg
 bool gRecieveCursorMsg = false;
 
+// set cursor msg
+bool gDestroyMsg = false;
+
 // main window
 MkListeningWindow* gMainWindowPtr = NULL;
 
@@ -54,6 +57,11 @@ MkBaseThreadUnit* MkBaseFramework::CreateLoadingThreadUnit(const MkHashStr& thre
 MkListeningWindow* MkBaseFramework::GetMainWindowPtr(void)
 {
 	return gMainWindowPtr;
+}
+
+void MkBaseFramework::Close(void)
+{
+	gDestroyMsg = true;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -76,7 +84,7 @@ bool MkBaseFramework::__Start
 	MkPathName::SetUp(rootPath);
 
 	// 싱글톤 생성
-	m_InstanceDeallocator.Reserve(20);
+	m_InstanceDeallocator.Reserve(64);
 
 	// 0.
 	m_InstanceDeallocator.RegisterInstance(new MkSystemEnvironment());
@@ -127,7 +135,7 @@ bool MkBaseFramework::__Start
 		return false;
 
 	// 메인 윈도우 생성
-	if (!m_MainWindow.SetUpByWindowCreation(hInstance, (wndProc == NULL) ? WndProc : wndProc, NULL, title, sysWinProp, MkInt2(x, y), MkInt2(clientWidth, clientHeight)))
+	if (!m_MainWindow.SetUpByWindowCreation(hInstance, (wndProc == NULL) ? WndProc : wndProc, NULL, title, sysWinProp, MkInt2(x, y), MkInt2(clientWidth, clientHeight), fullScreen))
 		return false;
 
 	gMainWindowPtr = &m_MainWindow;
@@ -211,6 +219,27 @@ void MkBaseFramework::__Run(void)
 
 	while (true)
 	{
+		if (gDestroyMsg)
+		{
+			// background loader 삭제(아직 loading thread에는 남아 있을 수 있음)
+			MK_BG_LOADER.__Clear();
+
+			if (!m_UseLogicThreadUnit)
+			{
+				// 모든 페이지 삭제
+				MK_PAGE_MGR.__Clear();
+			}
+
+			// 스레드 유닛 모두 종료
+			m_ThreadManager.StopAll();
+
+			// window 종료 전 해제(renderer가 존재하면 여기서 해제)
+			Free();
+
+			// window 종료
+			DestroyWindow(hWnd);
+		}
+
 		MSG msg;
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
@@ -329,30 +358,18 @@ void MkBaseFramework::__Run(void)
 
 void MkBaseFramework::__End(void)
 {
-	// background loader 삭제(아직 loading thread에는 남아 있을 수 있음)
-	MK_BG_LOADER.__Clear();
-
-	if (!m_UseLogicThreadUnit)
-	{
-		// 모든 페이지 삭제
-		MK_PAGE_MGR.__Clear();
-	}
-
-	// 스레드 유닛 모두 종료
-	m_ThreadManager.StopAll();
-
-	// 확장 해제
-	Clear();
-
-	// 윈도우 종료
+	// 윈도우 등록 해제
 	m_MainWindow.Clear();
+
+	// window 종료 후 해제
+	Clear();
 
 	// 원 설정 복원
 	m_FPUSetter.Restore();
 	m_ASKSetter.Restore();
 
 	// end msg
-	MK_DEV_PANEL.MsgToLog(L"MkBaseFramework end. Bye~", true);
+	MK_LOG_MGR.Msg(L"MkBaseFramework end. Bye~", true);
 
 	// 싱글톤 종료
 	m_InstanceDeallocator.ClearRearToFront();

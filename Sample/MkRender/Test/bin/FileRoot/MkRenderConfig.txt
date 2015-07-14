@@ -14,6 +14,8 @@ Node "FontResource"
 		//		int thickness = 0; // 0:eThin, 1:eMedium, 2:eThick, 3:eFull
 		//	}
 		// }
+		
+		str DefaultType = "¸¼Àº°íµñ";
 			
 		Node "¸¼Àº°íµñ"
 		{

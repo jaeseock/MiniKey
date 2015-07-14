@@ -34,7 +34,7 @@ public:
 	// clientSize의 xy가 0 이하이면 워크스페이스(바탕화면에서 작업표시줄이 제외된 영역) 크기로 생성
 	virtual bool SetUpByWindowCreation
 		(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp,
-		const MkInt2& position, const MkInt2& clientSize);
+		const MkInt2& position, const MkInt2& clientSize, bool fullScreen = false);
 
 	// 외부에서 생성된 윈도우로 초기화
 	virtual bool SetUpByOuterWindow(HWND hWnd);

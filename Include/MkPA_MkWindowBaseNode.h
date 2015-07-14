@@ -59,9 +59,6 @@ public:
 	// root window node(window manager node에 등록된 직계 하위 node) 부터 현 node가지의 경로를 path에 넣어 반환
 	void GetWindowPath(MkArray<MkHashStr>& path) const;
 
-	// window frame type 반환
-	MkWindowThemeData::eFrameType GetWindowFrameType(void) const { return m_WindowFrameType; }
-
 	// 특정 form type 여부 반환
 	inline bool IsDualForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_DualUnit); }
 	inline bool IsQuadForm(void) { return (GetFormType() == MkWindowThemeFormData::eFT_QuadUnit); }
@@ -116,9 +113,6 @@ protected:
 
 protected:
 
-	// 설정 정보
-	MkWindowThemeData::eFrameType m_WindowFrameType;
-
 	// 휘발성 정보
 	bool m_CursorInside;
 
@@ -130,6 +124,4 @@ public:
 	static const MkHashStr ArgKey_WheelDelta;
 	static const MkHashStr ArgKey_ExclusiveWindow;
 	static const MkHashStr ArgKey_ExclusiveException;
-
-	static const MkHashStr ObjKey_WindowFrameType;
 };

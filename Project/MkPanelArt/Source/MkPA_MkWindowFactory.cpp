@@ -17,14 +17,9 @@ const MkHashStr MkWindowFactory::BodyFrameName = MkStr(MKDEF_PA_WIN_CONTROL_PREF
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkWindowFactory::SetThemeName(const MkHashStr& themeName)
+void MkWindowFactory::SetThemeName(const MkHashStr& themeName)
 {
-	bool ok = MK_STATIC_RES.GetWindowThemeSet().IsValidTheme(themeName);
-	if (ok)
-	{
-		m_ThemeName = themeName;
-	}
-	return ok;
+	m_ThemeName = MK_STATIC_RES.GetWindowThemeSet().IsValidTheme(themeName) ? themeName : MkWindowThemeData::DefaultThemeName;
 }
 
 MkWindowTagNode* MkWindowFactory::CreateTextTagNode(const MkHashStr& name, const MkStr& message, MkFloat2& textRegion) const
@@ -89,9 +84,19 @@ MkWindowBaseNode* MkWindowFactory::CreateOkButtonNode(void) const
 	return CreateButtonTypeNode(OkButtonName, MkWindowThemeData::eCT_OKBtn, L"OK");
 }
 
+MkWindowBaseNode* MkWindowFactory::CreateOkButtonNode(const MkStr& message) const
+{
+	return CreateButtonTypeNode(OkButtonName, MkWindowThemeData::eCT_OKBtn, message);
+}
+
 MkWindowBaseNode* MkWindowFactory::CreateCancelButtonNode(void) const
 {
 	return CreateButtonTypeNode(CancelButtonName, MkWindowThemeData::eCT_CancelBtn, L"Cancel");
+}
+
+MkWindowBaseNode* MkWindowFactory::CreateCancelButtonNode(const MkStr& message) const
+{
+	return CreateButtonTypeNode(CancelButtonName, MkWindowThemeData::eCT_CancelBtn, message);
 }
 
 MkTitleBarControlNode* MkWindowFactory::CreateMessageBox
@@ -142,7 +147,7 @@ MkWindowTagNode* MkWindowFactory::_CreateTextTagNode(const MkHashStr& name, cons
 		}
 		else
 		{
-			node->SetTextName(textName); // text naem 삽입
+			node->SetTextName(textName); // text name 삽입
 		}
 
 		// text 영역의 크기를 반환

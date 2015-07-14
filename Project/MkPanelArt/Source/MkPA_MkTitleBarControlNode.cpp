@@ -34,8 +34,8 @@ MkTitleBarControlNode* MkTitleBarControlNode::CreateChildNode(MkSceneNode* paren
 void MkTitleBarControlNode::SetTitleBar(const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType, float length, bool useCloseBtn)
 {
 	// title bar
-	m_WindowFrameType = frameType;
-	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_WindowFrameType);
+	m_FrameType = frameType;
+	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_FrameType);
 
 	SetThemeName(themeName);
 	SetComponentType(MkWindowThemeData::eCT_Title);
@@ -55,7 +55,7 @@ void MkTitleBarControlNode::UseCloseButton(bool enable)
 		if (node != NULL)
 		{
 			node->SetThemeName(GetThemeName());
-			node->SetComponentType(MkWindowThemeData::GetLEDButtonComponent(m_WindowFrameType, MkWindowThemeData::eLED_Red));
+			node->SetComponentType(MkWindowThemeData::GetLEDButtonComponent(m_FrameType, MkWindowThemeData::eLED_Red));
 			node->SetFormState(MkWindowThemeFormData::eS_Normal);
 			node->SetLocalDepth(-0.1f); // title과 겹치는 것을 피하기 위해 0.1f만큼 앞에 위치
 			node->SetAlignmentPosition(eRAP_RightCenter);
@@ -106,7 +106,7 @@ void MkTitleBarControlNode::SetIcon(MkWindowThemeData::eIconType iconType, const
 	// system icon. MkWindowThemedNode 사용
 	else
 	{
-		MkWindowThemeData::eComponentType componentType = MkWindowThemeData::GetSystemIconComponent(m_WindowFrameType, iconType);
+		MkWindowThemeData::eComponentType componentType = MkWindowThemeData::GetSystemIconComponent(m_FrameType, iconType);
 		if (componentType == MkWindowThemeData::eCT_None)
 		{
 			RemoveChildNode(IconNodeName);
@@ -151,7 +151,7 @@ void MkTitleBarControlNode::SetCaption(const MkArray<MkHashStr>& textNode, eRect
 
 void MkTitleBarControlNode::SetCaption(const MkStr& caption, eRectAlignmentPosition position)
 {
-	_SetCaption(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_WindowFrameType), caption, position);
+	_SetCaption(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_FrameType), caption, position);
 }
 
 void MkTitleBarControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
@@ -324,7 +324,7 @@ void MkTitleBarControlNode::_SetCaption(const MkArray<MkHashStr>& textNode, cons
 		node->SetAlignmentPosition(position);
 		if (GetHorizontalRectAlignmentType(position) == eRAT_Left) // 좌측 계열 정렬이면 icon 위치 확보
 		{
-			float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(GetThemeName(), m_WindowFrameType);
+			float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(GetThemeName(), m_FrameType);
 			node->SetAlignmentOffset(MkFloat2(frameSize + node->GetLengthOfBetweenIconAndText(), 0.f));
 		}
 	}

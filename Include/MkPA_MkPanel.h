@@ -25,6 +25,7 @@
 
 
 class MkDrawStepInterface;
+class MkDrawTextNodeStep;
 class MkTextNode;
 class MkSceneNode;
 
@@ -262,6 +263,8 @@ protected:
 	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkArray<VertexData>& buffer) const;
 
 	float _GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const;
+
+	void _UpdateTextNodeTexture(MkDrawTextNodeStep* drawStep);
 
 protected:
 

@@ -53,7 +53,7 @@ void MkBodyFrameControlNode::SetClientSize(const MkFloat2& clientSize)
 				}
 			}
 
-			float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(parentNode->GetThemeName(), parentNode->GetWindowFrameType());
+			float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(parentNode->GetThemeName(), parentNode->GetFrameType());
 			float titleLength = GetMax<float>(m_ClientRect.size.x - sizeOffset, 0.f);
 			parentNode->SetClientSize(MkFloat2(titleLength, frameSize));
 		}

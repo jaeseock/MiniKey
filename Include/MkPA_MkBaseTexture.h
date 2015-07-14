@@ -16,6 +16,8 @@
 #include "MkPA_MkImageInfo.h"
 
 
+class MkPathName;
+
 class MkBaseTexture
 {
 public:
@@ -86,9 +88,16 @@ public:
 
 	// image info
 	inline const MkImageInfo& GetImageInfo(void) const { return m_Info; }
+	inline void ResetDefaultSubsetInfo(const MkInt2& srcSize, const MkInt2& realSize) { m_Info.ResetDefaultSubsetInfo(srcSize, realSize); }
+
+	// 파일로 저장
+	bool SaveToPNG(const MkPathName& filePath) const;
 
 	// 해당 포맷이 알파 포맷인지 체크
 	static bool IsAlphaFormat(D3DFORMAT format);
+
+	// size의 x, y가 1 이상일 경우 2의 n승을 만족하는 최소 크기를 반환
+	static MkInt2 GetFormalSize(const MkInt2 srcSize);
 
 	MkBaseTexture();
 	virtual ~MkBaseTexture() { _Clear(); }

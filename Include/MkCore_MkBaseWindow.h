@@ -21,7 +21,7 @@ public:
 	//	window.SetUpByWindowCreation(hI, WndProc, NULL, L"full window", eSWP_Close, MkInt2::Zero, MkInt2::Zero);
 	virtual bool SetUpByWindowCreation
 		(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp,
-		const MkInt2& position, const MkInt2& clientSize);
+		const MkInt2& position, const MkInt2& clientSize, bool fullScreen = false);
 
 	// 외부에서 생성된 윈도우로 초기화
 	virtual bool SetUpByOuterWindow(HWND hWnd);
@@ -67,8 +67,17 @@ public:
 	// 윈도우 타이틀 변경
 	virtual void SetWindowTitle(const MkStr& title);
 
-	// 윈도우 스타일 반환
-	inline DWORD GetWindowStyle(void) const { return m_WindowStyle; }
+	// 현재 적용중인 윈도우 스타일 반환
+	DWORD GetWindowStyle(void) const;
+
+	// window mode시의 스타일 반환
+	inline DWORD GetWindowModeStyle(void) const { return m_WindowModeStyle; }
+
+	// window mode 스타일로 전환
+	void ChangeToWindowModeStyle(void);
+
+	// full mode 스타일로 전환
+	void ChangeToFullModeStyle(void);
 
 	// clientSize가 고정된 윈도우 크기를 반환
 	MkInt2 ConvertClientToWindowSize(const MkInt2& clientSize) const;
@@ -99,7 +108,7 @@ public:
 
 protected:
 	
-	bool _CreateWindow(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, const MkInt2& position, const MkInt2& windowSize);
+	bool _CreateWindow(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, const MkInt2& position, const MkInt2& windowSize, bool fullScreen);
 
 protected:
 
@@ -107,7 +116,8 @@ protected:
 	HWND m_hWnd;
 	HWND m_hParent;
 	MkStr m_ClassName;
-	DWORD m_WindowStyle;
+	DWORD m_WindowModeStyle;
+	DWORD m_CurrentWindowStyle;
 };
 
 #endif

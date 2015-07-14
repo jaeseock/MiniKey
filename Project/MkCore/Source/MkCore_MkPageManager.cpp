@@ -42,13 +42,13 @@ void MkPageManager::SetPageFlowTable(const MkHashStr& pageIn, const MkHashStr& c
 	m_StateFSM.SetTable(pageIn, condition, pageOut);
 }
 
-bool MkPageManager::SetMoveMessage(const MkHashStr& moveMessage)
+bool MkPageManager::SetMoveMessage(const MkHashStr& condition)
 {
 	// moveMessage로 인한 페이지 변화가 있어야지만 적용
-	bool ok = (m_StateFSM.Proceed(moveMessage, false) == MkFiniteStateMachinePattern<MkHashStr, MkHashStr>::eStateChanged);
+	bool ok = (m_StateFSM.Proceed(condition, false) == MkFiniteStateMachinePattern<MkHashStr, MkHashStr>::eStateChanged);
 	if (ok)
 	{
-		m_MoveMessage = moveMessage;
+		m_MoveMessage = condition;
 	}
 	return ok;
 }

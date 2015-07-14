@@ -1,0 +1,28 @@
+
+float4 blendingWeight : UDP0 <string def = "1, 1, 1, 1";>;
+
+texture diffTex : DIFFUSETEX;
+
+struct PS_IN
+{
+	float2 uv : TEXCOORD0;
+};
+
+sampler diffuseMap = sampler_state
+{
+	Texture = (diffTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+float4 PS(PS_IN In) : COLOR
+{
+  float4 diffuseColor = tex2D(diffuseMap, In.uv);
+  float luminance = 0.299f * diffuseColor.r + 0.587f * diffuseColor.g + 0.114f * diffuseColor.b;
+  float3 offset = (float3(luminance, luminance, luminance) - diffuseColor.rgb) * blendingWeight.rgb;
+
+  return float4(diffuseColor.rgb + offset, diffuseColor.a);
+}
+
+// approximately 7 instruction slots used (1 texture, 6 arithmetic)

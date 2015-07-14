@@ -1,0 +1,43 @@
+
+float3 rimColor : UDP <string def = "1, 1, 1";>;
+float alpha : ALPHA;
+
+texture diffTex : DIFFUSEMAP;
+texture specTex : SPECULARMAP;
+
+struct PS_IN
+{
+ 	float4 color0 : COLOR0;
+ 	float4 color1 : COLOR1;
+	float2 uv : TEXCOORD0;
+};
+
+sampler diffuseMap = sampler_state
+{
+	Texture = (diffTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+sampler specularMap = sampler_state
+{
+	Texture = (specTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+float4 PS(PS_IN In) : COLOR
+{
+  float4 diffuseColor = tex2D(diffuseMap, In.uv);
+  diffuseColor.rgb *= In.color0.rgb;
+  
+  float4 specularColor = tex2D(specularMap, In.uv);
+  diffuseColor.rgb += specularColor.rgb * In.color1.r + rimColor * In.color1.g;
+  diffuseColor.a *= alpha;
+  
+	return diffuseColor;
+}
+
+// approximately 7 instruction slots used (2 texture, 5 arithmetic)

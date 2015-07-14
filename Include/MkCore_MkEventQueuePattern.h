@@ -44,7 +44,7 @@
 //				break;
 //			...
 //			case eQuit:
-//				DestroyWindow(m_Window.GetParentWindowHandle());
+//				MkBaseFramework::Close();
 //				break;
 //			}
 //		}

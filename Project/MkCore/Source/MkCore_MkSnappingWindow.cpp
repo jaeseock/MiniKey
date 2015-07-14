@@ -6,9 +6,14 @@
 //------------------------------------------------------------------------------------------------//
 
 bool MkSnappingWindow::SetUpByWindowCreation
-(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp, const MkInt2& position, const MkInt2& clientSize)
+(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp, const MkInt2& position, const MkInt2& clientSize, bool fullScreen)
 {
-	bool ok = MkListeningWindow::SetUpByWindowCreation(hInstance, wndProc, hParent, title, sysWinProp, position, clientSize);
+	MK_CHECK(!fullScreen, title + L" MkSnappingWindow는 full screen이 될 수 없음")
+	{
+		fullScreen = false;
+	}
+
+	bool ok = MkListeningWindow::SetUpByWindowCreation(hInstance, wndProc, hParent, title, sysWinProp, position, clientSize, fullScreen);
 	if (ok)
 	{
 		_SnapToParent();

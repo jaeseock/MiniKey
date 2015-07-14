@@ -29,6 +29,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkPanelArt", "Project\MkPan
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App_02", "Application\App_02\App_02.vcproj", "{A9E30C99-FBDA-4FE8-9B69-C6A9112DF5E7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC} = {30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -72,6 +78,12 @@ Global
 		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}.Release|Win32.Build.0 = Release|Win32
 		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}.Shipping|Win32.ActiveCfg = Shipping|Win32
 		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}.Shipping|Win32.Build.0 = Shipping|Win32
+		{A9E30C99-FBDA-4FE8-9B69-C6A9112DF5E7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A9E30C99-FBDA-4FE8-9B69-C6A9112DF5E7}.Debug|Win32.Build.0 = Debug|Win32
+		{A9E30C99-FBDA-4FE8-9B69-C6A9112DF5E7}.Release|Win32.ActiveCfg = Release|Win32
+		{A9E30C99-FBDA-4FE8-9B69-C6A9112DF5E7}.Release|Win32.Build.0 = Release|Win32
+		{A9E30C99-FBDA-4FE8-9B69-C6A9112DF5E7}.Shipping|Win32.ActiveCfg = Shipping|Win32
+		{A9E30C99-FBDA-4FE8-9B69-C6A9112DF5E7}.Shipping|Win32.Build.0 = Shipping|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

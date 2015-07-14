@@ -21,7 +21,7 @@
 #define MKDEF_PA_IMAGE_INFO_FILE_EXT L"mii"
 
 // MkTextNode에서 투명 처리 될 color key(D3DCOLOR)
-#define MKDEF_PA_TEXTNODE_COLOR_KEY 0xff010101
+#define MKDEF_PA_TEXTNODE_COLOR_KEY 0xffff60C0
 
 // window visual pattern node에서 system이 처리 할 node, panel name prefix
 #define MKDEF_PA_WIN_VISUAL_PATTERN_PREFIX L"__#WT:"

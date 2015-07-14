@@ -40,9 +40,9 @@ void MkListeningWindow::ClearAllWindowUpdateListener(void)
 
 bool MkListeningWindow::SetUpByWindowCreation
 (HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp,
- const MkInt2& position, const MkInt2& clientSize)
+ const MkInt2& position, const MkInt2& clientSize, bool fullScreen)
 {
-	bool ok = MkBaseWindow::SetUpByWindowCreation(hInstance, wndProc, hParent, title, sysWinProp, position, clientSize);
+	bool ok = MkBaseWindow::SetUpByWindowCreation(hInstance, wndProc, hParent, title, sysWinProp, position, clientSize, fullScreen);
 	MKDEF_CAST_CURRENT_RECT(ok, ListenWindowRectUpdate);
 	return ok;
 }

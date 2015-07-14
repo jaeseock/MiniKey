@@ -152,15 +152,10 @@ void MkPanel::SetTextNode(const MkTextNode& source, bool restrictToPanelWidth)
 		MK_CHECK(drawStep != NULL, L"MkDrawTextNodeStep alloc 실패")
 			break;
 
-		drawStep->SetUp(m_TargetTextNodePtr);
-		m_Texture = drawStep->GetTargetTexture();
-		m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
-
 		m_DrawStep = drawStep;
 
-		const MkInt2& srcSize = m_TargetTextNodePtr->GetWholePixelSize();
-		m_TextureSize.x = static_cast<float>(srcSize.x);
-		m_TextureSize.y = static_cast<float>(srcSize.y);
+		// setp 초기화 및 설정
+		_UpdateTextNodeTexture(drawStep);
 		return;
 	}
 	while (false);
@@ -180,8 +175,8 @@ void MkPanel::BuildAndUpdateTextCache(void)
 {
 	if ((m_TargetTextNodePtr != NULL) && (m_DrawStep != NULL))
 	{
-		MkDrawTextNodeStep* drawTextNodeStep = dynamic_cast<MkDrawTextNodeStep*>(m_DrawStep);
-		if (drawTextNodeStep != NULL)
+		MkDrawTextNodeStep* drawStep = dynamic_cast<MkDrawTextNodeStep*>(m_DrawStep);
+		if (drawStep != NULL)
 		{
 			m_TargetTextNodePtr->Build();
 			
@@ -189,14 +184,8 @@ void MkPanel::BuildAndUpdateTextCache(void)
 			m_Texture = NULL; // ref-
 			m_MaterialKey.m_TextureID = 0;
 
-			drawTextNodeStep->SetUp(m_TargetTextNodePtr);
-
-			m_Texture = m_DrawStep->GetTargetTexture();
-			m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
-
-			const MkInt2& srcSize = m_TargetTextNodePtr->GetWholePixelSize();
-			m_TextureSize.x = static_cast<float>(srcSize.x);
-			m_TextureSize.y = static_cast<float>(srcSize.y);
+			// setp 초기화 및 설정
+			_UpdateTextNodeTexture(drawStep);
 		}
 	}
 }
@@ -657,6 +646,30 @@ float MkPanel::_GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePoin
 	MkFloat2 lineVector = m_WorldVertice[to] - m_WorldVertice[from];
 	MkFloat2 pointVector = point - m_WorldVertice[from];
 	return (lineVector.x * pointVector.y - lineVector.y * pointVector.x);
+}
+
+void MkPanel::_UpdateTextNodeTexture(MkDrawTextNodeStep* drawStep)
+{
+	if ((m_TargetTextNodePtr != NULL) && (drawStep != NULL))
+	{
+		drawStep->SetUp(m_TargetTextNodePtr);
+		m_Texture = drawStep->GetTargetTexture();
+		m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
+
+		// text node size
+		const MkInt2& srcSize = m_TargetTextNodePtr->GetWholePixelSize();
+		m_TextureSize.x = static_cast<float>(srcSize.x);
+		m_TextureSize.y = static_cast<float>(srcSize.y);
+
+		// real texture size
+		const MkInt2& realSize = drawStep->GetTargetTextureSize();
+
+		// reset default subset info
+		if (realSize.IsPositive())
+		{
+			m_Texture->ResetDefaultSubsetInfo(srcSize, realSize);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

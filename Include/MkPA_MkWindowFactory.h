@@ -11,6 +11,7 @@
 
 
 class MkSceneNode;
+class MkWindowTagNode;
 class MkWindowBaseNode;
 class MkTitleBarControlNode;
 
@@ -22,11 +23,14 @@ public:
 	// 汲沥 函版
 	//------------------------------------------------------------------------------------------------//
 
-	bool SetThemeName(const MkHashStr& themeName);
+	void SetThemeName(const MkHashStr& themeName);
+	inline const MkHashStr& ThemeName(void) const { return m_ThemeName; }
 
 	inline void SetFrameType(MkWindowThemeData::eFrameType frameType) { m_FrameType = frameType; }
+	inline MkWindowThemeData::eFrameType GetFrametype(void) const { return m_FrameType; }
 
 	inline void SetMinClientSizeForButton(const MkFloat2& size) { m_MinClientSizeForButton = size; }
+	inline const MkFloat2& GetMinClientSizeForButton(void) const { return m_MinClientSizeForButton; }
 
 	//------------------------------------------------------------------------------------------------//
 	// tag(text)
@@ -50,9 +54,11 @@ public:
 
 	// ok button 积己
 	MkWindowBaseNode* CreateOkButtonNode(void) const; // OkButtonName
+	MkWindowBaseNode* CreateOkButtonNode(const MkStr& message) const; // OkButtonName
 
 	// cancel button 积己
 	MkWindowBaseNode* CreateCancelButtonNode(void) const; // CancelButtonName
+	MkWindowBaseNode* CreateCancelButtonNode(const MkStr& message) const; // CancelButtonName
 
 	//------------------------------------------------------------------------------------------------//
 	// preset window : message box

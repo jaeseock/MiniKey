@@ -11,8 +11,6 @@ const MkHashStr MkWindowBaseNode::ArgKey_WheelDelta(L"WheelDelta");
 const MkHashStr MkWindowBaseNode::ArgKey_ExclusiveWindow(L"ExclusiveWindow");
 const MkHashStr MkWindowBaseNode::ArgKey_ExclusiveException(L"ExclusiveException");
 
-const MkHashStr MkWindowBaseNode::ObjKey_WindowFrameType(L"WinFrameType");
-
 
 //------------------------------------------------------------------------------------------------//
 
@@ -184,7 +182,6 @@ void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, Mk
 
 void MkWindowBaseNode::Clear(void)
 {
-	m_WindowFrameType = MkWindowThemeData::eFT_None;
 	m_CursorInside = false;
 	m_CallBackTargetWindowPath.Clear();
 
@@ -203,32 +200,16 @@ void MkWindowBaseNode::SetObjectTemplate(MkDataNode& node)
 	attr.Assign(ePA_SNA_AcceptInput, true);
 	attr.Assign(ePA_SNA_Enable, true);
 	node.SetData(ObjKey_Attribute, attr.m_Field, 0);
-
-	// frame type
-	node.CreateUnit(ObjKey_WindowFrameType, MkStr::EMPTY);
 }
 
 void MkWindowBaseNode::LoadObject(const MkDataNode& node)
 {
 	MkWindowThemedNode::LoadObject(node);
-
-	// frame type
-	MkHashStr frameTypeName;
-	if (node.GetDataEx(ObjKey_WindowFrameType, frameTypeName, 0) && (!frameTypeName.Empty()))
-	{
-		m_WindowFrameType = MkWindowThemeData::ConvertFrameNameToType(frameTypeName);
-	}
 }
 
 void MkWindowBaseNode::SaveObject(MkDataNode& node) const
 {
 	MkWindowThemedNode::SaveObject(node);
-
-	// frame type
-	if ((m_WindowFrameType > MkWindowThemeData::eFT_None) && (m_WindowFrameType < MkWindowThemeData::eFT_Max))
-	{
-		node.SetDataEx(ObjKey_WindowFrameType, MkWindowThemeData::FrameTypeName[m_WindowFrameType], 0);
-	}
 }
 
 MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(name)
@@ -236,7 +217,6 @@ MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(n
 	SetAcceptInput(true);
 	SetEnable(true);
 
-	m_WindowFrameType = MkWindowThemeData::eFT_None;
 	m_CursorInside = false;
 }
 

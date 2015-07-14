@@ -101,17 +101,6 @@ void MkScenePortalNode::SetDestinationNode(MkSceneNode* destNode)
 		MkPanel& panel = CreatePanel(MaskingPanelName, m_DestinationNode, iRegion);
 		panel.SetLocalDepth(-0.1f); // 배경과 겹치지 않도록 0.1f만큼 앞으로 이동
 
-		// window manager면 target region으로 자신의 window rect를 설정
-		if (m_DestinationNode->IsDerivedFrom(ePA_SNT_WindowManagerNode))
-		{
-			MkWindowManagerNode* mgrNode = dynamic_cast<MkWindowManagerNode*>(m_DestinationNode);
-			if (mgrNode != NULL)
-			{
-				mgrNode->SetTargetRegion(iRegion);
-				mgrNode->SetScenePortalBind(true);
-			}
-		}
-
 		// sample bg 삭제
 		RemoveChildNode(SampleBackgroundName);
 	}
@@ -182,23 +171,20 @@ void MkScenePortalNode::Update(double currTime)
 	if ((m_DestinationNode != NULL) && m_WindowRect.size.IsPositive())
 	{
 		// window manager?
-		if (m_DestinationNode->IsDerivedFrom(ePA_SNT_WindowManagerNode))
+		if (m_DestinationNode->IsDerivedFrom(ePA_SNT_WindowManagerNode) && PanelExist(MaskingPanelName))
 		{
 			MkWindowManagerNode* mgrNode = dynamic_cast<MkWindowManagerNode*>(m_DestinationNode);
-			if (mgrNode != NULL)
+			MkPanel* maskingPanel = GetPanel(MaskingPanelName);
+			if ((mgrNode != NULL) && (maskingPanel != NULL))
 			{
-				// 자신의 transform만 먼저 반영
+				// 자신과 screen panel의 transform만 먼저 계산
 				m_Transform.Update((m_ParentNodePtr == NULL) ? NULL : m_ParentNodePtr->__GetTransformPtr());
-				const MkFloat2& worldPos = m_Transform.GetWorldPosition();
+				maskingPanel->__Update(&m_Transform, currTime);
 
-				// input pivot으로 자신의 world position을 설정
-				mgrNode->SetInputPivotPosition(MkInt2(static_cast<int>(worldPos.x), static_cast<int>(worldPos.y)));
-
-				// cursor를 가지고 있을 경우만 input update 허용
-				if (m_CursorInside)
-				{
-					mgrNode->ValidateInputAtThisFrame();
-				}
+				// legacy 적용
+				const MkFloatRect& aabr = maskingPanel->GetWorldAABR();
+				mgrNode->__SetScenePortalLegacy
+					(m_CursorInside, MkIntRect(static_cast<int>(aabr.position.x), static_cast<int>(aabr.position.y), static_cast<int>(aabr.size.x), static_cast<int>(aabr.size.y)));
 			}
 		}
 

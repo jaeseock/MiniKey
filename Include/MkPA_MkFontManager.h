@@ -70,10 +70,12 @@ public:
 public:
 
 	// 초기화
+	// L"FontType"->L"DefaultType" 값을 시작 font type으로 삼음
 	// (NOTE) 장치 초기화 이후 실행
-	void SetUp(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey);
+	void SetUp(const MkDataNode* dataNode);
 
 	// 해당 설정으로 폰트 교체
+	// empty면 L"FontType"->L"DefaultType" 값을 적용
 	// (NOTE) font type만 리셋되고 color와 style는 그대로 유지됨
 	// ex>
 	//	MkDataNode dataNode;
@@ -81,7 +83,7 @@ public:
 	//	{
 	//		MK_FONT_MGR.ChangeFontType(dataNode.GetChildNode(L"FontResource"), L"맑은고딕");
 	//	}
-	void ChangeFontType(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey);
+	bool ChangeFontType(const MkDataNode* dataNode, const MkHashStr& fontTypeNodeKey);
 
 	// 별도로 등록할 폰트 파일이 있을 경우 사용
 	// filePath : root directory 기준 상대 혹은 절대 폰트 파일 경로

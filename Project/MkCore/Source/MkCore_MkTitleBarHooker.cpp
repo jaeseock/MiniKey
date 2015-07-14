@@ -1,6 +1,7 @@
 
 #include "MkCore_MkBaseWindow.h"
 #include "MkCore_MkInputManager.h"
+#include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkTitleBarHooker.h"
 
 
@@ -9,7 +10,7 @@
 void MkTitleBarHooker::SetUp(MkBaseWindow* targetWindow, bool maxSizeIsWorkspace)
 {
 	m_TargetWindow = targetWindow;
-	m_MaximizeEnable = (targetWindow == NULL) ? false : MK_FLAG_EXIST(m_TargetWindow->GetWindowStyle(), WS_MAXIMIZEBOX);
+	m_MaximizeEnable = (targetWindow == NULL) ? false : MK_FLAG_EXIST(m_TargetWindow->GetWindowModeStyle(), WS_MAXIMIZEBOX);
 	m_MaxSizeIsWorkspace = maxSizeIsWorkspace;
 	m_Minimized = false;
 	m_OnDrag = false;
@@ -31,7 +32,7 @@ bool MkTitleBarHooker::CheckWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 		switch (wParam)
 		{
 		case HTCLOSE: // 종료
-			DestroyWindow(hWnd);
+			MkBaseFramework::Close();
 			break;
 
 		case HTCAPTION: // 드래그 시작

@@ -16,6 +16,7 @@ const MkHashStr MkWindowThemedNode::ObjKey_ComponentType(L"ComponentType");
 const MkHashStr MkWindowThemedNode::ObjKey_CustomFormName(L"CustomFormName");
 const MkHashStr MkWindowThemedNode::ObjKey_UseShadow(L"UseShadow");
 const MkHashStr MkWindowThemedNode::ObjKey_ClientSize(L"ClientSize");
+const MkHashStr MkWindowThemedNode::ObjKey_FrameType(L"FrameType");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -148,6 +149,7 @@ void MkWindowThemedNode::Clear(void)
 	m_UseShadow = false;
 	m_FormState = MkWindowThemeFormData::eS_None;
 	m_CustomFormName.Clear();
+	m_FrameType = MkWindowThemeData::eFT_None;
 
 	MkVisualPatternNode::Clear();
 }
@@ -194,6 +196,7 @@ void MkWindowThemedNode::SetObjectTemplate(MkDataNode& node)
 	node.CreateUnit(ObjKey_CustomFormName, MkStr::EMPTY);
 	node.CreateUnit(ObjKey_UseShadow, false);
 	node.CreateUnitEx(ObjKey_ClientSize, MkFloat2::Zero);
+	node.CreateUnit(ObjKey_FrameType, MkStr::EMPTY);
 	
 }
 
@@ -234,6 +237,13 @@ void MkWindowThemedNode::LoadObject(const MkDataNode& node)
 		SetClientSize(clientSize);
 	}
 
+	// frame type
+	MkHashStr frameTypeName;
+	if (node.GetDataEx(ObjKey_FrameType, frameTypeName, 0) && (!frameTypeName.Empty()))
+	{
+		m_FrameType = MkWindowThemeData::ConvertFrameNameToType(frameTypeName);
+	}
+
 	// form state -> default
 	SetFormState(MkWindowThemeFormData::eS_Default);
 }
@@ -260,6 +270,12 @@ void MkWindowThemedNode::SaveObject(MkDataNode& node) const
 
 	// client size
 	node.SetDataEx(ObjKey_ClientSize, m_ClientRect.size, 0);
+
+	// frame type
+	if ((m_FrameType > MkWindowThemeData::eFT_None) && (m_FrameType < MkWindowThemeData::eFT_Max))
+	{
+		node.SetDataEx(ObjKey_FrameType, MkWindowThemeData::FrameTypeName[m_FrameType], 0);
+	}
 }
 
 MkWindowThemedNode::MkWindowThemedNode(const MkHashStr& name) : MkVisualPatternNode(name)
@@ -267,6 +283,7 @@ MkWindowThemedNode::MkWindowThemedNode(const MkHashStr& name) : MkVisualPatternN
 	m_ComponentType = MkWindowThemeData::eCT_None;
 	m_UseShadow = false;
 	m_FormState = MkWindowThemeFormData::eS_None;
+	m_FrameType = MkWindowThemeData::eFT_None;
 }
 
 MkFloat2 MkWindowThemedNode::ConvertWindowToClientSize

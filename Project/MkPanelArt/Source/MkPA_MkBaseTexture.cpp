@@ -1,6 +1,7 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkGlobalFunction.h"
+#include "MkCore_MkPathName.h"
 
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkRenderStateSetter.h"
@@ -213,6 +214,13 @@ void MkBaseTexture::SetFilterType(eFilterType filterType)
 	}
 }
 
+bool MkBaseTexture::SaveToPNG(const MkPathName& filePath) const
+{
+	MkPathName fullPath;
+	fullPath.ConvertToRootBasisAbsolutePath(filePath);
+	return ((m_Surface != NULL) && (D3DXSaveSurfaceToFile(fullPath, D3DXIFF_PNG, m_Surface, NULL, NULL) == D3D_OK));
+}
+
 bool MkBaseTexture::IsAlphaFormat(D3DFORMAT format)
 {
 	switch (format)
@@ -237,6 +245,34 @@ bool MkBaseTexture::IsAlphaFormat(D3DFORMAT format)
 		return true;
     }
 	return false;
+}
+
+MkInt2 MkBaseTexture::GetFormalSize(const MkInt2 srcSize)
+{
+	MkInt2 targetSize = srcSize;
+	if (targetSize.IsPositive())
+	{
+		MkUInt2 uiSize(static_cast<unsigned int>(targetSize.x), static_cast<unsigned int>(targetSize.y));
+
+		unsigned int width = 1;
+		while (true)
+		{
+			if (width >= uiSize.x)
+				break;
+			width = width << 1; // * 2;
+		}
+
+		unsigned int height = 1;
+		while (true)
+		{
+			if (height >= uiSize.y)
+				break;
+			height = height << 1; // * 2;
+		}
+
+		targetSize = MkInt2(static_cast<int>(width), static_cast<int>(height));
+	}
+	return targetSize;
 }
 
 MkBaseTexture::MkBaseTexture()

@@ -1,0 +1,46 @@
+
+float3 outerColor : UDP <string def = "0, 0, 0";>;
+float specularRange : UDP <string def = "0.6";>;
+float alpha : ALPHA;
+
+texture diffTex : DIFFUSEMAP;
+texture toonRampTex : SPECULARMAP;
+
+struct ToonRampPS_IN
+{
+ 	float4 color0 : COLOR0;
+	float2 uv : TEXCOORD0;
+};
+
+sampler diffuseMap = sampler_state
+{
+	Texture = (diffTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+sampler toonRampMap = sampler_state
+{
+	Texture = (toonRampTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+float4 OuterColorPassPS(void) : COLOR
+{
+  return float4(outerColor, alpha);
+}
+// approximately 1 instruction slot used
+
+float4 ToonRampPS(ToonRampPS_IN In) : COLOR
+{
+  float4 diffuseColor = tex2D(diffuseMap, In.uv);
+  float4 rampColor = tex1D(toonRampMap, In.color0.r);
+  float specularPower = floor(In.color0.g + (1.f - specularRange)); // specularRange 이상이면 1.f로 specular 적용
+  float3 finalColor = saturate(diffuseColor.rgb * rampColor.rgb + float3(specularPower, specularPower, specularPower));
+  
+	return float4(finalColor, diffuseColor.a * alpha);
+}
+// approximately 10 instruction slots used (2 texture, 8 arithmetic)

@@ -35,7 +35,7 @@ MkListBoxControlNode* MkListBoxControlNode::CreateChildNode(MkSceneNode* parentN
 
 void MkListBoxControlNode::SetListBox(const MkHashStr& themeName, int onePageItemSize, float itemWidth, MkWindowThemeData::eFrameType frameType)
 {
-	m_WindowFrameType = frameType;
+	m_FrameType = frameType;
 
 	SetThemeName(themeName);
 	SetComponentType(MkWindowThemeData::eCT_DefaultBox);
@@ -69,7 +69,7 @@ void MkListBoxControlNode::SetOnePageItemSize(int onePageItemSize)
 		m_ButtonPoolData.Clear();
 
 		// 새롭게 btn pool 생성
-		float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(GetThemeName(), m_WindowFrameType);
+		float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(GetThemeName(), m_FrameType);
 		const MkWindowThemeFormData* bgFormData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), MkWindowThemeData::eCT_DefaultBox, MkHashStr::EMPTY);
 		const MkWindowThemeFormData* btnFormData = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), MkWindowThemeData::eCT_BlueSelBtn, MkHashStr::EMPTY);
 		if ((frameSize > 0.f) && (bgFormData != NULL) && (btnFormData != NULL))
@@ -145,7 +145,7 @@ MkWindowTagNode* MkListBoxControlNode::AddItem(const MkHashStr& uniqueKey, const
 	if (tagNode != NULL)
 	{
 		tagNode->SetLocalDepth(-0.1f); // btn과 겹치는 것을 피하기 위해 0.1f만큼 앞에 위치
-		tagNode->SetTextName(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_WindowFrameType), message);
+		tagNode->SetTextName(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_FrameType), message);
 		tagNode->SetAlignmentPosition(eRAP_LeftCenter);
 
 		_ItemData& itemData = m_ItemData.Create(uniqueKey);

@@ -36,8 +36,8 @@ MkEditBoxControlNode* MkEditBoxControlNode::CreateChildNode(MkSceneNode* parentN
 void MkEditBoxControlNode::SetSingleLineEditBox
 (const MkHashStr& themeName, MkWindowThemeData::eFrameType frameType, float length, const MkStr& initMsg, bool useHistory)
 {
-	m_WindowFrameType = frameType;
-	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_WindowFrameType);
+	m_FrameType = frameType;
+	float frameSize = MK_STATIC_RES.GetWindowThemeSet().GetFrameSize(themeName, m_FrameType);
 	
 	// background
 	SetThemeName(themeName);
@@ -279,7 +279,7 @@ void MkEditBoxControlNode::_DefaultSetUp(bool useHistory)
 
 	// create panels
 	MkFloat2 localPos = _GetFormMargin();
-	const MkArray<MkHashStr>& editTextNode = MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_WindowFrameType);
+	const MkArray<MkHashStr>& editTextNode = MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_FrameType);
 
 	// selection panel
 	MkPanel& selPanel = CreatePanel(SelectionPanelName);

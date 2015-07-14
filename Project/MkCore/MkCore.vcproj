@@ -439,14 +439,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Source\MkCore_MkOpenWebPage.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Include\MkCore_MkOpenWebPage.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Source\MkCore_MkZipCompressor.cpp"
 					>
 				</File>
@@ -552,6 +544,14 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkVersionTag.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkWebBrowser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkWebBrowser.h"
 					>
 				</File>
 			</Filter>
@@ -928,6 +928,10 @@
 				>
 				<File
 					RelativePath="..\..\Include\MkCore_MkBaseLoadingTarget.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkBasePage.cpp"
 					>
 				</File>
 				<File

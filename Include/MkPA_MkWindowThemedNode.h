@@ -97,6 +97,13 @@ public:
 	inline MkWindowThemeFormData::eState GetFormState(void) const { return m_FormState; }
 
 	//------------------------------------------------------------------------------------------------//
+	// frame type
+	//------------------------------------------------------------------------------------------------//
+
+	// window frame type ¹ÝÈ¯
+	MkWindowThemeData::eFrameType GetFrameType(void) const { return m_FrameType; }
+
+	//------------------------------------------------------------------------------------------------//
 	// event
 	//------------------------------------------------------------------------------------------------//
 
@@ -173,6 +180,9 @@ protected:
 	// form state
 	MkWindowThemeFormData::eState m_FormState;
 
+	// etc
+	MkWindowThemeData::eFrameType m_FrameType;
+
 public:
 
 	static const MkHashStr ShadowNodeName;
@@ -184,4 +194,5 @@ public:
 	static const MkHashStr ObjKey_CustomFormName;
 	static const MkHashStr ObjKey_UseShadow;
 	static const MkHashStr ObjKey_ClientSize;
+	static const MkHashStr ObjKey_FrameType;
 };

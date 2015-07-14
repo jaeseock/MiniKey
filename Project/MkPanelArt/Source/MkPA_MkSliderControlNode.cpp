@@ -243,7 +243,7 @@ void MkSliderControlNode::LoadObject(const MkDataNode& node)
 		node.GetData(ObjKey_CurrentValue, currentValue, 0) &&
 		node.GetData(ObjKey_ShowValue, showValue, 0))
 	{
-		_SetSlider(GetThemeName(), m_WindowFrameType, lineLength, beginValue, valueSize, currentValue, showValue, horizontal);
+		_SetSlider(GetThemeName(), m_FrameType, lineLength, beginValue, valueSize, currentValue, showValue, horizontal);
 	}
 }
 
@@ -276,7 +276,7 @@ void MkSliderControlNode::_SetSlider
 {
 	m_LineLength = GetMax<float>(0.f, length);
 
-	m_WindowFrameType = frameType;
+	m_FrameType = frameType;
 	m_Horizontal = horizontal;
 
 	// slider bar
@@ -304,7 +304,7 @@ void MkSliderControlNode::_SetSlider
 		}
 	}
 
-	MkWindowThemeData::eComponentType btnComponentType = MkWindowThemeData::GetLEDButtonComponent(m_WindowFrameType, MkWindowThemeData::eLED_Blue);
+	MkWindowThemeData::eComponentType btnComponentType = MkWindowThemeData::GetLEDButtonComponent(m_FrameType, MkWindowThemeData::eLED_Blue);
 	if (btnNode != NULL)
 	{
 		btnNode->SetThemeName(GetThemeName());
@@ -326,7 +326,7 @@ void MkSliderControlNode::_SetSlider
 				tagNode = MkWindowTagNode::CreateChildNode(btnNode, ValueTagName);
 				if (tagNode != NULL)
 				{
-					const MkArray<MkHashStr>& textName = MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_WindowFrameType);
+					const MkArray<MkHashStr>& textName = MK_STATIC_RES.GetWindowThemeSet().GetEditTextNode(GetThemeName(), m_FrameType);
 					tagNode->SetTextName(textName, MkStr(initValue)); // 즉각적인 panel 생성
 					tagNode->SetVisible(false);
 				}

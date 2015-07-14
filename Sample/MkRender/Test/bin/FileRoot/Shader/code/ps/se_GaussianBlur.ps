@@ -1,0 +1,41 @@
+
+// linear sampling
+// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+
+const float offset[3] = {0.f, 1.384615f, 3.230769f};
+const float weight[3] = {0.227027f, 0.1581081f, 0.0351352f};
+
+float2 diffMapSize : DIFFUSEMAPSIZE;
+
+texture diffTex : DIFFUSEMAP;
+
+struct PS_IN
+{
+	float2 uv : TEXCOORD0;
+};
+
+sampler diffuseMap = sampler_state
+{
+	Texture = (diffTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+float4 PS(PS_IN In) : COLOR
+{
+  float4 fragmentColor = tex2D(diffuseMap, In.uv) * weight[0];
+  for (int i=1; i<3; i++)
+  {
+    float xOffset = offset[i] / diffMapSize.r;
+    float yOffset = offset[i] / diffMapSize.g;
+    fragmentColor += tex2D(diffuseMap, In.uv + float2(xOffset, 0.f)) * weight[i];
+    fragmentColor += tex2D(diffuseMap, In.uv - float2(xOffset, 0.f)) * weight[i];
+    fragmentColor += tex2D(diffuseMap, In.uv + float2(0.f, yOffset)) * weight[i];
+    fragmentColor += tex2D(diffuseMap, In.uv - float2(0.f, yOffset)) * weight[i];
+  }
+
+  return fragmentColor;
+}
+
+// approximately 39 instruction slots used (9 texture, 30 arithmetic)

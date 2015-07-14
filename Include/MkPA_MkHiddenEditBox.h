@@ -34,6 +34,8 @@ public:
 	void StepForwardMsgHistory(void);
 	inline void TextModified(void) { m_Modified = true; }
 
+	inline bool IsBinding(void) const { return (m_TargetEditBox != NULL); }
+
 	MkHiddenEditBox();
 	virtual ~MkHiddenEditBox() {}
 

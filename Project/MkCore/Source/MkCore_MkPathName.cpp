@@ -600,7 +600,7 @@ unsigned int MkPathName::GetWrittenTime(void) const
 	// 만약 atltime을 사용하기 싫다면 이 쪽을 대신 사용 할 것
 	// 그레고리력 기준으로 계산
 	// http://ko.wikipedia.org/wiki/%EC%9C%A4%EB%85%84
-	// 2000 ~ 2136.2 범위임으로 2100년을 제외한 년도는 4로 나누어 떨어지면 윤년이라는 점을 주의할 것
+	// 2000 ~ 2136.2 범위이므로 2100년을 제외한 년도는 4로 나누어 떨어지면 윤년이라는 점을 주의할 것
 	unsigned int thisYear = static_cast<unsigned int>(write_local_time.wYear) - 2000;
 	unsigned int lastLeapYearCount = (thisYear == 0) ? 0 : ((thisYear - 1) / 4 + (((thisYear - 1) < 100) ? 1 : 0)); // 작년까지의 윤년 수(ex> 2011년은 3개(00, 04, 08), 2111년은 25개)
 	unsigned int daysTillLastYear = thisYear * 365 + lastLeapYearCount; // 작년까지의 일수
@@ -625,7 +625,7 @@ unsigned int MkPathName::GetWrittenTime(void) const
 
 	__time64_t currentSecs = ctime.GetTime();
 
-	// 2000년 기준임으로 1970 ~ 2000.1.1 00:00:00에 해당하는 초를 제외
+	// 2000년 기준이므로 1970 ~ 2000.1.1 00:00:00에 해당하는 초를 제외
 	// CTime c2000(2000, 1, 1, 0, 0, 0, 0) >> c2000.GetTime() == 946652400;
 	__time64_t secsFrom2000 = currentSecs - static_cast<__time64_t>(946652400);
 	return static_cast<unsigned int>(secsFrom2000);

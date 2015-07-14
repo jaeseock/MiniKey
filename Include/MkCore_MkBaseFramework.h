@@ -126,10 +126,18 @@ public:
 	virtual void ConsumeSetCursorMsg(void) {}
 
 	// 확장 해제
+	// (NOTE) MkBaseFramework::Close()의 결과로 호출되며 main window handle과 모든 thread들도 유효한 상태
+	virtual void Free(void) {}
+
+	// 확장 해제
+	// (NOTE) MkBaseFramework::Close()/DestroyWindow()의 결과로 호출되며 main window handle과 모든 thread들이 무효화 된 상태
 	virtual void Clear(void) {}
 
 	// main window 반환
 	static MkListeningWindow* GetMainWindowPtr(void);
+
+	// framework 종료 선언
+	static void Close(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// implementation

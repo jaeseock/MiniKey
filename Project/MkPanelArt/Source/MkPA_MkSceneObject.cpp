@@ -8,6 +8,7 @@
 #include "MkPA_MkWindowManagerNode.h"
 #include "MkPA_MkWindowTagNode.h"
 #include "MkPA_MkWindowThemedNode.h"
+#include "MkPA_MkProgressBarNode.h"
 #include "MkPA_MkWindowBaseNode.h"
 #include "MkPA_MkBodyFrameControlNode.h"
 #include "MkPA_MkCheckBoxControlNode.h"
@@ -60,6 +61,7 @@ void MkSceneObject::InitSceneObject(void)
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_SceneNode, ePA_SNT_VisualPatternNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_VisualPatternNode, ePA_SNT_WindowTagNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_VisualPatternNode, ePA_SNT_WindowThemedNode);
+	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowThemedNode, ePA_SNT_ProgressBarNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowThemedNode, ePA_SNT_WindowBaseNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_TitleBarControlNode);
 	SceneNodeTypeHierarchy.SetHierarchy(ePA_SNT_WindowBaseNode, ePA_SNT_BodyFrameControlNode);
@@ -78,6 +80,7 @@ void MkSceneObject::InitSceneObject(void)
 	__TSI_ObjectOp<MkWindowManagerNode>::SetTemplate();
 	__TSI_ObjectOp<MkWindowTagNode>::SetTemplate();
 	__TSI_ObjectOp<MkWindowThemedNode>::SetTemplate();
+	__TSI_ObjectOp<MkProgressBarNode>::SetTemplate();
 	__TSI_ObjectOp<MkWindowBaseNode>::SetTemplate();
 	__TSI_ObjectOp<MkBodyFrameControlNode>::SetTemplate();
 	__TSI_ObjectOp<MkCheckBoxControlNode>::SetTemplate();
@@ -97,6 +100,7 @@ bool MkSceneObject::IsNodeClassKey(const MkHashStr& classKey)
 		(classKey == MkWindowManagerNode::SceneClassKey()) ||
 		(classKey == MkWindowTagNode::SceneClassKey()) ||
 		(classKey == MkWindowThemedNode::SceneClassKey()) ||
+		(classKey == MkProgressBarNode::SceneClassKey()) ||
 		(classKey == MkWindowBaseNode::SceneClassKey()) ||
 		(classKey == MkBodyFrameControlNode::SceneClassKey()) ||
 		(classKey == MkCheckBoxControlNode::SceneClassKey()) ||
@@ -118,6 +122,7 @@ MkSceneNode* MkSceneObject::CreateNodeInstance(const MkHashStr& classKey, const 
 	else if (classKey == MkWindowManagerNode::SceneClassKey()) { node = new MkWindowManagerNode(name); }
 	else if (classKey == MkWindowTagNode::SceneClassKey()) { node = new MkWindowTagNode(name); }
 	else if (classKey == MkWindowThemedNode::SceneClassKey()) { node = new MkWindowThemedNode(name); }
+	else if (classKey == MkProgressBarNode::SceneClassKey()) { node = new MkProgressBarNode(name); }
 	else if (classKey == MkWindowBaseNode::SceneClassKey()) { node = new MkWindowBaseNode(name); }
 	else if (classKey == MkBodyFrameControlNode::SceneClassKey()) { node = new MkBodyFrameControlNode(name); }
 	else if (classKey == MkCheckBoxControlNode::SceneClassKey()) { node = new MkCheckBoxControlNode(name); }

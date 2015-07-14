@@ -22,22 +22,12 @@ public:
 	static MkWindowManagerNode* CreateChildNode(MkSceneNode* parentNode, const MkHashStr& childNodeName);
 
 	//------------------------------------------------------------------------------------------------//
-	// 갱신 이전 정보 설정
+	// 정보 설정
 	//------------------------------------------------------------------------------------------------//
 
 	// 하위 윈도우들이 위치 할 깊이 대역폭. default는 1000.f
 	inline void SetDepthBandwidth(float depth) { m_DepthBandwidth = depth; }
 	inline float GetDepthBandwidth(void) const { return m_DepthBandwidth; }
-
-	// 해당 system이 사용할 영역. default는 display resolution
-	inline void SetTargetRegion(const MkInt2& region) { m_TargetRegion = region; }
-	inline const MkInt2& GetTargetRegion(void) const { return m_TargetRegion; }
-
-	// scene portal node 하위 manager 여부
-	inline void SetScenePortalBind(bool enable) { m_ScenePortalBind = enable; }
-
-	// 해당 프레임 input 관련 갱신 금지
-	inline void ValidateInputAtThisFrame(void) { m_ValidInputAtThisFrame = true; }
 
 	//------------------------------------------------------------------------------------------------//
 	// window 등록/삭제
@@ -67,16 +57,6 @@ public:
 	void DeactivateWindow(const MkHashStr& windowName);
 
 	//------------------------------------------------------------------------------------------------//
-	// cursor pivot
-	// 기본적으로 window system은 root와 input 좌표계가 동일하다고 간주하고 만들어지기 때문에 cursor의
-	// world position을 그대로 사용 할 수 있지만, 만약 그렇지 않다면(서로 다른 좌표계라면) pivot을 수정해
-	// cursor의 world position을 변환 해 주어야 함
-	//------------------------------------------------------------------------------------------------//
-
-	inline void SetInputPivotPosition(const MkInt2& pivotPosition) { m_InputPivotPosition = pivotPosition; }
-	inline const MkInt2& GetInputPivotPosition(void) const { return m_InputPivotPosition; }
-
-	//------------------------------------------------------------------------------------------------//
 	// event
 	//------------------------------------------------------------------------------------------------//
 
@@ -102,6 +82,9 @@ public:
 
 	MkWindowManagerNode(const MkHashStr& name);
 	virtual ~MkWindowManagerNode() { Clear(); }
+
+	// scene portal을 부모로 두었을 경우 갱신 관련 정보 설정
+	void __SetScenePortalLegacy(bool cursorInside, const MkIntRect& systemRect);
 
 protected:
 
@@ -152,22 +135,19 @@ protected:
 	bool m_DeleteWindowLock;
 
 	// 대상 영역 지정
-	MkInt2 m_TargetRegion;
+	MkIntRect m_SystemRect;
 
-	// scene portal node 하위 manager인지 여부
-	bool m_ScenePortalBind;
+	// 부모 scene portal로부터 갱신 정보를 받았는지 여부
+	bool m_HasScenePortalLegacy;
 
-	// scene portal node 하위 manager이면 갱신시 input 처리 여부
-	bool m_ValidInputAtThisFrame;
+	// 부모 scene portal로부터 갱신 정보를 받았을 때 input 처리 여부(scene portal의 cursor 포함 여부)
+	bool m_CursorIsInsideOfScenePortal;
 
 	// 다음 프레임에 삭제 될 window
 	MkArray<MkHashStr> m_DeletingWindow;
 
 	// 다음 프레임에 반영 될 활성화/비활성화 event
 	MkArray<_ActivationEvent> m_ActivationEvent;
-
-	// input
-	MkInt2 m_InputPivotPosition;
 
 	// 현 최상단 윈도우
 	MkHashStr m_CurrentFocusWindow;

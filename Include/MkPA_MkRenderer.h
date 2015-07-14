@@ -15,6 +15,7 @@
 #include "MkCore_MkVersionTag.h"
 #include "MkCore_MkWindowUpdateListener.h"
 #include "MkCore_MkEventQueuePattern.h"
+#include "MkCore_MkWebBrowser.h"
 
 #include "MkPA_MkDrawQueue.h"
 
@@ -40,6 +41,29 @@ public:
 	inline MkDrawQueue& GetDrawQueue(void) { return m_DrawQueue; }
 
 	inline const MkVersionTag& GetRendererVersion(void) const { return m_RendererVersion; }
+
+	//------------------------------------------------------------------------------------------------//
+	// web dialog
+	//
+	// ex>
+	//	if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
+	//	{
+	//		if (MK_RENDERER.GetWebDialog() == NULL)
+	//		{
+	//			MK_RENDERER.OpenWebDialog(L"http://www.daum.net/", MkIntRect(20, 20, 400, 400));
+	//		}
+	//		else
+	//		{
+	//			MK_RENDERER.CloseWebDialog();
+	//		}
+	//	}
+	//------------------------------------------------------------------------------------------------//
+
+	bool OpenWebDialog(const MkStr& url, const MkIntRect& rect);
+	void CloseWebDialog(void);
+
+	inline HWND GetWebDialog(void) const { return m_WebBrowser.GetBrowserHandle(); }
+	inline const RECT& GetDialogRect(void) const { return m_DialogRect; }
 
 	//------------------------------------------------------------------------------------------------//
 	// render event
@@ -94,4 +118,8 @@ protected:
 
 	// draw queue
 	MkDrawQueue m_DrawQueue;
+
+	// web browser dialog
+	MkWebBrowser m_WebBrowser;
+	RECT m_DialogRect;
 };

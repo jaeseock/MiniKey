@@ -634,6 +634,18 @@
 								</File>
 							</Filter>
 						</Filter>
+						<Filter
+							Name="Progress bar node"
+							>
+							<File
+								RelativePath=".\Source\MkPA_MkProgressBarNode.cpp"
+								>
+							</File>
+							<File
+								RelativePath="..\..\Include\MkPA_MkProgressBarNode.h"
+								>
+							</File>
+						</Filter>
 					</Filter>
 				</Filter>
 			</Filter>

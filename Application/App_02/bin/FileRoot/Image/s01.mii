@@ -1,0 +1,78 @@
+
+str Group = "Sample"; // (opt)그룹명
+
+// subset definition
+/*
+Node "PRIFIX(single일 경우 NAME)"
+{
+	int2 Position = (0, 0); // (opt)위치. 기본값은 (0, 0)
+	int2 Size = (101, 101); // 크기
+	int2 Table = (1, 1); // (opt)테이블의 행렬(xy). 기본값은 (1, 1). 기본값이 (1, 1)이 아닐 경우(복수의 subset 의미) PRIFIX 뒤에 numbering이 붙음
+	int2 Offset = (101, 101); // (opt)Table에서 복수의 subset을 의미할 경우 다음 subset 탐색시의 이동 거리. 수평이동시 x, 수직이동시 y 사용. 기본값은 Size
+}
+*/
+
+Node "FaceS" // single subset
+{
+	int2 Size = (101, 101); // 크기
+}
+
+Node "FaceH_" // horizontal 1D table. FaceH_0, FaceH_1, ..., FaceH_8
+{
+	int2 Size = (101, 101);
+	int2 Table = (9, 1);
+}
+
+Node "FaceV_" // vertical 1D table. FaceV_0, FaceV_1, ..., FaceV_4
+{
+	int2 Size = (101, 101);
+	int2 Table = (1, 5);
+}
+
+Node "FaceF_" // 2D table. FaceF_0, FaceF_1, ..., FaceF_44
+{
+	int2 Size = (101, 101);
+	int2 Table = (9, 5);
+}
+
+Node "FaceP_" // horizontal panorama. FaceP_0, FaceP_1, ..., FaceP_29
+{
+	int2 Size = (101, 101);
+	int2 Table = (30, 1);
+	int2 Offset = (10, 0);
+}
+
+// sequence definition
+/*
+Node "NAME"
+{
+	float TotalRange = 4.5; // 총 시간 구간의 길이(sec)
+	str SubsetList = "P_0" / "P_1" / "P_2"; // subset list. MkDataNode의 automation 기능 추천(해당 문장은 str SubsetList = "~" / "P_" / "0" / "2";와 동일)
+	float TimeList = 0 / 1.5 / 3; // (opt)subset list와 1:1 대응되는 등장 시간. 없으면 Range를 Subset 갯수만큼 균일하게 쪼개서 사용
+	bool Loop = yes; // (opt)루핑 여부. 기본값은 true
+}
+*/
+
+Node "HorizontalChange"
+{
+	float TotalRange = 2.25; // 0.25 * 9
+	str SubsetList = "~" / "FaceH_" / "0" / "8";
+}
+
+Node "VerticalChange"
+{
+	float TotalRange = 1.25; // 0.25 * 5
+	str SubsetList = "~" / "FaceV_" / "0" / "4";
+}
+
+Node "FullChange"
+{
+	float TotalRange = 4.5; // 0.1 * 45
+	str SubsetList = "~" / "FaceF_" / "0" / "44";
+}
+
+Node "Panorama"
+{
+	float TotalRange = 3; // 0.1 * 30
+	str SubsetList = "~" / "FaceP_" / "0" / "29" / "28" / "1"; // mirroring. 0, 1, ..., 28, 29, 28, 27, ..., 2, 1
+}

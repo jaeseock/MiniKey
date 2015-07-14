@@ -29,6 +29,8 @@ public:
 	// «ÿ¡¶
 	virtual void Clear(void);
 
+	inline const MkInt2& GetTargetTextureSize(void) const { return m_TextureSize; }
+
 	MkDrawToStaticTextureStep();
 	virtual ~MkDrawToStaticTextureStep() { Clear(); }
 

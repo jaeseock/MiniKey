@@ -56,6 +56,9 @@ public:
 	// 초기화
 	void SetUp(const MkInt2& imageSize, const MkDataNode* node);
 
+	// 기본(MkHashStr::EMPTY) subset info 변경
+	void ResetDefaultSubsetInfo(const MkInt2& srcSize, const MkInt2& realSize);
+
 	// 해당 sequence의 pointer 반환
 	const Sequence* GetSequencePtr(const MkHashStr& sequenceName) const;
 

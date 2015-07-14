@@ -1,0 +1,73 @@
+
+float3 rimColor : UDP <string def = "1, 0, 0";>;
+float alpha : ALPHA;
+
+texture diffTex : DIFFUSEMAP;
+texture specTex : SPECULARMAP;
+texture normalTex : NORMALMAP;
+
+struct PS_IN
+{
+  float4 color0 : COLOR0;
+	float2 uv : TEXCOORD0;
+	float3 lightDir : TEXCOORD1;
+	float3 cameraDir : TEXCOORD2;
+};
+
+sampler diffuseMap = sampler_state
+{
+	Texture = (diffTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+sampler specularMap = sampler_state
+{
+	Texture = (specTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+sampler normalMap = sampler_state
+{
+	Texture = (normalTex);
+	MipFilter = LINEAR;
+	MinFilter = LINEAR;
+	MagFilter = LINEAR;
+};
+
+float4 PS(PS_IN In) : COLOR
+{
+  // light direction 복구(0.f ~ 1.f -> -1.f ~ 1.f)
+  float3 lightDir = normalize(In.lightDir);
+  
+  // normal 복구
+  float4 normalColor = tex2D(normalMap, In.uv);
+  float3 normal = normalize(normalColor.rgb * 2.f - float3(1.f, 1.f, 1.f));
+  
+  // light power
+  float NDotL = dot(normal, lightDir);
+  float lightPower = saturate((0.5f + NDotL) * 0.7f); // Lambert. -0.35 ~ 1.05;
+  
+  // specular power
+  float3 reflectionVec = 2.f * NDotL * normal - lightDir;
+  float3 camDir = normalize(In.cameraDir);
+	float specularPower = pow(max(0.f, dot(reflectionVec, camDir)), 2.f); // phong. sharpness = 2.f
+	
+	// rim power
+	float rimPower = 1.f - saturate(dot(normal, camDir));
+	rimPower *= rimPower; // pow 2
+  
+  // map color
+  float4 diffuseColor = tex2D(diffuseMap, In.uv);
+  float4 specularColor = tex2D(specularMap, In.uv);
+  
+  // final color
+  float3 finalColor = diffuseColor.rgb * In.color0.rgb * lightPower + specularColor.rgb * specularPower + rimColor * rimPower;
+  
+	return float4(saturate(finalColor), diffuseColor.a * alpha);
+}
+
+// approximately 30 instruction slots used (3 texture, 27 arithmetic)

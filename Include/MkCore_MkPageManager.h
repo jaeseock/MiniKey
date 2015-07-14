@@ -43,7 +43,7 @@ public:
 
 	// FSM에 조건 메세지를 보내서 페이지 이동
 	// Update()시 적용됨
-	bool SetMoveMessage(const MkHashStr& moveMessage);
+	bool SetMoveMessage(const MkHashStr& condition);
 
 	// 직접 leaf 페이즈로 이동
 	// Update()시 적용됨

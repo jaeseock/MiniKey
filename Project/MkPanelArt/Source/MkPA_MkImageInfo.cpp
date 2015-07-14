@@ -185,6 +185,23 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 	}
 }
 
+void MkImageInfo::ResetDefaultSubsetInfo(const MkInt2& srcSize, const MkInt2& realSize)
+{
+	if (m_Subsets.Exist(MkHashStr::EMPTY))
+	{
+		Subset& emptySubset = m_Subsets[MkHashStr::EMPTY];
+
+		emptySubset.rectSize = MkFloat2(static_cast<float>(srcSize.x), static_cast<float>(srcSize.y));
+
+		float u = static_cast<float>(srcSize.x) / static_cast<float>(realSize.x);
+		float v = static_cast<float>(srcSize.y) / static_cast<float>(realSize.y);
+		emptySubset.uv[MkFloatRect::eLeftTop] = MkFloat2::Zero;
+		emptySubset.uv[MkFloatRect::eRightTop] = MkFloat2(u, 0.f);
+		emptySubset.uv[MkFloatRect::eLeftBottom] = MkFloat2(0.f, v);
+		emptySubset.uv[MkFloatRect::eRightBottom] = MkFloat2(u, v);
+	}
+}
+
 const MkImageInfo::Sequence* MkImageInfo::GetSequencePtr(const MkHashStr& sequenceName) const
 {
 	return m_Sequences.Exist(sequenceName) ? &m_Sequences[sequenceName] : NULL;

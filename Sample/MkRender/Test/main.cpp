@@ -41,6 +41,7 @@
 #include "MkPA_MkSliderControlNode.h"
 #include "MkPA_MkListBoxControlNode.h"
 #include "MkPA_MkDropDownListControlNode.h"
+#include "MkPA_MkProgressBarNode.h"
 
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkStaticResourceContainer.h"
@@ -57,6 +58,18 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
+		/*
+		HWND webHnd = CreateWindow(L"WebCtrl32", L"http://www.daum.net/", WS_CHILD | WS_VISIBLE, 0, 0, 800, 600,
+			MkBaseFramework::GetMainWindowPtr()->GetWindowHandle(), NULL, NULL, NULL);
+
+		DWORD errCode = ::GetLastError();
+
+		WNDCLASSEX wcx;
+		ZeroMemory(&wcx, sizeof(WNDCLASSEX));
+		BOOL classExist = ::GetClassInfoEx(NULL, L"WebCtrl32", &wcx);
+
+		*/
+		
 		m_RootNode = new MkSceneNode(L"Root");
 
 		MkSceneNode* mainNode = m_RootNode->CreateChildNode(L"Main");
@@ -153,6 +166,12 @@ public:
 		lbNode->AddItem(L"bbb", L"bbb");
 		lbNode->AddItem(L"ccc", L"ccc");
 		lbNode->SortItemSequenceInAscendingOrder();
+
+		MkProgressBarNode* pbNode = MkProgressBarNode::CreateChildNode(bodyFrame, L"ProgBar");
+		pbNode->SetProgressBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Medium, 250.f, 50, 200, MkProgressBarNode::eSPM_Percentage);
+		pbNode->SetAlignmentPosition(eRAP_LeftTop);
+		pbNode->SetAlignmentOffset(MkFloat2(10.f, -160.f));
+		pbNode->SetLocalDepth(-1.f);
 
 		// window C : title bar
 		titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"TitleBarC");
@@ -520,7 +539,15 @@ public:
 
 		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
 		{
-			MK_PAGE_MGR.ChangePageDirectly(L"RestorePage");
+			//MK_PAGE_MGR.ChangePageDirectly(L"RestorePage");
+			if (MK_RENDERER.GetWebDialog() == NULL)
+			{
+				MK_RENDERER.OpenWebDialog(L"http://www.daum.net/", MkIntRect(20, 20, 400, 400));
+			}
+			else
+			{
+				MK_RENDERER.CloseWebDialog();
+			}
 		}
 	}
 

@@ -30,7 +30,7 @@ bool MkHiddenEditBox::SetUp(HWND parentHandle, HINSTANCE hInstance)
 	MK_CHECK(m_hWnd != NULL, L"hidden edit box 생성 실패")
 		return false;
 
-	gOldInputProc = reinterpret_cast<WNDPROC>(SetWindowLong(m_hWnd, GWL_WNDPROC, reinterpret_cast<LONG>(__InputSubProc)));
+	gOldInputProc = reinterpret_cast<WNDPROC>(SetWindowLongPtr(m_hWnd, GWL_WNDPROC, reinterpret_cast<LONG>(__InputSubProc)));
 	PostMessage(m_hWnd, EM_LIMITTEXT, static_cast<WPARAM>(MKDEF_MAX_INPUT_COUNT), NULL);
 
 	return true;
@@ -43,9 +43,9 @@ void MkHiddenEditBox::SetTargetEditBoxNode(const MkSceneNode* ownerMgr, MkEditBo
 
 	if (targetEditBox == NULL)
 	{
-		if ((ownerMgr == NULL) || (ownerMgr == m_TargetWindowMgr)) // 동일 window manager의 해제 명령만 인식
+		if ((ownerMgr == NULL) || (ownerMgr == m_TargetWindowMgr)) // os나 동일 window manager의 해제 명령만 인식
 		{
-			_ClearTargetEditBox(true);
+			_ClearTargetEditBox(ownerMgr != NULL); // os에 의한 해제는 별도로 focus를 설정하지 않음
 		}
 	}
 	else

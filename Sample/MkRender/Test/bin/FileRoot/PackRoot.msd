@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2015.07.03 (15:01:16)
+//   - time stamp : 2015.07.14 (19:46:13)
 //   - exporter   : client (Test)
 //--------------------------------------------------------------------//
 
@@ -151,12 +151,12 @@ Node "[SUBNODES]"
 					"Small";
 				vec2 ClientSize = (180.000, 12.000);
 				str ComponentType = "eCT_Title";
+				str FrameType = "eFT_Small";
 				int IconType = 3;
 				float LocalDepth = 200.000;
 				vec2 LocalPosition = (500.000, 300.000);
 				str ThemeName = "Default";
 				bool UseCloseBtn = No;
-				str WinFrameType = "eFT_Small";
 
 				Node "[SUBNODES]"
 				{
@@ -251,11 +251,11 @@ Node "[SUBNODES]"
 					"Small";
 				vec2 ClientSize = (344.000, 12.000);
 				str ComponentType = "eCT_Title";
+				str FrameType = "eFT_Small";
 				int IconType = 1;
 				float LocalDepth = 800.000;
 				vec2 LocalPosition = (400.000, 600.000);
 				str ThemeName = "Default";
-				str WinFrameType = "eFT_Small";
 
 				Node "[SUBNODES]"
 				{
@@ -311,11 +311,11 @@ Node "[SUBNODES]"
 														"Small";
 													vec2 ClientSize = (244.000, 12.000);
 													str ComponentType = "eCT_Title";
+													str FrameType = "eFT_Small";
 													int IconType = 1;
 													float LocalDepth = 200.000;
 													vec2 LocalPosition = (0.000, 162.000);
 													str ThemeName = "Default";
-													str WinFrameType = "eFT_Small";
 
 													Node "[SUBNODES]"
 													{
@@ -338,12 +338,12 @@ Node "[SUBNODES]"
 																	int AlignPosition = 34;
 																	vec2 ClientSize = (210.000, 12.000);
 																	str ComponentType = "eCT_DefaultBox";
+																	str FrameType = "eFT_Small";
 																	bool History = Yes;
 																	float LocalDepth = -1.000;
 																	vec2 LocalPosition = (13.000, 235.000);
 																	str TextString = "아기 다리";
 																	str ThemeName = "Default";
-																	str WinFrameType = "eFT_Small";
 																}
 
 																Node "Slider" : "MkSliderControlNode"
@@ -354,6 +354,7 @@ Node "[SUBNODES]"
 																	vec2 ClientSize = (210.000, 0.000);
 																	str ComponentType = "eCT_GuideLine";
 																	int CurrentValue = 20;
+																	str FrameType = "eFT_Small";
 																	bool Horizontal = Yes;
 																	float LineLength = 210.000;
 																	float LocalDepth = -1.000;
@@ -361,7 +362,6 @@ Node "[SUBNODES]"
 																	bool ShowValue = Yes;
 																	str ThemeName = "Default";
 																	int ValueSize = 90;
-																	str WinFrameType = "eFT_Small";
 																}
 
 																Node "SubCCBtn" : "MkWindowBaseNode"
@@ -401,13 +401,13 @@ Node "[SUBNODES]"
 										vec2 ClientSize = (0.000, 150.000);
 										str ComponentType = "eCT_GuideLine";
 										int CurrentValue = 12;
+										str FrameType = "eFT_Small";
 										float LineLength = 150.000;
 										float LocalDepth = -1.000;
 										vec2 LocalPosition = (13.000, 22.000);
 										bool ShowValue = Yes;
 										str ThemeName = "Default";
 										int ValueSize = 15;
-										str WinFrameType = "eFT_Small";
 									}
 								}
 							}
@@ -427,11 +427,11 @@ Node "[SUBNODES]"
 					"Small";
 				vec2 ClientSize = (344.000, 12.000);
 				str ComponentType = "eCT_Title";
+				str FrameType = "eFT_Small";
 				int IconType = 1;
 				float LocalDepth = 600.000;
 				vec2 LocalPosition = (200.000, 500.000);
 				str ThemeName = "Default";
-				str WinFrameType = "eFT_Small";
 
 				Node "[SUBNODES]"
 				{
@@ -455,6 +455,7 @@ Node "[SUBNODES]"
 								int AlignPosition = 34;
 								vec2 ClientSize = (206.000, 108.000);
 								str ComponentType = "eCT_DefaultBox";
+								str FrameType = "eFT_Small";
 								str ItemKeyList = // [8]
 									"aaa" /
 									"가나다" /
@@ -487,7 +488,21 @@ Node "[SUBNODES]"
 								vec2 LocalPosition = (13.000, 109.000);
 								int OnePageItemSize = 6;
 								str ThemeName = "Default";
-								str WinFrameType = "eFT_Small";
+							}
+
+							Node "ProgBar" : "MkProgressBarNode"
+							{
+								vec2 AlignOffset = (10.000, -160.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (250.000, 16.000);
+								str ComponentType = "eCT_DefaultBox";
+								int CurrValue = 50;
+								str FrameType = "eFT_Medium";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 71.000);
+								int MaxValue = 200;
+								int ShowProgMode = 2;
+								str ThemeName = "Default";
 							}
 						}
 					}
@@ -505,11 +520,11 @@ Node "[SUBNODES]"
 					"Small";
 				vec2 ClientSize = (344.000, 12.000);
 				str ComponentType = "eCT_Title";
+				str FrameType = "eFT_Small";
 				int IconType = 1;
 				float LocalDepth = 400.000;
 				vec2 LocalPosition = (100.000, 400.000);
 				str ThemeName = "Default";
-				str WinFrameType = "eFT_Small";
 
 				Node "[SUBNODES]"
 				{
@@ -563,11 +578,11 @@ Node "[SUBNODES]"
 									"Small";
 								vec2 ClientSize = (12.000, 12.000);
 								str ComponentType = "eCT_CheckBoxBtn";
+								str FrameType = "eFT_Small";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 205.000);
 								bool OnCheck = Yes;
 								str ThemeName = "Default";
-								str WinFrameType = "eFT_Small";
 							}
 
 							Node "DropDown" : "MkDropDownListControlNode"
@@ -576,12 +591,12 @@ Node "[SUBNODES]"
 								int AlignPosition = 34;
 								vec2 ClientSize = (200.000, 12.000);
 								str ComponentType = "eCT_DefaultBox";
+								str FrameType = "eFT_Small";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 180.000);
 								int MaxOnePageItemSize = 6;
 								str TargetItemKey = "6";
 								str ThemeName = "Default";
-								str WinFrameType = "eFT_Small";
 
 								Node "[SUBNODES]"
 								{
@@ -591,6 +606,7 @@ Node "[SUBNODES]"
 										uint Attribute = 67328;
 										vec2 ClientSize = (200.000, 108.000);
 										str ComponentType = "eCT_DefaultBox";
+										str FrameType = "eFT_Small";
 										str ItemKeyList = // [8]
 											"0" /
 											"1" /
@@ -623,7 +639,6 @@ Node "[SUBNODES]"
 										vec2 LocalPosition = (0.000, -114.000);
 										int OnePageItemSize = 6;
 										str ThemeName = "Default";
-										str WinFrameType = "eFT_Small";
 									}
 								}
 							}
