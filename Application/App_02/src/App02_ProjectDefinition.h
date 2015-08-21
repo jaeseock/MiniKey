@@ -42,9 +42,43 @@ public:
 		};
 	};
 
-	//------------------------------------------------------------------------------------------------//
-
 	class AppIntro
+	{
+	public:
+		static const MkHashStr Name;
+		
+		class Condition
+		{
+		public:
+			static const MkHashStr Next;
+		};
+	};
+
+	class AppLobby
+	{
+	public:
+		static const MkHashStr Name;
+		
+		class Condition
+		{
+		public:
+			static const MkHashStr Battle;
+		};
+	};
+
+	class AppBriefingRoom
+	{
+	public:
+		static const MkHashStr Name;
+		
+		class Condition
+		{
+		public:
+			static const MkHashStr Next;
+		};
+	};
+
+	class AppBattleZone
 	{
 	public:
 		static const MkHashStr Name;
@@ -68,7 +102,6 @@ class GlobalDef
 {
 public:
 
-	static const MkFloat2 AppResolution;
-
 	static const MkHashStr FinalDrawStepName;
 };
+

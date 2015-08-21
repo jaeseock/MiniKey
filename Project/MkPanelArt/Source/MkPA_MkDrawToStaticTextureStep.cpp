@@ -91,10 +91,21 @@ bool MkDrawToStaticTextureStep::_CreateTexture(void)
 		MK_CHECK(texture != NULL, L"MkBaseTexture alloc 실패")
 			return false;
 
-		MK_CHECK(texture->SetUp(m_TextureSize, 1, 0, (m_AlphaType == eNone) ? D3DFMT_X8R8G8B8 : D3DFMT_A8R8G8B8), L"MkBaseTexture 초기화 실패")
+		// texture 크기가 2의 n승이 아닐 수 있으므로 여기서 맞춤
+		MkInt2 targetSize = MkBaseTexture::GetFormalSize(m_TextureSize);
+
+		// texture 생성
+		MK_CHECK(texture->SetUp(targetSize, 1, 0, (m_AlphaType == eNone) ? D3DFMT_X8R8G8B8 : D3DFMT_A8R8G8B8), L"MkBaseTexture 초기화 실패")
 		{
 			delete texture;
 			return false;
+		}
+
+		// texture 크기가 다르면 default subset 크기 재설정
+		if (targetSize.IsPositive() && (targetSize != m_TextureSize))
+		{
+			texture->ResetDefaultSubsetInfo(m_TextureSize, targetSize);
+			m_TextureSize = targetSize;
 		}
 
 		m_TargetTexture = texture;

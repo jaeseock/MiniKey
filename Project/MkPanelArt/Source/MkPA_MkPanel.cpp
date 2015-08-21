@@ -660,15 +660,6 @@ void MkPanel::_UpdateTextNodeTexture(MkDrawTextNodeStep* drawStep)
 		const MkInt2& srcSize = m_TargetTextNodePtr->GetWholePixelSize();
 		m_TextureSize.x = static_cast<float>(srcSize.x);
 		m_TextureSize.y = static_cast<float>(srcSize.y);
-
-		// real texture size
-		const MkInt2& realSize = drawStep->GetTargetTextureSize();
-
-		// reset default subset info
-		if (realSize.IsPositive())
-		{
-			m_Texture->ResetDefaultSubsetInfo(srcSize, realSize);
-		}
 	}
 }
 

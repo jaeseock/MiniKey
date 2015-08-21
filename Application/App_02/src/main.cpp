@@ -13,6 +13,8 @@
 #include "App02_GamePageRoot.h"
 #include "App02_GamePageAppStart.h"
 #include "App02_GamePageAppIntro.h"
+#include "App02_GamePageAppLobby.h"
+#include "App02_GamePageAppBriefingRoom.h"
 
 //------------------------------------------------------------------------------------------------//
 // framework
@@ -26,6 +28,8 @@ public:
 		MK_PAGE_MGR.SetUp(new GamePageRoot());
 		MK_PAGE_MGR.RegisterChildPage(GamePage::Root::Name, new GamePageAppStart());
 		MK_PAGE_MGR.RegisterChildPage(GamePage::Root::Name, new GamePageAppIntro());
+		MK_PAGE_MGR.RegisterChildPage(GamePage::Root::Name, new GamePageAppLobby());
+		MK_PAGE_MGR.RegisterChildPage(GamePage::Root::Name, new GamePageAppBriefingRoom());
 		
 		MK_PAGE_MGR.ChangePageDirectly(GamePage::AppStart::Name);
 		
@@ -57,8 +61,7 @@ public:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	ThisApplication application;
-	application.Run(hI, L"App 02", L"..\\FileRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT,
-		static_cast<int>(GlobalDef::AppResolution.x), static_cast<int>(GlobalDef::AppResolution.y), false, false, NULL, cmdline);
+	application.Run(hI, L"App 02", L"..\\FileRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768, false, false, NULL, cmdline);
 
 	return 0;
 }

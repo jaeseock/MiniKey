@@ -6,6 +6,7 @@
 //#include "MkCore_MkTimeState.h"
 
 //#include "MkPA_MkRenderer.h"
+#include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkProgressBarNode.h"
 
 //#include "MkPA_MkDrawSceneNodeStep.h"
@@ -104,7 +105,8 @@ void GamePageAppStart::_SetLoadedResCount(int count)
 			{
 				m_ProgressBarNode->SetProgressBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Medium, 900.f, m_LoadedResCount, m_TotalResCount, MkProgressBarNode::eSPM_Percentage);
 				float barWidth = m_ProgressBarNode->CalculateWindowSize().x;
-				m_ProgressBarNode->SetLocalPosition(MkFloat2((GlobalDef::AppResolution.x - barWidth) * 0.5f, 50.f));
+				float screenWidth = static_cast<float>(MK_DEVICE_MGR.GetCurrentResolution().x);
+				m_ProgressBarNode->SetLocalPosition(MkFloat2((screenWidth - barWidth) * 0.5f, 50.f));
 				m_ProgressBarNode->SetLocalDepth(-1.f);
 			}
 		}

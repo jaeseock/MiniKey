@@ -100,6 +100,8 @@ public:
 	
 	//------------------------------------------------------------------------------------------------//
 
+	virtual void Update(double currTime = 0.);
+
 	virtual void Clear(void);
 
 	MKDEF_DECLARE_SCENE_OBJECT_HEADER; // MkSceneObject
@@ -119,6 +121,9 @@ protected:
 	MkArray<MkHashStr> m_CallBackTargetWindowPath;
 
 public:
+
+	// tooltip node. 해당 이름의 node가 직계 자식으로 존재하면 tooltip으로 인식
+	static const MkHashStr ToolTipName;
 
 	static const MkHashStr ArgKey_CursorLocalPosition;
 	static const MkHashStr ArgKey_WheelDelta;

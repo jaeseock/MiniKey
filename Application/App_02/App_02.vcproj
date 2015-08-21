@@ -251,6 +251,14 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\App02_GameDefinition.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GameDefinition.h"
+				>
+			</File>
+			<File
 				RelativePath=".\src\App02_ProjectDefinition.cpp"
 				>
 			</File>
@@ -268,43 +276,107 @@
 				RelativePath=".\src\main.cpp"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="Game page"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+			>
+			<File
+				RelativePath=".\src\App02_GamePageAppBattleZone.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppBattleZone.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppBriefingRoom.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppBriefingRoom.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppIntro.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppIntro.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppLobby.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppLobby.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppStart.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageAppStart.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageBase.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageBase.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageRoot.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\App02_GamePageRoot.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Game system"
+			>
 			<Filter
-				Name="GamePage"
-				Filter="h;hpp;hxx;hm;inl;inc;xsd"
-				UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
+				Name="Army"
 				>
 				<File
-					RelativePath=".\src\App02_GamePageAppIntro.cpp"
+					RelativePath=".\src\App02_SystemArmy.h"
+					>
+				</File>
+				<Filter
+					Name="Action"
+					>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Object"
+				>
+				<File
+					RelativePath=".\src\App02_SystemGameObject.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\src\App02_GamePageAppIntro.h"
+					RelativePath=".\src\App02_SystemGameObject.h"
 					>
 				</File>
-				<File
-					RelativePath=".\src\App02_GamePageAppStart.cpp"
+				<Filter
+					Name="Tech"
 					>
-				</File>
-				<File
-					RelativePath=".\src\App02_GamePageAppStart.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\App02_GamePageBase.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\App02_GamePageBase.h"
-					>
-				</File>
-				<File
-					RelativePath=".\src\App02_GamePageRoot.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\src\App02_GamePageRoot.h"
-					>
-				</File>
+					<File
+						RelativePath=".\src\App02_SystemTechObjectBase.cpp"
+						>
+					</File>
+					<File
+						RelativePath=".\src\App02_SystemTechObjectBase.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 	</Files>

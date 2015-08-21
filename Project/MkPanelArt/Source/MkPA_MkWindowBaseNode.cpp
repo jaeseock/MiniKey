@@ -6,6 +6,8 @@
 #include "MkPA_MkWindowBaseNode.h"
 
 
+const MkHashStr MkWindowBaseNode::ToolTipName = L"#ToolTip";
+
 const MkHashStr MkWindowBaseNode::ArgKey_CursorLocalPosition(L"CursorLocalPosition");
 const MkHashStr MkWindowBaseNode::ArgKey_WheelDelta(L"WheelDelta");
 const MkHashStr MkWindowBaseNode::ArgKey_ExclusiveWindow(L"ExclusiveWindow");
@@ -179,6 +181,21 @@ void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, Mk
 }
 
 //------------------------------------------------------------------------------------------------//
+
+void MkWindowBaseNode::Update(double currTime)
+{
+	// tooltip 상태 갱신
+	if (ChildExist(ToolTipName))
+	{
+		MkSceneNode* tooltipNode = GetChildNode(ToolTipName);
+		if (tooltipNode != NULL)
+		{
+			tooltipNode->SetVisible(m_CursorInside);
+		}
+	}
+
+	MkWindowThemedNode::Update(currTime);
+}
 
 void MkWindowBaseNode::Clear(void)
 {

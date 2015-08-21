@@ -3,9 +3,10 @@
 //#include "MkCore_MkDataNode.h"
 //#include "MkCore_MkDevPanel.h"
 //#include "MkCore_MkInputManager.h"
-//#include "MkCore_MkTimeState.h"
+//
 #include "MkCore_MkVersionTag.h"
 #include "MkCore_MkBaseFramework.h"
+#include "MkCore_MkPageManager.h"
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkTextNode.h"
 #include "MkPA_MkWindowManagerNode.h"
@@ -27,12 +28,14 @@ const static MkHashStr LoadBtnName(L"Load");
 class GPAppIntroWinMgr : public MkWindowManagerNode
 {
 public:
+
 	virtual void SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
 	{
 		if ((eventType == ePA_SNE_CursorLBtnReleased) && (path.GetSize() == 1))
 		{
 			if (path[0] == NewGameBtnName)
 			{
+				MK_PAGE_MGR.SetMoveMessage(GamePage::AppIntro::Condition::Next);
 				return;
 			}
 			else if (path[0] == LoadBtnName)
@@ -40,7 +43,7 @@ public:
 				MkPathName loadFilePath;
 				if (loadFilePath.GetSingleFilePathFromDialog(L"txt", MK_DEVICE_MGR.GetTargetWindow()->GetWindowHandle()))
 				{
-					int kk = 0;
+					
 				}
 				return;
 			}
@@ -58,7 +61,6 @@ public:
 	virtual ~GPAppIntroWinMgr() {}
 };
 
-
 //------------------------------------------------------------------------------------------------//
 
 bool GamePageAppIntro::SetUp(MkDataNode& sharingNode)
@@ -67,6 +69,8 @@ bool GamePageAppIntro::SetUp(MkDataNode& sharingNode)
 		return false;
 
 	m_RootSceneNode->SetLocalDepth(10.f);
+
+	float screenWidth = static_cast<float>(MK_DEVICE_MGR.GetCurrentResolution().x);
 
 	// window factory
 	MkWindowFactory winFactory;
@@ -83,7 +87,7 @@ bool GamePageAppIntro::SetUp(MkDataNode& sharingNode)
 		titleNode->Update(); // text panel »ý¼º
 
 		float width = static_cast<float>(titleNode->GetTagTextPtr()->GetWholePixelSize().x);
-		titleNode->SetLocalPosition(MkFloat2((1024.f - width) * 0.5f, 550.f));
+		titleNode->SetLocalPosition(MkFloat2((screenWidth - width) * 0.5f, 550.f));
 	}
 
 	// version
@@ -93,7 +97,7 @@ bool GamePageAppIntro::SetUp(MkDataNode& sharingNode)
 	if (versionNode != NULL)
 	{
 		m_RootSceneNode->AttachChildNode(versionNode);
-		versionNode->SetLocalPosition(MkFloat2(1024.f - versionSize.x - 10.f, 10.f));
+		versionNode->SetLocalPosition(MkFloat2(screenWidth - versionSize.x - 10.f, 10.f));
 	}
 
 	// window mgr
@@ -107,7 +111,7 @@ bool GamePageAppIntro::SetUp(MkDataNode& sharingNode)
 		if (winMgrNode->AttachWindow(newGameBtn))
 		{
 			winMgrNode->ActivateWindow(newGameBtn->GetNodeName());
-			newGameBtn->SetLocalPosition(MkFloat2((1024.f - winFactory.GetMinClientSizeForButton().x) * 0.5f, 300.f));
+			newGameBtn->SetLocalPosition(MkFloat2((screenWidth - winFactory.GetMinClientSizeForButton().x) * 0.5f, 300.f));
 		}
 
 		// load
@@ -115,7 +119,7 @@ bool GamePageAppIntro::SetUp(MkDataNode& sharingNode)
 		if (winMgrNode->AttachWindow(loadBtn))
 		{
 			winMgrNode->ActivateWindow(loadBtn->GetNodeName());
-			loadBtn->SetLocalPosition(MkFloat2((1024.f - winFactory.GetMinClientSizeForButton().x) * 0.5f, 200.f));
+			loadBtn->SetLocalPosition(MkFloat2((screenWidth - winFactory.GetMinClientSizeForButton().x) * 0.5f, 200.f));
 		}
 
 		// quit
@@ -123,27 +127,17 @@ bool GamePageAppIntro::SetUp(MkDataNode& sharingNode)
 		if (winMgrNode->AttachWindow(quitBtn))
 		{
 			winMgrNode->ActivateWindow(quitBtn->GetNodeName());
-			quitBtn->SetLocalPosition(MkFloat2((1024.f - winFactory.GetMinClientSizeForButton().x) * 0.5f, 100.f));
+			quitBtn->SetLocalPosition(MkFloat2((screenWidth - winFactory.GetMinClientSizeForButton().x) * 0.5f, 100.f));
 		}
 	}
 	
 	return true;
 }
 
-void GamePageAppIntro::Update(const MkTimeState& timeState)
-{
-	GamePageBase::Update(timeState);
-}
-
-void GamePageAppIntro::Clear(MkDataNode* sharingNode)
-{
-	GamePageBase::Clear(sharingNode);
-}
-
 GamePageAppIntro::GamePageAppIntro(void) : GamePageBase(GamePage::AppIntro::Name)
 {
 	// page flow
-	//SetPageFlowTable(GamePage::AppIntro::Condition::Next, GamePage::Intro::Name);
+	SetPageFlowTable(GamePage::AppIntro::Condition::Next, GamePage::AppLobby::Name);
 }
 
 //------------------------------------------------------------------------------------------------//

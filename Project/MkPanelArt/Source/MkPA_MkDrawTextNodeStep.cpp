@@ -13,9 +13,7 @@ void MkDrawTextNodeStep::SetUp(const MkTextNode* textNode)
 	m_TextNode = textNode;
 	if (m_TextNode != NULL)
 	{
-		// texture 크기가 2의 n승이 아닐 수 있으므로 여기서 맞춤
-		MkInt2 targetSize = MkBaseTexture::GetFormalSize(m_TextNode->GetWholePixelSize());
-		_SetAlphaKeyArguments(targetSize, MKDEF_PA_TEXTNODE_COLOR_KEY);
+		_SetAlphaKeyArguments(m_TextNode->GetWholePixelSize(), MKDEF_PA_TEXTNODE_COLOR_KEY);
 	}
 
 	if (m_TargetTexture != NULL)

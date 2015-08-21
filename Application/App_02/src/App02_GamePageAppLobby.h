@@ -6,14 +6,18 @@
 #include "App02_GamePageBase.h"
 
 
-class GamePageAppIntro : public GamePageBase
+class GamePageAppLobby : public GamePageBase
 {
 public:
 
 	virtual bool SetUp(MkDataNode& sharingNode);
 
-	GamePageAppIntro(void);
-	virtual ~GamePageAppIntro() {}
+	//virtual void Update(const MkTimeState& timeState);
+
+	//virtual void Clear(MkDataNode* sharingNode = NULL);
+
+	GamePageAppLobby(void);
+	virtual ~GamePageAppLobby() {}
 
 protected:
 

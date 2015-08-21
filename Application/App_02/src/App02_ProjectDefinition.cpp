@@ -12,9 +12,16 @@ const MkHashStr GamePage::AppStart::Condition::Next(L"Next");
 const MkHashStr GamePage::AppIntro::Name(L"AppIntro");
 const MkHashStr GamePage::AppIntro::Condition::Next(L"Next");
 
-//------------------------------------------------------------------------------------------------//
+const MkHashStr GamePage::AppLobby::Name(L"AppLobby");
+const MkHashStr GamePage::AppLobby::Condition::Battle(L"Battle");
 
-const MkFloat2 GlobalDef::AppResolution(1024.f, 768.f);
+const MkHashStr GamePage::AppBriefingRoom::Name(L"AppBriefingRoom");
+const MkHashStr GamePage::AppBriefingRoom::Condition::Next(L"Next");
+
+const MkHashStr GamePage::AppBattleZone::Name(L"AppBattleZone");
+const MkHashStr GamePage::AppBattleZone::Condition::Next(L"Next");
+
+//------------------------------------------------------------------------------------------------//
 
 const MkHashStr GlobalDef::FinalDrawStepName(L"Final");
 
