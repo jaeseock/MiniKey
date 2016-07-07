@@ -537,12 +537,24 @@ public:
 			//MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
 		}
 
-		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
+		//MK_PAGE_MGR.ChangePageDirectly(L"RestorePage");
+
+		MkStr urlLink;
+		if (MK_INPUT_MGR.GetKeyReleased(L'9'))
 		{
-			//MK_PAGE_MGR.ChangePageDirectly(L"RestorePage");
+			urlLink = L"https://origin.rohan.co.kr/shop/gamemall?userid=jaeseock";
+		}
+		if (MK_INPUT_MGR.GetKeyReleased(L'0'))
+		{
+			urlLink = L"https://origin.rohan.co.kr/shop/gamemall?userid=seqseq10";
+		}
+
+		if (!urlLink.Empty())
+		{
 			if (MK_RENDERER.GetWebDialog() == NULL)
 			{
-				MK_RENDERER.OpenWebDialog(L"http://www.daum.net/", MkIntRect(20, 20, 400, 400));
+				//MK_RENDERER.OpenWebDialog(L"http://www.daum.net/", MkIntRect(20, 20, 920, 720));
+				MK_RENDERER.OpenWebDialog(urlLink, MkIntRect(20, 20, 820, 660));
 			}
 			else
 			{

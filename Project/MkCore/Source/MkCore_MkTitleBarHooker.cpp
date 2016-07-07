@@ -33,7 +33,7 @@ bool MkTitleBarHooker::CheckWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 		{
 		case HTCLOSE: // 종료
 			MkBaseFramework::Close();
-			break;
+			return true;
 
 		case HTCAPTION: // 드래그 시작
 			m_TargetWindow->SetOnTop();

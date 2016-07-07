@@ -1,5 +1,6 @@
 
 #include <Windows.h>
+#include <Wininet.h>
 #include "comdef.h"
 #include "MkCore_MkStr.h"
 #include "MkCore_MkWebBrowser.h"
@@ -11,57 +12,63 @@ bool MkWebBrowser::Open(HWND parent, const MkStr& pageUrl, int posX, int posY, i
 	if ((m_Browser != NULL) || pageUrl.Empty())
 		return false;
 
-	HRESULT hr;
-	VARIANT vtHeader2 = {0};
-	VARIANT vtTarget2 = {0};
-	VARIANT vtEmpty2 = {0};
-
-	vtHeader2.vt = VT_BSTR;
-	vtHeader2.bstrVal = SysAllocString(L"Content-Type: application/x-www-form-urlencoded\r\n");
-
-	vtTarget2.vt = VT_BSTR;
-	vtTarget2.bstrVal = SysAllocString(L"_top");
-
-	VariantInit(&vtEmpty2);
-
 	CoInitialize(NULL);
-	CoCreateInstance(CLSID_InternetExplorer, NULL, CLSCTX_LOCAL_SERVER, IID_IWebBrowser2, (void**)&m_Browser);
-
-	m_Browser->put_Width((long)width);
-	m_Browser->put_Height((long)height);
-	m_Browser->put_Left((long)posX);
-	m_Browser->put_Top((long)posY);
-	m_Browser->put_MenuBar(VARIANT_FALSE);
-	m_Browser->put_ToolBar(VARIANT_FALSE);
-	m_Browser->put_AddressBar(VARIANT_FALSE);
-	m_Browser->put_StatusBar(VARIANT_FALSE);
-
-	BSTR cBuf = SysAllocString(pageUrl.GetPtr());
-	hr = m_Browser->Navigate(cBuf, &vtEmpty2, &vtTarget2, &vtEmpty2, &vtHeader2);
-
-	SysFreeString(cBuf);
-	SysFreeString(vtHeader2.bstrVal);
-	SysFreeString(vtTarget2.bstrVal);
-
-	bool ok = SUCCEEDED(hr);
-	if (ok)
+	HRESULT hr = CoCreateInstance(CLSID_InternetExplorer, NULL, CLSCTX_LOCAL_SERVER, IID_IWebBrowser2, (void**)&m_Browser);
+	if (SUCCEEDED(hr) && (m_Browser != NULL))
 	{
-		m_Browser->put_Visible((show) ? VARIANT_TRUE : VARIANT_FALSE);
-		m_Browser->get_HWND((long*)&m_hWnd);
+		m_Browser->put_Width((long)width);
+		m_Browser->put_Height((long)height);
+		m_Browser->put_Left((long)posX);
+		m_Browser->put_Top((long)posY);
+		m_Browser->put_MenuBar(VARIANT_FALSE);
+		m_Browser->put_ToolBar(VARIANT_FALSE);
+		m_Browser->put_AddressBar(VARIANT_FALSE);
+		m_Browser->put_StatusBar(VARIANT_FALSE);
 
-		if (parent != NULL)
+		BSTR cBuf = SysAllocString(pageUrl.GetPtr());
+
+		VARIANT vtFlag2 = {0};
+		vtFlag2.vt = VT_I4;
+		vtFlag2.lVal = navNoHistory | navNoReadFromCache | navNoWriteToCache;
+
+		VARIANT vtTarget2 = {0};
+		vtTarget2.vt = VT_BSTR;
+		vtTarget2.bstrVal = SysAllocString(L"_top");
+
+		VARIANT vtEmpty2 = {0};
+		VariantInit(&vtEmpty2);
+
+		VARIANT vtHeader2 = {0};
+		vtHeader2.vt = VT_BSTR;
+		vtHeader2.bstrVal = SysAllocString(L"Content-Type: application/x-www-form-urlencoded\r\n");
+
+		hr = m_Browser->Navigate(cBuf, &vtFlag2, &vtTarget2, &vtEmpty2, &vtHeader2);
+
+		SysFreeString(cBuf);
+		SysFreeString(vtHeader2.bstrVal);
+		SysFreeString(vtTarget2.bstrVal);
+
+		if (SUCCEEDED(hr))
 		{
-			m_StyleBackup = static_cast<DWORD>(::GetWindowLongPtr(m_hWnd, GWL_STYLE));
-			::SetWindowLongPtr(m_hWnd, GWL_STYLE, WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN);
-			::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
-			::SetParent(m_hWnd, parent);
+			m_Browser->put_Visible((show) ? VARIANT_TRUE : VARIANT_FALSE);
+			m_Browser->get_HWND((long*)&m_hWnd);
+
+			if (parent != NULL)
+			{
+				m_StyleBackup = static_cast<DWORD>(::GetWindowLongPtr(m_hWnd, GWL_STYLE));
+				::SetWindowLongPtr(m_hWnd, GWL_STYLE, WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN);
+				::SetWindowPos(m_hWnd, 0, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_DRAWFRAME);
+				::SetParent(m_hWnd, parent);
+			}
+
+			return true;
+		}
+		else
+		{
+			Close();
 		}
 	}
-	else
-	{
-		Close();
-	}
-	return ok;
+	return false;
 }
 
 void MkWebBrowser::Close(void)
