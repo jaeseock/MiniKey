@@ -649,6 +649,18 @@
 					</Filter>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="Line"
+				>
+				<File
+					RelativePath=".\Source\MkPA_MkLineShape.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkLineShape.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Draw"

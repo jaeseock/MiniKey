@@ -13,6 +13,7 @@ const MkHashStr MkWindowTagNode::TextPanelName(MkStr(MKDEF_PA_WIN_VISUAL_PATTERN
 const MkHashStr MkWindowTagNode::ObjKey_IconPath(L"IconPath");
 const MkHashStr MkWindowTagNode::ObjKey_IconSOSName(L"IconSOSName");
 const MkHashStr MkWindowTagNode::ObjKey_TextName(L"TextName");
+const MkHashStr MkWindowTagNode::ObjKey_TextMsg(L"TextMsg");
 const MkHashStr MkWindowTagNode::ObjKey_LengthOfBetweenIT(L"LengthOfBetweenIT");
 
 //------------------------------------------------------------------------------------------------//
@@ -55,24 +56,32 @@ void MkWindowTagNode::SetTextName(const MkArray<MkHashStr>& textName)
 
 void MkWindowTagNode::SetTextName(const MkArray<MkHashStr>& textName, const MkStr& msg)
 {
+	m_TextMsg = msg;
+
+	bool txtNameChanged = false;
 	if (textName != m_TextName)
 	{
 		m_TextName = textName;
+		txtNameChanged = true;
 	}
 
 	MkPanel* textPanel = GetPanel(TextPanelName);
 
-	if ((textPanel == NULL) && _UpdateText()) // panel이 없으면 바로 caption을 세팅해야되므로 즉각 반영
+	// panel이 없거나 text name이 변경되었으면 바로 msg를 세팅해야되므로 즉각 반영
+	if ((textPanel == NULL) || txtNameChanged)
 	{
-		textPanel = GetPanel(TextPanelName);
+		if (_UpdateText())
+		{
+			textPanel = GetPanel(TextPanelName);
+		}
 	}
 
-	if (textPanel != NULL)
+	if ((textPanel != NULL) && (!m_TextMsg.Empty()))
 	{
 		MkTextNode* textNode = textPanel->GetTextNodePtr();
 		if (textNode != NULL)
 		{
-			textNode->SetText(msg);
+			textNode->SetText(m_TextMsg);
 			textPanel->BuildAndUpdateTextCache();
 
 			m_UpdateCommand.Set(eUC_Region);
@@ -116,6 +125,7 @@ void MkWindowTagNode::Clear(void)
 	m_IconPath.Clear();
 	m_IconSubsetOrSequenceName.Clear();
 	m_TextName.Clear();
+	m_TextMsg.Clear();
 
 	MkVisualPatternNode::Clear();
 }
@@ -144,6 +154,7 @@ void MkWindowTagNode::SetObjectTemplate(MkDataNode& node)
 	node.CreateUnit(ObjKey_IconPath, MkStr::EMPTY);
 	node.CreateUnit(ObjKey_IconSOSName, MkStr::EMPTY);
 	// ObjKey_TextName
+	// ObjKey_TextMsg
 	node.CreateUnit(ObjKey_LengthOfBetweenIT, MKDEF_PA_DEFAULT_LENGTH_BETWEEN_WIN_COMPONENT_X);
 }
 
@@ -166,7 +177,18 @@ void MkWindowTagNode::LoadObject(const MkDataNode& node)
 	MkArray<MkHashStr> textName;
 	if (node.GetDataEx(ObjKey_TextName, textName))
 	{
-		SetTextName(textName);
+		MkStr msg;
+		if (node.GetData(ObjKey_TextMsg, msg, 0))
+		{
+			if (msg.Empty())
+			{
+				SetTextName(textName);
+			}
+			else
+			{
+				SetTextName(textName, msg);
+			}
+		}
 	}
 
 	// gap
@@ -187,8 +209,13 @@ void MkWindowTagNode::SaveObject(MkDataNode& node) const
 	if (!m_TextName.Empty())
 	{
 		node.CreateUnitEx(ObjKey_TextName, m_TextName);
-	}
 
+		if (!m_TextMsg.Empty())
+		{
+			node.CreateUnit(ObjKey_TextMsg, m_TextMsg);
+		}
+	}
+	
 	node.SetDataEx(ObjKey_LengthOfBetweenIT, m_LengthOfBetweenIconAndText, 0);
 }
 

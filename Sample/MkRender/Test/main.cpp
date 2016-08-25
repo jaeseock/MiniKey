@@ -285,8 +285,26 @@ public:
 		hSliderNode->SetLocalDepth(-1.f);
 
 		//--------------------------------------------------//
+		// line
+
+		MkLineShape& lineShape0 = bodyFrame->CreateLine(L"test red line");
+		lineShape0.AddLine(MkFloat2(0.f, 0.f), MkFloat2(200.f, 100.f));
+		lineShape0.SetColor(MkColor::Red);
+		lineShape0.SetLocalDepth(-1.f);
+		lineShape0.SetRecordable(true);
 		
-		//		
+		MkLineShape& lineShape1 = bodyFrame->CreateLine(L"test white line");
+		MkArray<MkFloat2> lineVertices(4);
+		lineVertices.PushBack(MkFloat2(0.f, 0.f));
+		lineVertices.PushBack(MkFloat2(-100.f, 200.f));
+		lineVertices.PushBack(MkFloat2(-100.f, 300.f));
+		lineVertices.PushBack(MkFloat2(50.f, 350.f));
+		lineShape1.AddLine(lineVertices);
+		lineShape1.SetColor(MkColor::White);
+		lineShape1.SetLocalDepth(-1.f);
+		lineShape1.SetRecordable(true);
+		
+		//--------------------------------------------------//
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		ds->SetSceneNode(m_RootNode);
 
@@ -537,16 +555,15 @@ public:
 			//MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
 		}
 
-		//MK_PAGE_MGR.ChangePageDirectly(L"RestorePage");
+		if (MK_INPUT_MGR.GetKeyReleased(VK_RETURN))
+		{
+			MK_PAGE_MGR.ChangePageDirectly(L"RestorePage");
+		}
 
 		MkStr urlLink;
 		if (MK_INPUT_MGR.GetKeyReleased(L'9'))
 		{
 			urlLink = L"https://origin.rohan.co.kr/shop/gamemall?userid=jaeseock";
-		}
-		if (MK_INPUT_MGR.GetKeyReleased(L'0'))
-		{
-			urlLink = L"https://origin.rohan.co.kr/shop/gamemall?userid=seqseq10";
 		}
 
 		if (!urlLink.Empty())

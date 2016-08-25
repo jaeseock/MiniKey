@@ -2,6 +2,8 @@
 
 
 //------------------------------------------------------------------------------------------------//
+// MaterialKey의 main key는 texture ptr, sub key는 object alpha. main key가 NULL이면 그려지지 않음
+//
 // 구성용 data node 샘플
 //
 //	Node "SampleRect" : "T_SRect" // 안전을 위해 MKDEF_S2D_BT_SRECT_TEMPLATE_NAME 상속 권장
@@ -29,7 +31,7 @@ class MkDrawTextNodeStep;
 class MkTextNode;
 class MkSceneNode;
 
-class MkPanel : public MkSceneObject
+class MkPanel : public MkSceneRenderObject
 {
 public:
 
@@ -50,6 +52,8 @@ public:
 	};
 
 public:
+
+	virtual ePA_SceneObjectType GetObjectType(void) const { return ePA_SOT_Panel; }
 
 	//------------------------------------------------------------------------------------------------//
 	// transform
@@ -80,9 +84,6 @@ public:
 	inline float GetWorldRotation(void) const { return m_Transform.GetWorldRotation(); }
 	inline float GetWorldScale(void) const { return m_Transform.GetWorldScale(); }
 	inline float GetWorldAlpha(void) const { return m_Transform.GetWorldAlpha(); }
-
-	// get axis-aligned minimum bounding rect
-	inline const MkFloatRect& GetWorldAABR(void) const { return m_AABR; }
 
 	//------------------------------------------------------------------------------------------------//
 	// panel size, uv op & resizing(image source와 panel 크기가 다를 경우의 처리)
@@ -185,8 +186,13 @@ public:
 	void Clear(void);
 
 	//------------------------------------------------------------------------------------------------//
-	// MkSceneObject
+	// MkSceneRenderObject
 	//------------------------------------------------------------------------------------------------//
+
+	virtual bool __CheckDrawable(void) const;
+	virtual void __ExcuteCustomDrawStep(void);
+	virtual void __FillVertexData(MkByteArray& buffer) const;
+	virtual void __ApplyRenderState(void) const;
 
 	virtual void Load(const MkDataNode& node);
 	virtual void Save(MkDataNode& node) const;
@@ -203,37 +209,9 @@ public:
 	}
 	VertexData;
 
-	class MaterialKey // std::map의 key가 될 수 있는 최소 조건(operator <) 만족
-	{
-	public:
-		inline bool operator == (const MaterialKey& key) const { return ((m_TextureID == key.m_TextureID) && (m_ObjectAlpha == key.m_ObjectAlpha)); }
-		inline bool operator < (const MaterialKey& key) const { return ((m_TextureID < key.m_TextureID) ? true : ((m_TextureID == key.m_TextureID) ? (m_ObjectAlpha < key.m_ObjectAlpha) : false)); }
-
-		MaterialKey()
-		{
-			m_TextureID = 0;
-			m_ObjectAlpha = 0xff;
-		}
-
-		ID64 m_TextureID;
-		DWORD m_ObjectAlpha;
-	};
-
 	inline void __SetParentNode(MkSceneNode* parentNode) { m_ParentNode = parentNode; }
 
-	// 활성화 여부 반환
-	bool __CheckDrawable(void) const;
-	bool __CheckDrawable(const MkFloatRect& cameraAABR) const;
-
-	inline const MaterialKey& __GetMaterialKey(void) const { return m_MaterialKey; }
-
-	void __ExcuteCustomDrawStep(void);
-
 	void __Update(const MkSceneTransform* parentTransform, double currTime);
-
-	void __FillVertexData(MkArray<VertexData>& buffer) const;
-
-	void __AffectTexture(void) const;
 
 	bool __CheckWorldIntersection(const MkFloat2& worldPoint) const;
 
@@ -260,7 +238,7 @@ protected:
 		eVerticalReflection // v
 	};
 
-	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkArray<VertexData>& buffer) const;
+	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkByteArray& buffer) const;
 
 	float _GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const;
 
@@ -284,14 +262,12 @@ protected:
 	// transform result
 	MkFloat2 m_WorldVertice[MkFloatRect::eMaxPointName];
 	MkFloat2 m_UV[MkFloatRect::eMaxPointName];
-	MkFloatRect m_AABR; // axis-aligned bounding rect
-
+	
 	// texture
 	MkBaseTexturePtr m_Texture;
 	MkHashStr m_SubsetOrSequenceName;
 	double m_SequenceStartTime;
 	double m_SequenceTimeOffset;
-	MaterialKey m_MaterialKey;
 	MkFloat2 m_TextureSize;
 
 	// text node
@@ -315,4 +291,3 @@ public:
 };
 
 MKDEF_DECLARE_FIXED_SIZE_TYPE(MkPanel::VertexData)
-MKDEF_DECLARE_FIXED_SIZE_TYPE(MkPanel::MaterialKey)

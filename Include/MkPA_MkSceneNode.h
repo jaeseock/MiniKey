@@ -10,6 +10,7 @@
 #include "MkCore_MkPairArray.h"
 
 #include "MkPA_MkPanel.h"
+#include "MkPA_MkLineShape.h"
 
 
 class MkDataNode;
@@ -98,6 +99,29 @@ public:
 	bool PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth = 0.f, const MkBitField32& attrCondition = MkBitField32::EMPTY) const;
 
 	//------------------------------------------------------------------------------------------------//
+	// line shape 관리
+	//------------------------------------------------------------------------------------------------//
+
+	// line 존재 여부
+	inline bool LineExist(const MkHashStr& name) const { return m_Lines.Exist(name); }
+
+	// line 생성. 같은 이름의 line이 이미 존재하면 삭제 후 재생성
+	MkLineShape& CreateLine(const MkHashStr& name);
+
+	// line 반환. 없으면 NULL 반환
+	inline MkLineShape* GetLine(const MkHashStr& name) { return m_Lines.Exist(name) ? &m_Lines[name] : NULL; }
+	inline const MkLineShape* GetLine(const MkHashStr& name) const { return m_Lines.Exist(name) ? &m_Lines[name] : NULL; }
+
+	// line 이름 리스트 반환
+	inline unsigned int GetLineNameList(MkArray<MkHashStr>& buffer) const { return m_Lines.GetKeyList(buffer); }
+
+	// line 삭제
+	inline void DeleteLine(const MkHashStr& name) { if (m_Lines.Exist(name)) { m_Lines.Erase(name); } }
+
+	// 모든 line 삭제
+	inline void DeleteAllLines(void) { m_Lines.Clear(); }
+
+	//------------------------------------------------------------------------------------------------//
 	// attribute
 	//------------------------------------------------------------------------------------------------//
 
@@ -151,7 +175,7 @@ public:
 
 	const MkSceneTransform* __GetTransformPtr(void) const { return &m_Transform; }
 
-	void __GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray<float, const MkPanel*>& buffer) const;
+	void __GetAllValidObjects(const MkFloatRect& cameraAABR, MkPairArray<float, const MkSceneRenderObject*>& buffer) const;
 
 protected:
 
@@ -167,10 +191,14 @@ protected:
 
 	// axis aligned bounding box
 	MkFloatRect m_PanelAABR; // 직계 panel들만 대상
-	MkFloatRect m_TotalAABR; // m_PanelAABR + 하위 모든 자식 노드들의 AABR 합산
+	MkFloatRect m_LineAABR; // 직계 line들만 대상
+	MkFloatRect m_TotalAABR; // m_PanelAABR + m_LineAABR + 하위 모든 자식 노드들의 AABR 합산
 
 	// sub panels
 	MkHashMap<MkHashStr, MkPanel> m_Panels; // name, panel
+
+	// sub lines
+	MkHashMap<MkHashStr, MkLineShape> m_Lines; // name, line
 
 public:
 
@@ -181,6 +209,7 @@ public:
 	static const MkHashStr SystemKey_NodeExceptions; // 해당 리스트를 node 출력 대상에서 제외
 
 	static const MkHashStr RootKey_Panels;
+	static const MkHashStr RootKey_Lines;
 	static const MkHashStr RootKey_SubNodes;
 
 	static const MkHashStr ObjKey_Attribute;

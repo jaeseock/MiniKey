@@ -6,6 +6,7 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkHashStr.h"
+#include "MkCore_MkRect.h"
 #include "MkCore_MkTypeHierarchy.h"
 
 #include "MkPA_MkGlobalDefinition.h"
@@ -31,14 +32,12 @@ class MkSceneNode;
 
 
 //------------------------------------------------------------------------------------------------//
-// PVC
+// scene의 base object 정의(PVC)
 //------------------------------------------------------------------------------------------------//
 
 class MkSceneObject
 {
 public:
-
-	//------------------------------------------------------------------------------------------------//
 
 	// data로부터 구성 된 scene node를 반환
 	// 저장 된 상태의 node를 그대로 얻고 싶으면 사용
@@ -84,3 +83,67 @@ protected:
 	// class hierarchy
 	static MkTypeHierarchy<ePA_SceneNodeType> SceneNodeTypeHierarchy;
 };
+
+
+//------------------------------------------------------------------------------------------------//
+// 실제로 그려지는 object(PVC)
+//------------------------------------------------------------------------------------------------//
+
+class MkSceneRenderObject : public MkSceneObject
+{
+public:
+
+	virtual ePA_SceneObjectType GetObjectType(void) const = NULL;
+
+	inline const MkFloatRect& GetWorldAABR(void) const { return m_AABR; }
+
+	// batch rendering의 기준
+	// (NOTE) 상속받은 class는 각각 독자적인 MaterialKey 형태를 가지고 있어야 함(중복 발생 가능성이 있으면 안됨)
+	// std::map의 key가 될 수 있는 최소 조건(operator <) 만족
+	class MaterialKey
+	{
+	public:
+		inline bool operator == (const MaterialKey& key) const { return ((m_MainKey == key.m_MainKey) && (m_SubKey == key.m_SubKey)); }
+		inline bool operator < (const MaterialKey& key) const { return ((m_MainKey < key.m_MainKey) ? true : ((m_MainKey == key.m_MainKey) ? (m_SubKey < key.m_SubKey) : false)); }
+
+		MaterialKey()
+		{
+			m_MainKey = 0;
+			m_SubKey = 0;
+		}
+
+		ID64 m_MainKey;
+		DWORD m_SubKey;
+	};
+
+	inline const MaterialKey& __GetMaterialKey(void) const { return m_MaterialKey; }
+
+	// 실제로 그려지는지 여부 반환
+	virtual bool __CheckDrawable(void) const { return false; }
+
+	// __CheckDrawable() + 카메라 영역 체크
+	inline bool __CheckDrawableAndInside(const MkFloatRect& cameraAABR) const { return (__CheckDrawable() && m_AABR.CheckIntersection(cameraAABR)); }
+
+	// 전용 draw step이 존재 할 경우 수행
+	virtual void __ExcuteCustomDrawStep(void) {}
+
+	// draw시 object에 맞는 vertex block 수 반환. 상수일 경우 생략 가능
+	virtual unsigned int __GetVertexDataBlockSize(void) const { return 0; }
+
+	// 실제 그려질 vertex data 생성
+	virtual void __FillVertexData(MkByteArray& buffer) const {}
+
+	// render state 반영
+	virtual void __ApplyRenderState(void) const {}
+
+	virtual ~MkSceneRenderObject() {}
+
+protected:
+
+	MkFloatRect m_AABR; // axis-aligned minimum bounding rect
+	MaterialKey m_MaterialKey;
+};
+
+MKDEF_DECLARE_FIXED_SIZE_TYPE(MkSceneRenderObject::MaterialKey)
+
+//------------------------------------------------------------------------------------------------//

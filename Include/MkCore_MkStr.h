@@ -95,7 +95,7 @@ public:
 	MkStr& operator = (const MkUInt2& pt);
 	MkStr& operator = (const MkVec2& value);
 	MkStr& operator = (const MkVec3& value);
-	MkStr& operator = (const MkMemoryBlockDescriptor<unsigned char>& byteBlock);
+	MkStr& operator = (const MkByteArrayDescriptor& byteBlock);
 	
 	// ºñ±³
 	bool operator == (const MkStr& str) const;

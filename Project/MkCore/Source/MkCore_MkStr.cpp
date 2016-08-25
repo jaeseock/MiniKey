@@ -234,7 +234,7 @@ MkStr& MkStr::operator = (const MkVec3& value)
 	return *this;
 }
 
-MkStr& MkStr::operator = (const MkMemoryBlockDescriptor<unsigned char>& byteBlock)
+MkStr& MkStr::operator = (const MkByteArrayDescriptor& byteBlock)
 {
 	Flush();
 	if (byteBlock.IsValid())

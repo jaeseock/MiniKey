@@ -3,6 +3,7 @@
 #include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkPanel.h"
+#include "MkPA_MkLineShape.h"
 #include "MkPA_MkSceneNode.h"
 #include "MkPA_MkVisualPatternNode.h"
 #include "MkPA_MkWindowManagerNode.h"
@@ -75,6 +76,7 @@ void MkSceneObject::InitSceneObject(void)
 
 	// template
 	__TSI_ObjectOp<MkPanel>::SetTemplate();
+	__TSI_ObjectOp<MkLineShape>::SetTemplate();
 	__TSI_ObjectOp<MkSceneNode>::SetTemplate();
 	__TSI_ObjectOp<MkVisualPatternNode>::SetTemplate();
 	__TSI_ObjectOp<MkWindowManagerNode>::SetTemplate();

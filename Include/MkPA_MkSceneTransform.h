@@ -49,9 +49,12 @@ public:
 	// identify
 	void ClearLocalTransform(void);
 
-	// local rect -> world rect vertices
-	void GetWorldRectVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const;
+	// local vertices -> world vertices
+	void GetWorldVertices(const MkArray<MkFloat2>& localVertices, MkArray<MkFloat2>& worldVertices) const;
 
+	// local rect -> world rect vertices
+	void GetWorldVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const;
+	
 	// in & out
 	static void SetObjectTemplate(MkDataNode& node);
 	void Load(const MkDataNode& node);

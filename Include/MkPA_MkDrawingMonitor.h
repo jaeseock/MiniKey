@@ -20,9 +20,9 @@ public:
 
 	inline void IncreaseRenderTargetCounter(void) { ++m_RenderTargetCounter; }
 
-	inline void IncreaseValidPanelCounter(unsigned int count) { m_ValidPanelCounter += count; }
+	inline void IncreaseValidObjectCounter(unsigned int count) { m_ValidObjectCounter += count; }
 	inline void IncreaseValidMaterialCounter(unsigned int count) { m_ValidMaterialCounter += count; }
-	inline void IncreasePanelSetCounter(unsigned int count) { m_PanelSetCounter += count; }
+	inline void IncreaseObjectUnionCounter(unsigned int count) { m_ObjectUnionCounter += count; }
 
 	void EndOfFrame(void);
 
@@ -34,8 +34,8 @@ protected:
 
 	unsigned int m_RenderTargetCounter;
 
-	unsigned int m_ValidPanelCounter;
+	unsigned int m_ValidObjectCounter;
 	unsigned int m_ValidMaterialCounter;
-	unsigned int m_PanelSetCounter;
+	unsigned int m_ObjectUnionCounter;
 
 };

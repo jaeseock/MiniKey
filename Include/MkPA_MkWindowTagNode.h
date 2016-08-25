@@ -44,11 +44,11 @@ public:
 
 	// textName가 empty면 삭제
 	void SetTextName(const MkArray<MkHashStr>& textName);
+	inline const MkArray<MkHashStr>& GetTextName(void) const { return m_TextName; }
 
 	// text node를 설정하면서 바로 text를 변경
 	void SetTextName(const MkArray<MkHashStr>& textName, const MkStr& msg);
-
-	inline const MkArray<MkHashStr>& GetTextName(void) const { return m_TextName; }
+	inline const MkStr& GetTextMessage(void) const { return m_TextMsg; }
 
 	// text에 대한 휘발성 수정(저장되지 않음)을 위한 text node pointer 반환
 	MkTextNode* GetTagTextPtr(void);
@@ -111,6 +111,7 @@ protected:
 
 	// text
 	MkArray<MkHashStr> m_TextName;
+	MkStr m_TextMsg; // 비어있지 않으면 m_TextName에 문자열이 존재하더라도 덮어씌워버림
 
 	// region
 	float m_LengthOfBetweenIconAndText;
@@ -123,5 +124,6 @@ public:
 	static const MkHashStr ObjKey_IconPath;
 	static const MkHashStr ObjKey_IconSOSName;
 	static const MkHashStr ObjKey_TextName;
+	static const MkHashStr ObjKey_TextMsg;
 	static const MkHashStr ObjKey_LengthOfBetweenIT;
 };

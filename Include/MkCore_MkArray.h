@@ -1194,6 +1194,45 @@ MKDEF_DECALRE_BLOCK_EXPANSION_SIZE_IN_ARRAY(unsigned char, 1)
 typedef MkArray<unsigned char> MkByteArray;
 typedef MkMemoryBlockDescriptor<unsigned char> MkByteArrayDescriptor;
 
+// helper
+template <class DataType>
+class MkByteArrayHelper
+{
+public:
+
+	// 단일 객체 삽입
+	// ex>
+	//	MkByteArray buffer(10);
+	//	VertexData vd;
+	//	for (int i=0; i<10; ++i)
+	//	{
+	//		... // vd에 값 할당 블라블라
+	//		MkByteArrayHelper<VertexData>::PushBack(buffer, vd);
+	//	}
+	static void PushBack(MkByteArray& byteArray, const DataType& instance)
+	{
+		byteArray.PushBack(MkByteArrayDescriptor(reinterpret_cast<const unsigned char*>(&instance), sizeof(DataType)));
+	}
+
+	// 객체 배열 삽입
+	// ex>
+	//	MkByteArray buffer(10);
+	//	MkArray<SegmentData> sds(10);
+	//	for (int i=0; i<10; ++i)
+	//	{
+	//		SegmentData& sd = sds.PushBack();
+	//		... // sd에 값 할당 블라블라
+	//	}
+	//	MkByteArrayHelper<SegmentData>::PushBack(buffer, sds);
+	static void PushBack(MkByteArray& byteArray, const MkArray<DataType>& instanceArray)
+	{
+		if (!instanceArray.Empty())
+		{
+			byteArray.PushBack(MkByteArrayDescriptor(reinterpret_cast<const unsigned char*>(instanceArray.GetPtr()), sizeof(DataType) * instanceArray.GetSize()));
+		}
+	}
+};
+
 //------------------------------------------------------------------------------------------------//
 
 #endif

@@ -66,7 +66,27 @@ void MkSceneTransform::ClearLocalTransform(void)
 	m_LocalAlpha = 1.f;
 }
 
-void MkSceneTransform::GetWorldRectVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const
+void MkSceneTransform::GetWorldVertices(const MkArray<MkFloat2>& localVertices, MkArray<MkFloat2>& worldVertices) const
+{
+	if (!localVertices.Empty())
+	{
+		worldVertices.Fill(localVertices.GetSize());
+
+		float cosR = (m_WorldRotation == 0.f) ? 1.f : MkAngleOp::Cos(m_WorldRotation);
+		float sinR = (m_WorldRotation == 0.f) ? 0.f : MkAngleOp::Sin(m_WorldRotation);
+
+		MK_INDEXING_LOOP(localVertices, i)
+		{
+			const MkFloat2& localVertex = localVertices[i];
+			MkFloat2& worldVertex = worldVertices[i];
+
+			worldVertex.x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+			worldVertex.y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+		}
+	}
+}
+
+void MkSceneTransform::GetWorldVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const
 {
 	float cosR = (m_WorldRotation == 0.f) ? 1.f : MkAngleOp::Cos(m_WorldRotation);
 	float sinR = (m_WorldRotation == 0.f) ? 0.f : MkAngleOp::Sin(m_WorldRotation);

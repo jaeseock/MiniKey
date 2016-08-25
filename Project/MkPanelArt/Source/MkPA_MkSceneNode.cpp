@@ -12,6 +12,7 @@ const MkHashStr MkSceneNode::SystemKey_PanelExceptions(L"__#WS:PanelEx");
 const MkHashStr MkSceneNode::SystemKey_NodeExceptions(L"__#WS:NodeEx");
 
 const MkHashStr MkSceneNode::RootKey_Panels(L"[PANELS]");
+const MkHashStr MkSceneNode::RootKey_Lines(L"[LINES]");
 const MkHashStr MkSceneNode::RootKey_SubNodes(L"[SUBNODES]");
 
 const MkHashStr MkSceneNode::ObjKey_Attribute(L"Attribute");
@@ -102,6 +103,14 @@ bool MkSceneNode::PickPanel
 	return !buffer.Empty();
 }
 
+MkLineShape& MkSceneNode::CreateLine(const MkHashStr& name)
+{
+	DeleteLine(name);
+	MkLineShape& line = m_Lines.Create(name);
+	line.__SetParentNode(this);
+	return line;
+}
+
 void MkSceneNode::Update(double currTime)
 {
 	if (GetSkipUpdateWhileInvisible() && (!GetVisible()))
@@ -117,16 +126,34 @@ void MkSceneNode::Update(double currTime)
 		MkHashMapLooper<MkHashStr, MkPanel> looper(m_Panels);
 		MK_STL_LOOP(looper)
 		{
-			MkPanel& currPanel = looper.GetCurrentField();
-			currPanel.__Update(__GetTransformPtr(), currTime);
-			if (currPanel.__CheckDrawable())
+			MkPanel& currObject = looper.GetCurrentField();
+			currObject.__Update(__GetTransformPtr(), currTime);
+			if (currObject.__CheckDrawable())
 			{
-				m_PanelAABR.UpdateToUnion(currPanel.GetWorldAABR());
+				m_PanelAABR.UpdateToUnion(currObject.GetWorldAABR());
 			}
 		}
 	}
 
 	m_TotalAABR = m_PanelAABR;
+
+	// lines
+	m_LineAABR.Clear();
+	if (!m_Lines.Empty())
+	{
+		MkHashMapLooper<MkHashStr, MkLineShape> looper(m_Lines);
+		MK_STL_LOOP(looper)
+		{
+			MkLineShape& currObject = looper.GetCurrentField();
+			currObject.__Update(__GetTransformPtr());
+			if (currObject.__CheckDrawable())
+			{
+				m_LineAABR.UpdateToUnion(currObject.GetWorldAABR());
+			}
+		}
+	}
+
+	m_TotalAABR.UpdateToUnion(m_LineAABR);
 
 	// children
 	if (!m_ChildrenNode.Empty())
@@ -151,7 +178,10 @@ void MkSceneNode::Update(double currTime)
 void MkSceneNode::Clear(void)
 {
 	m_Panels.Clear();
+	m_Lines.Clear();
+
 	m_PanelAABR.Clear();
+	m_LineAABR.Clear();
 	m_TotalAABR.Clear();
 
 	MkSingleTypeTreePattern<MkSceneNode>::Clear();
@@ -172,8 +202,23 @@ void MkSceneNode::Load(const MkDataNode& node)
 		MK_INDEXING_LOOP(keyList, i)
 		{
 			const MkHashStr& name = keyList[i];
-			MkPanel& panel = CreatePanel(name);
-			panel.LoadObject(*rootNode->GetChildNode(name));
+			MkPanel& object = CreatePanel(name);
+			object.LoadObject(*rootNode->GetChildNode(name));
+		}
+	}
+
+	// lines
+	if (node.ChildExist(RootKey_Lines))
+	{
+		const MkDataNode* rootNode = node.GetChildNode(RootKey_Lines);
+
+		MkArray<MkHashStr> keyList;
+		rootNode->GetChildNodeList(keyList);
+		MK_INDEXING_LOOP(keyList, i)
+		{
+			const MkHashStr& name = keyList[i];
+			MkLineShape& object = CreateLine(name);
+			object.LoadObject(*rootNode->GetChildNode(name));
 		}
 	}
 
@@ -251,13 +296,51 @@ void MkSceneNode::Save(MkDataNode& node) const
 					MkDataNode* targetDataNode = rootNode->CreateChildNode(key);
 					if (targetDataNode != NULL)
 					{
-						const MkPanel* targetPanel = GetPanel(key);
-						const MkHashStr& panelClassKey = targetPanel->GetSceneClassKey();
-						MK_CHECK(!panelClassKey.Empty(), key.GetString() + L" panel node는 MkSceneObject 기능이 정의되지 않았음")
+						const MkSceneRenderObject* targetObject = GetPanel(key);
+						const MkHashStr& objClassKey = targetObject->GetSceneClassKey();
+						MK_CHECK(!objClassKey.Empty(), key.GetString() + L" object node는 MkSceneObject 기능이 정의되지 않았음")
 							return;
 
-						targetDataNode->ApplyTemplate(panelClassKey);
-						targetPanel->SaveObject(*targetDataNode);
+						targetDataNode->ApplyTemplate(objClassKey);
+						targetObject->SaveObject(*targetDataNode);
+					}
+				}
+			}
+		}
+	}
+
+	// lines
+	if (!m_Lines.Empty())
+	{
+		// 저장 대상일 경우만 지정
+		MkArray<MkHashStr> targets(m_Lines.GetSize());
+		MkConstHashMapLooper<MkHashStr, MkLineShape> looper(m_Lines);
+		MK_STL_LOOP(looper)
+		{
+			if (looper.GetCurrentField().GetRecordable())
+			{
+				targets.PushBack(looper.GetCurrentKey());
+			}
+		}
+
+		if (!targets.Empty())
+		{
+			MkDataNode* rootNode = node.CreateChildNode(RootKey_Lines);
+			if (rootNode != NULL)
+			{
+				MK_INDEXING_LOOP(targets, i)
+				{
+					const MkHashStr& key = targets[i];
+					MkDataNode* targetDataNode = rootNode->CreateChildNode(key);
+					if (targetDataNode != NULL)
+					{
+						const MkSceneRenderObject* targetObject = GetLine(key);
+						const MkHashStr& objClassKey = targetObject->GetSceneClassKey();
+						MK_CHECK(!objClassKey.Empty(), key.GetString() + L" object node는 MkSceneObject 기능이 정의되지 않았음")
+							return;
+
+						targetDataNode->ApplyTemplate(objClassKey);
+						targetObject->SaveObject(*targetDataNode);
 					}
 				}
 			}
@@ -337,7 +420,7 @@ MkSceneNode::MkSceneNode(const MkHashStr& name) : MkSingleTypeTreePattern<MkScen
 
 //------------------------------------------------------------------------------------------------//
 
-void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray<float, const MkPanel*>& buffer) const
+void MkSceneNode::__GetAllValidObjects(const MkFloatRect& cameraAABR, MkPairArray<float, const MkSceneRenderObject*>& buffer) const
 {
 	if (GetVisible())
 	{
@@ -347,9 +430,22 @@ void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray
 			MK_STL_LOOP(looper)
 			{
 				const MkPanel& panel = looper.GetCurrentField();
-				if (panel.__CheckDrawable(cameraAABR))
+				if (panel.__CheckDrawableAndInside(cameraAABR))
 				{
 					buffer.PushBack(panel.GetWorldDepth(), &panel);
+				}
+			}
+		}
+
+		if ((!m_Lines.Empty()) && m_LineAABR.SizeIsNotZero() && m_LineAABR.CheckIntersection(cameraAABR))
+		{
+			MkConstHashMapLooper<MkHashStr, MkLineShape> looper(m_Lines);
+			MK_STL_LOOP(looper)
+			{
+				const MkLineShape& lineShape = looper.GetCurrentField();
+				if (lineShape.__CheckDrawableAndInside(cameraAABR))
+				{
+					buffer.PushBack(lineShape.GetWorldDepth(), &lineShape);
 				}
 			}
 		}
@@ -359,7 +455,7 @@ void MkSceneNode::__GetAllValidPanels(const MkFloatRect& cameraAABR, MkPairArray
 			MkConstHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
 			MK_STL_LOOP(looper)
 			{
-				looper.GetCurrentField()->__GetAllValidPanels(cameraAABR, buffer);
+				looper.GetCurrentField()->__GetAllValidObjects(cameraAABR, buffer);
 			}
 		}
 	}

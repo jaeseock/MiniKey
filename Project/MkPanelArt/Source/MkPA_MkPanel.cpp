@@ -6,6 +6,7 @@
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkBitmapPool.h"
+#include "MkPA_MkRenderStateSetter.h"
 #include "MkPA_MkDrawTextNodeStep.h"
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkSceneNode.h"
@@ -82,7 +83,7 @@ bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOr
 		return false;
 
 	m_Texture = const_cast<MkBaseTexture*>(texture); // ref++
-	m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
+	m_MaterialKey.m_MainKey = MK_PTR_TO_ID64(m_Texture.GetPtr());
 	return SetSubsetOrSequenceName(subsetOrSequenceName, timeOffset);
 }
 
@@ -182,7 +183,7 @@ void MkPanel::BuildAndUpdateTextCache(void)
 			
 			// draw step은 재사용하지만 texture는 Build()시 크기가 변할 수 있으므로 파괴 후 재생성
 			m_Texture = NULL; // ref-
-			m_MaterialKey.m_TextureID = 0;
+			m_MaterialKey.m_MainKey = 0;
 
 			// setp 초기화 및 설정
 			_UpdateTextNodeTexture(drawStep);
@@ -210,7 +211,7 @@ void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 				break;
 
 			m_Texture = drawStep->GetTargetTexture();
-			m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
+			m_MaterialKey.m_MainKey = MK_PTR_TO_ID64(m_Texture.GetPtr());
 
 			drawStep->SetSceneNode(sceneNode);
 
@@ -227,12 +228,49 @@ void MkPanel::Clear(void)
 {
 	m_PixelScrollPosition.Clear();
 	m_Texture = NULL;
-	m_MaterialKey.m_TextureID = 0;
+	m_MaterialKey.m_MainKey = 0;
 	m_SubsetOrSequenceName.Clear();
 	m_TextureSize.Clear();
 	m_TargetTextNodeName.Clear();
 	MK_DELETE(m_TargetTextNodePtr);
 	MK_DELETE(m_DrawStep);
+}
+
+void MkPanel::__ExcuteCustomDrawStep(void)
+{
+	if (m_DrawStep != NULL)
+	{
+		m_DrawStep->Draw();
+	}
+}
+
+void MkPanel::__FillVertexData(MkByteArray& buffer) const
+{
+	// xyz, uv
+	// 0 --- 1
+	// |  /  |
+	// 2 --- 3
+	// seq : 0, 1, 2, 2, 1, 3
+
+	bool hr = GetHorizontalReflection();
+	bool vr = GetVerticalReflection();
+
+	_FillVertexData(MkFloatRect::eLeftTop, hr, vr, buffer); // 0
+	_FillVertexData(MkFloatRect::eRightTop, hr, vr, buffer); // 1
+	_FillVertexData(MkFloatRect::eLeftBottom, hr, vr, buffer); // 2
+	_FillVertexData(MkFloatRect::eLeftBottom, hr, vr, buffer); // 2
+	_FillVertexData(MkFloatRect::eRightTop, hr, vr, buffer); // 1
+	_FillVertexData(MkFloatRect::eRightBottom, hr, vr, buffer); // 3
+}
+
+void MkPanel::__ApplyRenderState(void) const
+{
+	MK_RENDER_STATE.UpdateFVF(MKDEF_PANEL_FVF);
+
+	if (m_Texture != NULL)
+	{
+		m_Texture->UpdateRenderState(m_MaterialKey.m_SubKey);
+	}
 }
 
 void MkPanel::Load(const MkDataNode& node)
@@ -374,14 +412,6 @@ void MkPanel::SaveObject(MkDataNode& node) const
 	}
 }
 
-void MkPanel::__ExcuteCustomDrawStep(void)
-{
-	if (m_DrawStep != NULL)
-	{
-		m_DrawStep->Draw();
-	}
-}
-
 bool MkPanel::__CheckDrawable(void) const
 {
 	return
@@ -389,12 +419,7 @@ bool MkPanel::__CheckDrawable(void) const
 		(m_Texture != NULL) && // 텍스쳐가 존재하고
 		m_PanelSize.IsPositive() && m_AABR.size.IsPositive() && // 유효한 크기가 존재하고
 		(m_Transform.GetWorldDepth() >= 0.f) && (m_Transform.GetWorldDepth() <= MKDEF_PA_MAX_WORLD_DEPTH) && // 깊이값이 카메라 범위 안에 있고
-		(m_MaterialKey.m_ObjectAlpha > 0)); // 오브젝트 알파가 0보다 크면 true
-}
-
-bool MkPanel::__CheckDrawable(const MkFloatRect& cameraAABR) const
-{
-	return (__CheckDrawable() && m_AABR.CheckIntersection(cameraAABR)); // 영역 체크도 통과하면 true
+		(m_MaterialKey.m_SubKey > 0)); // 오브젝트 알파가 0보다 크면 true
 }
 
 void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
@@ -403,7 +428,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 	m_Transform.Update(parentTransform);
 
 	// alpha
-	m_MaterialKey.m_ObjectAlpha = static_cast<DWORD>(m_Transform.GetWorldAlpha() * 255.f);
+	m_MaterialKey.m_SubKey = static_cast<DWORD>(m_Transform.GetWorldAlpha() * 255.f);
 
 	// world vertex and uv
 	if (m_Texture != NULL)
@@ -536,7 +561,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 
 			// vertices
 			internalRect.size += m_PanelSize;
-			m_Transform.GetWorldRectVertices(internalRect, m_WorldVertice);
+			m_Transform.GetWorldVertices(internalRect, m_WorldVertice);
 
 			// filtering mode. 이미지 원본을 확대/축소 할 경우 point보다는 linear filtering이 유리
 			// 원칙적으로는 최종 출력 rect로 비교해야 하지만 잘라 그리기의 경우 uv로부터 size를 역산해야되는데 floating 계산 특성상 발생하는
@@ -562,33 +587,6 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 	}
 }
 
-void MkPanel::__FillVertexData(MkArray<VertexData>& buffer) const
-{
-	// xyz, uv
-	// 0 --- 1
-	// |  /  |
-	// 2 --- 3
-	// seq : 0, 1, 2, 2, 1, 3
-
-	bool hr = GetHorizontalReflection();
-	bool vr = GetVerticalReflection();
-
-	_FillVertexData(MkFloatRect::eLeftTop, hr, vr, buffer); // 0
-	_FillVertexData(MkFloatRect::eRightTop, hr, vr, buffer); // 1
-	_FillVertexData(MkFloatRect::eLeftBottom, hr, vr, buffer); // 2
-	_FillVertexData(MkFloatRect::eLeftBottom, hr, vr, buffer); // 2
-	_FillVertexData(MkFloatRect::eRightTop, hr, vr, buffer); // 1
-	_FillVertexData(MkFloatRect::eRightBottom, hr, vr, buffer); // 3
-}
-
-void MkPanel::__AffectTexture(void) const
-{
-	if (m_Texture != NULL)
-	{
-		m_Texture->UpdateRenderState(m_MaterialKey.m_ObjectAlpha);
-	}
-}
-
 bool MkPanel::__CheckWorldIntersection(const MkFloat2& worldPoint) const
 {
 	if (m_Transform.GetWorldRotation() == 0.f) // rotation이 없으므로 (m_WorldVertice == m_AABR)임
@@ -607,16 +605,18 @@ bool MkPanel::__CheckWorldIntersection(const MkFloat2& worldPoint) const
 	return true;
 }
 
-MkPanel::MkPanel(void) : MkSceneObject()
+MkPanel::MkPanel(void) : MkSceneRenderObject()
 {
 	m_ParentNode = NULL;
+
+	m_MaterialKey.m_SubKey = 0xff; // alpha 1
 
 	SetSmallerSourceOp(eReducePanel);
 	SetBiggerSourceOp(eExpandPanel);
 
 	m_SequenceStartTime = 0.;
 	m_SequenceTimeOffset = 0.;
-	m_MaterialKey.m_TextureID = 0;
+	m_MaterialKey.m_MainKey = 0;
 
 	m_Attribute.Clear();
 	SetVisible(true);
@@ -627,10 +627,9 @@ MkPanel::MkPanel(void) : MkSceneObject()
 	m_DrawStep = NULL;
 }
 
-void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkArray<VertexData>& buffer) const
+void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkByteArray& buffer) const
 {
-	VertexData& vd = buffer.PushBack();
-
+	VertexData vd;
 	const MkFloat2& wv = m_WorldVertice[pn];
 	vd.x = wv.x;
 	vd.y = wv.y;
@@ -639,6 +638,8 @@ void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkAr
 	const MkFloat2& uv = m_UV[pn];
 	vd.u = (hr) ? (1.f - uv.x) : uv.x;
 	vd.v = (vr) ? (1.f - uv.y) : uv.y;
+
+	MkByteArrayHelper<VertexData>::PushBack(buffer, vd);
 }
 
 float MkPanel::_GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const
@@ -654,7 +655,7 @@ void MkPanel::_UpdateTextNodeTexture(MkDrawTextNodeStep* drawStep)
 	{
 		drawStep->SetUp(m_TargetTextNodePtr);
 		m_Texture = drawStep->GetTargetTexture();
-		m_MaterialKey.m_TextureID = MK_PTR_TO_ID64(m_Texture.GetPtr());
+		m_MaterialKey.m_MainKey = MK_PTR_TO_ID64(m_Texture.GetPtr());
 
 		// text node size
 		const MkInt2& srcSize = m_TargetTextNodePtr->GetWholePixelSize();

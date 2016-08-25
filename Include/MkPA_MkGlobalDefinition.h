@@ -11,6 +11,13 @@ enum ePA_MaterialBlendType
 	ePA_MBT_ColorMult
 };
 
+// scene (render) object type
+enum ePA_SceneObjectType
+{
+	ePA_SOT_Panel = 0, // MkPanel
+	ePA_SOT_LineShape // MkLineShape
+};
+
 // scene node type
 enum ePA_SceneNodeType
 {

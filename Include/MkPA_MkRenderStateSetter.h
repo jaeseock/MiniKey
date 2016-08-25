@@ -22,6 +22,9 @@ public:
 	// 렌더링 시작 선언
 	void Begin(void);
 
+	// fvf
+	void UpdateFVF(DWORD fvf);
+
 	// MkBaseTexture
 	void UpdateBlendOp(DWORD alphaBlend, DWORD objectAlpha, DWORD srcBlend, DWORD dstBlend, DWORD alphaTest, DWORD alphaRef);
 
@@ -65,6 +68,9 @@ protected:
 	// transform
 	MkValueDecision<D3DXMATRIX> m_ViewMatrix;
 	MkValueDecision<D3DXMATRIX> m_ProjectionMatrix;
+
+	// fvf
+	MkValueDecision<DWORD> m_FVF;
 
 	// material
 	MkValueDecision<DWORD> m_AlphaBlend;

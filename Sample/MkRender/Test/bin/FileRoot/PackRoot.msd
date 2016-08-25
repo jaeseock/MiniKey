@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2016.07.07 (17:38:42)
+//   - time stamp : 2016.08.25 (15:25:41)
 //   - exporter   : 오재석 (Test)
 //--------------------------------------------------------------------//
 
@@ -191,6 +191,7 @@ Node "[SUBNODES]"
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
 										vec2 LocalPosition = (23.000, 3.000);
+										str TextMsg = "Cancel";
 										str TextName = // [3]
 											"Theme" /
 											"Default" /
@@ -205,6 +206,7 @@ Node "[SUBNODES]"
 								int AlignPosition = 66;
 								float LocalDepth = -0.100;
 								vec2 LocalPosition = (32.000, 33.000);
+								str TextMsg = "너무너무 잘생겨서<LF>어케 할지를 모르겠으용<LF>~(-_-)~";
 								str TextName = // [3]
 									"Theme" /
 									"Default" /
@@ -228,6 +230,7 @@ Node "[SUBNODES]"
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
 										vec2 LocalPosition = (34.500, 3.000);
+										str TextMsg = "OK";
 										str TextName = // [3]
 											"Theme" /
 											"Default" /
@@ -540,6 +543,31 @@ Node "[SUBNODES]"
 						str ThemeName = "Default";
 						bool UseShadow = Yes;
 
+						Node "[LINES]"
+						{
+							Node "test red line" : "MkLineShape"
+							{
+								uint Attribute = 3;
+								uint Color = 4294901760;
+								uint Indice = // [2]
+									0 / 1;
+								float LDepth = -1.000;
+								vec2 LVertices = // [2]
+									(0.000, 0.000) / (200.000, 100.000);
+							}
+
+							Node "test white line" : "MkLineShape"
+							{
+								uint Attribute = 3;
+								uint Indice = // [6]
+									0 / 1 / 1 / 2 / 2 /
+									3;
+								float LDepth = -1.000;
+								vec2 LVertices = // [4]
+									(0.000, 0.000) / (-100.000, 200.000) / (-100.000, 300.000) / (50.000, 350.000);
+							}
+						}
+
 						Node "[SUBNODES]"
 						{
 							Node "BtnNormal" : "MkWindowBaseNode"
@@ -559,6 +587,7 @@ Node "[SUBNODES]"
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
 										vec2 LocalPosition = (3.000, 3.000);
+										str TextMsg = "아재 아재 어따대고 시비여?<LF> 바라아제";
 										str TextName = // [3]
 											"Theme" /
 											"Default" /
@@ -660,6 +689,7 @@ Node "[SUBNODES]"
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
 										vec2 LocalPosition = (23.000, 3.000);
+										str TextMsg = "Cancel";
 										str TextName = // [3]
 											"Theme" /
 											"Default" /
@@ -685,6 +715,7 @@ Node "[SUBNODES]"
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
 										vec2 LocalPosition = (34.500, 3.000);
+										str TextMsg = "OK";
 										str TextName = // [3]
 											"Theme" /
 											"Default" /

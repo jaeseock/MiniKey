@@ -79,11 +79,11 @@ public:
 		eMBB_OkCancel // OkButtonName, CancelButtonName
 	};
 
-	// 戎惯己 text
+	// 积己
 	MkTitleBarControlNode* CreateMessageBox
 		(const MkHashStr& name, const MkStr& title, const MkStr& desc, MkWindowBaseNode* callBackWindow, eMsgBoxType boxType = eMBT_Default, eMsgBoxButton btnType = eMBB_OK) const;
 
-	// 沥利 text
+	// 积己
 	MkTitleBarControlNode* CreateMessageBox
 		(const MkHashStr& name, const MkArray<MkHashStr>& title, const MkArray<MkHashStr>& desc, MkWindowBaseNode* callBackWindow, eMsgBoxType boxType = eMBT_Default, eMsgBoxButton btnType = eMBB_OK) const;
 

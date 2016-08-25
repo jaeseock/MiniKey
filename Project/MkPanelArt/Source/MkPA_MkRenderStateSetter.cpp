@@ -41,6 +41,8 @@ void MkRenderStateSetter::Begin(void)
 	m_ViewMatrix.SetUp();
 	m_ProjectionMatrix.SetUp();
 
+	m_FVF.SetUp();
+
 	m_AlphaBlend.SetUp();
 	m_ObjectAlpha.SetUp();
 	m_SrdBlend.SetUp();
@@ -94,8 +96,7 @@ void MkRenderStateSetter::Begin(void)
 		device->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
 
 		device->SetTransform(D3DTS_WORLD, &MkD3DType::GetIdentityMatrix());
-		device->SetFVF(MKDEF_PANEL_FVF);
-
+		
 		device->SetMaterial(&m_D3DMaterial);
 
 		// 대부분이 알파 오브젝트고 소팅 순서를 완벽하게 정해서 그려주므로 의미 없음
@@ -105,6 +106,15 @@ void MkRenderStateSetter::Begin(void)
 		device->SetIndices(NULL); // D3DPT_TRIANGLELIST만 사용하므로 index buffer가 필요 없음
 		device->SetVertexShader(NULL);
 		device->SetPixelShader(NULL);
+	}
+}
+
+void MkRenderStateSetter::UpdateFVF(DWORD fvf)
+{
+	LPDIRECT3DDEVICE9 device = MK_DEVICE_MGR.GetDevice();
+	if (device != NULL)
+	{
+		MK_UPDATE_RENDER_FUNCTION(m_FVF, fvf, SetFVF);
 	}
 }
 
