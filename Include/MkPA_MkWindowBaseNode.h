@@ -7,6 +7,7 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkGlobalDefinition.h"
+#include "MkCore_MkTimeCounter.h"
 #include "MkPA_MkWindowThemedNode.h"
 
 
@@ -65,7 +66,7 @@ public:
 
 	//------------------------------------------------------------------------------------------------//
 	// call back
-	// cursor click event 발생시 대상 window에 통지 : ePA_SNE_Cursor(L/M/R)Btn(Pressed/Released/DBClicked)
+	// cursor event 발생시 대상 window에 통지 : ePA_SNE_Cursor(L/M/R)Btn(Pressed/Released/DBClicked/Hold)
 	// 호출 시점은 SendNodeReportTypeEvent(cursor event) 호출 직후
 	// (NOTE) call back target과 caller는 같은 window manager에 등록되어 있어야 함
 	//------------------------------------------------------------------------------------------------//
@@ -75,7 +76,7 @@ public:
 	inline const MkArray<MkHashStr>& GetCallBackTargetWindowPath(void) const { return m_CallBackTargetWindowPath; }
 
 	// cursor click event 발생 통지
-	virtual void CallBackOperation(ePA_SceneNodeEvent evt, const MkArray<MkHashStr>& callerPath) {}
+	virtual void CallBackOperation(ePA_SceneNodeEvent evt, const MkDataNode* argument, const MkArray<MkHashStr>& callerPath) {}
 
 	//------------------------------------------------------------------------------------------------//
 	// attribute
@@ -112,13 +113,17 @@ public:
 protected:
 
 	void _StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position);
+	void _StartHoldingCheck(ePA_SceneNodeEvent evt);
 
 protected:
 
-	// 휘발성 정보
+	// 내부값은 모두 휘발성 정보
 	bool m_CursorInside;
 
 	MkArray<MkHashStr> m_CallBackTargetWindowPath;
+
+	MkTimeCounter m_HoldingCounter;
+	ePA_SceneNodeEvent m_HoldingEventType;
 
 public:
 
@@ -126,6 +131,7 @@ public:
 	static const MkHashStr ToolTipName;
 
 	static const MkHashStr ArgKey_CursorLocalPosition;
+	static const MkHashStr ArgKey_CursorWorldPosition;
 	static const MkHashStr ArgKey_WheelDelta;
 	static const MkHashStr ArgKey_ExclusiveWindow;
 	static const MkHashStr ArgKey_ExclusiveException;

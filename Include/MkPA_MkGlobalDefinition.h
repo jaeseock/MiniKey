@@ -66,9 +66,11 @@ enum ePA_SceneNodeAttribute
 };
 
 // scene node event
-// (NOTE) 변경이 생기면 디버깅을 위해 MkWindowManagerNode.cpp의 NODE_EVT_NAME, SendNodeReportTypeEvent()에 반영하기를 권장
+// (NOTE) 변경이 생기면 디버깅을 위해 MkWindowManagerNode.cpp의 NODE_EVT_NAME, SendNodeReportTypeEvent()에도 반영 할 것
 enum ePA_SceneNodeEvent
 {
+	ePA_SNE_None = -1,
+
 	// MkSceneNode
 	ePA_SNE_DragMovement = 0, // ArgKey_DragMovement : MkVec2(world x, y)
 	ePA_SNE_BeginDrag,
@@ -80,15 +82,18 @@ enum ePA_SceneNodeEvent
 	// MkWindowBaseNode
 	ePA_SNE_CursorEntered,
 	ePA_SNE_CursorLeft,
-	ePA_SNE_CursorLBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorLBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorLBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorMBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorMBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorMBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorRBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorRBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
-	ePA_SNE_CursorRBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y)
+	ePA_SNE_CursorLBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorLBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorLBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorLBtnHold, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorMBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorMBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorMBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorMBtnHold, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorRBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorRBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorRBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
+	ePA_SNE_CursorRBtnHold, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
 	ePA_SNE_WheelMoved, // ArgKey_WheelDelta : int delta
 	ePA_SNE_Activate,
 	ePA_SNE_Deactivate,

@@ -1,7 +1,9 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkDataNode.h"
+#include "MkCore_MkTimeManager.h"
 
+#include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkWindowManagerNode.h"
 #include "MkPA_MkWindowBaseNode.h"
 
@@ -9,6 +11,7 @@
 const MkHashStr MkWindowBaseNode::ToolTipName = L"#ToolTip";
 
 const MkHashStr MkWindowBaseNode::ArgKey_CursorLocalPosition(L"CursorLocalPosition");
+const MkHashStr MkWindowBaseNode::ArgKey_CursorWorldPosition(L"CursorWorldPosition");
 const MkHashStr MkWindowBaseNode::ArgKey_WheelDelta(L"WheelDelta");
 const MkHashStr MkWindowBaseNode::ArgKey_ExclusiveWindow(L"ExclusiveWindow");
 const MkHashStr MkWindowBaseNode::ArgKey_ExclusiveException(L"ExclusiveException");
@@ -55,23 +58,50 @@ void MkWindowBaseNode::UpdateCursorInput
 
 		switch (leftBS)
 		{
-		case eBS_Released: _StartCursorReport(ePA_SNE_CursorLBtnReleased, position); break;
-		case eBS_Pressed: _StartCursorReport(ePA_SNE_CursorLBtnPressed, position); break;
-		case eBS_DoubleClicked: _StartCursorReport(ePA_SNE_CursorLBtnDBClicked, position); break;
+		case eBS_Released:
+			_StartCursorReport(ePA_SNE_CursorLBtnReleased, position);
+			m_HoldingEventType = ePA_SNE_None;
+			break;
+		case eBS_Pressed:
+			_StartCursorReport(ePA_SNE_CursorLBtnPressed, position);
+			_StartHoldingCheck(ePA_SNE_CursorLBtnHold);
+			break;
+		case eBS_DoubleClicked:
+			_StartCursorReport(ePA_SNE_CursorLBtnDBClicked, position);
+			_StartHoldingCheck(ePA_SNE_CursorLBtnHold);
+			break;
 		}
 
 		switch (middleBS)
 		{
-		case eBS_Released: _StartCursorReport(ePA_SNE_CursorMBtnReleased, position); break;
-		case eBS_Pressed: _StartCursorReport(ePA_SNE_CursorMBtnPressed, position); break;
-		case eBS_DoubleClicked: _StartCursorReport(ePA_SNE_CursorMBtnDBClicked, position); break;
+		case eBS_Released:
+			_StartCursorReport(ePA_SNE_CursorMBtnReleased, position);
+			m_HoldingEventType = ePA_SNE_None;
+			break;
+		case eBS_Pressed:
+			_StartCursorReport(ePA_SNE_CursorMBtnPressed, position);
+			_StartHoldingCheck(ePA_SNE_CursorMBtnHold);
+			break;
+		case eBS_DoubleClicked:
+			_StartCursorReport(ePA_SNE_CursorMBtnDBClicked, position);
+			_StartHoldingCheck(ePA_SNE_CursorMBtnHold);
+			break;
 		}
 
 		switch (rightBS)
 		{
-		case eBS_Released: _StartCursorReport(ePA_SNE_CursorRBtnReleased, position); break;
-		case eBS_Pressed: _StartCursorReport(ePA_SNE_CursorRBtnPressed, position); break;
-		case eBS_DoubleClicked: _StartCursorReport(ePA_SNE_CursorRBtnDBClicked, position); break;
+		case eBS_Released:
+			_StartCursorReport(ePA_SNE_CursorRBtnReleased, position);
+			m_HoldingEventType = ePA_SNE_None;
+			break;
+		case eBS_Pressed:
+			_StartCursorReport(ePA_SNE_CursorRBtnPressed, position);
+			_StartHoldingCheck(ePA_SNE_CursorRBtnHold);
+			break;
+		case eBS_DoubleClicked:
+			_StartCursorReport(ePA_SNE_CursorRBtnDBClicked, position);
+			_StartHoldingCheck(ePA_SNE_CursorRBtnHold);
+			break;
 		}
 
 		if (wheelDelta != 0)
@@ -85,6 +115,20 @@ void MkWindowBaseNode::UpdateCursorInput
 		{
 			StartNodeReportTypeEvent(ePA_SNE_CursorEntered, NULL);
 		}
+
+		// holding check
+		if ((m_HoldingEventType == ePA_SNE_CursorLBtnHold) || (m_HoldingEventType == ePA_SNE_CursorMBtnHold) || (m_HoldingEventType == ePA_SNE_CursorRBtnHold))
+		{
+			MkTimeState ts;
+			MK_TIME_MGR.GetCurrentTimeState(ts);
+
+			if (m_HoldingCounter.OnTick(ts))
+			{
+				_StartCursorReport(m_HoldingEventType, position);
+
+				m_HoldingEventType = ePA_SNE_None;
+			}
+		}
 	}
 	else
 	{
@@ -93,10 +137,9 @@ void MkWindowBaseNode::UpdateCursorInput
 			SetFormState(MkWindowThemeFormData::eS_Normal);
 		}
 
-		if (m_CursorInside)
-		{
-			StartNodeReportTypeEvent(ePA_SNE_CursorLeft, NULL);
-		}
+		StartNodeReportTypeEvent(ePA_SNE_CursorLeft, NULL);
+
+		m_HoldingEventType = ePA_SNE_None;
 	}
 
 	m_CursorInside = cursorInside;
@@ -200,6 +243,7 @@ void MkWindowBaseNode::Update(double currTime)
 void MkWindowBaseNode::Clear(void)
 {
 	m_CursorInside = false;
+	m_HoldingEventType = ePA_SNE_None;
 	m_CallBackTargetWindowPath.Clear();
 
 	MkWindowThemedNode::Clear();
@@ -235,6 +279,7 @@ MkWindowBaseNode::MkWindowBaseNode(const MkHashStr& name) : MkWindowThemedNode(n
 	SetEnable(true);
 
 	m_CursorInside = false;
+	m_HoldingEventType = ePA_SNE_None;
 }
 
 void MkWindowBaseNode::_StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position)
@@ -245,6 +290,7 @@ void MkWindowBaseNode::_StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& 
 
 	MkDataNode arg;
 	arg.CreateUnit(MkWindowBaseNode::ArgKey_CursorLocalPosition, MkVec2(localPos.x, localPos.y));
+	arg.CreateUnit(MkWindowBaseNode::ArgKey_CursorWorldPosition, MkVec2(worldPos.x, worldPos.y));
 	StartNodeReportTypeEvent(evt, &arg);
 
 	// call back
@@ -266,13 +312,22 @@ void MkWindowBaseNode::_StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& 
 
 			MkArray<MkHashStr> myPath;
 			GetWindowPath(myPath);
-			winBase->CallBackOperation(evt, myPath);
+			winBase->CallBackOperation(evt, &arg, myPath);
 			return;
 		}
 		while (false);
 
 		m_CallBackTargetWindowPath.Clear(); // 부정 경로. 초기화
 	}
+}
+
+void MkWindowBaseNode::_StartHoldingCheck(ePA_SceneNodeEvent evt)
+{
+	m_HoldingEventType = evt; // ePA_SNE_Cursor(L/M/R)BtnHold
+
+	MkTimeState ts;
+	MK_TIME_MGR.GetCurrentTimeState(ts);
+	m_HoldingCounter.SetUp(ts, MKDEF_PA_HOLD_EVENT_TIME_CONDITION);
 }
 
 //------------------------------------------------------------------------------------------------//

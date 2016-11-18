@@ -58,40 +58,6 @@ void MkBaseTexture::UpdateRenderState(DWORD objectAlpha) const
 	{
 		bool hasObjectAlpha = (objectAlpha < 0xff);
 
-		// blend type. color/alpha operation에서 만들어진 컬러, 알파 값을 어떻게 배경 컬러, 알파와 섞을지 결정
-		DWORD alphaBlend, srcBlend, dstBlend;
-		switch (m_BlendType)
-		{
-		case ePA_MBT_Opaque: // 기본적으로 불투명이지만 objectAlpha가 영향을 미치면 ePA_MBT_AlphaChannel와 동일
-			alphaBlend = (hasObjectAlpha) ? TRUE : FALSE;
-			srcBlend = (hasObjectAlpha) ? D3DBLEND_SRCALPHA : D3DBLEND_ONE;
-			dstBlend = (hasObjectAlpha) ? D3DBLEND_INVSRCALPHA : D3DBLEND_ZERO;
-			break;
-
-		case ePA_MBT_AlphaChannel: // (srcColor * srcAlpha) + (dstColor * (1.f - srcAlpha))
-			alphaBlend = TRUE;
-			srcBlend = D3DBLEND_SRCALPHA;
-			dstBlend = D3DBLEND_INVSRCALPHA;
-			break;
-
-		case ePA_MBT_ColorAdd: // (srcColor * 1) + (dstColor * 1)
-			alphaBlend = TRUE;
-			srcBlend = D3DBLEND_ONE;
-			dstBlend = D3DBLEND_ONE;
-			break;
-
-		case ePA_MBT_ColorMult: // (srcColor * 0) + (dstColor * srcColor)
-			alphaBlend = TRUE;
-			srcBlend = D3DBLEND_ZERO;
-			dstBlend = D3DBLEND_SRCCOLOR;
-			break;
-		}
-
-		DWORD alphaTest = (m_AlphaTestingRef == 0) ? FALSE : TRUE;
-		DWORD alphaRef = static_cast<DWORD>(m_AlphaTestingRef);
-		
-		MK_RENDER_STATE.UpdateBlendOp(alphaBlend, objectAlpha, srcBlend, dstBlend, alphaTest, alphaRef);
-		
 		// color/alpha operation. 해당 재질의 컬러, 알파 값을 만들어냄
 		DWORD cOP, cA1, cA2, aOP, aA1, aA2;
 		switch (m_BlendType)
@@ -134,6 +100,40 @@ void MkBaseTexture::UpdateRenderState(DWORD objectAlpha) const
 		}
 
 		MK_RENDER_STATE.UpdateTextureOperation(0, cOP, cA1, cA2, aOP, aA1, aA2);
+
+		// blend type. color/alpha operation에서 만들어진 컬러, 알파 값을 어떻게 배경 컬러, 알파와 섞을지 결정
+		DWORD alphaBlend, srcBlend, dstBlend;
+		switch (m_BlendType)
+		{
+		case ePA_MBT_Opaque: // 기본적으로 불투명이지만 objectAlpha가 영향을 미치면 ePA_MBT_AlphaChannel와 동일
+			alphaBlend = (hasObjectAlpha) ? TRUE : FALSE;
+			srcBlend = (hasObjectAlpha) ? D3DBLEND_SRCALPHA : D3DBLEND_ONE;
+			dstBlend = (hasObjectAlpha) ? D3DBLEND_INVSRCALPHA : D3DBLEND_ZERO;
+			break;
+
+		case ePA_MBT_AlphaChannel: // (srcColor * srcAlpha) + (dstColor * (1.f - srcAlpha))
+			alphaBlend = TRUE;
+			srcBlend = D3DBLEND_SRCALPHA;
+			dstBlend = D3DBLEND_INVSRCALPHA;
+			break;
+
+		case ePA_MBT_ColorAdd: // (srcColor * 1) + (dstColor * 1)
+			alphaBlend = TRUE;
+			srcBlend = D3DBLEND_ONE;
+			dstBlend = D3DBLEND_ONE;
+			break;
+
+		case ePA_MBT_ColorMult: // (srcColor * 0) + (dstColor * srcColor)
+			alphaBlend = TRUE;
+			srcBlend = D3DBLEND_ZERO;
+			dstBlend = D3DBLEND_SRCCOLOR;
+			break;
+		}
+
+		DWORD alphaTest = (m_AlphaTestingRef == 0) ? FALSE : TRUE;
+		DWORD alphaRef = static_cast<DWORD>(m_AlphaTestingRef);
+		
+		MK_RENDER_STATE.UpdateBlendOp(alphaBlend, objectAlpha, srcBlend, dstBlend, alphaTest, alphaRef);
 
 		// set sampler 0
 		MK_RENDER_STATE.UpdateBaseTexture

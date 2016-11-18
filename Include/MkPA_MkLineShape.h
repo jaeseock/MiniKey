@@ -3,21 +3,6 @@
 
 //------------------------------------------------------------------------------------------------//
 // 모든 MkLineShape는 재질 구성이 동일하므로 같은 MaterialKey(main key:0, sub key:ePA_SOT_LineShape)를 사용
-//
-// 구성용 data node 샘플
-//
-//	Node "SampleRect" : "T_SRect" // 안전을 위해 MKDEF_S2D_BT_SRECT_TEMPLATE_NAME 상속 권장
-//	{
-//		uint Alpha = 128;
-//		float Depth = 0.000;
-//		vec2 Position = (100.000, 200.000);
-//		bool Reflection = // [2]
-//			Yes / No;
-//		//str Resource = "map" / "Image\s03.jpg" / ""; // 이미지 출력
-//		str Resource = "odt" / "<%T:굴림12%><%S:샘플02%>샘플 메세지다요"; // original deco text 출력
-//		//str Resource = "sdt" / "SampleCategory" / "ErrorMsg" / "SampleMsg"; // scene deco text 출력
-//		bool Visible = Yes;
-//	}
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkBitField32.h"
@@ -52,7 +37,8 @@ public:
 
 	virtual ePA_SceneObjectType GetObjectType(void) const { return ePA_SOT_LineShape; }
 
-	// 저장&읽기 가능 여부 설정. 주 용도는 디버깅용이므로 default는 false
+	// 저장&읽기 가능 여부 설정
+	// (NOTE) 주 용도는 디버깅용이므로 default는 false
 	void SetRecordable(bool enable);
 	bool GetRecordable(void) const;
 

@@ -155,12 +155,15 @@ const MkStr NODE_EVT_NAME[] =
 	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnPressed),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnReleased),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnHold),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorMBtnPressed),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorMBtnReleased),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorMBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorMBtnHold),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorRBtnPressed),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorRBtnReleased),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorRBtnDBClicked),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorRBtnHold),
 	MK_VALUE_TO_STRING(ePA_SNE_WheelMoved),
 	MK_VALUE_TO_STRING(ePA_SNE_Activate),
 	MK_VALUE_TO_STRING(ePA_SNE_Deactivate),
@@ -290,16 +293,25 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 		case ePA_SNE_CursorLBtnPressed:
 		case ePA_SNE_CursorLBtnReleased:
 		case ePA_SNE_CursorLBtnDBClicked:
+		case ePA_SNE_CursorLBtnHold:
 		case ePA_SNE_CursorMBtnPressed:
 		case ePA_SNE_CursorMBtnReleased:
 		case ePA_SNE_CursorMBtnDBClicked:
+		case ePA_SNE_CursorMBtnHold:
 		case ePA_SNE_CursorRBtnPressed:
 		case ePA_SNE_CursorRBtnReleased:
 		case ePA_SNE_CursorRBtnDBClicked:
+		case ePA_SNE_CursorRBtnHold:
 			{
 				MkVec2 buffer;
 				if (argument->GetData(MkWindowBaseNode::ArgKey_CursorLocalPosition, buffer, 0))
 				{
+					msg += L"L";
+					msg += buffer;
+				}
+				if (argument->GetData(MkWindowBaseNode::ArgKey_CursorWorldPosition, buffer, 0))
+				{
+					msg += L", W";
 					msg += buffer;
 				}
 			}
@@ -969,7 +981,7 @@ void MkWindowManagerNode::Update(double currTime)
 	}
 
 	// modal
-	if (updateModalDepth)
+	if (updateModalDepth && (!m_ModalWindow.Empty()))
 	{
 		m_RootWindowList[m_ModalWindow]->SetLocalDepth(m_DepthBandwidth * 0.1f); // 10%
 	}

@@ -59,6 +59,14 @@ public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
 		/*
+		MkStr tBuff;
+		tBuff.Reserve(3000);
+		for (int i=0; i<1000; ++i)
+		{
+			//tBuff += dDice
+		}
+		*/
+		/*
 		HWND webHnd = CreateWindow(L"WebCtrl32", L"http://www.daum.net/", WS_CHILD | WS_VISIBLE, 0, 0, 800, 600,
 			MkBaseFramework::GetMainWindowPtr()->GetWindowHandle(), NULL, NULL, NULL);
 
@@ -229,6 +237,20 @@ public:
 		msgBoxNode->SetLocalPosition(MkFloat2(500.f, 300.f));
 		winMgrNode->AttachWindow(msgBoxNode);
 		winMgrNode->ActivateWindow(L"MsgBox", false);
+
+		// window modal button set : dummy
+		/*
+		MkWindowBaseNode* modalDummyWin = MkWindowBaseNode::CreateChildNode(NULL, L"ModalDummy");
+		winMgrNode->AttachWindow(modalDummyWin);
+		winMgrNode->ActivateWindow(L"ModalDummy", true);
+		modalDummyWin->SetLocalPosition(MkFloat2(500.f, 400.f));
+
+		// window modal button set : buttons
+		btnInst = wndFactory.CreateComponentNode(L"Btn1", MkWindowThemeData::eCT_RedLEDBtnSmall);
+		btnInst->SetAlignmentPosition(eRAP_LeftBottom);
+		btnInst->SetAlignmentOffset(MkFloat2(0.f, 0.f));
+		modalDummyWin->AttachChildNode(btnInst);
+		*/
 
 		//--------------------------------------------------//
 		// sub window mgr
