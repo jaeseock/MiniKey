@@ -39,6 +39,8 @@
 //------------------------------------------------------------------------------------------------//
 
 // ePA_SNE_Cursor(L/M/R)BtnHold event 발생 조건 시간(해당 window를 누르고 있는 시간)
+// 값이 0. 이하면 ePA_SNE_Cursor(L/M/R)BtnPressed, ePA_SNE_Cursor(L/M/R)BtnDBClicked 직후 바로 동작
+//#define MKDEF_PA_HOLD_EVENT_TIME_CONDITION 0.6 // sec.
 #define MKDEF_PA_HOLD_EVENT_TIME_CONDITION 0.6 // sec.
 
 //------------------------------------------------------------------------------------------------//

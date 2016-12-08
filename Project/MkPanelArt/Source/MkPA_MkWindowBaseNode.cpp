@@ -56,6 +56,11 @@ void MkWindowBaseNode::UpdateCursorInput
 			}
 		}
 
+		if (!m_CursorInside)
+		{
+			StartNodeReportTypeEvent(ePA_SNE_CursorEntered, NULL);
+		}
+
 		switch (leftBS)
 		{
 		case eBS_Released:
@@ -64,11 +69,11 @@ void MkWindowBaseNode::UpdateCursorInput
 			break;
 		case eBS_Pressed:
 			_StartCursorReport(ePA_SNE_CursorLBtnPressed, position);
-			_StartHoldingCheck(ePA_SNE_CursorLBtnHold);
+			_StartHoldingCheck(ePA_SNE_CursorLBtnHold, position);
 			break;
 		case eBS_DoubleClicked:
 			_StartCursorReport(ePA_SNE_CursorLBtnDBClicked, position);
-			_StartHoldingCheck(ePA_SNE_CursorLBtnHold);
+			_StartHoldingCheck(ePA_SNE_CursorLBtnHold, position);
 			break;
 		}
 
@@ -80,11 +85,11 @@ void MkWindowBaseNode::UpdateCursorInput
 			break;
 		case eBS_Pressed:
 			_StartCursorReport(ePA_SNE_CursorMBtnPressed, position);
-			_StartHoldingCheck(ePA_SNE_CursorMBtnHold);
+			_StartHoldingCheck(ePA_SNE_CursorMBtnHold, position);
 			break;
 		case eBS_DoubleClicked:
 			_StartCursorReport(ePA_SNE_CursorMBtnDBClicked, position);
-			_StartHoldingCheck(ePA_SNE_CursorMBtnHold);
+			_StartHoldingCheck(ePA_SNE_CursorMBtnHold, position);
 			break;
 		}
 
@@ -96,24 +101,12 @@ void MkWindowBaseNode::UpdateCursorInput
 			break;
 		case eBS_Pressed:
 			_StartCursorReport(ePA_SNE_CursorRBtnPressed, position);
-			_StartHoldingCheck(ePA_SNE_CursorRBtnHold);
+			_StartHoldingCheck(ePA_SNE_CursorRBtnHold, position);
 			break;
 		case eBS_DoubleClicked:
 			_StartCursorReport(ePA_SNE_CursorRBtnDBClicked, position);
-			_StartHoldingCheck(ePA_SNE_CursorRBtnHold);
+			_StartHoldingCheck(ePA_SNE_CursorRBtnHold, position);
 			break;
-		}
-
-		if (wheelDelta != 0)
-		{
-			MkDataNode arg;
-			arg.CreateUnit(MkWindowBaseNode::ArgKey_WheelDelta, wheelDelta);
-			StartNodeReportTypeEvent(ePA_SNE_WheelMoved, &arg);
-		}
-
-		if (!m_CursorInside)
-		{
-			StartNodeReportTypeEvent(ePA_SNE_CursorEntered, NULL);
 		}
 
 		// holding check
@@ -128,6 +121,13 @@ void MkWindowBaseNode::UpdateCursorInput
 
 				m_HoldingEventType = ePA_SNE_None;
 			}
+		}
+
+		if (wheelDelta != 0)
+		{
+			MkDataNode arg;
+			arg.CreateUnit(MkWindowBaseNode::ArgKey_WheelDelta, wheelDelta);
+			StartNodeReportTypeEvent(ePA_SNE_WheelMoved, &arg);
 		}
 	}
 	else
@@ -321,13 +321,22 @@ void MkWindowBaseNode::_StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& 
 	}
 }
 
-void MkWindowBaseNode::_StartHoldingCheck(ePA_SceneNodeEvent evt)
+void MkWindowBaseNode::_StartHoldingCheck(ePA_SceneNodeEvent evt, const MkInt2& position)
 {
-	m_HoldingEventType = evt; // ePA_SNE_Cursor(L/M/R)BtnHold
+	if (MKDEF_PA_HOLD_EVENT_TIME_CONDITION > 0.)
+	{
+		MkTimeState ts;
+		MK_TIME_MGR.GetCurrentTimeState(ts);
+		m_HoldingCounter.SetUp(ts, MKDEF_PA_HOLD_EVENT_TIME_CONDITION);
 
-	MkTimeState ts;
-	MK_TIME_MGR.GetCurrentTimeState(ts);
-	m_HoldingCounter.SetUp(ts, MKDEF_PA_HOLD_EVENT_TIME_CONDITION);
+		m_HoldingEventType = evt; // ePA_SNE_Cursor(L/M/R)BtnHold
+	}
+	else
+	{
+		_StartCursorReport(evt, position);
+
+		m_HoldingEventType = ePA_SNE_None;
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

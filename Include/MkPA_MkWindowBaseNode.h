@@ -113,7 +113,7 @@ public:
 protected:
 
 	void _StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position);
-	void _StartHoldingCheck(ePA_SceneNodeEvent evt);
+	void _StartHoldingCheck(ePA_SceneNodeEvent evt, const MkInt2& position);
 
 protected:
 
