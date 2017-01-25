@@ -14,9 +14,8 @@ class _TSI_DataWriting
 public:
 	static void Record(const MkByteArrayDescriptor& descriptor, MkByteArray& destBuffer, unsigned int& currentPosition)
 	{
-		if (descriptor.IsValid())
+		if (destBuffer.Overwrite(currentPosition, descriptor))
 		{
-			destBuffer.Overwrite(currentPosition, descriptor);
 			currentPosition += descriptor.GetSize();
 		}
 	}

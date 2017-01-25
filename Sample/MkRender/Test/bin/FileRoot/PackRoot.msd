@@ -1,8 +1,8 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2016.11.18 (16:24:36)
-//   - exporter   : ø¿¿ÁºÆ (Test)
+//   - time stamp : 2017.01.25 (17:28:57)
+//   - exporter   : pc (Test)
 //--------------------------------------------------------------------//
 
 
@@ -137,29 +137,9 @@ Node "[SUBNODES]"
 			"TitleBarC" /
 			"TitleBarB" /
 			"TitleBar";
-		str Modal = "ModalDummy";
 
 		Node "[SUBNODES]"
 		{
-			Node "ModalDummy" : "MkWindowBaseNode"
-			{
-				uint Attribute = 66819;
-				float LocalDepth = 100.000;
-				vec2 LocalPosition = (500.000, 400.000);
-
-				Node "[SUBNODES]"
-				{
-					Node "Btn1" : "MkWindowBaseNode"
-					{
-						int AlignPosition = 66;
-						vec2 ClientSize = (16.000, 16.000);
-						str ComponentType = "eCT_RedLEDBtnSmall";
-						float LocalDepth = -1.000;
-						str ThemeName = "Default";
-					}
-				}
-			}
-
 			Node "MsgBox" : "MkTitleBarControlNode"
 			{
 				uint Attribute = 197891;

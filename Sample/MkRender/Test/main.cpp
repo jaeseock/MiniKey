@@ -238,6 +238,7 @@ public:
 		winMgrNode->AttachWindow(msgBoxNode);
 		winMgrNode->ActivateWindow(L"MsgBox", false);
 
+		/*
 		// window modal button set : dummy
 		MkWindowBaseNode* modalDummyWin = MkWindowBaseNode::CreateChildNode(NULL, L"ModalDummy");
 		winMgrNode->AttachWindow(modalDummyWin);
@@ -249,6 +250,7 @@ public:
 		btnInst->SetAlignmentPosition(eRAP_LeftBottom);
 		btnInst->SetAlignmentOffset(MkFloat2(0.f, 0.f));
 		modalDummyWin->AttachChildNode(btnInst);
+		*/
 
 		//--------------------------------------------------//
 		// sub window mgr

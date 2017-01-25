@@ -2,7 +2,7 @@
 #include "zlib/zlib.h"
 #include "MkCore_MkZipCompressor.h"
 
-#pragma comment(lib, "zdll")
+#pragma comment(lib, "zlib")
 
 
 //------------------------------------------------------------------------------------------------//

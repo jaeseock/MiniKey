@@ -1,0 +1,16 @@
+
+str TargetSrcPath = "..\..\TempSVN";
+
+str SkipNameFilter =
+"world\srvattr" /
+"fairy" /
+"data\script" /
+"autoconfirmquiz.bin" /
+"autoconfirmquizword.bin" /
+"world\instancezone\srvattr";
+
+str SkipExtFilter = "bak" / "bmk" / "box" / "monster" / "guard";
+
+str InfoFilePath = "LastInfo.txt";
+
+str ExportDirPath = "Export";

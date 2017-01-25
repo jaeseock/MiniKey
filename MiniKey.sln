@@ -36,6 +36,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "App_02", "Application\App_0
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanSoundClassicToOriginConverter", "Application\RohanSoundClassicToOriginConverter\RohanSoundClassicToOriginConverter.vcproj", "{D913F0EA-9F5C-4BEA-B498-1C36E83C1611}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileDiffFinder", "Application\FileDiffFinder\FileDiffFinder.vcproj", "{2FEE82FC-A8F7-4F82-B168-FC5F6AE6BE64}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +100,12 @@ Global
 		{D913F0EA-9F5C-4BEA-B498-1C36E83C1611}.Release|Win32.Build.0 = Release|Win32
 		{D913F0EA-9F5C-4BEA-B498-1C36E83C1611}.Shipping|Win32.ActiveCfg = Release|Win32
 		{D913F0EA-9F5C-4BEA-B498-1C36E83C1611}.Shipping|Win32.Build.0 = Release|Win32
+		{2FEE82FC-A8F7-4F82-B168-FC5F6AE6BE64}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2FEE82FC-A8F7-4F82-B168-FC5F6AE6BE64}.Debug|Win32.Build.0 = Debug|Win32
+		{2FEE82FC-A8F7-4F82-B168-FC5F6AE6BE64}.Release|Win32.ActiveCfg = Release|Win32
+		{2FEE82FC-A8F7-4F82-B168-FC5F6AE6BE64}.Release|Win32.Build.0 = Release|Win32
+		{2FEE82FC-A8F7-4F82-B168-FC5F6AE6BE64}.Shipping|Win32.ActiveCfg = Release|Win32
+		{2FEE82FC-A8F7-4F82-B168-FC5F6AE6BE64}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
