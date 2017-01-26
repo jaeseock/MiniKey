@@ -23,7 +23,7 @@ public:
 	// data node -> memory
 	bool Convert(const MkDataNode& source, MkByteArray& destination) const;
 
-	// data node -> memory -> binary file
+	// data node -> memory -> compress -> insert tag to front -> binary file
 	bool Convert(const MkDataNode& source, const MkPathName& filePath) const;
 
 protected:

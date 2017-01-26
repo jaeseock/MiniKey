@@ -4,6 +4,7 @@
 #include "MkCore_MkFileManager.h"
 #include "MkCore_MkInterfaceForDataReading.h"
 #include "MkCore_MkTagDefinitionForDataNode.h"
+#include "MkCore_MkZipCompressor.h"
 #include "MkCore_MkDataNode.h"
 #include "MkCore_MkMemoryToDataNodeConverter.h"
 
@@ -52,7 +53,10 @@ public:
 
 bool MkMemoryToDataNodeConverter::Convert(const MkByteArray& srcArray, MkDataNode& destination, bool checkBinTag) const
 {
+	const MkByteArray* targetArray = &srcArray;
+	MkByteArray compBuffer;
 	unsigned int startPos = 0;
+
 	if (checkBinTag)
 	{
 		MkByteArray binTag;
@@ -61,18 +65,27 @@ bool MkMemoryToDataNodeConverter::Convert(const MkByteArray& srcArray, MkDataNod
 			return false;
 
 		startPos = MkTagDefinitionForDataNode::TagForBinaryDataNode.GetSize();
+		if (srcArray.GetSize() > startPos)
+		{
+			MK_CHECK(MkZipCompressor::Uncompress(srcArray.GetPtr() + startPos, srcArray.GetSize() - startPos, compBuffer) > 0, L"MkDataNode(binary) 데이터 압축 해제 실패")
+				return false;
+
+			targetArray = &compBuffer;
+			startPos = 0;
+		}
 	}
 
 	MkInterfaceForDataReading drInterface;
-	MK_CHECK(drInterface.SetUp(srcArray, startPos), L"입력 데이터가 비어서 노드 구성 실패")
-		return false;
-
-	bool ok = _BuildNode(drInterface, destination);
-	if (ok)
+	if (drInterface.SetUp(*targetArray, startPos))
 	{
-		destination.Rehash();
+		if (_BuildNode(drInterface, destination))
+		{
+			destination.Rehash();
+		}
+		else
+			return false;
 	}
-	return ok;
+	return true;
 }
 
 bool MkMemoryToDataNodeConverter::Convert(const MkPathName& filePath, MkDataNode& destination) const

@@ -9,6 +9,9 @@
 #include "MkCore_MkMemoryToDataTextConverter.h"
 
 
+// text 머릿말 예상 크기
+#define MKDEF_HEADER_RESERVATION 500
+
 // binary -> text 변환시 용량이 늘어나기는 하지만 20배를 넘기기는 힘들거라 예상
 #define MKDEF_M_TO_T_RESERVATION 20
 
@@ -50,22 +53,36 @@ public:
 
 bool MkMemoryToDataTextConverter::Convert(const MkByteArray& srcArray, const MkPathName& filePath)
 {
-	MkInterfaceForDataReading drInterface;
-	MK_CHECK(drInterface.SetUp(srcArray, 0), L"MkInterfaceForDataReading 초기화 실패")
-		return false;
-
 	MkStr strBuffer;
-	strBuffer.Reserve(srcArray.GetSize() * MKDEF_M_TO_T_RESERVATION);
+	bool converting = true;
 
-	_InitiateHeaderMsg(strBuffer, filePath);
+	if (srcArray.Empty())
+	{
+		strBuffer.Reserve(MKDEF_HEADER_RESERVATION);
 
-	if (_BuildText(drInterface, 0, strBuffer))
+		_InitiateHeaderMsg(strBuffer, filePath);
+	}
+	else
+	{
+		MkInterfaceForDataReading drInterface;
+		MK_CHECK(drInterface.SetUp(srcArray, 0), L"MkInterfaceForDataReading 초기화 실패")
+			return false;
+
+		strBuffer.Reserve(MKDEF_HEADER_RESERVATION + srcArray.GetSize() * MKDEF_M_TO_T_RESERVATION);
+
+		_InitiateHeaderMsg(strBuffer, filePath);
+		strBuffer += MkStr::LF;
+		strBuffer += MkStr::LF;
+
+		converting = _BuildText(drInterface, 0, strBuffer);
+	}
+
+	if (converting)
 	{
 		MK_CHECK(strBuffer.WriteToTextFile(filePath, true), MkStr(filePath) + L"경로에 파일 쓰기 오류")
 			return false;
-		return true;
 	}
-	return false;
+	return converting;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -78,7 +95,7 @@ void MkMemoryToDataTextConverter::_InitiateHeaderMsg(MkStr& strBuffer, const MkP
 	strBuffer += L"//   - file path  : " + MkStr(filePath) + MkStr::LF;
 	strBuffer += L"//   - time stamp : " + MK_SYS_ENV.GetCurrentSystemDate() + L" (" + MK_SYS_ENV.GetCurrentSystemTime() + L")" + MkStr::LF;
 	strBuffer += L"//   - exporter   : " + MK_SYS_ENV.GetCurrentLogOnUserName() + L" (" + MkPathName::GetApplicationName() + L")" + MkStr::LF;
-	strBuffer += L"//--------------------------------------------------------------------//" + MkStr::LF + MkStr::LF;
+	strBuffer += L"//--------------------------------------------------------------------//";
 }
 
 bool MkMemoryToDataTextConverter::_BuildText(MkInterfaceForDataReading& drInterface, unsigned int nodeDepth, MkStr& strBuffer) const

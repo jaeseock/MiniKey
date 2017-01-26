@@ -4,6 +4,7 @@
 #include "MkCore_MkInterfaceForDataWriting.h"
 #include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkTagDefinitionForDataNode.h"
+#include "MkCore_MkZipCompressor.h"
 #include "MkCore_MkDataNode.h"
 #include "MkCore_MkHelperForDataNodeConverter.h"
 #include "MkCore_MkDataNodeToMemoryConverter.h"
@@ -55,16 +56,23 @@ bool MkDataNodeToMemoryConverter::Convert(const MkDataNode& source, MkByteArray&
 
 bool MkDataNodeToMemoryConverter::Convert(const MkDataNode& source, const MkPathName& filePath) const
 {
-	MkByteArray buffer;
-	if (!Convert(source, buffer))
+	MkByteArray binBuffer;
+	if (!Convert(source, binBuffer))
 		return false;
+
+	MkByteArray compBuffer;
+	if (!binBuffer.Empty())
+	{	
+		MK_CHECK(MkZipCompressor::Compress(binBuffer.GetPtr(), binBuffer.GetSize(), compBuffer) > 0, MkStr(filePath) + L" 경로에 저장 할 " + source.GetNodeName().GetString() + L" 노드 압축 실패")
+			return false;
+	}
 
 	MkInterfaceForFileWriting fwInterface;
 	MK_CHECK(fwInterface.SetUp(filePath, true, true), MkStr(filePath) + L" 경로 파일 열기 실패")
 		return false;
 
-	fwInterface.Write(MkTagDefinitionForDataNode::TagForBinaryDataNode, MkArraySection(0)); // binary tag
-	fwInterface.Write(buffer, MkArraySection(0));
+	fwInterface.Write(MkTagDefinitionForDataNode::TagForBinaryDataNode, MkArraySection(0));
+	fwInterface.Write(compBuffer, MkArraySection(0));
 	fwInterface.Clear();
 	return true;
 }
