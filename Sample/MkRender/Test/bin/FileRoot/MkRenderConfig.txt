@@ -701,7 +701,7 @@ Node "StaticResource"
 	}
 }
 
-Node "CursorType" // 커서 지정에 대해서는 kCursorManager::eCursorType 참조
+Node "CursorType" // 커서 지정에 대해서는 MkCursorManager::eCursorType 참조
 {
 	Node "eNormal"
 	{

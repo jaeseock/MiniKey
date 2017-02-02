@@ -51,32 +51,10 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkMemoryToDataNodeConverter::Convert(const MkByteArray& srcArray, MkDataNode& destination, bool checkBinTag) const
+bool MkMemoryToDataNodeConverter::ConvertMemory(const MkByteArray& srcArray, MkDataNode& destination) const
 {
-	const MkByteArray* targetArray = &srcArray;
-	MkByteArray compBuffer;
-	unsigned int startPos = 0;
-
-	if (checkBinTag)
-	{
-		MkByteArray binTag;
-		srcArray.GetSubArray(MkArraySection(0, MkTagDefinitionForDataNode::TagForBinaryDataNode.GetSize()), binTag);
-		if (binTag != MkTagDefinitionForDataNode::TagForBinaryDataNode)
-			return false;
-
-		startPos = MkTagDefinitionForDataNode::TagForBinaryDataNode.GetSize();
-		if (srcArray.GetSize() > startPos)
-		{
-			MK_CHECK(MkZipCompressor::Uncompress(srcArray.GetPtr() + startPos, srcArray.GetSize() - startPos, compBuffer) > 0, L"MkDataNode(binary) 데이터 압축 해제 실패")
-				return false;
-
-			targetArray = &compBuffer;
-			startPos = 0;
-		}
-	}
-
 	MkInterfaceForDataReading drInterface;
-	if (drInterface.SetUp(*targetArray, startPos))
+	if (drInterface.SetUp(srcArray)) // 메모리가 비었어도 빈 노드 로딩이라 간주하고 성공 인정
 	{
 		if (_BuildNode(drInterface, destination))
 		{
@@ -88,13 +66,31 @@ bool MkMemoryToDataNodeConverter::Convert(const MkByteArray& srcArray, MkDataNod
 	return true;
 }
 
-bool MkMemoryToDataNodeConverter::Convert(const MkPathName& filePath, MkDataNode& destination) const
+bool MkMemoryToDataNodeConverter::ConvertBinaryData(const MkByteArray& srcArray, MkDataNode& destination) const
+{
+	MkByteArray binTag;
+	srcArray.GetSubArray(MkArraySection(0, MkTagDefinitionForDataNode::TagForBinaryDataNode.GetSize()), binTag);
+	if (binTag != MkTagDefinitionForDataNode::TagForBinaryDataNode)
+		return false;
+
+	MkByteArray compBuffer;
+	unsigned int tagSize = MkTagDefinitionForDataNode::TagForBinaryDataNode.GetSize();
+	if (srcArray.GetSize() > tagSize)
+	{
+		MK_CHECK(MkZipCompressor::Uncompress(srcArray.GetPtr() + tagSize, srcArray.GetSize() - tagSize, compBuffer) > 0, L"MkDataNode(binary) 데이터 압축 해제 실패")
+			return false;
+	}
+
+	return ConvertMemory(compBuffer, destination);
+}
+
+bool MkMemoryToDataNodeConverter::ConvertBinaryFile(const MkPathName& filePath, MkDataNode& destination) const
 {
 	MkByteArray srcArray;
 	MK_CHECK(MkFileManager::GetFileData(filePath, srcArray), MkStr(filePath) + L" 경로 파일 읽기 실패")
 		return false;
 
-	return Convert(srcArray, destination, true);
+	return ConvertBinaryData(srcArray, destination);
 }
 
 //------------------------------------------------------------------------------------------------//

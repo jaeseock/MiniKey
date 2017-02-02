@@ -28,7 +28,7 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkDataNodeToMemoryConverter::Convert(const MkDataNode& source, MkByteArray& destination) const
+bool MkDataNodeToMemoryConverter::ConvertToMemory(const MkDataNode& source, MkByteArray& destination) const
 {
 	MkInterfaceForDataWriting dwInterface;
 	MkHelperForDataNodeConverter::ReserveInterface(source, dwInterface);
@@ -54,10 +54,10 @@ bool MkDataNodeToMemoryConverter::Convert(const MkDataNode& source, MkByteArray&
 	return true;
 }
 
-bool MkDataNodeToMemoryConverter::Convert(const MkDataNode& source, const MkPathName& filePath) const
+bool MkDataNodeToMemoryConverter::ConvertToBinaryFile(const MkDataNode& source, const MkPathName& filePath) const
 {
 	MkByteArray binBuffer;
-	if (!Convert(source, binBuffer))
+	if (!ConvertToMemory(source, binBuffer))
 		return false;
 
 	MkByteArray compBuffer;

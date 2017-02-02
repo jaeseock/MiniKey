@@ -21,10 +21,10 @@ class MkDataNodeToMemoryConverter
 public:
 
 	// data node -> memory
-	bool Convert(const MkDataNode& source, MkByteArray& destination) const;
+	bool ConvertToMemory(const MkDataNode& source, MkByteArray& destination) const;
 
-	// data node -> memory -> compress -> insert tag to front -> binary file
-	bool Convert(const MkDataNode& source, const MkPathName& filePath) const;
+	// ConvertToMemory() -> binary data(tag + compressed data) -> binary file
+	bool ConvertToBinaryFile(const MkDataNode& source, const MkPathName& filePath) const;
 
 protected:
 

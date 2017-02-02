@@ -32,7 +32,7 @@ bool MkDataNode::LoadFromText(const MkPathName& filePath)
 		if (textToMemoryConverter.Convert(filePath, buffer))
 		{
 			MkMemoryToDataNodeConverter memoryToDataNodeConverter;
-			return memoryToDataNodeConverter.Convert(buffer, *this, false);
+			return memoryToDataNodeConverter.ConvertMemory(buffer, *this);
 		}
 	}
 	return false;
@@ -48,7 +48,7 @@ bool MkDataNode::LoadFromText(const MkByteArray& fileData)
 		if (textToMemoryConverter.Convert(fileData, buffer))
 		{
 			MkMemoryToDataNodeConverter memoryToDataNodeConverter;
-			return memoryToDataNodeConverter.Convert(buffer, *this, false);
+			return memoryToDataNodeConverter.ConvertMemory(buffer, *this);
 		}
 	}
 	return false;
@@ -60,7 +60,7 @@ bool MkDataNode::LoadFromBinary(const MkPathName& filePath)
 	{
 		Clear();
 		MkMemoryToDataNodeConverter memoryToDataNodeConverter;
-		return memoryToDataNodeConverter.Convert(filePath, *this);
+		return memoryToDataNodeConverter.ConvertBinaryFile(filePath, *this);
 	}
 	return false;
 }
@@ -71,7 +71,7 @@ bool MkDataNode::LoadFromBinary(const MkByteArray& fileData)
 	{
 		Clear();
 		MkMemoryToDataNodeConverter memoryToDataNodeConverter;
-		return memoryToDataNodeConverter.Convert(fileData, *this, true);
+		return memoryToDataNodeConverter.ConvertBinaryData(fileData, *this);
 	}
 	return false;
 }
@@ -86,7 +86,7 @@ bool MkDataNode::LoadFromExcel(const MkPathName& filePath)
 		if (excelToMemoryConverter.Convert(filePath, buffer))
 		{
 			MkMemoryToDataNodeConverter memoryToDataNodeConverter;
-			return memoryToDataNodeConverter.Convert(buffer, *this, false);
+			return memoryToDataNodeConverter.ConvertMemory(buffer, *this);
 		}
 	}
 	return false;
@@ -126,7 +126,7 @@ bool MkDataNode::SaveToText(const MkPathName& filePath) const
 {
 	MkByteArray buffer;
 	MkDataNodeToMemoryConverter dataNodeToMemoryConverter;
-	if (dataNodeToMemoryConverter.Convert(*this, buffer))
+	if (dataNodeToMemoryConverter.ConvertToMemory(*this, buffer))
 	{
 		MkMemoryToDataTextConverter memoryToDataTextConverter;
 		return memoryToDataTextConverter.Convert(buffer, filePath);
@@ -137,7 +137,7 @@ bool MkDataNode::SaveToText(const MkPathName& filePath) const
 bool MkDataNode::SaveToBinary(const MkPathName& filePath) const
 {
 	MkDataNodeToMemoryConverter dataNodeToMemoryConverter;
-	return dataNodeToMemoryConverter.Convert(*this, filePath);
+	return dataNodeToMemoryConverter.ConvertToBinaryFile(*this, filePath);
 }
 
 //------------------------------------------------------------------------------------------------//
