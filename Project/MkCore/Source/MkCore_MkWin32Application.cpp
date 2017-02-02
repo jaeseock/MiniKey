@@ -11,6 +11,7 @@
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
 
+
 //------------------------------------------------------------------------------------------------//
 
 MkBaseFramework* MkWin32Application::CreateFramework(void) const
@@ -27,8 +28,35 @@ void MkWin32Application::Run
 	//_CrtSetBreakAlloc(1633); // 블럭 넘버 넣어주면 브레이크
 #endif // _DEBUG
 
+	HANDLE mutexHandle = NULL;
 	__try
 	{
+		// mutex를 이용한 중복 실행 방지
+#ifndef _DEBUG
+		if (wcslen(MKDEF_BLOCK_DUP_EXCUTE_NAME) > 0)
+		{
+			mutexHandle = ::CreateMutex(NULL, FALSE, MKDEF_BLOCK_DUP_EXCUTE_NAME);
+			if ((mutexHandle != NULL) && (::GetLastError() == ERROR_ALREADY_EXISTS))
+			{
+				HWND runWnd = ::FindWindow(title, title);
+				if (runWnd == NULL)
+				{
+					::MessageBox(NULL, L"Already running", title, MB_OK);
+				}
+				else
+				{
+					::ShowWindow(runWnd, SW_SHOWNORMAL);
+					::SetFocus(runWnd);
+					::SetForegroundWindow(runWnd);
+					::SetActiveWindow(runWnd);
+				}
+
+				::CloseHandle(mutexHandle);
+				return;
+			}
+		}
+#endif
+
 		// 프레임워크 객체 생성
 		MkBaseFramework* frameworkPtr = CreateFramework();
 		assert(frameworkPtr != NULL);
@@ -46,6 +74,11 @@ void MkWin32Application::Run
 	}
 	__except (ExpFilter(GetExceptionInformation(), GetExceptionCode()))
 	{
+	}
+
+	if (mutexHandle != NULL)
+	{
+		::CloseHandle(mutexHandle);
 	}
 }
 
