@@ -25,9 +25,9 @@
 //   가져가려면 데이터의 낭비를 불러 일으키게 되므로 여기서는 포기한다
 //
 // 입출력 기능
-// - node <-> binary data <-> compressed data <-> binary file(real/file system)
-//                        <-> text data(MkStr) <-> text file(real/file system)
-//                        <-  excel file(real)
+// - node <-> memory <-> binary data(tag + compressed data) <-> binary file(real/file system)
+//                   <-> text data(MkStr) <-> text file(real/file system)
+//                   <-  excel file(real)
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkSingleTypeTreePattern.h"

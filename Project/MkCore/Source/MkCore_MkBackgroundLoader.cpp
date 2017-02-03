@@ -3,7 +3,7 @@
 #include "MkCore_MkDevPanel.h"
 #include "MkCore_MkBackgroundLoader.h"
 
-#define MKDEF_FILEIO_MSG_TEXT L"file count to loading : "
+#define MKDEF_FILEIO_MSG_TEXT L"백그라운드 로딩(혹은 대기) 중인 파일 수 : "
 
 //------------------------------------------------------------------------------------------------//
 
@@ -13,18 +13,19 @@ bool MkBackgroundLoader::RegisterLoadingTarget
 	MK_CHECK(loadingTarget != NULL, L"NULL MkBaseLoadingTarget으로 " + MkStr(filePath) + L" 파일 로딩 시도")
 		return false;
 
-	unsigned int queueSize;
 	MkWrapInCriticalSection(m_CS)
 	{
 		LoadingTargetInfo& ti = m_LoadingTargetList.PushBack();
 		ti.target = loadingTarget; // +ref
 		ti.filePath = filePath;
 		ti.argument = argument;
-
-		queueSize = m_LoadingTargetList.GetSize();
 	}
 
-	MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_FILEIO, MKDEF_FILEIO_MSG_TEXT + MkStr(queueSize));
+	unsigned int workingTargetCount = m_WorkingTargetCount;
+	++workingTargetCount;
+	m_WorkingTargetCount = workingTargetCount;
+
+	MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_FILEIO, MKDEF_FILEIO_MSG_TEXT + MkStr(workingTargetCount));
 	return true;
 }
 
@@ -59,7 +60,10 @@ bool MkBackgroundLoader::__GetNextLoadingTarget(LoadingTargetInfo& buffer)
 		queueSize = m_LoadingTargetList.GetSize();
 	}
 
-	MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_FILEIO, MKDEF_FILEIO_MSG_TEXT + MkStr(queueSize));
+	unsigned int workingTargetCount = (found) ? (queueSize + 1) : queueSize;
+	m_WorkingTargetCount = workingTargetCount;
+
+	MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_FILEIO, MKDEF_FILEIO_MSG_TEXT + MkStr(workingTargetCount));
 	return found;
 }
 
@@ -67,6 +71,12 @@ void MkBackgroundLoader::__Clear(void)
 {
 	MkScopedCriticalSection(m_CS);
 	m_LoadingTargetList.Clear();
+	m_WorkingTargetCount = 0;
+}
+
+MkBackgroundLoader::MkBackgroundLoader() : MkSingletonPattern()
+{
+	m_WorkingTargetCount = 0;
 }
 
 //------------------------------------------------------------------------------------------------//

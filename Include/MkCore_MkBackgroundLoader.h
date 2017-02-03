@@ -10,7 +10,7 @@
 // thread-safe
 //------------------------------------------------------------------------------------------------//
 
-#include "MkCore_MkCriticalSection.h"
+#include "MkCore_MkLockable.h"
 #include "MkCore_MkDeque.h"
 #include "MkCore_MkSingletonPattern.h"
 #include "MkCore_MkBaseLoadingTarget.h"
@@ -28,6 +28,9 @@ public:
 	// loadingTarget 등록을 통한 background loading 명령
 	bool RegisterLoadingTarget(const MkLoadingTargetPtr& loadingTarget, const MkPathName& filePath, const MkStr& argument);
 
+	// 처리가 완료되지 않은 loading target 수 반환
+	inline unsigned int GetWorkingTargetCount(void) { return m_WorkingTargetCount; }
+
 	//------------------------------------------------------------------------------------------------//
 	// implementation
 	//------------------------------------------------------------------------------------------------//
@@ -44,13 +47,14 @@ public:
 
 	void __Clear(void);
 
-	MkBackgroundLoader() : MkSingletonPattern() {}
+	MkBackgroundLoader();
 	virtual ~MkBackgroundLoader() { __Clear(); }
 
 protected:
 
 	MkCriticalSection m_CS;
 	MkDeque<LoadingTargetInfo> m_LoadingTargetList;
+	MkLockable<unsigned int> m_WorkingTargetCount;
 };
 
 //------------------------------------------------------------------------------------------------//
