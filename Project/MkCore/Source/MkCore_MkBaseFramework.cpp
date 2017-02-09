@@ -181,11 +181,13 @@ bool MkBaseFramework::__Start
 
 		gDraggedFilePathList.Reserve(32);
 
-#if (MKDEF_CORE_DEV_ENV_OVER_VISTA)
+#if MKDEF_VISTA_OR_HIGHER_ONLY
+#if (WINVER >= 0x0600)
 		// UAC 사용시에도 파일 드롭 사용 가능하도록 설정
 		// http://www.tipssoft.com/bulletin/board.php?bo_table=FAQ&wr_id=1571
 		ChangeWindowMessageFilter(0x0049, 0x0001); // WM_COPYGLOBALDATA, MSGFLT_ADD
 		ChangeWindowMessageFilter(WM_DROPFILES, MSGFLT_ADD);
+#endif
 #endif
 		MK_DEV_PANEL.MsgToLog(L"Drag accept files", false);
 	}

@@ -4,7 +4,7 @@
 #include "MkCore_MkSystemEnvironment.h"
 #include "MkCore_MkBaseWindow.h"
 
-#if (MKDEF_CORE_DEV_ENV_OVER_VISTA)
+#if (MKDEF_VISTA_OR_HIGHER_ONLY)
 #if (WINVER >= 0x0600)
 	#include <Dwmapi.h>
 	#pragma comment (lib, "Dwmapi.lib")
@@ -279,7 +279,7 @@ MkInt2 MkBaseWindow::GetWindowSize(HWND hWnd)
 		return MkInt2::Zero;
 
 	RECT rect;
-#if (MKDEF_CORE_DEV_ENV_OVER_VISTA)
+#if (MKDEF_VISTA_OR_HIGHER_ONLY)
 #if (WINVER >= 0x0600)
 	if (MK_SYS_ENV.CheckWindowsIsVistaOrHigher())
 	{

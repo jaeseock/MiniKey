@@ -11,10 +11,11 @@
 #define MKDEF_CORE_REVISION_VERSION 0
 
 //------------------------------------------------------------------------------------------------//
-// dev environment
+// target environment
 //------------------------------------------------------------------------------------------------//
 
-#define MKDEF_CORE_DEV_ENV_OVER_VISTA TRUE
+// 최소 지원 사양 결정. TRUE일 경우 window vista 이상, FALSE일 경우 xp 포함
+#define MKDEF_VISTA_OR_HIGHER_ONLY FALSE
 
 //------------------------------------------------------------------------------------------------//
 // MkWin32Application
