@@ -68,7 +68,7 @@ public:
 	virtual void SetWindowTitle(const MkStr& title);
 
 	// 현재 적용중인 윈도우 스타일 반환
-	DWORD GetWindowStyle(void) const;
+	DWORD GetCurrentWindowStyle(void) const;
 
 	// window mode시의 스타일 반환
 	inline DWORD GetWindowModeStyle(void) const { return m_WindowModeStyle; }

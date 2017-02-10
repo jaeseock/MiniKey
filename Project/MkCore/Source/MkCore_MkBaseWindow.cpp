@@ -205,7 +205,7 @@ void MkBaseWindow::SetWindowTitle(const MkStr& title)
 	}
 }
 
-DWORD MkBaseWindow::GetWindowStyle(void) const
+DWORD MkBaseWindow::GetCurrentWindowStyle(void) const
 {
 	return (m_hWnd == NULL) ? 0 : static_cast<DWORD>(::GetWindowLongPtr(m_hWnd, GWL_STYLE));
 }
