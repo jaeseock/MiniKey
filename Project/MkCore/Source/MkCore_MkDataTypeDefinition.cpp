@@ -6,7 +6,7 @@
 #include "MkCore_MkMat3.h"
 #include "MkCore_MkQuaternion.h"
 #include "MkCore_MkDataTypeDefinition.h"
-#include "MkCore_MkHashStr.h"
+#include "MkCore_MkPathName.h"
 
 
 //------------------------------------------------------------------------------------------------//
@@ -83,6 +83,12 @@ const MkStr MkStr::TAG_CRLF(L"<CR><LF>");
 // MkHashStr
 const MkHashStr MkHashStr::EMPTY(MkStr::EMPTY);
 const MkArray<MkHashStr> MkHashStr::EMPTY_ARRAY(0);
+
+// MkPathName
+const MkHashStr MkPathName::KEY_FILE_COUNT(L"Fs");
+const MkHashStr MkPathName::KEY_DIR_COUNT(L"Ds");
+const MkHashStr MkPathName::KEY_FILE_SIZE(L"SZ");
+const MkHashStr MkPathName::KEY_WRITTEN_TIME(L"WT");
 
 // MkPrimitiveDataType
 ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)

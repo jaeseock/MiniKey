@@ -70,17 +70,7 @@ bool MkFileManager::__GetOriginalFileData(const MkPathName& filePath, MkByteArra
 
 void MkFileManager::__PrintSystemInformationToLog(void) const
 {
-	MkStr buffer;
-	buffer.Reserve(200);
-	buffer += L"< File system >";
-	buffer += MkStr::CRLF;
-	buffer += L"   - Chunks : ";
-	buffer += m_FileSystem.GetTotalChunkCount();
-	buffer += MkStr::CRLF;
-	buffer += L"   - Files : ";
-	buffer += m_FileSystem.GetTotalFileCount();
-	buffer += MkStr::CRLF;
-	MK_DEV_PANEL.MsgToLog(buffer, false);
+	m_FileSystem.PrintSystemInfoToDevPanel();
 }
 
 MkFileManager::MkFileManager(const MkPathName& workingDirectoryPath) : MkSingletonPattern<MkFileManager>()

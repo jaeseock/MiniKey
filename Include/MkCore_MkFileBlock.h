@@ -21,6 +21,7 @@
 class MkPathName;
 class MkInterfaceForFileWriting;
 class MkInterfaceForFileReading;
+class MkDataNode;
 
 class MkFileBlock
 {
@@ -109,6 +110,9 @@ public:
 	{
 		return ((uncompressedSize != m_UncompressedSize) || (writtenTime != m_WrittenTime));
 	}
+
+	// 블록 정보를 node에 구성
+	void GetBlockInfo(MkDataNode& fileNode) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 수정

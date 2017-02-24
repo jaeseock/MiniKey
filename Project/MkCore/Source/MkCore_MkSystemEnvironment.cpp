@@ -147,17 +147,21 @@ void MkSystemEnvironment::_Initialize(void)
 
 	// system 정보
 	SYSTEM_INFO systemInfo;
-	GetSystemInfo(&systemInfo);
+	::GetNativeSystemInfo(&systemInfo);
 
 	// cpu 연산방식
-	m_ProcessorArchitecture = eEtcPA;
-	if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_INTEL)
+	switch (systemInfo.wProcessorArchitecture)
 	{
+	case PROCESSOR_ARCHITECTURE_INTEL:
 		m_ProcessorArchitecture = eX86;
-	}
-	else if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-	{
+		break;
+	case PROCESSOR_ARCHITECTURE_IA64:
+	case PROCESSOR_ARCHITECTURE_AMD64:
 		m_ProcessorArchitecture = eX64;
+		break;
+	default:
+		m_ProcessorArchitecture = eEtcPA;
+		break;
 	}
 
 	// core 수
@@ -166,23 +170,28 @@ void MkSystemEnvironment::_Initialize(void)
 	// OS 버전
 	OSVERSIONINFO osVer;
 	osVer.dwOSVersionInfoSize = sizeof(osVer);
-	GetVersionEx(&osVer);
+	::GetVersionEx(&osVer);
 	unsigned int osMajor = static_cast<unsigned int>(osVer.dwMajorVersion);
 	unsigned int osMinor = static_cast<unsigned int>(osVer.dwMinorVersion);
-	m_WindowsVersion = MkStr(osMajor) + L"." + MkStr(osMinor) + MkStr::SPACE + MkStr(osVer.szCSDVersion);
+	m_WindowsVersion = MkStr(osMajor) + L"." + MkStr(osMinor);
+	if (osVer.szCSDVersion[0] != NULL)
+	{
+		m_WindowsVersion += MkStr::SPACE;
+		m_WindowsVersion += MkStr(osVer.szCSDVersion);
+	}
 	m_WindowsIsXpOrHigher = ((osMajor * 10 + osMinor) >= 51); // XP == 5.1
 	m_WindowsIsVistaOrHigher = ((osMajor * 10) >= 60); // Vista == 6.0
 
 	// 바탕화면 해상도
 	RECT rect;
-	GetWindowRect(GetDesktopWindow(), &rect);
+	::GetWindowRect(GetDesktopWindow(), &rect);
 	m_BackgroundResolution.x = static_cast<int>(rect.right);
 	m_BackgroundResolution.y = static_cast<int>(rect.bottom);
 
 	// 유저 정보
 	DWORD userNameSize = 256;
 	wchar_t userName[256];
-	GetUserName(userName, &userNameSize);
+	::GetUserName(userName, &userNameSize);
 	m_CurrentUserName = userName;
 }
 

@@ -5,6 +5,7 @@
 #include "MkCore_MkInterfaceForFileReading.h"
 #include "MkCore_MkInterfaceForFileTag.h"
 #include "MkCore_MkFilePathListContainer.h"
+#include "MkCore_MkDataNode.h"
 #include "MkCore_MkFileChunk.h"
 
 
@@ -198,6 +199,33 @@ bool MkFileChunk::GetBlockInfo(unsigned int blockIndex, unsigned int& originalSi
 	dataSize = block.GetDataSize();
 	writtenTime = block.GetWrittenTime();
 	return true;
+}
+
+bool MkFileChunk::GetBlockInfo(unsigned int blockIndex, MkDataNode& directoryNode, bool includeChunkInfo) const
+{
+	if (!_CheckAvailableBlock(blockIndex))
+		return false;
+
+	const MkFileBlock& block = m_BlockList[blockIndex];
+	MkPathName filePath = block.GetRelativeFilePath();
+	MkPathName fileName = filePath.GetFileName();
+
+	MkDataNode* fileNode = directoryNode.CreateChildNode(fileName);
+	bool ok = (fileNode != NULL);
+	if (ok)
+	{
+		block.GetBlockInfo(*fileNode);
+
+		if (includeChunkInfo)
+		{
+			const static MkHashStr KEY_BLOCK_FILE_NAME = L"BF";
+			fileNode->CreateUnit(KEY_BLOCK_FILE_NAME, m_AbsoluteChunkFilePath.GetFileName());
+
+			const static MkHashStr KEY_BLOCK_INDEX = L"BI";
+			fileNode->CreateUnit(KEY_BLOCK_INDEX, blockIndex);
+		}
+	}
+	return ok;
 }
 
 bool MkFileChunk::GetOriginalFileData(unsigned int blockIndex, MkByteArray& buffer) const

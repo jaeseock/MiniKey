@@ -18,7 +18,7 @@
 #define MKDEF_APP_EDIT_CHUNK_DIR_VALUE_ID 2
 #define MKDEF_APP_BTN_FIND_CHUNK_DIR_ID 3
 #define MKDEF_APP_EDIT_CHUNK_PREFIX_ID 4
-#define MKDEF_APP_EDIT_CHUNK_EXTENSION_ID 5
+#define MKDEF_APP_EDIT_SETTING_FILE_ID 5
 #define MKDEF_APP_BTN_LOAD_SYSTEM_DIR_ID 6
 
 #define MKDEF_APP_BG_DIRECTORY_ID 10
@@ -86,11 +86,11 @@ public:
 		_CreateControl(hWnd, hInstance, L"button", MKDEF_APP_BTN_FIND_CHUNK_DIR_ID, L"변경", buttonControlStyle, MkIntRect(555, currentY, 35, 20));
 
 		currentY += 25;
-		m_ChunkPrefixHandle = _CreateControl
-			(hWnd, hInstance, L"edit", MKDEF_APP_EDIT_CHUNK_PREFIX_ID, L"MK_PACK_", inputControlStyle, MkIntRect(10, currentY, 120, 20));
+		_CreateControl
+			(hWnd, hInstance, L"edit", MKDEF_APP_EDIT_CHUNK_PREFIX_ID, L"설정 파일명", staticTextControlStyle, MkIntRect(10, currentY + 3, 70, 14));
 
-		m_ChunkExtensionHandle = _CreateControl
-			(hWnd, hInstance, L"edit", MKDEF_APP_EDIT_CHUNK_EXTENSION_ID, L"mcf", inputControlStyle, MkIntRect(135, currentY, 80, 20));
+		m_SettingFileHandle = _CreateControl
+			(hWnd, hInstance, L"edit", MKDEF_APP_EDIT_SETTING_FILE_ID, L"PackSetting.txt", inputControlStyle, MkIntRect(85, currentY, 130, 20));
 
 		m_LoadingBtnHandle = _CreateControl
 			(hWnd, hInstance, L"button", MKDEF_APP_BTN_LOAD_SYSTEM_DIR_ID, L"파일 시스템 로드", buttonControlStyle, MkIntRect(220, currentY, 370, 20));
@@ -185,19 +185,21 @@ public:
 	{
 		if (m_OnLoading)
 		{
-			m_FileStructure.Clear();
+			m_SystemStructure.Clear();
 			m_CurrentNode = NULL;
+
+			// setting file이 있으면 초기화
+			if (!m_SettingFilePath.Empty())
+			{
+				m_FileSystem.SetSystemSetting(m_SettingFilePath);
+			}
 
 			if (m_FileSystem.SetUpFromChunkFiles(m_ChunkFilePath))
 			{
-				MK_DEV_PANEL.MsgToLog(L"//---------------------------------------------------------------//");
-				MK_DEV_PANEL.MsgToLog(L"   청크 파일 수 : " + MkStr(m_FileSystem.GetTotalChunkCount()));
-				MK_DEV_PANEL.MsgToLog(L"   모든 파일 수 : " + MkStr(m_FileSystem.GetTotalFileCount()));
-				MK_DEV_PANEL.MsgToLog(L"//---------------------------------------------------------------//");
+				m_FileSystem.PrintSystemInfoToDevPanel(true);
 
-				m_FileSystem.ExportFileStructure(m_FileStructure);
-
-				m_CurrentNode = &m_FileStructure;
+				m_FileSystem.ExportSystemStructure(m_SystemStructure, true);
+				m_CurrentNode = &m_SystemStructure;
 				_UpdateCurrentDirectory(m_CurrentNode);
 
 				MessageBox(m_MainWindow.GetWindowHandle(), L"구성 성공", L"Success!", MB_OK);
@@ -226,14 +228,14 @@ public:
 
 		if (m_OnUpdating)
 		{
-			m_FileStructure.Clear();
+			m_SystemStructure.Clear();
 			m_CurrentNode = NULL;
 
-			if (m_FileSystem.UpdateOriginalDirectory(m_UpdateSrcPath))
+			if (m_FileSystem.UpdateFromOriginalDirectory(m_UpdateSrcPath))
 			{
-				m_FileSystem.ExportFileStructure(m_FileStructure);
+				m_FileSystem.ExportSystemStructure(m_SystemStructure, true);
 
-				m_CurrentNode = &m_FileStructure;
+				m_CurrentNode = &m_SystemStructure;
 				_UpdateCurrentDirectory(m_CurrentNode);
 
 				MK_DEV_PANEL.MsgToLog(L"< 갱신 완료 >");
@@ -289,22 +291,30 @@ public:
 
 				case MKDEF_APP_BTN_LOAD_SYSTEM_DIR_ID:
 					{
-						if ((m_ChunkDirHandle != NULL) && (m_ChunkPrefixHandle != NULL) && (m_ChunkExtensionHandle != NULL))
+						if ((m_ChunkDirHandle != NULL) && (m_SettingFileHandle != NULL))
 						{
 							MkPathName chunkPath;
-							MkStr prefix, extension;
-							if (_GetPathFromEditBox(m_ChunkDirHandle, chunkPath) &&
-								_GetStringFromEditBox(m_ChunkPrefixHandle, prefix) && _GetStringFromEditBox(m_ChunkExtensionHandle, extension))
+							MkStr prefix, settingFile;
+							if (_GetPathFromEditBox(m_ChunkDirHandle, chunkPath) && _GetStringFromEditBox(m_SettingFileHandle, settingFile))
 							{
 								EnableWindow(m_LoadingBtnHandle, FALSE);
 								
 								m_ChunkFilePath = chunkPath;
 								m_ChunkFilePath.CheckAndAddBackslash();
 
-								m_FileSystem.SetChunkFileNamingRule(prefix, extension);
+								if (!settingFile.Empty())
+								{
+									m_SettingFilePath = m_ChunkFilePath;
+									m_SettingFilePath += settingFile;
+									if (!m_SettingFilePath.CheckAvailable())
+									{
+										m_SettingFilePath.Clear();
+									}
+								}
 
 								m_OnLoading = true;
 
+								MK_DEV_PANEL.MsgToLog(m_SettingFilePath.Empty() ? L"설정 파일 로딩 실패" : (settingFile + L" 로딩 성공"));
 								MK_DEV_PANEL.MsgToLog(L"< 파일 시스템 구성 중... >");
 							}
 						}
@@ -315,18 +325,20 @@ public:
 					{
 						if (m_CurrentNode != NULL)
 						{
-							MkArray<MkHashStr> keys;
-							if (m_CurrentNode->GetChildNodeList(keys) > 0)
+							MkArray<MkHashStr> listBuffer;
+							_GetSubDirs(m_CurrentNode, listBuffer);
+							
+							if (listBuffer.Empty())
 							{
-								MK_INDEXING_LOOP(keys, i)
-								{
-									MK_DEV_PANEL.MsgToLog(keys[i].GetString());
-								}
-								MK_DEV_PANEL.MsgToLog(L"< " + MkStr(keys.GetSize()) + L"개의 하위 디렉토리 >");
+								MK_DEV_PANEL.MsgToLog(L"< 하위 디렉토리가 존재하지 않음 >");
 							}
 							else
 							{
-								MK_DEV_PANEL.MsgToLog(L"< 하위 디렉토리가 존재하지 않음 >");
+								MK_INDEXING_LOOP(listBuffer, i)
+								{
+									MK_DEV_PANEL.MsgToLog(listBuffer[i].GetString());
+								}
+								MK_DEV_PANEL.MsgToLog(L"< " + MkStr(listBuffer.GetSize()) + L"개의 하위 디렉토리 >");
 							}
 						}
 					}
@@ -429,19 +441,20 @@ public:
 					{
 						if (m_CurrentNode != NULL)
 						{
-							MkArray<MkStr> files;
-							m_CurrentNode->GetData(L"Files", files);
-							if (!files.Empty())
+							MkArray<MkHashStr> listBuffer;
+							_GetSubFiles(m_CurrentNode, listBuffer);
+							
+							if (listBuffer.Empty())
 							{
-								MK_INDEXING_LOOP(files, i)
-								{
-									MK_DEV_PANEL.MsgToLog(files[i]);
-								}
-								MK_DEV_PANEL.MsgToLog(L"< " + MkStr(files.GetSize()) + L"개의 하위 파일 >");
+								MK_DEV_PANEL.MsgToLog(L"< 하위 파일이 존재하지 않음 >");
 							}
 							else
 							{
-								MK_DEV_PANEL.MsgToLog(L"< 하위 파일이 존재하지 않음 >");
+								MK_INDEXING_LOOP(listBuffer, i)
+								{
+									MK_DEV_PANEL.MsgToLog(listBuffer[i].GetString());
+								}
+								MK_DEV_PANEL.MsgToLog(L"< " + MkStr(listBuffer.GetSize()) + L"개의 하위 파일 >");
 							}
 						}
 					}
@@ -598,8 +611,8 @@ public:
 					{
 						if (m_CurrentNode != NULL)
 						{
-							MkPathName filePath = L"FileStructure.txt";
-							m_FileStructure.SaveToText(filePath);
+							MkPathName filePath = L"PackInfo.txt";
+							m_SystemStructure.SaveToText(filePath);
 							filePath.OpenFileInVerb();
 						}
 					}
@@ -656,7 +669,7 @@ public:
 		MkBaseFramework::Clear();
 
 		m_FileSystem.Clear();
-		m_FileStructure.Clear();
+		m_SystemStructure.Clear();
 	}
 
 	TestFramework() : MkBaseFramework()
@@ -664,8 +677,7 @@ public:
 		m_Font = NULL;
 
 		m_ChunkDirHandle = NULL;
-		m_ChunkPrefixHandle = NULL;
-		m_ChunkExtensionHandle = NULL;
+		m_SettingFileHandle = NULL;
 		m_LoadingBtnHandle = NULL;
 
 		m_CurrDirHandle = NULL;
@@ -766,30 +778,64 @@ protected:
 		}
 	}
 
+	void _GetSubObjectListByTag(MkDataNode* targetNode, MkArray<MkHashStr>& listBuffer, const MkHashStr& countTag, const MkHashStr& typeTag, bool exist)
+	{
+		if (targetNode != NULL)
+		{
+			unsigned int count = 0;
+			targetNode->GetData(countTag, count, 0);
+			if (count > 0)
+			{
+				listBuffer.Reserve(count);
+
+				MkArray<MkHashStr> keys;
+				targetNode->GetChildNodeList(keys);
+				MK_INDEXING_LOOP(keys, i)
+				{
+					const MkHashStr& currKey = keys[i];
+					bool hasTag = targetNode->GetChildNode(currKey)->IsValidKey(typeTag);
+					if ((exist) ? (hasTag) : (!hasTag))
+					{
+						listBuffer.PushBack(currKey);
+					}
+				}
+			}
+		}
+	}
+
+	void _GetSubDirs(MkDataNode* targetNode, MkArray<MkHashStr>& listBuffer)
+	{
+		_GetSubObjectListByTag(targetNode, listBuffer, MkPathName::KEY_DIR_COUNT, MkPathName::KEY_WRITTEN_TIME, false);
+	}
+
+	void _GetSubFiles(MkDataNode* targetNode, MkArray<MkHashStr>& listBuffer)
+	{
+		_GetSubObjectListByTag(targetNode, listBuffer, MkPathName::KEY_FILE_COUNT, MkPathName::KEY_WRITTEN_TIME, true);
+	}
+
 	void _RemoveDirectory(MkDataNode* targetNode)
 	{
 		if (targetNode != NULL)
 		{
 			// directory
-			MkArray<MkHashStr> dirs;
-			if (targetNode->GetChildNodeList(dirs) > 0)
+			MkArray<MkHashStr> listBuffer;
+			_GetSubDirs(targetNode, listBuffer);
+			MK_INDEXING_LOOP(listBuffer, i)
 			{
-				MK_INDEXING_LOOP(dirs, i)
-				{
-					_RemoveDirectory(targetNode->GetChildNode(dirs[i]));
-				}
+				_RemoveDirectory(targetNode->GetChildNode(listBuffer[i]));
 			}
+			listBuffer.Clear();
 
 			// files
-			MkArray<MkStr> files;
-			if (targetNode->GetData(L"Files", files))
+			_GetSubFiles(targetNode, listBuffer);
+			if (!listBuffer.Empty())
 			{
 				MkPathName relativePath;
 				_GetCurrentDirectoryPath(targetNode, relativePath);
 
-				MK_INDEXING_LOOP(files, i)
+				MK_INDEXING_LOOP(listBuffer, i)
 				{
-					MkPathName filePath = relativePath + files[i];
+					MkPathName filePath = relativePath + listBuffer[i];
 					m_FileSystem.RemoveFile(filePath);
 				}
 			}
@@ -801,25 +847,24 @@ protected:
 		if (targetNode != NULL)
 		{
 			// directory
-			MkArray<MkHashStr> dirs;
-			if (targetNode->GetChildNodeList(dirs) > 0)
+			MkArray<MkHashStr> listBuffer;
+			_GetSubDirs(targetNode, listBuffer);
+			MK_INDEXING_LOOP(listBuffer, i)
 			{
-				MK_INDEXING_LOOP(dirs, i)
-				{
-					_UnpackDirectory(targetNode->GetChildNode(dirs[i]));
-				}
+				_UnpackDirectory(targetNode->GetChildNode(listBuffer[i]));
 			}
+			listBuffer.Clear();
 
 			// files
-			MkArray<MkStr> files;
-			if (targetNode->GetData(L"Files", files))
+			_GetSubFiles(targetNode, listBuffer);
+			if (!listBuffer.Empty())
 			{
 				MkPathName relativePath;
 				_GetCurrentDirectoryPath(targetNode, relativePath);
 
-				MK_INDEXING_LOOP(files, i)
+				MK_INDEXING_LOOP(listBuffer, i)
 				{
-					MkPathName filePath = relativePath + files[i];
+					MkPathName filePath = relativePath + listBuffer[i];
 					m_FileSystem.ExtractAvailableFile(filePath, m_UnpackingFilePath);
 				}
 			}
@@ -831,8 +876,7 @@ protected:
 	HFONT m_Font;
 
 	HWND m_ChunkDirHandle;
-	HWND m_ChunkPrefixHandle;
-	HWND m_ChunkExtensionHandle;
+	HWND m_SettingFileHandle;
 	HWND m_LoadingBtnHandle;
 
 	HWND m_CurrDirHandle;
@@ -847,12 +891,13 @@ protected:
 	HWND m_OptimizeHandle;
 
 	MkFileSystem m_FileSystem;
-	MkDataNode m_FileStructure;
+	MkDataNode m_SystemStructure;
 	MkDataNode* m_CurrentNode;
 
 	bool m_OnLoading;
 	MkPathName m_ChunkFilePath;
-
+	MkPathName m_SettingFilePath;
+	
 	bool m_OnUnpacking;
 	MkPathName m_UnpackingFilePath;
 

@@ -59,11 +59,31 @@ public:
 	// 압축률(압축 후 크기/원본 크기)이 좋지 않다면 원본 유지가 오히려 유리하기때문에 압축 경계 이하일 경우만 압축해 저장
 	// 0이면 전혀 압축을 하지 않고 100 이상이면 대부분 압축(드물게 압축후 용량이 약간 늘어나는 경우도 존재)
 	// 감소율이 좋은 단색조 bmp가 20~40% 정도고 이미 압축되어 있는 jpg, mp3 등은 90~100% 정도이므로 적절하게 설정
-	void SetPercentageForCompressing(unsigned int percentageForCompressing = 60);
+	void SetPercentageForCompressing(unsigned int percentageForCompressing = 70);
 
 	// 청크 파일명 규칙 설정
 	// ex> prefix == L"MK_PACK_", extension == L"mcf" -> "MK_PACK_0.mcf", "MK_PACK_1.mcf", "MK_PACK_2.mcf", ...
 	void SetChunkFileNamingRule(const MkStr& prefix = L"MK_PACK_", const MkStr& extension = L"mcf");
+
+	// SetUpFromOriginalDirectory(), UpdateFromOriginalDirectory() 호출시 적용 될 필터링 규칙
+	// 세부 항목에 대해서는 MkPathName::GetBlackFileList() 참조
+	void SetFilterForOriginalFiles
+		(const MkArray<MkPathName>& nameFilter, const MkArray<MkPathName>& extensionFilter,
+		const MkArray<MkStr>& prefixFilter, const MkArray<MkPathName>& exceptionFilter);
+
+	// 주어진 시스템 정보 data node 파일을 사용해 설정
+	// (in) settingFilePath : 시스템 정보 data node 파일의 절대, 혹은 root directory 기준 상대 디렉토리 경로
+	// return : 성공 여부
+	// node ex>
+	//	uint ChunkSizeInMB = 512;
+	//	uint PercentageForCompressing = 70;
+	//	str Prefix = "MK_PACK_";
+	//	str Extension = "mcf";
+	//	str NameFilter = "datanode_00.bin" / "abc\src_2.bmp" / "def/";
+	//	str ExtensionFilter = "exe" / "txt";
+	//	//str PrefixFilter = "";
+	//	str ExceptionFilter = "test_0.txt";
+	bool SetSystemSetting(const MkPathName& settingFilePath);
 
 	//------------------------------------------------------------------------------------------------//
 	// 초기화
@@ -74,19 +94,11 @@ public:
 	// 대상 파일 검색은 black filter 사용
 	// 파일 크기가 0인 파일은 포함시키지 않음
 	// (in) absolutePathOfBaseDirectory : 패킹 할 원본 디렉토리 절대경로
-	// (in) nameFilter : 제외 될 파일 이름 리스트
-	// (in) extensionFilter : 제외 될 파일 확장자 리스트
-	// (in) prefixFilter : 제외 될 파일 접두사 리스트
-	// (in) exceptionFilter : 필터링과 상관 없이 예외적으로 포함 될 파일 이름 리스트
 	// (in) workingDirectoryPath : 청크 파일들을 생성할 절대, 혹은 root directory 기준 상대 디렉토리 경로
 	// return : 성공 여부
-	bool SetUpFromOriginalDirectory
-		(const MkPathName& absolutePathOfBaseDirectory,
-		const MkArray<MkPathName>& nameFilter, const MkArray<MkPathName>& extensionFilter,
-		const MkArray<MkStr>& prefixFilter, const MkArray<MkPathName>& exceptionFilter,
-		const MkPathName& workingDirectoryPath);
+	bool SetUpFromOriginalDirectory(const MkPathName& absolutePathOfBaseDirectory, const MkPathName& workingDirectoryPath);
 
-	// 패키징 된 청크 파일들로부터 구성
+	// 설정된 시스템 정보를 사용해 패키징 된 청크 파일들로부터 구성
 	// (in) workingDirectoryPath : 청크 파일들이 존재하는 절대, 혹은 root directory 기준 상대 디렉토리 경로
 	// return : 성공 여부
 	bool SetUpFromChunkFiles(const MkPathName& workingDirectoryPath);
@@ -136,10 +148,14 @@ public:
 	// return : 성공 여부
 	bool ExtractAllAvailableFiles(const MkPathName& destinationDirectoryPath) const;
 
-	// MkDataNode에 폴더와 파일 구조 출력. 디버깅 및 탐색용으로 사용 가능
-	// 폴더는 노드, 파일명은 "Files"라는 key에 array로 저장 됨
+	// 현재 시스템 정보를 MkDevPanel에 출력
+	// (NOTE) 호출 시점은 당연하지만 MkDevPabnel 생성 이후에 가능
+	void PrintSystemInfoToDevPanel(bool printFilterInfo = false) const;
+
+	// MkDataNode에 폴더와 파일 정보 출력
 	// (out) node : 출력 될 MkDataNode
-	void ExportFileStructure(MkDataNode& node) const;
+	// (in) includeChunkInfo : 파일별로 소속 chunk와 block index정보도 포함시킬지 여부
+	void ExportSystemStructure(MkDataNode& node, bool includeChunkInfo = false) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 수정
@@ -155,11 +171,12 @@ public:
 	// 존재하지 않는 파일이면 추가. 이미 존재하는 파일의 경우 파일 크기가 0일 경우 삭제, 그렇지 않으면 갱신
 	// 다수의 파일을 한꺼번에 갱신하고자 할 때 효율적
 	// (in) absolutePathOfBaseDirectory : 갱신 할 원본 디렉토리 절대경로. 경로가 존재하지 않으면 갱신 파일이 없다고 간주
+	// (in) removeOrgFilesAfterUpdating : 갱신 완료 후 원본 파일 삭제여부
 	// return : 성공 여부
-	bool UpdateOriginalDirectory(const MkPathName& absolutePathOfBaseDirectory);
+	bool UpdateFromOriginalDirectory(const MkPathName& absolutePathOfBaseDirectory, bool removeOrgFilesAfterUpdating = false);
 
 	// 청크 최적화
-	// RemoveFile(), UpdateOriginalDirectory()의 호출로 청크내 빈 공간이 일정 비율 이상 차지할 경우 파일 최적화 실행
+	// RemoveFile(), UpdateFromOriginalDirectory()의 호출로 청크내 빈 공간이 일정 비율 이상 차지할 경우 파일 최적화 실행
 	// (in) percentageForOptimizing : 청크파일의 빈 공간 비율이 주어진 퍼센트 비율 이상일 경우 최적화 실행
 	// return : 성공 여부
 	// ex> percentageForOptimizing == 30%, chunk_0(25%), chunk_1(34%), chunk_2(30%) 일 경우 chunk_1, chunk_2 최적화 실행
@@ -188,11 +205,8 @@ protected:
 
 	void _RegisterPathListToSearchTable(const MkArray<MkPathName>& memberFilePathList, unsigned int chunkIndex, unsigned int blockOffset);
 
-	void _BuildStructureAndCountFiles(const MkHashStr& key, MkDataNode& node) const;
-	void _BuildStructureAndCountFiles(const MkArray<MkStr>& token, unsigned int currIndex, unsigned int indexOfFile, MkDataNode* node) const;
-
-	void _FillFilesToNode(const MkHashStr& key, MkDataNode& node) const;
-	void _FillFilesToNode(const MkArray<MkStr>& token, unsigned int currIndex, unsigned int indexOfFile, MkDataNode* node) const;
+	void _ExportSystemStructure(MkDataNode& node, const MkArray<MkStr>& token, unsigned int depth, const FileBlockIndex& fbi, bool includeChunkInfo) const;
+	void _IncreaseUnitCount(MkDataNode& node, const MkHashStr& key) const;
 
 protected:
 
@@ -201,6 +215,10 @@ protected:
 	unsigned int m_PercentageForCompressing;
 	MkStr m_ChunkFilePrefix;
 	MkStr m_ChunkFileExtension;
+	MkArray<MkPathName> m_NameFilter;
+	MkArray<MkPathName> m_ExtensionFilter;
+	MkArray<MkStr> m_PrefixFilter;
+	MkArray<MkPathName> m_ExceptionFilter;
 
 	// 구성된 청크 파일이 존재하는 절대 디렉토리 경로
 	MkPathName m_AbsoluteWorkingDirectoryPath;

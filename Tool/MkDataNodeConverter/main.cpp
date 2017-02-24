@@ -72,7 +72,12 @@ public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
 	{
 		// 세팅 파일 로드
-		m_SettingNode.Load(MKDEF_APP_SETTING_FILE_NAME);
+		MkPathName settingFile;
+		settingFile.ConvertToRootBasisAbsolutePath(MKDEF_APP_SETTING_FILE_NAME);
+		if (settingFile.CheckAvailable())
+		{
+			m_SettingNode.Load(settingFile);
+		}
 
 		// 세팅 파일 여부 상관없이 무결성을 보장해야 함
 		

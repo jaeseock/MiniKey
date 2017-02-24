@@ -94,9 +94,6 @@
 // shared pointer reference 정보 출력
 #define MKDEF_SHOW_SHARED_POINTER_REF_INFO FALSE
 
-// 파일 패킹시 정보 출력
-#define MKDEF_SHOW_FILE_PACKING_INFO TRUE
-
 //------------------------------------------------------------------------------------------------//
 
 #endif

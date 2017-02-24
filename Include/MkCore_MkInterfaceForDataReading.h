@@ -59,6 +59,9 @@ public:
 	bool Read(MkVec3& buffer);
 	bool Read(MkStr& buffer);
 
+	// 호환성을 위한 외부 버퍼에 읽기
+	bool Read(unsigned char* buffer, unsigned int size);
+
 	// 최종위치 도달여부
 	bool CheckEndOfBlock(void) const;
 

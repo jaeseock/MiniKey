@@ -27,11 +27,22 @@ class MkCheatMessage
 {
 public:
 
-	// 입력 처리
+	// 라인별 자동 파싱여부 반환
+	// true면 command, arguments로 분리해 ExcuteMsg() 호출
+	// false면 라인 명령어를 통채로 넣어 ExcuteLine() 호출
+	// firstKeyword : 유효문자가 존재하는 라인의 최초 키워드. 조건 검사시 사용(ex> lineMsg[0] == L'/')
+	virtual bool DoAutoParsing(const MkStr& firstKeyword) const { return true; }
+
+	// 자동 파싱된 명령 처리
 	// command : 공문자가 없는 명령 키워드
 	// argument : 인수 배열
 	// resultMsg에 실행 결과를 넣고 정상적 처리여부 반환
 	virtual bool ExcuteMsg(const MkStr& command, const MkArray<MkStr>& argument, MkStr& resultMsg) const;
+
+	// 라인 단위 명령 처리
+	// lineMsg : 라인 명령
+	// resultMsg에 실행 결과를 넣고 정상적 처리여부 반환
+	virtual bool ExcuteLine(const MkStr& lineMsg, MkStr& resultMsg) const { return false; }
 
 	//------------------------------------------------------------------------------------------------//
 	// implementation

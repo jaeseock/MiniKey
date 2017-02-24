@@ -37,9 +37,6 @@ void MkStr::SetUp(unsigned int codePage)
 	// code page가 별도 설정되어 있지 않으면 OS 설정을 따름
 	if (codePage == 0)
 	{
-		// locale 설정은 텍스트만이 아닌 날자, 숫자 등 표기법 전반의 규칙을 변경
-		// 따라서 예상치 못한 결과를 수반 할 수 있으므로(ex> https://kldp.org/node/115088)
-		// std::locale::ctype 선언으로 설정을 제한 함
 		std::locale newLocale("", std::locale::ctype);
 		std::locale::global(newLocale);
 
@@ -613,12 +610,19 @@ unsigned int MkStr::GetLineNumber(unsigned int position) const
 
 void MkStr::ReplaceKeyword(const MkStr& keywordFrom, const MkStr& keywordTo)
 {
-	m_Str.ReplaceAll(MkArraySection(0), keywordFrom.GetBodyBlockDescriptor(), keywordTo.GetBodyBlockDescriptor());
+	ReplaceKeyword(MkArraySection(0), keywordFrom, keywordTo);
 }
 
 void MkStr::ReplaceKeyword(const MkArraySection& section, const MkStr& keywordFrom, const MkStr& keywordTo)
 {
-	m_Str.ReplaceAll(section, keywordFrom.GetBodyBlockDescriptor(), keywordTo.GetBodyBlockDescriptor());
+	if ((keywordFrom.GetSize() == 1) && (keywordTo.GetSize() == 1))
+	{
+		m_Str.ReplaceAll(section, keywordFrom.GetAt(0), keywordTo.GetAt(0));
+	}
+	else
+	{
+		m_Str.ReplaceAll(section, keywordFrom.GetBodyBlockDescriptor(), keywordTo.GetBodyBlockDescriptor());
+	}
 }
 
 void MkStr::ReplaceCRLFtoTag(void)

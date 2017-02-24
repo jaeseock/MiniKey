@@ -72,7 +72,13 @@ public:
 	inline const MkPathName& GetAbsoluteChunkFilePath(void) const { return m_AbsoluteChunkFilePath; }
 
 	// 블록 정보 반환
+	// 갱신을 위한 정보(크기 및 수정일시)만 반환
 	bool GetBlockInfo(unsigned int blockIndex, unsigned int& originalSize, unsigned int& dataSize, unsigned int& writtenTime) const;
+
+	// 블록 정보 반환
+	// data node에 블록 내 파일과 리렉토리 정보를 담아 반환
+	// includeChunkInfo가 true일 경우 파일마다 소속 청크파일명과 block index를 추가 
+	bool GetBlockInfo(unsigned int blockIndex, MkDataNode& directoryNode, bool includeChunkInfo) const;
 
 	// blockIndex번 블록의 압축이 해제된 원본 파일 데이터를 buffer에 담아 반환
 	// (in) blockIndex : 블록 번호

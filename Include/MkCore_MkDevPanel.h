@@ -55,6 +55,9 @@ public:
 	// 윈도우상 text만 초기화 하는 것으로 로그 파일에는 영향이 없음
 	void ClearLogWindow(void);
 
+	// visible
+	void SetVisible(bool enable);
+
 	//------------------------------------------------------------------------------------------------//
 	// implementation
 	//------------------------------------------------------------------------------------------------//
@@ -98,7 +101,8 @@ protected:
 
 	enum eEventType
 	{
-		eMsgToFreeboard = 0, // arg0 : line index, arg1 : msg
+		eVisible = 0, // arg0 : on(1)/off(0)
+		eMsgToFreeboard, // arg0 : line index, arg1 : msg
 		eMsgToSystem, // arg0 : line index, arg1 : msg
 		eMsgToDrawing, // arg0 : line index, arg1 : msg
 		eMsgToLog, // arg0 : 0/1(addtime false/true), arg1 : msg
@@ -116,6 +120,8 @@ protected:
 
 	HWND _CreateControl
 		(HWND hWnd, HINSTANCE hInstance, const wchar_t* type, unsigned int id, const wchar_t* caption, DWORD style, const MkIntRect& rect);
+
+	void _SetVisible(bool enable);
 
 	void _SetBoardMsg(eBoardType boardType, unsigned int index, const MkStr& msg);
 	void _SetBoardType(eBoardType boardType);

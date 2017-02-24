@@ -13,6 +13,9 @@ class MkFilePathListContainer
 {
 public:
 
+	// 기반 절대 경로 반환
+	inline const MkPathName& GetAbsolutePathOfBaseDirectory(void) const { return m_AbsolutePathOfBaseDirectory; }
+
 	// 상대 파일 경로 배열 참조
 	inline MkArray<MkPathName>& GetRelativeFilePathList(void) { return m_RelativeFilePathList; }
 

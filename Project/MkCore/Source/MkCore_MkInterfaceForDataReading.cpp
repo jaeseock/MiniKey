@@ -10,17 +10,18 @@ template <class DataType>
 class __TSI_DataReading
 {
 public:
-	static bool Extract(DataType& buffer, const MkByteArray& srcArray, unsigned int& currentPosition, unsigned int endPosition)
+	static bool Extract(DataType& buffer, const MkByteArray& srcArray, unsigned int& currentPosition, unsigned int endPosition, unsigned int count = 1)
 	{
-		if ((endPosition == 0) || ((currentPosition + sizeof(DataType)) > endPosition))
+		unsigned int dataSize = sizeof(DataType) * count;
+		if ((endPosition == 0) || ((currentPosition + dataSize) > endPosition))
 			return false;
 
-		MkByteArrayDescriptor descriptor = srcArray.GetMemoryBlockDescriptor(MkArraySection(currentPosition, sizeof(DataType)));
+		MkByteArrayDescriptor descriptor = srcArray.GetMemoryBlockDescriptor(MkArraySection(currentPosition, dataSize));
 		if (!descriptor.IsValid())
 			return false;
 
-		memcpy_s(reinterpret_cast<unsigned char*>(&buffer), sizeof(DataType), descriptor, sizeof(DataType));
-		currentPosition += sizeof(DataType);
+		memcpy_s(reinterpret_cast<unsigned char*>(&buffer), dataSize, descriptor, dataSize);
+		currentPosition += dataSize;
 		return true;
 	}
 };
@@ -93,6 +94,11 @@ bool MkInterfaceForDataReading::Read(MkStr& buffer)
 		m_CurrentPosition += strSize;
 	}
 	return true;
+}
+
+bool MkInterfaceForDataReading::Read(unsigned char* buffer, unsigned int size)
+{
+	return ((buffer == NULL) || (m_SourcePtr == NULL)) ? false : __TSI_DataReading<unsigned char>::Extract(*buffer, *m_SourcePtr, m_CurrentPosition, m_EndPosition, size);
 }
 
 bool MkInterfaceForDataReading::CheckEndOfBlock(void) const { return (m_CurrentPosition == m_EndPosition); }

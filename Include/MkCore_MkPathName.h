@@ -31,8 +31,10 @@
 
 #include <Windows.h>
 #include "MkCore_MkMap.h"
-#include "MkCore_MkStr.h"
+#include "MkCore_MkHashStr.h"
 
+
+class MkDataNode;
 
 class MkPathName : public MkStr
 {
@@ -111,7 +113,7 @@ public:
 	void SplitPath(MkPathName& path, MkStr& name, MkStr& extension) const;
 
 	//------------------------------------------------------------------------------------------------//
-	// 파일 검색
+	// 실제 파일 검색
 	// 디렉토리 경로만 유효. 히든 속성 파일 제외
 	// 필터관련 문자열은 대소문자 구별 없음
 	// 빈 필터 배열이 지정될 경우 해당 검사는 하지 않음
@@ -134,9 +136,15 @@ public:
 	// (in) includeZeroSizeFile : 파일 크기가 0인 파일도 포함 할 것인지의 여부
 	void GetFileList(MkArray<MkPathName>& filePathList, bool includeSubDirectory = true, bool includeZeroSizeFile = true) const;
 
+	// 모든 파일 구조 정보 반환
+	// (out) node : 정보가 담길 버퍼
+	// return : 성공 여부
+	bool GetFileStructure(MkDataNode& node) const;
+
 	// 필터링을 통과한 파일들만 검색(white filter)
 	// (out) filePathList : 파일 경로가 담길 버퍼
-	// (in) nameFilter : 통과 될 파일 이름 리스트
+	// (in) nameFilter : 통과 될 파일/디렉토리 이름 리스트. 상대경로 포함하며 '\'나 '/'로 종료되면 디렉토리 경로라 인식
+	//			(ex> L"Item\\armor\\helmet.dds", L"Item\\weapon\\")
 	// (in) extensionFilter : 통과 될 파일 확장자 리스트
 	// (in) prefixFilter : 통과 될 파일 접두사 리스트
 	// (in) exceptionFilter : 필터링과 상관 없이 예외적으로 제외 될 파일 이름 리스트
@@ -146,7 +154,8 @@ public:
 
 	// 필터링을 통과하지 못 한 파일들만 검색(black filter)
 	// (out) filePathList : 파일 경로가 담길 버퍼
-	// (in) nameFilter : 제외 될 파일 이름 리스트
+	// (in) nameFilter : 제외 될 파일/디렉토리 이름 리스트. 상대경로 포함하며 '\'나 '/'로로 종료되면 디렉토리 경로라 인식
+	//			(ex> L"Item\\armor\\helmet.dds", L"Item\\weapon\\")
 	// (in) extensionFilter : 제외 될 파일 확장자 리스트
 	// (in) prefixFilter : 제외 될 파일 접두사 리스트
 	// (in) exceptionFilter : 필터링과 상관 없이 예외적으로 포함 될 파일 이름 리스트
@@ -164,7 +173,7 @@ public:
 	void GetIndexFormFileList
 		(MkMap<unsigned int, MkPathName>& filePathTable, const MkStr& prefix, const MkStr& extension, bool includeZeroSizeFile = true) const;
 
-	// 실제 경로에 존재하는 파일의 마지막 수정일시를 2000년 이후 초단위로 변환해 반환
+	// 경로에 존재하는 파일의 마지막 수정일시를 2000년 이후 초단위로 변환해 반환
 	// unsigned int 범위상 2136.2년까지 유효범위
 	// 파일이 없거나 에러 발생하면 MKDEF_ARRAY_ERROR 반환
 	unsigned int GetWrittenTime(void) const;
@@ -241,9 +250,10 @@ public:
 
 	// 디렉토리 삭제
 	// 하위 디렉토리, 파일 포함 전부 삭제(read-only, system, hidden 등 속성 상관 없이 전부 삭제)
+	// deleteAllFiles : true면 포함된 모든 파일까지 삭제. false면 빈 디렉토리만 삭제
 	// return : 최종적으로 디렉토리가 존재하지 않는지 여부(이미 디렉토리가 없는 상태여도 true)
 	//          파일 경로일 경우 false
-	bool DeleteCurrentDirectory(void) const;
+	bool DeleteCurrentDirectory(bool deleteAllFiles = true) const;
 
 	// 최종 경로에 이르기까지의 directory를 체크해 없으면 생성
 	// return : 최종적으로 경로가 존재하는지 여부(이미 경로가 존재하는 상태여도 true)
@@ -389,6 +399,14 @@ protected:
 
 	static unsigned int _GetFilePathFromDialog
 		(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner, bool singleSelection, bool forOpen);
+
+public:
+
+	// data node 구성용 key
+	static const MkHashStr KEY_FILE_COUNT;
+	static const MkHashStr KEY_DIR_COUNT;
+	static const MkHashStr KEY_FILE_SIZE;
+	static const MkHashStr KEY_WRITTEN_TIME;
 };
 
 #endif

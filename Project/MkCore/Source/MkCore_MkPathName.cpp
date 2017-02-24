@@ -5,6 +5,7 @@
 #include "MkCore_MkHashStr.h"
 #include "MkCore_MkPathName.h"
 #include "MkCore_MkInterfaceForFileReading.h"
+#include "MkCore_MkDataNode.h"
 
 // static value
 static MkPathName gModulePath;
@@ -34,7 +35,7 @@ public:
 			{
 				unsigned int fileCount = 0;
 				unsigned int fileSize = 0;
-				_ScoutDirectory(targetPath, fileCount, fileSize, includeSubDirectory);
+				_ScoutDirectory(targetPath, fileCount, fileSize, includeSubDirectory, NULL);
 				fileSizeInKB = fileSize;
 				return fileCount;
 			}
@@ -43,10 +44,27 @@ public:
 		return 0;
 	}
 
+	bool ScoutDirectory(const MkPathName& startPath, MkDataNode& node) const
+	{
+		if (startPath.IsDirectoryPath())
+		{
+			MkPathName targetPath;
+			targetPath.ConvertToRootBasisAbsolutePath(startPath);
+			if (targetPath.CheckAvailable())
+			{
+				unsigned int fileCount = 0;
+				unsigned int fileSize = 0;
+				_ScoutDirectory(targetPath, fileCount, fileSize, true, &node);
+				return true;
+			}
+		}
+		return false;
+	}
+
 protected:
 	
 	// currentDirectoryPath는 존재하는 디렉토리 절대 경로
-	void _ScoutDirectory(const MkPathName& currentDirectoryPath, unsigned int& fileCount, unsigned int& fileSize, bool includeSubDirectory) const
+	void _ScoutDirectory(const MkPathName& currentDirectoryPath, unsigned int& fileCount, unsigned int& fileSize, bool includeSubDirectory, MkDataNode* node) const
 	{
 		// 최초 핸들 얻음
 		WIN32_FIND_DATA fd;
@@ -56,6 +74,9 @@ protected:
 		if (hFind == INVALID_HANDLE_VALUE)
 			return;
 
+		unsigned int subFiles = 0; // 직계 파일 수
+		unsigned int subDirs = 0; // 직계 디렉토리 수
+
 		// 핸들 검사
 		do
 		{
@@ -64,10 +85,24 @@ protected:
 			{
 				if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) // 파일
 				{
-					++fileCount;
+					++subFiles;
+
 					if (fd.nFileSizeLow > 0)
 					{
-						fileSize += fd.nFileSizeLow / 1024;
+						if (fd.nFileSizeHigh == 0)
+						{
+							fileSize += fd.nFileSizeLow / 1024;
+						}
+						else
+						{
+							unsigned __int64 sz =
+								static_cast<unsigned __int64>(fd.nFileSizeHigh) *
+								(static_cast<unsigned __int64>(MAXDWORD) + static_cast<unsigned __int64>(1)) +
+								static_cast<unsigned __int64>(fd.nFileSizeLow);
+
+							sz /= static_cast<unsigned __int64>(1024);
+							fileSize += static_cast<unsigned int>(sz);
+						}
 					}
 				}
 				else if (includeSubDirectory) // 디렉토리
@@ -75,16 +110,20 @@ protected:
 					MkPathName targetName = fd.cFileName;
 					if ((targetName != L".") && (targetName != L".."))
 					{
+						++subDirs;
+
 						MkPathName targetPath = currentDirectoryPath;
 						targetPath += targetName;
 						targetPath += L"\\";
-						_ScoutDirectory(targetPath, fileCount, fileSize, includeSubDirectory); // 재귀
+						_ScoutDirectory(targetPath, fileCount, fileSize, includeSubDirectory, node); // 재귀
 					}
 				}
 			}
 		}
 		while (FindNextFile(hFind, &fd));
 		FindClose(hFind);
+
+		fileCount += subFiles;
 	}
 };
 
@@ -95,8 +134,8 @@ class __DirectoryDestroyer
 public:
 
 	// startPath : 탐색을 시작할 디렉토리 경로
-	// deleteReadOnly : read-only 파일 삭제 여부
-	bool DestroyDirectory(const MkPathName& startPath) const
+	// deleteAllFiles : true면 포함된 모든 파일까지 삭제. false면 빈 디렉토리만 삭제
+	bool DestroyDirectory(const MkPathName& startPath, bool deleteAllFiles = true) const
 	{
 		if (!startPath.IsDirectoryPath())
 			return false;
@@ -105,7 +144,7 @@ public:
 		targetPath.ConvertToRootBasisAbsolutePath(startPath);
 		if (targetPath.CheckAvailable())
 		{
-			_DestroyDirectory(targetPath);
+			_DestroyDirectory(targetPath, deleteAllFiles);
 			return (!targetPath.CheckAvailable());
 		}
 		return true;
@@ -114,13 +153,15 @@ public:
 protected:
 
 	// currentDirectoryPath는 존재하는 디렉토리 절대 경로
-	void _DestroyDirectory(const MkPathName& currentDirectoryPath) const
+	void _DestroyDirectory(const MkPathName& currentDirectoryPath, bool deleteAllFiles) const
 	{
 		// 최초 핸들 얻음
 		WIN32_FIND_DATA fd;
 		MkStr pathForHandling = currentDirectoryPath;
 		pathForHandling += L"*.*";
 		HANDLE hFind = FindFirstFile(pathForHandling.GetPtr(), &fd);
+		bool noFiles = true;
+
 		if (hFind != INVALID_HANDLE_VALUE)
 		{
 			// 핸들 검사
@@ -131,18 +172,23 @@ protected:
 				targetPath += targetName;
 				if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) // 파일
 				{
-					if (((fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0) || ((fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) != 0))
+					if (deleteAllFiles)
 					{
-						SetFileAttributes(targetPath.GetPtr(), FILE_ATTRIBUTE_NORMAL);
+						if (((fd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0) || ((fd.dwFileAttributes & FILE_ATTRIBUTE_SYSTEM) != 0))
+						{
+							SetFileAttributes(targetPath.GetPtr(), FILE_ATTRIBUTE_NORMAL);
+						}
+						DeleteFile(targetPath.GetPtr());
 					}
-					DeleteFile(targetPath.GetPtr());
+					else
+						noFiles = false;
 				}
 				else // 디렉토리
 				{
 					if ((targetName != L".") && (targetName != L".."))
 					{
 						targetPath += L"\\";
-						_DestroyDirectory(targetPath); // 재귀
+						_DestroyDirectory(targetPath, deleteAllFiles); // 재귀
 					}
 				}
 			}
@@ -150,7 +196,10 @@ protected:
 			FindClose(hFind);
 		}
 
-		RemoveDirectory(currentDirectoryPath.GetPtr());
+		if (noFiles)
+		{
+			RemoveDirectory(currentDirectoryPath.GetPtr());
+		}
 	}
 };
 
@@ -177,7 +226,11 @@ public:
 
 protected:
 	
-	virtual bool _CheckAvailable(const MkPathName& name) const { return true; }
+	// file 검사
+	virtual bool _CheckAvailable(const MkPathName& relativePath, const MkPathName& fileName) const { return true; }
+
+	// directory 검사
+	virtual bool _CheckAvailable(const MkPathName& relativePath) const { return true; }
 
 	void _GetFileListInDirectory
 		(MkArray<MkPathName>& fileNameList, const MkPathName& startPath, const MkPathName& offset, bool includeSubDirectory, bool includeZeroSizeFile) const
@@ -196,33 +249,32 @@ protected:
 		// 핸들 검사
 		do
 		{
-			// 히든 속성 제외
-			if ((fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0)
+			if ((fd.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) == 0) // 히든 속성 제외
 			{
-				MkPathName targetName = fd.cFileName;
-
 				if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) // 파일
 				{
-					if (_CheckAvailable(targetName))
+					if (includeZeroSizeFile || ((fd.nFileSizeLow > 0) || (fd.nFileSizeHigh > 0))) // 용량 검사
 					{
-						if (includeZeroSizeFile || ((fd.nFileSizeLow > 0) || (fd.nFileSizeHigh > 0)))
+						MkPathName fileName = fd.cFileName;
+						if (_CheckAvailable(offset, fileName))
 						{
-							MkPathName targetPath = offset;
-							targetPath += targetName;
-							fileNameList.PushBack(targetPath);
+							fileNameList.PushBack(offset + fileName);
 						}
 					}
 				}
 				else if (includeSubDirectory) // 디렉토리
 				{
+					MkPathName targetName = fd.cFileName;
 					if ((targetName != L".") && (targetName != L".."))
 					{
-						MkPathName newOffset;
-						newOffset.Reserve(offset.GetSize() + targetName.GetSize() + 1);
-						newOffset += offset;
-						newOffset += targetName;
-						newOffset += L"\\";
-						_GetFileListInDirectory(fileNameList, startPath, newOffset, includeSubDirectory, includeZeroSizeFile); // 재귀
+						MkPathName targetPath = offset;
+						targetPath += targetName;
+						targetPath += L"\\";
+
+						if (_CheckAvailable(targetPath))
+						{
+							_GetFileListInDirectory(fileNameList, startPath, targetPath, includeSubDirectory, includeZeroSizeFile); // 재귀
+						}
 					}
 				}
 			}
@@ -298,33 +350,38 @@ protected:
 		return turnOn;
 	}
 
-	virtual bool _CheckAvailable(const MkPathName& name) const
+	virtual bool _CheckAvailable(const MkPathName& relativePath, const MkPathName& fileName) const
 	{
 		if (m_SkipFiltering)
 			return !m_PassingResult;
 
-		MkPathName tmpName = name;
-		tmpName.ToLower();
+		MkPathName targetPath = relativePath;
+		targetPath.ToLower();
+
+		MkPathName targetFile = fileName;
+		targetFile.ToLower();
+
+		targetPath += fileName;
 
 		if (m_OnExceptionFilter || m_OnNameFilter)
 		{
-			MkHashStr hashName(tmpName);
+			MkHashStr hashKey(targetPath);
 			if (m_OnExceptionFilter)
 			{
-				if (m_ExceptionFilter.Exist(hashName))
+				if (m_ExceptionFilter.Exist(hashKey))
 					return !m_PassingResult;
 			}
 
 			if (m_OnNameFilter)
 			{
-				if (m_NameFilter.Exist(hashName))
+				if (m_NameFilter.Exist(hashKey))
 					return m_PassingResult;
 			}
 		}
 
 		if (m_OnExtensionFilter)
 		{
-			if (m_ExtensionFilter.Exist(MkHashStr(tmpName.GetFileExtension())))
+			if (m_ExtensionFilter.Exist(MkHashStr(targetFile.GetFileExtension())))
 				return m_PassingResult;
 		}
 
@@ -332,9 +389,23 @@ protected:
 		{
 			MK_INDEXING_LOOP(m_PrefixFilter, i)
 			{
-				if (tmpName.CheckPrefix(m_PrefixFilter[i]))
+				if (targetFile.CheckPrefix(m_PrefixFilter[i]))
 					return m_PassingResult;
 			}
+		}
+
+		return !m_PassingResult;
+	}
+
+	virtual bool _CheckAvailable(const MkPathName& relativePath) const
+	{
+		if (m_OnNameFilter)
+		{
+			MkPathName targetPath = relativePath;
+			targetPath.ToLower();
+
+			if (m_NameFilter.Exist(MkHashStr(targetPath)))
+				return m_PassingResult;
 		}
 
 		return !m_PassingResult;
@@ -399,11 +470,11 @@ void MkPathName::SetUp(const wchar_t* rootPath)
 //------------------------------------------------------------------------------------------------//
 
 MkPathName::MkPathName(void) : MkStr() {}
-MkPathName::MkPathName(const MkPathName& str) : MkStr(str) {}
-MkPathName::MkPathName(const MkStr& str) : MkStr(str) {}
-MkPathName::MkPathName(const MkHashStr& str) : MkStr(str) {}
-MkPathName::MkPathName(const std::wstring& str) : MkStr(str) {}
-MkPathName::MkPathName(const wchar_t* wcharArray) : MkStr(wcharArray) {}
+MkPathName::MkPathName(const MkPathName& str) : MkStr(str) { ReplaceKeyword(L"/", L"\\"); }
+MkPathName::MkPathName(const MkStr& str) : MkStr(str) { ReplaceKeyword(L"/", L"\\"); }
+MkPathName::MkPathName(const MkHashStr& str) : MkStr(str) { ReplaceKeyword(L"/", L"\\"); }
+MkPathName::MkPathName(const std::wstring& str) : MkStr(str) { ReplaceKeyword(L"/", L"\\"); }
+MkPathName::MkPathName(const wchar_t* wcharArray) : MkStr(wcharArray) { ReplaceKeyword(L"/", L"\\"); }
 
 //------------------------------------------------------------------------------------------------//
 
@@ -517,6 +588,11 @@ void MkPathName::GetFileList(MkArray<MkPathName>& filePathList, bool includeSubD
 {
 	__BaseFileCollection interfaceInstance;
 	interfaceInstance.GetFileList(filePathList, *this, includeSubDirectory, includeZeroSizeFile);
+}
+
+bool MkPathName::GetFileStructure(MkDataNode& node) const
+{
+	return true;
 }
 
 void MkPathName::GetWhiteFileList
@@ -673,7 +749,7 @@ void MkPathName::CheckAndAddBackslash(void)
 void MkPathName::OptimizePath(void)
 {
 	bool directoryPath = IsDirectoryPath();
-	
+
 	if (!Exist(L".\\"))
 	{
 		if (directoryPath)
@@ -745,10 +821,10 @@ bool MkPathName::DeleteCurrentFile(void) const
 	return true;
 }
 
-bool MkPathName::DeleteCurrentDirectory(void) const
+bool MkPathName::DeleteCurrentDirectory(bool deleteAllFiles) const
 {
 	__DirectoryDestroyer destroyer;
-	return destroyer.DestroyDirectory(*this);
+	return destroyer.DestroyDirectory(*this, deleteAllFiles);
 }
 
 bool MkPathName::MakeDirectoryPath(void) const
@@ -1032,7 +1108,7 @@ unsigned int MkPathName::_GetExtensionPosition(void) const
 
 	unsigned int size = GetSize();
 	const wchar_t& lastChar = m_Str[size - 1];
-	if (lastChar == L'\\')
+	if ((lastChar == L'\\') || (lastChar == L'/'))
 		return 0; // 경로명. ex> "abc\\"
 
 	if (lastChar == L'.')
@@ -1044,7 +1120,7 @@ unsigned int MkPathName::_GetExtensionPosition(void) const
 	for (unsigned int i = size-2; i != 0xffffffff; --i)
 	{
 		const wchar_t& currChar = m_Str[i];
-		if (currChar == L'\\')
+		if ((currChar == L'\\') || (currChar == L'/'))
 			return 0; // 경로명. ex> "abc\\def"
 
 		if (currChar == L'.')
@@ -1053,12 +1129,9 @@ unsigned int MkPathName::_GetExtensionPosition(void) const
 				return MKDEF_ARRAY_ERROR; // 파일명 없음, error. ex> ".ext"
 
 			const wchar_t& nameChar = m_Str[i-1];
-			if (nameChar == L'\\')
+			if ((nameChar == L'\\') || (nameChar == L'/'))
 				return MKDEF_ARRAY_ERROR; // 파일명 없음, error. ex> "\\.ext"
 
-			if (nameChar == L'.')
-				return MKDEF_ARRAY_ERROR; // dot 연속은 인정하지 않음, error. ex> "..ext"
-			
 			return (i + 1); // 확장자 위치 반환
 		}
 	}

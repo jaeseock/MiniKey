@@ -28,12 +28,7 @@
 //	MkFileSystem pack;
 //	pack.SetChunkSizeGuideline(5);
 //	pack.SetPercentageForCompressing(70);
-//	MkArray<MkPathName> nameFilter;
-//	MkArray<MkPathName> extensionFilter;
-//	MkArray<MkStr> prefixFilter;
-//	MkArray<MkPathName> exceptionFilter;
-//	pack.SetUpFromOriginalDirectory
-//		(L"D:\\Solutions\\CurrentProject\\MiniKey\\Samples\\EmptyConsoleProject\\bin\\Src\\", nameFilter, extensionFilter, prefixFilter, exceptionFilter, L"");
+//	pack.SetUpFromOriginalDirectory(L"D:\\Solutions\\CurrentProject\\MiniKey\\Samples\\EmptyConsoleProject\\bin\\Src\\", L"");
 //	pack.Clear();
 //
 // //...

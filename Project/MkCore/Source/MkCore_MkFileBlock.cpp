@@ -2,13 +2,13 @@
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkGlobalFunction.h"
 #include "MkCore_MkPathName.h"
-#include "MkCore_MkDevPanel.h"
 #include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkInterfaceForFileReading.h"
 #include "MkCore_MkInterfaceForDataWriting.h"
 #include "MkCore_MkInterfaceForDataReading.h"
 #include "MkCore_MkInterfaceForFileTag.h"
 #include "MkCore_MkZipCompressor.h"
+#include "MkCore_MkDataNode.h"
 #include "MkCore_MkFileBlock.h"
 
 
@@ -47,17 +47,6 @@ unsigned int MkFileBlock::SetUpFromOriginalFileAndAttachToChunkFile
 	m_CompressionEfficiency = 100;
 	MkByteArray* dataBlockPtr = &uncompressedData;
 
-	// debug msg
-	MkStr infoMsg;
-	if (MKDEF_SHOW_FILE_PACKING_INFO)
-	{
-		infoMsg = L"  - ";
-		infoMsg += relativeFilePath;
-		infoMsg += L"(";
-		infoMsg += m_WrittenTime;
-		infoMsg += L") ";
-	}
-
 	MkByteArray compressedData;
 	if (percentageForCompressing > 0)
 	{
@@ -68,23 +57,9 @@ unsigned int MkFileBlock::SetUpFromOriginalFileAndAttachToChunkFile
 
 		// 압축률 체크
 		unsigned int compressionEfficiency = ConvertToPercentage<unsigned int, unsigned int>(compressedSize, m_UncompressedSize);
-
-		if (MKDEF_SHOW_FILE_PACKING_INFO)
-		{
-			infoMsg += L"CE ";
-			infoMsg += compressionEfficiency;
-			infoMsg += L"%, ";
-		}
-
 		if (compressionEfficiency > percentageForCompressing)
 		{
 			compressedData.Clear(); // 원본 데이터로 저장
-
-			if (MKDEF_SHOW_FILE_PACKING_INFO)
-			{
-				infoMsg += L"N ";
-				infoMsg += m_UncompressedSize;
-			}
 		}
 		else
 		{
@@ -93,12 +68,6 @@ unsigned int MkFileBlock::SetUpFromOriginalFileAndAttachToChunkFile
 			m_CompressionEfficiency = compressionEfficiency;
 			dataBlockPtr = &compressedData;
 			uncompressedData.Clear();
-
-			if (MKDEF_SHOW_FILE_PACKING_INFO)
-			{
-				infoMsg += L"C ";
-				infoMsg += compressedSize;
-			}
 		}
 	}
 
@@ -119,12 +88,6 @@ unsigned int MkFileBlock::SetUpFromOriginalFileAndAttachToChunkFile
 	// 청크 파일에 덧붙힘
 	MK_CHECK(_WriteBlockToChunk(chunkFileInterface, tagBlock, headerBlock, *dataBlockPtr), absoluteOriginalFilePath + L" 패킹 실패")
 		return 0;
-
-	// debug
-	if (!infoMsg.Empty())
-	{
-		MK_DEV_PANEL.MsgToLog(infoMsg);
-	}
 
 	return m_BlockSize;
 }
@@ -248,6 +211,29 @@ bool MkFileBlock::GetOriginalFileData(MkInterfaceForFileReading& chunkFileInterf
 			return false;
 	}
 	return true;
+}
+
+void MkFileBlock::GetBlockInfo(MkDataNode& fileNode) const
+{
+	if (m_BlockState != eDisable) // disable일 경우 종료
+	{	
+		// 크기 정보
+		// eUncompressed : 원래 크기만 기록
+		// eCompressed : 원래 크기, 압축 후 크기, 압축 효율 순으로 기록
+		MkArray<unsigned int> sizeBuf(3);
+		sizeBuf.PushBack(m_UncompressedSize);
+
+		if (m_BlockState == eCompressed)
+		{
+			sizeBuf.PushBack(m_DataSize);
+			sizeBuf.PushBack(m_CompressionEfficiency);
+		}
+
+		fileNode.CreateUnit(MkPathName::KEY_FILE_SIZE, sizeBuf);
+
+		// 수정 시간
+		fileNode.CreateUnit(MkPathName::KEY_WRITTEN_TIME, m_WrittenTime);
+	}
 }
 
 bool MkFileBlock::SetBlockState(const MkPathName& absoluteChunkFilePath, eFileBlockState newState)
