@@ -11,6 +11,8 @@
 //	bool boolOut;
 //	int intOut;
 //	unsigned int uintOut;
+//	__int64 dintOut;
+//	unsigned __int64 duintOut;
 //	float floatOut;
 //	MkInt2 ptOut;
 //	MkVec2 v2Out;
@@ -23,6 +25,8 @@
 //	drInterface.Read(boolOut);
 //	drInterface.Read(intOut);
 //	drInterface.Read(uintOut);
+//	drInterface.Read(dintOut);
+//	drInterface.Read(duintOut);
 //	drInterface.Read(floatOut);
 //	drInterface.Read(ptOut);
 //	drInterface.Read(v2Out);
@@ -53,6 +57,8 @@ public:
 	bool Read(bool& buffer);
 	bool Read(int& buffer);
 	bool Read(unsigned int& buffer);
+	bool Read(__int64& buffer);
+	bool Read(unsigned __int64& buffer);
 	bool Read(float& buffer);
 	bool Read(MkInt2& buffer);
 	bool Read(MkVec2& buffer);

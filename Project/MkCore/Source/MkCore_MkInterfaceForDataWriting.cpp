@@ -50,6 +50,8 @@ bool MkInterfaceForDataWriting::SetInputSize(ePrimitiveDataType type, unsigned i
 		case ePDT_Bool: m_BoolUnits.Reserve(size); break;
 		case ePDT_Int: m_IntUnits.Reserve(size); break;
 		case ePDT_UnsignedInt: m_UIntUnits.Reserve(size); break;
+		case ePDT_DInt: m_DIntUnits.Reserve(size); break;
+		case ePDT_DUnsignedInt: m_DUIntUnits.Reserve(size); break;
 		case ePDT_Float: m_FloatUnits.Reserve(size); break;
 		case ePDT_Int2: m_Int2Units.Reserve(size); break;
 		case ePDT_Vec2: m_Vec2Units.Reserve(size); break;
@@ -66,6 +68,8 @@ void MkInterfaceForDataWriting::UpdateInputSize(void)
 	totalSize += m_BoolUnits.GetSize();
 	totalSize += m_IntUnits.GetSize();
 	totalSize += m_UIntUnits.GetSize();
+	totalSize += m_DIntUnits.GetSize();
+	totalSize += m_DUIntUnits.GetSize();
 	totalSize += m_FloatUnits.GetSize();
 	totalSize += m_Int2Units.GetSize();
 	totalSize += m_Vec2Units.GetSize();
@@ -81,6 +85,8 @@ void MkInterfaceForDataWriting::UpdateInputSize(void)
 void MkInterfaceForDataWriting::Write(bool source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Bool, m_BoolUnits) }
 void MkInterfaceForDataWriting::Write(int source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Int, m_IntUnits) }
 void MkInterfaceForDataWriting::Write(unsigned int source) { MKDEF_DATA_INPUT_OPERATION(ePDT_UnsignedInt, m_UIntUnits) }
+void MkInterfaceForDataWriting::Write(__int64 source) { MKDEF_DATA_INPUT_OPERATION(ePDT_DInt, m_DIntUnits) }
+void MkInterfaceForDataWriting::Write(unsigned __int64 source) { MKDEF_DATA_INPUT_OPERATION(ePDT_DUnsignedInt, m_DUIntUnits) }
 void MkInterfaceForDataWriting::Write(float source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Float, m_FloatUnits) }
 void MkInterfaceForDataWriting::Write(const MkInt2& source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Int2, m_Int2Units) }
 void MkInterfaceForDataWriting::Write(const MkVec2& source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Vec2, m_Vec2Units) }
@@ -94,6 +100,8 @@ unsigned int MkInterfaceForDataWriting::Flush(MkByteArray& destBuffer, unsigned 
 	inputByteSize += m_BoolUnits.GetSize() * sizeof(bool);
 	inputByteSize += m_IntUnits.GetSize() * sizeof(int);
 	inputByteSize += m_UIntUnits.GetSize() * sizeof(unsigned int);
+	inputByteSize += m_DIntUnits.GetSize() * sizeof(__int64);
+	inputByteSize += m_DUIntUnits.GetSize() * sizeof(unsigned __int64);
 	inputByteSize += m_FloatUnits.GetSize() * sizeof(float);
 	inputByteSize += m_Int2Units.GetSize() * sizeof(MkInt2);
 	inputByteSize += m_Vec2Units.GetSize() * sizeof(MkVec2);
@@ -135,6 +143,14 @@ unsigned int MkInterfaceForDataWriting::Flush(MkByteArray& destBuffer, unsigned 
 			_TSI_DataWriting<unsigned int>::Record(m_UIntUnits[unit.index], destBuffer, currentPosition);
 			break;
 
+		case ePDT_DInt:
+			_TSI_DataWriting<__int64>::Record(m_DIntUnits[unit.index], destBuffer, currentPosition);
+			break;
+
+		case ePDT_DUnsignedInt:
+			_TSI_DataWriting<unsigned __int64>::Record(m_DUIntUnits[unit.index], destBuffer, currentPosition);
+			break;
+
 		case ePDT_Float:
 			_TSI_DataWriting<float>::Record(m_FloatUnits[unit.index], destBuffer, currentPosition);
 			break;
@@ -172,6 +188,8 @@ void MkInterfaceForDataWriting::Clear(void)
 	m_BoolUnits.Clear();
 	m_IntUnits.Clear();
 	m_UIntUnits.Clear();
+	m_DIntUnits.Clear();
+	m_DUIntUnits.Clear();
 	m_FloatUnits.Clear();
 	m_Int2Units.Clear();
 	m_Vec2Units.Clear();

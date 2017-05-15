@@ -521,6 +521,14 @@ public:
 	// return : 변환된 unsigned int 형
 	unsigned int ToUnsignedInteger(void) const;
 
+	// __int64형으로 변환
+	// return : 변환된 __int64 형
+	__int64 ToDoubleInteger(void) const;
+
+	// unsigned __int64형으로 변환
+	// return : 변환된 unsigned __int64 형
+	unsigned __int64 ToDoubleUnsignedInteger(void) const;
+
 	// float으로 변환
 	// %로 종결될 경우 percentage 형태라 가정하고 100:1의 비율로 변환(100% -> 1.f, 50% -> 0.5f)
 	// return : 변환된 float 형

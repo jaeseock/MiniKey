@@ -9,9 +9,7 @@
 // - debug
 //   * MKDEF_CHECK_EXCEPTION_BREAK 선언 : 메세지 박스로 정지여부 질문. yes면 멈추고 no면 로그 남기고 action 실행
 //   * MKDEF_CHECK_EXCEPTION_BREAK 비선언 : 메세지 박스로 확인창 남김. 확인 후 로그 남기고 action 실행
-// - release
-//   * MKDEF_CHECK_EXCEPTION_BREAK 선언 : 메세지 박스로 정지여부 질문. yes면 강제 예외 발생, no면 로그 남기고 action 실행
-//   * MKDEF_CHECK_EXCEPTION_BREAK 비선언 : 메세지 박스로 확인창 남김. 확인 후 로그 남기고 action 실행
+// - release : 메세지 박스로 확인창 남김. 확인 후 로그 남기고 action 실행
 // - shipping : action만 실행
 //
 // 매크로 부분이 복잡한 이유는 코드에서 "MK_CHECK(index != 0, L"index is " + MkStr(rlt)) {...}" 식으로

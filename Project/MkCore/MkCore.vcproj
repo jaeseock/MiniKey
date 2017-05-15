@@ -431,11 +431,27 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkFileDownloader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkFileDownloader.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkCore_MkFloatOp.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkFloatOp.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkStringOp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkStringOp.h"
 					>
 				</File>
 				<File
@@ -490,6 +506,14 @@
 			<Filter
 				Name="Archive"
 				>
+				<File
+					RelativePath=".\Source\MkCore_MkCmdLine.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkCmdLine.h"
+					>
+				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkCurveInterpolator.h"
 					>
@@ -831,6 +855,46 @@
 					</File>
 					<File
 						RelativePath="..\..\Include\MkCore_MkTagDefinitionForDataNode.h"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="Patch system"
+				>
+				<Filter
+					Name="0. Make patch files"
+					>
+					<File
+						RelativePath=".\Source\MkCore_MkPatchFileGenerator.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkCore_MkPatchFileGenerator.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="2. Check, download and update files"
+					>
+					<File
+						RelativePath=".\Source\MkCore_MkPatchFileDownloader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkCore_MkPatchFileDownloader.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="1. Start patching"
+					>
+					<File
+						RelativePath=".\Source\MkCore_MkPatchStarter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkCore_MkPatchStarter.h"
 						>
 					</File>
 				</Filter>

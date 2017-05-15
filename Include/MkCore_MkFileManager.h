@@ -64,6 +64,10 @@ class MkFileManager : public MkSingletonPattern<MkFileManager>
 {
 public:
 
+	//------------------------------------------------------------------------------------------------//
+	// 사용
+	//------------------------------------------------------------------------------------------------//
+
 	// 실제 경로 혹은 패키징 시스템 내 파일 존재여부 반환
 	// (in) filePath : 절대, 혹은 root directory 기준 상대 파일 경로
 	// return : 존재 여부
@@ -89,11 +93,13 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	static bool __GetFileDataInRealPath(const MkPathName& filePath, MkByteArray& buffer);
-
+	
 	bool __CheckAvailable(const MkPathName& filePath) const;
 	bool __GetOriginalFileData(const MkPathName& filePath, MkByteArray& buffer) const;
 
 	void __PrintSystemInformationToLog(void) const;
+
+	inline MkFileSystem& GetFileSystem(void) { return m_FileSystem; }
 
 	MkFileManager(const MkPathName& workingDirectoryPath); // 패킹 시스템 설정 수정을 원할 경우 여기서 수정
 	virtual ~MkFileManager() { m_FileSystem.Clear(); }

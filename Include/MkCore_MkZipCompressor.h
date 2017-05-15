@@ -5,8 +5,8 @@
 // zip 압축/해제용 인터페이스
 //------------------------------------------------------------------------------------------------//
 // ex>
-//	BsInterfaceForFileReading frInterface;
-//	BsInterfaceForFileWriting fwInterface;
+//	MkInterfaceForFileReading frInterface;
+//	MkInterfaceForFileWriting fwInterface;
 //
 //	// file -> srcArray -> compress -> file -> destBuffer -> uncompress -> file
 //	for (unsigned int i=0; i<4; ++i)
@@ -14,7 +14,7 @@
 //		// file -> srcArray
 //		MkByteArray srcArray;
 //		frInterface.SetUp(L"src_" + BsStr(i) + L".jpg");
-//		frInterface.Read(srcArray);
+//		frInterface.Read(srcArray, MkArraySection(0));
 //		frInterface.Clear();
 //
 //		// srcArray -> compress
@@ -25,13 +25,13 @@
 //
 //		// compress -> file
 //		fwInterface.SetUp(L"comp_" + BsStr(i) + L".bin", true, true);
-//		fwInterface.Write(destBuffer);
+//		fwInterface.Write(destBuffer, MkArraySection(0));
 //		fwInterface.Clear();
 //		destBuffer.Clear();
 //
 //		// file -> destBuffer
 //		frInterface.SetUp(L"comp_" + BsStr(i) + L".bin");
-//		frInterface.Read(srcArray);
+//		frInterface.Read(srcArray, MkArraySection(0));
 //		frInterface.Clear();
 //
 //		// destBuffer -> uncompress
@@ -40,7 +40,7 @@
 //
 //		// uncompress -> file
 //		fwInterface.SetUp(L"uncomp_" + BsStr(i) + L".jpg", true, true);
-//		fwInterface.Write(destBuffer);
+//		fwInterface.Write(destBuffer, MkArraySection(0));
 //		fwInterface.Clear();
 //		destBuffer.Clear();
 //	}

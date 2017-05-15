@@ -32,7 +32,7 @@
 //	class TestFramework : public MkBaseFramework
 //	{
 //	public:
-//		virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+//		virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 //		{
 //			MK_PAGE_MGR.SetUp(new TestPage(L"TestPage"));
 //			MK_PAGE_MGR.ChangePageDirectly(L"TestPage");
@@ -93,6 +93,7 @@
 
 class MkBaseThreadUnit;
 class MkCheatMessage;
+class MkCmdLine;
 
 class MkBaseFramework
 {
@@ -111,7 +112,7 @@ public:
 	virtual MkCheatMessage* CreateCheatMessage(void) const { return NULL; }
 
 	// 확장 초기화
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg) { return true; }
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine) { return true; }
 
 	// 모든 스레드의 초기화 완료 후 루핑 시작 알람
 	virtual void StartLooping(void) {}
@@ -145,7 +146,7 @@ public:
 
 	bool __Start
 		(HINSTANCE hInstance, const wchar_t* title, const wchar_t* rootPath, bool useLog, eSystemWindowProperty sysWinProp,
-		int x, int y, int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, WNDPROC wndProc, const char* arg);
+		int x, int y, int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, WNDPROC wndProc, const MkCmdLine& cmdLine);
 
 	void __Run(void);
 

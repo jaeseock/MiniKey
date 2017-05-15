@@ -188,6 +188,8 @@ unsigned int MkMemoryToDataNodeConverter::_BuildBlock(MkInterfaceForDataReading&
 		case ePDT_Bool: ok = __TSI_AssignUnitToNode<bool>::Proceed(drInterface, targetNode, blockName); break;
 		case ePDT_Int: ok = __TSI_AssignUnitToNode<int>::Proceed(drInterface, targetNode, blockName); break;
 		case ePDT_UnsignedInt: ok = __TSI_AssignUnitToNode<unsigned int>::Proceed(drInterface, targetNode, blockName); break;
+		case ePDT_DInt: ok = __TSI_AssignUnitToNode<__int64>::Proceed(drInterface, targetNode, blockName); break;
+		case ePDT_DUnsignedInt: ok = __TSI_AssignUnitToNode<unsigned __int64>::Proceed(drInterface, targetNode, blockName); break;
 		case ePDT_Float: ok = __TSI_AssignUnitToNode<float>::Proceed(drInterface, targetNode, blockName); break;
 		case ePDT_Int2: ok = __TSI_AssignUnitToNode<MkInt2>::Proceed(drInterface, targetNode, blockName); break;
 		case ePDT_Vec2: ok = __TSI_AssignUnitToNode<MkVec2>::Proceed(drInterface, targetNode, blockName); break;

@@ -1,0 +1,191 @@
+//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path  : PackInfo.txt
+//   - time stamp : 2017.02.22 (18:08:29)
+//   - exporter   : pc (MkChunkNavigator)
+//--------------------------------------------------------------------//
+
+
+uint Ds = 2;
+uint Fs = 7;
+
+Node "TEST_1.txt"
+{
+	str BF = "MK_PACK_0.mcf";
+	uint BI = 1;
+	uint SZ = // [3]
+		2415 / 1085 / 44;
+	uint WT = 534955830;
+}
+
+Node "abc"
+{
+	uint Fs = 3;
+
+	Node "28.mp3"
+	{
+		str BF = "MK_PACK_2.mcf";
+		uint BI = 5;
+		uint SZ = 1930819;
+		uint WT = 534955830;
+	}
+
+	Node "src_2.bmp"
+	{
+		str BF = "MK_PACK_2.mcf";
+		uint BI = 4;
+		uint SZ = 1328022;
+		uint WT = 534955830;
+	}
+
+	Node "src_3.jpg"
+	{
+		str BF = "MK_PACK_2.mcf";
+		uint BI = 3;
+		uint SZ = 1966829;
+		uint WT = 534955830;
+	}
+}
+
+Node "datanode_00.bin"
+{
+	str BF = "MK_PACK_2.mcf";
+	uint BI = 2;
+	uint SZ = // [3]
+		2080 / 701 / 33;
+	uint WT = 534955830;
+}
+
+Node "datanode_00.txt"
+{
+	str BF = "MK_PACK_2.mcf";
+	uint BI = 1;
+	uint SZ = // [3]
+		2068 / 836 / 40;
+	uint WT = 534955830;
+}
+
+Node "def"
+{
+	uint Ds = 1;
+	uint Fs = 5;
+
+	Node "Chapter05-Filion-StarCraftII.pdf"
+	{
+		str BF = "MK_PACK_2.mcf";
+		uint BI = 0;
+		uint SZ = 4444815;
+		uint WT = 534955830;
+	}
+
+	Node "img"
+	{
+		uint Fs = 5;
+
+		Node "BliuhgjCAAAPge8.jpg"
+		{
+			str BF = "MK_PACK_1.mcf";
+			uint BI = 4;
+			uint SZ = 36693;
+			uint WT = 534955830;
+		}
+
+		Node "d0097083_52fd92303c3fd.jpg"
+		{
+			str BF = "MK_PACK_1.mcf";
+			uint BI = 3;
+			uint SZ = 114830;
+			uint WT = 534955830;
+		}
+
+		Node "dbc89afae47958cfb83b4497fb1ae7cd.gif"
+		{
+			str BF = "MK_PACK_1.mcf";
+			uint BI = 2;
+			uint SZ = 8231046;
+			uint WT = 534955830;
+		}
+
+		Node "f0042788_526e28a2ce2c1.gif"
+		{
+			str BF = "MK_PACK_1.mcf";
+			uint BI = 1;
+			uint SZ = 2047842;
+			uint WT = 534955830;
+		}
+
+		Node "신사.jpg"
+		{
+			str BF = "MK_PACK_1.mcf";
+			uint BI = 0;
+			uint SZ = 90932;
+			uint WT = 534955830;
+		}
+	}
+
+	Node "src_4.jpg"
+	{
+		str BF = "MK_PACK_0.mcf";
+		uint BI = 8;
+		uint SZ = 2167809;
+		uint WT = 534955830;
+	}
+
+	Node "test.txt"
+	{
+		str BF = "MK_PACK_0.mcf";
+		uint BI = 7;
+		uint SZ = 29;
+		uint WT = 534955830;
+	}
+
+	Node "정규분포곡선.xls"
+	{
+		str BF = "MK_PACK_0.mcf";
+		uint BI = 6;
+		uint SZ = // [3]
+			60416 / 21520 / 35;
+		uint WT = 534955830;
+	}
+
+	Node "특문입력기.exe"
+	{
+		str BF = "MK_PACK_0.mcf";
+		uint BI = 5;
+		uint SZ = 192512;
+		uint WT = 534955830;
+	}
+}
+
+Node "src_0.bmp"
+{
+	str BF = "MK_PACK_0.mcf";
+	uint BI = 4;
+	uint SZ = // [3]
+		5555254 / 3753109 / 67;
+	uint WT = 534955830;
+}
+
+Node "src_1.jpg"
+{
+	str BF = "MK_PACK_0.mcf";
+	uint BI = 3;
+	uint SZ = 957475;
+	uint WT = 534955830;
+}
+
+Node "test_0.txt"
+{
+	str BF = "MK_PACK_0.mcf";
+	uint BI = 2;
+	uint SZ = 38;
+	uint WT = 534955830;
+}
+
+Node "wavmp3_converter.exe"
+{
+	str BF = "MK_PACK_0.mcf";
+	uint BI = 0;
+	uint SZ = 3854651;
+	uint WT = 534955831;
+}

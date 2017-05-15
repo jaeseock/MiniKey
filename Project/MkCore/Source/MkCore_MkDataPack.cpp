@@ -82,6 +82,8 @@ bool MkDataPack::CreateUnit(const MkHashStr& key, ePrimitiveDataType type, unsig
 		case ePDT_Bool : interfacePtr = new MkDataUnit<bool>; break;
 		case ePDT_Int : interfacePtr = new MkDataUnit<int>; break;
 		case ePDT_UnsignedInt : interfacePtr = new MkDataUnit<unsigned int>; break;
+		case ePDT_DInt : interfacePtr = new MkDataUnit<__int64>; break;
+		case ePDT_DUnsignedInt : interfacePtr = new MkDataUnit<unsigned __int64>; break;
 		case ePDT_Float : interfacePtr = new MkDataUnit<float>; break;
 		case ePDT_Int2 : interfacePtr = new MkDataUnit<MkInt2>; break;
 		case ePDT_Vec2 : interfacePtr = new MkDataUnit<MkVec2>; break;
@@ -111,6 +113,10 @@ bool MkDataPack::SetData(const MkHashStr& key, int value, unsigned int index)
 { return __TSI_DataUnitOperation<int>::SetSingleData(m_UnitTable, key, value, index); }
 bool MkDataPack::SetData(const MkHashStr& key, unsigned int value, unsigned int index)
 { return __TSI_DataUnitOperation<unsigned int>::SetSingleData(m_UnitTable, key, value, index); }
+bool MkDataPack::SetData(const MkHashStr& key, __int64 value, unsigned int index)
+{ return __TSI_DataUnitOperation<__int64>::SetSingleData(m_UnitTable, key, value, index); }
+bool MkDataPack::SetData(const MkHashStr& key, unsigned __int64 value, unsigned int index)
+{ return __TSI_DataUnitOperation<unsigned __int64>::SetSingleData(m_UnitTable, key, value, index); }
 bool MkDataPack::SetData(const MkHashStr& key, float value, unsigned int index)
 { return __TSI_DataUnitOperation<float>::SetSingleData(m_UnitTable, key, value, index); }
 bool MkDataPack::SetData(const MkHashStr& key, const MkInt2& value, unsigned int index)
@@ -128,6 +134,10 @@ bool MkDataPack::SetData(const MkHashStr& key, const MkArray<int>& values)
 { return __TSI_DataUnitOperation<int>::SetDataArray(m_UnitTable, key, values); }
 bool MkDataPack::SetData(const MkHashStr& key, const MkArray<unsigned int>& values)
 { return __TSI_DataUnitOperation<unsigned int>::SetDataArray(m_UnitTable, key, values); }
+bool MkDataPack::SetData(const MkHashStr& key, const MkArray<__int64>& values)
+{ return __TSI_DataUnitOperation<__int64>::SetDataArray(m_UnitTable, key, values); }
+bool MkDataPack::SetData(const MkHashStr& key, const MkArray<unsigned __int64>& values)
+{ return __TSI_DataUnitOperation<unsigned __int64>::SetDataArray(m_UnitTable, key, values); }
 bool MkDataPack::SetData(const MkHashStr& key, const MkArray<float>& values)
 { return __TSI_DataUnitOperation<float>::SetDataArray(m_UnitTable, key, values); }
 bool MkDataPack::SetData(const MkHashStr& key, const MkArray<MkInt2>& values)
@@ -145,6 +155,10 @@ bool MkDataPack::GetData(const MkHashStr& key, int& buffer, unsigned int index) 
 { return __TSI_DataUnitOperation<int>::GetSingleData(m_UnitTable, key, buffer, index); }
 bool MkDataPack::GetData(const MkHashStr& key, unsigned int& buffer, unsigned int index) const
 { return __TSI_DataUnitOperation<unsigned int>::GetSingleData(m_UnitTable, key, buffer, index); }
+bool MkDataPack::GetData(const MkHashStr& key, __int64& buffer, unsigned int index) const
+{ return __TSI_DataUnitOperation<__int64>::GetSingleData(m_UnitTable, key, buffer, index); }
+bool MkDataPack::GetData(const MkHashStr& key, unsigned __int64& buffer, unsigned int index) const
+{ return __TSI_DataUnitOperation<unsigned __int64>::GetSingleData(m_UnitTable, key, buffer, index); }
 bool MkDataPack::GetData(const MkHashStr& key, float& buffer, unsigned int index) const
 { return __TSI_DataUnitOperation<float>::GetSingleData(m_UnitTable, key, buffer, index); }
 bool MkDataPack::GetData(const MkHashStr& key, MkInt2& buffer, unsigned int index) const
@@ -162,6 +176,10 @@ bool MkDataPack::GetData(const MkHashStr& key, MkArray<int>& buffers) const
 { return __TSI_DataUnitOperation<int>::GetDataArray(m_UnitTable, key, buffers); }
 bool MkDataPack::GetData(const MkHashStr& key, MkArray<unsigned int>& buffers) const
 { return __TSI_DataUnitOperation<unsigned int>::GetDataArray(m_UnitTable, key, buffers); }
+bool MkDataPack::GetData(const MkHashStr& key, MkArray<__int64>& buffers) const
+{ return __TSI_DataUnitOperation<__int64>::GetDataArray(m_UnitTable, key, buffers); }
+bool MkDataPack::GetData(const MkHashStr& key, MkArray<unsigned __int64>& buffers) const
+{ return __TSI_DataUnitOperation<unsigned __int64>::GetDataArray(m_UnitTable, key, buffers); }
 bool MkDataPack::GetData(const MkHashStr& key, MkArray<float>& buffers) const
 { return __TSI_DataUnitOperation<float>::GetDataArray(m_UnitTable, key, buffers); }
 bool MkDataPack::GetData(const MkHashStr& key, MkArray<MkInt2>& buffers) const

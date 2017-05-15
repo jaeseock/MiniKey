@@ -85,10 +85,10 @@ const MkHashStr MkHashStr::EMPTY(MkStr::EMPTY);
 const MkArray<MkHashStr> MkHashStr::EMPTY_ARRAY(0);
 
 // MkPathName
-const MkHashStr MkPathName::KEY_FILE_COUNT(L"Fs");
-const MkHashStr MkPathName::KEY_DIR_COUNT(L"Ds");
-const MkHashStr MkPathName::KEY_FILE_SIZE(L"SZ");
-const MkHashStr MkPathName::KEY_WRITTEN_TIME(L"WT");
+const MkHashStr MkPathName::KeyFileCount(L"#FC");
+const MkHashStr MkPathName::KeyDirCount(L"#DC");
+const MkHashStr MkPathName::KeyFileSize(L"#SZ");
+const MkHashStr MkPathName::KeyWrittenTime(L"#WT");
 
 // MkPrimitiveDataType
 ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)
@@ -106,6 +106,12 @@ ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)
 			{
 				if (tag == m_TypeTag[ePDT_Int]) return ePDT_Int;
 				else if (tag == m_TypeTag[ePDT_Int2]) return ePDT_Int2;
+			}
+			break;
+		case L'd':
+			{
+				if (tag == m_TypeTag[ePDT_DInt]) return ePDT_DInt;
+				else if (tag == m_TypeTag[ePDT_DUnsignedInt]) return ePDT_DUnsignedInt;
 			}
 			break;
 		case L'u':
@@ -140,6 +146,8 @@ const MkStr MkPrimitiveDataType::m_TypeTag[ePDT_MaxCount] =
 		L"bool",
 		L"int",
 		L"uint",
+		L"dint",
+		L"duint",
 		L"float",
 		L"int2",
 		L"vec2",

@@ -9,6 +9,7 @@
 #include "MkCore_MkHashStr.h"
 #include "MkCore_MkPathName.h"
 #include "MkCore_MkFileManager.h"
+#include "MkCore_MkStringOp.h"
 #include "MkCore_MkStr.h"
 
 
@@ -419,27 +420,14 @@ MkMemoryBlockDescriptor<wchar_t> MkStr::GetMemoryBlockDescriptor(const MkArraySe
 
 void MkStr::ImportMultiByteString(const std::string& str)
 {
-	int sizeOfMultiByte = static_cast<int>(str.size());
-	int sizeOfWideChar = MultiByteToWideChar(gCurrentCodePage, 0, str.c_str(), sizeOfMultiByte, NULL, 0);
-	wchar_t* buffer = SysAllocStringLen(NULL, sizeOfWideChar);
-	// 완성형으로 변환하고 싶을때는 두번째 인자로 MB_PRECOMPOSED 사용 할 것
-	MultiByteToWideChar(gCurrentCodePage, 0, str.c_str(), sizeOfMultiByte, buffer, sizeOfWideChar);
-	buffer[sizeOfWideChar] = NULL;
-	*this = buffer;
-	SysFreeString(buffer);
+	std::wstring buffer;
+	MkStringOp::ConvertString(str, buffer, gCurrentCodePage);
+	*this = buffer.c_str();
 }
 
 void MkStr::ExportMultiByteString(std::string& str) const
 {
-	const wchar_t* sourcePtr = m_Str.GetPtr();
-	int sizeOfChar = WideCharToMultiByte(gCurrentCodePage, 0, sourcePtr, -1, NULL, 0, NULL, NULL);
-	if (sizeOfChar > 0)
-	{
-		char* buffer = new char[sizeOfChar];
-		WideCharToMultiByte(gCurrentCodePage, 0, sourcePtr, -1, buffer, sizeOfChar, NULL, NULL);
-		str = buffer;
-		delete [] buffer;
-	}
+	MkStringOp::ConvertString(std::wstring(m_Str.GetPtr()), str, gCurrentCodePage);
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -1172,6 +1160,21 @@ unsigned int MkStr::ToUnsignedInteger(void) const
 	tmpBuf.RemoveBlank();
 	wchar_t* tmp = NULL;
 	return static_cast<unsigned int>(wcstoul(tmpBuf, &tmp, 10));
+}
+
+__int64 MkStr::ToDoubleInteger(void) const
+{
+	MkStr tmpBuf = *this;
+	tmpBuf.RemoveBlank();
+	return _wtoi64(tmpBuf);
+}
+
+unsigned __int64 MkStr::ToDoubleUnsignedInteger(void) const
+{
+	MkStr tmpBuf = *this;
+	tmpBuf.RemoveBlank();
+	wchar_t* tmp = NULL;
+	return _wcstoui64(tmpBuf, &tmp, 10);
 }
 
 float MkStr::ToFloat(void) const

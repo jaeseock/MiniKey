@@ -124,6 +124,7 @@ void MkThreadManager::StopAll(void)
 		MK_STL_LOOP(looper)
 		{
 			delete looper.GetCurrentField().unit;
+			::CloseHandle(looper.GetCurrentField().handle);
 		}
 		m_ThreadInfos.Clear();
 	}

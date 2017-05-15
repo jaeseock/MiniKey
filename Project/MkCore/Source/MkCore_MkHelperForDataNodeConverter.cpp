@@ -137,6 +137,8 @@ void MkHelperForDataNodeConverter::WriteUnitString(ePrimitiveDataType unitType, 
 	case ePDT_Bool: dwInterface.Write(unitStr.ToBool()); break;
 	case ePDT_Int: dwInterface.Write(unitStr.ToInteger()); break;
 	case ePDT_UnsignedInt: dwInterface.Write(unitStr.ToUnsignedInteger()); break;
+	case ePDT_DInt: dwInterface.Write(unitStr.ToDoubleInteger()); break;
+	case ePDT_DUnsignedInt: dwInterface.Write(unitStr.ToDoubleUnsignedInteger()); break;
 	case ePDT_Float: dwInterface.Write(unitStr.ToFloat()); break;
 	case ePDT_Int2: dwInterface.Write(unitStr.ToInt2()); break;
 	case ePDT_Vec2: dwInterface.Write(unitStr.ToVec2()); break;

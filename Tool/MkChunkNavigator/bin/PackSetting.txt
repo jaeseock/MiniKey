@@ -1,0 +1,10 @@
+
+uint ChunkSizeInMB = 10;
+uint PercentageForCompressing = 70;
+str Prefix = "MK_PACK_";
+str Extension = "mcf";
+
+str NameFilter = "datanode_00.bin" / "def/";
+str ExtensionFilter = "exe" / "txt";
+//str PrefixFilter = "";
+str ExceptionFilter = "test_0.txt";

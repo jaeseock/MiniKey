@@ -31,6 +31,7 @@
 
 #include <Windows.h>
 #include "MkCore_MkMap.h"
+#include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
 
 
@@ -102,7 +103,7 @@ public:
 	MkStr GetFileExtension(void) const;
 
 	// 경로, 파일이름, 확장자로 구분해 반환
-	// (NOTE) 확장자 없이 종료될 경우 마지막이 L"\\"로 종료되면 경로, 아니면 파일명으로 반환됨
+	// (NOTE) 확장자 없이 종료될 경우 마지막이 '\'나 '/'로 종료되면 디렉토리 경로, 아니면 파일명으로 반환됨
 	// (out) path : 경로
 	// (out) name : 확장자가 제외된 파일명
 	// (out) extension : 확장자
@@ -111,6 +112,61 @@ public:
 	// ex> (L"test\\test\\").SplitPath(path, name, extension) -> path == L"test\\test", name == L"", extension == L""
 	// ex> (L"test\\.txt").SplitPath(path, name, extension) -> path == L"test\\", name == L"", extension == L".txt"
 	void SplitPath(MkPathName& path, MkStr& name, MkStr& extension) const;
+
+	//------------------------------------------------------------------------------------------------//
+	// 경로 필터 처리용 유틸리티
+	//------------------------------------------------------------------------------------------------//
+
+	class Filter
+	{
+	public:
+
+		bool SetUp(const MkArray<MkPathName>* exceptionFilter, const MkArray<MkPathName>* nameFilter, const MkArray<MkPathName>* extensionFilter, const MkArray<MkStr>* prefixFilter);
+		bool CheckAvailable(void) const; // 필터 존재여부
+		bool CheckAvailableFile(const MkPathName& relativePath) const; // 해당 파일 경로 유효 여부
+		bool CheckAvailableDirectory(const MkPathName& relativePath) const; // 해당 디렉토리 경로 유효 여부
+		
+		bool GetExceptionFilter(MkArray<MkStr>& buffer) const;
+		bool GetNameFilter(MkArray<MkStr>& buffer) const;
+		bool GetExtensionFilter(MkArray<MkStr>& buffer) const;
+		bool GetPrefixFilter(MkArray<MkStr>& buffer) const;
+
+		void Clear(void);
+
+		Filter(bool result);
+
+	protected:
+
+		static bool _ConvertArrayToHashMap(const MkArray<MkPathName>& source, MkHashMap<MkHashStr, int>& target);
+		static bool _ConvertArrayToArray(const MkArray<MkStr>& source, MkArray<MkStr>& target);
+		static bool _GetKeyList(const MkHashMap<MkHashStr, int>& source, MkArray<MkStr>& buffer);
+
+	protected:
+
+		MkHashMap<MkHashStr, int> m_ExceptionFilter;
+		MkHashMap<MkHashStr, int> m_NameFilter;
+		MkHashMap<MkHashStr, int> m_ExtensionFilter;
+		MkArray<MkStr> m_PrefixFilter;
+
+		bool m_OnExceptionFilter;
+		bool m_OnNameFilter;
+		bool m_OnExtensionFilter;
+		bool m_OnPrefixFilter;
+
+		bool m_PassingResult;
+	};
+
+	class WhiteFilter : public Filter
+	{
+	public:
+		WhiteFilter();
+	};
+
+	class BlackFilter : public Filter
+	{
+	public:
+		BlackFilter();
+	};
 
 	//------------------------------------------------------------------------------------------------//
 	// 실제 파일 검색
@@ -125,21 +181,17 @@ public:
 	unsigned int GetFileCount(bool includeSubDirectory = true) const;
 
 	// 모든 파일 개수와 크기의 총 합 반환
-	// (out) fileSizeInKB : 디렉토리 하위 모든 파일의 KB 단위 크기 합
+	// (out) totalFileSize : 디렉토리 하위 모든 파일의 크기 합
 	// (in) includeSubDirectory : 하위 폴더 탐색여부
 	// return : 디렉토리 하위 파일 수
-	unsigned int GetFileCountAndSize(unsigned int& fileSizeInKB, bool includeSubDirectory = true) const;
+	unsigned int GetFileCountAndTotalSize(unsigned __int64& totalFileSize, bool includeSubDirectory = true) const;
 
 	// 모든 파일 경로 리스트 반환
 	// (out) filePathList : 파일 경로가 담길 버퍼
 	// (in) includeSubDirectory : 하위 폴더 탐색여부. 하위 폴더내의 파일명에는 시작 디렉토리부터의 상대 경로가 포함됨
 	// (in) includeZeroSizeFile : 파일 크기가 0인 파일도 포함 할 것인지의 여부
-	void GetFileList(MkArray<MkPathName>& filePathList, bool includeSubDirectory = true, bool includeZeroSizeFile = true) const;
-
-	// 모든 파일 구조 정보 반환
-	// (out) node : 정보가 담길 버퍼
-	// return : 성공 여부
-	bool GetFileStructure(MkDataNode& node) const;
+	// (in) filter(opt) : 필터링용 객체. NULL이면 필터링 무시
+	void GetFileList(MkArray<MkPathName>& filePathList, bool includeSubDirectory = true, bool includeZeroSizeFile = true, const Filter* filter = NULL) const;
 
 	// 필터링을 통과한 파일들만 검색(white filter)
 	// (out) filePathList : 파일 경로가 담길 버퍼
@@ -149,8 +201,8 @@ public:
 	// (in) prefixFilter : 통과 될 파일 접두사 리스트
 	// (in) exceptionFilter : 필터링과 상관 없이 예외적으로 제외 될 파일 이름 리스트
 	// (in) includeSubDirectory : 하위 폴더 탐색여부. 하위 폴더내의 파일명에는 시작 디렉토리부터의 상대 경로가 포함됨
-	void GetWhiteFileList(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>& nameFilter, const MkArray<MkPathName>& extensionFilter,
-		const MkArray<MkStr>& prefixFilter, const MkArray<MkPathName>& exceptionFilter, bool includeSubDirectory = true, bool includeZeroSizeFile = true) const;
+	void GetWhiteFileList(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>* nameFilter, const MkArray<MkPathName>* extensionFilter,
+		const MkArray<MkStr>* prefixFilter, const MkArray<MkPathName>* exceptionFilter, bool includeSubDirectory = true, bool includeZeroSizeFile = true) const;
 
 	// 필터링을 통과하지 못 한 파일들만 검색(black filter)
 	// (out) filePathList : 파일 경로가 담길 버퍼
@@ -160,8 +212,8 @@ public:
 	// (in) prefixFilter : 제외 될 파일 접두사 리스트
 	// (in) exceptionFilter : 필터링과 상관 없이 예외적으로 포함 될 파일 이름 리스트
 	// (in) includeSubDirectory : 하위 폴더 탐색여부. 하위 폴더내의 파일명에는 시작 디렉토리부터의 상대 경로가 포함됨
-	void GetBlackFileList(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>& nameFilter, const MkArray<MkPathName>& extensionFilter,
-		const MkArray<MkStr>& prefixFilter, const MkArray<MkPathName>& exceptionFilter, bool includeSubDirectory = true, bool includeZeroSizeFile = true) const;
+	void GetBlackFileList(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>* nameFilter, const MkArray<MkPathName>* extensionFilter,
+		const MkArray<MkStr>* prefixFilter, const MkArray<MkPathName>* exceptionFilter, bool includeSubDirectory = true, bool includeZeroSizeFile = true) const;
 
 	// white filter의 특수한 예로 한 폴더 내에서 "[prefix][index].[extension]" 형태의 파일들만 검색해 <index, 파일 경로> 형태로 반환
 	// (out) filePathTable : index와 파일 경로가 담길 버퍼
@@ -175,8 +227,16 @@ public:
 
 	// 경로에 존재하는 파일의 마지막 수정일시를 2000년 이후 초단위로 변환해 반환
 	// unsigned int 범위상 2136.2년까지 유효범위
-	// 파일이 없거나 에러 발생하면 MKDEF_ARRAY_ERROR 반환
+	// 파일이 없거나 에러 발생하면 0 반환
 	unsigned int GetWrittenTime(void) const;
+
+	// GetWrittenTime()으로 얻은 시간을 연/월/일/시/분/초 단위로 변환
+	// (NOTE) 2000년 1월 1일 이전의 시간은 2000년 1월 1일로 고정됨
+	static void ConvertWrittenTime(unsigned int writtenTime, int& year, int& month, int& day, int& hour, int& min, int& sec);
+
+	// 연/월/일/시/분/초 단위를을 GetWrittenTime() 시간으로 변환
+	// (NOTE) 2000년 1월 1일 이전의 시간은 0으로 고정됨
+	static unsigned int ConvertWrittenTime(int year, int month, int day, int hour, int min, int sec);
 
 	//------------------------------------------------------------------------------------------------//
 	// 경로 수정
@@ -267,11 +327,32 @@ public:
 	// ex (L"file\\abc\\test.bin").RenameCurrentFile(L"t_0.bin") -> L"file\\abc\\t_0.bin"
 	bool RenameCurrentFile(const MkPathName& newFileName);
 
+	// 파일 복사
+	// (in) newPath : 해당 파일이 존재하는 디렉토리를 기준으로 한 상대 혹은 절대 파일/디렉토리 경로
+	//                디렉토리 경로의 경우 원본과 동일한 파일명 사용
+	// (in) failIfExists : newPath에 해당하는 파일이 이미 존재 할 경우 실패 처리할지 여부
+	// return : 성공 여부. 원본 파일이 경로에 존재하지 않거나 복사가 실패하면 false
+	// ex (L"file\\abc\\test.bin").CopyCurrentFile(L"..\\kk") -> L"file\\kk\\test.bin"
+	// ex (L"file\\abc\\test.bin").CopyCurrentFile(L"..\\kk\\t_0.mmb") -> L"file\\kk\\t_0.mmb"
+	bool CopyCurrentFile(const MkPathName& newPath, bool failIfExists = true) const;
+
 	// 파일 이동(cut & paste)
-	// (in) newPath : 해당 파일이 존재하는 디렉토리를 기준으로 한 상대 혹은 절대 디렉토리 경로. 존재하지 않으면 생성
-	// return : 이동 성공 여부. 파일이 경로에 존재하지 않거나 디렉토리 경로이거나 이동이 실패하면 false
-	// ex (L"file\\abc\\test.bin").MoveCurrentFile(L"..\\kk") -> L"file\\kk\\t_0.bin"
-	bool MoveCurrentFile(const MkPathName& newPath);
+	// (in) newPath : 해당 파일이 존재하는 디렉토리를 기준으로 한 상대 혹은 절대 파일/디렉토리 경로
+	//                디렉토리 경로의 경우 원본과 동일한 파일명 사용
+	// return : 성공 여부. 원본 파일이 경로에 존재하지 않거나 이동이 실패하면 false
+	// ex (L"file\\abc\\test.bin").MoveCurrentFile(L"..\\kk") -> L"file\\kk\\test.bin"
+	// ex (L"file\\abc\\test.bin").MoveCurrentFile(L"..\\kk\\t_0.mmb") -> L"file\\kk\\t_0.mmb"
+	bool MoveCurrentFile(const MkPathName& newPath) const;
+
+	// 수정 시간 변경
+	// (in) writtenTime : 수정 시간. GetWrittenTime() 참조
+	// return : 성공 여부
+	bool SetWrittenTime(unsigned int writtenTime) const;
+
+	// 수정 시간 변경
+	// (in) year, month, day, hour, min, sec : 수정 시간
+	// return : 성공 여부
+	bool SetWrittenTime(int year, int month, int day, int hour, int min, int sec) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 시스템 경로
@@ -372,6 +453,57 @@ public:
 	bool GetDirectoryPathFromDialog(const MkStr& msg = L"", HWND owner = NULL, const MkPathName& initialPath = L"");
 
 	//------------------------------------------------------------------------------------------------//
+	// structure(MkDataNode) 구성 및 지원 함수
+	//------------------------------------------------------------------------------------------------//
+
+	// 해당 디렉토리 경로에 속한 모든 파일, 디렉토리 정보를 data node에 출력
+	// 크기가 4G가 넘는 단일 파일과 하위에 아무것도 없는 디렉토리는 제외함
+	// (out) node : 출력 노드
+	// return : 소속 파일이 마지막으로 수정된 시간
+	// ex>
+	//	MkPathName path = L"D:\\Docs\\";
+	//	MkDataNode node;
+	//	unsigned int wt = path.ExportSystemStructure(node);
+	//	node.SaveToText(MkStr(wt) + L".txt");
+	unsigned int ExportSystemStructure(MkDataNode& node) const;
+
+	// node의 하위에 존재하는 디렉토리 key 반환
+	static void __GetSubDirectories(const MkDataNode& node, MkArray<MkHashStr>& subDirs);
+
+	// node의 하위에 존재하는 파일 key 반환
+	static void __GetSubFiles(const MkDataNode& node, MkArray<MkHashStr>& subFiles);
+
+	// node의 count 증가
+	static void __IncreaseDirectoryCount(MkDataNode& node); // KeyDirCount
+	static void __IncreaseFileCount(MkDataNode& node); // KeyFileCount
+
+	// 두 file node의 size와 written time이 다른지 비교해 결과 반환
+	// 같으면 currFileNode의 size정보를 lastFileNode와 동일하게 맞춤(lastFileNode는 압축 크기 정보 복사)
+	static bool __CheckFileDifference(const MkDataNode& lastFileNode, MkDataNode& currFileNode);
+
+	// 파일명을 node name으로 생성해 크기(KeyFileSize), 수정시간(KeyWrittenTime) 기록
+	// (out) node : 파일이 존재하는 디렉토리 node
+	// (in) compressed : 압축 여부
+	// (in) origSize : 원본 파일 크기
+	// (in) compSize : compressed가 true일 경우 압축 후 크기
+	// (in) writtenTime : 파일 수정시간
+	// return : 생성된 노드 포인터
+	// ex 0>
+	//	Node "28.mp3"
+	//	{
+	//		uint SZ = 1930819;
+	//		uint WT = 534955830;
+	//	}
+	// ex 1>
+	//	Node "datanode_00.bin"
+	//	{
+	//		uint SZ = // [2]
+	//			2080 / 701;
+	//		uint WT = 534955830;
+	//	}
+	MkDataNode* __CreateFileStructureInfo(MkDataNode& node, bool compressed, unsigned int origSize, unsigned int compSize, unsigned int writtenTime);
+
+	//------------------------------------------------------------------------------------------------//
 
 protected:
 
@@ -390,6 +522,9 @@ protected:
 	// basePath와 다른 장치일 경우 false 반환 
 	bool _ConvertToRelativePath(const MkPathName& basePath);
 
+	// copy or move
+	bool _CopyOrMoveCurrentFile(const MkPathName& newPath, bool copy, bool failIfExists) const;
+
 	// 프로세스 생성
 	bool _ExcuteProcess(const MkStr& processTitle, DWORD flag, const MkStr& argument) const;
 
@@ -400,13 +535,16 @@ protected:
 	static unsigned int _GetFilePathFromDialog
 		(MkPathName& directoryPath, MkArray<MkPathName>& fileNameList, const MkArray<MkStr>& extensionList, HWND owner, bool singleSelection, bool forOpen);
 
+	static void _GetSubNodesByTag(const MkDataNode& node, MkArray<MkHashStr>& subNodes, const MkHashStr& countTag, const MkHashStr& typeTag, bool exist);
+	static void _IncreaseUnitCountByTag(MkDataNode& node, const MkHashStr& key);
+
 public:
 
 	// data node 구성용 key
-	static const MkHashStr KEY_FILE_COUNT;
-	static const MkHashStr KEY_DIR_COUNT;
-	static const MkHashStr KEY_FILE_SIZE;
-	static const MkHashStr KEY_WRITTEN_TIME;
+	static const MkHashStr KeyFileCount;
+	static const MkHashStr KeyDirCount;
+	static const MkHashStr KeyFileSize;
+	static const MkHashStr KeyWrittenTime;
 };
 
 #endif

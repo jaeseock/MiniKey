@@ -207,16 +207,18 @@ bool MkFileChunk::GetBlockInfo(unsigned int blockIndex, MkDataNode& directoryNod
 		return false;
 
 	const MkFileBlock& block = m_BlockList[blockIndex];
-	MkPathName filePath = block.GetRelativeFilePath();
-	MkPathName fileName = filePath.GetFileName();
-
-	MkDataNode* fileNode = directoryNode.CreateChildNode(fileName);
-	bool ok = (fileNode != NULL);
-	if (ok)
+	if (block.Available())
 	{
-		block.GetBlockInfo(*fileNode);
+		MkPathName filePath = block.GetRelativeFilePath();
+		MkDataNode* fileNode = filePath.GetFileName().__CreateFileStructureInfo
+			(directoryNode,
+			block.GetBlockState() == MkFileBlock::eCompressed,
+			block.GetUncompressedSize(),
+			block.GetDataSize(),
+			block.GetWrittenTime());
 
-		if (includeChunkInfo)
+		// chunk & block 정보 기록
+		if (includeChunkInfo && (fileNode != NULL))
 		{
 			const static MkHashStr KEY_BLOCK_FILE_NAME = L"BF";
 			fileNode->CreateUnit(KEY_BLOCK_FILE_NAME, m_AbsoluteChunkFilePath.GetFileName());
@@ -224,8 +226,9 @@ bool MkFileChunk::GetBlockInfo(unsigned int blockIndex, MkDataNode& directoryNod
 			const static MkHashStr KEY_BLOCK_INDEX = L"BI";
 			fileNode->CreateUnit(KEY_BLOCK_INDEX, blockIndex);
 		}
+		return (fileNode != NULL);
 	}
-	return ok;
+	return true;
 }
 
 bool MkFileChunk::GetOriginalFileData(unsigned int blockIndex, MkByteArray& buffer) const

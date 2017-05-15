@@ -19,7 +19,6 @@
 // 설정 기본 값
 #define MKDEF_APP_DEF_OUTPUT_TYPE 1 // 0:text, 1:binary
 #define MKDEF_APP_DEF_NEW_EXTENSION true
-#define MKDEF_APP_DEF_NEW_EXT_VALUE L"mmd" // minikey metadata
 #define MKDEF_APP_DEF_MAKE_BACKUP true
 
 // 설정 키
@@ -69,7 +68,7 @@ _NodeFileInfo;
 class TestFramework : public MkBaseFramework
 {
 public:
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
 		// 세팅 파일 로드
 		MkPathName settingFile;
@@ -96,7 +95,7 @@ public:
 		}
 
 		// 확장자 값 읽어들이고 없으면 복구
-		MkStr extVal = MKDEF_APP_DEF_NEW_EXT_VALUE;
+		MkStr extVal = MkDataNode::DefaultFileExtension;
 		if (!m_SettingNode.GetData(MKDEF_APP_KEY_EXT_VALUE, extVal, 0))
 		{
 			m_SettingNode.CreateUnit(MKDEF_APP_KEY_EXT_VALUE, extVal);
@@ -106,7 +105,7 @@ public:
 			extVal.RemoveBlank();
 			if (extVal.Empty())
 			{
-				extVal = MKDEF_APP_DEF_NEW_EXT_VALUE;
+				extVal = MkDataNode::DefaultFileExtension;
 			}
 			m_SettingNode.SetData(MKDEF_APP_KEY_EXT_VALUE, extVal, 0);
 		}
@@ -347,7 +346,7 @@ public:
 							extVal.RemoveBlank();
 							if (extVal.Empty())
 							{
-								extVal = MKDEF_APP_DEF_NEW_EXT_VALUE;
+								extVal = MkDataNode::DefaultFileExtension;
 							}
 							m_SettingNode.SetData(MKDEF_APP_KEY_EXT_VALUE, extVal, 0);
 							SetWindowText(m_NewExtValueHandle, extVal.GetPtr());

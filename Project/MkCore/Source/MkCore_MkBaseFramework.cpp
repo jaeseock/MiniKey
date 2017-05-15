@@ -68,7 +68,7 @@ void MkBaseFramework::Close(void)
 
 bool MkBaseFramework::__Start
 (HINSTANCE hInstance, const wchar_t* title, const wchar_t* rootPath, bool useLog, eSystemWindowProperty sysWinProp,
- int x, int y, int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, WNDPROC wndProc, const char* arg)
+ int x, int y, int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, WNDPROC wndProc, const MkCmdLine& cmdLine)
 {
 	assert(title != NULL);
 	assert(rootPath != NULL);
@@ -153,8 +153,8 @@ bool MkBaseFramework::__Start
 		MkFileManager::Instance().__PrintSystemInformationToLog();
 	}
 
-	// SetUp
-	MK_CHECK(SetUp(clientWidth, clientHeight, fullScreen, arg), L"확장 초기화 실패")
+	// 확장 초기화. app이 update를 필요로 하지 않을 경우 여기서 false를 받아 종료
+	if (!SetUp(clientWidth, clientHeight, fullScreen, cmdLine))
 		return false;
 
 	// logic thread procedure

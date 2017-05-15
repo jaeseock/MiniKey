@@ -42,6 +42,8 @@ bool MkFileManager::SaveDataToFile(const MkPathName& filePath, const MkByteArray
 	return false;
 }
 
+//------------------------------------------------------------------------------------------------//
+
 bool MkFileManager::__GetFileDataInRealPath(const MkPathName& filePath, MkByteArray& buffer)
 {
 	MkPathName absoluteFilePath;
@@ -75,9 +77,7 @@ void MkFileManager::__PrintSystemInformationToLog(void) const
 
 MkFileManager::MkFileManager(const MkPathName& workingDirectoryPath) : MkSingletonPattern<MkFileManager>()
 {
-	//m_FileSystem.SetChunkSizeGuideline(); // chunkSizeInMB
-	//m_FileSystem.SetPercentageForCompressing(); // percentageForCompressing
-	//m_FileSystem.SetChunkFileNamingRule(); // prefix, extension
+	m_FileSystem.SetSystemSetting();
 
 	MK_CHECK(m_FileSystem.SetUpFromChunkFiles(workingDirectoryPath), L"MkFileManager 초기화 실패")
 		return;

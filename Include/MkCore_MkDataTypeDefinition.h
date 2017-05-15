@@ -21,6 +21,8 @@ enum ePrimitiveDataType
 	ePDT_Bool = ePDT_IndexBegin,
 	ePDT_Int,
 	ePDT_UnsignedInt,
+	ePDT_DInt, // __int64
+	ePDT_DUnsignedInt, // unsigned __int64
 	ePDT_Float,
 	ePDT_Int2,
 	ePDT_Vec2,
@@ -48,6 +50,8 @@ public:
 	template <>	static ePrimitiveDataType GetEnum<bool>(void) { return ePDT_Bool; }
 	template <>	static ePrimitiveDataType GetEnum<int>(void) { return ePDT_Int; }
 	template <>	static ePrimitiveDataType GetEnum<unsigned int>(void) { return ePDT_UnsignedInt; }
+	template <>	static ePrimitiveDataType GetEnum<__int64>(void) { return ePDT_DInt; }
+	template <>	static ePrimitiveDataType GetEnum<unsigned __int64>(void) { return ePDT_DUnsignedInt; }
 	template <>	static ePrimitiveDataType GetEnum<float>(void) { return ePDT_Float; }
 	template <>	static ePrimitiveDataType GetEnum<MkInt2>(void) { return ePDT_Int2; }
 	template <>	static ePrimitiveDataType GetEnum<MkVec2>(void) { return ePDT_Vec2; }
@@ -68,6 +72,8 @@ public:
 	template <>	static const MkStr& GetTag<bool>(void) { return m_TypeTag[ePDT_Bool]; }
 	template <>	static const MkStr& GetTag<int>(void) { return m_TypeTag[ePDT_Int]; }
 	template <>	static const MkStr& GetTag<unsigned int>(void) { return m_TypeTag[ePDT_UnsignedInt]; }
+	template <>	static const MkStr& GetTag<__int64>(void) { return m_TypeTag[ePDT_DInt]; }
+	template <>	static const MkStr& GetTag<unsigned __int64>(void) { return m_TypeTag[ePDT_DUnsignedInt]; }
 	template <>	static const MkStr& GetTag<float>(void) { return m_TypeTag[ePDT_Float]; }
 	template <>	static const MkStr& GetTag<MkInt2>(void) { return m_TypeTag[ePDT_Int2]; }
 	template <>	static const MkStr& GetTag<MkVec2>(void) { return m_TypeTag[ePDT_Vec2]; }

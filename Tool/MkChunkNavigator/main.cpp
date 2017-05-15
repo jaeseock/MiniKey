@@ -58,7 +58,17 @@ class TestFramework : public MkBaseFramework
 {
 public:
 
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+	enum eFrameworkState
+	{
+		eFS_Idle = 0,
+
+		eFS_Loading,
+		eFS_Unpacking,
+		eFS_Updating,
+		eFS_Optimizing
+	};
+
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
 		// 콘트롤 생성 준비
 		m_Font = CreateFont
@@ -90,7 +100,7 @@ public:
 			(hWnd, hInstance, L"edit", MKDEF_APP_EDIT_CHUNK_PREFIX_ID, L"설정 파일명", staticTextControlStyle, MkIntRect(10, currentY + 3, 70, 14));
 
 		m_SettingFileHandle = _CreateControl
-			(hWnd, hInstance, L"edit", MKDEF_APP_EDIT_SETTING_FILE_ID, L"PackSetting.txt", inputControlStyle, MkIntRect(85, currentY, 130, 20));
+			(hWnd, hInstance, L"edit", MKDEF_APP_EDIT_SETTING_FILE_ID, L"PackInfo.mmd", inputControlStyle, MkIntRect(85, currentY, 130, 20));
 
 		m_LoadingBtnHandle = _CreateControl
 			(hWnd, hInstance, L"button", MKDEF_APP_BTN_LOAD_SYSTEM_DIR_ID, L"파일 시스템 로드", buttonControlStyle, MkIntRect(220, currentY, 370, 20));
@@ -183,7 +193,7 @@ public:
 
 	virtual void Update(void)
 	{
-		if (m_OnLoading)
+		if (m_State == eFS_Loading)
 		{
 			m_SystemStructure.Clear();
 			m_CurrentNode = NULL;
@@ -212,7 +222,7 @@ public:
 			EnableWindow(m_LoadingBtnHandle, TRUE);
 		}
 
-		if (m_OnUnpacking)
+		if (m_State == eFS_Unpacking)
 		{
 			_UnpackDirectory(m_CurrentNode);
 
@@ -226,7 +236,7 @@ public:
 			MK_DEV_PANEL.MsgToLog(L"< 언패킹 완료 >");
 		}
 
-		if (m_OnUpdating)
+		if (m_State == eFS_Updating)
 		{
 			m_SystemStructure.Clear();
 			m_CurrentNode = NULL;
@@ -248,21 +258,18 @@ public:
 			EnableWindow(m_DoUpdateHandle, TRUE);
 		}
 
-		if (m_OnOptimizing)
+		if (m_State == eFS_Optimizing)
 		{
-			m_FileSystem.OptimizeChunks(0);
+			m_FileSystem.OptimizeAllChunks(0);
 
 			EnableWindow(m_OptimizeHandle, TRUE);
 
 			MK_DEV_PANEL.MsgToLog(L"< 청크 최적화 완료 >");
 		}
 
-		if (m_OnLoading || m_OnUnpacking || m_OnUpdating || m_OnOptimizing)
+		if (m_State != eFS_Idle)
 		{
-			m_OnLoading = false;
-			m_OnUnpacking = false;
-			m_OnUpdating = false;
-			m_OnOptimizing = false;
+			m_State = eFS_Idle;
 		}
 		else
 		{
@@ -291,7 +298,7 @@ public:
 
 				case MKDEF_APP_BTN_LOAD_SYSTEM_DIR_ID:
 					{
-						if ((m_ChunkDirHandle != NULL) && (m_SettingFileHandle != NULL))
+						if ((m_State == eFS_Idle) && (m_ChunkDirHandle != NULL) && (m_SettingFileHandle != NULL))
 						{
 							MkPathName chunkPath;
 							MkStr prefix, settingFile;
@@ -312,7 +319,7 @@ public:
 									}
 								}
 
-								m_OnLoading = true;
+								m_State = eFS_Loading;
 
 								MK_DEV_PANEL.MsgToLog(m_SettingFilePath.Empty() ? L"설정 파일 로딩 실패" : (settingFile + L" 로딩 성공"));
 								MK_DEV_PANEL.MsgToLog(L"< 파일 시스템 구성 중... >");
@@ -326,7 +333,7 @@ public:
 						if (m_CurrentNode != NULL)
 						{
 							MkArray<MkHashStr> listBuffer;
-							_GetSubDirs(m_CurrentNode, listBuffer);
+							MkPathName::__GetSubDirectories(*m_CurrentNode, listBuffer);
 							
 							if (listBuffer.Empty())
 							{
@@ -390,7 +397,7 @@ public:
 
 				case MKDEF_APP_BTN_UNPACK_TARGET_DIR_ID:
 					{
-						if (m_CurrentNode != NULL)
+						if ((m_State == eFS_Idle) && (m_CurrentNode != NULL))
 						{
 							EnableWindow(m_UnpackDirHandle, FALSE);
 
@@ -403,7 +410,7 @@ public:
 							m_UnpackingFilePath.Clear();
 							if (m_UnpackingFilePath.GetDirectoryPathFromDialog(L"풀린 파일들이 위치 할 폴더 선택", m_MainWindow.GetWindowHandle(), defPath))
 							{
-								m_OnUnpacking = true;
+								m_State = eFS_Unpacking;
 
 								MK_DEV_PANEL.MsgToLog(L"< 언패킹 중... >");
 							}
@@ -442,7 +449,7 @@ public:
 						if (m_CurrentNode != NULL)
 						{
 							MkArray<MkHashStr> listBuffer;
-							_GetSubFiles(m_CurrentNode, listBuffer);
+							MkPathName::__GetSubFiles(*m_CurrentNode, listBuffer);
 							
 							if (listBuffer.Empty())
 							{
@@ -560,7 +567,7 @@ public:
 
 				case MKDEF_APP_BTN_UPDATE_DIR_ID:
 					{
-						if ((m_UpdateSrcDirHandle != NULL) && (m_DoUpdateHandle != NULL))
+						if ((m_State == eFS_Idle) && (m_UpdateSrcDirHandle != NULL) && (m_DoUpdateHandle != NULL))
 						{
 							MkPathName srcPath;
 							if (_GetPathFromEditBox(m_UpdateSrcDirHandle, srcPath))
@@ -570,7 +577,7 @@ public:
 								m_UpdateSrcPath = srcPath;
 								m_UpdateSrcPath.CheckAndAddBackslash();
 
-								m_OnUpdating = true;
+								m_State = eFS_Updating;
 
 								MK_DEV_PANEL.MsgToLog(L"< 갱신 중... >");
 							}
@@ -596,13 +603,13 @@ public:
 
 				case MKDEF_APP_BTN_OPT_CHUNK_ID:
 					{
-						if (m_OptimizeHandle != NULL)
+						if ((m_State == eFS_Idle) && (m_OptimizeHandle != NULL))
 						{
 							EnableWindow(m_OptimizeHandle, FALSE);
 
 							MK_DEV_PANEL.MsgToLog(L"< 청크 최적화 시작 >");
 
-							m_OnOptimizing = true;
+							m_State = eFS_Optimizing;
 						}
 					}
 					break;
@@ -692,10 +699,7 @@ public:
 		m_OptimizeHandle = NULL;
 		
 		m_CurrentNode = NULL;
-		m_OnLoading = false;
-		m_OnUnpacking = false;
-		m_OnUpdating = false;
-		m_OnOptimizing = false;
+		m_State = eFS_Idle;
 	}
 
 	virtual ~TestFramework()
@@ -778,48 +782,13 @@ protected:
 		}
 	}
 
-	void _GetSubObjectListByTag(MkDataNode* targetNode, MkArray<MkHashStr>& listBuffer, const MkHashStr& countTag, const MkHashStr& typeTag, bool exist)
-	{
-		if (targetNode != NULL)
-		{
-			unsigned int count = 0;
-			targetNode->GetData(countTag, count, 0);
-			if (count > 0)
-			{
-				listBuffer.Reserve(count);
-
-				MkArray<MkHashStr> keys;
-				targetNode->GetChildNodeList(keys);
-				MK_INDEXING_LOOP(keys, i)
-				{
-					const MkHashStr& currKey = keys[i];
-					bool hasTag = targetNode->GetChildNode(currKey)->IsValidKey(typeTag);
-					if ((exist) ? (hasTag) : (!hasTag))
-					{
-						listBuffer.PushBack(currKey);
-					}
-				}
-			}
-		}
-	}
-
-	void _GetSubDirs(MkDataNode* targetNode, MkArray<MkHashStr>& listBuffer)
-	{
-		_GetSubObjectListByTag(targetNode, listBuffer, MkPathName::KEY_DIR_COUNT, MkPathName::KEY_WRITTEN_TIME, false);
-	}
-
-	void _GetSubFiles(MkDataNode* targetNode, MkArray<MkHashStr>& listBuffer)
-	{
-		_GetSubObjectListByTag(targetNode, listBuffer, MkPathName::KEY_FILE_COUNT, MkPathName::KEY_WRITTEN_TIME, true);
-	}
-
 	void _RemoveDirectory(MkDataNode* targetNode)
 	{
 		if (targetNode != NULL)
 		{
 			// directory
 			MkArray<MkHashStr> listBuffer;
-			_GetSubDirs(targetNode, listBuffer);
+			MkPathName::__GetSubDirectories(*targetNode, listBuffer);
 			MK_INDEXING_LOOP(listBuffer, i)
 			{
 				_RemoveDirectory(targetNode->GetChildNode(listBuffer[i]));
@@ -827,7 +796,7 @@ protected:
 			listBuffer.Clear();
 
 			// files
-			_GetSubFiles(targetNode, listBuffer);
+			MkPathName::__GetSubFiles(*targetNode, listBuffer);
 			if (!listBuffer.Empty())
 			{
 				MkPathName relativePath;
@@ -848,7 +817,7 @@ protected:
 		{
 			// directory
 			MkArray<MkHashStr> listBuffer;
-			_GetSubDirs(targetNode, listBuffer);
+			MkPathName::__GetSubDirectories(*targetNode, listBuffer);
 			MK_INDEXING_LOOP(listBuffer, i)
 			{
 				_UnpackDirectory(targetNode->GetChildNode(listBuffer[i]));
@@ -856,7 +825,7 @@ protected:
 			listBuffer.Clear();
 
 			// files
-			_GetSubFiles(targetNode, listBuffer);
+			MkPathName::__GetSubFiles(*targetNode, listBuffer);
 			if (!listBuffer.Empty())
 			{
 				MkPathName relativePath;
@@ -894,17 +863,12 @@ protected:
 	MkDataNode m_SystemStructure;
 	MkDataNode* m_CurrentNode;
 
-	bool m_OnLoading;
+	eFrameworkState m_State;
+
 	MkPathName m_ChunkFilePath;
 	MkPathName m_SettingFilePath;
-	
-	bool m_OnUnpacking;
 	MkPathName m_UnpackingFilePath;
-
-	bool m_OnUpdating;
 	MkPathName m_UpdateSrcPath;
-
-	bool m_OnOptimizing;
 };
 
 

@@ -221,6 +221,8 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 		case ePDT_Bool: ok = __TSI_AssignUnitToText<bool>::Proceed(drInterface, dataList, blockName); break;
 		case ePDT_Int: ok = __TSI_AssignUnitToText<int>::Proceed(drInterface, dataList, blockName); break;
 		case ePDT_UnsignedInt: ok = __TSI_AssignUnitToText<unsigned int>::Proceed(drInterface, dataList, blockName); break;
+		case ePDT_DInt: ok = __TSI_AssignUnitToText<__int64>::Proceed(drInterface, dataList, blockName); break;
+		case ePDT_DUnsignedInt: ok = __TSI_AssignUnitToText<unsigned __int64>::Proceed(drInterface, dataList, blockName); break;
 		case ePDT_Float: ok = __TSI_AssignUnitToText<float>::Proceed(drInterface, dataList, blockName); break;
 		case ePDT_Int2: ok = __TSI_AssignUnitToText<MkInt2>::Proceed(drInterface, dataList, blockName); break;
 		case ePDT_Vec2: ok = __TSI_AssignUnitToText<MkVec2>::Proceed(drInterface, dataList, blockName); break;

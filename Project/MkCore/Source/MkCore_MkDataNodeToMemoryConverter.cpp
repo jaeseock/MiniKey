@@ -124,6 +124,8 @@ void MkDataNodeToMemoryConverter::_ConvertUnits(const MkDataNode& targetNode, Mk
 		case ePDT_Bool: __TSI_AssignUnitDataToMemory<bool>::Proceed(targetNode, currentKey, dwInterface); break;
 		case ePDT_Int: __TSI_AssignUnitDataToMemory<int>::Proceed(targetNode, currentKey, dwInterface); break;
 		case ePDT_UnsignedInt: __TSI_AssignUnitDataToMemory<unsigned int>::Proceed(targetNode, currentKey, dwInterface); break;
+		case ePDT_DInt: __TSI_AssignUnitDataToMemory<__int64>::Proceed(targetNode, currentKey, dwInterface); break;
+		case ePDT_DUnsignedInt: __TSI_AssignUnitDataToMemory<unsigned __int64>::Proceed(targetNode, currentKey, dwInterface); break;
 		case ePDT_Float: __TSI_AssignUnitDataToMemory<float>::Proceed(targetNode, currentKey, dwInterface); break;
 		case ePDT_Int2: __TSI_AssignUnitDataToMemory<MkInt2>::Proceed(targetNode, currentKey, dwInterface); break;
 		case ePDT_Vec2: __TSI_AssignUnitDataToMemory<MkVec2>::Proceed(targetNode, currentKey, dwInterface); break;

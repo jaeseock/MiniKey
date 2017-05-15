@@ -40,7 +40,7 @@ class TestFramework : public MkBaseFramework
 {
 public:
 
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
 		// 能飘费 积己 霖厚
 		m_Font = CreateFont

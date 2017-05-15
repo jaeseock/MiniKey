@@ -55,21 +55,18 @@ bool MkCheck::ExceptionForRelease(const char* function, long lineNum, const wcha
 	msg += L"\nMESSAGE : ";
 	msg += message;
 
-#if (MKDEF_CHECK_EXCEPTION_BREAK)
-	int rlt = MessageBox(NULL, msg.GetPtr(), L"Oops!!! Break?", MB_YESNO);
-	if (rlt == IDYES)
-	{
-		// crash log
-		MK_LOG_MGR.CreateCrashPage(msg);
-
-		// 강제예외
-		throw;
-	}
-	else if (rlt == IDNO)
-#else
+//#if (MKDEF_CHECK_EXCEPTION_BREAK)
+//	int rlt = MessageBox(NULL, msg.GetPtr(), L"Oops!!! Break?", MB_YESNO);
+//	if (rlt == IDYES)
+//	{
+//		MK_LOG_MGR.CreateCrashPage(msg); // crash log
+//		throw; // 강제예외
+//	}
+//	else if (rlt == IDNO)
+//#else
 	int rlt = MessageBox(NULL, msg.GetPtr(), L"Oops!!!", MB_OK);
 	if (rlt == IDOK)
-#endif
+//#endif
 	{
 		// log 기록 후 진행
 		MK_LOG_MGR.Msg(L"<Error> " + msg, true);

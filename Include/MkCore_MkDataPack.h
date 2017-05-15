@@ -58,6 +58,8 @@ public:
 	bool SetData(const MkHashStr& key, bool value, unsigned int index);
 	bool SetData(const MkHashStr& key, int value, unsigned int index);
 	bool SetData(const MkHashStr& key, unsigned int value, unsigned int index);
+	bool SetData(const MkHashStr& key, __int64 value, unsigned int index);
+	bool SetData(const MkHashStr& key, unsigned __int64 value, unsigned int index);
 	bool SetData(const MkHashStr& key, float value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkInt2& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkVec2& value, unsigned int index);
@@ -69,6 +71,8 @@ public:
 	bool SetData(const MkHashStr& key, const MkArray<bool>& values);
 	bool SetData(const MkHashStr& key, const MkArray<int>& values);
 	bool SetData(const MkHashStr& key, const MkArray<unsigned int>& values);
+	bool SetData(const MkHashStr& key, const MkArray<__int64>& values);
+	bool SetData(const MkHashStr& key, const MkArray<unsigned __int64>& values);
 	bool SetData(const MkHashStr& key, const MkArray<float>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkInt2>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkVec2>& values);
@@ -80,6 +84,8 @@ public:
 	bool GetData(const MkHashStr& key, bool& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, int& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, unsigned int& buffer, unsigned int index) const;
+	bool GetData(const MkHashStr& key, __int64& buffer, unsigned int index) const;
+	bool GetData(const MkHashStr& key, unsigned __int64& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, float& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkInt2& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkVec2& buffer, unsigned int index) const;
@@ -91,6 +97,8 @@ public:
 	bool GetData(const MkHashStr& key, MkArray<bool>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<int>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<unsigned int>& buffers) const;
+	bool GetData(const MkHashStr& key, MkArray<__int64>& buffers) const;
+	bool GetData(const MkHashStr& key, MkArray<unsigned __int64>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<float>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkInt2>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkVec2>& buffers) const;

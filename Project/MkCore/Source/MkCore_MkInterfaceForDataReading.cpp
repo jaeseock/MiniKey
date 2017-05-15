@@ -55,6 +55,16 @@ bool MkInterfaceForDataReading::Read(unsigned int& buffer)
 	return (m_SourcePtr == NULL) ? false : __TSI_DataReading<unsigned int>::Extract(buffer, *m_SourcePtr, m_CurrentPosition, m_EndPosition);
 }
 
+bool MkInterfaceForDataReading::Read(__int64& buffer)
+{
+	return (m_SourcePtr == NULL) ? false : __TSI_DataReading<__int64>::Extract(buffer, *m_SourcePtr, m_CurrentPosition, m_EndPosition);
+}
+
+bool MkInterfaceForDataReading::Read(unsigned __int64& buffer)
+{
+	return (m_SourcePtr == NULL) ? false : __TSI_DataReading<unsigned __int64>::Extract(buffer, *m_SourcePtr, m_CurrentPosition, m_EndPosition);
+}
+
 bool MkInterfaceForDataReading::Read(float& buffer)
 {
 	return (m_SourcePtr == NULL) ? false : __TSI_DataReading<float>::Extract(buffer, *m_SourcePtr, m_CurrentPosition, m_EndPosition);

@@ -16,6 +16,8 @@
 //	dwInterface.SetInputSize(ePDT_Bool, 1);
 //	dwInterface.SetInputSize(ePDT_Int, 1);
 //	dwInterface.SetInputSize(ePDT_UnsignedInt, 1);
+//	dwInterface.SetInputSize(ePDT_DInt, 1);
+//	dwInterface.SetInputSize(ePDT_DUnsignedInt, 1);
 //	dwInterface.SetInputSize(ePDT_Float, 1);
 //	dwInterface.SetInputSize(ePDT_Int2, 1);
 //	dwInterface.SetInputSize(ePDT_Vec2, 1);
@@ -26,6 +28,8 @@
 //	dwInterface.Write(true);
 //	dwInterface.Write(static_cast<int>(1234));
 //	dwInterface.Write(static_cast<unsigned int>(5678));
+//	dwInterface.Write(static_cast<__int64>(1234));
+//	dwInterface.Write(static_cast<unsigned __int64>(5678));
 //	dwInterface.Write(12.345f);
 //	dwInterface.Write(MkInt2(-20, 30));
 //	dwInterface.Write(MkVec2(12.f, 34.f));
@@ -55,6 +59,8 @@ public:
 	void Write(bool source);
 	void Write(int source);
 	void Write(unsigned int source);
+	void Write(__int64 source);
+	void Write(unsigned __int64 source);
 	void Write(float source);
 	void Write(const MkInt2& source);
 	void Write(const MkVec2& source);
@@ -91,6 +97,8 @@ protected:
 	MkArray<bool> m_BoolUnits;
 	MkArray<int> m_IntUnits;
 	MkArray<unsigned int> m_UIntUnits;
+	MkArray<__int64> m_DIntUnits;
+	MkArray<unsigned __int64> m_DUIntUnits;
 	MkArray<float> m_FloatUnits;
 	MkArray<MkInt2> m_Int2Units;
 	MkArray<MkVec2> m_Vec2Units;

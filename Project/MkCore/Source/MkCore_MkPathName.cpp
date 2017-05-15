@@ -1,6 +1,7 @@
 
 #include <ShlObj.h>
 #include <atltime.h>
+#include "MkCore_MkCheck.h"
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
 #include "MkCore_MkPathName.h"
@@ -23,9 +24,10 @@ class __DirectoryScouter
 public:
 
 	// startPath : 탐색을 시작할 디렉토리 경로
-	// fileSizeInKB : 총 파일 크기 반환(KB)
+	// totalFileSize : 총 파일 크기 반환
 	// includeSubDirectory : 하위 폴더 탐색 여부
-	unsigned int ScoutDirectory(const MkPathName& startPath, unsigned int& fileSizeInKB, bool includeSubDirectory) const
+	// 반환 값은 속한 모든 파일 수
+	unsigned int ScoutDirectory(const MkPathName& startPath, unsigned __int64& totalFileSize, bool includeSubDirectory)
 	{
 		if (startPath.IsDirectoryPath())
 		{
@@ -33,18 +35,19 @@ public:
 			targetPath.ConvertToRootBasisAbsolutePath(startPath);
 			if (targetPath.CheckAvailable())
 			{
-				unsigned int fileCount = 0;
-				unsigned int fileSize = 0;
-				_ScoutDirectory(targetPath, fileCount, fileSize, includeSubDirectory, NULL);
-				fileSizeInKB = fileSize;
-				return fileCount;
+				_ScoutDirectory(targetPath, includeSubDirectory, NULL);
+				totalFileSize = m_TotalFileSize;
+				return m_TotalFileCount;
 			}
 		}
-		fileSizeInKB = 0;
+		totalFileSize = 0;
 		return 0;
 	}
 
-	bool ScoutDirectory(const MkPathName& startPath, MkDataNode& node) const
+	// startPath : 탐색을 시작할 디렉토리 경로
+	// node : 정보가 담길 data node
+	// 반환 값은 소속 파일이 마지막으로 수정된 시간
+	unsigned int ScoutDirectory(const MkPathName& startPath, MkDataNode& node)
 	{
 		if (startPath.IsDirectoryPath())
 		{
@@ -52,19 +55,25 @@ public:
 			targetPath.ConvertToRootBasisAbsolutePath(startPath);
 			if (targetPath.CheckAvailable())
 			{
-				unsigned int fileCount = 0;
-				unsigned int fileSize = 0;
-				_ScoutDirectory(targetPath, fileCount, fileSize, true, &node);
-				return true;
+				node.Clear();
+				_ScoutDirectory(targetPath, true, &node);
+				return m_HighestWrittenTime;
 			}
 		}
-		return false;
+		return 0;
+	}
+
+	__DirectoryScouter()
+	{
+		m_TotalFileCount = 0;
+		m_TotalFileSize = 0;
+		m_HighestWrittenTime = 0;
 	}
 
 protected:
 	
 	// currentDirectoryPath는 존재하는 디렉토리 절대 경로
-	void _ScoutDirectory(const MkPathName& currentDirectoryPath, unsigned int& fileCount, unsigned int& fileSize, bool includeSubDirectory, MkDataNode* node) const
+	void _ScoutDirectory(const MkPathName& currentDirectoryPath, bool includeSubDirectory, MkDataNode* node)
 	{
 		// 최초 핸들 얻음
 		WIN32_FIND_DATA fd;
@@ -74,9 +83,6 @@ protected:
 		if (hFind == INVALID_HANDLE_VALUE)
 			return;
 
-		unsigned int subFiles = 0; // 직계 파일 수
-		unsigned int subDirs = 0; // 직계 디렉토리 수
-
 		// 핸들 검사
 		do
 		{
@@ -85,23 +91,31 @@ protected:
 			{
 				if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) // 파일
 				{
-					++subFiles;
+					unsigned __int64 currSize = static_cast<unsigned __int64>(fd.nFileSizeLow) +
+						static_cast<unsigned __int64>(fd.nFileSizeHigh) * (static_cast<unsigned __int64>(MAXDWORD) + static_cast<unsigned __int64>(1));
 
-					if (fd.nFileSizeLow > 0)
+					m_TotalFileSize += currSize;
+					++m_TotalFileCount;
+
+					if (node != NULL)
 					{
+						MkPathName targetPath = currentDirectoryPath;
+						MkPathName fileName = fd.cFileName;
+						targetPath += fileName;
+
+						MK_CHECK(fd.nFileSizeHigh == 0, targetPath + L" 파일의 크기가 4G를 넘음. 제외함") {}
 						if (fd.nFileSizeHigh == 0)
 						{
-							fileSize += fd.nFileSizeLow / 1024;
-						}
-						else
-						{
-							unsigned __int64 sz =
-								static_cast<unsigned __int64>(fd.nFileSizeHigh) *
-								(static_cast<unsigned __int64>(MAXDWORD) + static_cast<unsigned __int64>(1)) +
-								static_cast<unsigned __int64>(fd.nFileSizeLow);
+							unsigned int writtenTime = targetPath.GetWrittenTime();
+							if (writtenTime > m_HighestWrittenTime)
+							{
+								m_HighestWrittenTime = writtenTime;
+							}
 
-							sz /= static_cast<unsigned __int64>(1024);
-							fileSize += static_cast<unsigned int>(sz);
+							if (fileName.__CreateFileStructureInfo(*node, false, fd.nFileSizeLow, 0, writtenTime) != NULL)
+							{
+								MkPathName::__IncreaseFileCount(*node);
+							}
 						}
 					}
 				}
@@ -110,21 +124,45 @@ protected:
 					MkPathName targetName = fd.cFileName;
 					if ((targetName != L".") && (targetName != L".."))
 					{
-						++subDirs;
+						MkDataNode* childNode = NULL;
+						if (node != NULL)
+						{
+							childNode = node->CreateChildNode(targetName);
+							MK_CHECK(childNode != NULL, targetName + L" : 같은 이름의 파일이 동일 위치에 존재해 해당 디렉토리 생성 실패") {}
+						}
 
 						MkPathName targetPath = currentDirectoryPath;
 						targetPath += targetName;
 						targetPath += L"\\";
-						_ScoutDirectory(targetPath, fileCount, fileSize, includeSubDirectory, node); // 재귀
+						_ScoutDirectory(targetPath, includeSubDirectory, childNode); // 재귀
+
+						if (childNode != NULL)
+						{
+							// 해당 자식노드의 하위에 아무런 파일이나 디렉토리가 없으면 삭제
+							if ((!childNode->IsValidKey(MkPathName::KeyDirCount)) && (!childNode->IsValidKey(MkPathName::KeyFileCount)))
+							{
+								childNode->DetachFromParentNode();
+								delete childNode;
+							}
+							else
+							{
+								MkPathName::__IncreaseDirectoryCount(*node); // 유의미하면 카운터 증가
+							}
+						}
 					}
 				}
 			}
 		}
 		while (FindNextFile(hFind, &fd));
 		FindClose(hFind);
-
-		fileCount += subFiles;
 	}
+
+protected:
+
+	unsigned int m_TotalFileCount;
+	unsigned __int64 m_TotalFileSize;
+
+	unsigned int m_HighestWrittenTime;
 };
 
 // 파일, 디렉토리 삭제
@@ -204,14 +242,17 @@ protected:
 };
 
 // 기본 콜렉션. 모든 파일 검색
-class __BaseFileCollection
+class __FileCollector
 {
 public:
 
 	// fileNameList : 검색된 파일 경로들이 담길 버퍼. 가능하면 충분히 Reserve 할 것
 	// startPath : 탐색을 시작할 디렉토리 경로
 	// includeSubDirectory : 하위 폴더 탐색 여부
-	void GetFileList(MkArray<MkPathName>& fileNameList, const MkPathName& startPath, bool includeSubDirectory, bool includeZeroSizeFile) const
+	// filter : 초기화 된 필터(opt)
+	void GetFileList
+		(MkArray<MkPathName>& fileNameList, const MkPathName& startPath,
+		bool includeSubDirectory, bool includeZeroSizeFile, const MkPathName::Filter* filter) const
 	{
 		if (startPath.IsDirectoryPath())
 		{
@@ -219,21 +260,16 @@ public:
 			targetPath.ConvertToRootBasisAbsolutePath(startPath);
 			if (targetPath.CheckAvailable())
 			{
-				_GetFileListInDirectory(fileNameList, targetPath, L"", includeSubDirectory, includeZeroSizeFile);
+				_GetFileListInDirectory(fileNameList, targetPath, L"", includeSubDirectory, includeZeroSizeFile, filter);
 			}
 		}
 	}
 
 protected:
-	
-	// file 검사
-	virtual bool _CheckAvailable(const MkPathName& relativePath, const MkPathName& fileName) const { return true; }
-
-	// directory 검사
-	virtual bool _CheckAvailable(const MkPathName& relativePath) const { return true; }
 
 	void _GetFileListInDirectory
-		(MkArray<MkPathName>& fileNameList, const MkPathName& startPath, const MkPathName& offset, bool includeSubDirectory, bool includeZeroSizeFile) const
+		(MkArray<MkPathName>& fileNameList, const MkPathName& startPath, const MkPathName& offset,
+		bool includeSubDirectory, bool includeZeroSizeFile, const MkPathName::Filter* filter) const
 	{
 		// 최초 핸들 얻음
 		WIN32_FIND_DATA fd;
@@ -256,7 +292,7 @@ protected:
 					if (includeZeroSizeFile || ((fd.nFileSizeLow > 0) || (fd.nFileSizeHigh > 0))) // 용량 검사
 					{
 						MkPathName fileName = fd.cFileName;
-						if (_CheckAvailable(offset, fileName))
+						if ((filter == NULL) ? true : filter->CheckAvailableFile(offset + fileName))
 						{
 							fileNameList.PushBack(offset + fileName);
 						}
@@ -271,9 +307,9 @@ protected:
 						targetPath += targetName;
 						targetPath += L"\\";
 
-						if (_CheckAvailable(targetPath))
+						if ((filter == NULL) ? true : filter->CheckAvailableDirectory(targetPath))
 						{
-							_GetFileListInDirectory(fileNameList, startPath, targetPath, includeSubDirectory, includeZeroSizeFile); // 재귀
+							_GetFileListInDirectory(fileNameList, startPath, targetPath, includeSubDirectory, includeZeroSizeFile, filter); // 재귀
 						}
 					}
 				}
@@ -282,163 +318,6 @@ protected:
 		while (FindNextFile(hFind, &fd));
 		FindClose(hFind);
 	}
-};
-
-// 필터링 콜렉션
-class __FileCollectionWithFiltering : public __BaseFileCollection
-{
-public:
-
-	void GetFileList
-		(MkArray<MkPathName>& fileNameList, const MkPathName& startPath,
-		const MkArray<MkPathName>& exceptionFilter, const MkArray<MkPathName>& nameFilter,
-		const MkArray<MkPathName>& extensionFilter, const MkArray<MkStr>& prefixFilter,
-		bool includeSubDirectory, bool includeZeroSizeFile)
-	{
-		m_OnExceptionFilter = _ConvertArrayToHashMap(exceptionFilter, m_ExceptionFilter);
-		m_OnNameFilter = _ConvertArrayToHashMap(nameFilter, m_NameFilter);
-		m_OnExtensionFilter = _ConvertArrayToHashMap(extensionFilter, m_ExtensionFilter);
-		m_OnPrefixFilter = _ConvertArrayToArray(prefixFilter, m_PrefixFilter);
-
-		__BaseFileCollection::GetFileList(fileNameList, startPath, includeSubDirectory, includeZeroSizeFile);
-	}
-
-	__FileCollectionWithFiltering(const bool& passingResult) : __BaseFileCollection()
-	{
-		m_OnExceptionFilter = false;
-		m_OnNameFilter = false;
-		m_OnExtensionFilter = false;
-		m_OnPrefixFilter = false;
-		m_SkipFiltering = true;
-		m_PassingResult = passingResult;
-	}
-
-protected:
-
-	// 필터링 대상 파일 수에 비례하여 검색 횟수가 늘어나므로 HashMap<>을 사용해 검색 효율 증대
-	bool _ConvertArrayToHashMap(const MkArray<MkPathName>& source, MkHashMap<MkHashStr, int>& target)
-	{
-		bool turnOn = !source.Empty();
-		if (turnOn)
-		{
-			target.Clear();
-			MK_INDEXING_LOOP(source, i)
-			{
-				MkStr srcStr = source[i];
-				target.Create(MkHashStr(srcStr.ToLower()), 0);
-			}
-			target.Rehash();
-			m_SkipFiltering = false;
-		}
-		return turnOn;
-	}
-
-	bool _ConvertArrayToArray(const MkArray<MkStr>& source, MkArray<MkStr>& target)
-	{
-		bool turnOn = !source.Empty();
-		if (turnOn)
-		{
-			target.Clear();
-			target.Reserve(source.GetSize());
-			MK_INDEXING_LOOP(source, i)
-			{
-				MkStr srcStr = source[i];
-				target.PushBack(srcStr.ToLower());
-			}
-			m_SkipFiltering = false;
-		}
-		return turnOn;
-	}
-
-	virtual bool _CheckAvailable(const MkPathName& relativePath, const MkPathName& fileName) const
-	{
-		if (m_SkipFiltering)
-			return !m_PassingResult;
-
-		MkPathName targetPath = relativePath;
-		targetPath.ToLower();
-
-		MkPathName targetFile = fileName;
-		targetFile.ToLower();
-
-		targetPath += fileName;
-
-		if (m_OnExceptionFilter || m_OnNameFilter)
-		{
-			MkHashStr hashKey(targetPath);
-			if (m_OnExceptionFilter)
-			{
-				if (m_ExceptionFilter.Exist(hashKey))
-					return !m_PassingResult;
-			}
-
-			if (m_OnNameFilter)
-			{
-				if (m_NameFilter.Exist(hashKey))
-					return m_PassingResult;
-			}
-		}
-
-		if (m_OnExtensionFilter)
-		{
-			if (m_ExtensionFilter.Exist(MkHashStr(targetFile.GetFileExtension())))
-				return m_PassingResult;
-		}
-
-		if (m_OnPrefixFilter)
-		{
-			MK_INDEXING_LOOP(m_PrefixFilter, i)
-			{
-				if (targetFile.CheckPrefix(m_PrefixFilter[i]))
-					return m_PassingResult;
-			}
-		}
-
-		return !m_PassingResult;
-	}
-
-	virtual bool _CheckAvailable(const MkPathName& relativePath) const
-	{
-		if (m_OnNameFilter)
-		{
-			MkPathName targetPath = relativePath;
-			targetPath.ToLower();
-
-			if (m_NameFilter.Exist(MkHashStr(targetPath)))
-				return m_PassingResult;
-		}
-
-		return !m_PassingResult;
-	}
-
-protected:
-
-	MkHashMap<MkHashStr, int> m_ExceptionFilter;
-	MkHashMap<MkHashStr, int> m_NameFilter;
-	MkHashMap<MkHashStr, int> m_ExtensionFilter;
-	MkArray<MkStr> m_PrefixFilter;
-
-	bool m_OnExceptionFilter;
-	bool m_OnNameFilter;
-	bool m_OnExtensionFilter;
-	bool m_OnPrefixFilter;
-	bool m_SkipFiltering;
-
-	bool m_PassingResult;
-};
-
-// white colletion : 필터링 통과한 파일만 검색
-class __WhiteFileCollection : public __FileCollectionWithFiltering
-{
-public:
-	__WhiteFileCollection() : __FileCollectionWithFiltering(true) {}
-};
-
-// black colletion : 필터링 통과 못 한 파일만 검색
-class __BlackFileCollection : public __FileCollectionWithFiltering
-{
-public:
-	__BlackFileCollection() : __FileCollectionWithFiltering(false) {}
 };
 
 //------------------------------------------------------------------------------------------------//
@@ -571,44 +450,190 @@ void MkPathName::SplitPath(MkPathName& path, MkStr& name, MkStr& extension) cons
 
 //------------------------------------------------------------------------------------------------//
 
+bool MkPathName::Filter::SetUp
+(const MkArray<MkPathName>* exceptionFilter, const MkArray<MkPathName>* nameFilter, const MkArray<MkPathName>* extensionFilter, const MkArray<MkStr>* prefixFilter)
+{
+	m_OnExceptionFilter = (exceptionFilter == NULL) ? false : _ConvertArrayToHashMap(*exceptionFilter, m_ExceptionFilter);
+	m_OnNameFilter = (nameFilter == NULL) ? false : _ConvertArrayToHashMap(*nameFilter, m_NameFilter);
+	m_OnExtensionFilter = (extensionFilter == NULL) ? false : _ConvertArrayToHashMap(*extensionFilter, m_ExtensionFilter);
+	m_OnPrefixFilter = (prefixFilter == NULL) ? false : _ConvertArrayToArray(*prefixFilter, m_PrefixFilter);
+	return CheckAvailable();
+}
+
+bool MkPathName::Filter::CheckAvailable(void) const
+{
+	return (m_OnExceptionFilter || m_OnNameFilter || m_OnExtensionFilter || m_OnPrefixFilter);
+}
+
+bool MkPathName::Filter::CheckAvailableFile(const MkPathName& relativePath) const
+{
+	MkPathName targetPath = relativePath;
+	targetPath.ToLower();
+
+	if (m_OnExceptionFilter || m_OnNameFilter)
+	{
+		MkHashStr hashKey(targetPath);
+		if (m_OnExceptionFilter)
+		{
+			if (m_ExceptionFilter.Exist(hashKey))
+				return !m_PassingResult;
+		}
+
+		if (m_OnNameFilter)
+		{
+			if (m_NameFilter.Exist(hashKey))
+				return m_PassingResult;
+		}
+	}
+
+	if (m_OnExtensionFilter)
+	{
+		if (m_ExtensionFilter.Exist(MkHashStr(targetPath.GetFileExtension())))
+			return m_PassingResult;
+	}
+
+	if (m_OnPrefixFilter)
+	{
+		MkPathName targetFile = targetPath.GetFileName(false);
+		MK_INDEXING_LOOP(m_PrefixFilter, i)
+		{
+			if (targetFile.CheckPrefix(m_PrefixFilter[i]))
+				return m_PassingResult;
+		}
+	}
+
+	return !m_PassingResult;
+}
+
+bool MkPathName::Filter::CheckAvailableDirectory(const MkPathName& relativePath) const
+{
+	if (m_OnNameFilter)
+	{
+		MkPathName targetPath = relativePath;
+		targetPath.ToLower();
+
+		if (m_NameFilter.Exist(MkHashStr(targetPath)))
+			return m_PassingResult;
+	}
+
+	return !m_PassingResult;
+}
+
+bool MkPathName::Filter::GetExceptionFilter(MkArray<MkStr>& buffer) const { return _GetKeyList(m_ExceptionFilter, buffer); }
+bool MkPathName::Filter::GetNameFilter(MkArray<MkStr>& buffer) const { return _GetKeyList(m_NameFilter, buffer); }
+bool MkPathName::Filter::GetExtensionFilter(MkArray<MkStr>& buffer) const { return _GetKeyList(m_ExtensionFilter, buffer); }
+bool MkPathName::Filter::GetPrefixFilter(MkArray<MkStr>& buffer) const { buffer = m_PrefixFilter; return !buffer.Empty(); }
+
+void MkPathName::Filter::Clear(void)
+{
+	m_ExceptionFilter.Clear();
+	m_NameFilter.Clear();
+	m_ExtensionFilter.Clear();
+	m_PrefixFilter.Clear();
+
+	m_OnExceptionFilter = false;
+	m_OnNameFilter = false;
+	m_OnExtensionFilter = false;
+	m_OnPrefixFilter = false;
+}
+
+MkPathName::Filter::Filter(bool result)
+{
+	m_OnExceptionFilter = false;
+	m_OnNameFilter = false;
+	m_OnExtensionFilter = false;
+	m_OnPrefixFilter = false;
+	m_PassingResult = result;
+}
+
+bool MkPathName::Filter::_ConvertArrayToHashMap(const MkArray<MkPathName>& source, MkHashMap<MkHashStr, int>& target)
+{
+	bool turnOn = !source.Empty();
+	if (turnOn)
+	{
+		target.Clear();
+		MK_INDEXING_LOOP(source, i)
+		{
+			MkStr srcStr = source[i];
+			target.Create(MkHashStr(srcStr.ToLower()), 0);
+		}
+		target.Rehash();
+	}
+	return turnOn;
+}
+
+bool MkPathName::Filter::_ConvertArrayToArray(const MkArray<MkStr>& source, MkArray<MkStr>& target)
+{
+	bool turnOn = !source.Empty();
+	if (turnOn)
+	{
+		target.Clear();
+		target.Reserve(source.GetSize());
+		MK_INDEXING_LOOP(source, i)
+		{
+			MkStr srcStr = source[i];
+			target.PushBack(srcStr.ToLower());
+		}
+	}
+	return turnOn;
+}
+
+bool MkPathName::Filter::_GetKeyList(const MkHashMap<MkHashStr, int>& source, MkArray<MkStr>& buffer)
+{
+	bool ok = !source.Empty();
+	if (ok)
+	{
+		buffer.Clear();
+		buffer.Reserve(source.GetSize());
+		MkConstHashMapLooper<MkHashStr, int> looper(source);
+		MK_STL_LOOP(looper)
+		{
+			buffer.PushBack(looper.GetCurrentKey().GetString());
+		}
+	}
+	return ok;
+}
+
+MkPathName::WhiteFilter::WhiteFilter() : Filter(true) {}
+MkPathName::BlackFilter::BlackFilter() : Filter(false) {}
+
+//------------------------------------------------------------------------------------------------//
+
 unsigned int MkPathName::GetFileCount(bool includeSubDirectory) const
 {
 	__DirectoryScouter scouter;
-	unsigned int fileSize;
-	return scouter.ScoutDirectory(*this, fileSize, includeSubDirectory);
+	unsigned __int64 totalFileSize;
+	return scouter.ScoutDirectory(*this, totalFileSize, includeSubDirectory);
 }
 
-unsigned int MkPathName::GetFileCountAndSize(unsigned int& fileSizeInKB, bool includeSubDirectory) const
+unsigned int MkPathName::GetFileCountAndTotalSize(unsigned __int64& totalFileSize, bool includeSubDirectory) const
 {
 	__DirectoryScouter scouter;
-	return scouter.ScoutDirectory(*this, fileSizeInKB, includeSubDirectory);
+	return scouter.ScoutDirectory(*this, totalFileSize, includeSubDirectory);
 }
 
-void MkPathName::GetFileList(MkArray<MkPathName>& filePathList, bool includeSubDirectory, bool includeZeroSizeFile) const
+void MkPathName::GetFileList(MkArray<MkPathName>& filePathList, bool includeSubDirectory, bool includeZeroSizeFile, const Filter* filter) const
 {
-	__BaseFileCollection interfaceInstance;
-	interfaceInstance.GetFileList(filePathList, *this, includeSubDirectory, includeZeroSizeFile);
-}
-
-bool MkPathName::GetFileStructure(MkDataNode& node) const
-{
-	return true;
+	__FileCollector interfaceInstance;
+	interfaceInstance.GetFileList(filePathList, *this, includeSubDirectory, includeZeroSizeFile, filter);
 }
 
 void MkPathName::GetWhiteFileList
-(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>& nameFilter, const MkArray<MkPathName>& extensionFilter,
- const MkArray<MkStr>& prefixFilter, const MkArray<MkPathName>& exceptionFilter, bool includeSubDirectory, bool includeZeroSizeFile) const
+(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>* nameFilter, const MkArray<MkPathName>* extensionFilter,
+ const MkArray<MkStr>* prefixFilter, const MkArray<MkPathName>* exceptionFilter, bool includeSubDirectory, bool includeZeroSizeFile) const
 {
-	__WhiteFileCollection interfaceInstance;
-	interfaceInstance.GetFileList(filePathList, *this, exceptionFilter, nameFilter, extensionFilter, prefixFilter, includeSubDirectory, includeZeroSizeFile);
+	WhiteFilter ft;
+	const Filter* filter = ft.SetUp(exceptionFilter, nameFilter, extensionFilter, prefixFilter) ? &ft : NULL;
+	GetFileList(filePathList, includeSubDirectory, includeZeroSizeFile, filter);
 }
 
 void MkPathName::GetBlackFileList
-(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>& nameFilter, const MkArray<MkPathName>& extensionFilter,
- const MkArray<MkStr>& prefixFilter, const MkArray<MkPathName>& exceptionFilter, bool includeSubDirectory, bool includeZeroSizeFile) const
+(MkArray<MkPathName>& filePathList, const MkArray<MkPathName>* nameFilter, const MkArray<MkPathName>* extensionFilter,
+ const MkArray<MkStr>* prefixFilter, const MkArray<MkPathName>* exceptionFilter, bool includeSubDirectory, bool includeZeroSizeFile) const
 {
-	__BlackFileCollection interfaceInstance;
-	interfaceInstance.GetFileList(filePathList, *this, exceptionFilter, nameFilter, extensionFilter, prefixFilter, includeSubDirectory, includeZeroSizeFile);
+	BlackFilter ft;
+	const Filter* filter = ft.SetUp(exceptionFilter, nameFilter, extensionFilter, prefixFilter) ? &ft : NULL;
+	GetFileList(filePathList, includeSubDirectory, includeZeroSizeFile, filter);
 }
 
 void MkPathName::GetIndexFormFileList
@@ -620,12 +645,12 @@ void MkPathName::GetIndexFormFileList
 	// 먼저 prefix, extension으로 white filtering
 	MkArray<MkPathName> filePathList;
 	filePathList.Reserve(256);
-	MkArray<MkPathName> emptyFilter;
 	MkArray<MkPathName> extensionFilter;
 	extensionFilter.PushBack(extension);
 	MkArray<MkStr> prefixFilter;
 	prefixFilter.PushBack(prefix);
-	GetWhiteFileList(filePathList, emptyFilter, extensionFilter, prefixFilter, emptyFilter, false, includeZeroSizeFile);
+
+	GetWhiteFileList(filePathList, NULL, &extensionFilter, &prefixFilter, NULL, false, includeZeroSizeFile);
 	if (filePathList.Empty())
 		return;
 
@@ -651,24 +676,28 @@ void MkPathName::GetIndexFormFileList
 	}
 }
 
+// 2000년 기준이므로 1970 ~ 2000.1.1 00:00:00에 해당하는 초를 제외
+// CTime c2000(2000, 1, 1, 0, 0, 0, 0) >> c2000.GetTime() == 946652400;
+#define MKDEF_WRITTEN_TIME_OFFSET (static_cast<__time64_t>(946652400))
+
 unsigned int MkPathName::GetWrittenTime(void) const
 {
 	if (!CheckAvailable())
-		return MKDEF_ARRAY_ERROR;
+		return 0;
 
 	HANDLE fileHandle = CreateFile(m_Str.GetPtr(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
     if (fileHandle == INVALID_HANDLE_VALUE)
-		return MKDEF_ARRAY_ERROR;
+		return 0;
 
-	FILETIME create_time, access_time, write_time;
-	GetFileTime(fileHandle, &create_time, &access_time, &write_time);
+	FILETIME write_time;
+	GetFileTime(fileHandle, NULL, NULL, &write_time);
 	SYSTEMTIME write_system_time, write_local_time;
 	FileTimeToSystemTime(&write_time, &write_system_time);
 	SystemTimeToTzSpecificLocalTime(NULL, &write_system_time, &write_local_time);
     CloseHandle(fileHandle);
 
 	if ((write_local_time.wYear < 2000) || (write_local_time.wYear > 2135))
-		return MKDEF_ARRAY_ERROR;
+		return 0;
 
 	/*
 	// CTime 이라는 것이 있는 줄 모르고 만든 수동계산
@@ -696,14 +725,28 @@ unsigned int MkPathName::GetWrittenTime(void) const
 
 	// 자동 계산(CTime 이용)
 	// CTime의 범위가 1970.1.1 ~ 2038.12.31이라 위 필터링에서 자동으로 걸러지므로 안심하고 사용 가능
-	CTime ctime(write_local_time.wYear, write_local_time.wMonth, write_local_time.wDay,
-		write_local_time.wHour, write_local_time.wMinute, write_local_time.wSecond, 0);
+	return ConvertWrittenTime
+		(static_cast<int>(write_local_time.wYear), static_cast<int>(write_local_time.wMonth), static_cast<int>(write_local_time.wDay),
+		static_cast<int>(write_local_time.wHour), static_cast<int>(write_local_time.wMinute), static_cast<int>(write_local_time.wSecond));
+}
 
+void MkPathName::ConvertWrittenTime(unsigned int writtenTime, int& year, int& month, int& day, int& hour, int& min, int& sec)
+{
+	CTime ctime(static_cast<__time64_t>(writtenTime) + MKDEF_WRITTEN_TIME_OFFSET);
+
+	year = ctime.GetYear();
+	month = ctime.GetMonth();
+	day = ctime.GetDay();
+	hour = ctime.GetHour();
+	min = ctime.GetMinute();
+	sec = ctime.GetSecond();
+}
+
+unsigned int MkPathName::ConvertWrittenTime(int year, int month, int day, int hour, int min, int sec)
+{
+	CTime ctime(year, month, day, hour, min, sec, 0);
 	__time64_t currentSecs = ctime.GetTime();
-
-	// 2000년 기준이므로 1970 ~ 2000.1.1 00:00:00에 해당하는 초를 제외
-	// CTime c2000(2000, 1, 1, 0, 0, 0, 0) >> c2000.GetTime() == 946652400;
-	__time64_t secsFrom2000 = currentSecs - static_cast<__time64_t>(946652400);
+	__time64_t secsFrom2000 = currentSecs - MKDEF_WRITTEN_TIME_OFFSET;
 	return static_cast<unsigned int>(secsFrom2000);
 }
 
@@ -888,35 +931,50 @@ bool MkPathName::RenameCurrentFile(const MkPathName& newFileName)
 	return false;
 }
 
-bool MkPathName::MoveCurrentFile(const MkPathName& newPath)
+bool MkPathName::CopyCurrentFile(const MkPathName& newPath, bool failIfExists) const
 {
-	if (newPath.Empty() || newPath.IsDirectoryPath())
-		return false;
+	return _CopyOrMoveCurrentFile(newPath, true, failIfExists);
+}
 
+bool MkPathName::MoveCurrentFile(const MkPathName& newPath) const
+{
+	return _CopyOrMoveCurrentFile(newPath, false, false);
+}
+
+bool MkPathName::SetWrittenTime(unsigned int writtenTime) const
+{
+	int year, month, day, hour, min, sec;
+	ConvertWrittenTime(writtenTime, year, month, day, hour, min, sec);
+	return SetWrittenTime(year, month, day, hour, min, sec);
+}
+
+bool MkPathName::SetWrittenTime(int year, int month, int day, int hour, int min, int sec) const
+{
 	MkPathName tmpPath;
 	tmpPath.ConvertToRootBasisAbsolutePath(*this);
 	if (tmpPath.CheckAvailable())
 	{
-		MkPathName targetPath;
-		if (newPath.IsAbsolutePath())
-		{
-			targetPath = newPath;
-		}
-		else
-		{
-			targetPath = tmpPath.GetPath() + newPath;
-			targetPath.OptimizePath();
+		HANDLE hFile = CreateFile
+			(tmpPath.GetPtr(), GENERIC_READ | GENERIC_WRITE , FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
 
-			if (!targetPath.CheckAvailable())
-			{
-				if (!targetPath.MakeDirectoryPath())
-					return false;
-			}
+		MK_CHECK(hFile != INVALID_HANDLE_VALUE, *this + L" 파일 오픈 실패")
+			return false;
 
-			targetPath += tmpPath.GetFileName();
-		}
+		SYSTEMTIME st;
+		st.wYear = year;
+		st.wMonth = month;
+		st.wDayOfWeek = 0;
+		st.wDay = day;
+		st.wHour = hour;
+		st.wMinute = min;
+		st.wSecond = sec;
+		st.wMilliseconds = 0;
 
-		bool ok = (MoveFile(tmpPath.GetPtr(), targetPath.GetPtr()) != 0);
+		FILETIME ft;
+		SystemTimeToFileTime(&st, &ft);
+		LocalFileTimeToFileTime(&ft, &ft);
+		bool ok = (SetFileTime(hFile, NULL, NULL, &ft) != 0);
+		CloseHandle(hFile);
 		return ok;
 	}
 	return false;
@@ -1101,6 +1159,87 @@ bool MkPathName::GetDirectoryPathFromDialog(const MkStr& msg, HWND owner, const 
 
 //------------------------------------------------------------------------------------------------//
 
+unsigned int MkPathName::ExportSystemStructure(MkDataNode& node) const
+{
+	__DirectoryScouter scouter;
+	return scouter.ScoutDirectory(*this, node);
+}
+
+void MkPathName::__GetSubDirectories(const MkDataNode& node, MkArray<MkHashStr>& subDirs)
+{
+	_GetSubNodesByTag(node, subDirs, KeyDirCount, KeyWrittenTime, false); // node에서 KeyDirCount 갯수만큼 KeyWrittenTime가 없는 child node
+}
+
+void MkPathName::__GetSubFiles(const MkDataNode& node, MkArray<MkHashStr>& subFiles)
+{
+	_GetSubNodesByTag(node, subFiles, KeyFileCount, KeyWrittenTime, true); // node에서 KeyFileCount 갯수만큼 KeyWrittenTime가 있는 child node
+}
+
+void MkPathName::__IncreaseDirectoryCount(MkDataNode& node) { _IncreaseUnitCountByTag(node, KeyDirCount); }
+void MkPathName::__IncreaseFileCount(MkDataNode& node) { _IncreaseUnitCountByTag(node, KeyFileCount); }
+
+bool MkPathName::__CheckFileDifference(const MkDataNode& lastFileNode, MkDataNode& currFileNode)
+{
+	MkArray<unsigned int> size0(2);
+	unsigned int wt0 = 0;
+	if (!lastFileNode.GetData(KeyFileSize, size0))
+	{
+		size0.PushBack(0);
+	}
+	lastFileNode.GetData(KeyWrittenTime, wt0, 0);
+
+	unsigned int size1 = 0, wt1 = 0;
+	currFileNode.GetData(KeyFileSize, size1, 0);
+	currFileNode.GetData(KeyWrittenTime, wt1, 0);
+
+	bool diff = ((size0[0] != size1) || (wt0 != wt1)); // 다른지만 비교하지 대소판단은 하지 않음
+	if ((!diff) && (size0.GetSize() == 2))
+	{
+		currFileNode.SetData(KeyFileSize, size0); // 복사
+	}
+	return diff;
+}
+
+MkDataNode* MkPathName::__CreateFileStructureInfo
+(MkDataNode& node, bool compressed, unsigned int origSize, unsigned int compSize, unsigned int writtenTime)
+{
+	if (Empty() || IsDirectoryPath())
+		return NULL;
+
+	MkDataNode* fileNode = node.CreateChildNode(*this);
+	MK_CHECK(fileNode != NULL, *this + L" : 같은 이름의 디렉토리가 동일 위치에 존재해 해당 파일 정보 생성 실패")
+		return NULL;
+
+	do
+	{
+		// 크기 정보
+		// compressed(false) : 원래 크기만 기록
+		// compressed(true) : 원래 크기, 압축 후 크기 순으로 기록
+		MkArray<unsigned int> sizeBuf(2);
+		sizeBuf.PushBack(origSize);
+
+		if (compressed)
+		{
+			sizeBuf.PushBack(compSize);
+		}
+
+		if (!fileNode->CreateUnit(KeyFileSize, sizeBuf))
+			break;
+
+		// 수정 시간
+		if (!fileNode->CreateUnit(KeyWrittenTime, writtenTime))
+			break;
+
+		return fileNode;
+	}
+	while (false);
+
+	delete fileNode;
+	return NULL;
+}
+
+//------------------------------------------------------------------------------------------------//
+
 unsigned int MkPathName::_GetExtensionPosition(void) const
 {
 	if (Empty())
@@ -1272,6 +1411,46 @@ bool MkPathName::_ConvertToRelativePath(const MkPathName& basePath)
 		}
 	}
 	return true;
+}
+
+bool MkPathName::_CopyOrMoveCurrentFile(const MkPathName& newPath, bool copy, bool failIfExists) const
+{
+	if (Empty() || IsDirectoryPath() || newPath.Empty())
+		return false;
+
+	MkPathName tmpPath;
+	tmpPath.ConvertToRootBasisAbsolutePath(*this);
+	if (tmpPath.CheckAvailable())
+	{
+		MkPathName targetPath;
+		if (newPath.IsAbsolutePath())
+		{
+			targetPath = newPath;
+		}
+		else
+		{
+			targetPath = tmpPath.GetPath() + newPath;
+			targetPath.OptimizePath();
+		}
+
+		if (targetPath.IsDirectoryPath())
+		{
+			targetPath.CheckAndAddBackslash();
+			if (!targetPath.MakeDirectoryPath())
+				return false;
+
+			targetPath += GetFileName();
+		}
+		else if (!targetPath.GetPath().MakeDirectoryPath())
+			return false;
+
+		if (copy)
+		{
+			return (::CopyFile(tmpPath.GetPtr(), targetPath.GetPtr(), (failIfExists) ? TRUE : FALSE) != 0);
+		}
+		return (::MoveFile(tmpPath.GetPtr(), targetPath.GetPtr()) != 0);
+	}
+	return false;
 }
 
 bool MkPathName::_ExcuteProcess(const MkStr& processTitle, DWORD flag, const MkStr& argument) const
@@ -1488,6 +1667,42 @@ unsigned int MkPathName::_GetFilePathFromDialog
 	MK_DELETE_ARRAY(tmpFilter);
 
 	return fileCount;
+}
+
+void MkPathName::_GetSubNodesByTag(const MkDataNode& node, MkArray<MkHashStr>& subNodes, const MkHashStr& countTag, const MkHashStr& typeTag, bool exist)
+{
+	unsigned int count = 0;
+	node.GetData(countTag, count, 0);
+	if (count > 0)
+	{
+		subNodes.Reserve(count);
+
+		MkArray<MkHashStr> keys;
+		node.GetChildNodeList(keys);
+		MK_INDEXING_LOOP(keys, i)
+		{
+			const MkHashStr& currKey = keys[i];
+			bool hasTag = node.GetChildNode(currKey)->IsValidKey(typeTag);
+			if ((exist) ? (hasTag) : (!hasTag))
+			{
+				subNodes.PushBack(currKey);
+			}
+		}
+	}
+}
+
+void MkPathName::_IncreaseUnitCountByTag(MkDataNode& node, const MkHashStr& key)
+{
+	if (node.IsValidKey(key))
+	{
+		unsigned int cnt;
+		node.GetData(key, cnt, 0); // ++cnt
+		node.SetData(key, cnt + 1, 0);
+	}
+	else
+	{
+		node.CreateUnit(key, static_cast<unsigned int>(1));
+	}
 }
 
 //------------------------------------------------------------------------------------------------//
