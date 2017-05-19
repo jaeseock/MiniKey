@@ -13,8 +13,12 @@ public:
 
 	inline void SetParentWindowHandle(HWND hWnd) { m_hWnd = hWnd; }
 
+	// launcher file은 res의 root에 위치하여야 함. 따라서 fileName은 경로 없는 순수 파일명이어야 함(ex> "launcher.exe")
 	void SetLauncherFileName(const MkPathName& fileName);
+
+	// 실행파일 경로는 상대경로 포함 가능(ex> "bin\\client.exe")
 	void SetRunFilePath(const MkPathName& filePath);
+	
 	bool SetHistoryDirectoryPath(const MkPathName& historyDirPath);
 	bool SetPatchRootDirectoryPath(const MkPathName& patchDirPath);
 	bool SetUpdatingRootDirectoryPath(const MkPathName& updatingDirPath, const MkArray<MkStr>& destList);

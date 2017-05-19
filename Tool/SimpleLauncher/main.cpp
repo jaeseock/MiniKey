@@ -6,12 +6,12 @@
 
 #include "MkCore_MkCmdLine.h"
 #include "MkCore_MkDevPanel.h"
-//#include "MkCore_MkDataNode.h"
 
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
 
 #include "MkCore_MkPatchFileGenerator.h"
+#include "MkCore_MkPatchStarter.h"
 #include "MkCore_MkPatchFileDownloader.h"
 
 #define MKDEF_APP_EDIT_MAIN_ID 1
@@ -30,11 +30,26 @@ class TestFramework : public MkBaseFramework
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
+		// patch url 검사
+		std::string patchUrlKey = MKDEF_PATCH_DOWNLOAD_URL_KEY;
+		if (cmdLine.HasPair(patchUrlKey))
+		{
+			m_PatchURL.ImportMultiByteString(cmdLine.GetValue(patchUrlKey, 0));
+		}
+
+		if (m_PatchURL.Empty())
+		{
+			::MessageBox(NULL, L"No URL.", L"SimpleLauncher", MB_OK);
+			return false; // quit
+		}
+
+		// launcher가 app을 실행하므로 복수 실행 예외 처리
 		MkCmdLine newCmd = cmdLine;
 		newCmd.AddPair("#AME", "_MkGameApp");
 		newCmd.UpdateFullStr();
 		m_Arg.ImportMultiByteString(newCmd);
 
+		// ui 생성
 		m_Font = CreateFont
 			(12, 0, 0, 0, 0, 0, 0, 0, HANGUL_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DRAFT_QUALITY, VARIABLE_PITCH | FF_ROMAN, L"굴림");
 
@@ -60,6 +75,24 @@ public:
 
 		currentY += 30;
 		m_RunBtnHandle = _CreateControl(hWnd, hInstance, L"button", MKDEF_APP_BTN_START_ID, L"게임 시작", buttonControlStyle, MkIntRect(5, currentY, 400, 40));
+
+		// 강제로 foreground로 보냄
+		HWND frontWnd = ::GetForegroundWindow();
+		HWND myWnd = m_MainWindow.GetWindowHandle();
+		if ((frontWnd != NULL) && (frontWnd != myWnd))
+		{
+			DWORD frontThreadID = ::GetWindowThreadProcessId(frontWnd, NULL);
+			DWORD myThreadID= ::GetCurrentThreadId();
+			if (myThreadID != frontThreadID)
+			{
+				if (::AttachThreadInput(myThreadID, frontThreadID, TRUE))
+				{
+					::SetForegroundWindow(myWnd);
+					::BringWindowToTop(myWnd);
+					::AttachThreadInput(myThreadID, frontThreadID, FALSE);
+				}
+			}
+		}
 		
 		return true;
 	}
@@ -68,7 +101,12 @@ public:
 	{
 		MK_DEV_PANEL.ClearLogWindow();
 
-		m_Patcher.CheckAndDownloadPatchFile(L"http://210.207.252.151/Test");
+		MK_DEV_PANEL.InsertEmptyLine();
+		MK_DEV_PANEL.MsgToLog(L"> Download URL :");
+		MK_DEV_PANEL.MsgToLog(L"  " + m_PatchURL);
+		MK_DEV_PANEL.InsertEmptyLine();
+
+		m_Patcher.CheckAndDownloadPatchFile(m_PatchURL);
 	}
 
 	virtual void Update(void)
@@ -290,6 +328,7 @@ protected:
 	HWND m_RunBtnHandle;
 
 	MkStr m_Arg;
+	MkStr m_PatchURL;
 
 	MkPatchFileDownloader m_Patcher;
 	MkPatchFileDownloader::ePatchState m_PatchState;

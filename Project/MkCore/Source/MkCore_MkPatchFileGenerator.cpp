@@ -618,10 +618,6 @@ bool MkPatchFileGenerator::Update(void)
 					{
 						// deep copy
 						*launcherNode = *fileNode;
-
-						// 정규 패치 목록에서 제거
-						fileNode->DetachFromParentNode();
-						delete fileNode;
 					}
 				}
 
@@ -741,6 +737,11 @@ bool MkPatchFileGenerator::Update(void)
 				MK_DEV_PANEL.MsgToLog(L"  경로에 파일 저장 완료.");
 
 				m_HistoryList.Insert(0, m_UpdateWrittenTime); // history list에 등록
+
+				MK_DEV_PANEL.InsertEmptyLine();
+				MK_DEV_PANEL.MsgToLog(L"-------------------------------------");
+				MK_DEV_PANEL.MsgToLog(L"[ 패치 파일 생성이 완료되었습니다. ]");
+				MK_DEV_PANEL.MsgToLog(L"-------------------------------------");
 			}
 			MK_DEV_PANEL.InsertEmptyLine();
 

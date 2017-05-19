@@ -17,7 +17,7 @@ public:
 		newCmd.AddPair("#AME", "_MkStarter");
 		newCmd.UpdateFullStr();
 
-		bool ok = MkPatchStarter::StartLauncher(L"http://210.207.252.151/Test", newCmd);
+		bool ok = MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara", newCmd);
 		return false; // Á¾·á
 	}
 
@@ -26,16 +26,6 @@ public:
 
 protected:
 };
-
-
-
-
-
-
-
-
-
-
 
 class TestApplication : public MkWin32Application
 {
@@ -54,7 +44,7 @@ public:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	TestApplication application;
-	application.Run(hI, L"Starter", L"", true, eSWP_None, CW_USEDEFAULT, CW_USEDEFAULT, 100, 20, false, true, NULL, cmdline,
+	application.Run(hI, L"Starter", L"", false, eSWP_None, CW_USEDEFAULT, CW_USEDEFAULT, 100, 20, false, true, NULL, cmdline,
 		"#DMK=_MkStarter; #BME=_MkStarter; #BME=_MkLauncher; #BME=_MkGameApp");
 
 	return 0;

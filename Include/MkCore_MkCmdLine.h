@@ -73,6 +73,7 @@ public:
 	void Clear(void);
 
 	MkCmdLine() {}
+	MkCmdLine(const char* cmdLine) { *this = cmdLine; }
 	MkCmdLine(const MkCmdLine& cmdLine) { *this = cmdLine; }
 	~MkCmdLine() { Clear(); }
 

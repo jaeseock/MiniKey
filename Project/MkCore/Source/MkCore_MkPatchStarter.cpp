@@ -1,4 +1,5 @@
 
+#include "MkCore_MkCmdLine.h"
 #include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkInterfaceForFileReading.h"
 #include "MkCore_MkZipCompressor.h"
@@ -174,11 +175,17 @@ bool MkPatchStarter::StartLauncher(const MkStr& url, const char* arg)
 	bool ok = errorMsg.Empty();
 	if (ok)
 	{
+		// url을 launcher에 전달하기 위해 cmd line에 추가
+		MkCmdLine cmdLine = arg;
+
+		std::string urlStr;
+		url.ExportMultiByteString(urlStr);
+		cmdLine.AddPair(MKDEF_PATCH_DOWNLOAD_URL_KEY, urlStr);
+		cmdLine.UpdateFullStr();
+
 		MkStr args;
-		if (arg != NULL)
-		{
-			args.ImportMultiByteString(arg);
-		}
+		args.ImportMultiByteString(cmdLine);
+
 		localLauncherFilePath.OpenFileInVerb(args);
 	}
 	else

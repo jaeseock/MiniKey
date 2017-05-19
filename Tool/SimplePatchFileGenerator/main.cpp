@@ -101,16 +101,43 @@ public:
 
 	virtual void Update(void)
 	{
-		if (m_OnPacking)
+		if (m_OnPacking == 1)
+		{
+			if (m_PG.GeneratePatchFiles(m_ResRootPath))
+			{
+				m_ResRootPath[m_ResRootPath.GetSize() - 1] = L'/'; // L'\\' -> '/'
+
+				if (m_SettingNode.IsValidKey(KEY_StartPath))
+				{
+					m_SettingNode.SetData(KEY_StartPath, m_ResRootPath, 0);
+				}
+				else
+				{
+					m_SettingNode.CreateUnit(KEY_StartPath, m_ResRootPath);
+				}
+
+				MkPathName settingFile;
+				settingFile.ConvertToRootBasisAbsolutePath(SettingFileName);
+				m_SettingNode.SaveToText(settingFile);
+
+				m_OnPacking = 2;
+			}
+			else
+			{
+				m_OnPacking = 0;
+				EnableWindow(m_PackingStartHandle, TRUE);
+			}
+		}
+		else if (m_OnPacking == 2)
 		{
 			if (!m_PG.Update())
 			{
-				m_OnPacking = false;
+				m_OnPacking = 0;
 				EnableWindow(m_PackingStartHandle, TRUE);
 			}
 		}
 
-		if (!m_OnPacking)
+		if (m_OnPacking == 0)
 		{
 			MK_INDEXING_LOOP(gFrameworkEvent, i)
 			{
@@ -139,7 +166,14 @@ public:
 					{
 						if ((m_ResourceDirHandle != NULL) && (m_PackingStartHandle != NULL))
 						{
-							MkPathName resPath;
+							m_ResRootPath.Clear();
+							if (_GetPathFromEditBox(m_ResourceDirHandle, m_ResRootPath) && (!m_ResRootPath.Empty()))
+							{
+								m_OnPacking = 1;
+								EnableWindow(m_PackingStartHandle, FALSE);
+							}
+							
+							/*
 							if (_GetPathFromEditBox(m_ResourceDirHandle, resPath) &&
 								m_PG.GeneratePatchFiles(resPath))
 							{
@@ -161,6 +195,7 @@ public:
 								m_OnPacking = true;
 								EnableWindow(m_PackingStartHandle, FALSE);
 							}
+							*/
 						}
 					}
 					break;
@@ -207,7 +242,7 @@ public:
 		m_Font = NULL;
 		m_ResourceDirHandle = NULL;
 		m_PackingStartHandle = NULL;
-		m_OnPacking = false;
+		m_OnPacking = 0;
 	}
 
 	virtual ~TestFramework()
@@ -247,11 +282,12 @@ protected:
 	MkDataNode m_SettingNode;
 	MkPathName m_LauncherFileName;
 	MkPathName m_RunFilePath;
+	MkPathName m_ResRootPath;
 
 	HWND m_ResourceDirHandle;
 	HWND m_PackingStartHandle;
 
-	bool m_OnPacking;
+	int m_OnPacking;
 	
 	MkPatchFileGenerator m_PG;
 };
