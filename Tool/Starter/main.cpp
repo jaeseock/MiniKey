@@ -17,7 +17,7 @@ public:
 		newCmd.AddPair("#AME", "_MkStarter");
 		newCmd.UpdateFullStr();
 
-		bool ok = MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara", newCmd);
+		bool ok = MkPatchStarter::StartLauncher(L"http://210.207.252.151/Test", newCmd);
 		return false; // Á¾·á
 	}
 

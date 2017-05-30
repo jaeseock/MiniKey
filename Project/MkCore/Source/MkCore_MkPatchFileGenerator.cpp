@@ -778,6 +778,78 @@ void MkPatchFileGenerator::ConvertFilePathToDownloadable(const MkPathName& fileP
 	buffer += DownloadableFileExtension;
 }
 
+void MkPatchFileGenerator::IntersectionTest(const MkArray<MkHashStr>& sources, const MkArray<MkHashStr>& targets,
+ MkArray<MkHashStr>& sourceOnly, MkArray<unsigned int>& sourceIntersection, MkArray<unsigned int>& targetIntersection, MkArray<MkHashStr>& targetOnly)
+{
+	unsigned int sourceSize = sources.GetSize();
+	unsigned int targetSize = targets.GetSize();
+	if ((sourceSize == 0) && (targetSize > 0))
+	{
+		targetOnly = targets;
+		return;
+	}
+	else if ((sourceSize > 0) && (targetSize == 0))
+	{
+		sourceOnly = sources;
+		return;
+	}
+
+	MkArray<bool> enable;
+	enable.Fill(targetSize, true);
+
+	sourceOnly.Reserve(sourceSize);
+	unsigned int minSize = GetMin<unsigned int>(sourceSize, targetSize);
+	sourceIntersection.Reserve(minSize);
+	targetIntersection.Reserve(minSize);
+	
+	for (unsigned int i=0; i<sourceSize; ++i)
+	{
+		bool notFound = true;
+		const MkHashStr& currSrc = sources[i];
+		for (unsigned int j=0; j<targetSize; ++j)
+		{
+			if (enable[j]) // MkArray::IntersectionTest와는 달리 대소문자를 구별하지 않음
+			{
+				bool equals = true;
+
+				const MkHashStr& currTgt = targets[j];
+				if (currSrc != currTgt)
+				{
+					MkStr lowSrc = currSrc.GetString();
+					lowSrc.ToLower();
+
+					MkStr lowTgt = currTgt.GetString();
+					lowTgt.ToLower();
+
+					equals = (lowSrc == lowTgt);
+				}
+
+				if (equals)
+				{
+					sourceIntersection.PushBack(i);
+					targetIntersection.PushBack(j);
+					enable[j] = false;
+					notFound = false;
+					break;
+				}
+			}
+		}
+		if (notFound)
+		{
+			sourceOnly.PushBack(currSrc);
+		}
+	}
+
+	targetOnly.Reserve(targetSize - sourceIntersection.GetSize());
+	for (unsigned int i=0; i<targetSize; ++i) // 일치되지 않은 나머지는 targetOnly에 등록
+	{
+		if (enable[i])
+		{
+			targetOnly.PushBack(targets[i]);
+		}
+	}
+}
+
 MkPatchFileGenerator::MkPatchFileGenerator()
 {
 	m_hWnd = NULL;
@@ -970,25 +1042,27 @@ bool MkPatchFileGenerator::_FindDifferenceBetweenTwoNode
 		MkPathName::__GetSubFiles(*lastDirNode, lastObjects);
 		MkPathName::__GetSubFiles(*currDirNode, currObjects);
 
-		MkArray<MkHashStr> delList, intersection, addList;
-		lastObjects.IntersectionTest(currObjects, delList, intersection, addList); // 교차 판정
-		lastObjects.Clear();
-		currObjects.Clear();
-
+		// 교차 판정. 대소문자 구별하지 않음
+		MkArray<MkHashStr> delList, addList;
+		MkArray<unsigned int> lastIntersection, currIntersection;
+		IntersectionTest(lastObjects, currObjects, delList, lastIntersection, currIntersection, addList);
+		
 		// delList, addList와는 달리 intersection은 크기와 수정시간을 비교해 갱신 결정
-		MkArray<MkHashStr> repList(intersection.GetSize());
-		MK_INDEXING_LOOP(intersection, i)
+		MkArray<MkHashStr> repList(lastIntersection.GetSize());
+		MK_INDEXING_LOOP(lastIntersection, i)
 		{
-			const MkHashStr& fileName = intersection[i];
-			if (MkPathName::__CheckFileDifference(*lastDirNode->GetChildNode(fileName), *currDirNode->GetChildNode(fileName)))
+			const MkHashStr& lastFileName = lastObjects[lastIntersection[i]];
+			const MkHashStr& currFileName = currObjects[currIntersection[i]];
+			if (MkPathName::__CheckFileDifference(*lastDirNode->GetChildNode(lastFileName), *currDirNode->GetChildNode(currFileName)))
 			{
-				repList.PushBack(fileName);
-			}
-			else
-			{
+				repList.PushBack(currFileName); // 현재 파일명 기준
 			}
 		}
-		intersection.Clear();
+
+		lastObjects.Clear();
+		currObjects.Clear();
+		lastIntersection.Clear();
+		currIntersection.Clear();
 
 		// delete
 		if (!_SetAllFilesToUpdate(dirPath, *lastDirNode, delList, updateRoot, KEY_DeleteNode, false, 1, writtenTime))
@@ -1009,7 +1083,32 @@ bool MkPatchFileGenerator::_FindDifferenceBetweenTwoNode
 		MkPathName::__GetSubDirectories(*lastDirNode, lastObjects);
 		MkPathName::__GetSubDirectories(*currDirNode, currObjects);
 
-		lastObjects.IntersectionTest(currObjects, delList, intersection, addList); // 교차 판정
+		// 검증용 교차 판정. 대소문자 구별하지 않음
+		IntersectionTest(lastObjects, currObjects, delList, lastIntersection, currIntersection, addList);
+		delList.Clear();
+		addList.Clear();
+
+		// 교차 판정. 대소문자 구별 함!!!
+		MkArray<MkHashStr> intersection;
+		lastObjects.IntersectionTest(currObjects, delList, intersection, addList);
+
+		// 대소문자 구분 한/구분하지 않은 교차 크기가 다르다면 동일 경로상에 대소문자가 다른 디렉토리명이 있다는 뜻
+		if (intersection.GetSize() != lastIntersection.GetSize())
+		{
+			if (dirPath.Empty())
+			{
+				MK_DEV_PANEL.MsgToLog(L"> 원본 경로 루트에 이전과는 대소문자가 다른 디렉토리가 존재.");
+			}
+			else
+			{
+				MK_DEV_PANEL.MsgToLog(L"> " + dirPath);
+				MK_DEV_PANEL.MsgToLog(L"  원본 경로 하위에 이전과는 대소문자가 다른 디렉토리가 존재.");
+			}
+			return false;
+		}
+
+		lastIntersection.Clear();
+		currIntersection.Clear();
 		lastObjects.Clear();
 		currObjects.Clear();
 

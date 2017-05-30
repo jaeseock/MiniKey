@@ -34,6 +34,12 @@ public:
 
 	static void ConvertFilePathToDownloadable(const MkPathName& filePath, MkPathName& buffer);
 
+	// MkArray::IntersectionTest와는 달리 대소문자를 구별하지 않음
+	//	ex> source가 "abc.txt"이고 target이 "abc.TXT"일 경우 동일하다 인식
+	// intersection으로 source와 target의 해당 index를 반환
+	static void IntersectionTest(const MkArray<MkHashStr>& sources, const MkArray<MkHashStr>& targets,
+		MkArray<MkHashStr>& sourceOnly, MkArray<unsigned int>& sourceIntersection, MkArray<unsigned int>& targetIntersection, MkArray<MkHashStr>& targetOnly);
+
 	MkPatchFileGenerator();
 
 protected:
