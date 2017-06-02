@@ -2,40 +2,35 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkCmdLine.h"
-#include "MkCore_MkBaseFramework.h"
+#include "MkCore_MkPathName.h"
 #include "MkCore_MkWin32Application.h"
 #include "MkCore_MkPatchStarter.h"
 
 
-// single thread
-class TestFramework : public MkBaseFramework
+class TestApplication : public MkWin32Application
 {
 public:
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
+	TestApplication() : MkWin32Application() {}
+	virtual ~TestApplication() {}
+
+protected:
+
+	virtual bool _CheckExcution(MkCmdLine& cmdLine, HANDLE& myMutexHandle, const wchar_t* myTitle)
 	{
+		if (!MkWin32Application::_CheckExcution(cmdLine, myMutexHandle, myTitle))
+			return false;
+
 		MkCmdLine newCmd = cmdLine;
 		newCmd.AddPair("#AME", "_MkStarter");
 		newCmd.UpdateFullStr();
 
-		bool ok = MkPatchStarter::StartLauncher(L"http://210.207.252.151/Test", newCmd);
+		// 문자열 설정
+		MkStr::SetUp();
+		MkPathName::SetUp();
+
+		MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara", newCmd);
 		return false; // 종료
 	}
-
-	TestFramework() : MkBaseFramework() {}
-	virtual ~TestFramework() {}
-
-protected:
-};
-
-class TestApplication : public MkWin32Application
-{
-public:
-
-	virtual MkBaseFramework* CreateFramework(void) const { return new TestFramework; }
-
-public:
-	TestApplication() : MkWin32Application() {}
-	virtual ~TestApplication() {}
 };
 
 //------------------------------------------------------------------------------------------------//

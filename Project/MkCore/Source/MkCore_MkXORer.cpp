@@ -30,7 +30,7 @@ void MkXORer::Convert(MkByteArray& targetArray, const MkStr& key)
 	if (!key.Empty())
 	{
 		// wchar_t array -> unsigned char array. key 내부 m_Str의 마지막 NULL값은 포함되지 않음
-		MkByteArray keyArray(MkMemoryBlockDescriptor<unsigned char>(reinterpret_cast<const unsigned char*>(key.GetPtr()), key.GetSize() * 2));
+		MkByteArray keyArray(MkMemoryBlockDescriptor<unsigned char>(reinterpret_cast<const unsigned char*>(key.GetPtr()), key.GetSize() * sizeof(wchar_t)));
 		Convert(targetArray, keyArray);
 	}
 }

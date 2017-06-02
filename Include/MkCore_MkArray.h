@@ -1187,6 +1187,7 @@ MKDEF_DECALRE_BLOCK_EXPANSION_SIZE_IN_ARRAY(wchar_t, 32)
 MKDEF_DECALRE_BLOCK_EXPANSION_SIZE_IN_ARRAY(char, 1)
 MKDEF_DECALRE_BLOCK_EXPANSION_SIZE_IN_ARRAY(unsigned char, 1)
 
+
 //------------------------------------------------------------------------------------------------//
 // MkByteArray 정의
 //------------------------------------------------------------------------------------------------//
@@ -1202,7 +1203,7 @@ public:
 
 	// 단일 객체 삽입
 	// ex>
-	//	MkByteArray buffer(10);
+	//	MkByteArray buffer(10); // reserve 필요
 	//	VertexData vd;
 	//	for (int i=0; i<10; ++i)
 	//	{
@@ -1216,13 +1217,13 @@ public:
 
 	// 객체 배열 삽입
 	// ex>
-	//	MkByteArray buffer(10);
 	//	MkArray<SegmentData> sds(10);
 	//	for (int i=0; i<10; ++i)
 	//	{
 	//		SegmentData& sd = sds.PushBack();
 	//		... // sd에 값 할당 블라블라
 	//	}
+	//	MkByteArray buffer; // reserve 불필요
 	//	MkByteArrayHelper<SegmentData>::PushBack(buffer, sds);
 	static void PushBack(MkByteArray& byteArray, const MkArray<DataType>& instanceArray)
 	{
@@ -1230,6 +1231,52 @@ public:
 		{
 			byteArray.PushBack(MkByteArrayDescriptor(reinterpret_cast<const unsigned char*>(instanceArray.GetPtr()), sizeof(DataType) * instanceArray.GetSize()));
 		}
+	}
+
+	// 배열 중간 객체 참조
+	// ex>
+	//	MkByteArray byteArray;
+	//	... // byteArray에 값 할당 블라블라
+	//	int value = 0;
+	//	if (MkByteArrayHelper<int>::GetValue(byteArray, 128, value))
+	//	{
+	//		...
+	//	}
+	static bool GetValue(const MkByteArray& byteArray, unsigned int position, DataType& buffer)
+	{
+		MkByteArrayDescriptor descriptor = byteArray.GetMemoryBlockDescriptor(MkArraySection(position, sizeof(DataType)));
+		bool ok = descriptor.IsValid();
+		if (ok)
+		{
+			memcpy_s(reinterpret_cast<unsigned char*>(&buffer), sizeof(DataType), descriptor, sizeof(DataType));
+		}
+		return ok;
+	}
+
+	static DataType GetValue(const MkByteArray& byteArray, unsigned int position)
+	{
+		DataType buffer;
+		GetValue(byteArray, position, buffer);
+		return buffer;
+	}
+
+	// 배열 중간 객체 할당
+	// ex>
+	//	MkByteArray byteArray;
+	//	... // byteArray에 값 할당 블라블라
+	//	if (MkByteArrayHelper<int>::SetValue(byteArray, 128, static_cast<int>(-9999)))
+	//	{
+	//		...
+	//	}
+	static bool SetValue(MkByteArray& byteArray, unsigned int position, const DataType& value)
+	{
+		MkByteArrayDescriptor descriptor = byteArray.GetMemoryBlockDescriptor(MkArraySection(position, sizeof(DataType)));
+		bool ok = descriptor.IsValid();
+		if (ok)
+		{
+			memcpy_s(descriptor, sizeof(DataType), reinterpret_cast<const unsigned char*>(&value), sizeof(DataType));
+		}
+		return ok;
 	}
 };
 

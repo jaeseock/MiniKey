@@ -62,7 +62,7 @@ public:
 
 protected:
 
-	bool _CheckExcution(MkCmdLine& cmdLine, HANDLE& myMutexHandle, const wchar_t* myTitle);
+	virtual bool _CheckExcution(MkCmdLine& cmdLine, HANDLE& myMutexHandle, const wchar_t* myTitle);
 };
 
 //------------------------------------------------------------------------------------------------//
