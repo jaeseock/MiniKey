@@ -11,6 +11,8 @@
 // - down-top 좌표계에서는 좌하가 원점
 //------------------------------------------------------------------------------------------------//
 
+#include <math.h>
+#include <float.h>
 #include "MkCore_MkLinearSection.h"
 #include "MkCore_MkType2.h"
 
@@ -105,6 +107,9 @@ public:
 	inline bool SizeIsZero(void) const { return ((size.x == static_cast<DataType>(0)) || (size.y == static_cast<DataType>(0))); }
 	inline bool SizeIsNotZero(void) const { return ((size.x > static_cast<DataType>(0)) && (size.y > static_cast<DataType>(0))); }
 
+	// 중점 반환
+	inline MkType2<DataType> GetCenterPosition(void) const { return (position + size * 0.5f); }
+
 	// 초기화
 	inline void Clear(void)
 	{
@@ -186,6 +191,38 @@ public:
 		DataType x = MkLinearSection<DataType>(position.x, size.x).Confine(MkLinearSection<DataType>(rect.position.x, rect.size.x));
 		DataType y = MkLinearSection<DataType>(position.y, size.y).Confine(MkLinearSection<DataType>(rect.position.y, rect.size.y));
 		return MkType2<DataType>(x, y);
+	}
+
+	// rect가 자신과 겹치면 겹치지 않도록 밀어내고 변경 여부를 반환
+	// 밀어내는 방향은 중점간의 방향을 기준으로 함
+	bool SqueezeOut(MkRect& rect) const
+	{
+		MkRect intersection;
+		bool ok = (GetIntersection(rect, intersection) && intersection.size.IsPositive());
+		if (ok)
+		{
+			// 벡터 연산때문에 실수 계산이 반드시 필요하다
+			MkType2<DataType> toTarget = rect.GetCenterPosition() - GetCenterPosition();
+			MkFloat2 direction(static_cast<float>(toTarget.x), static_cast<float>(toTarget.y));
+
+			// 방향 단위벡터를 구함. 중점이 겹치면 (0.f, -1.f)를, 아니면 자신 중점부터 rect 중점까지의 벡터를 사용
+			float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+			direction = (length == 0.f) ? MkFloat2(0.f, -1.f) : (direction / length);
+
+			// 이동할 벡터 결정
+			float xRate = (direction.x == 0) ? FLT_MAX : abs(static_cast<float>(intersection.size.x) / direction.x); // x축 배율
+			float yRate = (direction.y == 0) ? FLT_MAX : abs(static_cast<float>(intersection.size.y) / direction.y); // y축 배율
+			direction *= GetMin<float>(xRate, yRate);
+			MkType2<DataType> movement(static_cast<DataType>(direction.x), static_cast<DataType>(direction.y));
+
+			// 이산학상 제로일 수 있으므로 체크
+			ok = !movement.IsZero();
+			if (ok)
+			{
+				rect.position += movement;
+			}
+		}
+		return ok;
 	}
 
 	// 자신을 기준으로 rect가 alignmentPosition 위치에 border만큼 떨어져 정렬될 위치를 반환

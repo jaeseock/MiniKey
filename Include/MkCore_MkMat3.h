@@ -415,14 +415,14 @@ public:
 		}
 
 		MkVec3 pivotDir = fdest.CrossProduct(src);
-		if (pivotDir.Normalise() == 0.f)
+		if (pivotDir.Normalize() == 0.f)
 			return false;
 		
 		MkVec3 localPivot = src.GetPivotVector(pivotDir);
 		MkVec2 localDir;
 		localDir.x = localPivot.DotProduct(dest);
 		localDir.y = src.DotProduct(dest);
-		localDir.Normalise();
+		localDir.Normalize();
 
 		FromAxisRadian(pivotDir, MkAngleOp::DirectionToRadian(localDir) + addition);
 		//FromAxisRadian(-pivotDir, MkAngleOp::DirectionToRadian(localDir) + addition); // CCW

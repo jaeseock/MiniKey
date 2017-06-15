@@ -45,7 +45,7 @@ public:
 		else
 		{
 			MkVec3 thisToTarget = sphere.center - center;
-			float distance = thisToTarget.Normalise();
+			float distance = thisToTarget.Normalize();
 
 			if ((distance + sphere.radius) <= radius) // sphere가 자신에게 포함됨
 			{

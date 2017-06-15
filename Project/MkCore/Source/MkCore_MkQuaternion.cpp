@@ -177,7 +177,7 @@ MkQuaternion MkQuaternion::Slerp(float t, const MkQuaternion& startQ, const MkQu
 	}
 
 	MkQuaternion liQ = (1.f - t) * startQ + t * tmpQ;
-	liQ.Normalise();
+	liQ.Normalize();
 	return liQ;
 }
 
@@ -192,7 +192,7 @@ MkQuaternion MkQuaternion::Nlerp(float t, const MkQuaternion& startQ, const MkQu
 	{
 		result = startQ + t * (endQ - startQ);
 	}
-	result.Normalise();
+	result.Normalize();
 	return result;
 }
 

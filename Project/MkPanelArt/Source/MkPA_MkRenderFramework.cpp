@@ -20,9 +20,9 @@
 //	return new MkS2DCheatMessage;
 //}
 
-bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 {
-	if (!MkBaseFramework::SetUp(clientWidth, clientHeight, fullScreen, arg))
+	if (!MkBaseFramework::SetUp(clientWidth, clientHeight, fullScreen, cmdLine))
 		return false;
 
 	// ·»´õ·¯ ½Ì±ÛÅæ »ý¼º

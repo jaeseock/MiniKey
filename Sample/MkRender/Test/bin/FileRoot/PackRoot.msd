@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2017.02.16 (14:07:36)
+//   - time stamp : 2017.06.15 (19:34:42)
 //   - exporter   : pc (Test)
 //--------------------------------------------------------------------//
 
@@ -18,14 +18,14 @@ Node "[SUBNODES]"
 			{
 				uint Attribute = 26;
 				str ImagePath = "Image\s01.jpg";
-				float LocalDepth = 1002.000;
+				float LocalDepth = 9999.000;
 				vec2 PanelSize = (450.000, 250.000);
 			}
 
 			Node "TextTest" : "MkPanel"
 			{
 				uint Attribute = 26;
-				float LocalDepth = 1001.000;
+				float LocalDepth = 9998.000;
 				vec2 PanelSize = (110.000, 250.000);
 				bool TextNodeWR = Yes;
 
@@ -126,6 +126,11 @@ Node "[SUBNODES]"
 						vec2 PanelSize = (1024.000, 768.000);
 					}
 				}
+			}
+
+			Node "RectDummy" : "MkSceneNode"
+			{
+				float LocalDepth = 9997.000;
 			}
 		}
 	}

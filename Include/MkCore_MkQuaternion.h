@@ -230,7 +230,7 @@ public:
 	}
 
 	// ¥‹¿ß»≠
-	inline float Normalise(void)
+	inline float Normalize(void)
 	{
 		float tlength = Length();
 		if (tlength != 0.f)

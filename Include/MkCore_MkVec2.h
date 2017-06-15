@@ -109,7 +109,7 @@ public:
 	inline float DotProduct(const MkVec2& vec) const { return (x * vec.x + y * vec.y); }
 
 	// ¥‹¿ß∫§≈Õ»≠
-	inline float Normalise(void)
+	inline float Normalize(void)
 	{
 		float length = Length();
 		if (length != 0.f)

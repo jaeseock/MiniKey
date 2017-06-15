@@ -14,7 +14,7 @@ public:
 
 	//virtual MkCheatMessage* CreateCheatMessage(void) const;
 
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg);
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine);
 
 	virtual void ConsumeSetCursorMsg(void);
 

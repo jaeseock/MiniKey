@@ -49,6 +49,7 @@
 #include "MkCore_MkDevPanel.h"
 
 #include "MkPA_MkWindowFactory.h"
+#include "MkCore_MkTimeCounter.h"
 
 //------------------------------------------------------------------------------------------------//
 
@@ -91,18 +92,24 @@ public:
 		ip.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
 		ip.SetBiggerSourceOp(MkPanel::eCutSource);
 		ip.SetPanelSize(MkFloat2(450.f, 250.f));
-		ip.SetLocalDepth(1002.f);
+		ip.SetLocalDepth(9999.f);
 		ip.SetTexture(L"Image\\s01.jpg");
 
 		MkPanel& tp = mainNode->CreatePanel(L"TextTest");
 		tp.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
 		tp.SetBiggerSourceOp(MkPanel::eCutSource);
 		tp.SetPanelSize(MkFloat2(110.f, 250.f));
-		tp.SetLocalDepth(1001.f);
+		tp.SetLocalDepth(9998.f);
 		MkArray<MkHashStr> textName;
 		textName.PushBack(L"_Sample");
 		tp.SetTextNode(textName, true);
 
+		//-----------------------------------------------------------//
+		m_RectDummyNode = mainNode->CreateChildNode(L"RectDummy");
+		m_RectDummyNode->SetLocalDepth(9997.f);
+		m_DummyIndex = 0;
+		//-----------------------------------------------------------//
+		
 		// window mgr
 		MkWindowManagerNode* winMgrNode = MkWindowManagerNode::CreateChildNode(m_RootNode, L"WinMgr");
 		winMgrNode->SetDepthBandwidth(1000.f);
@@ -359,6 +366,108 @@ public:
 						m_TargetNode = buffer[0]->GetParentNode();
 						MK_DEV_PANEL.MsgToLog(L"Pick : " + m_TargetNode->GetNodeName().GetString());
 					}
+				}
+
+				if (MK_INPUT_MGR.GetMouseRightButtonPushing())
+				{
+					const int CHECK_COUNT = 4;
+					const float MARGIN_RATIO = 0.2f;
+
+					MkFloat2 rectSize(150.f, 30.f);
+					MkFloat2 clientSize(rectSize.x - 6.f, rectSize.y - 6.f);
+					MkFloat2 rectPos;
+					rectPos.x = static_cast<float>(mp.x) - rectSize.x * 0.5f;
+					rectPos.y = static_cast<float>(mp.y) - rectSize.y * 0.5f;
+
+					// 상하좌우 MARGIN_RATIO 만큼 겹쳐도 됨
+					MkFloat2 margin = rectSize * MARGIN_RATIO;
+					MkFloatRect myRect(rectPos + margin, rectSize - margin * 2.f);
+
+					//
+					unsigned int childCnt = m_RectDummyNode->GetChildNodeCount();
+
+					// 이미 존재하는 rect 리스트를 구함
+					MkArray<MkFloatRect> rectList(childCnt);
+					MkArray<MkHashStr> childNameList;
+					m_RectDummyNode->GetChildNodeList(childNameList);
+					MK_INDEXING_LOOP(childNameList, i)
+					{
+						MkWindowThemedNode* node = dynamic_cast<MkWindowThemedNode*>(m_RectDummyNode->GetChildNode(childNameList[i]));
+						rectList.PushBack(MkFloatRect(node->GetWorldPosition(), node->GetWindowRect().size));
+					}
+					
+					for (int k=0; k<CHECK_COUNT; ++k)
+					{
+						MkFloatRect collisionUnion;
+						MK_INDEXING_LOOP(rectList, i)
+						{
+							const MkFloatRect& currRect = rectList[i];
+							if (currRect.CheckIntersection(myRect))
+							{
+								collisionUnion.UpdateToUnion(currRect);
+							}
+						}
+
+						if (collisionUnion.SizeIsZero() || (!collisionUnion.SqueezeOut(myRect)))
+							break;
+					}
+
+					rectPos = myRect.position - margin;
+
+					//
+					MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(m_RectDummyNode, MkStr(m_DummyIndex));
+					tbgNode->SetLocalPosition(rectPos);
+					tbgNode->SetLocalDepth(-0.001f * static_cast<float>(m_DummyIndex));
+					tbgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+					tbgNode->SetComponentType(MkWindowThemeData::eCT_NoticeBox);
+					tbgNode->SetShadowUsage(false);
+					tbgNode->SetClientSize(clientSize);
+					tbgNode->SetFormState(MkWindowThemeFormData::eS_Default);
+					tbgNode->SetAcceptInput(false);
+
+					DummyTimer& dummyTimer = m_DummyTimer.PushBack();
+					dummyTimer.id = m_DummyIndex;
+					dummyTimer.state = 0;
+					dummyTimer.counter.SetUp(timeState, 1.f);
+
+					++m_DummyIndex;
+				}
+
+				unsigned int killCount = 0;
+				MK_INDEXING_LOOP(m_DummyTimer, i)
+				{
+					DummyTimer& dummyTimer = m_DummyTimer[i];
+					if (dummyTimer.counter.OnTick(timeState))
+					{
+						if (dummyTimer.state == 0)
+						{
+							dummyTimer.counter.SetUp(timeState, 0.2f);
+							dummyTimer.state = 1;
+						}
+						else if (dummyTimer.state == 1)
+						{
+							++killCount;
+						}
+					}
+					else
+					{
+						MkSceneNode* node = m_RectDummyNode->GetChildNode(MkStr(dummyTimer.id));
+
+						MkFloat2 pos = node->GetLocalPosition();
+						pos.y += static_cast<float>(timeState.elapsed) * 40.f;
+						node->SetLocalPosition(pos);
+
+						if (dummyTimer.state == 1)
+						{
+							node->SetLocalAlpha(1.f - dummyTimer.counter.GetTickRatio(timeState));
+						}
+					}
+				}
+
+				for (unsigned int i=0; i<killCount; ++i)
+				{
+					m_RectDummyNode->RemoveChildNode(MkStr(m_DummyTimer[0].id));
+					m_DummyTimer.PopFront();
 				}
 			}
 
@@ -665,6 +774,19 @@ protected:
 	MkSceneNode* m_TargetNode;
 	unsigned int si;
 	eRectAlignmentPosition ap;
+
+	MkSceneNode* m_RectDummyNode;
+	unsigned int m_DummyIndex;
+
+	typedef struct _DummyTimer
+	{
+		unsigned int id;
+		int state;
+		MkTimeCounter counter;
+	}
+	DummyTimer;
+
+	MkDeque<DummyTimer> m_DummyTimer;
 };
 
 // RestorePage 선언
@@ -959,7 +1081,7 @@ protected:
 class TestFramework : public MkRenderFramework
 {
 public:
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
 		MK_PAGE_MGR.SetUp(new MkBasePage(L"Root"));
 		MK_PAGE_MGR.RegisterChildPage(L"Root", new TestPage(L"TestPage"));
@@ -967,7 +1089,7 @@ public:
 		
 		MK_PAGE_MGR.ChangePageDirectly(L"TestPage");
 		
-		return MkRenderFramework::SetUp(clientWidth, clientHeight, fullScreen, arg);
+		return MkRenderFramework::SetUp(clientWidth, clientHeight, fullScreen, cmdLine);
 	}
 
 	virtual ~TestFramework() {}

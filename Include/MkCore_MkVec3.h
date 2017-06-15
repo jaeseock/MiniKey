@@ -131,7 +131,7 @@ public:
 	inline float DotProduct(const MkVec3& vec) const { return (x * vec.x + y * vec.y + z * vec.z); }
 
 	// ¥‹¿ß∫§≈Õ»≠
-	inline float Normalise(void)
+	inline float Normalize(void)
 	{
 		float length = Length();
 		if (length != 0.f)
@@ -173,7 +173,7 @@ public:
 	inline MkVec3 GetPivotVector(const MkVec3& upVec) const
 	{
 		MkVec3 tmp = CrossProduct(upVec);
-		tmp.Normalise();
+		tmp.Normalize();
 		return tmp;
 	}
 
@@ -207,7 +207,7 @@ public:
 		{
 			perp = CrossProduct(perp);
 		}
-		perp.Normalise();
+		perp.Normalize();
 		return perp;
 	}
 

@@ -45,7 +45,7 @@ public:
 		MkVec3 p01 = v1 - v0;
 		MkVec3 p02 = v2 - v0;
 		normal = (clockwise) ? p02.CrossProduct(p01) : p01.CrossProduct(p02);
-		normal.Normalise();
+		normal.Normalize();
 		d = -(normal.DotProduct(v1)); // D = -N dot P
 		return true;
 	}
