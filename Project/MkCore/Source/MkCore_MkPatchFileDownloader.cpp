@@ -177,7 +177,14 @@ void MkPatchFileDownloader::Update(void)
 			m_DownloadFileInfoList.Clear();
 			m_DownloadFileInfoList.Reserve(totalFiles);
 
-			_FindFilesToDownload(structureNode, MkStr::EMPTY); // 검색
+			// module file name
+			wchar_t fullPath[MAX_PATH];
+			::GetModuleFileName(NULL, fullPath, MAX_PATH);
+			MkPathName tmpBuf = fullPath;
+			MkPathName moduleFileName = tmpBuf.GetFileName();
+			moduleFileName.ToLower();
+
+			_FindFilesToDownload(structureNode, MkStr::EMPTY, moduleFileName); // 검색
 
 			MK_DEV_PANEL.MsgToLog(L"> 다운 대상 파일 : " + MkStr(m_DownloadFileInfoList.GetSize()) + L" 개");
 			MK_DEV_PANEL.InsertEmptyLine();
@@ -421,13 +428,24 @@ MkPatchFileDownloader::MkPatchFileDownloader()
 
 //------------------------------------------------------------------------------------------------//
 
-void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const MkPathName& pathOffset)
+void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const MkPathName& pathOffset, const MkPathName& moduleFileName)
 {
 	// 파일 검사
 	MkArray<MkHashStr> subObjs;
 	MkPathName::__GetSubFiles(node, subObjs);
 	MK_INDEXING_LOOP(subObjs, i)
 	{
+		// module file의 경우는 이미 MkPatchStarter에서 패치되었을거라 간주하고 skip
+		// 다시 패치받아도 보통은 문제 없지만 process에 올라간 파일이 바인드되어 있을 경우 error 발생 할 수 있으므로
+		// (ex> 외장 메모리에서 실행될 경우 등) 깔끔하게 skip 하도록 함
+		if (pathOffset.Empty())
+		{
+			MkPathName currFileName = subObjs[i];
+			currFileName.ToLower();
+			if (currFileName == moduleFileName)
+				continue;
+		}
+
 		// patch file info
 		unsigned int patchOrigSize = 0, patchCompSize = 0, patchWrittenTime = 0;
 		const MkDataNode& fileNode = *node.GetChildNode(subObjs[i]);
@@ -483,7 +501,7 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 	{
 		MkPathName newOffset = pathOffset + subObjs[i];
 		newOffset.CheckAndAddBackslash();
-		_FindFilesToDownload(*node.GetChildNode(subObjs[i]), newOffset); // 재귀
+		_FindFilesToDownload(*node.GetChildNode(subObjs[i]), newOffset, moduleFileName); // 재귀
 	}
 }
 

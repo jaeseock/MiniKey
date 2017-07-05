@@ -50,7 +50,7 @@ protected:
 	}
 	_DownloadFileInfo;
 
-	void _FindFilesToDownload(const MkDataNode& node, const MkPathName& pathOffset);
+	void _FindFilesToDownload(const MkDataNode& node, const MkPathName& pathOffset, const MkPathName& moduleFileName);
 
 	static unsigned int _CountTotalFiles(const MkDataNode& node);
 

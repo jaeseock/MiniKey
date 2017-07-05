@@ -675,6 +675,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkLayeredImage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkLayeredImage.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\Include\MkCore_MkM128Operator.h"
 					>
 				</File>

@@ -7,6 +7,8 @@
 #include "MkCore_MkCmdLine.h"
 #include "MkCore_MkDevPanel.h"
 
+#include "MkCore_MkLayeredImage.h"
+
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
 
@@ -22,6 +24,7 @@
 #define MKDEF_APP_BTN_START_ID 5
 
 static bool g_RunGame = false;
+static MkLayeredImage g_LayeredImage;
 
 
 // single thread
@@ -30,6 +33,8 @@ class TestFramework : public MkBaseFramework
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
+		g_LayeredImage.Clear();
+
 		// patch url °Ë»ç
 		std::string patchUrlKey = MKDEF_PATCH_DOWNLOAD_URL_KEY;
 		if (cmdLine.HasPair(patchUrlKey))
@@ -341,9 +346,19 @@ public:
 
 	virtual MkBaseFramework* CreateFramework(void) const { return new TestFramework; }
 
-public:
 	TestApplication() : MkWin32Application() {}
 	virtual ~TestApplication() {}
+
+protected:
+
+	virtual bool _CheckExcution(MkCmdLine& cmdLine, HANDLE& myMutexHandle, const wchar_t* myTitle)
+	{
+		if (!MkWin32Application::_CheckExcution(cmdLine, myMutexHandle, myTitle))
+			return false;
+
+		g_LayeredImage.SetUp(L"launcher.png");
+		return true;
+	}
 };
 
 //------------------------------------------------------------------------------------------------//

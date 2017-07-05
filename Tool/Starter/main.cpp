@@ -28,7 +28,7 @@ protected:
 		MkStr::SetUp();
 		MkPathName::SetUp();
 
-		MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara", newCmd);
+		MkPatchStarter::StartLauncher(L"http://210.207.252.151/temp", newCmd);
 		return false; // Á¾·á
 	}
 };
