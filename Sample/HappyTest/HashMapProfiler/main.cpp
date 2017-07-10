@@ -185,7 +185,7 @@ protected:
 class TestFramework : public MkBaseFramework
 {
 public:
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
 		MK_PAGE_MGR.SetUp(new TestPage(L"TestPage"));
 		MK_PAGE_MGR.ChangePageDirectly(L"TestPage");

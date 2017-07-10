@@ -19,7 +19,7 @@
 //------------------------------------------------------------------------------------------------//
 
 const static size_t VECTOR_MEMBER_COUNT = 100000;
-const static size_t MAP_MEMBER_COUNT = 10000;
+const static size_t MAP_MEMBER_COUNT = 100000;
 
 
 // TestPage ¼±¾ð
@@ -149,7 +149,7 @@ public:
 class TestFramework : public MkBaseFramework
 {
 public:
-	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const char* arg)
+	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
 		MK_PAGE_MGR.SetUp(new TestPage(L"TestPage"));
 		MK_PAGE_MGR.ChangePageDirectly(L"TestPage");
@@ -178,7 +178,7 @@ public:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	TestApplication application;
-	application.Run(hI, L"STL profiling", L"", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 100, 100, false, false, NULL, cmdline);
+	application.Run(hI, L"STL profiling", L"", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 300, 100, false, false, NULL, cmdline);
 
 	return 0;
 }
