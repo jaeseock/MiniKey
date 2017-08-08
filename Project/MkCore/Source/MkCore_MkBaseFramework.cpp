@@ -36,8 +36,8 @@ MkArray<MkPathName> gDraggedFilePathList;
 // set cursor msg
 bool gRecieveCursorMsg = false;
 
-// set cursor msg
-bool gDestroyMsg = false;
+// setup complete
+bool gEnableUpdate = false;
 
 // main window
 MkListeningWindow* gMainWindowPtr = NULL;
@@ -61,7 +61,15 @@ MkListeningWindow* MkBaseFramework::GetMainWindowPtr(void)
 
 void MkBaseFramework::Close(void)
 {
-	gDestroyMsg = true;
+	MkListeningWindow* wnd = GetMainWindowPtr();
+	if (wnd != NULL)
+	{
+		HWND hWnd = wnd->GetWindowHandle();
+		if (hWnd != NULL)
+		{
+			::PostMessage(hWnd, WM_CLOSE, NULL, NULL);
+		}
+	}
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -71,7 +79,175 @@ bool MkBaseFramework::__Start
  int x, int y, int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, WNDPROC wndProc, const MkCmdLine& cmdLine)
 {
 	assert(title != NULL);
-	assert(rootPath != NULL);
+	
+	if (!_CreateSingletons(rootPath, useLog))
+		return false;
+
+	// 메인 윈도우 생성
+	if (!m_MainWindow.SetUpByWindowCreation(hInstance, (wndProc == NULL) ? WndProc : wndProc, NULL, title, sysWinProp, MkInt2(x, y), MkInt2(clientWidth, clientHeight), fullScreen))
+		return false;
+
+	if (!_ApplyMainWindowAndCreateThreads(clientWidth, clientHeight, fullScreen, dragAccept, cmdLine))
+		return false;
+
+	// 루핑 돌입
+	HWND hWnd = m_MainWindow.GetWindowHandle();
+
+	while (true)
+	{
+		MSG msg;
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			if (msg.message == WM_CLOSE)
+			{
+				__Close();
+			}
+			else if (msg.message == WM_QUIT)
+				break;
+
+			if (!TranslateAccelerator(hWnd, NULL, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+		}
+		else
+		{
+			_UpdateOneFrame();
+		}
+	}
+
+	__Destroy();
+
+	// 윈도우 등록 해제
+	m_MainWindow.Clear();
+
+	return true;
+}
+
+bool MkBaseFramework::__Start(HWND hWnd, const wchar_t* rootPath, bool useLog, bool dragAccept, const MkCmdLine& cmdLine)
+{
+	assert(hWnd != NULL);
+	
+	if (!_CreateSingletons(rootPath, useLog))
+		return false;
+
+	// 메인 윈도우 생성
+	if (!m_MainWindow.SetUpByOuterWindow(hWnd))
+		return false;
+
+	MkInt2 cs = m_MainWindow.GetClientSize();
+	if (!_ApplyMainWindowAndCreateThreads(cs.x, cs.y, false, dragAccept, cmdLine))
+		return false;
+
+	return true;
+}
+
+void MkBaseFramework::__Update(void)
+{
+	if (gEnableUpdate)
+	{
+		_UpdateOneFrame();
+	}
+}
+
+void MkBaseFramework::__Close(void)
+{
+	// background loader 삭제(아직 loading thread에는 남아 있을 수 있음)
+	MK_BG_LOADER.__Clear();
+
+	if (!m_UseLogicThreadUnit)
+	{
+		// 모든 페이지 삭제
+		MK_PAGE_MGR.__Clear();
+	}
+
+	// 스레드 유닛 모두 종료
+	m_ThreadManager.StopAll();
+
+	// 해제
+	Clear();
+
+	// end msg
+	MK_LOG_MGR.Msg(L"MkBaseFramework end. Bye~", true);
+}
+
+void MkBaseFramework::__Destroy(void)
+{
+	// 원 설정 복원
+	m_FPUSetter.Restore();
+	m_ASKSetter.Restore();
+
+	// 싱글톤 종료
+	m_InstanceDeallocator.ClearRearToFront();
+}
+
+bool MkBaseFramework::MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	if ((!gEnableUpdate) || (hWnd == NULL))
+		return false;
+
+	MK_INPUT_MGR.__CheckWndProc(hWnd, msg, wParam, lParam);
+
+	if (gMainWindowTitleBarHooker.CheckWndProc(hWnd, msg, wParam, lParam))
+		return true;
+
+	switch (msg)
+	{
+	case WM_SETCURSOR:
+		{
+			if (LOWORD(lParam) == HTCLIENT)
+			{
+				gRecieveCursorMsg = true;
+				return true;
+			}
+		}
+		break;
+
+	case WM_DROPFILES:
+		{
+			HDROP hDrop = reinterpret_cast<HDROP>(wParam);
+			wchar_t pathBuf[MAX_PATH];
+			int fileCount = DragQueryFile(hDrop, 0xffffffff, pathBuf, MAX_PATH);
+
+			for (int i=0; i<fileCount; ++i)
+			{
+				ZeroMemory(pathBuf, sizeof(pathBuf));
+				DragQueryFile(hDrop, i, pathBuf, MAX_PATH);
+
+				MkPathName filePath = pathBuf;
+				gDraggedFilePathList.PushBack(filePath);
+			}
+
+			DragFinish(hDrop);
+		}
+		break;
+
+	case WM_DESTROY:
+		::PostQuitMessage(0);
+		break;
+	}
+
+	return false;
+}
+
+LRESULT CALLBACK MkBaseFramework::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	if (MsgProc(hWnd, msg, wParam, lParam))
+		return FALSE;
+
+	return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+//------------------------------------------------------------------------------------------------//
+
+bool MkBaseFramework::_CreateSingletons(const wchar_t* rootPath, bool useLog)
+{
+	// main window
+	MK_CHECK(gMainWindowPtr == NULL, L"main window가 이미 존재")
+		return false;
+
+	gEnableUpdate = false;
 
 	// 고정키, 필터키 사용 정지
 	m_ASKSetter.TurnOffStickyAndFilterKeys();
@@ -80,7 +256,6 @@ bool MkBaseFramework::__Start
 	m_FPUSetter.FixPrecision();
 
 	// 문자열 설정
-	MkStr::SetUp();
 	MkPathName::SetUp(rootPath);
 
 	// 싱글톤 생성
@@ -94,7 +269,14 @@ bool MkBaseFramework::__Start
 	// 디버그빌드가 아니고 멀티코어이면 LFH 사용
 	if ((buildMode != MkSystemEnvironment::eDebug) && (MK_SYS_ENV.GetNumberOfProcessors() > 1))
 	{
-		_TurnOnLowFragmentationHeap();
+		// http://jacking.tistory.com/363
+		HANDLE heaps[1025] = {0, };
+		DWORD heapCount = GetProcessHeaps(1024, heaps);
+		for (DWORD i=0; i<heapCount; ++i)
+		{
+			ULONG heapFragValue = 2;
+			bool success = (HeapSetInformation(heaps[i], HeapCompatibilityInformation, &heapFragValue, sizeof(heapFragValue)) == TRUE);
+		}
 	}
 
 	// 1.
@@ -130,14 +312,11 @@ bool MkBaseFramework::__Start
 	// start!!!
 	MK_DEV_PANEL.MsgToLog(L"Application start" + MkStr::CRLF, true);
 
-	// main window
-	MK_CHECK(gMainWindowPtr == NULL, L"main window가 이미 존재")
-		return false;
+	return true;
+}
 
-	// 메인 윈도우 생성
-	if (!m_MainWindow.SetUpByWindowCreation(hInstance, (wndProc == NULL) ? WndProc : wndProc, NULL, title, sysWinProp, MkInt2(x, y), MkInt2(clientWidth, clientHeight), fullScreen))
-		return false;
-
+bool MkBaseFramework::_ApplyMainWindowAndCreateThreads(int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, const MkCmdLine& cmdLine)
+{
 	gMainWindowPtr = &m_MainWindow;
 
 	// 후커에 등록
@@ -193,248 +372,129 @@ bool MkBaseFramework::__Start
 	}
 
 	MK_DEV_PANEL.MsgToLog(L"MkBaseFramework 초기화 성공", false);
-	return true;
-}
 
-void MkBaseFramework::__Run(void)
-{
 	// 등록된 모든 스레드 유닛 시작
 	m_ThreadManager.WakeUpAll();
 
-	// SetUp이 완료될 때 까지 대기
-	// 실패하면 종료
-	if (!m_ThreadManager.WaitTillAllThreadsAreRunning())
-		return;
+	// SetUp이 완료될 때 까지 대기, 실패하면 종료
+	MK_CHECK(m_ThreadManager.WaitTillAllThreadsAreRunning(), L"thread unit 초기화 실패")
+		return false;
 
-	// 루핑 알람
-	StartLooping();
-
+	MK_DEV_PANEL.MsgToLog(L"----------------------------------------------------------", false);
 	MK_DEV_PANEL.MsgToLog(L"MkBaseFramework 루핑 진입", false);
 	MK_DEV_PANEL.MsgToLog(L"----------------------------------------------------------", false);
 
-	// 루핑 돌입
-	const MkHashStr profKey = MkStr(MKDEF_PROFILING_PREFIX_FOR_THREAD) + MkStr(MKDEF_MAIN_THREAD_NAME);
-	HWND hWnd = m_MainWindow.GetWindowHandle();
+	// 루핑 시작
+	StartLooping();
 
-	MkTimeState lastTimeState;
-	lastTimeState.frameCount = 0xffffffff;
+	gEnableUpdate = true;
+	return true;
+}
 
-	while (true)
+void MkBaseFramework::_UpdateOneFrame(void)
+{
+	const static MkHashStr profKey = MkStr(MKDEF_PROFILING_PREFIX_FOR_THREAD) + MkStr(MKDEF_MAIN_THREAD_NAME);
+
+	// logic thread unit 사용
+	if (m_UseLogicThreadUnit)
 	{
-		if (gDestroyMsg)
-		{
-			// background loader 삭제(아직 loading thread에는 남아 있을 수 있음)
-			MK_BG_LOADER.__Clear();
+		static MkTimeState lastTimeState(0xffffffff, 0., 0., false);
 
-			if (!m_UseLogicThreadUnit)
+		MkTimeState currTimeState;
+		MK_TIME_MGR.GetCurrentTimeState(currTimeState);
+
+		// 새로운 프레임이면 수행
+		if (currTimeState.frameCount != lastTimeState.frameCount)
+		{
+			// 현재 프레임 프로파일링 시작
+			MK_PROF_MGR.Begin(profKey);
+
+			// 입력 갱신
+			MK_INPUT_MGR.__Update();
+
+			// page 갱신은 logic thread에서 처리
+
+			// cursor 처리
+			if (gRecieveCursorMsg)
 			{
-				// 모든 페이지 삭제
-				MK_PAGE_MGR.__Clear();
+				ConsumeSetCursorMsg();
+				gRecieveCursorMsg = false;
 			}
 
-			// 스레드 유닛 모두 종료
-			m_ThreadManager.StopAll();
+			// 확장 갱신
+			Update();
 
-			// window 종료 전 해제(renderer가 존재하면 여기서 해제)
-			Free();
+			// 드래그 파일 처리
+			ConsumeDraggedFiles(gDraggedFilePathList);
 
-			// window 종료
-			DestroyWindow(hWnd);
-		}
+			// 현재 프레임 프로파일링 종료
+			MK_PROF_MGR.End(profKey);
 
-		MSG msg;
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-				break;
-
-			if (!TranslateAccelerator(hWnd, NULL, &msg))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+			lastTimeState = currTimeState;
 		}
 		else
 		{
-			// logic thread unit 사용
-			if (m_UseLogicThreadUnit)
-			{
-				MkTimeState currTimeState;
-				MK_TIME_MGR.GetCurrentTimeState(currTimeState);
-
-				// 새로운 프레임이면 수행
-				if (currTimeState.frameCount != lastTimeState.frameCount)
-				{
-					// 현재 프레임 프로파일링 시작
-					MK_PROF_MGR.Begin(profKey);
-
-					// 입력 갱신
-					MK_INPUT_MGR.__Update();
-
-					// page 갱신은 logic thread에서 처리
-
-					// cursor 처리
-					if (gRecieveCursorMsg)
-					{
-						ConsumeSetCursorMsg();
-						gRecieveCursorMsg = false;
-					}
-
-					// 확장 갱신
-					Update();
-
-					// 드래그 파일 처리
-					ConsumeDraggedFiles(gDraggedFilePathList);
-
-					// 현재 프레임 프로파일링 종료
-					MK_PROF_MGR.End(profKey);
-
-					lastTimeState = currTimeState;
-				}
-				else
-				{
-					Sleep(1); // 동일 시간이면 대기
-				}
-			}
-			// single thread
-			else
-			{
-				// 프레임 시작
-				MK_TIME_MGR.Update();
-
-				// 현재 프레임 프로파일링 시작
-				MK_PROF_MGR.Begin(profKey);
-
-				// 입력 갱신
-				MK_INPUT_MGR.__Update();
-
-				// cursor 처리
-				if (gRecieveCursorMsg)
-				{
-					ConsumeSetCursorMsg();
-					gRecieveCursorMsg = false;
-				}
-
-				// page 갱신
-				MK_PAGE_MGR.__Update();
-
-				// 확장 갱신
-				Update();
-
-				// 드래그 파일 처리
-				ConsumeDraggedFiles(gDraggedFilePathList);
-
-				// 현재 프레임 프로파일링 종료
-				MK_PROF_MGR.End(profKey);
-			}
-
-			// dev panel 위치 조정
-			if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
-			{
-				if (MK_INPUT_MGR.GetKeyPressed(VK_LEFT))
-				{
-					MK_DEV_PANEL.__SetAlignmentPosition(eRAP_LMostTop);
-				}
-				else if (MK_INPUT_MGR.GetKeyPressed(VK_RIGHT))
-				{
-					MK_DEV_PANEL.__SetAlignmentPosition(eRAP_RMostTop);
-				}
-				else if (MK_INPUT_MGR.GetKeyPressed(VK_UP))
-				{
-					MK_DEV_PANEL.__SetAlignmentPosition(eRAP_RightTop);
-				}
-				else if (MK_INPUT_MGR.GetKeyPressed(VK_DOWN))
-				{
-					MK_DEV_PANEL.__SetAlignmentPosition(eRAP_LeftBottom);
-				}
-			}
-
-			// dev panel 갱신
-			MK_DEV_PANEL.__Update();
-
-			// 후커 갱신
-			gMainWindowTitleBarHooker.Update();
+			Sleep(1); // 동일 시간이면 대기
 		}
 	}
-}
-
-void MkBaseFramework::__End(void)
-{
-	// 윈도우 등록 해제
-	m_MainWindow.Clear();
-
-	// window 종료 후 해제
-	Clear();
-
-	// 원 설정 복원
-	m_FPUSetter.Restore();
-	m_ASKSetter.Restore();
-
-	// end msg
-	MK_LOG_MGR.Msg(L"MkBaseFramework end. Bye~", true);
-
-	// 싱글톤 종료
-	m_InstanceDeallocator.ClearRearToFront();
-}
-
-LRESULT CALLBACK MkBaseFramework::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-	MK_INPUT_MGR.__CheckWndProc(hWnd, msg, wParam, lParam);
-
-	if (gMainWindowTitleBarHooker.CheckWndProc(hWnd, msg, wParam, lParam))
-		return 0;
-
-	switch (msg)
+	// single thread
+	else
 	{
-	case WM_SETCURSOR:
+		// 프레임 시작
+		MK_TIME_MGR.Update();
+
+		// 현재 프레임 프로파일링 시작
+		MK_PROF_MGR.Begin(profKey);
+
+		// 입력 갱신
+		MK_INPUT_MGR.__Update();
+
+		// cursor 처리
+		if (gRecieveCursorMsg)
 		{
-			if (LOWORD(lParam) == HTCLIENT)
-			{
-				gRecieveCursorMsg = true;
-				return TRUE;
-			}
+			ConsumeSetCursorMsg();
+			gRecieveCursorMsg = false;
 		}
-		break;
 
-	case WM_DROPFILES:
-		{
-			HDROP hDrop = reinterpret_cast<HDROP>(wParam);
-			wchar_t pathBuf[MAX_PATH];
-			int fileCount = DragQueryFile(hDrop, 0xffffffff, pathBuf, MAX_PATH);
+		// page 갱신
+		MK_PAGE_MGR.__Update();
 
-			for (int i=0; i<fileCount; ++i)
-			{
-				ZeroMemory(pathBuf, sizeof(pathBuf));
-				DragQueryFile(hDrop, i, pathBuf, MAX_PATH);
+		// 확장 갱신
+		Update();
 
-				MkPathName filePath = pathBuf;
-				gDraggedFilePathList.PushBack(filePath);
-			}
+		// 드래그 파일 처리
+		ConsumeDraggedFiles(gDraggedFilePathList);
 
-			DragFinish(hDrop);
-		}
-		break;
-
-	case WM_DESTROY:
-		::PostQuitMessage(0);
-		break;
+		// 현재 프레임 프로파일링 종료
+		MK_PROF_MGR.End(profKey);
 	}
 
-	return DefWindowProc(hWnd, msg, wParam, lParam);
-}
-
-//------------------------------------------------------------------------------------------------//
-
-// http://jacking.tistory.com/363
-void MkBaseFramework::_TurnOnLowFragmentationHeap(void)
-{
-	HANDLE heaps[1025] = {0, };
-	DWORD heapCount = GetProcessHeaps(1024, heaps);
-	for (DWORD i=0; i<heapCount; ++i)
+	// dev panel 위치 조정
+	if (MK_INPUT_MGR.GetKeyPushing(VK_CONTROL) && MK_INPUT_MGR.GetKeyPushing(VK_SHIFT))
 	{
-		ULONG heapFragValue = 2;
-		bool success = (HeapSetInformation(heaps[i], HeapCompatibilityInformation, &heapFragValue, sizeof(heapFragValue)) == TRUE);
+		if (MK_INPUT_MGR.GetKeyPressed(VK_LEFT))
+		{
+			MK_DEV_PANEL.__SetAlignmentPosition(eRAP_LMostTop);
+		}
+		else if (MK_INPUT_MGR.GetKeyPressed(VK_RIGHT))
+		{
+			MK_DEV_PANEL.__SetAlignmentPosition(eRAP_RMostTop);
+		}
+		else if (MK_INPUT_MGR.GetKeyPressed(VK_UP))
+		{
+			MK_DEV_PANEL.__SetAlignmentPosition(eRAP_RightTop);
+		}
+		else if (MK_INPUT_MGR.GetKeyPressed(VK_DOWN))
+		{
+			MK_DEV_PANEL.__SetAlignmentPosition(eRAP_LeftBottom);
+		}
 	}
+
+	// dev panel 갱신
+	MK_DEV_PANEL.__Update();
+
+	// 후커 갱신
+	gMainWindowTitleBarHooker.Update();
 }
 
 //------------------------------------------------------------------------------------------------//

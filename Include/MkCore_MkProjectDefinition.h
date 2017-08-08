@@ -22,10 +22,10 @@
 //------------------------------------------------------------------------------------------------//
 
 // 구분자 태그
-#define MKDEF_CMDLINE_SEPARATOR ";"
+#define MKDEF_CMDLINE_SEPARATOR L";"
 
 // 할당자 태그
-#define MKDEF_CMDLINE_ASSIGNER "="
+#define MKDEF_CMDLINE_ASSIGNER L"="
 
 //------------------------------------------------------------------------------------------------//
 // MkCheck

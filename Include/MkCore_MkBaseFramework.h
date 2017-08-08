@@ -78,7 +78,7 @@
 //	int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 //	{
 //		TestApplication application;
-//		application.Run(hI, L"MK Test app", L"..\\FileRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, false, false, NULL, cmdline);
+//		application.Run(hI, L"MK Test app", L"..\\FileRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600, false, false, NULL, NULL);
 //		return 0;
 //	}
 //------------------------------------------------------------------------------------------------//
@@ -127,11 +127,7 @@ public:
 	virtual void ConsumeSetCursorMsg(void) {}
 
 	// 확장 해제
-	// (NOTE) MkBaseFramework::Close()의 결과로 호출되며 main window handle과 모든 thread들도 유효한 상태
-	virtual void Free(void) {}
-
-	// 확장 해제
-	// (NOTE) MkBaseFramework::Close()/DestroyWindow()의 결과로 호출되며 main window handle과 모든 thread들이 무효화 된 상태
+	// (NOTE) MkBaseFramework::Close()의 결과로 호출되며 모든 thread들은 무효화 되었지만 window handle은 살아있는 상태
 	virtual void Clear(void) {}
 
 	// main window 반환
@@ -144,15 +140,20 @@ public:
 	// implementation
 	//------------------------------------------------------------------------------------------------//
 
+	// 윈도우 생성으로 시작
 	bool __Start
 		(HINSTANCE hInstance, const wchar_t* title, const wchar_t* rootPath, bool useLog, eSystemWindowProperty sysWinProp,
 		int x, int y, int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, WNDPROC wndProc, const MkCmdLine& cmdLine);
 
-	void __Run(void);
+	// 외부 윈도우로 시작. __Update(), __Close, __Destroy와 set
+	bool __Start(HWND hWnd, const wchar_t* rootPath, bool useLog, bool dragAccept, const MkCmdLine& cmdLine);
 
-	void __End(void);
+	void __Update(void);
+	void __Close(void);
+	void __Destroy(void);
 
 	// 윈도우 프로시져
+	static bool MsgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	MkBaseFramework() {}
@@ -160,7 +161,9 @@ public:
 
 protected:
 
-	void _TurnOnLowFragmentationHeap(void);
+	bool _CreateSingletons(const wchar_t* rootPath, bool useLog);
+	bool _ApplyMainWindowAndCreateThreads(int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, const MkCmdLine& cmdLine);
+	void _UpdateOneFrame(void);
 
 protected:
 

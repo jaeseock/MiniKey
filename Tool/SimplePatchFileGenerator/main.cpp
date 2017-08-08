@@ -310,8 +310,8 @@ public:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	TestApplication application;
-	application.Run(hI, L"SimplePatchFileGenerator", L"", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 600, 92, false, true, TestFramework::NewWndProc, cmdline,
-		"#DMK=_MkPatchFileGenerator; #BME=_MkPatchFileGenerator"); // 중복 실행 금지
+	application.Run(hI, L"SimplePatchFileGenerator", L"", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 600, 92, false, true, TestFramework::NewWndProc,
+		L"#DMK=_MkPatchFileGenerator; #BME=_MkPatchFileGenerator"); // 중복 실행 금지
 
 	return 0;
 }

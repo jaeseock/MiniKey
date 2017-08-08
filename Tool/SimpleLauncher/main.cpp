@@ -7,7 +7,7 @@
 #include "MkCore_MkCmdLine.h"
 #include "MkCore_MkDevPanel.h"
 
-#include "MkCore_MkLayeredImage.h"
+#include "MkCore_MkLayeredWindow.h"
 
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
@@ -24,7 +24,7 @@
 #define MKDEF_APP_BTN_START_ID 5
 
 static bool g_RunGame = false;
-static MkLayeredImage g_LayeredImage;
+static MkLayeredWindow g_LayeredWindow;
 
 
 // single thread
@@ -33,13 +33,13 @@ class TestFramework : public MkBaseFramework
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
-		g_LayeredImage.Clear();
+		g_LayeredWindow.Clear();
 
 		// patch url 검사
-		std::string patchUrlKey = MKDEF_PATCH_DOWNLOAD_URL_KEY;
+		MkStr patchUrlKey = MKDEF_PATCH_DOWNLOAD_URL_KEY;
 		if (cmdLine.HasPair(patchUrlKey))
 		{
-			m_PatchURL.ImportMultiByteString(cmdLine.GetValue(patchUrlKey, 0));
+			m_PatchURL = cmdLine.GetValue(patchUrlKey, 0);
 		}
 
 		if (m_PatchURL.Empty())
@@ -50,9 +50,8 @@ public:
 
 		// launcher가 app을 실행하므로 복수 실행 예외 처리
 		MkCmdLine newCmd = cmdLine;
-		newCmd.AddPair("#AME", "_MkGameApp");
-		newCmd.UpdateFullStr();
-		m_Arg.ImportMultiByteString(newCmd);
+		newCmd.AddPair(L"#AME", L"_MkGameApp");
+		newCmd.GetFullStr(m_Arg);
 
 		// ui 생성
 		m_Font = CreateFont
@@ -356,7 +355,7 @@ protected:
 		if (!MkWin32Application::_CheckExcution(cmdLine, myMutexHandle, myTitle))
 			return false;
 
-		g_LayeredImage.SetUp(L"launcher.png");
+		g_LayeredWindow.SetUp(L"SimpleLauncherIntroImage", L"launcher.png");
 		return true;
 	}
 };
@@ -367,8 +366,8 @@ protected:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	TestApplication application;
-	application.Run(hI, L"SimpleLauncher", L"", true, eSWP_FixedSize, CW_USEDEFAULT, CW_USEDEFAULT, 410, 146, false, true, TestFramework::NewWndProc, cmdline,
-		"#DMK=_MkLauncher; #BME=_MkStarter; #BME=_MkLauncher; #BME=_MkGameApp");
+	application.Run(hI, L"SimpleLauncher", L"", true, eSWP_FixedSize, CW_USEDEFAULT, CW_USEDEFAULT, 410, 146, false, true, TestFramework::NewWndProc,
+		L"#DMK=_MkLauncher; #BME=_MkStarter; #BME=_MkLauncher; #BME=_MkGameApp");
 
 	return 0;
 }

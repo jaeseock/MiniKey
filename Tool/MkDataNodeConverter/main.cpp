@@ -631,7 +631,7 @@ public:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	TestApplication application;
-	application.Run(hI, L"MkDataNodeConverter", L"", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 295, 420, false, true, TestFramework::NewWndProc, cmdline);
+	application.Run(hI, L"MkDataNodeConverter", L"", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 295, 420, false, true, TestFramework::NewWndProc);
 
 	return 0;
 }

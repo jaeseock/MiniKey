@@ -80,7 +80,7 @@ void MkRenderFramework::Update(void)
 	MK_RENDERER.Update();
 }
 
-void MkRenderFramework::Free(void)
+void MkRenderFramework::Clear(void)
 {
 	MK_RENDERER.Clear();
 }

@@ -58,11 +58,14 @@ void MkStr::SetUp(unsigned int codePage)
 
 	SetCodePage(codePage);
 
-	gBlankTag.Reserve(4);
-	gBlankTag.PushBack(MKDEF_WCHAR_TAP);
-	gBlankTag.PushBack(MKDEF_WCHAR_LINEFEED);
-	gBlankTag.PushBack(MKDEF_WCHAR_RETURN);
-	gBlankTag.PushBack(MKDEF_WCHAR_SPACE);
+	if (gBlankTag.Empty())
+	{
+		gBlankTag.Reserve(4);
+		gBlankTag.PushBack(MKDEF_WCHAR_TAP);
+		gBlankTag.PushBack(MKDEF_WCHAR_LINEFEED);
+		gBlankTag.PushBack(MKDEF_WCHAR_RETURN);
+		gBlankTag.PushBack(MKDEF_WCHAR_SPACE);
+	}
 }
 
 void MkStr::SetCodePage(unsigned int codePage) { gCurrentCodePage = codePage; }

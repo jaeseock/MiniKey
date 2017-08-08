@@ -20,15 +20,15 @@ protected:
 		if (!MkWin32Application::_CheckExcution(cmdLine, myMutexHandle, myTitle))
 			return false;
 
-		MkCmdLine newCmd = cmdLine;
-		newCmd.AddPair("#AME", "_MkStarter");
-		newCmd.UpdateFullStr();
-
-		// 문자열 설정
-		MkStr::SetUp();
 		MkPathName::SetUp();
 
-		MkPatchStarter::StartLauncher(L"http://210.207.252.151/temp", newCmd);
+		MkCmdLine newCmd = cmdLine;
+		newCmd.AddPair(L"#AME", L"_MkStarter");
+
+		MkStr cmdPass;
+		newCmd.GetFullStr(cmdPass);
+
+		MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara", cmdPass.GetPtr());
 		return false; // 종료
 	}
 };
@@ -39,8 +39,8 @@ protected:
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
 	TestApplication application;
-	application.Run(hI, L"Starter", L"", false, eSWP_None, CW_USEDEFAULT, CW_USEDEFAULT, 100, 20, false, true, NULL, cmdline,
-		"#DMK=_MkStarter; #BME=_MkStarter; #BME=_MkLauncher; #BME=_MkGameApp");
+	application.Run(hI, L"Starter", L"", false, eSWP_None, CW_USEDEFAULT, CW_USEDEFAULT, 100, 20, false, true, NULL,
+		L"#DMK=_MkStarter; #BME=_MkStarter; #BME=_MkLauncher; #BME=_MkGameApp");
 
 	return 0;
 }

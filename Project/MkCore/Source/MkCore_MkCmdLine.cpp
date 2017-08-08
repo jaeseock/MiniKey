@@ -1,15 +1,29 @@
 
 #include <Windows.h>
-#include "MkCore_MkStringOp.h"
 #include "MkCore_MkCmdLine.h"
 
 //---------------------------------------------------------------------------//
 
-const std::string MkCmdLine::Separator(MKDEF_CMDLINE_SEPARATOR);
-const std::string MkCmdLine::Assigner(MKDEF_CMDLINE_ASSIGNER);
+const MkStr MkCmdLine::Separator(MKDEF_CMDLINE_SEPARATOR);
+const MkStr MkCmdLine::Assigner(MKDEF_CMDLINE_ASSIGNER);
 
+void MkCmdLine::SetUp(void)
+{
+	Clear();
 
-MkCmdLine& MkCmdLine::operator = (const char* cmdLine)
+	const wchar_t* cmdLine = ::GetCommandLine();
+	int lineCount = 0;
+	LPWSTR* cmdLines = ::CommandLineToArgvW(cmdLine, &lineCount);
+	if (lineCount > 1)
+	{
+		for (int i=1; i<lineCount; ++i)
+		{
+			*this += MkStr(cmdLines[i]);
+		}
+	}
+}
+
+MkCmdLine& MkCmdLine::operator = (const MkStr& cmdLine)
 {
 	Clear();
 	*this += cmdLine;
@@ -18,24 +32,21 @@ MkCmdLine& MkCmdLine::operator = (const char* cmdLine)
 
 MkCmdLine& MkCmdLine::operator = (const MkCmdLine& cmdLine)
 {
-	m_FullStr = cmdLine.GetFullStr();
 	m_Lines = cmdLine.GetNormalLines();
 	m_Pairs = cmdLine.GetPairs();
 	return *this;
 }
 
-MkCmdLine& MkCmdLine::operator += (const char* cmdLine)
+MkCmdLine& MkCmdLine::operator += (const MkStr& cmdLine)
 {
-	if (cmdLine != NULL)
+	if (!cmdLine.Empty())
 	{
-		std::string cmdStr = cmdLine;
-		_Parse(cmdStr);
-		UpdateFullStr();
+		_Parse(cmdLine);
 	}
 	return *this;
 }
 
-void MkCmdLine::AddPair(const std::string& key, const std::string& value)
+void MkCmdLine::AddPair(const MkStr& key, const MkStr& value)
 {
 	if (m_Pairs.Exist(key))
 	{
@@ -47,7 +58,7 @@ void MkCmdLine::AddPair(const std::string& key, const std::string& value)
 	}
 }
 
-bool MkCmdLine::RemovePair(const std::string& key)
+bool MkCmdLine::RemovePair(const MkStr& key)
 {
 	bool ok = m_Pairs.Exist(key);
 	if (ok)
@@ -57,12 +68,9 @@ bool MkCmdLine::RemovePair(const std::string& key)
 	return ok;
 }
 
-void MkCmdLine::UpdateFullStr(void)
+void MkCmdLine::GetFullStr(MkStr& buffer)
 {
-	if (!m_FullStr.empty())
-	{
-		m_FullStr.clear();
-	}
+	buffer.Clear();
 
 	bool needSpace = false;
 	if (!m_Lines.Empty())
@@ -71,44 +79,44 @@ void MkCmdLine::UpdateFullStr(void)
 		{
 			if (needSpace)
 			{
-				m_FullStr += " ";
+				buffer += L" ";
 			}
 			else
 			{
 				needSpace = true;
 			}
 
-			m_FullStr += m_Lines[i];
-			m_FullStr += Separator;
+			buffer += m_Lines[i];
+			buffer += Separator;
 		}
 
 		if (!m_Pairs.Empty())
 		{
-			m_FullStr += " ";
+			buffer += L" ";
 		}
 	}
 
 	if (!m_Pairs.Empty())
 	{
-		MkMapLooper<std::string, MkArray<std::string> > keyLooper(m_Pairs);
+		MkMapLooper<MkStr, MkArray<MkStr> > keyLooper(m_Pairs);
 		MK_STL_LOOP(keyLooper)
 		{
-			MkArray<std::string>& values = keyLooper.GetCurrentField();
+			MkArray<MkStr>& values = keyLooper.GetCurrentField();
 			MK_INDEXING_LOOP(values, i)
 			{
 				if (needSpace)
 				{
-					m_FullStr += " ";
+					buffer += L" ";
 				}
 				else
 				{
 					needSpace = true;
 				}
 
-				m_FullStr += keyLooper.GetCurrentKey();
-				m_FullStr += Assigner;
-				m_FullStr += values[i];
-				m_FullStr += Separator;
+				buffer += keyLooper.GetCurrentKey();
+				buffer += Assigner;
+				buffer += values[i];
+				buffer += Separator;
 			}
 		}
 	}
@@ -116,49 +124,46 @@ void MkCmdLine::UpdateFullStr(void)
 
 void MkCmdLine::Clear(void)
 {
-	if (!m_FullStr.empty())
-	{
-		m_FullStr.clear();
-	}
-
 	m_Lines.Clear();
 	m_Pairs.Clear();
 }
 
-void MkCmdLine::_Parse(const std::string& cmdStr)
+void MkCmdLine::_Parse(const MkStr& cmdLine)
 {
 	// Separator를 사용해 라인 단위로 자름
-	std::vector<std::string> lines;
-	MkStringOp::Tokenize(cmdStr, lines, Separator);
+	MkArray<MkStr> lines;
+	cmdLine.Tokenize(lines, Separator);
 
-	for (size_t i=0; i<lines.size(); ++i)
+	MK_INDEXING_LOOP(lines, i)
 	{
-		std::string& currLine = lines[i];
+		MkStr& currLine = lines[i];
 		bool isNormalLine = true; // key-value pair가 아닌 일반 라인 여부
 
 		// key-value pair인지 검사해 처리
-		if (MkStringOp::CountKeyword(currLine, Assigner) > 0)
+		if (currLine.CountKeyword(Assigner) > 0)
 		{
-			std::string lineCopy = currLine;
+			MkStr lineCopy = currLine;
 
 			// key-value pair는 공문자를 인정하지 않음
-			MkStringOp::RemoveBlank(lineCopy);
+			lineCopy.RemoveBlank();
 
 			// key가 존재해야 pair로 인식. 없으면 일반 라인 취급
-			std::string key;
-			if (MkStringOp::GetFirstBlock(lineCopy, Assigner, key, 0, true) &&
-				(!key.empty()))
+			MkStr key;
+			unsigned int vPos = lineCopy.GetFirstBlock(0, Assigner, key);
+			if ((vPos != MKDEF_ARRAY_ERROR) && (!key.Empty()))
 			{
-				AddPair(key, lineCopy); // value는 비었어도 정상적인 pair로 인정해 추가
+				MkStr value;
+				lineCopy.GetSubStr(MkArraySection(vPos), value);
+				AddPair(key, value); // value는 비었어도 정상적인 pair로 인정해 추가
 				isNormalLine = false;
 			}
 		}
 
 		// 일반 라인이고 유효문자가 존재하면 앞/뒤 공문자 제거해 등록
-		if (isNormalLine && (MkStringOp::GetFirstValidPosition(currLine) >= 0))
+		if (isNormalLine && (currLine.GetFirstValidPosition() >= 0))
 		{
-			MkStringOp::RemoveFrontSideBlank(currLine);
-			MkStringOp::RemoveRearSideBlank(currLine);
+			currLine.RemoveFrontSideBlank();
+			currLine.RemoveRearSideBlank();
 
 			m_Lines.PushBack(currLine);
 		}

@@ -13,3 +13,5 @@
 *.idb
 *.ncb
 *.suo
+*.pch
+*.res

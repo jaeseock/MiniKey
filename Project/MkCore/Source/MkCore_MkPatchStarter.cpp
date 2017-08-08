@@ -9,7 +9,7 @@
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkPatchStarter::StartLauncher(const MkStr& url, const char* arg)
+bool MkPatchStarter::StartLauncher(const MkStr& url, const wchar_t* arg)
 {
 	MkStr rootURL = url;
 	if ((!rootURL.Empty()) && (!rootURL.CheckPostfix(L"/")))
@@ -177,14 +177,10 @@ bool MkPatchStarter::StartLauncher(const MkStr& url, const char* arg)
 	{
 		// url을 launcher에 전달하기 위해 cmd line에 추가
 		MkCmdLine cmdLine = arg;
-
-		std::string urlStr;
-		url.ExportMultiByteString(urlStr);
-		cmdLine.AddPair(MKDEF_PATCH_DOWNLOAD_URL_KEY, urlStr);
-		cmdLine.UpdateFullStr();
+		cmdLine.AddPair(MKDEF_PATCH_DOWNLOAD_URL_KEY, url);
 
 		MkStr args;
-		args.ImportMultiByteString(cmdLine);
+		cmdLine.GetFullStr(args);
 
 		localLauncherFilePath.OpenFileInVerb(args);
 	}

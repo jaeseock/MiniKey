@@ -1,0 +1,14 @@
+//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path  : ..\..\ORC.txt
+//   - time stamp : 2017.07.28 (15:41:49)
+//   - exporter   : pc (3_ReadAndSaveDataNode)
+//--------------------------------------------------------------------//
+
+
+PushTemplate "T_MonsterForm";
+str EnglishName = "Orc";
+str KoreanName = "¿À²Ù";
+int intelligence = 10;
+uint threeSize = // [3]
+	50 / 200 / 70;

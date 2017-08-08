@@ -304,7 +304,14 @@ void MkPatchFileDownloader::Update(void)
 
 				if (m_ErrorMsg.Empty())
 				{
-					MK_DEV_PANEL.MsgToLog(L"  + " + fileInfo.filePath);
+					if (fileInfo.alreadyDowned)
+					{
+						MK_DEV_PANEL.MsgToLog(L"    " + fileInfo.filePath);
+					}
+					else
+					{
+						MK_DEV_PANEL.MsgToLog(L"  + " + fileInfo.filePath);
+					}
 					++m_CurrentProgress;
 				}
 				else
