@@ -21,7 +21,7 @@ public:
 	//	window.SetUpByWindowCreation(hI, WndProc, NULL, L"full window", eSWP_Close, MkInt2::Zero, MkInt2::Zero);
 	virtual bool SetUpByWindowCreation
 		(HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp,
-		const MkInt2& position, const MkInt2& clientSize, bool fullScreen = false);
+		const MkInt2& position, const MkInt2& clientSize, bool fullScreen = false, bool hide = false);
 
 	// 외부에서 생성된 윈도우로 초기화
 	virtual bool SetUpByOuterWindow(HWND hWnd);
@@ -84,9 +84,6 @@ public:
 
 	// 윈도우 크기로부터 clientSize를 계산해 반환
 	MkInt2 ConvertWindowToClientSize(const MkInt2& windowSize) const;
-
-	// 인스턴스 핸들 반환
-	HINSTANCE GetInstanceHandle(void) const;
 
 	// 윈도우 핸들 반환
 	inline HWND GetWindowHandle(void) const { return m_hWnd; }

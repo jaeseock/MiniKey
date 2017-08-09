@@ -39,7 +39,7 @@ public:
 	// rootWindow : 어플리케이션 루트 윈도우
 	// sRect::eAlignmentPosition : rootWindow에 대한 snapping 위치
 	// cheatInterface : 치트 처리 인터페이스. NULL일경우 기본 인터페이스(MkCheatMessage) 사용, MkDevPanel 종료시 자체적으로 등록된 객체 삭제
-	bool SetUp(MkListeningWindow& rootWindow, eRectAlignmentPosition alignmentPosition = eRAP_RMostTop, MkCheatMessage* cheatInterface = NULL);
+	bool SetUp(MkListeningWindow& rootWindow, eRectAlignmentPosition alignmentPosition = eRAP_RMostTop, MkCheatMessage* cheatInterface = NULL, bool hide = false);
 
 	// freeboard의 index 라인에 msg 출력
 	void MsgToFreeboard(unsigned int index, const MkStr& msg);

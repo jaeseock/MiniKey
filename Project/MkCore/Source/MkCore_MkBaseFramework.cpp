@@ -2,6 +2,7 @@
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkPathName.h"
 #include "MkCore_MkTitleBarHooker.h"
+#include "MkCore_MkCmdLine.h"
 
 #include "MkCore_MkLogManager.h"
 #include "MkCore_MkSystemEnvironment.h"
@@ -324,7 +325,8 @@ bool MkBaseFramework::_ApplyMainWindowAndCreateThreads(int clientWidth, int clie
 
 	// ½Ì±ÛÅæ¿¡ À©µµ¿ì µî·Ï
 	MK_INPUT_MGR.SetUp(m_MainWindow.GetWindowHandle());
-	if (MK_DEV_PANEL.SetUp(m_MainWindow, eRAP_RMostTop, CreateCheatMessage()))
+
+	if (MK_DEV_PANEL.SetUp(m_MainWindow, eRAP_RMostTop, CreateCheatMessage(), cmdLine.HasPair(L"#HDP")))
 	{
 		m_MainWindow.SetOnTop();
 

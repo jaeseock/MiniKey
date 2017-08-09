@@ -40,7 +40,7 @@ CKuntaraLauncherApp theApp;
 
 BOOL CKuntaraLauncherApp::InitInstance()
 {
-	if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkLauncher; #BME=_MkStarter; #BME=_MkLauncher; #BME=_MkGameApp"))
+	if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkLauncher; #BME=_MkStarter; #BME=_MkLauncher; #BME=_MkGameApp; #HDP="))
 		return FALSE;
 
 	GP_MGR.SetUp();

@@ -18,10 +18,12 @@ const static DWORD FullModeStyle = (WS_EX_TOPMOST | WS_POPUP);
 
 bool MkBaseWindow::SetUpByWindowCreation
 (HINSTANCE hInstance, WNDPROC wndProc, HWND hParent, const MkStr& title, eSystemWindowProperty sysWinProp,
- const MkInt2& position, const MkInt2& clientSize, bool fullScreen)
+ const MkInt2& position, const MkInt2& clientSize, bool fullScreen, bool hide)
 {
 	// 윈도우 스타일
-	m_WindowModeStyle = (WS_VISIBLE | WS_OVERLAPPED | WS_CAPTION);
+	m_WindowModeStyle = (hide) ? 0 : WS_VISIBLE;
+	m_WindowModeStyle |= (WS_OVERLAPPED | WS_CAPTION);
+	
 	if (MK_FLAG_EXIST(sysWinProp, eSWP_Minimize))
 	{
 		m_WindowModeStyle |= WS_MINIMIZEBOX;
@@ -78,7 +80,7 @@ bool MkBaseWindow::SetUpByOuterWindow(HWND hWnd)
 	m_hParent = GetParent(m_hWnd);
 	m_ClassName.Clear(); // 클래스 이름이 비었으므로 종료시 클래스 해제하지 않음(외부에 의존)
 	m_CurrentWindowStyle = m_WindowModeStyle = static_cast<DWORD>(GetWindowLongPtr(m_hWnd, GWL_STYLE));
-	m_hInstance = GetInstanceHandle();
+	m_hInstance = ::GetModuleHandle(NULL);
 	return true;
 }
 
@@ -246,11 +248,6 @@ MkInt2 MkBaseWindow::ConvertClientToWindowSize(const MkInt2& clientSize) const
 MkInt2 MkBaseWindow::ConvertWindowToClientSize(const MkInt2& windowSize) const
 {
 	return (windowSize - ConvertClientToWindowSize(MkInt2::Zero));
-}
-
-HINSTANCE MkBaseWindow::GetInstanceHandle(void) const
-{
-	return (m_hWnd == NULL) ? NULL : reinterpret_cast<HINSTANCE>(GetWindowLongPtr(m_hWnd, GWL_HINSTANCE));
 }
 
 MkInt2 MkBaseWindow::GetWorkspaceSize(void)
