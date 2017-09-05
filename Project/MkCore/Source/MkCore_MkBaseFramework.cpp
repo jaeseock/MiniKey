@@ -382,9 +382,9 @@ bool MkBaseFramework::_ApplyMainWindowAndCreateThreads(int clientWidth, int clie
 	MK_CHECK(m_ThreadManager.WaitTillAllThreadsAreRunning(), L"thread unit 초기화 실패")
 		return false;
 
-	MK_DEV_PANEL.MsgToLog(L"----------------------------------------------------------", false);
+	MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------", false);
 	MK_DEV_PANEL.MsgToLog(L"MkBaseFramework 루핑 진입", false);
-	MK_DEV_PANEL.MsgToLog(L"----------------------------------------------------------", false);
+	MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------", false);
 
 	// 루핑 시작
 	StartLooping();

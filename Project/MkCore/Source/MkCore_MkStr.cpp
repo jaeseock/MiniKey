@@ -919,13 +919,38 @@ void MkStr::ReplaceAllBlocks(unsigned int position, const MkStr& beginKeyword, c
 void MkStr::RemoveAllComment(void)
 {
 	EraseAllBlocks(0, L"/*", L"*/");
+
+	// protocol 예외시 L"//" 처리. ex> https://...
+	unsigned int pos = 0;
+	while (true)
+	{
+		pos = GetFirstKeywordPosition(MkArraySection(pos), L"://");
+		if (pos == MKDEF_ARRAY_ERROR)
+			break;
+		
+		if (pos > 0)
+		{
+			const wchar_t& c = m_Str[pos - 1]; // 직전 문자가 알파벳이면
+			if (((c >= L'A') && (c <= L'Z')) || ((c >= L'a') && (c <= L'z')))
+			{
+				m_Str[pos] = L'_'; // L"://" -> L"__#PK_"
+				m_Str[pos + 1] = L'_';
+				m_Str[pos + 2] = L'#';
+
+				pos = Insert(pos + 3, L"PK_");
+			}
+		}
+	}
+
 	ReplaceAllBlocks(0, L"//", MkStr::LF, MkStr::LF);
 
-	unsigned int pos = GetFirstKeywordPosition(L"//");
+	pos = GetFirstKeywordPosition(L"//");
 	if (pos != MKDEF_ARRAY_ERROR) // L"//" ~ EOF
 	{
 		BackSpace(GetSize() - pos);
 	}
+
+	ReplaceKeyword(L"__#PK_", L"://");
 }
 
 //------------------------------------------------------------------------------------------------//

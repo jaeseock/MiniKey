@@ -65,6 +65,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KuntaraLauncher", "Tool\Kun
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Uninstall", "Tool\Uninstall\Uninstall.vcproj", "{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServiceDataGenerator", "Tool\ServiceDataGenerator\ServiceDataGenerator.vcproj", "{0215579E-9A42-4B6D-8034-6673B7D5A595}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UpdateService", "Tool\UpdateService\UpdateService.vcproj", "{5E485D32-E895-4BF0-AE65-3C25E610423E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -150,6 +165,24 @@ Global
 		{F60E0E9A-688D-41C8-8AF8-15D5FD9D5969}.Release|Win32.Build.0 = Release|Win32
 		{F60E0E9A-688D-41C8-8AF8-15D5FD9D5969}.Shipping|Win32.ActiveCfg = Shipping|Win32
 		{F60E0E9A-688D-41C8-8AF8-15D5FD9D5969}.Shipping|Win32.Build.0 = Shipping|Win32
+		{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}.Debug|Win32.Build.0 = Debug|Win32
+		{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}.Release|Win32.ActiveCfg = Release|Win32
+		{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}.Release|Win32.Build.0 = Release|Win32
+		{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}.Shipping|Win32.ActiveCfg = Release|Win32
+		{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}.Shipping|Win32.Build.0 = Release|Win32
+		{0215579E-9A42-4B6D-8034-6673B7D5A595}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0215579E-9A42-4B6D-8034-6673B7D5A595}.Debug|Win32.Build.0 = Debug|Win32
+		{0215579E-9A42-4B6D-8034-6673B7D5A595}.Release|Win32.ActiveCfg = Release|Win32
+		{0215579E-9A42-4B6D-8034-6673B7D5A595}.Release|Win32.Build.0 = Release|Win32
+		{0215579E-9A42-4B6D-8034-6673B7D5A595}.Shipping|Win32.ActiveCfg = Release|Win32
+		{0215579E-9A42-4B6D-8034-6673B7D5A595}.Shipping|Win32.Build.0 = Release|Win32
+		{5E485D32-E895-4BF0-AE65-3C25E610423E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5E485D32-E895-4BF0-AE65-3C25E610423E}.Debug|Win32.Build.0 = Debug|Win32
+		{5E485D32-E895-4BF0-AE65-3C25E610423E}.Release|Win32.ActiveCfg = Release|Win32
+		{5E485D32-E895-4BF0-AE65-3C25E610423E}.Release|Win32.Build.0 = Release|Win32
+		{5E485D32-E895-4BF0-AE65-3C25E610423E}.Shipping|Win32.ActiveCfg = Release|Win32
+		{5E485D32-E895-4BF0-AE65-3C25E610423E}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

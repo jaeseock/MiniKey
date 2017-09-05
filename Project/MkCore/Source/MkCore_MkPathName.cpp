@@ -851,6 +851,17 @@ bool MkPathName::ConvertToWorkingBasisRelativePath(void) { return _ConvertToRela
 void MkPathName::ConvertToRootBasisAbsolutePath(const MkPathName& path) { _UpdateCurrentPath(GetRootDirectory(), path); }
 bool MkPathName::ConvertToRootBasisRelativePath(void) { return _ConvertToRelativePath(GetRootDirectory()); }
 
+void MkPathName::ConvertToSystemBasisAbsolutePath(const MkPathName& path, int csidl)
+{
+	wchar_t buffer[MAX_PATH] = {0, };
+	::SHGetSpecialFolderPath(NULL, buffer, csidl, NULL);
+
+	MkPathName systemPath = buffer;
+	systemPath.CheckAndAddBackslash();
+
+	_UpdateCurrentPath(systemPath, path);
+}
+
 //------------------------------------------------------------------------------------------------//
 
 bool MkPathName::DeleteCurrentFile(void) const

@@ -298,6 +298,11 @@ public:
 	// return : 절대경로이지만 root directory와 다른 장치일 경우 false, 아니면 true
 	bool ConvertToRootBasisRelativePath(void);
 
+	// path가 상대경로이면 CSIDL 기준 절대경로로, 절대경로이면 덮어쓴 후 경로 최적화
+	// (in) path : 경로명
+	// ex> ConvertToSystemBasisAbsolutePath(L"abc\\test.txt", CSIDL_COMMON_DESKTOPDIRECTORY)
+	void ConvertToSystemBasisAbsolutePath(const MkPathName& path, int csidl);
+
 	//------------------------------------------------------------------------------------------------//
 	// 파일 처리
 	// 실제 경로상 파일 조작

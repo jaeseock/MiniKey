@@ -447,6 +447,22 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkRegistryOp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkRegistryOp.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkShortcutOp.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkShortcutOp.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkCore_MkStringOp.cpp"
 					>
 				</File>
@@ -664,6 +680,14 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkAccessibilityShortcutKeySetter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkApplicationRegister.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkApplicationRegister.h"
 					>
 				</File>
 				<File

@@ -33,7 +33,10 @@ bool MkCheck::ExceptionForDebug(const wchar_t* expression, const wchar_t* messag
 #endif
 	{
 		// log 기록 후 진행
-		MK_LOG_MGR.Msg(L"<Error> " + msg, true);
+		if (MkLogManager::InstancePtr() != NULL)
+		{
+			MK_LOG_MGR.Msg(L"<Error> " + msg, true);
+		}
 	}
 
 	return true; // excute action
@@ -59,7 +62,10 @@ bool MkCheck::ExceptionForRelease(const char* function, long lineNum, const wcha
 //	int rlt = MessageBox(NULL, msg.GetPtr(), L"Oops!!! Break?", MB_YESNO);
 //	if (rlt == IDYES)
 //	{
-//		MK_LOG_MGR.CreateCrashPage(msg); // crash log
+//		if (MkLogManager::InstancePtr() != NULL)
+//		{
+//			MK_LOG_MGR.CreateCrashPage(msg); // crash log
+//		{
 //		throw; // 강제예외
 //	}
 //	else if (rlt == IDNO)
@@ -69,7 +75,10 @@ bool MkCheck::ExceptionForRelease(const char* function, long lineNum, const wcha
 //#endif
 	{
 		// log 기록 후 진행
-		MK_LOG_MGR.Msg(L"<Error> " + msg, true);
+		if (MkLogManager::InstancePtr() != NULL)
+		{
+			MK_LOG_MGR.Msg(L"<Error> " + msg, true);
+		}
 	}
 	
 	return true; // excute action

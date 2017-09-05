@@ -530,6 +530,12 @@ MkDataNode::MkDataNode(const MkHashStr& name) : MkSingleTypeTreePattern<MkDataNo
 	m_TemplateLink = NULL;
 }
 
+MkDataNode::MkDataNode(const MkDataNode& node) : MkSingleTypeTreePattern<MkDataNode>()
+{
+	m_TemplateLink = NULL;
+	*this = node;
+}
+
 //------------------------------------------------------------------------------------------------//
 
 void MkDataNode::__CopyFromTemplateNode(const MkDataNode* source)

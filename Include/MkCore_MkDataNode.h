@@ -305,6 +305,7 @@ public:
 
 	MkDataNode();
 	MkDataNode(const MkHashStr& name);
+	MkDataNode(const MkDataNode& node);
 	virtual ~MkDataNode()
 	{
 		m_ReadOnly = false;
