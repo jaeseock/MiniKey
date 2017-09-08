@@ -32,7 +32,10 @@ bool MkThreadManager::RegisterThreadUnit(MkBaseThreadUnit* threadUnit)
 		m_ThreadInfos.Create(threadUnit->GetThreadName(), threadInfo);
 	}
 
-	MK_DEV_PANEL.MsgToLog(threadName + L" thread(" + MkStr(threadInfo.id) + L") 등록", false);
+	if (MkDevPanel::InstancePtr() != NULL)
+	{
+		MK_DEV_PANEL.MsgToLog(threadName + L" thread(" + MkStr(threadInfo.id) + L") 등록", false);
+	}
 	return true;
 }
 
@@ -141,7 +144,10 @@ unsigned int WINAPI MkThreadManager::__ThreadProc(LPVOID lpParam)
 
 	const MkStr& threadName = threadObject->GetThreadName().GetString();
 	unsigned int currentThreadID = static_cast<unsigned int>(GetCurrentThreadId());
-	MK_DEV_PANEL.MsgToLog(threadName + L" thread(" + MkStr(currentThreadID) + L") 실행", false);
+	if (MkDevPanel::InstancePtr() != NULL)
+	{
+		MK_DEV_PANEL.MsgToLog(threadName + L" thread(" + MkStr(currentThreadID) + L") 실행", false);
+	}
 
 	// 초기화
 	bool ok = threadObject->SetUp();
@@ -161,7 +167,10 @@ unsigned int WINAPI MkThreadManager::__ThreadProc(LPVOID lpParam)
 	// 종료 선언
 	threadObject->__ChangeStateToEnd();
 
-	MK_DEV_PANEL.MsgToLog(threadName + L" thread(" + MkStr(currentThreadID) + L") end", false);
+	if (MkDevPanel::InstancePtr() != NULL)
+	{
+		MK_DEV_PANEL.MsgToLog(threadName + L" thread(" + MkStr(currentThreadID) + L") end", false);
+	}
 
 	return 0;
 }

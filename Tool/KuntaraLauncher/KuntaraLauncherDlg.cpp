@@ -8,6 +8,7 @@
 
 #include "MkCore_MkPathName.h"
 #include "MkCore_MkDevPanel.h"
+#include "MkCore_MkFileDownloader.h"
 #include "MkCore_MkCmdLine.h"
 #include "MkCore_MkLayeredWindow.h"
 #include "MkCore_MkPatchFileGenerator.h"
@@ -82,19 +83,19 @@ BOOL CKuntaraLauncherDlg::OnInitDialog()
 	}
 
 	// browser
-	CComVariant noticeURL(L"http://www.playwith.co.kr/");
+	CComVariant noticeURL(L"http://testgameinfo.kuntara.co.kr/launcher/");
 	m_WebBrowser.MoveWindow(2, 52, 846, 394, 0);
 	m_WebBrowser.Navigate2(&noticeURL, NULL, NULL, NULL, NULL);
 
 	// progress : main
 	//m_MainProgress.SetProgressInfo(10, 119, 493, L"launcher\\gage_f.png", L"launcher\\gage_b.png");
-	m_MainProgress.SetProgressInfo(10, 119, 493, IDB_PNG2, IDB_PNG1);
+	m_MainProgress.SetProgressInfo(10, 119, 514, IDB_PNG2, IDB_PNG1);
 	m_MainProgress.SetRange(0, 100);
 	m_MainProgress.SetPos(0);
 
 	// progress : sub
 	//m_SubProgress.SetProgressInfo(11, 119, 514, L"launcher\\gage_f.png", L"launcher\\gage_b.png");
-	m_SubProgress.SetProgressInfo(11, 119, 514, IDB_PNG2, IDB_PNG1);
+	m_SubProgress.SetProgressInfo(11, 119, 493, IDB_PNG2, IDB_PNG1);
 	m_SubProgress.SetRange(0, 100);
 	m_SubProgress.SetPos(0);
 
@@ -196,7 +197,7 @@ LRESULT CKuntaraLauncherDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 			}
 			else
 			{
-				//m_PatchURL = L"http://210.207.252.151/kuntara"; // temp
+				//m_PatchURL = L"http://210.207.252.151/kuntara/korea"; // temp
 			}
 
 			if (m_PatchURL.Empty())
@@ -232,7 +233,7 @@ LRESULT CKuntaraLauncherDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 			{
 				switch (currState)
 				{
-				case MkPatchFileDownloader::eDownloadTargetFiles:
+				case MkPatchFileDownloader::eRegisterTargetFiles:
 				case MkPatchFileDownloader::eUpdateFiles:
 				case MkPatchFileDownloader::eOptimizeChunk:
 					m_SubProgress.SetPos(m_Patcher.GetCurrentProgress());
@@ -243,7 +244,7 @@ LRESULT CKuntaraLauncherDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 				float blockSize = 0.f;
 				switch (currState)
 				{
-				case MkPatchFileDownloader::eDownloadTargetFiles:
+				case MkPatchFileDownloader::eRegisterTargetFiles:
 					offset = 20;
 					blockSize = 50.f;
 					break;
@@ -269,29 +270,37 @@ LRESULT CKuntaraLauncherDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 				{
 				case MkPatchFileDownloader::ePurgeDeleteList: m_MainProgress.SetPos(5); break;
 				case MkPatchFileDownloader::eFindDownloadTargets: m_MainProgress.SetPos(10); break;
-				case MkPatchFileDownloader::eDownloadTargetFiles: m_MainProgress.SetPos(20); break;
+				case MkPatchFileDownloader::eRegisterTargetFiles: m_MainProgress.SetPos(20); break;
 				case MkPatchFileDownloader::eUpdateFiles: m_MainProgress.SetPos(70); break;
 				case MkPatchFileDownloader::eOptimizeChunk: m_MainProgress.SetPos(80); break;
 
-				case MkPatchFileDownloader::eShowResult:
-					m_MainProgress.SetPos(100);
+				case MkPatchFileDownloader::eShowSuccessResult:
 					m_StartBtn.EnableWindow(TRUE);
+					m_MainProgress.SetPos(100);
+					m_MainState = eMS_Complete;
+					break;
+
+				case MkPatchFileDownloader::eShowFailedResult:
+					m_MainProgress.SetPos(100);
 					m_MainState = eMS_Complete;
 					break;
 				}
 
-				if (m_Patcher.GetMaxProgress() == 0)
+				if (currState != MkPatchFileDownloader::eDownloadTargetFiles)
 				{
-					m_SubProgress.SetRange(0, 1);
-					m_SubProgress.SetPos(1);
-				}
-				else
-				{
-					m_SubProgress.SetRange(0, m_Patcher.GetMaxProgress());
-					m_SubProgress.SetPos(0);
-				}
+					if (m_Patcher.GetMaxProgress() == 0)
+					{
+						m_SubProgress.SetRange(0, 1);
+						m_SubProgress.SetPos(1);
+					}
+					else
+					{
+						m_SubProgress.SetRange(0, m_Patcher.GetMaxProgress());
+						m_SubProgress.SetPos(0);
+					}
 
-				m_PatchState = currState;
+					m_PatchState = currState;
+				}
 			}
 
 			MkStr descStr;
@@ -311,6 +320,7 @@ LRESULT CKuntaraLauncherDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 				descStr = L"다운 대상 파일 선별";
 				break;
 
+			case MkPatchFileDownloader::eRegisterTargetFiles:
 			case MkPatchFileDownloader::eDownloadTargetFiles:
 				//descStr = L"패치 파일 다운로드 (" + MkStr(m_Patcher.GetCurrentProgress()) + L" / " + MkStr(m_Patcher.GetMaxProgress()) + L")";
 				descStr = L"패치 파일 다운로드";
@@ -326,8 +336,12 @@ LRESULT CKuntaraLauncherDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 				descStr = L"파일 시스템 최적화";
 				break;
 
-			case MkPatchFileDownloader::eShowResult:
+			case MkPatchFileDownloader::eShowSuccessResult:
 				descStr = L"완료";
+				break;
+
+			case MkPatchFileDownloader::eShowFailedResult:
+				descStr = L"진행 중지. 잠시 후 재도전 해보세요.";
 				break;
 			}
 
@@ -346,13 +360,13 @@ LRESULT CKuntaraLauncherDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
-		case eMS_Complete:
-			// 대기
-			break;
+	case eMS_Complete:
+		// 대기
+		break;
 
-		case eMS_Quit:
-			MkBaseFramework::Close();
-			break;
+	case eMS_Quit:
+		MkBaseFramework::Close();
+		break;
 	}
 	
 	APP_MGR.GetApplication().Update();
@@ -408,7 +422,20 @@ void CKuntaraLauncherDlg::OnOK()
 
 void CKuntaraLauncherDlg::OnBnClickedQuit()
 {
-	m_MainState = eMS_Quit;
+	switch (m_MainState)
+	{
+	case eMS_FirstFrame:
+	case eMS_CheckInput:
+	case eMS_StartPatch:
+	case eMS_Complete:
+	case eMS_Quit:
+		MkBaseFramework::Close();
+		break;
+
+	case eMS_UpdatePatch:
+		MK_FILE_DOWNLOADER.StopDownload();
+		break;
+	}
 }
 
 HBRUSH CKuntaraLauncherDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)

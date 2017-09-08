@@ -431,14 +431,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Source\MkCore_MkFileDownloader.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Include\MkCore_MkFileDownloader.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Source\MkCore_MkFloatOp.cpp"
 					>
 				</File>
@@ -952,6 +944,14 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkDevPanel.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkFileDownloader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkFileDownloader.h"
 					>
 				</File>
 				<File

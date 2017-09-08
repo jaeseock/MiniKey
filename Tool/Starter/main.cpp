@@ -28,7 +28,7 @@ protected:
 		MkStr cmdPass;
 		newCmd.GetFullStr(cmdPass);
 
-		MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara", cmdPass.GetPtr());
+		MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara/korea", cmdPass.GetPtr());
 		return false; // Á¾·á
 	}
 };

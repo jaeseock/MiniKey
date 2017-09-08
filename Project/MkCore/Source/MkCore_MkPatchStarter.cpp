@@ -29,7 +29,8 @@ bool MkPatchStarter::StartLauncher(const MkStr& url, const wchar_t* arg)
 	do
 	{
 		// 정보 파일 다운
-		if (MkFileDownloader::Start(infoFileURL, localTempInfoFilePath) != MkFileDownloader::eSuccess)
+		//if (MkFileDownloader::DownloadFileRightNow(infoFileURL, localTempInfoFilePath) != MkFileDownloader::eSuccess)
+		if (!MkFileDownloader::DownloadFileRightNow(infoFileURL, localTempInfoFilePath))
 		{
 			errorMsg = infoFileURL + L"\n파일 다운로드를 실패했습니다.";
 			break;
@@ -95,7 +96,8 @@ bool MkPatchStarter::StartLauncher(const MkStr& url, const wchar_t* arg)
 				MkPathName tmpLauncherFilePath = MkPathName::GetRootDirectory() + launcherFileDown; // ex> D:\\Client\\SimpleLauncher.exe.rp
 
 				// download
-				if (MkFileDownloader::Start(srcURL, tmpLauncherFilePath) != MkFileDownloader::eSuccess)
+				if (!MkFileDownloader::DownloadFileRightNow(srcURL, tmpLauncherFilePath))
+				//if (MkFileDownloader::DownloadFileRightNow(srcURL, tmpLauncherFilePath) != MkFileDownloader::eSuccess)
 				{
 					errorMsg = srcURL + L"\n파일 다운로드를 실패했습니다.";
 					break;

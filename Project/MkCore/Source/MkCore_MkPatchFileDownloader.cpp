@@ -15,7 +15,7 @@ const MkStr MkPatchFileDownloader::TemporaryRepositoryDirName(L"__TempRep\\");
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkPatchFileDownloader::CheckAndDownloadPatchFile(const MkStr& url)
+bool MkPatchFileDownloader::CheckAndDownloadPatchFile(const MkStr& url, bool useFileSystem)
 {
 	bool ok = (m_MainState == eReady);
 	if (ok)
@@ -29,6 +29,8 @@ bool MkPatchFileDownloader::CheckAndDownloadPatchFile(const MkStr& url)
 		m_DataRootURL = m_RootURL + MkPatchFileGenerator::PatchDataDirName;
 		m_DataRootURL.BackSpace(1);
 		m_DataRootURL += L"/"; // ex> http://210.207.252.151/Test/data/
+
+		m_UseFileSystem = useFileSystem;
 
 		m_ErrorMsg.Clear();
 		m_MainState = eDownloadPatchInfoFile;
@@ -57,11 +59,9 @@ void MkPatchFileDownloader::Update(void)
 			MkStr urlInfoFilePath = m_RootURL + infoFileNameDown; // ex> http://210.207.252.151/Test/PatchInfo.mmd.rp
 			MkPathName localInfoFilePath = localTempDir + infoFileName; // D:\\Client\\__TempRep\\PatchInfo.mmd
 
-			switch (MkFileDownloader::Start(urlInfoFilePath, localInfoFilePath))
+			if (!MkFileDownloader::DownloadFileRightNow(urlInfoFilePath, localInfoFilePath))
 			{
-			case MkFileDownloader::eInvalidURL: m_ErrorMsg = urlInfoFilePath + L"\n경로에 파일이 존재하지 않습니다."; break;
-			case MkFileDownloader::eNetworkError: m_ErrorMsg = urlInfoFilePath + L"\n네트워크 오류로 다운이 실패했습니다."; break;
-			case MkFileDownloader::eOutOfMemory: m_ErrorMsg = urlInfoFilePath + L"\n메모리 부족으로 다운이 실패했습니다."; break;
+				m_ErrorMsg = urlInfoFilePath + L"\n네트워크 오류로 다운이 실패했습니다.";
 			}
 
 			if (m_ErrorMsg.Empty())
@@ -111,7 +111,7 @@ void MkPatchFileDownloader::Update(void)
 				MK_DEV_PANEL.MsgToLog(m_ErrorMsg);
 				MK_DEV_PANEL.InsertEmptyLine();
 
-				m_MainState = eShowResult;
+				m_MainState = eShowFailedResult;
 			}
 		}
 		break;
@@ -190,13 +190,13 @@ void MkPatchFileDownloader::Update(void)
 			MK_DEV_PANEL.InsertEmptyLine();
 			MK_DEV_PANEL.MsgToLog(L"> 파일 다운을 시작합니다.");
 
-			m_MainState = eDownloadTargetFiles;
+			m_MainState = eRegisterTargetFiles;
 			m_MaxProgress = m_DownloadFileInfoList.GetSize();
 			m_CurrentProgress = 0;
 		}
 		break;
 
-	case eDownloadTargetFiles:
+	case eRegisterTargetFiles:
 		{
 			if (m_CurrentProgress == m_MaxProgress)
 			{
@@ -211,7 +211,12 @@ void MkPatchFileDownloader::Update(void)
 			{
 				// 이미 다운받은 경우면 스킵
 				const _DownloadFileInfo& fileInfo = m_DownloadFileInfoList[m_CurrentProgress];
-				if (!fileInfo.alreadyDowned)
+				if (fileInfo.alreadyDowned)
+				{
+					MK_DEV_PANEL.MsgToLog(L"    " + fileInfo.filePath);
+					++m_CurrentProgress;
+				}
+				else
 				{
 					// url
 					MkPathName relPathInServer, relPathInClient;
@@ -226,103 +231,141 @@ void MkPatchFileDownloader::Update(void)
 					bool compressed = (fileInfo.compSize > 0);
 
 					// down
-					switch (MkFileDownloader::Start(urlPath, (compressed) ? localFilePathForComp : localFilePathForOrig))
+					m_CurrentDownInfo = MK_FILE_DOWNLOADER.DownloadFile(urlPath, (compressed) ? localFilePathForComp : localFilePathForOrig);
+					if (m_CurrentDownInfo == NULL)
 					{
-					case MkFileDownloader::eInvalidURL: m_ErrorMsg = urlPath + L"\n경로에 파일이 존재하지 않습니다."; break;
-					case MkFileDownloader::eNetworkError: m_ErrorMsg = urlPath + L"\n네트워크 오류로 다운이 실패했습니다."; break;
-					case MkFileDownloader::eOutOfMemory: m_ErrorMsg = urlPath + L"\n메모리 부족으로 다운이 실패했습니다."; break;
-					}
-
-					if (m_ErrorMsg.Empty())
-					{
-						do
-						{
-							// uncompress!!! -> WT 변경!!!!
-							if (compressed)
-							{
-								// 압축 파일 읽어들여
-								MkByteArray compData;
-								MkInterfaceForFileReading frInterface;
-								if (!frInterface.SetUp(localFilePathForComp))
-								{
-									m_ErrorMsg = localFilePathForComp + L"\n파일 열기 실패.";
-									break;
-								}
-								if (frInterface.Read(compData, MkArraySection(0)) != fileInfo.compSize)
-								{
-									m_ErrorMsg = localFilePathForComp + L"\n읽기 오류거나 다운된 압축 파일 크기가 다릅니다.";
-									break;
-								}
-								frInterface.Clear();
-
-								// 압축 해제
-								MkByteArray origData;
-								if (MkZipCompressor::Uncompress(compData.GetPtr(), compData.GetSize(), origData) != fileInfo.origSize)
-								{
-									m_ErrorMsg = localFilePathForComp + L"\n압축 해제 후 크기가 다릅니다";
-									break;
-								}
-								compData.Clear();
-
-								// 파일로 기록
-								MkInterfaceForFileWriting fwInterface;
-								if (!fwInterface.SetUp(localFilePathForOrig, true, true))
-								{
-									m_ErrorMsg = localFilePathForOrig + L"\n파일 생성 실패.";
-									break;
-								}
-								if (fwInterface.Write(origData, MkArraySection(0)) != fileInfo.origSize)
-								{
-									m_ErrorMsg = localFilePathForOrig + L"\n쓰기 오류.";
-									break;
-								}
-								fwInterface.Clear();
-								origData.Clear();
-
-								// 압축 파일 삭제
-								localFilePathForComp.DeleteCurrentFile();
-							}
-							else
-							{
-								// 크기만 검사
-								if (localFilePathForOrig.GetFileSize() != fileInfo.origSize)
-								{
-									m_ErrorMsg = localFilePathForOrig + L"\n다운된 원본 파일 크기가 다릅니다. 맞는 크기 : " + MkStr(fileInfo.origSize);
-									break;
-								}
-							}
-
-							// 파일 수정시간 변경
-							if (!localFilePathForOrig.SetWrittenTime(fileInfo.writtenTime))
-							{
-								m_ErrorMsg = localFilePathForOrig + L"\n파일 수정시간 변경 실패";
-							}
-						}
-						while (false);
-					}
-				}
-
-				if (m_ErrorMsg.Empty())
-				{
-					if (fileInfo.alreadyDowned)
-					{
-						MK_DEV_PANEL.MsgToLog(L"    " + fileInfo.filePath);
+						m_MainState = eShowFailedResult;
+						m_MaxProgress = 0;
+						m_CurrentProgress = 0;
 					}
 					else
 					{
-						MK_DEV_PANEL.MsgToLog(L"  + " + fileInfo.filePath);
+						m_MainState = eDownloadTargetFiles;
 					}
-					++m_CurrentProgress;
-				}
-				else
-				{
-					m_MainState = eShowResult;
-					m_MaxProgress = 0;
-					m_CurrentProgress = 0;
 				}
 			}
 		}
 		break;
+
+	case eDownloadTargetFiles:
+		{
+			MkFileDownInfo::eDownState downState = m_CurrentDownInfo->GetDownState();
+			if ((downState == MkFileDownInfo::eDS_Wait) || (downState == MkFileDownInfo::eDS_Downloading))
+			{
+				::Sleep(1); // 대기
+				break;
+			}
+			else if (downState == MkFileDownInfo::eDS_Complete) // 완료
+			{
+				const _DownloadFileInfo& fileInfo = m_DownloadFileInfoList[m_CurrentProgress];
+
+				MkPathName localFilePathForOrig = m_TempDataPath + fileInfo.filePath; // 비압축. ex> D:\\Client\\__TempRep\\data\\AAA\\BBB\\abc.mmd
+				bool compressed = (fileInfo.compSize > 0);
+
+				do
+				{
+					// uncompress!!! -> WT 변경!!!!
+					if (compressed)
+					{
+						MkPathName relPathInClient;
+						MkPatchFileGenerator::ConvertFilePathToDownloadable(fileInfo.filePath, relPathInClient); // ex> AAA\\BBB\\abc.mmd -> AAA\\BBB\\abc.mmd.rp
+						MkPathName localFilePathForComp = m_TempDataPath + relPathInClient; // 압축. ex> D:\\Client\\__TempRep\\data\\AAA\\BBB\\abc.mmd.rp
+
+						// 압축 파일 읽어들여
+						MkByteArray compData;
+						MkInterfaceForFileReading frInterface;
+						if (!frInterface.SetUp(localFilePathForComp))
+						{
+							m_ErrorMsg = localFilePathForComp + L"\n파일 열기 실패.";
+							break;
+						}
+						if (frInterface.Read(compData, MkArraySection(0)) != fileInfo.compSize)
+						{
+							m_ErrorMsg = localFilePathForComp + L"\n읽기 오류거나 다운된 압축 파일 크기가 다릅니다.";
+							break;
+						}
+						frInterface.Clear();
+
+						// 압축 해제
+						MkByteArray origData;
+						if (MkZipCompressor::Uncompress(compData.GetPtr(), compData.GetSize(), origData) != fileInfo.origSize)
+						{
+							m_ErrorMsg = localFilePathForComp + L"\n압축 해제 후 크기가 다릅니다";
+							break;
+						}
+						compData.Clear();
+
+						// 파일로 기록
+						MkInterfaceForFileWriting fwInterface;
+						if (!fwInterface.SetUp(localFilePathForOrig, true, true))
+						{
+							m_ErrorMsg = localFilePathForOrig + L"\n파일 생성 실패.";
+							break;
+						}
+						if (fwInterface.Write(origData, MkArraySection(0)) != fileInfo.origSize)
+						{
+							m_ErrorMsg = localFilePathForOrig + L"\n쓰기 오류.";
+							break;
+						}
+						fwInterface.Clear();
+						origData.Clear();
+
+						// 압축 파일 삭제
+						localFilePathForComp.DeleteCurrentFile();
+					}
+					else
+					{
+						// 크기만 검사
+						if (localFilePathForOrig.GetFileSize() != fileInfo.origSize)
+						{
+							m_ErrorMsg = localFilePathForOrig + L"\n다운된 원본 파일 크기가 다릅니다. 맞는 크기 : " + MkStr(fileInfo.origSize);
+							break;
+						}
+					}
+
+					// 파일 수정시간 변경
+					if (!localFilePathForOrig.SetWrittenTime(fileInfo.writtenTime))
+					{
+						m_ErrorMsg = localFilePathForOrig + L"\n파일 수정시간 변경 실패";
+					}
+				}
+				while (false);
+			}
+			else // 다운로드 중단/실패
+			{
+				MkStr fileURL;
+				MkPathName destLocalPath;
+				m_CurrentDownInfo->__GetTargetInfo(fileURL, destLocalPath);
+
+				switch (downState)
+				{
+				case MkFileDownInfo::eDS_Abort: m_ErrorMsg = fileURL + L"\n사용자에 의한 중도포기"; break;
+				case MkFileDownInfo::eDS_InvalidURL: m_ErrorMsg = fileURL + L"\n해당 파일이 네트워크상 존재하지 않음"; break;
+				case MkFileDownInfo::eDS_OutOfMemory: m_ErrorMsg = fileURL + L"\n메모리 부족"; break;
+				case MkFileDownInfo::eDS_Failed: m_ErrorMsg = fileURL + L"\n다운로드 실패"; break;
+				}
+			}
+
+			if (m_ErrorMsg.Empty())
+			{
+				MK_DEV_PANEL.MsgToLog(L"  + " + m_DownloadFileInfoList[m_CurrentProgress].filePath);
+
+				m_MainState = eRegisterTargetFiles;
+				++m_CurrentProgress;
+			}
+			else
+			{
+				m_MainState = eShowFailedResult;
+				m_MaxProgress = 0;
+				m_CurrentProgress = 0;
+			}
+
+			// info 삭제
+			delete m_CurrentDownInfo;
+			m_CurrentDownInfo = NULL;
+		}
+		break;
+		
 
 	case eUpdateFiles:
 		{
@@ -372,7 +415,7 @@ void MkPatchFileDownloader::Update(void)
 				}
 				else
 				{
-					m_MainState = eShowResult;
+					m_MainState = eShowFailedResult;
 					m_MaxProgress = 0;
 					m_CurrentProgress = 0;
 				}
@@ -387,7 +430,7 @@ void MkPatchFileDownloader::Update(void)
 				MK_DEV_PANEL.MsgToLog(L"> 파일 시스템 최적화가 완료되었습니다.");
 				MK_DEV_PANEL.InsertEmptyLine();
 
-				m_MainState = eShowResult;
+				m_MainState = eShowSuccessResult;
 				m_MaxProgress = 0;
 				m_CurrentProgress = 0;
 			}
@@ -403,7 +446,7 @@ void MkPatchFileDownloader::Update(void)
 				{
 					m_ErrorMsg = MkStr(targetChunk) + L" 번 청크 최적화를 실패했습니다.";
 
-					m_MainState = eShowResult;
+					m_MainState = eShowFailedResult;
 					m_MaxProgress = 0;
 					m_CurrentProgress = 0;
 				}
@@ -411,7 +454,10 @@ void MkPatchFileDownloader::Update(void)
 		}
 		break;
 
-	case eShowResult:
+	case eShowSuccessResult:
+		break;
+
+	case eShowFailedResult:
 		{
 			if (!m_ErrorMsg.Empty())
 			{
@@ -426,11 +472,18 @@ void MkPatchFileDownloader::Update(void)
 	}
 }
 
+float MkPatchFileDownloader::GetDownloadProgress(void)
+{
+	return (m_CurrentDownInfo == NULL) ? 0.f : m_CurrentDownInfo->GetProgress();
+}
+
 MkPatchFileDownloader::MkPatchFileDownloader()
 {
 	m_MainState = eReady;
+	m_UseFileSystem = true;
 	m_MaxProgress = 0;
 	m_CurrentProgress = 0;
+	m_CurrentDownInfo = NULL;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -483,18 +536,23 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 			MkPathName tmpFilePath = m_TempDataPath + filePath;
 			info.alreadyDowned = (tmpFilePath.CheckAvailable() && (tmpFilePath.GetFileSize() == patchOrigSize) && (tmpFilePath.GetWrittenTime() == patchWrittenTime));
 
-			// 파일 시스템이 없으면 실제 파일 대상
-			const MkFileSystem& fs = MkFileManager::Instance().GetFileSystem();
-			bool updateToRealFile = (fs.GetTotalChunkCount() == 0);
-			if (!updateToRealFile)
+			
+			bool updateToRealFile = true;
+			if (m_UseFileSystem)
 			{
-				// 실제 파일이 존재하면 대상
-				updateToRealFile = realFileExist;
-
-				// 파일 시스템 소속 여부 판단. 파일 시스템에도 소속되지 않는다면 실제 파일 대상
+				// 파일 시스템이 없으면 실제 파일 대상
+				const MkFileSystem& fs = MkFileManager::Instance().GetFileSystem();
+				updateToRealFile = (fs.GetTotalChunkCount() == 0);
 				if (!updateToRealFile)
 				{
-					updateToRealFile = (!(fs.CheckFileFilter(pathOffset) && fs.CheckFileFilter(filePath)));
+					// 실제 파일이 존재하면 대상
+					updateToRealFile = realFileExist;
+
+					// 파일 시스템 소속 여부 판단. 파일 시스템에도 소속되지 않는다면 실제 파일 대상
+					if (!updateToRealFile)
+					{
+						updateToRealFile = (!(fs.CheckFileFilter(pathOffset) && fs.CheckFileFilter(filePath)));
+					}
 				}
 			}
 			info.updateToRealFile = updateToRealFile;

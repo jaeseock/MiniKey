@@ -7,6 +7,8 @@
 #include "MkCore_MkDataNode.h"
 
 
+class MkFileDownInfo;
+
 class MkPatchFileDownloader
 {
 public:
@@ -18,20 +20,23 @@ public:
 		eDownloadPatchInfoFile,
 		ePurgeDeleteList,
 		eFindDownloadTargets,
+		eRegisterTargetFiles,
 		eDownloadTargetFiles,
 		eUpdateFiles,
 		eOptimizeChunk,
 
-		eShowResult
+		eShowSuccessResult,
+		eShowFailedResult
 	};
 
-	bool CheckAndDownloadPatchFile(const MkStr& url);
+	bool CheckAndDownloadPatchFile(const MkStr& url, bool useFileSystem = true);
 
 	void Update(void);
 
 	inline ePatchState GetCurrentState(void) const { return m_MainState; }
 	inline unsigned int GetMaxProgress(void) const { return m_MaxProgress; }
 	inline unsigned int GetCurrentProgress(void) const { return m_CurrentProgress; }
+	float GetDownloadProgress(void);
 
 	inline const MkPathName& GetRunFilePath(void) const { return m_RunFilePath; }
 
@@ -65,9 +70,12 @@ protected:
 	MkPathName m_TempDataPath;
 	MkStr m_ErrorMsg;
 	MkPathName m_RunFilePath;
+	bool m_UseFileSystem;
 
 	MkDataNode m_PatchInfoNode;
 	MkArray<_DownloadFileInfo> m_DownloadFileInfoList;
+
+	MkFileDownInfo* m_CurrentDownInfo;
 	
 	unsigned int m_MaxProgress;
 	unsigned int m_CurrentProgress;

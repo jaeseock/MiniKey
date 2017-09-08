@@ -15,6 +15,7 @@
 #include "MkCore_MkDevPanel.h"
 #include "MkCore_MkBackgroundLoader.h"
 #include "MkCore_MkPageManager.h"
+#include "MkCore_MkFileDownloader.h"
 
 #include "MkCore_MkLogicThreadUnit.h"
 #include "MkCore_MkLoadingThreadUnit.h"
@@ -164,6 +165,7 @@ void MkBaseFramework::__Close(void)
 	}
 
 	// 스레드 유닛 모두 종료
+	MK_FILE_DOWNLOADER.__CloseDownloadThread();
 	m_ThreadManager.StopAll();
 
 	// 해제
