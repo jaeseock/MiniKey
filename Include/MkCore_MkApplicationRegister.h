@@ -47,8 +47,8 @@ public:
 	//------------------------------------------------------------------------------------------------//
 	// 레지스트리, 숏컷, client 파일 삭제
 	// GenerateServiceData::SaveService()로 저장된 service data 기반
-	// ex> MkApplicationRegister::UninstallService(L"registerinfo.mmd");
-	static bool UninstallService(const MkPathName& targetServicesFilePath);
+	// ex> MkApplicationRegister::UninstallService(L"registerinfo.mmd", false);
+	static bool UninstallService(const MkPathName& targetServicesFilePath, bool requireConfirm = true);
 
 	//------------------------------------------------------------------------------------------------//
 };

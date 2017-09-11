@@ -34,7 +34,7 @@
 // //...
 //
 //	// 어플리케이션 초기화시 패키징 된 청크로 매니져 초기화
-//	new MkFileManager(L"");
+//	new MkFileManager(L"", true);
 //
 //	// 청크로부터 L"a\\src_2.bmp" 추출 후 L"..\\out\\src_2.bmp" 경로에 기록해 추출 확인
 //	MkByteArray buffer;
@@ -101,7 +101,7 @@ public:
 
 	inline MkFileSystem& GetFileSystem(void) { return m_FileSystem; }
 
-	MkFileManager(const MkPathName& workingDirectoryPath); // 패킹 시스템 설정 수정을 원할 경우 여기서 수정
+	MkFileManager(const MkPathName& workingDirectoryPath, bool loadChunk); // 패킹 시스템 설정 수정을 원할 경우 여기서 수정
 	virtual ~MkFileManager() { m_FileSystem.Clear(); }
 
 protected:

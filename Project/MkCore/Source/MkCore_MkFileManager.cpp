@@ -75,12 +75,14 @@ void MkFileManager::__PrintSystemInformationToLog(void) const
 	m_FileSystem.PrintSystemInfoToDevPanel();
 }
 
-MkFileManager::MkFileManager(const MkPathName& workingDirectoryPath) : MkSingletonPattern<MkFileManager>()
+MkFileManager::MkFileManager(const MkPathName& workingDirectoryPath, bool loadChunk) : MkSingletonPattern<MkFileManager>()
 {
 	m_FileSystem.SetSystemSetting();
 
-	MK_CHECK(m_FileSystem.SetUpFromChunkFiles(workingDirectoryPath), L"MkFileManager 초기화 실패")
-		return;
+	if (loadChunk)
+	{
+		MK_CHECK(m_FileSystem.SetUpFromChunkFiles(workingDirectoryPath), L"MkFileManager 초기화 실패") {}
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

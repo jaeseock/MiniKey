@@ -641,7 +641,7 @@ bool MkApplicationRegister::UpdateService(const MkPathName& targetServicesFilePa
 	return true;
 }
 
-bool MkApplicationRegister::UninstallService(const MkPathName& targetServicesFilePath)
+bool MkApplicationRegister::UninstallService(const MkPathName& targetServicesFilePath, bool requireConfirm)
 {
 	MkPathName fullPath;
 	fullPath.ConvertToModuleBasisAbsolutePath(targetServicesFilePath);
@@ -658,6 +658,17 @@ bool MkApplicationRegister::UninstallService(const MkPathName& targetServicesFil
 	{
 		MkArray<MkStr> uninstallList;
 		__GetUninstallList(*rpiNode, MkStr::EMPTY, uninstallList);
+
+		// 삭제 확인해야 하고 삭제 할 프로젝트가 있을 경우
+		if (requireConfirm && (!uninstallList.Empty()))
+		{
+			MkStr msg = L"[ ";
+			msg += uninstallList[0];
+			msg += L"]\n서비스를 삭제하시겠습니까?";
+			
+			if (::MessageBox(NULL, msg.GetPtr(), L"Uninstall", MB_YESNO) == IDNO)
+				return false;
+		}
 
 		MK_INDEXING_LOOP(uninstallList, i)
 		{

@@ -161,7 +161,7 @@ public:
 
 protected:
 
-	bool _CreateSingletons(const wchar_t* rootPath, bool useLog);
+	bool _CreateSingletons(const wchar_t* rootPath, bool useLog, const MkCmdLine& cmdLine);
 	bool _ApplyMainWindowAndCreateThreads(int clientWidth, int clientHeight, bool fullScreen, bool dragAccept, const MkCmdLine& cmdLine);
 	void _UpdateOneFrame(void);
 

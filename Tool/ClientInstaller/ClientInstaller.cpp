@@ -38,8 +38,8 @@ CClientInstallerApp theApp;
 
 BOOL CClientInstallerApp::InitInstance()
 {
-	//if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkClientInstaller; #BME=_MkClientInstaller; #HDP="))
-	if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkClientInstaller; #BME=_MkClientInstaller"))
+	//if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkClientInstaller; #BME=_MkClientInstaller; #ICF=; #HDP="))
+	if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkClientInstaller; #BME=_MkClientInstaller; #ICF="))
 		return FALSE;
 
 	// 응용 프로그램 매니페스트가 ComCtl32.dll 버전 6 이상을 사용하여 비주얼 스타일을

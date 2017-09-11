@@ -82,7 +82,7 @@ bool MkBaseFramework::__Start
 {
 	assert(title != NULL);
 	
-	if (!_CreateSingletons(rootPath, useLog))
+	if (!_CreateSingletons(rootPath, useLog, cmdLine))
 		return false;
 
 	// 메인 윈도우 생성
@@ -131,7 +131,7 @@ bool MkBaseFramework::__Start(HWND hWnd, const wchar_t* rootPath, bool useLog, b
 {
 	assert(hWnd != NULL);
 	
-	if (!_CreateSingletons(rootPath, useLog))
+	if (!_CreateSingletons(rootPath, useLog, cmdLine))
 		return false;
 
 	// 메인 윈도우 생성
@@ -244,7 +244,7 @@ LRESULT CALLBACK MkBaseFramework::WndProc(HWND hWnd, UINT msg, WPARAM wParam, LP
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkBaseFramework::_CreateSingletons(const wchar_t* rootPath, bool useLog)
+bool MkBaseFramework::_CreateSingletons(const wchar_t* rootPath, bool useLog, const MkCmdLine& cmdLine)
 {
 	// main window
 	MK_CHECK(gMainWindowPtr == NULL, L"main window가 이미 존재")
@@ -289,7 +289,8 @@ bool MkBaseFramework::_CreateSingletons(const wchar_t* rootPath, bool useLog)
 	m_InstanceDeallocator.RegisterInstance(new MkSharedPointerManager());
 
 	// 3. root directory로 file system root 설정
-	m_InstanceDeallocator.RegisterInstance(new MkFileManager(L""));
+	bool loadChunk = !cmdLine.HasPair(L"#ICF");
+	m_InstanceDeallocator.RegisterInstance(new MkFileManager(L"", loadChunk));
 
 	// 4.
 	m_InstanceDeallocator.RegisterInstance(new MkTimeManager());
