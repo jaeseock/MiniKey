@@ -518,10 +518,17 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 		MkPathName realPath;
 		realPath.ConvertToRootBasisAbsolutePath(filePath);
 
+		bool posOnRealPath = true;
+		if (m_UseFileSystem)
+		{
+			const MkFileSystem& fs = MkFileManager::Instance().GetFileSystem();
+			posOnRealPath = (!(fs.CheckFileFilter(pathOffset) && fs.CheckFileFilter(filePath)));
+		}
+
 		bool realFileExist = realPath.CheckAvailable();
 		bool downTheFile = (realFileExist) ?
 			((realPath.GetFileSize() != patchOrigSize) || (realPath.GetWrittenTime() != patchWrittenTime)) :
-			(MkFileManager::Instance().GetFileSystem().GetFileDifference(filePath, patchOrigSize, patchWrittenTime) != 0);
+			(posOnRealPath || (MkFileManager::Instance().GetFileSystem().GetFileDifference(filePath, patchOrigSize, patchWrittenTime) != 0));
 
 		// 다운 대상이면 이미 받아 놓은 임시 파일이 있는지 검사해 없거나 다르면 다운
 		if (downTheFile)
@@ -536,13 +543,11 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 			MkPathName tmpFilePath = m_TempDataPath + filePath;
 			info.alreadyDowned = (tmpFilePath.CheckAvailable() && (tmpFilePath.GetFileSize() == patchOrigSize) && (tmpFilePath.GetWrittenTime() == patchWrittenTime));
 
-			
 			bool updateToRealFile = true;
 			if (m_UseFileSystem)
 			{
 				// 파일 시스템이 없으면 실제 파일 대상
-				const MkFileSystem& fs = MkFileManager::Instance().GetFileSystem();
-				updateToRealFile = (fs.GetTotalChunkCount() == 0);
+				updateToRealFile = (MkFileManager::Instance().GetFileSystem().GetTotalChunkCount() == 0);
 				if (!updateToRealFile)
 				{
 					// 실제 파일이 존재하면 대상
@@ -551,7 +556,7 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 					// 파일 시스템 소속 여부 판단. 파일 시스템에도 소속되지 않는다면 실제 파일 대상
 					if (!updateToRealFile)
 					{
-						updateToRealFile = (!(fs.CheckFileFilter(pathOffset) && fs.CheckFileFilter(filePath)));
+						updateToRealFile = posOnRealPath;
 					}
 				}
 			}

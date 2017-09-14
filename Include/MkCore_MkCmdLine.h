@@ -38,6 +38,9 @@ public:
 	inline unsigned int GetNormalLineCount(void) const { return m_Lines.GetSize(); }
 	inline const MkArray<MkStr>& GetNormalLines(void) const { return m_Lines; }
 
+	// 일반 라인 삭제
+	inline void ClearNormalLines(void) { m_Lines.Clear(); }
+
 	// key-value pair 참조
 	inline unsigned int GetPairCount(void) const { return m_Pairs.GetSize(); }
 	inline const MkMap<MkStr, MkArray<MkStr> >& GetPairs(void) const { return m_Pairs; }
@@ -53,7 +56,7 @@ public:
 	bool RemovePair(const MkStr& key);
 
 	// 일반 라인, key-value pair로 원본 문자열 재구성
-	void GetFullStr(MkStr& buffer);
+	void GetFullStr(MkStr& buffer) const;
 
 	// 초기화
 	void Clear(void);

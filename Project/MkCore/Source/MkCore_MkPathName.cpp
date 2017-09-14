@@ -1051,6 +1051,8 @@ void MkPathName::OpenFileInVerb(const MkStr& argument) const
 	tmpPath.ConvertToRootBasisAbsolutePath(*this);
 	if (tmpPath.CheckAvailable())
 	{
+		SetWorkingDirectory(tmpPath.GetPath()); // 워킹 디렉토리 변경
+
 		SHELLEXECUTEINFO si;
 		ZeroMemory(&si, sizeof(SHELLEXECUTEINFO));
 		si.cbSize = sizeof(SHELLEXECUTEINFO);

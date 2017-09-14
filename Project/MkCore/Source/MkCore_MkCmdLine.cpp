@@ -68,7 +68,7 @@ bool MkCmdLine::RemovePair(const MkStr& key)
 	return ok;
 }
 
-void MkCmdLine::GetFullStr(MkStr& buffer)
+void MkCmdLine::GetFullStr(MkStr& buffer) const
 {
 	buffer.Clear();
 
@@ -98,10 +98,10 @@ void MkCmdLine::GetFullStr(MkStr& buffer)
 
 	if (!m_Pairs.Empty())
 	{
-		MkMapLooper<MkStr, MkArray<MkStr> > keyLooper(m_Pairs);
+		MkConstMapLooper<MkStr, MkArray<MkStr> > keyLooper(m_Pairs);
 		MK_STL_LOOP(keyLooper)
 		{
-			MkArray<MkStr>& values = keyLooper.GetCurrentField();
+			const MkArray<MkStr>& values = keyLooper.GetCurrentField();
 			MK_INDEXING_LOOP(values, i)
 			{
 				if (needSpace)
