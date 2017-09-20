@@ -135,26 +135,26 @@ bool MkWin32Application::_CheckExcution(MkCmdLine& cmdLine, HANDLE& myMutexHandl
 {
 	// 자기 자신의 mutex 선언 여부 조사
 	MkStr myMutexKey;
-	if (g_CmdLine.HasPair(L"#DMK")) // declare mutex key
+	if (cmdLine.HasPair(L"#DMK")) // declare mutex key
 	{
-		myMutexKey = g_CmdLine.GetValue(L"#DMK", 0);
+		myMutexKey = cmdLine.GetValue(L"#DMK", 0);
 	}
 
 	// 중복 실행 금지 여부 검사
-	if (g_CmdLine.HasPair(L"#BME")) // block multiple excution
+	if (cmdLine.HasPair(L"#BME")) // block multiple excution
 	{
 		MkArray<MkStr> checkList;
 
-		if (g_CmdLine.HasPair(L"#AME")) // allow multiple excution
+		if (cmdLine.HasPair(L"#AME")) // allow multiple excution
 		{
 			// 검사 대상이라도 중복실행 허용 리스트는 제외
-			const MkArray<MkStr>& blockList = g_CmdLine.GetValues(L"#BME");
-			const MkArray<MkStr>& allowList = g_CmdLine.GetValues(L"#AME");
+			const MkArray<MkStr>& blockList = cmdLine.GetValues(L"#BME");
+			const MkArray<MkStr>& allowList = cmdLine.GetValues(L"#AME");
 			blockList.GetDifferenceOfSets(allowList, checkList); // checkList = blockList - allowList
 		}
 		else
 		{
-			checkList = g_CmdLine.GetValues(L"#BME");
+			checkList = cmdLine.GetValues(L"#BME");
 		}
 
 		MK_INDEXING_LOOP(checkList, i)

@@ -413,7 +413,7 @@ void CKuntaraLauncherDlg::OnOK()
 	// launcher가 app을 실행하므로 복수 실행 예외 처리
 	const MkCmdLine& cmdLine = MkWin32Application::GetCmdLine();
 	MkCmdLine newCmd = cmdLine;
-	newCmd.AddPair(L"#AME", L"_MkGameApp");
+	newCmd.AddPair(L"#AME", L"_MkLauncher");
 	MkStr newArg;
 	newCmd.GetFullStr(newArg);
 	MkPathName runPath = m_Patcher.GetRunFilePath();
