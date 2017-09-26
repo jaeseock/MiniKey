@@ -83,8 +83,14 @@ BOOL CKuntaraLauncherDlg::OnInitDialog()
 	}
 
 	// browser
-	CComVariant noticeURL(L"http://testgameinfo.kuntara.co.kr/launcher/");
 	m_WebBrowser.MoveWindow(2, 52, 846, 394, 0);
+
+	// border(상하좌우 2 px)를 시스템적으로 제거하려면 원 이미지 850*398보다 상하좌우 2 px씩 더 주고 준 만큼 rgn을 제거
+	//m_WebBrowser.MoveWindow(-2, 50, 854, 342, 0);
+	//HRGN hRgn = ::CreateRectRgn(2, 2, 852, 340);
+	//m_WebBrowser.SetWindowRgn(hRgn, 0);
+
+	CComVariant noticeURL(L"https://gameinfo.kuntara.co.kr/launcher/");
 	m_WebBrowser.Navigate2(&noticeURL, NULL, NULL, NULL, NULL);
 
 	// progress : main
