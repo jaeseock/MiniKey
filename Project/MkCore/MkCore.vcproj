@@ -463,6 +463,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkVisitWebPage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkVisitWebPage.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkCore_MkXORer.cpp"
 					>
 				</File>
