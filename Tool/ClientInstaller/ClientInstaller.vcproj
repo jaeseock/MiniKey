@@ -252,6 +252,18 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\install\cancle_n.png"
+				>
+			</File>
+			<File
+				RelativePath=".\install\cancle_o.png"
+				>
+			</File>
+			<File
+				RelativePath=".\install\cancle_p.png"
+				>
+			</File>
+			<File
 				RelativePath=".\res\ClientInstaller.ico"
 				>
 			</File>
@@ -264,6 +276,30 @@
 				>
 			</File>
 			<File
+				RelativePath=".\install\complete_n.png"
+				>
+			</File>
+			<File
+				RelativePath=".\install\complete_o.png"
+				>
+			</File>
+			<File
+				RelativePath=".\install\complete_p.png"
+				>
+			</File>
+			<File
+				RelativePath=".\install\gage_bar.png"
+				>
+			</File>
+			<File
+				RelativePath=".\install\gage_frame.png"
+				>
+			</File>
+			<File
+				RelativePath=".\install\install_bg.png"
+				>
+			</File>
+			<File
 				RelativePath=".\kuntara.ico"
 				>
 			</File>
@@ -271,6 +307,30 @@
 		<Filter
 			Name="Custom"
 			>
+			<File
+				RelativePath=".\CImgBtn.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CImgBtn.h"
+				>
+			</File>
+			<File
+				RelativePath=".\CImgProgress.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CImgProgress.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GDIPlusManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\GDIPlusManager.h"
+				>
+			</File>
 			<File
 				RelativePath=".\MkAppManager.cpp"
 				>

@@ -7,7 +7,15 @@
 #include "ClientInstallerDlg.h"
 
 #include "MkAppManager.h"
+#include "GDIPlusManager.h"
 
+/*
+#ifdef _DEBUG
+#pragma comment(lib, "../../External/Zlib/lib/zlib_d32.lib")
+#else
+#pragma comment(lib, "../../External/Zlib/lib/zlib_r32.lib")
+#endif
+*/
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -38,10 +46,12 @@ CClientInstallerApp theApp;
 
 BOOL CClientInstallerApp::InitInstance()
 {
-	//if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkClientInstaller; #BME=_MkClientInstaller; #ICF=; #HDP="))
-	if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkClientInstaller; #BME=_MkClientInstaller; #ICF="))
+	if (!APP_MGR.GetApplication().Initialize(m_pszAppName, L"#DMK=_MkClientInstaller; #BME=_MkClientInstaller; #ICF=; #HDP="))
 		return FALSE;
 
+	GP_MGR.SetUp();
+
+	/*
 	// 응용 프로그램 매니페스트가 ComCtl32.dll 버전 6 이상을 사용하여 비주얼 스타일을
 	// 사용하도록 지정하는 경우, Windows XP 상에서 반드시 InitCommonControlsEx()가 필요합니다.
 	// InitCommonControlsEx()를 사용하지 않으면 창을 만들 수 없습니다.
@@ -51,8 +61,10 @@ BOOL CClientInstallerApp::InitInstance()
 	// 이 항목을 설정하십시오.
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
+	*/
 
 	CWinAppEx::InitInstance();
+	AfxEnableControlContainer();
 
 	// 표준 초기화
 	// 이들 기능을 사용하지 않고 최종 실행 파일의 크기를 줄이려면
@@ -80,4 +92,10 @@ BOOL CClientInstallerApp::InitInstance()
 	// 대화 상자가 닫혔으므로 응용 프로그램의 메시지 펌프를 시작하지 않고  응용 프로그램을 끝낼 수 있도록 FALSE를
 	// 반환합니다.
 	return FALSE;
+}
+
+int CClientInstallerApp::ExitInstance()
+{
+	GP_MGR.Clear();
+	return CWinAppEx::ExitInstance();
 }

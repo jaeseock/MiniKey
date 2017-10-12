@@ -78,9 +78,8 @@ IDR_MAINFRAME           ICON                    "res\\ClientInstaller.ico"
 //
 
 IDD_CLIENTINSTALLER_DIALOG DIALOGEX 0, 0, 294, 80
-STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_THICKFRAME
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "[군타라 온라인]을 설치합니다"
 FONT 11, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "확인",IDOK,237,59,50,14
@@ -148,6 +147,21 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG1                PNG                     "install\\cancle_n.png"
+IDB_PNG2                PNG                     "install\\cancle_o.png"
+IDB_PNG3                PNG                     "install\\cancle_p.png"
+IDB_PNG4                PNG                     "install\\complete_n.png"
+IDB_PNG5                PNG                     "install\\complete_o.png"
+IDB_PNG6                PNG                     "install\\complete_p.png"
+IDB_PNG7                PNG                     "install\\gage_bar.png"
+IDB_PNG8                PNG                     "install\\gage_frame.png"
+IDB_PNG9                PNG                     "install\\install_bg.png"
 #endif    // 한국어 resources
 /////////////////////////////////////////////////////////////////////////////
 

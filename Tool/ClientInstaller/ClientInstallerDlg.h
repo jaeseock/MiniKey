@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include "CImgBtn.h"
+#include "CImgProgress.h"
+//#include "../../Lib/MkCore/Include/MkCore_MkPatchFileDownloader.h"
 #include "MkCore_MkPatchFileDownloader.h"
 #include "afxwin.h"
-#include "afxcmn.h"
 
 
 // CClientInstallerDlg 대화 상자
@@ -52,12 +54,19 @@ protected:
 
 	HICON m_hIcon;
 
-	CEdit m_InfoEdit;
-	CProgressCtrl m_MainProgress;
-	CProgressCtrl m_SubProgress;
-	CButton m_CancelBtn;
-	CButton m_DoneBtn;
+	// control
+	CImgProgress m_MainProgress;
+	CImgProgress m_SubProgress;
 
+	CImgBtn m_CancelBtn;
+	CImgBtn m_DoneBtn;
+
+	//CProgressCtrl m_MainProgress;
+	//CProgressCtrl m_SubProgress;
+	//CButton m_CancelBtn;
+	//CButton m_DoneBtn;
+
+	CEdit m_InfoEdit;
 	MkStr m_LastDesc;
 
 	eMainState m_MainState;
@@ -65,4 +74,8 @@ protected:
 	MkStr m_PatchURL;
 	MkPatchFileDownloader m_Patcher;
 	MkPatchFileDownloader::ePatchState m_PatchState;
+public:
+	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg LRESULT OnNcHitTest(CPoint point);
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };

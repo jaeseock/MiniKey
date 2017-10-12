@@ -6,6 +6,11 @@
 #include "ClientInstaller.h"
 #include "ClientInstallerDlg.h"
 
+//#include "../../Lib/MkCore/Include/MkCore_MkPathName.h"
+//#include "../../Lib/MkCore/Include/MkCore_MkDevPanel.h"
+//#include "../../Lib/MkCore/Include/MkCore_MkFileDownloader.h"
+//#include "../../Lib/MkCore/Include/MkCore_MkPatchFileGenerator.h"
+//#include "../../Lib/MkCore/Include/MkCore_MkBaseFramework.h"
 #include "MkCore_MkPathName.h"
 #include "MkCore_MkDevPanel.h"
 #include "MkCore_MkFileDownloader.h"
@@ -13,13 +18,23 @@
 #include "MkCore_MkBaseFramework.h"
 
 #include "MkAppManager.h"
+#include "GDIPlusManager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+//#define MKDEF_CLIENT_FOLDER_NAME L"KuntaraOnline"
+//#define MKDEF_DOWNLOAD_URL L"http://210.207.252.151/fullpack/korea_pw" 
+
+// cdn(pw)
 #define MKDEF_CLIENT_FOLDER_NAME L"KuntaraOnline"
-#define MKDEF_DOWNLOAD_URL L"http://210.207.252.151/fullpack/korea_pw"
+#define MKDEF_DOWNLOAD_URL L"http://full.kuntara.co.kr/pw"
+
+// cdn(og)
+//#define MKDEF_CLIENT_FOLDER_NAME L"Ongate Kuntara Online"
+//#define MKDEF_DOWNLOAD_URL L"http://full.kuntara.co.kr/og"
+
 #define MKDEF_SERVICE_FILE_NAME L"UpdateService.exe"
 
 
@@ -48,6 +63,9 @@ BEGIN_MESSAGE_MAP(CClientInstallerDlg, CDialog)
 	ON_MESSAGE(WM_KICKIDLE, OnKickIdle)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDCANCEL, &CClientInstallerDlg::OnBnClickedCancel)
+	ON_WM_ERASEBKGND()
+	ON_WM_NCHITTEST()
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -113,17 +131,29 @@ BOOL CClientInstallerDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// 큰 아이콘을 설정합니다.
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
-	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	m_InfoEdit.SetWindowTextW(m_LastDesc.GetPtr());
+	if (GP_MGR.AddImage(0, IDB_PNG9))
+	{
+		MkInt2 bgSize = GP_MGR.GetImageSize(0);
+		MoveWindow(0, 0, bgSize.x, bgSize.y, 0);
+	}
 
+	// TODO: 여기에 추가 초기화 작업을 추가합니다.
+	m_MainProgress.SetProgressInfo(10, 58, 360, IDB_PNG7, IDB_PNG8);
 	m_MainProgress.SetRange(0, 100);
 	m_MainProgress.SetPos(0);
 
+	m_SubProgress.SetProgressInfo(11, 58, 325, IDB_PNG7, IDB_PNG8);
 	m_SubProgress.SetRange(0, 100);
 	m_SubProgress.SetPos(0);
 
+	m_CancelBtn.SetButtonInfo(20, 446, 388, IDB_PNG1, IDB_PNG2, IDB_PNG3, IDB_PNG1);
+
+	m_DoneBtn.SetButtonInfo(21, 446, 388, IDB_PNG4, IDB_PNG5, IDB_PNG6, IDB_PNG4);
 	m_DoneBtn.EnableWindow(FALSE);
 	m_DoneBtn.ShowWindow(SW_HIDE);
+
+	m_InfoEdit.SetWindowTextW(m_LastDesc.GetPtr());
+	m_InfoEdit.MoveWindow(72, 395, 350, 16, 0);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -337,6 +367,11 @@ LRESULT CClientInstallerDlg::OnKickIdle(WPARAM wParam, LPARAM lParam)
 
 			if (descStr != m_LastDesc)
 			{
+				//RECT rc;
+				//m_InfoEdit.GetWindowRect(&rc);
+				//ScreenToClient(&rc);
+				//GP_MGR.Draw(this, 0, MkInt2(rc.left, rc.top), MkInt2(rc.right - rc.left, rc.bottom - rc.top));
+
 				m_InfoEdit.SetWindowTextW(descStr.GetPtr());
 				m_LastDesc = descStr;
 			}
@@ -391,4 +426,31 @@ void CClientInstallerDlg::OnBnClickedCancel()
 		MK_FILE_DOWNLOADER.StopDownload();
 		break;
 	}
+}
+
+BOOL CClientInstallerDlg::OnEraseBkgnd(CDC* pDC)
+{
+	GP_MGR.Draw(this, 0);
+	return TRUE;
+}
+
+LRESULT CClientInstallerDlg::OnNcHitTest(CPoint point)
+{
+	UINT hit = CDialog::OnNcHitTest(point);
+	return (hit == HTCLIENT) ? HTCAPTION : hit;
+}
+
+HBRUSH CClientInstallerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	if (pWnd->GetDlgCtrlID() == IDC_EDIT1)
+	{
+		pDC->SetBkColor(RGB(255, 255, 255));
+		pDC->SetBkMode(TRANSPARENT);
+		pDC->SetTextColor(RGB(140, 140, 140));
+		pDC->SelectStockObject(BLACK_BRUSH);
+		return NULL;
+	}
+	return hbr;
 }
