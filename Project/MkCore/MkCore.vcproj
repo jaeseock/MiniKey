@@ -543,6 +543,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkFtpInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkFtpInterface.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkCore_MkInstanceDeallocator.cpp"
 					>
 				</File>

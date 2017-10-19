@@ -9,7 +9,7 @@
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkPatchStarter::StartLauncher(const MkStr& url, const wchar_t* arg)
+bool MkPatchStarter::StartLauncher(const MkStr& url, const wchar_t* arg, bool updateLauncher)
 {
 	MkStr rootURL = url;
 	if ((!rootURL.Empty()) && (!rootURL.CheckPostfix(L"/")))
@@ -82,7 +82,7 @@ bool MkPatchStarter::StartLauncher(const MkStr& url, const wchar_t* arg)
 			}
 
 			// 런쳐 다운
-			if (downloadLauncher)
+			if (updateLauncher && downloadLauncher)
 			{
 				// url
 				MkPathName launcherFileDown;

@@ -13,7 +13,7 @@ class MkPatchStarter
 {
 public:
 
-	static bool StartLauncher(const MkStr& url, const wchar_t* arg = NULL);
+	static bool StartLauncher(const MkStr& url, const wchar_t* arg = NULL, bool updateLauncher = true);
 };
 
 //------------------------------------------------------------------------------------------------//
