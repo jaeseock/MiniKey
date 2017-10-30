@@ -90,6 +90,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WhiteBoardForTest", "Sample
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkDataNodeEditor", "Tool\MkDataNodeEditor\MkDataNodeEditor.vcproj", "{8C8C9D41-43F8-4F2F-9BA9-AD2B8007CF0E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -205,6 +210,12 @@ Global
 		{0103EE0D-2A7F-45D2-978A-F27076AB5A63}.Release|Win32.Build.0 = Release|Win32
 		{0103EE0D-2A7F-45D2-978A-F27076AB5A63}.Shipping|Win32.ActiveCfg = Release|Win32
 		{0103EE0D-2A7F-45D2-978A-F27076AB5A63}.Shipping|Win32.Build.0 = Release|Win32
+		{8C8C9D41-43F8-4F2F-9BA9-AD2B8007CF0E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8C8C9D41-43F8-4F2F-9BA9-AD2B8007CF0E}.Debug|Win32.Build.0 = Debug|Win32
+		{8C8C9D41-43F8-4F2F-9BA9-AD2B8007CF0E}.Release|Win32.ActiveCfg = Release|Win32
+		{8C8C9D41-43F8-4F2F-9BA9-AD2B8007CF0E}.Release|Win32.Build.0 = Release|Win32
+		{8C8C9D41-43F8-4F2F-9BA9-AD2B8007CF0E}.Shipping|Win32.ActiveCfg = Release|Win32
+		{8C8C9D41-43F8-4F2F-9BA9-AD2B8007CF0E}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

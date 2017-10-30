@@ -128,10 +128,10 @@ HWND MkWebBrowser::Open(const MkStr& pageUrl, int posX, int posY, int width, int
 	pWebBrowser->put_Height((long)height);
 	pWebBrowser->put_Left((long)posX);
 	pWebBrowser->put_Top((long)posY);
-	pWebBrowser->put_MenuBar(VARIANT_FALSE);
-	pWebBrowser->put_ToolBar(VARIANT_FALSE);
-	pWebBrowser->put_AddressBar(VARIANT_FALSE);
-	pWebBrowser->put_StatusBar(VARIANT_FALSE);
+	pWebBrowser->put_MenuBar(VARIANT_TRUE);
+	pWebBrowser->put_ToolBar(VARIANT_TRUE);
+	pWebBrowser->put_AddressBar(VARIANT_TRUE);
+	pWebBrowser->put_StatusBar(VARIANT_TRUE);
 
 	BSTR cBuf = SysAllocString(pageUrl.GetPtr());
 	hr = pWebBrowser->Navigate(cBuf, &vtEmpty2, &vtTarget2, &vtEmpty2, &vtHeader2);
