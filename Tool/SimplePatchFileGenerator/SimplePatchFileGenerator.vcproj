@@ -65,6 +65,7 @@
 				AdditionalLibraryDirectories="$(SolutionDir)Lib\$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				LargeAddressAware="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -139,6 +140,7 @@
 				AdditionalLibraryDirectories="$(SolutionDir)Lib\$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				LargeAddressAware="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"

@@ -385,8 +385,13 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath)
 		changed |= _CheckUpdateType(*updateNode, KEY_DeleteNode, L"  - 삭제 : ", msg);
 		msg += MkStr::LF;
 
-		if (changed)
+		if (changed || m_HistoryList.Empty())
 		{
+			if (m_HistoryList.Empty())
+			{
+				msg += L"완전 초기 상태로 ";
+			}
+
 			msg += L"패치 파일을 만드시겠습니까?";
 			if (::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO) == IDNO)
 			{
@@ -883,8 +888,34 @@ bool MkPatchFileGenerator::_LoadCurrentStructure(const MkPathName& sourceDirPath
 	}
 	else
 	{
-		MK_DEV_PANEL.MsgToLog(L"> " + m_SourcePath);
-		MK_DEV_PANEL.MsgToLog(L"  위치에 현 원본 파일이 없습니다. 확인이 필요합니다.");
+		if (m_SourcePath.IsDirectoryPath() && m_SourcePath.CheckAvailable())
+		{
+			// 디렉토리는 존재하지만 파일은 없음. 완전 초기 상태
+			MkStr msg;
+			msg.Reserve(512);
+			msg += m_SourcePath;
+			msg += MkStr::LF;
+			msg += L"위치에 원본 파일이 없습니다.";
+			msg += MkStr::LF;
+			msg += MkStr::LF;
+			msg += L"올바른 상태입니까?";
+			
+			int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
+			if (rlt == IDYES)
+			{
+				ok = true;
+			}
+			else if (rlt == IDNO)
+			{
+				MK_DEV_PANEL.MsgToLog(L"> " + m_SourcePath);
+				MK_DEV_PANEL.MsgToLog(L"  위치에 현 원본 파일이 없습니다. 확인이 필요합니다.");
+			}
+		}
+		else
+		{
+			MK_DEV_PANEL.MsgToLog(L"> " + m_SourcePath);
+			MK_DEV_PANEL.MsgToLog(L"  위치가 잘못되었습니다. 확인이 필요합니다.");
+		}
 	}
 	MK_DEV_PANEL.InsertEmptyLine();
 	return ok;

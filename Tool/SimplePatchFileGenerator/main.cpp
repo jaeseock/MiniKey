@@ -22,6 +22,7 @@ const static MkPathName SettingFileName = L"PatchInfo.mmd";
 const static MkHashStr KEY_StartPath = L"StartPath";
 const static MkHashStr KEY_LauncherFileName = L"LauncherFileName";
 const static MkHashStr KEY_RunFilePath = L"RunFilePath";
+const static MkHashStr KEY_OutDirNames = L"OutDirNames";
 
 static MkArray<int> gFrameworkEvent(32);
 
@@ -49,6 +50,8 @@ public:
 			MkStr tmpRFP;
 			m_SettingNode.GetData(KEY_RunFilePath, tmpRFP, 0);
 			m_RunFilePath = tmpRFP;
+
+			m_SettingNode.GetData(KEY_OutDirNames, m_OutDirNames);
 		}
 
 		if (startResPath.Empty())
@@ -95,8 +98,7 @@ public:
 		m_PG.SetRunFilePath(m_RunFilePath);
 		m_PG.SetHistoryDirectoryPath(L"History");
 		m_PG.SetPatchRootDirectoryPath(L"Patch");
-		MkArray<MkStr> emptyArr;
-		m_PG.SetUpdatingRootDirectoryPath(L"Update", emptyArr);
+		m_PG.SetUpdatingRootDirectoryPath(L"Update", m_OutDirNames);
 	}
 
 	virtual void Update(void)
@@ -283,6 +285,8 @@ protected:
 	MkPathName m_LauncherFileName;
 	MkPathName m_RunFilePath;
 	MkPathName m_ResRootPath;
+
+	MkArray<MkStr> m_OutDirNames;
 
 	HWND m_ResourceDirHandle;
 	HWND m_PackingStartHandle;
