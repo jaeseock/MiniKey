@@ -903,6 +903,8 @@ bool MkPatchFileGenerator::_LoadCurrentStructure(const MkPathName& sourceDirPath
 			int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
 			if (rlt == IDYES)
 			{
+				m_CurrentHistory.SetDataTypeTag(DataType_PatchHistory); // tag »ðÀÔ
+
 				ok = true;
 			}
 			else if (rlt == IDNO)

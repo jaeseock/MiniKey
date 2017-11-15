@@ -171,7 +171,7 @@ void MkPatchFileDownloader::Update(void)
 
 			// structure 기준으로 다운받을 파일 검색(structure node 존재여부는 위에서 검사)
 			const MkDataNode& structureNode = *m_PatchInfoNode.GetChildNode(MkPatchFileGenerator::KEY_StructureNode);
-			unsigned int totalFiles = _CountTotalFiles(structureNode);
+			unsigned int totalFiles = MkPathName::__CountTotalFiles(structureNode);
 			MK_DEV_PANEL.MsgToLog(L"> 누적 패치 파일 : " + MkStr(totalFiles) + L" 개");
 
 			m_DownloadFileInfoList.Clear();
@@ -573,20 +573,6 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 		newOffset.CheckAndAddBackslash();
 		_FindFilesToDownload(*node.GetChildNode(subObjs[i]), newOffset, moduleFileName); // 재귀
 	}
-}
-
-unsigned int MkPatchFileDownloader::_CountTotalFiles(const MkDataNode& node)
-{
-	unsigned int files = 0;
-	node.GetData(MkPathName::KeyFileCount, files, 0);
-
-	MkArray<MkHashStr> subDirs;
-	MkPathName::__GetSubDirectories(node, subDirs);
-	MK_INDEXING_LOOP(subDirs, i)
-	{
-		files += _CountTotalFiles(*node.GetChildNode(subDirs[i]));
-	}
-	return files;
 }
 
 //------------------------------------------------------------------------------------------------//

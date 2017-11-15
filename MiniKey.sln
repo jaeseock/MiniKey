@@ -90,6 +90,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WhiteBoardForTest", "Sample
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkCodeDefinitionConverter", "Tool\MkCodeDefinitionConverter\MkCodeDefinitionConverter.vcproj", "{F57F046B-907B-41FD-84FC-0ADA44E3B350}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -205,6 +210,12 @@ Global
 		{0103EE0D-2A7F-45D2-978A-F27076AB5A63}.Release|Win32.Build.0 = Release|Win32
 		{0103EE0D-2A7F-45D2-978A-F27076AB5A63}.Shipping|Win32.ActiveCfg = Release|Win32
 		{0103EE0D-2A7F-45D2-978A-F27076AB5A63}.Shipping|Win32.Build.0 = Release|Win32
+		{F57F046B-907B-41FD-84FC-0ADA44E3B350}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F57F046B-907B-41FD-84FC-0ADA44E3B350}.Debug|Win32.Build.0 = Debug|Win32
+		{F57F046B-907B-41FD-84FC-0ADA44E3B350}.Release|Win32.ActiveCfg = Release|Win32
+		{F57F046B-907B-41FD-84FC-0ADA44E3B350}.Release|Win32.Build.0 = Release|Win32
+		{F57F046B-907B-41FD-84FC-0ADA44E3B350}.Shipping|Win32.ActiveCfg = Release|Win32
+		{F57F046B-907B-41FD-84FC-0ADA44E3B350}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

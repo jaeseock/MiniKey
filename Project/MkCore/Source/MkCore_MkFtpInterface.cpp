@@ -37,10 +37,18 @@ bool MkFtpInterface::Connect(void)
 		if (!m_RemotePath.Empty())
 		{
 			if (::FtpSetCurrentDirectory(m_Connect, m_RemotePath.GetPtr()) == FALSE)
-				break;
+			{
+				if (::FtpCreateDirectory(m_Connect, m_RemotePath.GetPtr()) == TRUE)
+				{
+					if (::FtpSetCurrentDirectory(m_Connect, m_RemotePath.GetPtr()) == FALSE)
+						break;
+				}
+				else
+					break;
+			}
 		}
 
-		GetCurrentPath(m_RemotePath);
+		GetCurrentPath(m_RemotePath, false);
 		return true;
 	}
 	while (false);
@@ -49,7 +57,7 @@ bool MkFtpInterface::Connect(void)
 	return false;
 }
 
-bool MkFtpInterface::GetCurrentPath(MkStr& path)
+bool MkFtpInterface::GetCurrentPath(MkStr& path, bool relativePathFromRemote)
 {
 	if (_CheckConnection())
 	{
@@ -57,7 +65,14 @@ bool MkFtpInterface::GetCurrentPath(MkStr& path)
 		DWORD bufSize = INTERNET_MAX_PATH_LENGTH;
 		if (::FtpGetCurrentDirectory(m_Connect, tmpBuf, &bufSize) == TRUE)
 		{
-			path = tmpBuf;
+			if (relativePathFromRemote)
+			{
+				path = &tmpBuf[m_RemotePath.GetSize()];
+			}
+			else
+			{
+				path = tmpBuf;
+			}
 			return true;
 		}
 	}

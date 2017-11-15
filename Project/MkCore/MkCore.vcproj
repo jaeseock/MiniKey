@@ -431,6 +431,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkCodeDefinitionConverter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkCodeDefinitionConverter.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkCore_MkFloatOp.cpp"
 					>
 				</File>
@@ -460,14 +468,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkStringOp.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\MkCore_MkVisitWebPage.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Include\MkCore_MkVisitWebPage.h"
 					>
 				</File>
 				<File
@@ -543,14 +543,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Source\MkCore_MkFtpInterface.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Include\MkCore_MkFtpInterface.h"
-					>
-				</File>
-				<File
 					RelativePath=".\Source\MkCore_MkInstanceDeallocator.cpp"
 					>
 				</File>
@@ -600,14 +592,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkVersionTag.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\MkCore_MkWebBrowser.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Include\MkCore_MkWebBrowser.h"
 					>
 				</File>
 			</Filter>
@@ -732,6 +716,42 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_StackWalker.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="Web interface"
+				>
+				<File
+					RelativePath=".\Source\MkCore_MkFileDownloader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkFileDownloader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkFtpInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkFtpInterface.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkVisitWebPage.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkVisitWebPage.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkWebBrowser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkWebBrowser.h"
 					>
 				</File>
 			</Filter>
@@ -915,7 +935,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="2. Check, download and update files"
+					Name="3. Check, download and update files"
 					>
 					<File
 						RelativePath=".\Source\MkCore_MkPatchFileDownloader.cpp"
@@ -927,7 +947,7 @@
 					</File>
 				</Filter>
 				<Filter
-					Name="1. Start patching"
+					Name="2. Start patching"
 					>
 					<File
 						RelativePath=".\Source\MkCore_MkPatchStarter.cpp"
@@ -935,6 +955,18 @@
 					</File>
 					<File
 						RelativePath="..\..\Include\MkCore_MkPatchStarter.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="1. Upload files"
+					>
+					<File
+						RelativePath=".\Source\MkCore_MkPatchFileUploader.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkCore_MkPatchFileUploader.h"
 						>
 					</File>
 				</Filter>
@@ -960,14 +992,6 @@
 				</File>
 				<File
 					RelativePath="..\..\Include\MkCore_MkDevPanel.h"
-					>
-				</File>
-				<File
-					RelativePath=".\Source\MkCore_MkFileDownloader.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\Include\MkCore_MkFileDownloader.h"
 					>
 				</File>
 				<File

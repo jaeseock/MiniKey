@@ -38,7 +38,7 @@ public:
 	bool Connect(void);
 
 	// 현재 경로 반환
-	bool GetCurrentPath(MkStr& path);
+	bool GetCurrentPath(MkStr& path, bool relativePathFromRemote = true);
 
 	// 부모 디렉토리로 이동
 	bool MoveToParent(void);

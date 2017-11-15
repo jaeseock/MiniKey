@@ -1191,6 +1191,20 @@ void MkPathName::__GetSubFiles(const MkDataNode& node, MkArray<MkHashStr>& subFi
 void MkPathName::__IncreaseDirectoryCount(MkDataNode& node) { _IncreaseUnitCountByTag(node, KeyDirCount); }
 void MkPathName::__IncreaseFileCount(MkDataNode& node) { _IncreaseUnitCountByTag(node, KeyFileCount); }
 
+unsigned int MkPathName::__CountTotalFiles(const MkDataNode& node)
+{
+	unsigned int files = 0;
+	node.GetData(KeyFileCount, files, 0);
+
+	MkArray<MkHashStr> subDirs;
+	__GetSubDirectories(node, subDirs);
+	MK_INDEXING_LOOP(subDirs, i)
+	{
+		files += __CountTotalFiles(*node.GetChildNode(subDirs[i]));
+	}
+	return files;
+}
+
 bool MkPathName::__CheckFileDifference(const MkDataNode& lastFileNode, MkDataNode& currFileNode)
 {
 	MkArray<unsigned int> size0(2);

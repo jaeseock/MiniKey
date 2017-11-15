@@ -30,6 +30,9 @@ public:
 	unsigned int GetTotalPatchFileCount(void) const { return m_TotalPatchFileCount; }
 	unsigned int GetDonePatchFileCount(void) const { return m_DonePatchFileCount; }
 
+	inline const MkArray<MkStr>& GetUpdatingDestNames(void) const { return m_UpdatingDestName; }
+	inline const MkArray<MkPathName>& GetUpdatingDestPaths(void) const { return m_UpdatingDestPath; }
+
 	static MkStr ConvertWrittenTimeToStr(unsigned int writtenTime);
 
 	static void ConvertFilePathToDownloadable(const MkPathName& filePath, MkPathName& buffer);

@@ -482,6 +482,9 @@ public:
 	static void __IncreaseDirectoryCount(MkDataNode& node); // KeyDirCount
 	static void __IncreaseFileCount(MkDataNode& node); // KeyFileCount
 
+	// node에 포함된 모든 파일 count 반환
+	static unsigned int __CountTotalFiles(const MkDataNode& node);
+
 	// 두 file node의 size와 written time이 다른지 비교해 결과 반환
 	// 같으면 currFileNode의 size정보를 lastFileNode와 동일하게 맞춤(lastFileNode는 압축 크기 정보 복사)
 	static bool __CheckFileDifference(const MkDataNode& lastFileNode, MkDataNode& currFileNode);

@@ -153,7 +153,7 @@ MkStr& MkStr::operator = (const MkByteArray& str)
 
 MkStr& MkStr::operator = (const bool& value)
 {
-	*this = (value) ? L"Yes" : L"No";
+	*this = (value) ? L"true" : L"false";
 	return *this;
 }
 
@@ -1308,13 +1308,23 @@ bool MkStr::ReadTextFile(const MkPathName& filePath, bool ignoreComment)
 
 void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment)
 {
-	MkByteArray buffer = byteArray;
-
 	// text 파일은 멀티바이트 폼으로 저장되므로 std::wifstream를 사용하면 자동으로 wchar_t 기반으로 변환해 주지만
 	// 파일 시스템을 통해 std::ifstream(unsigned char)로 읽은 상태라 std::string를 한 번 거치게 함
-	unsigned int srcSize = buffer.GetSize();
-	buffer.Fill(srcSize + 1);
-	buffer.GetPtr()[srcSize] = NULL;
+	unsigned int srcSize = byteArray.GetSize();
+	MkByteArray buffer;
+
+	// BOM : UTF-8
+	if ((srcSize >= 3) && (byteArray[0] == 0xEF) && (byteArray[1] == 0xBB) && (byteArray[2] == 0xBF))
+	{
+		byteArray.GetSubArray(MkArraySection(3), buffer);
+		srcSize -= 3;
+	}
+	else
+	{
+		buffer = byteArray;
+	}
+
+	buffer.PushBack(NULL);
 	MkStr tempStr;
 	tempStr.ImportMultiByteString(std::string(reinterpret_cast<const char*>(buffer.GetPtr())));
 /*	
