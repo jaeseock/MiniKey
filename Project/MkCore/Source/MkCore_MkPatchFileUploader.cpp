@@ -123,7 +123,6 @@ bool MkPatchFileUploader::StartUploading
 
 		msg += MkStr::LF;
 	}
-	msg.WriteToTextFile(L"m_UploadCommand.txt");
 	
 	// ftp ¿¬°á
 	MK_DEV_PANEL.MsgToLog(L"> URL : " + url);
