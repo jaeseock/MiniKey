@@ -970,6 +970,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="opt. Extract patch file"
+					>
+					<File
+						RelativePath=".\Source\MkCore_MkPatchFileExtractor.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkCore_MkPatchFileExtractor.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

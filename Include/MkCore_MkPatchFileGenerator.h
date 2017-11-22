@@ -151,10 +151,15 @@ public:
 
 	// node key
 	static const MkHashStr KEY_CurrWT;
+	static const MkHashStr KEY_LastWT;
 	static const MkHashStr KEY_StructureNode;
 	static const MkHashStr KEY_FileSystemNode;
 	static const MkHashStr KEY_PurgeListNode;
 	static const MkHashStr KEY_LauncherNode;
+	static const MkHashStr KEY_UpdateNode;
+	static const MkHashStr KEY_AddNode;
+	static const MkHashStr KEY_ReplaceNode;
+	static const MkHashStr KEY_DeleteNode;
 
 	// launcher info file name & key
 	static const MkHashStr LauncherFileName;

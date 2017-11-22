@@ -12,18 +12,18 @@ const MkStr MkPatchFileGenerator::DataType_PatchHistory(L"PatchHistory");
 const MkStr MkPatchFileGenerator::DataType_PatchInfo(L"PatchInfo");
 const MkPathName MkPatchFileGenerator::PatchDataDirName(L"data\\");
 const MkHashStr MkPatchFileGenerator::KEY_CurrWT(L"#CurrWT");
+const MkHashStr MkPatchFileGenerator::KEY_LastWT(L"#LastWT");
 const MkHashStr MkPatchFileGenerator::KEY_StructureNode(L"#Structure");
 const MkHashStr MkPatchFileGenerator::KEY_FileSystemNode(L"#FileSystem");
 const MkHashStr MkPatchFileGenerator::KEY_PurgeListNode(L"PurgeList");
 const MkHashStr MkPatchFileGenerator::KEY_LauncherNode(L"#Launcher");
+const MkHashStr MkPatchFileGenerator::KEY_UpdateNode(L"#Update");
+const MkHashStr MkPatchFileGenerator::KEY_AddNode(L"#Add");
+const MkHashStr MkPatchFileGenerator::KEY_ReplaceNode(L"#Replace");
+const MkHashStr MkPatchFileGenerator::KEY_DeleteNode(L"#Delete");
 const MkHashStr MkPatchFileGenerator::LauncherFileName(L"LauncherFile");
 const MkHashStr MkPatchFileGenerator::KEY_RunFilePath(L"#RunFilePath");
 
-static const MkHashStr KEY_LastWT = L"#LastWT";
-static const MkHashStr KEY_UpdateNode = L"#Update";
-static const MkHashStr KEY_AddNode = L"#Add";
-static const MkHashStr KEY_ReplaceNode = L"#Replace";
-static const MkHashStr KEY_DeleteNode = L"#Delete";
 
 //------------------------------------------------------------------------------------------------//
 
