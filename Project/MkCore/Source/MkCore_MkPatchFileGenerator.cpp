@@ -263,10 +263,12 @@ bool MkPatchFileGenerator::SetUpdatingRootDirectoryPath(const MkPathName& updati
 	return ok;
 }
 
-bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath)
+bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress)
 {
 	if (m_MainState != eReady)
 		return false;
+
+	m_TryCompress = tryCompress;
 
 	bool ok = false;
 	do
@@ -504,11 +506,11 @@ bool MkPatchFileGenerator::Update(void)
 							break;
 						}
 
-						unsigned int srcSize = frInterface.Read(srcData, MkArraySection(0));
+						unsigned int srcSize = (m_TryCompress) ? frInterface.Read(srcData, MkArraySection(0)) : frInterface.GetFileSize();
 						frInterface.Clear();
 
 						MkByteArray compData; // 압축 후 데이터
-						if (srcSize > 0)
+						if (m_TryCompress && (srcSize > 0))
 						{
 							MkZipCompressor::Compress(srcData.GetPtr(), srcData.GetSize(), compData);
 							srcData.Clear();
@@ -862,6 +864,7 @@ MkPatchFileGenerator::MkPatchFileGenerator()
 	m_UpdateWrittenTime = 0;
 	m_TotalPatchFileCount = 0;
 	m_DonePatchFileCount = 0;
+	m_TryCompress = true;
 }
 
 //------------------------------------------------------------------------------------------------//

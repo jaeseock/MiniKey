@@ -46,10 +46,6 @@ public:
 	// (NOTE) 하위 unit과 자식 노드들을 대상으로 함
 	//------------------------------------------------------------------------------------------------//
 
-	// 실제 혹은 파일 시스템상의 파일, 데이터로부터 템플릿만 읽어들여 등록
-	static bool RegisterTemplate(const MkPathName& filePath);
-	static bool RegisterTemplate(const MkByteArray& fileData);
-
 	// 실제 혹은 파일 시스템상의 text format 파일, 데이터로부터 초기화
 	bool LoadFromText(const MkPathName& filePath);
 	bool LoadFromText(const MkByteArray& fileData);
@@ -256,6 +252,10 @@ public:
 	//------------------------------------------------------------------------------------------------//
 	// template
 	//------------------------------------------------------------------------------------------------//
+
+	// 실제 혹은 파일 시스템상의 파일, 데이터로부터 템플릿만 읽어들여 등록
+	static bool RegisterTemplate(const MkPathName& filePath);
+	static bool RegisterTemplate(const MkByteArray& fileData);
 
 	// 현 노드를 템플릿 노드로 선언하고 성공 여부 반환
 	// read-only 상태이거나 동일 이름을 가진 노드가 이미 템플릿으로 등록되어 있으면 실패

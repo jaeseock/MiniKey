@@ -14,18 +14,6 @@ const MkStr MkDataNode::DefaultFileExtension(MKDEF_DEF_DATA_NODE_FILE_EXTENSION)
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkDataNode::RegisterTemplate(const MkPathName& filePath)
-{
-	MkDataNode node;
-	return node.Load(filePath);
-}
-
-bool MkDataNode::RegisterTemplate(const MkByteArray& fileData)
-{
-	MkDataNode node;
-	return node.Load(fileData);
-}
-
 bool MkDataNode::LoadFromText(const MkPathName& filePath)
 {
 	if (!GetReadOnly())
@@ -101,7 +89,9 @@ bool MkDataNode::Load(const MkPathName& filePath)
 	if (!GetReadOnly())
 	{
 		// Excel 파일인지 확장자 체크
-		if (filePath.GetFileExtension().CheckPrefix(L"xls"))
+		MkStr ext = filePath.GetFileExtension();
+		ext.ToLower();
+		if (ext.CheckPrefix(L"xls"))
 		{
 			return LoadFromExcel(filePath);
 		}
@@ -440,6 +430,18 @@ MkDataNode& MkDataNode::operator = (const MkDataNode& source)
 
 //------------------------------------------------------------------------------------------------//
 
+bool MkDataNode::RegisterTemplate(const MkPathName& filePath)
+{
+	MkDataNode node;
+	return node.Load(filePath);
+}
+
+bool MkDataNode::RegisterTemplate(const MkByteArray& fileData)
+{
+	MkDataNode node;
+	return node.Load(fileData);
+}
+
 bool MkDataNode::DeclareToTemplate(bool checkDuplication) const
 {
 	const MkHashStr& nodeName = GetNodeName();
@@ -648,14 +650,14 @@ void MkDataNode::__GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNo
 
 MkDataNode& MkDataNode::_GetTemplateRoot(void)
 {
-	static MkDataNode gTemplateRoot(L"TemplateRoot");
-	return gTemplateRoot;
+	static MkDataNode sTemplateRoot(L"TemplateRoot");
+	return sTemplateRoot;
 }
 
 MkHashMap<MkHashStr, unsigned int>& MkDataNode::_GetPriorityTable(void)
 {
-	static MkHashMap<MkHashStr, unsigned int> s_PriorityTable;
-	return s_PriorityTable;
+	static MkHashMap<MkHashStr, unsigned int> sPriorityTable;
+	return sPriorityTable;
 }
 
 bool MkDataNode::_PredefinedUnitByTemplate(const MkHashStr& key) const
