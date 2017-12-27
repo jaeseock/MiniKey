@@ -1,0 +1,30 @@
+
+// 런쳐 파일명
+str LauncherFileName = "KuntaraLauncher.exe";
+
+// 패치 완료 후 런쳐에서 실행 될 클라이언트 파일명
+str RunFilePath = "client_shipping.exe";
+
+// 패치 원본 디렉토리 경로
+str StartPath = "D:\PatchProcess\Patch\CDN/";
+
+// 출력 정보
+Node "[EXPORT]"
+{
+	Node "QA"
+	{
+		str URL = "210.207.252.151";
+		str RemotePath = "main/QA";
+		str UserName = "eloadev";
+		str Password = "eloadev1234";
+	}
+
+	Node "Shipping"
+	{
+		bool Warning = yes;
+		str URL = "upload-playwith-kr.sf.cdngp.net";
+		str RemotePath = "main";
+		str UserName = "patchkuntara_playwith-kr";
+		str Password = "patchkuntara#adm";
+	}
+}

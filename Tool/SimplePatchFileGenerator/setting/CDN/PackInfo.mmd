@@ -1,0 +1,31 @@
+
+uint ChunkSizeInMB = 512;
+uint PercentageForCompressing = 80;
+str Prefix = "MK_PACK_";
+str Extension = "mpc";
+
+str NameFilter =
+	"ConnectInfo.json" /
+	"ConnectInfo.txt" /
+	"DefaultOption.json" /
+	"Kuntara.ico" /
+	"FrameResultLog.csv" /
+	"history.csv" /
+	"memoryleak.xsl" /
+	"memoryreport.xsl" /
+	"NiMemory-Leaks.xml" /
+	"NiMemory-Overview.xml" /
+	"splash.png" /
+	"UI_TextLog.txt" /
+	"log.txt" /
+	"GameGuard.des" /
+	"KuntaraKR.ini" /
+	"Config/" /
+	"generated/" /
+	"log/" /
+	"res\cursor/" /
+	"res\language\korean\font/" /
+	"res\shaders/" /
+	"res\sound\event/";
+
+str ExtensionFilter = "dll" / "exe" / "ilk" / "log" / "pdb" / "mpc" / "zip" / "bat" / "fev" / "fsb";
