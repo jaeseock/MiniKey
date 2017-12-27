@@ -10,6 +10,7 @@
 #include "MkCore_MkPathName.h"
 #include "MkCore_MkFileManager.h"
 #include "MkCore_MkStringOp.h"
+#include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkStr.h"
 
 
@@ -56,7 +57,7 @@ void MkStr::SetUp(unsigned int codePage)
 		}
 	}
 
-	SetCodePage(codePage);
+	SetGlobalCodePage(codePage);
 
 	if (gBlankTag.Empty())
 	{
@@ -68,9 +69,9 @@ void MkStr::SetUp(unsigned int codePage)
 	}
 }
 
-void MkStr::SetCodePage(unsigned int codePage) { gCurrentCodePage = codePage; }
+void MkStr::SetGlobalCodePage(unsigned int codePage) { gCurrentCodePage = codePage; }
 
-unsigned int MkStr::GetCodePage(void) { return gCurrentCodePage; }
+unsigned int MkStr::GetGlobalCodePage(void) { return gCurrentCodePage; }
 
 //------------------------------------------------------------------------------------------------//
 
@@ -942,7 +943,7 @@ void MkStr::RemoveAllComment(void)
 		}
 	}
 
-	ReplaceAllBlocks(0, L"//", MkStr::LF, MkStr::LF);
+	ReplaceAllBlocks(0, L"//", MkStr::LF, MkStr::CRLF);
 
 	pos = GetFirstKeywordPosition(L"//");
 	if (pos != MKDEF_ARRAY_ERROR) // L"//" ~ EOF
@@ -1308,46 +1309,29 @@ bool MkStr::ReadTextFile(const MkPathName& filePath, bool ignoreComment)
 
 void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment)
 {
-	// text 파일은 멀티바이트 폼으로 저장되므로 std::wifstream를 사용하면 자동으로 wchar_t 기반으로 변환해 주지만
-	// 파일 시스템을 통해 std::ifstream(unsigned char)로 읽은 상태라 std::string를 한 번 거치게 함
+	// text 파일은 멀티바이트 폼으로 저장되므로 std::wifstream를 사용하면 자동으로 인코딩 해 주지만
+	// 파일 시스템을 통해 std::ifstream(unsigned char)로 읽은 상태라 별도 디코딩을 함
 	unsigned int srcSize = byteArray.GetSize();
-	MkByteArray buffer;
+	MkByteArray srcData;
+	unsigned int codePage;
 
 	// BOM : UTF-8
 	if ((srcSize >= 3) && (byteArray[0] == 0xEF) && (byteArray[1] == 0xBB) && (byteArray[2] == 0xBF))
 	{
-		byteArray.GetSubArray(MkArraySection(3), buffer);
-		srcSize -= 3;
+		byteArray.GetSubArray(MkArraySection(3), srcData);
+		codePage = CP_UTF8;
 	}
 	else
 	{
-		buffer = byteArray;
+		srcData = byteArray;
+		codePage = gCurrentCodePage;
 	}
+	srcData.PushBack(NULL);
 
-	buffer.PushBack(NULL);
-	MkStr tempStr;
-	tempStr.ImportMultiByteString(std::string(reinterpret_cast<const char*>(buffer.GetPtr())));
-/*	
-	// 파일 오픈
-	std::wifstream inStream;
-	inStream.open(fullPath, std::ios::in);
-	if (!inStream.is_open())
-		return false;
+	std::wstring buffer;
+	MkStringOp::ConvertString(std::string(reinterpret_cast<const char*>(srcData.GetPtr())), buffer, codePage);
+	MkStr tempStr = buffer.c_str();
 
-	// 텍스트 크기
-	unsigned int stringCount = static_cast<unsigned int>(std::distance(std::istreambuf_iterator<wchar_t>(inStream), std::istreambuf_iterator<wchar_t>()));
-	if (stringCount > 0)
-	{
-		// 파일 스트림 -> 버퍼
-		inStream.seekg(0, std::ios::beg);
-		wchar_t* charBuf = new wchar_t[stringCount + 1];
-		inStream.read(charBuf, stringCount);
-		charBuf[stringCount] = NULL;
-		inStream.close();
-		tempStr = charBuf;
-		delete [] charBuf;
-	}
-*/
 	// tempStr 에서 주석 삭제
 	if (ignoreComment)
 	{
@@ -1358,21 +1342,46 @@ void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment)
 	*this += tempStr;
 }
 
-bool MkStr::WriteToTextFile(const MkPathName& filePath, bool overwrite) const
+bool MkStr::WriteToTextFile(const MkPathName& filePath, bool overwrite, bool ANSI) const
 {
-	MkPathName absoluteFilePath;
-	absoluteFilePath.ConvertToRootBasisAbsolutePath(filePath);
+	if (ANSI)
+	{
+		MkPathName absoluteFilePath;
+		absoluteFilePath.ConvertToRootBasisAbsolutePath(filePath);
 
-	// 파일 오픈
-	std::wofstream outStream;
-	outStream.open(absoluteFilePath, std::ios::out | (overwrite ? std::ios::trunc : std::ios::app));
-	if (!outStream.is_open())
-		return false;
+		std::wofstream outStream;
+		outStream.open(absoluteFilePath, std::ios::out | (overwrite ? std::ios::trunc : std::ios::app));
+		if (!outStream.is_open())
+			return false;
 
-	// 변환 후 기록
-	outStream.write(GetPtr(), GetSize());
-	outStream.close();
-	return true;
+		outStream.write(GetPtr(), GetSize());
+		outStream.close();
+		return true;
+	}
+	else
+	{
+		// 변환
+		std::string buffer;
+		MkStringOp::ConvertString(std::wstring(GetPtr()), buffer, CP_UTF8);
+		unsigned int strSize = static_cast<unsigned int>(buffer.size());
+
+		// 출력용 데이터
+		MkByteArray outData;
+		outData.Reserve(3 + strSize);
+
+		outData.PushBack(0xEF); // BOM
+		outData.PushBack(0xBB);
+		outData.PushBack(0xBF);
+
+		outData.PushBack(MkMemoryBlockDescriptor<unsigned char>(reinterpret_cast<const unsigned char*>(buffer.c_str()), strSize));
+
+		// 파일로 저장
+		MkInterfaceForFileWriting fwInterface;
+		if (!fwInterface.SetUp(filePath, overwrite, false))
+			return false;
+
+		return (fwInterface.Write(outData, MkArraySection(0)) == outData.GetSize());
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

@@ -33,6 +33,9 @@ MkFileDownInfo::eDownState MkFileDownInfo::GetDownState(void)
 	return m_DownState;
 }
 
+unsigned int MkFileDownInfo::GetFileSize(void) { return m_FileSize; }
+unsigned int MkFileDownInfo::GetDownSize(void) { return m_DownSize; }
+
 float MkFileDownInfo::GetProgress(void)
 {
 	unsigned int fs = m_FileSize;

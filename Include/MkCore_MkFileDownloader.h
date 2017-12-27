@@ -67,8 +67,11 @@ public:
 	};
 
 	bool SetUp(const MkStr& fileURL, const MkPathName& destFilePath);
+
 	eDownState GetDownState(void);
-	float GetProgress(void);
+	unsigned int GetFileSize(void);
+	unsigned int GetDownSize(void);
+	float GetProgress(void); // 0.f ~ 1.f
 
 	MkFileDownInfo();
 	~MkFileDownInfo() {}

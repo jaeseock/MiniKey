@@ -174,14 +174,14 @@ Node "FontResource"
 				int thickness = 2;
 			}
 			
-			Node "Big"
+			Node "Large"
 			{
 				str face = "³ª´®°íµñ";
 				uint size = 16;
 				int thickness = 1;
 			}
 			
-			Node "BigBold"
+			Node "LargeBold"
 			{
 				str face = "³ª´®°íµñ";
 				uint size = 16;

@@ -10,7 +10,7 @@
 // - 변환
 // - 텍스트 파일 입출력
 //
-// 타 언어팩 사용시 코드 페이지 변환 필요
+// OS 기본 설정된 언어외 타 언어를 사용 할 경우 인코딩시 코드페이지를 별도로 설정 해 주던가 UTF-8 사용 권장
 //
 // char와의 변환은 의도적으로 엄격히 관리(무심결에 혼용하는 행위 방지)하며 사용하더라도
 // std::string를 통해 간접적으로 입출력
@@ -42,8 +42,8 @@ public:
 	static void SetUp(unsigned int codePage = 0); // 0 : OS default
 
 	// 코드 페이지
-	static void SetCodePage(unsigned int codePage);
-	static unsigned int GetCodePage(void);
+	static void SetGlobalCodePage(unsigned int codePage);
+	static unsigned int GetGlobalCodePage(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// 생성자
@@ -574,8 +574,9 @@ public:
 	// 현 문자열을 실제 경로의 텍스트 파일로 출력
 	// (in) filePath : 출력 할 절대, 혹은 root directory 기준 상대 파일 경로
 	// (in) overwrite : 이미 동일 이름의 파일이 존재할 경우 덮어씌울지 여부. false 인 경우 뒤에 덧붙힘
+	// (in) ANSI : 인코딩 방식. true면 ANSI, false면 UTF-8
 	// return : 성공 여부
-	bool WriteToTextFile(const MkPathName& filePath, bool overwrite = true) const;
+	bool WriteToTextFile(const MkPathName& filePath, bool overwrite = true, bool ANSI = true) const;
 
 	//------------------------------------------------------------------------------------------------//
 

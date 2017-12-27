@@ -61,6 +61,19 @@ public:
 	bool Load(const MkPathName& filePath);
 	bool Load(const MkByteArray& fileData);
 
+	// 결과도 함께 반환
+	enum eLoadResult
+	{
+		eLR_ReadOnly = -1,
+		eLR_Failed = 0,
+		eLR_Text,
+		eLR_Binary,
+		eLR_Excel
+	};
+
+	bool Load(const MkPathName& filePath, eLoadResult& result);
+	bool Load(const MkByteArray& fileData, eLoadResult& result);
+
 	//------------------------------------------------------------------------------------------------//
 	// 파일로 출력. 반환값은 성공여부
 	// 템플릿으로부터 선 정의된 노드일 경우 고유값을 가지지 못한 unit, node들은 출력되지 않음

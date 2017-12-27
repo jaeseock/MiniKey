@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include "MkCore_MkDevPanel.h"
 #include "MkCore_MkFileManager.h"
+#include "MkCore_MkTimeManager.h"
 #include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkInterfaceForFileReading.h"
 #include "MkCore_MkZipCompressor.h"
@@ -34,8 +35,12 @@ bool MkPatchFileDownloader::CheckAndDownloadPatchFile(const MkStr& url, bool use
 
 		m_ErrorMsg.Clear();
 		m_MainState = eDownloadPatchInfoFile;
+		m_TotalDownloadSize = 0;
+		m_SuccessDownloadSize = 0;
+		m_CurrentDownloadSize = 0;
 		m_MaxProgress = 0;
 		m_CurrentProgress = 0;
+		m_LastDownloadSizeOnTick = 0;
 	}
 	return ok;
 }
@@ -186,13 +191,32 @@ void MkPatchFileDownloader::Update(void)
 
 			_FindFilesToDownload(structureNode, MkStr::EMPTY, moduleFileName); // 검색
 
+			// 총량 계산
+			MK_INDEXING_LOOP(m_DownloadFileInfoList, i)
+			{
+				const _DownloadFileInfo& fi = m_DownloadFileInfoList[i];
+				m_TotalDownloadSize += static_cast<unsigned __int64>((fi.compSize > 0) ? fi.compSize : fi.origSize);
+			}
+			m_SuccessDownloadSize = 0;
+			m_CurrentDownloadSize = 0;
+			
 			MK_DEV_PANEL.MsgToLog(L"> 다운 대상 파일 : " + MkStr(m_DownloadFileInfoList.GetSize()) + L" 개");
+
+			MkStr sizeBuf;
+			_ConvertDataSizeToString(m_TotalDownloadSize, sizeBuf);
+			MK_DEV_PANEL.MsgToLog(L"> 다운 대상 크기 : " + sizeBuf);
 			MK_DEV_PANEL.InsertEmptyLine();
 			MK_DEV_PANEL.MsgToLog(L"> 파일 다운을 시작합니다.");
 
 			m_MainState = eRegisterTargetFiles;
 			m_MaxProgress = m_DownloadFileInfoList.GetSize();
 			m_CurrentProgress = 0;
+
+			MkTimeState timeState;
+			MK_TIME_MGR.GetCurrentTimeState(timeState);
+			m_DownloadTickCounter.SetUp(timeState, 3.);
+			m_LastDownloadSizeOnTick = 0;
+			m_RemainCompleteTimeStr = L"--";
 		}
 		break;
 
@@ -204,6 +228,8 @@ void MkPatchFileDownloader::Update(void)
 				MK_DEV_PANEL.InsertEmptyLine();
 				MK_DEV_PANEL.MsgToLog(L"> 패치 파일을 적용합니다.");
 
+				m_CurrentDownloadSize = m_SuccessDownloadSize = m_TotalDownloadSize;
+				m_RemainCompleteTimeStr.Clear();
 				m_CurrentProgress = 0;
 				m_MainState = eUpdateFiles;
 			}
@@ -215,6 +241,9 @@ void MkPatchFileDownloader::Update(void)
 				{
 					MK_DEV_PANEL.MsgToLog(L"    " + fileInfo.filePath);
 					++m_CurrentProgress;
+
+					// 다운 성공 크기 갱신
+					m_SuccessDownloadSize += static_cast<unsigned __int64>((fileInfo.compSize > 0) ? fileInfo.compSize : fileInfo.origSize);
 				}
 				else
 				{
@@ -244,6 +273,8 @@ void MkPatchFileDownloader::Update(void)
 					}
 				}
 			}
+
+			_UpdateDownloadState();
 		}
 		break;
 
@@ -252,6 +283,8 @@ void MkPatchFileDownloader::Update(void)
 			MkFileDownInfo::eDownState downState = m_CurrentDownInfo->GetDownState();
 			if ((downState == MkFileDownInfo::eDS_Wait) || (downState == MkFileDownInfo::eDS_Downloading))
 			{
+				_UpdateDownloadState();
+
 				::Sleep(1); // 대기
 				break;
 			}
@@ -312,6 +345,9 @@ void MkPatchFileDownloader::Update(void)
 
 						// 압축 파일 삭제
 						localFilePathForComp.DeleteCurrentFile();
+
+						// 다운 성공 크기 갱신
+						m_SuccessDownloadSize += fileInfo.compSize;
 					}
 					else
 					{
@@ -321,6 +357,9 @@ void MkPatchFileDownloader::Update(void)
 							m_ErrorMsg = localFilePathForOrig + L"\n다운된 원본 파일 크기가 다릅니다. 맞는 크기 : " + MkStr(fileInfo.origSize);
 							break;
 						}
+
+						// 다운 성공 크기 갱신
+						m_SuccessDownloadSize += fileInfo.origSize;
 					}
 
 					// 파일 수정시간 변경
@@ -330,6 +369,8 @@ void MkPatchFileDownloader::Update(void)
 					}
 				}
 				while (false);
+
+				_UpdateDownloadState();
 			}
 			else // 다운로드 중단/실패
 			{
@@ -477,13 +518,37 @@ float MkPatchFileDownloader::GetDownloadProgress(void)
 	return (m_CurrentDownInfo == NULL) ? 0.f : m_CurrentDownInfo->GetProgress();
 }
 
+void MkPatchFileDownloader::GetCurrentDownloadState(MkStr& buffer) const
+{
+	MkStr currSize;
+	_ConvertDataSizeToString(m_CurrentDownloadSize, currSize);
+
+	MkStr totalSize;
+	_ConvertDataSizeToString(m_TotalDownloadSize, totalSize);
+
+	buffer.Clear();
+	buffer.Reserve(128);
+	buffer += currSize;
+	buffer += L" / ";
+	buffer += totalSize;
+	buffer += L" (";
+	buffer += static_cast<unsigned int>(ConvertToPercentage<unsigned __int64, unsigned __int64>(m_CurrentDownloadSize, m_TotalDownloadSize));
+	buffer += L"%)... ";
+	buffer += m_RemainCompleteTimeStr;
+	buffer += L" left";
+}
+
 MkPatchFileDownloader::MkPatchFileDownloader()
 {
 	m_MainState = eReady;
 	m_UseFileSystem = true;
+	m_TotalDownloadSize = 0;
+	m_SuccessDownloadSize = 0;
+	m_CurrentDownloadSize = 0;
 	m_MaxProgress = 0;
 	m_CurrentProgress = 0;
 	m_CurrentDownInfo = NULL;
+	m_LastDownloadSizeOnTick = 0;
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -572,6 +637,125 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 		MkPathName newOffset = pathOffset + subObjs[i];
 		newOffset.CheckAndAddBackslash();
 		_FindFilesToDownload(*node.GetChildNode(subObjs[i]), newOffset, moduleFileName); // 재귀
+	}
+}
+
+void MkPatchFileDownloader::_UpdateDownloadState(void)
+{
+	m_CurrentDownloadSize = m_SuccessDownloadSize;
+	if ((m_CurrentDownInfo != NULL) && (m_CurrentDownInfo->GetDownState() == MkFileDownInfo::eDS_Downloading))
+	{
+		m_CurrentDownloadSize += static_cast<unsigned __int64>(m_CurrentDownInfo->GetDownSize());
+	}
+
+	MkTimeState timeState;
+	MK_TIME_MGR.GetCurrentTimeState(timeState);
+	if (m_DownloadTickCounter.OnTick(timeState))
+	{
+		double downSizePerSec = static_cast<double>(m_CurrentDownloadSize - m_LastDownloadSizeOnTick) / m_DownloadTickCounter.GetTickCount();
+		double remainSize = static_cast<double>(m_TotalDownloadSize - m_CurrentDownloadSize);
+		unsigned int seconds = static_cast<unsigned int>(remainSize / downSizePerSec);
+		unsigned int days = seconds / 86400;
+		seconds = seconds % 86400;
+		unsigned int hour = seconds / 3600;
+		seconds = seconds % 3600;
+		unsigned int minute = seconds / 60;
+		seconds = seconds % 60;
+
+		m_RemainCompleteTimeStr.Clear();
+		m_RemainCompleteTimeStr.Reserve(32);
+		if (days > 0)
+		{
+			m_RemainCompleteTimeStr += days;
+			m_RemainCompleteTimeStr += L"d ";
+
+			m_RemainCompleteTimeStr += hour;
+			m_RemainCompleteTimeStr += L"h";
+		}
+		else if (hour > 0)
+		{
+			m_RemainCompleteTimeStr += hour;
+			m_RemainCompleteTimeStr += L"h ";
+
+			m_RemainCompleteTimeStr += minute;
+			m_RemainCompleteTimeStr += L"m";
+		}
+		else if (minute > 0)
+		{
+			m_RemainCompleteTimeStr += minute;
+			m_RemainCompleteTimeStr += L"m ";
+
+			m_RemainCompleteTimeStr += seconds;
+			m_RemainCompleteTimeStr += L"s";
+		}
+		else if (seconds > 0)
+		{
+			m_RemainCompleteTimeStr += seconds;
+			m_RemainCompleteTimeStr += L"s";
+		}
+		else
+		{
+			m_RemainCompleteTimeStr += L"--";
+		}
+
+		m_LastDownloadSizeOnTick = m_CurrentDownloadSize;
+		m_DownloadTickCounter.SetUp(timeState, 3.);
+	}
+}
+
+void MkPatchFileDownloader::_ConvertDataSizeToString(unsigned __int64 size, MkStr& buffer)
+{
+	unsigned __int64 totalKB = size / 1024;
+	unsigned __int64 gb = 0, mb = 0, kb = 0;
+
+	// giga 단위? -> GB/MB
+	if (totalKB > (1024 * 1024))
+	{
+		gb = totalKB / (1024 * 1024);
+		mb = (totalKB - gb * (1024 * 1024)) / 1024;
+	}
+	// mega 단위? -> MB/KB
+	else if (totalKB > 1024)
+	{
+		mb = totalKB / 1024;
+		kb = totalKB - mb * 1024;
+	}
+	// KB
+	else
+	{
+		kb = totalKB;
+	}
+
+	buffer.Clear();
+	buffer.Reserve(32);
+	if (gb > 0)
+	{
+		buffer += static_cast<unsigned int>(gb);
+		buffer += L"GB";
+	}
+	if (mb > 0)
+	{
+		if (!buffer.Empty())
+		{
+			buffer += L" ";
+		}
+
+		buffer += static_cast<unsigned int>(mb);
+		buffer += L"MB";
+	}
+	if (kb > 0)
+	{
+		if (!buffer.Empty())
+		{
+			buffer += L" ";
+		}
+		buffer += static_cast<unsigned int>(kb);
+		buffer += L"KB";
+	}
+
+	if (buffer.Empty())
+	{
+		buffer = L"0KB";
 	}
 }
 

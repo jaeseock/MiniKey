@@ -89,7 +89,7 @@ void MkSystemEnvironment::__PrintSystemInformationToLog(void) const
 
 	// locale
 	buffer += L"   - Code page : ";
-	buffer += MkStr(MkStr::GetCodePage());
+	buffer += MkStr(MkStr::GetGlobalCodePage());
 	buffer += MkStr::CRLF;
 
 	// background resolution

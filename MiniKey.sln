@@ -100,6 +100,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimplePatchFileExtractor", 
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkDataNodeEditor", "Tool\MkDataNodeEditor\MkDataNodeEditor.vcproj", "{B03883BB-B191-43B4-9821-058A05AC9AD4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -227,6 +232,12 @@ Global
 		{C71B4964-96C1-4FC5-941B-5943D3FC9EC0}.Release|Win32.Build.0 = Release|Win32
 		{C71B4964-96C1-4FC5-941B-5943D3FC9EC0}.Shipping|Win32.ActiveCfg = Release|Win32
 		{C71B4964-96C1-4FC5-941B-5943D3FC9EC0}.Shipping|Win32.Build.0 = Release|Win32
+		{B03883BB-B191-43B4-9821-058A05AC9AD4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B03883BB-B191-43B4-9821-058A05AC9AD4}.Debug|Win32.Build.0 = Debug|Win32
+		{B03883BB-B191-43B4-9821-058A05AC9AD4}.Release|Win32.ActiveCfg = Release|Win32
+		{B03883BB-B191-43B4-9821-058A05AC9AD4}.Release|Win32.Build.0 = Release|Win32
+		{B03883BB-B191-43B4-9821-058A05AC9AD4}.Shipping|Win32.ActiveCfg = Release|Win32
+		{B03883BB-B191-43B4-9821-058A05AC9AD4}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

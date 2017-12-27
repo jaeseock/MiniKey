@@ -210,20 +210,24 @@ public:
 		checkBox->SetAlignmentOffset(MkFloat2(10.f, -30.f));
 
 		MkDropDownListControlNode* ddList = MkDropDownListControlNode::CreateChildNode(bodyFrame, L"DropDown");
-		ddList->SetDropDownList(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, 6);
+		ddList->SetDropDownList(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 300.f, 6);
 		ddList->SetLocalDepth(-1.f);
 		ddList->SetAlignmentPosition(eRAP_LeftTop);
 		ddList->SetAlignmentOffset(MkFloat2(10.f, -55.f));
 
-		ddList->AddItem(L"0", L"아도~ 겐!");
-		ddList->AddItem(L"1", L"아따따따류~ 겐!");
-		ddList->AddItem(L"2", L"꺕꺕꺕꺕꺕, 꺕꺕!");
-		ddList->AddItem(L"3", L"이기이기");
-		ddList->AddItem(L"4", L"~(-_-)~");
-		ddList->AddItem(L"5", L"노동 1호");
-		ddList->AddItem(L"6", L"우히히");
-		ddList->AddItem(L"7", L"다다다 나나나");
-		ddList->SetTargetItemKey(L"6");
+		MkStr itemText;
+		itemText.ReadTextFile(L"다국어.txt");
+		MkArray<MkStr> itemTokens;
+		itemText.Tokenize(itemTokens, MkStr::LF);
+		MK_INDEXING_LOOP(itemTokens, i)
+		{
+			MkStr& currToken = itemTokens[i];
+			currToken.RemoveFrontSideBlank();
+			currToken.RemoveRearSideBlank();
+
+			ddList->AddItem(MkStr(i), currToken);
+		}
+		ddList->SetTargetItemKey(L"0");
 
 		MkWindowFactory wndFactory;
 		MkWindowBaseNode* btnInst = wndFactory.CreateNormalButtonNode(L"BtnNormal", L"아재 아재 어따대고 시비여?\n 바라아제");

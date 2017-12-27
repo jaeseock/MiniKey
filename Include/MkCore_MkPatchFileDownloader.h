@@ -4,6 +4,7 @@
 // 패킹된 개별 파일 관리자
 //------------------------------------------------------------------------------------------------//
 
+#include "MkCore_MkTimeCounter.h"
 #include "MkCore_MkDataNode.h"
 
 
@@ -40,6 +41,8 @@ public:
 
 	inline const MkPathName& GetRunFilePath(void) const { return m_RunFilePath; }
 
+	void GetCurrentDownloadState(MkStr& buffer) const;
+
 	MkPatchFileDownloader();
 
 protected:
@@ -56,6 +59,10 @@ protected:
 	_DownloadFileInfo;
 
 	void _FindFilesToDownload(const MkDataNode& node, const MkPathName& pathOffset, const MkPathName& moduleFileName);
+
+	void _UpdateDownloadState(void);
+
+	static void _ConvertDataSizeToString(unsigned __int64 size, MkStr& buffer);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -74,9 +81,17 @@ protected:
 	MkArray<_DownloadFileInfo> m_DownloadFileInfoList;
 
 	MkFileDownInfo* m_CurrentDownInfo;
-	
+
+	unsigned __int64 m_TotalDownloadSize;
+	unsigned __int64 m_SuccessDownloadSize;
+	unsigned __int64 m_CurrentDownloadSize;
 	unsigned int m_MaxProgress;
 	unsigned int m_CurrentProgress;
+
+	MkTimeCounter m_DownloadTickCounter;
+	unsigned __int64 m_LastDownloadSizeOnTick;
+	MkStr m_RemainCompleteTimeStr;
+
 	MkArray<unsigned int> m_OptimizingTarget;
 
 public:

@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2017.08.09 (15:08:29)
+//   - time stamp : 2017.12.27 (10:39:16)
 //   - exporter   : pc (Test)
 //--------------------------------------------------------------------//
 
@@ -27,7 +27,7 @@ Node "[SUBNODES]"
 				uint Attribute = 26;
 				float LocalDepth = 9998.000;
 				vec2 PanelSize = (110.000, 250.000);
-				bool TextNodeWR = Yes;
+				bool TextNodeWR = true;
 
 				Node "TextNodeData"
 				{
@@ -161,7 +161,7 @@ Node "[SUBNODES]"
 				float LocalDepth = 200.000;
 				vec2 LocalPosition = (500.000, 300.000);
 				str ThemeName = "Default";
-				bool UseCloseBtn = No;
+				bool UseCloseBtn = false;
 
 				Node "[SUBNODES]"
 				{
@@ -175,7 +175,7 @@ Node "[SUBNODES]"
 						float LocalDepth = 0.100;
 						vec2 LocalPosition = (-3.000, -81.000);
 						str ThemeName = "Default";
-						bool UseShadow = Yes;
+						bool UseShadow = true;
 
 						Node "[SUBNODES]"
 						{
@@ -277,7 +277,7 @@ Node "[SUBNODES]"
 						float LocalDepth = 0.100;
 						vec2 LocalPosition = (-3.000, -235.000);
 						str ThemeName = "Default";
-						bool UseShadow = Yes;
+						bool UseShadow = true;
 
 						Node "[SUBNODES]"
 						{
@@ -347,7 +347,7 @@ Node "[SUBNODES]"
 																	vec2 ClientSize = (210.000, 12.000);
 																	str ComponentType = "eCT_DefaultBox";
 																	str FrameType = "eFT_Small";
-																	bool History = Yes;
+																	bool History = true;
 																	float LocalDepth = -1.000;
 																	vec2 LocalPosition = (13.000, 235.000);
 																	str TextString = "아기 다리";
@@ -363,11 +363,11 @@ Node "[SUBNODES]"
 																	str ComponentType = "eCT_GuideLine";
 																	int CurrentValue = 20;
 																	str FrameType = "eFT_Small";
-																	bool Horizontal = Yes;
+																	bool Horizontal = true;
 																	float LineLength = 210.000;
 																	float LocalDepth = -1.000;
 																	vec2 LocalPosition = (13.000, 197.000);
-																	bool ShowValue = Yes;
+																	bool ShowValue = true;
 																	str ThemeName = "Default";
 																	int ValueSize = 90;
 																}
@@ -413,7 +413,7 @@ Node "[SUBNODES]"
 										float LineLength = 150.000;
 										float LocalDepth = -1.000;
 										vec2 LocalPosition = (13.000, 22.000);
-										bool ShowValue = Yes;
+										bool ShowValue = true;
 										str ThemeName = "Default";
 										int ValueSize = 15;
 									}
@@ -453,7 +453,7 @@ Node "[SUBNODES]"
 						float LocalDepth = 0.100;
 						vec2 LocalPosition = (-3.000, -235.000);
 						str ThemeName = "Default";
-						bool UseShadow = Yes;
+						bool UseShadow = true;
 
 						Node "[SUBNODES]"
 						{
@@ -546,7 +546,7 @@ Node "[SUBNODES]"
 						float LocalDepth = 0.100;
 						vec2 LocalPosition = (-3.000, -235.000);
 						str ThemeName = "Default";
-						bool UseShadow = Yes;
+						bool UseShadow = true;
 
 						Node "[LINES]"
 						{
@@ -615,7 +615,7 @@ Node "[SUBNODES]"
 								str FrameType = "eFT_Small";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 205.000);
-								bool OnCheck = Yes;
+								bool OnCheck = true;
 								str ThemeName = "Default";
 							}
 
@@ -623,13 +623,13 @@ Node "[SUBNODES]"
 							{
 								vec2 AlignOffset = (10.000, -55.000);
 								int AlignPosition = 34;
-								vec2 ClientSize = (200.000, 12.000);
+								vec2 ClientSize = (300.000, 12.000);
 								str ComponentType = "eCT_DefaultBox";
 								str FrameType = "eFT_Small";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 180.000);
 								int MaxOnePageItemSize = 6;
-								str TargetItemKey = "6";
+								str TargetItemKey = "0";
 								str ThemeName = "Default";
 
 								Node "[SUBNODES]"
@@ -638,10 +638,10 @@ Node "[SUBNODES]"
 									{
 										int AlignPosition = 82;
 										uint Attribute = 67328;
-										vec2 ClientSize = (200.000, 108.000);
+										vec2 ClientSize = (300.000, 108.000);
 										str ComponentType = "eCT_DefaultBox";
 										str FrameType = "eFT_Small";
-										str ItemKeyList = // [8]
+										str ItemKeyList = // [10]
 											"0" /
 											"1" /
 											"2" /
@@ -649,89 +649,10 @@ Node "[SUBNODES]"
 											"4" /
 											"5" /
 											"6" /
-											"7";
-										str ItemMsgList = // [8]
-											"아도~ 겐!" /
-											"아따따따류~ 겐!" /
-											"꺕꺕꺕꺕꺕, 꺕꺕!" /
-											"이기이기" /
-											"~(-_-)~" /
-											"노동 1호" /
-											"우히히" /
-											"다다다 나나나";
-										str ItemSequence = // [8]
-											"0" /
-											"1" /
-											"2" /
-											"3" /
-											"4" /
-											"5" /
-											"6" /
-											"7";
-										float ItemWidth = 194.000;
-										float LocalDepth = -0.100;
-										vec2 LocalPosition = (0.000, -114.000);
-										int OnePageItemSize = 6;
-										str ThemeName = "Default";
-									}
-								}
-							}
-
-							Node "__#WC:Cancel" : "MkWindowBaseNode"
-							{
-								vec2 AlignOffset = (10.000, -200.000);
-								int AlignPosition = 34;
-								vec2 ClientSize = (80.000, 12.000);
-								str ComponentType = "eCT_CancelBtn";
-								float LocalDepth = -1.000;
-								vec2 LocalPosition = (13.000, 35.000);
-								str ThemeName = "Default";
-
-								Node "[SUBNODES]"
-								{
-									Node "__#WC:OAOTag" : "MkWindowTagNode"
-									{
-										int AlignPosition = 51;
-										float LocalDepth = -0.100;
-										vec2 LocalPosition = (23.000, 3.000);
-										str TextMsg = "Cancel";
-										str TextName = // [3]
-											"Theme" /
-											"Default" /
-											"Small";
-									}
-								}
-							}
-
-							Node "__#WC:Ok" : "MkWindowBaseNode"
-							{
-								vec2 AlignOffset = (10.000, -140.000);
-								int AlignPosition = 34;
-								vec2 ClientSize = (80.000, 12.000);
-								str ComponentType = "eCT_OKBtn";
-								float LocalDepth = -1.000;
-								vec2 LocalPosition = (13.000, 95.000);
-								str ThemeName = "Default";
-
-								Node "[SUBNODES]"
-								{
-									Node "__#WC:OAOTag" : "MkWindowTagNode"
-									{
-										int AlignPosition = 51;
-										float LocalDepth = -0.100;
-										vec2 LocalPosition = (34.500, 3.000);
-										str TextMsg = "OK";
-										str TextName = // [3]
-											"Theme" /
-											"Default" /
-											"Small";
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
+											"7" /
+											"8" /
+											"9";
+										str ItemMsgList = // [10]
+											"똠방각하 으헤헤헤" /
+											"일본어 : ナムウィキ、みんなで育てる知識の木。" /
+											"아랍어 : 

@@ -86,34 +86,70 @@ bool MkDataNode::LoadFromExcel(const MkPathName& filePath)
 
 bool MkDataNode::Load(const MkPathName& filePath)
 {
-	if (!GetReadOnly())
+	eLoadResult result;
+	return Load(filePath, result);
+}
+
+bool MkDataNode::Load(const MkByteArray& fileData)
+{
+	eLoadResult result;
+	return Load(fileData, result);
+}
+
+bool MkDataNode::Load(const MkPathName& filePath, eLoadResult& result)
+{
+	if (GetReadOnly())
+	{
+		result = eLR_ReadOnly;
+	}
+	else
 	{
 		// Excel 파일인지 확장자 체크
 		MkStr ext = filePath.GetFileExtension();
 		ext.ToLower();
 		if (ext.CheckPrefix(L"xls"))
 		{
-			return LoadFromExcel(filePath);
+			result = LoadFromExcel(filePath) ? eLR_Excel : eLR_Failed;
 		}
+		else
+		{
+			MkByteArray fileData;
+			MK_CHECK(MkFileManager::GetFileData(filePath, fileData), MkStr(filePath) + L" 경로 파일 읽기 실패")
+			{
+				result = eLR_Failed;
+				return false;
+			}
 
-		MkByteArray fileData;
-		MK_CHECK(MkFileManager::GetFileData(filePath, fileData), MkStr(filePath) + L" 경로 파일 읽기 실패")
-			return false;
-
-		return Load(fileData);
+			return Load(fileData, result);
+		}
 	}
-	return false;
+	return (result > eLR_Failed);
 }
 
-bool MkDataNode::Load(const MkByteArray& fileData)
+bool MkDataNode::Load(const MkByteArray& fileData, eLoadResult& result)
 {
 	// 먼저 binary format으로 읽기 시도(tag 검사)
 	// 실패하면 text format으로 읽기 시도
-	if (!GetReadOnly())
+	if (GetReadOnly())
 	{
-		return LoadFromBinary(fileData) ? true : LoadFromText(fileData);
+		result = eLR_ReadOnly;
 	}
-	return false;
+	else
+	{
+		if (LoadFromBinary(fileData))
+		{
+			result = eLR_Binary;
+		}
+		else if (LoadFromText(fileData))
+		{
+			result = eLR_Text;
+		}
+		else
+		{
+			result = eLR_Failed;
+		}
+	}
+	return (result > eLR_Failed);
 }
 
 bool MkDataNode::SaveToText(const MkPathName& filePath) const
