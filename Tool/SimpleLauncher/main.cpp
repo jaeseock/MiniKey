@@ -165,7 +165,8 @@ public:
 					subDesc = MkStr(m_Patcher.GetCurrentProgress()) + L" / " + MkStr(m_Patcher.GetMaxProgress());
 					break;
 
-				case MkPatchFileDownloader::eShowResult:
+				case MkPatchFileDownloader::eShowSuccessResult:
+				case MkPatchFileDownloader::eShowFailedResult:
 					break;
 				}
 
@@ -239,8 +240,13 @@ public:
 					}
 					break;
 
-				case MkPatchFileDownloader::eShowResult:
+				case MkPatchFileDownloader::eShowSuccessResult:
 					mainDesc = L" 완료";
+					::SendMessage(m_MainProgHandle, PBM_SETPOS, 100, 0);
+					break;
+
+				case MkPatchFileDownloader::eShowFailedResult:
+					mainDesc = L" 실패";
 					::SendMessage(m_MainProgHandle, PBM_SETPOS, 100, 0);
 					break;
 				}

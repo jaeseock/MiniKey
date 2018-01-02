@@ -21,7 +21,7 @@
 			OutputDirectory="D:\_PatchTest\Client"
 			IntermediateDirectory="$(ProjectDir)obj\$(ConfigurationName)"
 			ConfigurationType="1"
-			UseOfMFC="2"
+			UseOfMFC="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -49,7 +49,7 @@
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -101,7 +101,7 @@
 			OutputDirectory="D:\_PatchTest\Client"
 			IntermediateDirectory="$(ProjectDir)obj\$(ConfigurationName)"
 			ConfigurationType="1"
-			UseOfMFC="2"
+			UseOfMFC="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -130,7 +130,7 @@
 				AdditionalIncludeDirectories="$(SolutionDir)Include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG"
 				MinimalRebuild="false"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -185,7 +185,7 @@
 			OutputDirectory="D:\_PatchTest\Client"
 			IntermediateDirectory="$(ProjectDir)obj\$(ConfigurationName)"
 			ConfigurationType="1"
-			UseOfMFC="2"
+			UseOfMFC="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -214,7 +214,7 @@
 				AdditionalIncludeDirectories="$(SolutionDir)Include"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;MK_SHIPPING"
 				MinimalRebuild="false"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
