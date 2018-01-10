@@ -764,6 +764,7 @@ bool MkPathName::ChangeFileName(const MkStr& name)
 
 	*this = tmpPath;
 	*this += name;
+	*this += L".";
 	*this += tmpExt;
 	return true;
 }
