@@ -48,7 +48,7 @@ bool MkLogManager::CreateNewPage(const MkStr& pageName, const MkPathName& filePa
 		msgBuffer += MkStr::CRLF;
 		msgBuffer += MkStr::CRLF;
 
-		ok = msgBuffer.WriteToTextFile(targetFilePath, true);
+		ok = msgBuffer.WriteToTextFile(targetFilePath, true, false);
 		if (ok)
 		{
 			m_PageTable = tmpTable;
@@ -80,7 +80,7 @@ void MkLogManager::Msg(const MkStr& pageName, const MkStr& message, bool addTime
 		buffer += MkStr::CRLF;
 
 		// print
-		buffer.WriteToTextFile(targetPage, false);
+		buffer.WriteToTextFile(targetPage, false, false);
 	}
 }
 
@@ -133,7 +133,7 @@ void MkLogManager::SendLogTo(const MkStr& pageName, const MkPathName& targetAddr
 		MkWrapInCriticalSection(m_CS_File)
 		{
 			// 배치파일 기록
-			batchBuffer.WriteToTextFile(batchFilePath);
+			batchBuffer.WriteToTextFile(batchFilePath, true, false);
 
 			// 전송 (임시 배치파일 삭제하려면 주석 지울 것)
 			if (batchFilePath.ExcuteWindowProcess(batchFilePath))

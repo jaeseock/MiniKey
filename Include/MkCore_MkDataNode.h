@@ -285,6 +285,9 @@ public:
 	// 템플릿의 루트 적용여부와 해당 템플릿 이름을 반환(템플릿이 적용되었더라도 루트가 아니라면 false 반환)
 	bool GetAppliedTemplateName(MkHashStr& name) const;
 
+	// 해당 유닛이 템플릿에 의해 정의된 유닛인지 여부 반환
+	bool IsDefinedUnitByTemplate(const MkHashStr& key) const;
+
 	// 해당 노드가 템플릿에 의해 정의된 노드인지 여부 반환
 	bool IsDefinedNodeByTemplate(void) const;
 
@@ -300,6 +303,11 @@ public:
 
 	// 템플릿 노드로부터 복사
 	void __CopyFromTemplateNode(const MkDataNode* source);
+
+	// 해당 unit 유효성(고유 정보 소유) 여부
+	// 템플릿 미적용 노드인 경우 항상 true
+	// 템플릿 적용 노드는 해당 unit과 달라야 true
+	bool __IsValidUnit(const MkHashStr& key) const;
 	
 	// 유효한 모든 unit key 반환
 	// 자신에게만 존재하거나 적용된 템플릿 노드와 값이 다른 경우에 해당
@@ -307,12 +315,14 @@ public:
 	void __GetValidUnitList(MkArray<MkHashStr>& keyList) const;
 
 	// 해당 노드 유효성(고유 정보 소유) 여부
-	// 템플릿 미적용 노드인 경우 항상 true이며 템플릿 적용 노드는 하위에 독자적인 unit이나 node가 있어야만 true
-	bool __IsValidNode(void) const;
+	// 템플릿 미적용 노드인 경우 항상 true
+	// 템플릿 적용 노드는 독자적인 값이 있어야 true. rootApplied가 true면 값은 같더라도 루트가 적용되어 있으면 true
+	bool __IsValidNode(bool rootApplied = true) const;
 
-	// 자식 노드 중 유효한 노드들의 이름을 종류별/철자별로 정렬해 반환
+	// 자식 노드 이름을 종류별/철자별로 정렬해 반환
 	// 템플릿 노드들이 등록된 순서대로 앞에 위치하고 일반 노드들이 철자별로 정렬되에 뒤에 위치
-	void __GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNodeList, MkArray<MkHashStr>& normalNodeList) const;
+	// validOnly 인자로 유효한 노드만 대상으로 할지 선정
+	void __GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNodeList, MkArray<MkHashStr>& normalNodeList, bool validOnly = true) const;
 
 	//------------------------------------------------------------------------------------------------//
 

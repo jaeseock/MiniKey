@@ -239,6 +239,11 @@ bool MkDataPack::Equals(const MkHashStr& key, const MkDataUnitInterface& source)
 	return m_UnitTable.Exist(key) ? (source == *m_UnitTable[key]) : false;
 }
 
+bool MkDataPack::Equals(const MkDataPack& source, const MkHashStr& key) const
+{
+	return m_UnitTable.Exist(key) ? source.Equals(key, *m_UnitTable[key]) : false;
+}
+
 MkDataPack& MkDataPack::operator = (const MkDataPack& source)
 {
 	Clear();

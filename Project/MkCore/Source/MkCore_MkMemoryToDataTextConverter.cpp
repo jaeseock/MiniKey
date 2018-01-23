@@ -79,7 +79,8 @@ bool MkMemoryToDataTextConverter::Convert(const MkByteArray& srcArray, const MkP
 
 	if (converting)
 	{
-		MK_CHECK(strBuffer.WriteToTextFile(filePath, true), MkStr(filePath) + L"경로에 파일 쓰기 오류")
+		// 다국어 처리를 위해 UTF-8로 저장
+		MK_CHECK(strBuffer.WriteToTextFile(filePath, true, false), MkStr(filePath) + L"경로에 파일 쓰기 오류")
 			return false;
 	}
 	return converting;

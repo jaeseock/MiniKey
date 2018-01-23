@@ -164,7 +164,7 @@ bool MkCodeDefinitionConverter::Convert(const MkPathName& filePath, const MkStr&
 	}
 
 	// ¿˙¿Â
-	return strBuffer.WriteToTextFile(exportFilePath);
+	return strBuffer.WriteToTextFile(exportFilePath, true, false);
 }
 
 //------------------------------------------------------------------------------------------------//

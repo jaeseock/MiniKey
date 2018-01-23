@@ -124,6 +124,7 @@ public:
 
 	// 동일 unit여부 판단 (dynamic cast 1회)
 	bool Equals(const MkHashStr& key, const MkDataUnitInterface& source) const;
+	bool Equals(const MkDataPack& source, const MkHashStr& key) const;
 
 	// 할당
 	MkDataPack& operator = (const MkDataPack& source);

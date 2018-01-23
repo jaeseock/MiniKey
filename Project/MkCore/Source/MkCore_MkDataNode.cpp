@@ -547,6 +547,11 @@ bool MkDataNode::GetAppliedTemplateName(MkHashStr& name) const
 	return ok;
 }
 
+bool MkDataNode::IsDefinedUnitByTemplate(const MkHashStr& key) const
+{
+	return ((m_TemplateLink != NULL) && IsValidKey(key) && m_TemplateLink->GetDataPack().IsValidKey(key));
+}
+
 bool MkDataNode::IsDefinedNodeByTemplate(void) const
 {
 	return (m_TemplateLink == NULL) ? false : (m_TemplateLink->GetNodeName() == GetNodeName());
@@ -594,6 +599,17 @@ void MkDataNode::__CopyFromTemplateNode(const MkDataNode* source)
 	}
 }
 
+bool MkDataNode::__IsValidUnit(const MkHashStr& key) const
+{
+	if (!IsValidKey(key))
+		return false;
+
+	if (m_TemplateLink == NULL)
+		return true;
+
+	return (!m_DataPack.Equals(m_TemplateLink->GetDataPack(), key));
+}
+
 void MkDataNode::__GetValidUnitList(MkArray<MkHashStr>& keyList) const
 {
 	if (m_TemplateLink == NULL)
@@ -606,7 +622,7 @@ void MkDataNode::__GetValidUnitList(MkArray<MkHashStr>& keyList) const
 	}
 }
 
-bool MkDataNode::__IsValidNode(void) const
+bool MkDataNode::__IsValidNode(bool rootApplied) const
 {
 	if (m_TemplateLink == NULL)
 		return true;
@@ -616,9 +632,12 @@ bool MkDataNode::__IsValidNode(void) const
 		return true;
 
 	// 템플릿이 적용되었더라도 root이면 정보 표시
-	MkHashStr tmpName;
-	if (GetAppliedTemplateName(tmpName))
-		return true;
+	if (rootApplied)
+	{
+		MkHashStr tmpName;
+		if (GetAppliedTemplateName(tmpName))
+			return true;
+	}
 
 	// 유닛 정보 동일여부 확인
 	if (m_DataPack != m_TemplateLink->GetDataPack())
@@ -628,40 +647,43 @@ bool MkDataNode::__IsValidNode(void) const
 	MkConstHashMapLooper<MkHashStr, MkDataNode*> looper(m_ChildrenNode);
 	MK_STL_LOOP(looper)
 	{
-		if (looper.GetCurrentField()->__IsValidNode())
+		if (looper.GetCurrentField()->__IsValidNode(rootApplied))
 			return true;
 	}
 
 	return false;
 }
 
-void MkDataNode::__GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNodeList, MkArray<MkHashStr>& normalNodeList) const
+void MkDataNode::__GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNodeList, MkArray<MkHashStr>& normalNodeList, bool validOnly) const
 {
 	MkArray<MkHashStr> childNodeList;
 	if (GetChildNodeList(childNodeList) == 0)
 		return;
 
 	// 출력 가치가 있는(고유 정보를 지닌) 노드만 걸러냄
-	MkArray<MkHashStr> validNodeList;
-	validNodeList.Reserve(childNodeList.GetSize());
-	MK_INDEXING_LOOP(childNodeList, i)
+	if (validOnly)
 	{
-		const MkHashStr& currName = childNodeList[i];
-		if (GetChildNode(currName)->__IsValidNode())
+		MkArray<MkHashStr> validNodeList;
+		validNodeList.Reserve(childNodeList.GetSize());
+		MK_INDEXING_LOOP(childNodeList, i)
 		{
-			validNodeList.PushBack(currName);
+			const MkHashStr& currName = childNodeList[i];
+			if (GetChildNode(currName)->__IsValidNode())
+			{
+				validNodeList.PushBack(currName);
+			}
 		}
+		childNodeList = validNodeList;
 	}
-	childNodeList.Clear();
 
 	// 분류
-	normalNodeList.Reserve(validNodeList.GetSize());
+	normalNodeList.Reserve(childNodeList.GetSize());
 	MkMap<unsigned int, MkHashStr> templateNodes; // priority 기준 정렬용 테이블
 	MkHashMap<MkHashStr, unsigned int>& priorityTable = _GetPriorityTable();
 
-	MK_INDEXING_LOOP(validNodeList, i)
+	MK_INDEXING_LOOP(childNodeList, i)
 	{
-		const MkHashStr& currName = validNodeList[i];
+		const MkHashStr& currName = childNodeList[i];
 		if (priorityTable.Exist(currName))
 		{
 			templateNodes.Create(priorityTable[currName], currName);

@@ -1,7 +1,7 @@
-//--------------------------------------------------------------------//
+ï»¿//--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2017.12.28 (16:37:35)
+//   - time stamp : 2018.01.17 (19:10:56)
 //   - exporter   : pc (Test)
 //--------------------------------------------------------------------//
 
@@ -40,33 +40,33 @@ Node "[SUBNODES]"
 
 					Node "1st"
 					{
-						str Text = "[ Ã¹¹øÂ° Á¦¸ñÀÔ´Ï´ç ]";
+						str Text = "[ ì²«ë²ˆì§¸ ì œëª©ì…ë‹ˆë‹¹ ]";
 
 						Node "Sub list"
 						{
 							int LFH = 8;
 							int LFV = 3;
 							str Seq = // [2]
-								"ÀÏ¹øÀÌ°í" /
-								"ÀÌ¹øÀÌ±¸³ª";
+								"ì¼ë²ˆì´ê³ " /
+								"ì´ë²ˆì´êµ¬ë‚˜";
 							str Style = "Desc:Normal";
 							str Type = "Medium";
 
-							Node "ÀÌ¹øÀÌ±¸³ª"
+							Node "ì´ë²ˆì´êµ¬ë‚˜"
 							{
-								str Text = "- Æò¹ü Ç×¸ñ µÎ¹øÂ°ÀÎµ¥<LF>- ÀÚµ¿ °³ÇàÀÇ À¯ÀÏÇÑ ¹æ¹ı";
+								str Text = "- í‰ë²” í•­ëª© ë‘ë²ˆì§¸ì¸ë°<LF>- ìë™ ê°œí–‰ì˜ ìœ ì¼í•œ ë°©ë²•";
 							}
 
-							Node "ÀÏ¹øÀÌ°í"
+							Node "ì¼ë²ˆì´ê³ "
 							{
-								str Text = "<LF>- Æò¹ü Ç×¸ñ Ã¹¹øÂ°ÀÌ°í<LF>";
+								str Text = "<LF>- í‰ë²” í•­ëª© ì²«ë²ˆì§¸ì´ê³ <LF>";
 							}
 						}
 					}
 
 					Node "2st"
 					{
-						str Text = "<LF>[ ÀÌ°ÅÀÌ µÎ¹øÂ° Á¦¸ñ ]";
+						str Text = "<LF>[ ì´ê±°ì´ ë‘ë²ˆì§¸ ì œëª© ]";
 
 						Node "0"
 						{
@@ -79,7 +79,7 @@ Node "[SUBNODES]"
 
 							Node "0"
 							{
-								str Text = "<LF>  - ³»¿ë Ç×¸ñ Ã¹¹øÂ°";
+								str Text = "<LF>  - ë‚´ìš© í•­ëª© ì²«ë²ˆì§¸";
 							}
 
 							Node "1"
@@ -91,19 +91,19 @@ Node "[SUBNODES]"
 
 								Node "100"
 								{
-									str Text = "<LF>  - ³»¿ë Ç×¸ñ µÎ¹øÂ°ÀÎµ¥ ";
+									str Text = "<LF>  - ë‚´ìš© í•­ëª© ë‘ë²ˆì§¸ì¸ë° ";
 								}
 
 								Node "200"
 								{
 									str Style = "Desc:Highlight";
-									str Text = "<% ¹Ù²ãÁÖ½Ã¿ë %>";
+									str Text = "<% ë°”ê¿”ì£¼ì‹œìš© %>";
 									str Type = "Special";
 								}
 
 								Node "300"
 								{
-									str Text = " <- ¹Ù²Ù°í °­Á¶   <LF>  - ¸·ÁÙ<LF>";
+									str Text = " <- ë°”ê¾¸ê³  ê°•ì¡°   <LF>  - ë§‰ì¤„<LF>";
 								}
 							}
 						}
@@ -137,19 +137,19 @@ Node "[SUBNODES]"
 
 	Node "WinMgr" : "MkWindowManagerNode"
 	{
-		str ActivateWins = // [4]
-			"MsgBox" /
-			"TitleBarC" /
-			"TitleBarB" /
-			"TitleBar";
+		str ActivateWins = // [3]
+			"Win(3)" /
+			"Win(2)" /
+			"Win(1)";
+		str DeactivateWins = "MsgBox";
 
 		Node "[SUBNODES]"
 		{
 			Node "MsgBox" : "MkTitleBarControlNode"
 			{
-				uint Attribute = 197891;
+				uint Attribute = 197890;
 				int CaptionAlignPos = 50;
-				str CaptionString = "Ä¸¼ÇÀÔ´Ï´ç";
+				str CaptionString = "ìº¡ì…˜ì…ë‹ˆë‹¹";
 				str CaptionTextName = // [3]
 					"Theme" /
 					"Default" /
@@ -158,7 +158,6 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 3;
-				float LocalDepth = 200.000;
 				vec2 LocalPosition = (500.000, 300.000);
 				str ThemeName = "Default";
 				bool UseCloseBtn = false;
@@ -173,7 +172,6 @@ Node "[SUBNODES]"
 						str ComponentType = "eCT_NoticeBox";
 						int HangingType = 3;
 						float LocalDepth = 0.100;
-						vec2 LocalPosition = (-3.000, -81.000);
 						str ThemeName = "Default";
 						bool UseShadow = true;
 
@@ -186,7 +184,6 @@ Node "[SUBNODES]"
 								vec2 ClientSize = (80.000, 12.000);
 								str ComponentType = "eCT_CancelBtn";
 								float LocalDepth = -1.000;
-								vec2 LocalPosition = (99.000, 7.000);
 								str ThemeName = "Default";
 
 								Node "[SUBNODES]"
@@ -195,7 +192,6 @@ Node "[SUBNODES]"
 									{
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
-										vec2 LocalPosition = (23.000, 3.000);
 										str TextMsg = "Cancel";
 										str TextName = // [3]
 											"Theme" /
@@ -210,8 +206,7 @@ Node "[SUBNODES]"
 								vec2 AlignOffset = (29.000, 30.000);
 								int AlignPosition = 66;
 								float LocalDepth = -0.100;
-								vec2 LocalPosition = (32.000, 33.000);
-								str TextMsg = "³Ê¹«³Ê¹« Àß»ı°Ü¼­<LF>¾îÄÉ ÇÒÁö¸¦ ¸ğ¸£°ÚÀ¸¿ë<LF>~(-_-)~";
+								str TextMsg = "ë„ˆë¬´ë„ˆë¬´ ì˜ìƒê²¨ì„œ<LF>ì–´ì¼€ í• ì§€ë¥¼ ëª¨ë¥´ê² ìœ¼ìš©<LF>~(-_-)~";
 								str TextName = // [3]
 									"Theme" /
 									"Default" /
@@ -225,7 +220,6 @@ Node "[SUBNODES]"
 								vec2 ClientSize = (80.000, 12.000);
 								str ComponentType = "eCT_OKBtn";
 								float LocalDepth = -1.000;
-								vec2 LocalPosition = (7.000, 7.000);
 								str ThemeName = "Default";
 
 								Node "[SUBNODES]"
@@ -234,7 +228,6 @@ Node "[SUBNODES]"
 									{
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
-										vec2 LocalPosition = (34.500, 3.000);
 										str TextMsg = "OK";
 										str TextName = // [3]
 											"Theme" /
@@ -248,11 +241,11 @@ Node "[SUBNODES]"
 				}
 			}
 
-			Node "TitleBar" : "MkTitleBarControlNode"
+			Node "Win(1)" : "MkTitleBarControlNode"
 			{
 				uint Attribute = 197891;
 				int CaptionAlignPos = 50;
-				str CaptionString = "ÄÚ·¹°¡ Å¸ÀÌÆ²µ¥½º!!!";
+				str CaptionString = "(1) ìœˆë„ìš° ì•ˆì˜ ìœˆë„ìš° + ì—ë””íŠ¸ë°•ìŠ¤";
 				str CaptionTextName = // [3]
 					"Theme" /
 					"Default" /
@@ -261,7 +254,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 800.000;
+				float LocalDepth = 733.333;
 				vec2 LocalPosition = (400.000, 600.000);
 				str ThemeName = "Default";
 
@@ -312,7 +305,7 @@ Node "[SUBNODES]"
 												{
 													uint Attribute = 197891;
 													int CaptionAlignPos = 50;
-													str CaptionString = "¼­ºê À©µµ¿ì";
+													str CaptionString = "ì„œë¸Œ ìœˆë„ìš°";
 													str CaptionTextName = // [3]
 														"Theme" /
 														"Default" /
@@ -350,7 +343,7 @@ Node "[SUBNODES]"
 																	bool History = true;
 																	float LocalDepth = -1.000;
 																	vec2 LocalPosition = (13.000, 235.000);
-																	str TextString = "¾Æ±â ´Ù¸®";
+																	str TextString = "ì•„ê¸° ë‹¤ë¦¬";
 																	str ThemeName = "Default";
 																}
 
@@ -424,11 +417,11 @@ Node "[SUBNODES]"
 				}
 			}
 
-			Node "TitleBarB" : "MkTitleBarControlNode"
+			Node "Win(2)" : "MkTitleBarControlNode"
 			{
 				uint Attribute = 197891;
 				int CaptionAlignPos = 50;
-				str CaptionString = "ÄÚ·¹°¡ Å¸ÀÌÆ²µ¥½ºB";
+				str CaptionString = "(2) ì½”ë ˆê°€ íƒ€ì´í‹€ë°ìŠ¤B";
 				str CaptionTextName = // [3]
 					"Theme" /
 					"Default" /
@@ -437,7 +430,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 600.000;
+				float LocalDepth = 466.667;
 				vec2 LocalPosition = (200.000, 500.000);
 				str ThemeName = "Default";
 
@@ -466,31 +459,31 @@ Node "[SUBNODES]"
 								str FrameType = "eFT_Small";
 								str ItemKeyList = // [8]
 									"aaa" /
-									"°¡³ª´Ù" /
+									"ê°€ë‚˜ë‹¤" /
 									"bbb" /
 									"ccc" /
-									"°¡°íÆÄ" /
-									"¿ó½º" /
-									"µµ³ª" /
-									"µµ³ªµµ³ª";
+									"ê°€ê³ íŒŒ" /
+									"ì›ìŠ¤" /
+									"ë„ë‚˜" /
+									"ë„ë‚˜ë„ë‚˜";
 								str ItemMsgList = // [8]
 									"aaa" /
-									"°¡³ª´Ù" /
+									"ê°€ë‚˜ë‹¤" /
 									"bbb" /
 									"ccc" /
-									"°¡°íÆÄ" /
-									"¿ó½º" /
-									"µµ³ª" /
-									"µµ³ªµµ³ª";
+									"ê°€ê³ íŒŒ" /
+									"ì›ìŠ¤" /
+									"ë„ë‚˜" /
+									"ë„ë‚˜ë„ë‚˜";
 								str ItemSequence = // [8]
 									"aaa" /
 									"bbb" /
 									"ccc" /
-									"°¡°íÆÄ" /
-									"°¡³ª´Ù" /
-									"µµ³ª" /
-									"µµ³ªµµ³ª" /
-									"¿ó½º";
+									"ê°€ê³ íŒŒ" /
+									"ê°€ë‚˜ë‹¤" /
+									"ë„ë‚˜" /
+									"ë„ë‚˜ë„ë‚˜" /
+									"ì›ìŠ¤";
 								float ItemWidth = 200.000;
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 109.000);
@@ -517,11 +510,11 @@ Node "[SUBNODES]"
 				}
 			}
 
-			Node "TitleBarC" : "MkTitleBarControlNode"
+			Node "Win(3)" : "MkTitleBarControlNode"
 			{
 				uint Attribute = 197891;
 				int CaptionAlignPos = 50;
-				str CaptionString = "ÄÚ·¹°¡ Å¸ÀÌÆ²µ¥½ºC";
+				str CaptionString = "(3) ë‹¤êµ­ì–´ ë° ê¹ì¸„ë¡¤ + 2D ë¼ì¸ ê·¸ë¦¬ê¸°";
 				str CaptionTextName = // [3]
 					"Theme" /
 					"Default" /
@@ -530,7 +523,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 400.000;
+				float LocalDepth = 200.000;
 				vec2 LocalPosition = (100.000, 400.000);
 				str ThemeName = "Default";
 
@@ -577,12 +570,12 @@ Node "[SUBNODES]"
 						{
 							Node "BtnNormal" : "MkWindowBaseNode"
 							{
-								vec2 AlignOffset = (10.000, -80.000);
+								vec2 AlignOffset = (10.000, -90.000);
 								int AlignPosition = 34;
-								vec2 ClientSize = (150.000, 24.000);
+								vec2 ClientSize = (120.000, 24.000);
 								str ComponentType = "eCT_NormalBtn";
 								float LocalDepth = -1.000;
-								vec2 LocalPosition = (13.000, 143.000);
+								vec2 LocalPosition = (13.000, 133.000);
 								str ThemeName = "Default";
 
 								Node "[SUBNODES]"
@@ -592,7 +585,85 @@ Node "[SUBNODES]"
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
 										vec2 LocalPosition = (3.000, 3.000);
-										str TextMsg = "¾ÆÀç ¾ÆÀç ¾îµû´ë°í ½Ãºñ¿©?<LF> ¹Ù¶ó¾ÆÁ¦";
+										str TextMsg = "ê°œí–‰í•˜ëŠ” í…ìŠ¤íŠ¸?<LF>ë²„íŠ¼ ì‚¬ì´ì¦ˆ ìë™ ì¡°ì •";
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
+									}
+								}
+							}
+
+							Node "BtnSel B" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (10.000, -180.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (80.000, 12.000);
+								str ComponentType = "eCT_BlueSelBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 55.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (3.000, 3.000);
+										str TextMsg = "íŒŒë‘ ì„ íƒ ë²„íŠ¼";
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
+									}
+								}
+							}
+
+							Node "BtnSel R" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (10.000, -210.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (116.000, 12.000);
+								str ComponentType = "eCT_RedOutlineSelBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 25.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (3.000, 3.000);
+										str TextMsg = "ê°€ì´ë“œë¼ì¸ ì„ íƒ ë²„íŠ¼";
+										str TextName = // [3]
+											"Theme" /
+											"Default" /
+											"Small";
+									}
+								}
+							}
+
+							Node "BtnSel Y" : "MkWindowBaseNode"
+							{
+								vec2 AlignOffset = (10.000, -150.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (80.000, 12.000);
+								str ComponentType = "eCT_YellowSelBtn";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (13.000, 85.000);
+								str ThemeName = "Default";
+
+								Node "[SUBNODES]"
+								{
+									Node "__#WC:OAOTag" : "MkWindowTagNode"
+									{
+										int AlignPosition = 51;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (3.000, 3.000);
+										str TextMsg = "ë…¸ë‘ ì„ íƒ ë²„íŠ¼";
 										str TextName = // [3]
 											"Theme" /
 											"Default" /
@@ -605,7 +676,7 @@ Node "[SUBNODES]"
 							{
 								vec2 AlignOffset = (10.000, -30.000);
 								int AlignPosition = 34;
-								str CaptionString = "Ã¼Å©¹Ú½º »ùÇÃ";
+								str CaptionString = "ì²´í¬ë°•ìŠ¤ ìƒ˜í”Œ";
 								str CaptionTextName = // [3]
 									"Theme" /
 									"Default" /
@@ -626,7 +697,7 @@ Node "[SUBNODES]"
 								vec2 ClientSize = (300.000, 12.000);
 								str ComponentType = "eCT_DefaultBox";
 								str FrameType = "eFT_Small";
-								float LocalDepth = -1.000;
+								float LocalDepth = -2.000;
 								vec2 LocalPosition = (13.000, 180.000);
 								int MaxOnePageItemSize = 6;
 								str TargetItemKey = "0";
@@ -641,7 +712,7 @@ Node "[SUBNODES]"
 										vec2 ClientSize = (300.000, 108.000);
 										str ComponentType = "eCT_DefaultBox";
 										str FrameType = "eFT_Small";
-										str ItemKeyList = // [10]
+										str ItemKeyList = // [9]
 											"0" /
 											"1" /
 											"2" /
@@ -650,9 +721,39 @@ Node "[SUBNODES]"
 											"5" /
 											"6" /
 											"7" /
-											"8" /
-											"9";
-										str ItemMsgList = // [10]
-											"Œc¹æ°¢ÇÏ À¸ÇìÇìÇì" /
-											"ÀÏº»¾î : «Ê«à«¦«£«­¡¢ªßªóªÊªÇëÀªÆªëò±ãÛªÎÙÊ¡£" /
-											"¾Æ¶ø¾î : 
+											"8";
+										str ItemMsgList = // [9]
+											"ì¼ë³¸ì–´ : ãƒŠãƒ ã‚¦ã‚£ã‚­ã€ã¿ã‚“ãªã§è‚²ã¦ã‚‹çŸ¥è­˜ã®æœ¨ã€‚" /
+											"ì•„ëì–´ : Ù†Ø§Ù…ÙˆÙˆÙŠÙƒÙŠØŒ Ø´Ø¬Ø±Ø© Ø§Ù„Ù…Ø¹Ø±ÙØ© Ø§Ù„ØªÙŠ ØªÙ†Ù…ÙˆÙ†Ù‡Ø§" /
+											"ë²ˆìì²´ : ä¸­è¯äººæ°‘å…±å’Œåœ‹" /
+											"ê°„ìì²´ : ä¸­åäººæ°‘å…±å’Œå›½" /
+											"ì‹ ìì²´ : ä¸­è¯äººæ°‘å…±å’Œå›½" /
+											"ì´ê²ƒë„ ê°„ì²´ì : è¿™æ˜¯è¦ä¿å­˜çš„ä¸­æ–‡å­—ç¬¦è¿™" /
+											"íƒœêµ­ì–´ :  à¸™à¸²à¸¡à¸¸à¸§à¸´à¸à¸´ à¸•à¹‰à¸™à¹„à¸¡à¹‰à¹à¸«à¹ˆà¸‡à¸„à¸§à¸²à¸¡à¸£à¸¹à¹‰à¸—à¸µà¹ˆà¸à¸§à¸à¸„à¸¸à¸“à¸›à¸¥à¸¹à¸" /
+											"ë˜ íƒœêµ­ì–´ :  à¸à¸£à¸¸à¸“à¸²à¹€à¸¥à¸·à¸­à¸ Folder à¸—à¸µà¹ˆà¸ˆà¸°à¸”à¸²à¸§à¸™à¹Œà¹‚à¸«à¸¥à¸”à¹„à¸Ÿà¸¥à¹Œà¸•à¸´à¸”à¸•à¸±à¹‰à¸‡ à¸‹à¸¶à¹ˆà¸‡ Folder [TeraInstall] à¸ˆà¸°à¸–à¸¹à¸à¸šà¸±à¸™à¸—à¸¶à¸à¸¥à¸‡à¹ƒà¸™à¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¸‚à¸­à¸‡ Folder à¸—à¸µà¹ˆà¹€à¸¥à¸·à¸­à¸" /
+											"í‚¤ë¦´ì–´ : Ğ´Ñ€ĞµĞ²Ğ¾ Ğ·Ğ½Ğ°Ğ½Ğ¸Ğ¹, ĞºĞ¾Ñ‚Ğ¾Ñ€Ğ¾Ğµ Ğ¼Ñ‹ Ğ²Ñ‹Ñ€Ğ°Ñ‰Ğ¸Ğ²Ğ°ĞµĞ¼ Ğ²Ğ¼ĞµÑÑ‚Ğµ";
+										str ItemSequence = // [9]
+											"0" /
+											"1" /
+											"2" /
+											"3" /
+											"4" /
+											"5" /
+											"6" /
+											"7" /
+											"8";
+										float ItemWidth = 294.000;
+										float LocalDepth = -0.100;
+										vec2 LocalPosition = (0.000, -114.000);
+										int OnePageItemSize = 6;
+										str ThemeName = "Default";
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
