@@ -28,6 +28,7 @@ enum ePrimitiveDataType
 	ePDT_Vec2,
 	ePDT_Vec3,
 	ePDT_Str,
+	ePDT_ByteArray,
 
 	ePDT_IndexEnd,
 	ePDT_MaxCount = ePDT_IndexEnd
@@ -57,6 +58,7 @@ public:
 	template <>	static ePrimitiveDataType GetEnum<MkVec2>(void) { return ePDT_Vec2; }
 	template <>	static ePrimitiveDataType GetEnum<MkVec3>(void) { return ePDT_Vec3; }
 	template <>	static ePrimitiveDataType GetEnum<MkStr>(void) { return ePDT_Str; }
+	template <>	static ePrimitiveDataType GetEnum<MkByteArray>(void) { return ePDT_ByteArray; }
 
 	// tag -> enum
 	// ex>
@@ -79,6 +81,7 @@ public:
 	template <>	static const MkStr& GetTag<MkVec2>(void) { return m_TypeTag[ePDT_Vec2]; }
 	template <>	static const MkStr& GetTag<MkVec3>(void) { return m_TypeTag[ePDT_Vec3]; }
 	template <>	static const MkStr& GetTag<MkStr>(void) { return m_TypeTag[ePDT_Str]; }
+	template <>	static const MkStr& GetTag<MkByteArray>(void) { return m_TypeTag[ePDT_ByteArray]; }
 
 	// enum -> tag
 	// ex>

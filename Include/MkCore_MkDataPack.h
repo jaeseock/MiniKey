@@ -65,6 +65,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkVec2& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkVec3& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkStr& value, unsigned int index);
+	bool SetData(const MkHashStr& key, const MkByteArray& value, unsigned int index);
 
 	// data array 할당 (dynamic cast 1회)
 	// return : 성공 여부. unit이 존재하지 않거나 타입이 다르면 실패
@@ -78,6 +79,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkArray<MkVec2>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkVec3>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkStr>& values);
+	bool SetData(const MkHashStr& key, const MkArray<MkByteArray>& values);
 
 	// single data 반환 (dynamic cast 1회)
 	// return : 성공 여부. unit이 존재하지 않거나 타입이 다르거나 index가 data 범위를 벗어난 경우 실패
@@ -91,6 +93,7 @@ public:
 	bool GetData(const MkHashStr& key, MkVec2& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkVec3& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkStr& buffer, unsigned int index) const;
+	bool GetData(const MkHashStr& key, MkByteArray& buffer, unsigned int index) const;
 
 	// data array 반환 (dynamic cast 1회)
 	// return : 성공 여부. unit이 존재하지 않거나 타입이 다르면 실패
@@ -104,6 +107,7 @@ public:
 	bool GetData(const MkHashStr& key, MkArray<MkVec2>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkVec3>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkStr>& buffers) const;
+	bool GetData(const MkHashStr& key, MkArray<MkByteArray>& buffers) const;
 
 	// unit 제거하고 성공여부 반환
 	bool RemoveUnit(const MkHashStr& key);

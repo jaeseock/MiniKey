@@ -436,6 +436,60 @@ void MkStr::ExportMultiByteString(std::string& str) const
 
 //------------------------------------------------------------------------------------------------//
 
+void MkStr::ImportByteArray(const MkByteArray& buffer)
+{
+	if (buffer.Empty())
+	{
+		*this = L"NA";
+	}
+	else
+	{
+		m_Str.Clear();
+
+		unsigned int fullSize = buffer.GetSize() * 2;
+		m_Str.Fill(fullSize + 1);
+
+		MK_INDEXING_LOOP(buffer, i)
+		{
+			const unsigned char& currByte = buffer[i];
+			unsigned char upperPart = currByte >> 4;
+			unsigned char lowerPart = currByte & 0xf;
+
+			unsigned int target = i * 2;
+			m_Str[target] = static_cast<wchar_t>((upperPart < 10) ? (upperPart + L'0') : (upperPart + L'7'));
+			m_Str[target + 1] = static_cast<wchar_t>((lowerPart < 10) ? (lowerPart + L'0') : (lowerPart + L'7'));
+		}
+
+		m_Str[fullSize] = NULL;
+	}
+}
+
+bool MkStr::ExportByteArray(MkByteArray& buffer) const
+{
+	if ((GetSize() % 2) != 0)
+		return false;
+
+	buffer.Clear();
+	if ((GetSize() == 2) && (GetAt(0) == L'N') && (GetAt(0) == L'A'))
+		return true;
+
+	buffer.Fill(GetSize() / 2);
+
+	MK_INDEXING_LOOP(buffer, i)
+	{
+		unsigned int target = i * 2;
+		const wchar_t& frontChar = m_Str[target];
+		const wchar_t& rearChar = m_Str[target + 1];
+
+		buffer[i] =
+			(static_cast<unsigned char>((frontChar < L'A') ? (frontChar - L'0') : (frontChar - L'7')) << 4) |
+			static_cast<unsigned char>((rearChar < L'A') ? (rearChar - L'0') : (rearChar - L'7'));
+	}
+	return true;
+}
+
+//------------------------------------------------------------------------------------------------//
+
 bool MkStr::Exist(const MkStr& keyword) const
 {
 	return m_Str.Exist(MkArraySection(0), keyword.GetBodyBlockDescriptor());

@@ -89,6 +89,7 @@ bool MkDataPack::CreateUnit(const MkHashStr& key, ePrimitiveDataType type, unsig
 		case ePDT_Vec2 : interfacePtr = new MkDataUnit<MkVec2>; break;
 		case ePDT_Vec3 : interfacePtr = new MkDataUnit<MkVec3>; break;
 		case ePDT_Str : interfacePtr = new MkDataUnit<MkStr>; break;
+		case ePDT_ByteArray : interfacePtr = new MkDataUnit<MkByteArray>; break;
 		}
 		assert(interfacePtr != NULL);
 		m_UnitTable.Create(key, interfacePtr);
@@ -127,6 +128,8 @@ bool MkDataPack::SetData(const MkHashStr& key, const MkVec3& value, unsigned int
 { return __TSI_DataUnitOperation<MkVec3>::SetSingleData(m_UnitTable, key, value, index); }
 bool MkDataPack::SetData(const MkHashStr& key, const MkStr& value, unsigned int index)
 { return __TSI_DataUnitOperation<MkStr>::SetSingleData(m_UnitTable, key, value, index); }
+bool MkDataPack::SetData(const MkHashStr& key, const MkByteArray& value, unsigned int index)
+{ return __TSI_DataUnitOperation<MkByteArray>::SetSingleData(m_UnitTable, key, value, index); }
 
 bool MkDataPack::SetData(const MkHashStr& key, const MkArray<bool>& values)
 { return __TSI_DataUnitOperation<bool>::SetDataArray(m_UnitTable, key, values); }
@@ -148,6 +151,8 @@ bool MkDataPack::SetData(const MkHashStr& key, const MkArray<MkVec3>& values)
 { return __TSI_DataUnitOperation<MkVec3>::SetDataArray(m_UnitTable, key, values); }
 bool MkDataPack::SetData(const MkHashStr& key, const MkArray<MkStr>& values)
 { return __TSI_DataUnitOperation<MkStr>::SetDataArray(m_UnitTable, key, values); }
+bool MkDataPack::SetData(const MkHashStr& key, const MkArray<MkByteArray>& values)
+{ return __TSI_DataUnitOperation<MkByteArray>::SetDataArray(m_UnitTable, key, values); }
 
 bool MkDataPack::GetData(const MkHashStr& key, bool& buffer, unsigned int index) const
 { return __TSI_DataUnitOperation<bool>::GetSingleData(m_UnitTable, key, buffer, index); }
@@ -169,6 +174,8 @@ bool MkDataPack::GetData(const MkHashStr& key, MkVec3& buffer, unsigned int inde
 { return __TSI_DataUnitOperation<MkVec3>::GetSingleData(m_UnitTable, key, buffer, index); }
 bool MkDataPack::GetData(const MkHashStr& key, MkStr& buffer, unsigned int index) const
 { return __TSI_DataUnitOperation<MkStr>::GetSingleData(m_UnitTable, key, buffer, index); }
+bool MkDataPack::GetData(const MkHashStr& key, MkByteArray& buffer, unsigned int index) const
+{ return __TSI_DataUnitOperation<MkByteArray>::GetSingleData(m_UnitTable, key, buffer, index); }
 
 bool MkDataPack::GetData(const MkHashStr& key, MkArray<bool>& buffers) const
 { return __TSI_DataUnitOperation<bool>::GetDataArray(m_UnitTable, key, buffers); }
@@ -190,6 +197,8 @@ bool MkDataPack::GetData(const MkHashStr& key, MkArray<MkVec3>& buffers) const
 { return __TSI_DataUnitOperation<MkVec3>::GetDataArray(m_UnitTable, key, buffers); }
 bool MkDataPack::GetData(const MkHashStr& key, MkArray<MkStr>& buffers) const
 { return __TSI_DataUnitOperation<MkStr>::GetDataArray(m_UnitTable, key, buffers); }
+bool MkDataPack::GetData(const MkHashStr& key, MkArray<MkByteArray>& buffers) const
+{ return __TSI_DataUnitOperation<MkByteArray>::GetDataArray(m_UnitTable, key, buffers); }
 
 bool MkDataPack::RemoveUnit(const MkHashStr& key)
 {

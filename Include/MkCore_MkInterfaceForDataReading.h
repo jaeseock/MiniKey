@@ -64,6 +64,7 @@ public:
 	bool Read(MkVec2& buffer);
 	bool Read(MkVec3& buffer);
 	bool Read(MkStr& buffer);
+	bool Read(MkByteArray& buffer);
 
 	// 호환성을 위한 외부 버퍼에 읽기
 	bool Read(unsigned char* buffer, unsigned int size);

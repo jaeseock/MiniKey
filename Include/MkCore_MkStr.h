@@ -180,7 +180,7 @@ public:
 	MkMemoryBlockDescriptor<wchar_t> GetMemoryBlockDescriptor(const MkArraySection& section) const;
 
 	//------------------------------------------------------------------------------------------------//
-	//  std::string를 통한 char형 컨버팅
+	// std::string를 통한 char형 컨버팅
 	//------------------------------------------------------------------------------------------------//
 
 	// *this <- std::string
@@ -188,6 +188,18 @@ public:
 
 	// *this -> std::string
 	void ExportMultiByteString(std::string& str) const;
+
+	//------------------------------------------------------------------------------------------------//
+	// MkByteArray 기호화
+	// 1byte(0x00~0xFF)를 L"00"~L"FF"로 바꾸므로 1byte -> 4byte(wchar_t * 2)로 용량 증가
+	// 비효율적이지만 이진값을 임시로 문자열 형태로 저장하기 위함
+	//------------------------------------------------------------------------------------------------//
+
+	// *this <- MkByteArray
+	void ImportByteArray(const MkByteArray& buffer);
+
+	// *this -> MkByteArray
+	bool ExportByteArray(MkByteArray& buffer) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 키워드 포함 및 위치 검사

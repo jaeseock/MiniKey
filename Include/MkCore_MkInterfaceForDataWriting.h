@@ -66,6 +66,7 @@ public:
 	void Write(const MkVec2& source);
 	void Write(const MkVec3& source);
 	void Write(const MkStr& source);
+	void Write(const MkByteArray& source);
 
 	// flush하여 destBuffer의 beginPosition 위치부터 쓰기(beginPosition이 MKDEF_MAX_ARRAY_SIZE면 가장 마지막 위치를 의미)
 	// destBuffer의 용량이 모자라면 확장
@@ -104,6 +105,7 @@ protected:
 	MkArray<MkVec2> m_Vec2Units;
 	MkArray<MkVec3> m_Vec3Units;
 	MkArray<MkStr> m_StrUnits;
+	MkArray<MkByteArray> m_BarUnits;
 
 	MkArray<InputUnit> m_InputList;
 };

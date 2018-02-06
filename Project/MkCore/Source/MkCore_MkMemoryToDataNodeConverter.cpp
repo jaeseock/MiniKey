@@ -195,6 +195,7 @@ unsigned int MkMemoryToDataNodeConverter::_BuildBlock(MkInterfaceForDataReading&
 		case ePDT_Vec2: ok = __TSI_AssignUnitToNode<MkVec2>::Proceed(drInterface, targetNode, blockName); break;
 		case ePDT_Vec3: ok = __TSI_AssignUnitToNode<MkVec3>::Proceed(drInterface, targetNode, blockName); break;
 		case ePDT_Str: ok = __TSI_AssignUnitToNode<MkStr>::Proceed(drInterface, targetNode, blockName); break;
+		case ePDT_ByteArray: ok = __TSI_AssignUnitToNode<MkByteArray>::Proceed(drInterface, targetNode, blockName); break;
 		}
 		if (!ok)
 			return MKDEF_DNC_MSG_ERROR;

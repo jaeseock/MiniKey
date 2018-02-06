@@ -24,7 +24,7 @@ public:
 		(unsigned int nodeCount, unsigned int templateCount, unsigned int unitCount, const unsigned int (&valueCount)[ePDT_MaxCount],
 		MkInterfaceForDataWriting& dwInterface);
 
-	static void WriteUnitString(ePrimitiveDataType unitType, const MkStr unitStr, MkInterfaceForDataWriting& dwInterface);
+	static void WriteUnitString(ePrimitiveDataType unitType, const MkStr& unitStr, MkInterfaceForDataWriting& dwInterface);
 };
 
 //------------------------------------------------------------------------------------------------//

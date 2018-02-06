@@ -27,7 +27,7 @@ template <class DataType>
 class __TSI_AssignUnitToText
 {
 public:
-	static bool Proceed(MkInterfaceForDataReading& drInterface, MkArray<MkStr>& dataList, const MkStr& unitName)
+	static bool Assign(MkInterfaceForDataReading& drInterface, MkArray<MkStr>& dataList, const MkStr& unitName)
 	{
 		unsigned int count;
 		MK_CHECK(drInterface.Read(count), unitName + L" 유닛 값 갯수 읽기 오류")
@@ -44,6 +44,27 @@ public:
 				return false;
 
 			dataList.PushBack(MkStr(buffer));
+		}
+		return true;
+	}
+
+	static bool Export(MkInterfaceForDataReading& drInterface, MkArray<MkStr>& dataList, const MkStr& unitName)
+	{
+		unsigned int count;
+		MK_CHECK(drInterface.Read(count), unitName + L" 유닛 값 갯수 읽기 오류")
+			return false;
+
+		MK_CHECK(count > 0, unitName + L" 유닛 값 갯수가 0임")
+			return false;
+
+		dataList.Reserve(count);
+		for (unsigned int i=0; i<count; ++i)
+		{
+			DataType buffer;
+			MK_CHECK(drInterface.Read(buffer), unitName + L" 유닛 " + MkStr(i) + L"번째 값 읽기 오류")
+				return false;
+
+			dataList.PushBack().ImportByteArray(buffer);
 		}
 		return true;
 	}
@@ -224,18 +245,18 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 		MkArray<MkStr> dataList;
 		switch (unitType)
 		{
-		case ePDT_Bool: ok = __TSI_AssignUnitToText<bool>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_Int: ok = __TSI_AssignUnitToText<int>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_UnsignedInt: ok = __TSI_AssignUnitToText<unsigned int>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_DInt: ok = __TSI_AssignUnitToText<__int64>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_DUnsignedInt: ok = __TSI_AssignUnitToText<unsigned __int64>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_Float: ok = __TSI_AssignUnitToText<float>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_Int2: ok = __TSI_AssignUnitToText<MkInt2>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_Vec2: ok = __TSI_AssignUnitToText<MkVec2>::Proceed(drInterface, dataList, blockName); break;
-		case ePDT_Vec3: ok = __TSI_AssignUnitToText<MkVec3>::Proceed(drInterface, dataList, blockName); break;
+		case ePDT_Bool: ok = __TSI_AssignUnitToText<bool>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_Int: ok = __TSI_AssignUnitToText<int>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_UnsignedInt: ok = __TSI_AssignUnitToText<unsigned int>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_DInt: ok = __TSI_AssignUnitToText<__int64>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_DUnsignedInt: ok = __TSI_AssignUnitToText<unsigned __int64>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_Float: ok = __TSI_AssignUnitToText<float>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_Int2: ok = __TSI_AssignUnitToText<MkInt2>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_Vec2: ok = __TSI_AssignUnitToText<MkVec2>::Assign(drInterface, dataList, blockName); break;
+		case ePDT_Vec3: ok = __TSI_AssignUnitToText<MkVec3>::Assign(drInterface, dataList, blockName); break;
 		case ePDT_Str:
 			{
-				ok = __TSI_AssignUnitToText<MkStr>::Proceed(drInterface, dataList, blockName);
+				ok = __TSI_AssignUnitToText<MkStr>::Assign(drInterface, dataList, blockName);
 
 				// 문자열의 경우 추가적인 처리 필요
 				if (ok)
@@ -256,6 +277,8 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 					}
 				}
 			}
+			break;
+		case ePDT_ByteArray: ok = __TSI_AssignUnitToText<MkByteArray>::Export(drInterface, dataList, blockName);
 			break;
 		}
 		if (!ok)
@@ -286,7 +309,7 @@ unsigned int MkMemoryToDataTextConverter::_BuildBlock(MkInterfaceForDataReading&
 			unsigned int lastIndex = dataSize - 1;
 			MK_INDEXING_LOOP(dataList, i)
 			{
-				bool lineFeed = ((unitType == ePDT_Str) || ((i % 5) == 0)); // line feed는 문자열이거나 5개 단위로 이루어짐
+				bool lineFeed = ((unitType == ePDT_Str) || (unitType == ePDT_ByteArray) || ((i % 5) == 0)); // line feed 조건
 				strBuffer += (lineFeed) ? arrayAnchor : MKDEF_M_TO_T_BLANK_TYPE;
 				strBuffer += dataList[i];
 				if (i < lastIndex)

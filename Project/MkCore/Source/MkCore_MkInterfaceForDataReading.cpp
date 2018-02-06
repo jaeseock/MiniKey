@@ -99,9 +99,32 @@ bool MkInterfaceForDataReading::Read(MkStr& buffer)
 	buffer.Clear();
 	if (size > 0)
 	{
-		unsigned int strSize = size * sizeof(wchar_t);
-		buffer = m_SourcePtr->GetMemoryBlockDescriptor(MkArraySection(m_CurrentPosition, strSize));
-		m_CurrentPosition += strSize;
+		unsigned int dataSize = size * sizeof(wchar_t);
+		buffer = m_SourcePtr->GetMemoryBlockDescriptor(MkArraySection(m_CurrentPosition, dataSize));
+		m_CurrentPosition += dataSize;
+	}
+	return true;
+}
+
+bool MkInterfaceForDataReading::Read(MkByteArray& buffer)
+{
+	if (m_SourcePtr == NULL)
+		return false;
+
+	// 길이(unsigned int)를 먼저 읽고
+	unsigned int size = 0;
+	if (!__TSI_DataReading<unsigned int>::Extract(size, *m_SourcePtr, m_CurrentPosition, m_EndPosition))
+		return false;
+
+	// 데이터를 읽음
+	buffer.Clear();
+	if (size > 0)
+	{
+		unsigned int dataSize = size * sizeof(unsigned char);
+		if (!m_SourcePtr->GetSubArray(MkArraySection(m_CurrentPosition, dataSize), buffer))
+			return false;
+
+		m_CurrentPosition += dataSize;
 	}
 	return true;
 }

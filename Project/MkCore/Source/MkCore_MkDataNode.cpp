@@ -212,6 +212,7 @@ bool MkDataNode::CreateUnit(const MkHashStr& key, const MkInt2& value) { return 
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkVec2& value) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkVec2>(), 1) ? SetData(key, value, 0) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkVec3& value) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkVec3>(), 1) ? SetData(key, value, 0) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkStr& value) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkStr>(), 1) ? SetData(key, value, 0) : false; }
+bool MkDataNode::CreateUnit(const MkHashStr& key, const MkByteArray& value) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkByteArray>(), 1) ? SetData(key, value, 0) : false; }
 
 bool MkDataNode::CreateUnitEx(const MkHashStr& key, const MkFloat2& value) { return CreateUnit(key, MkVec2(value.x, value.y)); }
 bool MkDataNode::CreateUnitEx(const MkHashStr& key, const MkHashStr& value) { return CreateUnit(key, value.GetString()); }
@@ -227,6 +228,7 @@ bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkInt2>& values)
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkVec2>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkVec2>(), 1) ? SetData(key, values) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkVec3>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkVec3>(), 1) ? SetData(key, values) : false; }
 bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkStr>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkStr>(), 1) ? SetData(key, values) : false; }
+bool MkDataNode::CreateUnit(const MkHashStr& key, const MkArray<MkByteArray>& values) { return CreateUnit(key, MkPrimitiveDataType::GetEnum<MkByteArray>(), 1) ? SetData(key, values) : false; }
 
 bool MkDataNode::CreateUnitEx(const MkHashStr& key, const MkArray<MkFloat2>& values)
 {
@@ -260,6 +262,7 @@ bool MkDataNode::SetData(const MkHashStr& key, const MkInt2& value, unsigned int
 bool MkDataNode::SetData(const MkHashStr& key, const MkVec2& value, unsigned int index) { return GetReadOnly() ? false : m_DataPack.SetData(key, value, index); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkVec3& value, unsigned int index) { return GetReadOnly() ? false : m_DataPack.SetData(key, value, index); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkStr& value, unsigned int index) { return GetReadOnly() ? false : m_DataPack.SetData(key, value, index); }
+bool MkDataNode::SetData(const MkHashStr& key, const MkByteArray& value, unsigned int index) { return GetReadOnly() ? false : m_DataPack.SetData(key, value, index); }
 
 bool MkDataNode::SetDataEx(const MkHashStr& key, const MkFloat2& value, unsigned int index) { return SetData(key, MkVec2(value.x, value.y), index); }
 bool MkDataNode::SetDataEx(const MkHashStr& key, const MkHashStr& value, unsigned int index) { return SetData(key, value.GetString(), index); }
@@ -274,6 +277,7 @@ bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkInt2>& values) { 
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkVec2>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkVec3>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
 bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkStr>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
+bool MkDataNode::SetData(const MkHashStr& key, const MkArray<MkByteArray>& values) { return GetReadOnly() ? false : m_DataPack.SetData(key, values); }
 
 bool MkDataNode::SetDataEx(const MkHashStr& key, const MkArray<MkFloat2>& values)
 {
@@ -305,6 +309,7 @@ bool MkDataNode::GetData(const MkHashStr& key, MkInt2& buffer, unsigned int inde
 bool MkDataNode::GetData(const MkHashStr& key, MkVec2& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
 bool MkDataNode::GetData(const MkHashStr& key, MkVec3& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
 bool MkDataNode::GetData(const MkHashStr& key, MkStr& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
+bool MkDataNode::GetData(const MkHashStr& key, MkByteArray& buffer, unsigned int index) const { return m_DataPack.GetData(key, buffer, index); }
 
 bool MkDataNode::GetDataEx(const MkHashStr& key, MkFloat2& buffer, unsigned int index) const
 {
@@ -339,6 +344,7 @@ bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkInt2>& buffers) const {
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkVec2>& buffers) const { return m_DataPack.GetData(key, buffers); }
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkVec3>& buffers) const { return m_DataPack.GetData(key, buffers); }
 bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkStr>& buffers) const { return m_DataPack.GetData(key, buffers); }
+bool MkDataNode::GetData(const MkHashStr& key, MkArray<MkByteArray>& buffers) const { return m_DataPack.GetData(key, buffers); }
 
 bool MkDataNode::GetDataEx(const MkHashStr& key, MkArray<MkFloat2>& buffers) const
 {
@@ -484,7 +490,7 @@ bool MkDataNode::DeclareToTemplate(bool checkDuplication) const
 	MK_CHECK(!GetReadOnly(), MkStr(nodeName) + L" 노드는 read-only 상태이어서 템플릿화 할 수 없음")
 		return false;
 
-	MkDataNode& templateRoot = _GetTemplateRoot();
+	MkDataNode& templateRoot = __GetTemplateRoot();
 	if (checkDuplication)
 	{
 		MK_CHECK(!templateRoot.ChildExist(nodeName), L"이미 " + MkStr(nodeName) + L" 템플릿 노드가 등록되어 있음")
@@ -503,7 +509,7 @@ bool MkDataNode::DeclareToTemplate(bool checkDuplication) const
 	templateRoot.Rehash();
 	newNode->SetReadOnly(true); // 템플릿 노드는 수정 불가
 
-	MkHashMap<MkHashStr, unsigned int>& priorityTable = _GetPriorityTable();
+	MkHashMap<MkHashStr, unsigned int>& priorityTable = __GetPriorityTable();
 	priorityTable.Create(nodeName, priority);
 	priorityTable.Rehash();
 	return true;
@@ -518,7 +524,7 @@ bool MkDataNode::ApplyTemplate(const MkHashStr& templateName)
 	MK_CHECK(m_TemplateLink == NULL, MkStr(nodeName) + L" 노드는 이미 템플릿이 적용된 상태이어서 새 템플릿을 적용 할 수 없음")
 		return false;
 
-	MkDataNode& templateRoot = _GetTemplateRoot();
+	MkDataNode& templateRoot = __GetTemplateRoot();
 	MK_CHECK(templateRoot.ChildExist(templateName), MkStr(templateName) + L" 템플릿 노드가 등록되지 않아 " + MkStr(nodeName) + L" 노드에 적용 불가")
 		return false;
 
@@ -529,7 +535,7 @@ bool MkDataNode::ApplyTemplate(const MkHashStr& templateName)
 bool MkDataNode::IsTemplateNode(void) const
 {
 	const MkHashStr& nodeName = GetNodeName();
-	MkDataNode& templateRoot = _GetTemplateRoot();
+	MkDataNode& templateRoot = __GetTemplateRoot();
 	return templateRoot.ChildExist(nodeName);
 }
 
@@ -539,7 +545,7 @@ bool MkDataNode::GetAppliedTemplateName(MkHashStr& name) const
 		return false;
 
 	const MkHashStr& currTemplateName = m_TemplateLink->GetNodeName();
-	bool ok = _GetTemplateRoot().ChildExist(currTemplateName);
+	bool ok = __GetTemplateRoot().ChildExist(currTemplateName);
 	if (ok)
 	{
 		name = currTemplateName;
@@ -559,8 +565,8 @@ bool MkDataNode::IsDefinedNodeByTemplate(void) const
 
 void MkDataNode::ClearAllTemplate(void)
 {
-	_GetTemplateRoot().Clear();
-	_GetPriorityTable().Clear();
+	__GetTemplateRoot().Clear();
+	__GetPriorityTable().Clear();
 }
 
 MkDataNode::MkDataNode() : MkSingleTypeTreePattern<MkDataNode>()
@@ -679,7 +685,7 @@ void MkDataNode::__GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNo
 	// 분류
 	normalNodeList.Reserve(childNodeList.GetSize());
 	MkMap<unsigned int, MkHashStr> templateNodes; // priority 기준 정렬용 테이블
-	MkHashMap<MkHashStr, unsigned int>& priorityTable = _GetPriorityTable();
+	MkHashMap<MkHashStr, unsigned int>& priorityTable = __GetPriorityTable();
 
 	MK_INDEXING_LOOP(childNodeList, i)
 	{
@@ -704,19 +710,19 @@ void MkDataNode::__GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNo
 	}
 }
 
-//------------------------------------------------------------------------------------------------//
-
-MkDataNode& MkDataNode::_GetTemplateRoot(void)
+MkDataNode& MkDataNode::__GetTemplateRoot(void)
 {
 	static MkDataNode sTemplateRoot(L"TemplateRoot");
 	return sTemplateRoot;
 }
 
-MkHashMap<MkHashStr, unsigned int>& MkDataNode::_GetPriorityTable(void)
+MkHashMap<MkHashStr, unsigned int>& MkDataNode::__GetPriorityTable(void)
 {
 	static MkHashMap<MkHashStr, unsigned int> sPriorityTable;
 	return sPriorityTable;
 }
+
+//------------------------------------------------------------------------------------------------//
 
 bool MkDataNode::_PredefinedUnitByTemplate(const MkHashStr& key) const
 {

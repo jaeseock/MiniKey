@@ -138,6 +138,7 @@ public:
 	bool CreateUnit(const MkHashStr& key, const MkVec2& value);
 	bool CreateUnit(const MkHashStr& key, const MkVec3& value);
 	bool CreateUnit(const MkHashStr& key, const MkStr& value);
+	bool CreateUnit(const MkHashStr& key, const MkByteArray& value);
 	bool CreateUnitEx(const MkHashStr& key, const MkFloat2& value);
 	bool CreateUnitEx(const MkHashStr& key, const MkHashStr& value);
 
@@ -153,6 +154,7 @@ public:
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkVec2>& values);
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkVec3>& values);
 	bool CreateUnit(const MkHashStr& key, const MkArray<MkStr>& values);
+	bool CreateUnit(const MkHashStr& key, const MkArray<MkByteArray>& values);
 	bool CreateUnitEx(const MkHashStr& key, const MkArray<MkFloat2>& values);
 	bool CreateUnitEx(const MkHashStr& key, const MkArray<MkHashStr>& values);
 
@@ -172,6 +174,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkVec2& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkVec3& value, unsigned int index);
 	bool SetData(const MkHashStr& key, const MkStr& value, unsigned int index);
+	bool SetData(const MkHashStr& key, const MkByteArray& value, unsigned int index);
 	bool SetDataEx(const MkHashStr& key, const MkFloat2& value, unsigned int index);
 	bool SetDataEx(const MkHashStr& key, const MkHashStr& value, unsigned int index);
 
@@ -187,6 +190,7 @@ public:
 	bool SetData(const MkHashStr& key, const MkArray<MkVec2>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkVec3>& values);
 	bool SetData(const MkHashStr& key, const MkArray<MkStr>& values);
+	bool SetData(const MkHashStr& key, const MkArray<MkByteArray>& values);
 	bool SetDataEx(const MkHashStr& key, const MkArray<MkFloat2>& values);
 	bool SetDataEx(const MkHashStr& key, const MkArray<MkHashStr>& values);
 
@@ -202,6 +206,7 @@ public:
 	bool GetData(const MkHashStr& key, MkVec2& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkVec3& buffer, unsigned int index) const;
 	bool GetData(const MkHashStr& key, MkStr& buffer, unsigned int index) const;
+	bool GetData(const MkHashStr& key, MkByteArray& buffer, unsigned int index) const;
 	bool GetDataEx(const MkHashStr& key, MkFloat2& buffer, unsigned int index) const;
 	bool GetDataEx(const MkHashStr& key, MkHashStr& buffer, unsigned int index) const;
 
@@ -217,6 +222,7 @@ public:
 	bool GetData(const MkHashStr& key, MkArray<MkVec2>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkVec3>& buffers) const;
 	bool GetData(const MkHashStr& key, MkArray<MkStr>& buffers) const;
+	bool GetData(const MkHashStr& key, MkArray<MkByteArray>& buffers) const;
 	bool GetDataEx(const MkHashStr& key, MkArray<MkFloat2>& buffers) const;
 	bool GetDataEx(const MkHashStr& key, MkArray<MkHashStr>& buffers) const;
 
@@ -324,6 +330,10 @@ public:
 	// validOnly 인자로 유효한 노드만 대상으로 할지 선정
 	void __GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNodeList, MkArray<MkHashStr>& normalNodeList, bool validOnly = true) const;
 
+	// static table
+	static MkDataNode& __GetTemplateRoot(void);
+	static MkHashMap<MkHashStr, unsigned int>& __GetPriorityTable(void);
+
 	//------------------------------------------------------------------------------------------------//
 
 	MkDataNode();
@@ -336,9 +346,6 @@ public:
 	}
 
 protected:
-
-	static MkDataNode& _GetTemplateRoot(void);
-	static MkHashMap<MkHashStr, unsigned int>& _GetPriorityTable(void);
 
 	bool _PredefinedUnitByTemplate(const MkHashStr& key) const;
 	bool _PredefinedChildNodeByTemplate(const MkHashStr& nodeName) const;

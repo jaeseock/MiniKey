@@ -100,6 +100,7 @@ ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)
 		case L'b':
 			{
 				if (tag == m_TypeTag[ePDT_Bool]) return ePDT_Bool;
+				else if (tag == m_TypeTag[ePDT_ByteArray]) return ePDT_ByteArray;
 			}
 			break;
 		case L'i':
@@ -152,7 +153,8 @@ const MkStr MkPrimitiveDataType::m_TypeTag[ePDT_MaxCount] =
 		L"int2",
 		L"vec2",
 		L"vec3",
-		L"str"
+		L"str",
+		L"bar"
 	};
 
 //------------------------------------------------------------------------------------------------//

@@ -130,7 +130,7 @@ void MkHelperForDataNodeConverter::ReserveInterface
 	dwInterface.UpdateInputSize();
 }
 
-void MkHelperForDataNodeConverter::WriteUnitString(ePrimitiveDataType unitType, const MkStr unitStr, MkInterfaceForDataWriting& dwInterface)
+void MkHelperForDataNodeConverter::WriteUnitString(ePrimitiveDataType unitType, const MkStr& unitStr, MkInterfaceForDataWriting& dwInterface)
 {
 	switch (unitType)
 	{
@@ -144,6 +144,13 @@ void MkHelperForDataNodeConverter::WriteUnitString(ePrimitiveDataType unitType, 
 	case ePDT_Vec2: dwInterface.Write(unitStr.ToVec2()); break;
 	case ePDT_Vec3: dwInterface.Write(unitStr.ToVec3()); break;
 	case ePDT_Str: dwInterface.Write(unitStr); break;
+	case ePDT_ByteArray:
+		{
+			MkByteArray buffer;
+			unitStr.ExportByteArray(buffer);
+			dwInterface.Write(buffer);
+		}
+		break;
 	}
 }
 

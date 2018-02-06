@@ -56,6 +56,7 @@ bool __MK_CDC_GET_AND_SET_VALUE(MkStr& strBuffer, const MkDataNode& node, const 
 	case ePDT_Vec2: __TSI_GetAndSetValue<MkVec2>::Proceed(strBuffer, node, service, contents, false, L"MkVec2"); break;
 	case ePDT_Vec3: __TSI_GetAndSetValue<MkVec3>::Proceed(strBuffer, node, service, contents, false, L"MkVec3"); break;
 	case ePDT_Str: __TSI_GetAndSetValue<MkStr>::Proceed(strBuffer, node, service, contents, true, MkStr::EMPTY); break;
+	case ePDT_ByteArray: __TSI_GetAndSetValue<MkByteArray>::Proceed(strBuffer, node, service, contents, false, MkStr::EMPTY); break;
 	default:
 		return __MK_CDC_ERROR(contents.GetString() + L" 콘텐츠의 " + service.GetString() + L" 서비스 값 타입이 정의되지 않았음");
 	}

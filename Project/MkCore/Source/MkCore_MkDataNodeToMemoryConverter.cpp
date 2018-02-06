@@ -131,6 +131,7 @@ void MkDataNodeToMemoryConverter::_ConvertUnits(const MkDataNode& targetNode, Mk
 		case ePDT_Vec2: __TSI_AssignUnitDataToMemory<MkVec2>::Proceed(targetNode, currentKey, dwInterface); break;
 		case ePDT_Vec3: __TSI_AssignUnitDataToMemory<MkVec3>::Proceed(targetNode, currentKey, dwInterface); break;
 		case ePDT_Str: __TSI_AssignUnitDataToMemory<MkStr>::Proceed(targetNode, currentKey, dwInterface); break;
+		case ePDT_ByteArray: __TSI_AssignUnitDataToMemory<MkByteArray>::Proceed(targetNode, currentKey, dwInterface); break;
 		}
 	}
 }

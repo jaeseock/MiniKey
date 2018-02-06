@@ -57,6 +57,7 @@ bool MkInterfaceForDataWriting::SetInputSize(ePrimitiveDataType type, unsigned i
 		case ePDT_Vec2: m_Vec2Units.Reserve(size); break;
 		case ePDT_Vec3: m_Vec3Units.Reserve(size); break;
 		case ePDT_Str: m_StrUnits.Reserve(size); break;
+		case ePDT_ByteArray: m_BarUnits.Reserve(size); break;
 		}
 	}
 	return ok;
@@ -75,6 +76,7 @@ void MkInterfaceForDataWriting::UpdateInputSize(void)
 	totalSize += m_Vec2Units.GetSize();
 	totalSize += m_Vec3Units.GetSize();
 	totalSize += m_StrUnits.GetSize();
+	totalSize += m_BarUnits.GetSize();
 
 	if (totalSize > 0)
 	{
@@ -92,6 +94,7 @@ void MkInterfaceForDataWriting::Write(const MkInt2& source) { MKDEF_DATA_INPUT_O
 void MkInterfaceForDataWriting::Write(const MkVec2& source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Vec2, m_Vec2Units) }
 void MkInterfaceForDataWriting::Write(const MkVec3& source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Vec3, m_Vec3Units) }
 void MkInterfaceForDataWriting::Write(const MkStr& source) { MKDEF_DATA_INPUT_OPERATION(ePDT_Str, m_StrUnits) }
+void MkInterfaceForDataWriting::Write(const MkByteArray& source) { MKDEF_DATA_INPUT_OPERATION(ePDT_ByteArray, m_BarUnits) }
 
 unsigned int MkInterfaceForDataWriting::Flush(MkByteArray& destBuffer, unsigned int beginPosition)
 {
@@ -109,6 +112,10 @@ unsigned int MkInterfaceForDataWriting::Flush(MkByteArray& destBuffer, unsigned 
 	MK_INDEXING_LOOP(m_StrUnits, i)
 	{
 		inputByteSize += sizeof(unsigned int) + m_StrUnits[i].GetSize() * sizeof(wchar_t);
+	}
+	MK_INDEXING_LOOP(m_BarUnits, i)
+	{
+		inputByteSize += sizeof(unsigned int) + m_BarUnits[i].GetSize();
 	}
 
 	if (inputByteSize == 0) // 기록할 값이 없음
@@ -169,11 +176,22 @@ unsigned int MkInterfaceForDataWriting::Flush(MkByteArray& destBuffer, unsigned 
 
 		case ePDT_Str:
 			{
-				unsigned int strSize = m_StrUnits[unit.index].GetSize();
-				_TSI_DataWriting<unsigned int>::Record(strSize, destBuffer, currentPosition); // 크기
-				if (strSize > 0)
+				unsigned int dataSize = m_StrUnits[unit.index].GetSize();
+				_TSI_DataWriting<unsigned int>::Record(dataSize, destBuffer, currentPosition); // 크기
+				if (dataSize > 0)
 				{
-					_TSI_DataWriting<wchar_t>::Record(m_StrUnits[unit.index].GetPtr(), strSize, destBuffer, currentPosition); // 문자열
+					_TSI_DataWriting<wchar_t>::Record(m_StrUnits[unit.index].GetPtr(), dataSize, destBuffer, currentPosition); // 문자열
+				}
+			}
+			break;
+
+		case ePDT_ByteArray:
+			{
+				unsigned int dataSize = m_BarUnits[unit.index].GetSize();
+				_TSI_DataWriting<unsigned int>::Record(dataSize, destBuffer, currentPosition); // 크기
+				if (dataSize > 0)
+				{
+					_TSI_DataWriting<unsigned char>::Record(m_BarUnits[unit.index].GetPtr(), dataSize, destBuffer, currentPosition); // 데이터
 				}
 			}
 			break;
@@ -195,6 +213,7 @@ void MkInterfaceForDataWriting::Clear(void)
 	m_Vec2Units.Clear();
 	m_Vec3Units.Clear();
 	m_StrUnits.Clear();
+	m_BarUnits.Clear();
 	m_InputList.Clear();
 }
 
