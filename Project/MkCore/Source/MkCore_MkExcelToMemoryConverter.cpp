@@ -241,6 +241,10 @@ bool MkExcelToMemoryConverter::_ParseTable
 				{
 					typeIndex = MkTagDefinitionForDataNode::IndexMarkForTemplateBegin;
 				}
+				else if (typeBuf == MkTagDefinitionForDataNode::TagForPushingTemplate)
+				{
+					typeIndex = MkTagDefinitionForDataNode::IndexMarkForPushingTemplate;
+				}
 				else
 					availableUnitType = false;
 			}
@@ -270,7 +274,7 @@ bool MkExcelToMemoryConverter::_ParseTable
 		if (isSingleType) // single
 		{
 			// 노드 타입이면
-			if ((typeBuf == MkTagDefinitionForDataNode::TagForNode) || (typeBuf == MkTagDefinitionForDataNode::TagForTemplate))
+			if ((typeIndex == MkTagDefinitionForDataNode::IndexMarkForNodeBegin) || (typeIndex == MkTagDefinitionForDataNode::IndexMarkForTemplateBegin))
 			{
 				_CellPos currFieldPos = fieldPos;
 
@@ -287,6 +291,11 @@ bool MkExcelToMemoryConverter::_ParseTable
 				currArray.Reserve(2);
 				currArray.PushBack(nodeNameBuf);
 				currArray.PushBack(sheetNameBuf);
+			}
+			// template pushing이면 field는 필요 없음
+			else if (typeIndex == MkTagDefinitionForDataNode::IndexMarkForPushingTemplate)
+			{
+				// do nothing
 			}
 			// 유닛 타입이면
 			else
@@ -521,26 +530,13 @@ bool MkExcelToMemoryConverter::_ConvertSheetToBinary(const MkStr& sheetName, MkI
 		MK_INDEXING_LOOP(sheetData.type, i) // unit type 기준 순회
 		{
 			int currType = sheetData.type[i];
-			ePrimitiveDataType typeEnum = static_cast<ePrimitiveDataType>(currType);
 			const MkStr& currKey = sheetData.key[i];
-			const MkArray<MkStr>& values = sheetData.data[0][i];
-			unsigned int valueCount = values.GetSize();
 
-			if (MkPrimitiveDataType::IsValid(typeEnum)) // unit
+			// node
+			if ((currType == MkTagDefinitionForDataNode::IndexMarkForNodeBegin) || (currType == MkTagDefinitionForDataNode::IndexMarkForTemplateBegin))
 			{
-				if (valueCount > 0) // 값이 없으면 unit 무시
-				{
-					dwInterface.Write(currType); // type
-					dwInterface.Write(currKey); // key
-					dwInterface.Write(valueCount); // count
-					MK_INDEXING_LOOP(values, j)
-					{
-						MkHelperForDataNodeConverter::WriteUnitString(typeEnum, values[j], dwInterface);
-					}
-				}
-			}
-			else // node
-			{
+				const MkArray<MkStr>& values = sheetData.data[0][i];
+				unsigned int valueCount = values.GetSize();
 				MK_CHECK(valueCount == 2, m_TargetFilePath + L" 파일 " + sheetName + L" sheet에서 " + currKey + L" 노드를 정의하는 필드 오류")
 					return false;
 
@@ -566,6 +562,30 @@ bool MkExcelToMemoryConverter::_ConvertSheetToBinary(const MkStr& sheetName, MkI
 				}
 
 				dwInterface.Write(MkTagDefinitionForDataNode::IndexMarkForNodeBlockEnd); // end of node
+			}
+			// pushing template
+			else if (currType == MkTagDefinitionForDataNode::IndexMarkForPushingTemplate)
+			{
+				dwInterface.Write(currType);
+				dwInterface.Write(currKey);
+			}
+			// unit
+			else
+			{
+				ePrimitiveDataType typeEnum = static_cast<ePrimitiveDataType>(currType);
+				const MkArray<MkStr>& values = sheetData.data[0][i];
+				unsigned int valueCount = values.GetSize();
+
+				if (MkPrimitiveDataType::IsValid(typeEnum) && (valueCount > 0)) // 값이 없으면 unit 무시
+				{
+					dwInterface.Write(currType); // type
+					dwInterface.Write(currKey); // key
+					dwInterface.Write(valueCount); // count
+					MK_INDEXING_LOOP(values, j)
+					{
+						MkHelperForDataNodeConverter::WriteUnitString(typeEnum, values[j], dwInterface);
+					}
+				}
 			}
 		}
 	}

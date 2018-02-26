@@ -432,6 +432,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkCore_MkClipboard.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkClipboard.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkCore_MkCodeDefinitionConverter.cpp"
 					>
 				</File>

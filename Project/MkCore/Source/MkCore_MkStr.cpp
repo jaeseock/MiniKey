@@ -1,4 +1,4 @@
-
+ï»¿
 #include <assert.h>
 #include <locale>
 #include <atlcoll.h>
@@ -17,8 +17,8 @@
 // CP_ACP 0
 // CP_KOREAN 949
 // CP_JAPANESE 932
-// CP_CHINESE_SIMPLIFIED 936 // °£Ã¼. Áß±¹ º»Åä
-// CP_CHINESE_TRADITIONAL 950 // ¹øÃ¼. ÇÑ±¹, ´ë¸¸, ÀÏº»
+// CP_CHINESE_SIMPLIFIED 936 // ê°„ì²´. ì¤‘êµ­ ë³¸í† 
+// CP_CHINESE_TRADITIONAL 950 // ë²ˆì²´. í•œêµ­, ëŒ€ë§Œ, ì¼ë³¸
 // CP_USA 437
 // CP_THAILAND 874
 // CP_GERMANY 1252
@@ -36,7 +36,7 @@ static MkArray<wchar_t> gBlankTag;
 
 void MkStr::SetUp(unsigned int codePage)
 {
-	// code page°¡ º°µµ ¼³Á¤µÇ¾î ÀÖÁö ¾ÊÀ¸¸é OS ¼³Á¤À» µû¸§
+	// code pageê°€ ë³„ë„ ì„¤ì •ë˜ì–´ ìˆì§€ ì•Šìœ¼ë©´ OS ì„¤ì •ì„ ë”°ë¦„
 	if (codePage == 0)
 	{
 		std::locale newLocale("", std::locale::ctype);
@@ -119,7 +119,7 @@ MkStr& MkStr::operator = (const MkHashStr& str)
 MkStr& MkStr::operator = (const wchar_t& character)
 {
 	m_Str.Flush();
-	m_Str.Reserve(m_Str.__GetBlockExpansionSizeInArray()); // 2±ÛÀÚ ÀÔ·ÂµÇ¹Ç·Î ÃÖ¼ÒÇÑ ÇÑ ºí·Ï È®º¸
+	m_Str.Reserve(m_Str.__GetBlockExpansionSizeInArray()); // 2ê¸€ì ì…ë ¥ë˜ë¯€ë¡œ ìµœì†Œí•œ í•œ ë¸”ë¡ í™•ë³´
 	m_Str.PushBack(character);
 	m_Str.PushBack(NULL);
 	return *this;
@@ -135,7 +135,7 @@ MkStr& MkStr::operator = (const wchar_t* wcharArray)
 	{
 		unsigned int size = static_cast<unsigned int>(lstrlen(wcharArray));
 		m_Str.Flush();
-		m_Str.PushBack(MkMemoryBlockDescriptor<wchar_t>(wcharArray, size + 1)); // NULL Æ÷ÇÔ º¹»ç
+		m_Str.PushBack(MkMemoryBlockDescriptor<wchar_t>(wcharArray, size + 1)); // NULL í¬í•¨ ë³µì‚¬
 	}
 	return *this;
 }
@@ -170,7 +170,7 @@ MkStr& MkStr::operator = (const unsigned int& value)
 {
 	wchar_t tmp[20];
 	unsigned long tv = static_cast<unsigned long>(value);
-	_ultow_s(tv, tmp, 20, 10); // _uitow_s °¡ ¾øÀ¸¹Ç·Î _ultow_s·Î ´ëÄ¡
+	_ultow_s(tv, tmp, 20, 10); // _uitow_s ê°€ ì—†ìœ¼ë¯€ë¡œ _ultow_së¡œ ëŒ€ì¹˜
 	*this = tmp;
 	return *this;
 }
@@ -720,7 +720,7 @@ unsigned int MkStr::RemoveFrontSideBlank(void)
 		if (removeSize == MKDEF_ARRAY_ERROR)
 		{
 			cnt = GetSize();
-			Flush(); // À¯È¿¹®ÀÚ ¾øÀ½
+			Flush(); // ìœ íš¨ë¬¸ì ì—†ìŒ
 		}
 		else if (removeSize > 0)
 		{
@@ -740,7 +740,7 @@ unsigned int MkStr::RemoveRearSideBlank(void)
 		if (removePos == MKDEF_ARRAY_ERROR)
 		{
 			cnt = GetSize();
-			Flush(); // À¯È¿¹®ÀÚ ¾øÀ½
+			Flush(); // ìœ íš¨ë¬¸ì ì—†ìŒ
 		}
 		else if (removePos < (GetSize() - 1))
 		{
@@ -759,7 +759,7 @@ void MkStr::GetSubStr(const MkArraySection& section, MkStr& buffer) const
 	if (section.GetSize() > 0)
 	{
 		m_Str.GetSubArray(section, buffer.m_Str);
-		if (buffer.m_Str[buffer.GetSize()] != NULL) // Áß°£º¹»çÀÇ °æ¿ì NULL±îÁö º¹»ç°¡ ÀÌ·ç¾îÁöÁö ¾ÊÀ¸¹Ç·Î NULL Ãß°¡
+		if (buffer.m_Str[buffer.GetSize()] != NULL) // ì¤‘ê°„ë³µì‚¬ì˜ ê²½ìš° NULLê¹Œì§€ ë³µì‚¬ê°€ ì´ë£¨ì–´ì§€ì§€ ì•Šìœ¼ë¯€ë¡œ NULL ì¶”ê°€
 		{
 			buffer.m_Str.PushBack(NULL);
 		}
@@ -774,12 +774,12 @@ unsigned int MkStr::GetFirstWord(unsigned int position, MkStr& buffer) const
 
 	unsigned int beginPos = GetFirstValidPosition(position);
 	if (beginPos == MKDEF_ARRAY_ERROR)
-		return MKDEF_ARRAY_ERROR; // À¯È¿¹®ÀÚ ¾øÀ½
+		return MKDEF_ARRAY_ERROR; // ìœ íš¨ë¬¸ì ì—†ìŒ
 
 	unsigned int endPos = GetFirstBlankPosition(beginPos + 1);
 	if (endPos == MKDEF_ARRAY_ERROR)
 	{
-		endPos = currsize; // À¯È¿¹®ÀÚ·Î Á¾·á
+		endPos = currsize; // ìœ íš¨ë¬¸ìë¡œ ì¢…ë£Œ
 	}
 
 	if (endPos > beginPos)
@@ -838,7 +838,7 @@ unsigned int MkStr::FindFirstStackPosition
 	unsigned int targetPosBegin = GetFirstKeywordPosition(MkArraySection(position), beginKeyword);
 	if (targetPosBegin != MKDEF_ARRAY_ERROR)
 	{
-		// ³»¿ë ½ÃÀÛÁ¡
+		// ë‚´ìš© ì‹œì‘ì 
 		unsigned int beginKeywordSize = beginKeyword.GetSize();
 		unsigned int endKeywordSize = endKeyword.GetSize();
 		unsigned int strBeginPos = targetPosBegin + beginKeywordSize;
@@ -848,13 +848,13 @@ unsigned int MkStr::FindFirstStackPosition
 
 		while (true)
 		{
-			// Á¾·áÁ¡ Å½»ö
+			// ì¢…ë£Œì  íƒìƒ‰
 			seekPos = GetFirstKeywordPosition(MkArraySection(seekPos), endKeyword);
 			if (seekPos != MKDEF_ARRAY_ERROR)
 			{
 				openerCount += CountKeyword(MkArraySection(strBeginPos, seekPos - strBeginPos), beginKeyword);
 
-				// ºí·Ï ¾ÈÀÇ begin/end keyword ¼ö°¡ °°¾Æ¾ß µ¿ÀÏ ±íÀÌ
+				// ë¸”ë¡ ì•ˆì˜ begin/end keyword ìˆ˜ê°€ ê°™ì•„ì•¼ ë™ì¼ ê¹Šì´
 				if (openerCount == closerCount)
 				{
 					blockBegin = targetPosBegin + beginKeywordSize;
@@ -867,7 +867,7 @@ unsigned int MkStr::FindFirstStackPosition
 				++closerCount;
 			}
 			else
-				break; // Á¾·á Å°¿öµå°¡ ¾øÀ½
+				break; // ì¢…ë£Œ í‚¤ì›Œë“œê°€ ì—†ìŒ
 		}
 	}
 	return MKDEF_ARRAY_ERROR;
@@ -975,7 +975,7 @@ void MkStr::RemoveAllComment(void)
 {
 	EraseAllBlocks(0, L"/*", L"*/");
 
-	// protocol ¿¹¿Ü½Ã L"//" Ã³¸®. ex> https://...
+	// protocol ì˜ˆì™¸ì‹œ L"//" ì²˜ë¦¬. ex> https://...
 	unsigned int pos = 0;
 	while (true)
 	{
@@ -985,7 +985,7 @@ void MkStr::RemoveAllComment(void)
 		
 		if (pos > 0)
 		{
-			const wchar_t& c = m_Str[pos - 1]; // Á÷Àü ¹®ÀÚ°¡ ¾ËÆÄºªÀÌ¸é
+			const wchar_t& c = m_Str[pos - 1]; // ì§ì „ ë¬¸ìê°€ ì•ŒíŒŒë²³ì´ë©´
 			if (((c >= L'A') && (c <= L'Z')) || ((c >= L'a') && (c <= L'z')))
 			{
 				m_Str[pos] = L'_'; // L"://" -> L"__#PK_"
@@ -1068,12 +1068,12 @@ unsigned int MkStr::Tokenize(MkArray<MkStr>& tokens, const MkArray<MkStr>& separ
 
 	const MkStr& firstSeparator = separators[0];
 	unsigned int size = separators.GetSize();
-	if (size > 1) // ±¸ºĞÀÚ°¡ µÎ°³ ÀÌ»óÀÏ °æ¿ì¸¸ º¹»çº»À» ¸¸µé¾î ±¸ºĞÀÚ¸¦ ÇÑ°¡Áö·Î Ä¡È¯ÇØ »ç¿ë
+	if (size > 1) // êµ¬ë¶„ìê°€ ë‘ê°œ ì´ìƒì¼ ê²½ìš°ë§Œ ë³µì‚¬ë³¸ì„ ë§Œë“¤ì–´ êµ¬ë¶„ìë¥¼ í•œê°€ì§€ë¡œ ì¹˜í™˜í•´ ì‚¬ìš©
 	{
 		MkStr tmpBuf = *this;
 		for (unsigned int i=1; i<size; ++i)
 		{
-			tmpBuf.ReplaceKeyword(separators[i], firstSeparator); // Ã¹¹øÂ° ±¸ºĞÀÚ·Î ´Ù¸¥ ±¸ºĞÀÚ Ä¡È¯
+			tmpBuf.ReplaceKeyword(separators[i], firstSeparator); // ì²«ë²ˆì§¸ êµ¬ë¶„ìë¡œ ë‹¤ë¥¸ êµ¬ë¶„ì ì¹˜í™˜
 		}
 		return tmpBuf.Tokenize(tokens, firstSeparator, ignoreEmptyToken);
 	}
@@ -1363,8 +1363,8 @@ bool MkStr::ReadTextFile(const MkPathName& filePath, bool ignoreComment)
 
 void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment)
 {
-	// text ÆÄÀÏÀº ¸ÖÆ¼¹ÙÀÌÆ® ÆûÀ¸·Î ÀúÀåµÇ¹Ç·Î std::wifstream¸¦ »ç¿ëÇÏ¸é ÀÚµ¿À¸·Î ÀÎÄÚµù ÇØ ÁÖÁö¸¸
-	// ÆÄÀÏ ½Ã½ºÅÛÀ» ÅëÇØ std::ifstream(unsigned char)·Î ÀĞÀº »óÅÂ¶ó º°µµ µğÄÚµùÀ» ÇÔ
+	// text íŒŒì¼ì€ ë©€í‹°ë°”ì´íŠ¸ í¼ìœ¼ë¡œ ì €ì¥ë˜ë¯€ë¡œ std::wifstreamë¥¼ ì‚¬ìš©í•˜ë©´ ìë™ìœ¼ë¡œ ì¸ì½”ë”© í•´ ì£¼ì§€ë§Œ
+	// íŒŒì¼ ì‹œìŠ¤í…œì„ í†µí•´ std::ifstream(unsigned char)ë¡œ ì½ì€ ìƒíƒœë¼ ë³„ë„ ë””ì½”ë”©ì„ í•¨
 	unsigned int srcSize = byteArray.GetSize();
 	MkByteArray srcData;
 	unsigned int codePage;
@@ -1386,13 +1386,13 @@ void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment)
 	MkStringOp::ConvertString(std::string(reinterpret_cast<const char*>(srcData.GetPtr())), buffer, codePage);
 	MkStr tempStr = buffer.c_str();
 
-	// tempStr ¿¡¼­ ÁÖ¼® »èÁ¦
+	// tempStr ì—ì„œ ì£¼ì„ ì‚­ì œ
 	if (ignoreComment)
 	{
 		tempStr.RemoveAllComment();
 	}
 
-	// ¹®ÀÚ¿­¿¡ Ãß°¡
+	// ë¬¸ìì—´ì— ì¶”ê°€
 	*this += tempStr;
 }
 
@@ -1414,12 +1414,16 @@ bool MkStr::WriteToTextFile(const MkPathName& filePath, bool overwrite, bool ANS
 	}
 	else
 	{
-		// º¯È¯
+		// ë³€í™˜
 		std::string buffer;
 		MkStringOp::ConvertString(std::wstring(GetPtr()), buffer, CP_UTF8);
+
+		// line feedë¥¼ window format(CR+LF)ë¡œ ì •ê·œí™”
+		MkStringOp::RemoveKeyword(buffer, "\r", 0);
+		MkStringOp::ReplaceKeyword(buffer, "\n", "\r\n", 0);
 		unsigned int strSize = static_cast<unsigned int>(buffer.size());
 
-		// Ãâ·Â¿ë µ¥ÀÌÅÍ
+		// ì¶œë ¥ìš© ë°ì´í„°
 		MkByteArray outData;
 		outData.Reserve(3 + strSize);
 
@@ -1429,7 +1433,7 @@ bool MkStr::WriteToTextFile(const MkPathName& filePath, bool overwrite, bool ANS
 
 		outData.PushBack(MkMemoryBlockDescriptor<unsigned char>(reinterpret_cast<const unsigned char*>(buffer.c_str()), strSize));
 
-		// ÆÄÀÏ·Î ÀúÀå
+		// íŒŒì¼ë¡œ ì €ì¥
 		MkInterfaceForFileWriting fwInterface;
 		if (!fwInterface.SetUp(filePath, overwrite, false))
 			return false;

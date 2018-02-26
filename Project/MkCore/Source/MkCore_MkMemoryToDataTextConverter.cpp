@@ -72,6 +72,20 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
+bool MkMemoryToDataTextConverter::Convert(const MkByteArray& srcArray, MkStr& strBuffer)
+{
+	strBuffer.Clear();
+	if (srcArray.Empty())
+		return true;
+	
+	MkInterfaceForDataReading drInterface;
+	MK_CHECK(drInterface.SetUp(srcArray, 0), L"MkInterfaceForDataReading 초기화 실패")
+		return false;
+
+	strBuffer.Reserve(srcArray.GetSize() * MKDEF_M_TO_T_RESERVATION);
+	return _BuildText(drInterface, 0, strBuffer);
+}
+
 bool MkMemoryToDataTextConverter::Convert(const MkByteArray& srcArray, const MkPathName& filePath)
 {
 	MkStr strBuffer;

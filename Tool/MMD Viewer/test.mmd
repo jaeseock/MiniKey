@@ -1,13 +1,14 @@
-//--------------------------------------------------------------------//
+ï»¿//--------------------------------------------------------------------//
 // MiniKey data node text source
-//   - file path  : D:\Solutions\MiniKey\Tool\MkDataNodeConverter\bin\test.txt
-//   - time stamp : 2017.02.24 (16:18:54)
-//   - exporter   : pc (MkDataNodeConverter)
+//   - file path  : d:\Solutions\MiniKey\Tool\MMD Viewer\test.mmd
+//   - time stamp : 2018.02.23 (17:04:29)
+//   - exporter   : pc (MMD Viewer)
 //--------------------------------------------------------------------//
 
 
+str #_DataTypeTag = "Sample data";
 int IQ = 65;
-str nameOfHero = "¹Ì¸ğ¿Í±âÇ°";
+str nameOfHero = "ë¯¸ëª¨ì™€ ê¸°í’ˆ";
 
 Template "T_Position"
 {
@@ -24,11 +25,11 @@ Template "T_Rect" : "T_Position"
 Template "T_VisibleState"
 {
 	vec3 bgColor = (0.200, 0.300, 0.400);
-	bool focus = No;
+	bool focus = false;
 	int layer = 128;
 	vec3 valueSet = // [3]
 		(-1.000, -0.500, -0.500) / (0.000, 0.300, 0.300) / (0.800, -1.000, 0.400);
-	bool visible = Yes;
+	bool visible = true;
 }
 
 Template "T_WindowBase" : "T_Rect"
@@ -37,13 +38,16 @@ Template "T_WindowBase" : "T_Rect"
 
 	Node "actionMap"
 	{
+		bar BinaryTest = // [2]
+			5B41975D /
+			28517129;
 		float aniKey = // [4]
 			1.000 / 2.500 / 4.600 / 10.000;
 		str aniName = // [4]
-			"¾Ö´Ï0" /
-			"¾Ö´Ï1" /
-			"¾Ö´Ï2" /
-			"¾Ö´Ï3";
+			"ì• ë‹ˆ0" /
+			"ì• ë‹ˆ1" /
+			"ì• ë‹ˆ2" /
+			"ì• ë‹ˆ3";
 
 		Node "seq" {}
 	}
@@ -54,7 +58,7 @@ Template "T_WindowBase" : "T_Rect"
 Template "T_MonsterForm"
 {
 	str EnglishName = "empty";
-	str KoreanName = "ºñ¾úÀ½";
+	str KoreanName = "ë¹„ì—ˆìŒ";
 	dint dropMoney = 0;
 	duint exp = 0;
 	int intelligence = 1;
@@ -71,7 +75,7 @@ Node "CharacterWindow" : "T_WindowBase"
 	Node "visibleState"
 	{
 		int layer = 256;
-		str text = "¾Æ´Â¸¸Å­ \"º¸ÀÏÁÙ\" ¾Ë¾Ò´Â°¨?\nÈ÷È÷È÷";
+		str text = "ìƒˆ \"ë¹„ì§€ë¸”\" ìŠ¤í…Œì´íŠ¸<LF>ì…ë‹ˆë‹¹.";
 	}
 }
 
@@ -80,7 +84,7 @@ Node "MonsterTable"
 	Node "Knight" : "T_MonsterForm"
 	{
 		str EnglishName = "Knight";
-		str KoreanName = "¾å¼¥ÀÌ";
+		str KoreanName = "ì–ìƒµì´";
 		dint dropMoney = 51234567890;
 		duint exp = 301234567890;
 		int intelligence = 15;
@@ -91,7 +95,7 @@ Node "MonsterTable"
 	Node "Ogre" : "T_MonsterForm"
 	{
 		str EnglishName = "Ogre";
-		str KoreanName = "¿À¿ì°Å";
+		str KoreanName = "ì˜¤ìš°ê±°";
 		duint exp = 201234567890;
 		int intelligence = 5;
 		uint threeSize = // [3]
@@ -101,7 +105,7 @@ Node "MonsterTable"
 	Node "Orc" : "T_MonsterForm"
 	{
 		str EnglishName = "Orc";
-		str KoreanName = "¿À²Ù";
+		str KoreanName = "ì˜¤ê¾¸";
 		duint exp = 101234567890;
 		int intelligence = 10;
 	}
@@ -109,7 +113,8 @@ Node "MonsterTable"
 	Node "You" : "T_MonsterForm"
 	{
 		str EnglishName = "Legend of BABO";
-		str KoreanName = "¾Ë¸é¼­";
+		str KoreanName = "ì•Œë©´ì„œ";
+		bar Youì—ê²Œë§Œ_ì¶”ê°€ = FFFF;
 		uint threeSize = // [3]
 			200 / 220 / 190;
 	}

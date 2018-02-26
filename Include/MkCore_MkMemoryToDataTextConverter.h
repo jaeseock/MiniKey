@@ -23,7 +23,12 @@ class MkMemoryToDataTextConverter
 {
 public:
 
+	// memory -> text
+	// header ¾øÀ½
+	bool Convert(const MkByteArray& srcArray, MkStr& strBuffer);
+
 	// memory -> text source file
+	// header »ğÀÔ
 	bool Convert(const MkByteArray& srcArray, const MkPathName& filePath);
 
 protected:
