@@ -288,8 +288,8 @@ bool MkApplicationRegister::GenerateServiceData::_CreateDefaultService(MkDataNod
 		if (!serviceNode->CreateUnit(UKEY_ClientPath, MkStr(clientPath))) return false;
 
 		// chunk info
-		if (!serviceNode->CreateUnit(UKEY_ChunkPrefix, MkStr(L"MK_PACK_"))) return false;
-		if (!serviceNode->CreateUnit(UKEY_ChunkExtension, MkStr(L"mpc"))) return false;
+		if (!serviceNode->CreateUnit(UKEY_ChunkPrefix, MkStr(L"MK_CHUNK_SYSTEM_"))) return false;
+		if (!serviceNode->CreateUnit(UKEY_ChunkExtension, MkStr(L"mcs"))) return false;
 	}
 	return true;
 }

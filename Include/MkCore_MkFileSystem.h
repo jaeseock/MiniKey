@@ -62,8 +62,8 @@ public:
 	void SetPercentageForCompressing(unsigned int percentageForCompressing = 70);
 
 	// 청크 파일명 규칙 설정
-	// ex> prefix == L"MK_PACK_", extension == L"mpc" -> "MK_PACK_0.mpc", "MK_PACK_1.mpc", "MK_PACK_2.mpc", ...
-	void SetChunkFileNamingRule(const MkStr& prefix = L"MK_PACK_", const MkStr& extension = L"mpc");
+	// ex> prefix == L"MK_CHUNK_SYSTEM_", extension == L"mcs" -> "MK_CHUNK_SYSTEM_0.mcs", "MK_CHUNK_SYSTEM_1.mcs", "MK_CHUNK_SYSTEM_2.mcs", ...
+	void SetChunkFileNamingRule(const MkStr& prefix = L"MK_CHUNK_SYSTEM_", const MkStr& extension = L"mcs");
 
 	// SetUpFromOriginalDirectory(), UpdateFromOriginalDirectory() 호출시 적용 될 필터링 규칙
 	// 세부 항목에 대해서는 MkPathName::GetBlackFileList() 참조
@@ -76,8 +76,8 @@ public:
 	// node ex>
 	//	uint ChunkSizeInMB = 512;
 	//	uint PercentageForCompressing = 70;
-	//	str Prefix = "MK_PACK_";
-	//	str Extension = "mpc";
+	//	str Prefix = "MK_CHUNK_SYSTEM_";
+	//	str Extension = "mcs";
 	//	str NameFilter = "datanode_00.bin" / "abc\src_2.bmp" / "def/";
 	//	str ExtensionFilter = "exe" / "txt";
 	//	//str PrefixFilter = "";
