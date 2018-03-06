@@ -311,11 +311,15 @@ public:
 
 								if (!settingFile.Empty())
 								{
-									m_SettingFilePath = m_ChunkFilePath;
-									m_SettingFilePath += settingFile;
+									m_SettingFilePath.ConvertToRootBasisAbsolutePath(settingFile); // 루트 먼저 탐색하고
 									if (!m_SettingFilePath.CheckAvailable())
 									{
-										m_SettingFilePath.Clear();
+										m_SettingFilePath = m_ChunkFilePath; // 없으면 대상 디렉토리에서 찾음
+										m_SettingFilePath += settingFile;
+										if (!m_SettingFilePath.CheckAvailable())
+										{
+											m_SettingFilePath.Clear();
+										}
 									}
 								}
 
