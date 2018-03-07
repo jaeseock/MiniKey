@@ -383,33 +383,34 @@ bool MkWindowThemedNode::_UpdateRegion(void)
 
 		if (m_WindowRect != oldWinRect)
 		{
-			SetAlignmentCommand(); // window rect가 변경되면 자신의 alignment도 갱신되야 함
-		}
+			// 자신의 alignment 갱신 요청
+			SetAlignmentCommand();
 
-		// client rect에 변경이 발생하면 자식 visual pattern 파생 객체들에게 재정렬 명령
-		if ((!m_ChildrenNode.Empty()) && (m_ClientRect != oldCliRect))
-		{
-			MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
-			MK_STL_LOOP(looper)
+			// 자식 visual pattern 파생 객체들에게 재정렬 명령
+			if (!m_ChildrenNode.Empty())
 			{
-				if (looper.GetCurrentField()->IsDerivedFrom(ePA_SNT_VisualPatternNode))
+				MkHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
+				MK_STL_LOOP(looper)
 				{
-					// shadow node. client size를 동기화
-					if (looper.GetCurrentField()->GetNodeName() == ShadowNodeName)
+					if (looper.GetCurrentField()->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 					{
-						MkWindowThemedNode* shadowNode = dynamic_cast<MkWindowThemedNode*>(looper.GetCurrentField());
-						if (shadowNode != NULL)
+						// shadow node. client size를 동기화
+						if (looper.GetCurrentField()->GetNodeName() == ShadowNodeName)
 						{
-							shadowNode->SetClientSize(m_ClientRect.size);
+							MkWindowThemedNode* shadowNode = dynamic_cast<MkWindowThemedNode*>(looper.GetCurrentField());
+							if (shadowNode != NULL)
+							{
+								shadowNode->SetClientSize(m_ClientRect.size);
+							}
 						}
-					}
-					// etc
-					else
-					{
-						MkVisualPatternNode* etcNode = dynamic_cast<MkVisualPatternNode*>(looper.GetCurrentField());
-						if (etcNode != NULL)
+						// etc
+						else
 						{
-							etcNode->SetAlignmentCommand();
+							MkVisualPatternNode* etcNode = dynamic_cast<MkVisualPatternNode*>(looper.GetCurrentField());
+							if (etcNode != NULL)
+							{
+								etcNode->SetAlignmentCommand();
+							}
 						}
 					}
 				}

@@ -8,7 +8,7 @@
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkPageManager.h"
 #include "MkCore_MkInputManager.h"
-#include "MkCore_MkTimeState.h"
+#include "MkCore_MkTimeManager.h"
 #include "MkCore_MkWin32Application.h"
 #include "MkCore_MkProfilingManager.h"
 #include "MkCore_MkKeywordFilter.h"
@@ -62,32 +62,16 @@ public:
 		m_PageNode = new MkSceneNode(L"<Page>");
 		MkSceneNode* rootNode = m_PageNode->CreateChildNode(L"<Root>");
 		MkSceneNode* mainNode = rootNode->CreateChildNode(L"Main");
-		//m_TargetNode = mainNode;
-
+		
 		MkSceneNode* bgNode = mainNode->CreateChildNode(L"BG");
 		bgNode->CreatePanel(L"P").SetTexture(L"Image\\rohan_screenshot.png");
 		bgNode->SetLocalDepth(10000.f);
 
 		MkPanel& ip = mainNode->CreatePanel(L"ImgTest");
 		ip.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
-		ip.SetBiggerSourceOp(MkPanel::eCutSource);
-		ip.SetPanelSize(MkFloat2(450.f, 250.f));
 		ip.SetLocalDepth(9999.f);
 		ip.SetTexture(L"Image\\s01.jpg");
 
-		MkPanel& tp = mainNode->CreatePanel(L"TextTest");
-		tp.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
-		tp.SetBiggerSourceOp(MkPanel::eCutSource);
-		tp.SetPanelSize(MkFloat2(110.f, 250.f));
-		tp.SetLocalDepth(9998.f);
-		MkArray<MkHashStr> textName;
-		textName.PushBack(L"_Sample");
-		tp.SetTextNode(textName, true);
-
-		//-----------------------------------------------------------//
-		m_RectDummyNode = mainNode->CreateChildNode(L"RectDummy");
-		m_RectDummyNode->SetLocalDepth(9997.f);
-		m_DummyIndex = 0;
 		//-----------------------------------------------------------//
 		
 		// window mgr
@@ -136,7 +120,7 @@ public:
 		titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"Win(2)");
 		titleBar->SetTitleBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 300.f, true);
 		titleBar->SetIcon(MkWindowThemeData::eIT_Notice);
-		titleBar->SetCaption(L"(2) 코레가 타이틀데스B", eRAP_LeftCenter);
+		titleBar->SetCaption(L"(2) 리스트 + 프로그레스 + client size 변경", eRAP_LeftCenter);
 		winMgrNode->AttachWindow(titleBar);
 		winMgrNode->ActivateWindow(L"Win(2)");
 
@@ -145,7 +129,7 @@ public:
 		// window B : body frame
 		bodyFrame = MkBodyFrameControlNode::CreateChildNode(titleBar, L"BodyFrameB");
 		bodyFrame->SetBodyFrame
-			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(350.f, 250.f));
+			(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(360.f, 250.f));
 
 		MkListBoxControlNode* lbNode = MkListBoxControlNode::CreateChildNode(bodyFrame, L"ListBox");
 		lbNode->SetListBox(MkWindowThemeData::DefaultThemeName, 6, 200.f, MkWindowThemeData::eFT_Small);
@@ -163,10 +147,28 @@ public:
 		lbNode->SortItemSequenceInAscendingOrder();
 
 		MkProgressBarNode* pbNode = MkProgressBarNode::CreateChildNode(bodyFrame, L"ProgBar");
-		pbNode->SetProgressBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Medium, 250.f, 50, 200, MkProgressBarNode::eSPM_Percentage);
+		pbNode->SetProgressBar(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Medium, 215.f, 50, 200, MkProgressBarNode::eSPM_Percentage);
 		pbNode->SetAlignmentPosition(eRAP_LeftTop);
 		pbNode->SetAlignmentOffset(MkFloat2(10.f, -160.f));
 		pbNode->SetLocalDepth(-1.f);
+
+		MkWindowThemedNode* tgNode = MkWindowThemedNode::CreateChildNode(bodyFrame, L"TextGuide");
+		tgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		tgNode->SetComponentType(MkWindowThemeData::eCT_GuideBox);
+		MkFloat2 textPanelSize(110.f, 220.f);
+		tgNode->SetClientSize(textPanelSize);
+		tgNode->SetAlignmentPosition(eRAP_LeftTop);
+		tgNode->SetAlignmentOffset(MkFloat2(240.f, -20.f));
+		tgNode->SetLocalDepth(-1.f);
+
+		MkPanel& tp = tgNode->CreatePanel(L"TextTest");
+		tp.SetSmallerSourceOp(MkPanel::eAttachToLeftTop);
+		tp.SetBiggerSourceOp(MkPanel::eCutSource);
+		tp.SetPanelSize(textPanelSize);
+		tp.SetLocalDepth(-1.f);
+		MkArray<MkHashStr> textName;
+		textName.PushBack(L"_Sample");
+		tp.SetTextNode(textName, true);
 
 		// window C : title bar
 		titleBar = MkTitleBarControlNode::CreateChildNode(NULL, L"Win(3)");
@@ -345,27 +347,62 @@ public:
 		MkDrawSceneNodeStep* ds = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		ds->SetSceneNode(m_PageNode);
 
-		MK_DEV_PANEL.MsgToFreeboard(2, L"1 키 : (1)번 윈도우 토글");
-		MK_DEV_PANEL.MsgToFreeboard(3, L"2 키 : (2)번 윈도우 토글");
-		MK_DEV_PANEL.MsgToFreeboard(4, L"3 키 : (3)번 윈도우 토글");
-		MK_DEV_PANEL.MsgToFreeboard(5, L"4 키 : 모달 메세지 박스 토글");
-		MK_DEV_PANEL.MsgToFreeboard(6, L"5 키 : 웹 브라우져 삽입/삭제");
-
-		MK_DEV_PANEL.MsgToFreeboard(8, L"S 키 : 현재 scene을 [PackRoot.msd] 파일로 저장");
-		MK_DEV_PANEL.MsgToFreeboard(9, L"L 키 : [PackRoot.msd] 파일을 읽어 현재 scene을 구성");
+		MK_DEV_PANEL.MsgToFreeboard(2, L"1/2/3 키 : 해당 번호 윈도우 토글");
+		MK_DEV_PANEL.MsgToFreeboard(3, L"4 키 : 메세지박스(모달) 토글");
+		MK_DEV_PANEL.MsgToFreeboard(4, L"5 키 : 웹 브라우져 삽입/삭제");
+		
+		MK_DEV_PANEL.MsgToFreeboard(6, L"O 키 : 현재 scene을 [PackRoot.msd] 파일로 저장");
+		MK_DEV_PANEL.MsgToFreeboard(7, L"P 키 : [PackRoot.msd] 파일을 읽어 현재 scene을 구성");
 
 		m_PageNode->Update();
+
+		MkTimeState timeState;
+		MK_TIME_MGR.GetCurrentTimeState(timeState);
+		m_TickCounter.SetUp(timeState, 3.f);
 
 		return true;
 	}
 
 	virtual void Update(const MkTimeState& timeState)
 	{
-		MkInt2 mp = MK_INPUT_MGR.GetAbsoluteMousePosition(true);
-		MK_DEV_PANEL.MsgToFreeboard(0, L"Cursor : " + MkStr(mp));
+		// 1st msg(header)
+		{
+			MkStr msg;
+			msg.Reserve(512);
+
+			msg += L"커서 : ";
+			msg += MK_INPUT_MGR.GetAbsoluteMousePosition(true);
+			msg += L", 틱 : ";
+			msg += m_TickCounter.GetTickCount() - m_TickCounter.GetTickTime(timeState);
+
+			MK_DEV_PANEL.MsgToFreeboard(0, msg);
+		}
 
 		if (m_PageNode != NULL)
 		{
+			if (m_TickCounter.OnTick(timeState))
+			{
+				MkPanel* imagePanel = m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"Main")->GetPanel(L"ImgTest");
+				MkHashStr currSN = imagePanel->GetSubsetOrSequenceName();
+				MkArray<MkHashStr> seqs;
+				imagePanel->GetAllSequences(seqs);
+
+				if (currSN.Empty())
+				{
+					currSN = seqs[0];
+				}
+				else
+				{
+					unsigned int index = seqs.FindFirstInclusion(MkArraySection(0), currSN) + 1;
+					currSN = seqs.IsValidIndex(index) ? seqs[index] : MkHashStr::EMPTY;
+				}
+				
+				imagePanel->SetSubsetOrSequenceName(currSN, 0.);
+				MkStr msg = L"s01.jpg의 애니메이션";
+				msg += currSN.Empty() ? L" 없음. 원본 그대로 출력" : MkStr(L"을 [" + currSN.GetString() + L"]로 교체");
+				MK_DEV_PANEL.MsgToLog(msg);
+			}
+
 			/*
 			MkSceneNode* mainNode = rootNode->GetChildNode(L"<Root>")->GetChildNode(L"Main");
 			if (mainNode != NULL)
@@ -381,167 +418,10 @@ public:
 						MK_DEV_PANEL.MsgToLog(L"Pick : " + m_TargetNode->GetNodeName().GetString());
 					}
 				}
-
-				if (MK_INPUT_MGR.GetMouseRightButtonPushing())
-				{
-					const int CHECK_COUNT = 4;
-					const float MARGIN_RATIO = 0.2f;
-
-					MkFloat2 rectSize(150.f, 30.f);
-					MkFloat2 clientSize(rectSize.x - 6.f, rectSize.y - 6.f);
-					MkFloat2 rectPos;
-					rectPos.x = static_cast<float>(mp.x) - rectSize.x * 0.5f;
-					rectPos.y = static_cast<float>(mp.y) - rectSize.y * 0.5f;
-
-					// 상하좌우 MARGIN_RATIO 만큼 겹쳐도 됨
-					MkFloat2 margin = rectSize * MARGIN_RATIO;
-					MkFloatRect myRect(rectPos + margin, rectSize - margin * 2.f);
-
-					//
-					unsigned int childCnt = m_RectDummyNode->GetChildNodeCount();
-
-					// 이미 존재하는 rect 리스트를 구함
-					MkArray<MkFloatRect> rectList(childCnt);
-					MkArray<MkHashStr> childNameList;
-					m_RectDummyNode->GetChildNodeList(childNameList);
-					MK_INDEXING_LOOP(childNameList, i)
-					{
-						MkWindowThemedNode* node = dynamic_cast<MkWindowThemedNode*>(m_RectDummyNode->GetChildNode(childNameList[i]));
-						rectList.PushBack(MkFloatRect(node->GetWorldPosition(), node->GetWindowRect().size));
-					}
-					
-					for (int k=0; k<CHECK_COUNT; ++k)
-					{
-						MkFloatRect collisionUnion;
-						MK_INDEXING_LOOP(rectList, i)
-						{
-							const MkFloatRect& currRect = rectList[i];
-							if (currRect.CheckIntersection(myRect))
-							{
-								collisionUnion.UpdateToUnion(currRect);
-							}
-						}
-
-						if (collisionUnion.SizeIsZero() || (!collisionUnion.SqueezeOut(myRect)))
-							break;
-					}
-
-					rectPos = myRect.position - margin;
-
-					//
-					MkWindowThemedNode* tbgNode = MkWindowThemedNode::CreateChildNode(m_RectDummyNode, MkStr(m_DummyIndex));
-					tbgNode->SetLocalPosition(rectPos);
-					tbgNode->SetLocalDepth(-0.001f * static_cast<float>(m_DummyIndex));
-					tbgNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
-					tbgNode->SetComponentType(MkWindowThemeData::eCT_NoticeBox);
-					tbgNode->SetShadowUsage(false);
-					tbgNode->SetClientSize(clientSize);
-					tbgNode->SetFormState(MkWindowThemeFormData::eS_Default);
-					tbgNode->SetAcceptInput(false);
-
-					DummyTimer& dummyTimer = m_DummyTimer.PushBack();
-					dummyTimer.id = m_DummyIndex;
-					dummyTimer.state = 0;
-					dummyTimer.counter.SetUp(timeState, 1.f);
-
-					++m_DummyIndex;
-				}
-
-				unsigned int killCount = 0;
-				MK_INDEXING_LOOP(m_DummyTimer, i)
-				{
-					DummyTimer& dummyTimer = m_DummyTimer[i];
-					if (dummyTimer.counter.OnTick(timeState))
-					{
-						if (dummyTimer.state == 0)
-						{
-							dummyTimer.counter.SetUp(timeState, 0.2f);
-							dummyTimer.state = 1;
-						}
-						else if (dummyTimer.state == 1)
-						{
-							++killCount;
-						}
-					}
-					else
-					{
-						MkSceneNode* node = m_RectDummyNode->GetChildNode(MkStr(dummyTimer.id));
-
-						MkFloat2 pos = node->GetLocalPosition();
-						pos.y += static_cast<float>(timeState.elapsed) * 40.f;
-						node->SetLocalPosition(pos);
-
-						if (dummyTimer.state == 1)
-						{
-							node->SetLocalAlpha(1.f - dummyTimer.counter.GetTickRatio(timeState));
-						}
-					}
-				}
-
-				for (unsigned int i=0; i<killCount; ++i)
-				{
-					m_RectDummyNode->RemoveChildNode(MkStr(m_DummyTimer[0].id));
-					m_DummyTimer.PopFront();
-				}
 			}
-
+			
 			if (m_TargetNode != NULL)
 			{
-				const float movement = static_cast<float>(timeState.elapsed) * 300.f;
-
-				MkFloat2 localPos = m_TargetNode->GetLocalPosition();
-				if (MK_INPUT_MGR.GetKeyPushing(L'A'))
-				{
-					localPos.x -= movement;
-					m_TargetNode->SetLocalPosition(localPos);
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(L'D'))
-				{
-					localPos.x += movement;
-					m_TargetNode->SetLocalPosition(localPos);
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(L'W'))
-				{
-					localPos.y += movement;
-					m_TargetNode->SetLocalPosition(localPos);
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(L'S'))
-				{
-					localPos.y -= movement;
-					m_TargetNode->SetLocalPosition(localPos);
-				}
-
-				float localRot = m_TargetNode->GetLocalRotation();
-				const float rotVel = static_cast<float>(timeState.elapsed) * MKDEF_PI * 0.5f;
-				if (MK_INPUT_MGR.GetKeyPushing(L'Q'))
-				{
-					localRot -= rotVel;
-					m_TargetNode->SetLocalRotation(localRot);
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(L'E'))
-				{
-					localRot += rotVel;
-					m_TargetNode->SetLocalRotation(localRot);
-				}
-				
-				float localScale = m_TargetNode->GetLocalScale();
-				const float scaleVel = static_cast<float>(timeState.elapsed);
-				if (MK_INPUT_MGR.GetKeyPushing(L'Z'))
-				{
-					localScale -= scaleVel;
-					m_TargetNode->SetLocalScale(localScale);
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(L'X'))
-				{
-					localScale += scaleVel;
-					m_TargetNode->SetLocalScale(localScale);
-				}
-				if (MK_INPUT_MGR.GetKeyPushing(L'C'))
-				{
-					localScale = 1.f;
-					m_TargetNode->SetLocalScale(localScale);
-				}
-				
 				if (m_TargetNode->GetNodeName().GetString() == L"Main")
 				{
 					MkPanel* tp = m_TargetNode->GetPanel(L"TextTest");
@@ -567,20 +447,6 @@ public:
 						tp->SetPixelScrollPosition(psp);
 					}
 					
-					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
-					{
-						MkPanel* ip = m_TargetNode->GetPanel(L"ImgTest");
-						MkArray<MkHashStr> keys;
-						ip->GetAllSequences(keys);
-						++si;
-						if (si >= keys.GetSize())
-						{
-							si = 0;
-						}
-						ip->SetSubsetOrSequenceName(keys[si], 0.);
-						MK_DEV_PANEL.MsgToLog(keys[si].GetString());
-					}
-
 					if (MK_INPUT_MGR.GetKeyReleased(L'2'))
 					{
 						MkPanel* tp = m_TargetNode->GetPanel(L"TextTest");
@@ -594,12 +460,6 @@ public:
 				else if (m_TargetNode->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 				{
 					MkVisualPatternNode* vpNode = dynamic_cast<MkVisualPatternNode*>(m_TargetNode);
-
-					if (MK_INPUT_MGR.GetKeyReleased(L'1'))
-					{
-						_IncAP();
-						vpNode->SetAlignmentPosition(ap);
-					}
 
 					if (vpNode->GetNodeType() == ePA_SNT_WindowTagNode)
 					{
@@ -692,65 +552,173 @@ public:
 				MK_DEV_PANEL.MsgToFreeboard(1, L"Target node : " + m_TargetNode->GetNodeName().GetString());
 			}
 			*/
+			
+			MkWindowManagerNode* winMgr = dynamic_cast<MkWindowManagerNode*>(m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"WinMgr"));
+			if (winMgr != NULL)
+			{
+				// 포커스 윈도우 transform
+				MkHashStr winName = winMgr->GetFocusWindowName();
+				if (winName != m_FocusWindowName)
+				{
+					m_FocusWindowName = winName;
+					if (m_FocusWindowName.Empty())
+					{
+						MK_DEV_PANEL.MsgToFreeboard(9, L"포커스 윈도우 없음");
+						MK_DEV_PANEL.MsgToFreeboard(10, MkStr::EMPTY);
+						MK_DEV_PANEL.MsgToFreeboard(11, MkStr::EMPTY);
+						MK_DEV_PANEL.MsgToFreeboard(12, MkStr::EMPTY);
+					}
+					else
+					{
+						MK_DEV_PANEL.MsgToFreeboard(9, L"포커스 윈도우 : " + m_FocusWindowName.GetString());
+						MK_DEV_PANEL.MsgToFreeboard(10, L"   방향키 : 이동");
+						MK_DEV_PANEL.MsgToFreeboard(11, L"   Q/E 키 : 좌회전/우회전, W 키 : 회전 초기화");
+						MK_DEV_PANEL.MsgToFreeboard(12, L"   A/D 키 : 축소/확대, S 키 : 크기 초기화");
+					}
+				}
+				
+				MkSceneNode* frontNode = winMgr->GetChildNode(m_FocusWindowName);
+				if (frontNode != NULL)
+				{
+					const float movement = static_cast<float>(timeState.elapsed) * 300.f;
 
-			if (m_PageNode != NULL)
-			{
-				m_PageNode->Update(timeState.fullTime);
+					bool focusIsWin2 = m_FocusWindowName.Equals(0, L"Win(2)");
+					MkFloat2 win2SizeOffset;
+
+					// 이동
+					MkFloat2 localPos = frontNode->GetLocalPosition();
+					if (MK_INPUT_MGR.GetKeyPushing(VK_LEFT))
+					{
+						localPos.x -= movement;
+						frontNode->SetLocalPosition(localPos);
+
+						if (focusIsWin2) win2SizeOffset.x -= movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_RIGHT))
+					{
+						localPos.x += movement;
+						frontNode->SetLocalPosition(localPos);
+
+						if (focusIsWin2) win2SizeOffset.x += movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_UP))
+					{
+						localPos.y += movement;
+						frontNode->SetLocalPosition(localPos);
+
+						if (focusIsWin2) win2SizeOffset.y -= movement;
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(VK_DOWN))
+					{
+						localPos.y -= movement;
+						frontNode->SetLocalPosition(localPos);
+
+						if (focusIsWin2) win2SizeOffset.y += movement;
+					}
+
+					if (focusIsWin2)
+					{
+						MkWindowThemedNode* win2BGNode = dynamic_cast<MkWindowThemedNode*>(frontNode->GetChildNode(L"BodyFrameB"));
+
+						MkProgressBarNode* progBar = dynamic_cast<MkProgressBarNode*>(win2BGNode->GetChildNode(L"ProgBar"));
+						float currVal = static_cast<float>(progBar->GetMaximumValue()) * m_TickCounter.GetTickRatio(timeState);
+						progBar->SetCurrentValue(static_cast<int>(currVal));
+
+						if (!win2SizeOffset.IsZero())
+						{
+							MkFloat2 bgSize = win2BGNode->GetClientSize() + win2SizeOffset;
+							if ((bgSize.x >= 360.f) && (bgSize.y >= 250.f) && (bgSize.x <= 500.f) && (bgSize.y <= 350.f)) // 크기 제한
+							{
+								win2BGNode->SetClientSize(bgSize);
+
+								MkWindowThemedNode* tgNode = dynamic_cast<MkWindowThemedNode*>(win2BGNode->GetChildNode(L"TextGuide"));
+								MkFloat2 textCS = tgNode->GetClientSize() + win2SizeOffset;
+								tgNode->SetClientSize(textCS);
+
+								MkPanel* textPanel = tgNode->GetPanel(L"TextTest");
+								textPanel->SetPanelSize(textCS);
+								textPanel->BuildAndUpdateTextCache();
+							}
+						}
+					}
+
+					// 회전
+					float localRot = frontNode->GetLocalRotation();
+					const float rotVel = static_cast<float>(timeState.elapsed) * MKDEF_PI * 0.5f;
+					if (MK_INPUT_MGR.GetKeyPushing(L'Q'))
+					{
+						localRot -= rotVel;
+						frontNode->SetLocalRotation(localRot);
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(L'E'))
+					{
+						localRot += rotVel;
+						frontNode->SetLocalRotation(localRot);
+					}
+					if (MK_INPUT_MGR.GetKeyPressed(L'W'))
+					{
+						frontNode->SetLocalRotation(0.f);
+					}
+					
+					float localScale = frontNode->GetLocalScale();
+					const float scaleVel = static_cast<float>(timeState.elapsed);
+					if (MK_INPUT_MGR.GetKeyPushing(L'A'))
+					{
+						localScale -= scaleVel;
+						frontNode->SetLocalScale(localScale);
+					}
+					if (MK_INPUT_MGR.GetKeyPushing(L'D'))
+					{
+						localScale += scaleVel;
+						frontNode->SetLocalScale(localScale);
+					}
+					if (MK_INPUT_MGR.GetKeyPressed(L'S'))
+					{
+						frontNode->SetLocalScale(1.f);
+					}
+				}
 			}
 
-			if (MK_INPUT_MGR.GetKeyReleased(L'1'))
-			{
-				MkWindowManagerNode* winMgr = dynamic_cast<MkWindowManagerNode*>(m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"WinMgr"));
-				MkHashStr name(L"Win(1)");
-				if (winMgr->IsActivating(name))
-				{
-					winMgr->DeactivateWindow(name);
-				}
-				else
-				{
-					winMgr->ActivateWindow(name, false);
-				}
-			}
-			if (MK_INPUT_MGR.GetKeyReleased(L'2'))
-			{
-				MkWindowManagerNode* winMgr = dynamic_cast<MkWindowManagerNode*>(m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"WinMgr"));
-				MkHashStr name(L"Win(2)");
-				if (winMgr->IsActivating(name))
-				{
-					winMgr->DeactivateWindow(name);
-				}
-				else
-				{
-					winMgr->ActivateWindow(name, false);
-				}
-			}
-			if (MK_INPUT_MGR.GetKeyReleased(L'3'))
-			{
-				MkWindowManagerNode* winMgr = dynamic_cast<MkWindowManagerNode*>(m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"WinMgr"));
-				MkHashStr name(L"Win(3)");
-				if (winMgr->IsActivating(name))
-				{
-					winMgr->DeactivateWindow(name);
-				}
-				else
-				{
-					winMgr->ActivateWindow(name, false);
-				}
-			}
-			if (MK_INPUT_MGR.GetKeyReleased(L'4'))
-			{
-				MkWindowManagerNode* winMgr = dynamic_cast<MkWindowManagerNode*>(m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"WinMgr"));
-				MkHashStr name(L"MsgBox");
-				if (winMgr->IsActivating(name))
-				{
-					winMgr->DeactivateWindow(name);
-				}
-				else
-				{
-					winMgr->ActivateWindow(name, true);
-				}
-			}
+			m_PageNode->Update(timeState.fullTime);
 
+			if (winMgr != NULL)
+			{
+				MkHashStr targetWinName;
+				bool modal = false;
+
+				if (MK_INPUT_MGR.GetKeyReleased(L'1'))
+				{
+					targetWinName = L"Win(1)";
+				}
+				if (MK_INPUT_MGR.GetKeyReleased(L'2'))
+				{
+					targetWinName = L"Win(2)";
+				}
+				if (MK_INPUT_MGR.GetKeyReleased(L'3'))
+				{
+					targetWinName = L"Win(3)";
+				}
+				if (MK_INPUT_MGR.GetKeyReleased(L'4'))
+				{
+					targetWinName = L"MsgBox";
+					modal = true;
+				}
+
+				if (!targetWinName.Empty())
+				{
+					if (winMgr->IsActivating(targetWinName))
+					{
+						winMgr->DeactivateWindow(targetWinName);
+						MK_DEV_PANEL.MsgToLog(targetWinName.GetString() + L" 윈도우 닫음");
+					}
+					else
+					{
+						winMgr->ActivateWindow(targetWinName, modal);
+						MK_DEV_PANEL.MsgToLog(targetWinName.GetString() + L" 윈도우 오픈");
+					}
+				}
+			}
+			
 			if (MK_INPUT_MGR.GetKeyReleased(L'5'))
 			{
 				if (MK_RENDERER.GetWebDialog() == NULL)
@@ -763,7 +731,7 @@ public:
 				}
 			}
 
-			if (MK_INPUT_MGR.GetKeyReleased(L'S'))
+			if (MK_INPUT_MGR.GetKeyReleased(L'O'))
 			{
 				MkDataNode tmpRootSaveTarget;
 				m_PageNode->GetChildNode(L"<Root>")->Save(tmpRootSaveTarget);
@@ -774,7 +742,7 @@ public:
 				MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------");
 			}
 
-			if (MK_INPUT_MGR.GetKeyReleased(L'L'))
+			if (MK_INPUT_MGR.GetKeyReleased(L'P'))
 			{
 				MkDataNode tmpRootLoadTarget;
 				if (tmpRootLoadTarget.Load(L"PackRoot.msd"))
@@ -790,8 +758,6 @@ public:
 					MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------");
 				}
 			}
-			
-			//MK_DEV_PANEL.MsgToFreeboard(0, L"HorizontalChange : " + hcn.GetString());
 		}
 	}
 
@@ -805,72 +771,16 @@ public:
 	TestPage(const MkHashStr& name) : MkBasePage(name)
 	{
 		m_PageNode = NULL;
-		//m_TargetNode = NULL;
-		si = 0;
-		ap = eRAP_NonePosition;
 	}
 
 	virtual ~TestPage() { Clear(); }
 
 protected:
 
-	void _IncAP(void)
-	{
-		switch (ap)
-		{
-		case eRAP_NonePosition: ap = eRAP_LMostOver; break;
-
-		case eRAP_LMostOver: ap = eRAP_LMostTop; break;
-		case eRAP_LMostTop: ap = eRAP_LMostCenter; break;
-		case eRAP_LMostCenter: ap = eRAP_LMostBottom; break;
-		case eRAP_LMostBottom: ap = eRAP_LMostUnder; break;
-		case eRAP_LMostUnder: ap = eRAP_LeftOver; break;
-
-		case eRAP_LeftOver: ap = eRAP_LeftTop; break;
-		case eRAP_LeftTop: ap = eRAP_LeftCenter; break;
-		case eRAP_LeftCenter: ap = eRAP_LeftBottom; break;
-		case eRAP_LeftBottom: ap = eRAP_LeftUnder; break;
-		case eRAP_LeftUnder: ap = eRAP_MiddleOver; break;
-
-		case eRAP_MiddleOver: ap = eRAP_MiddleTop; break;
-		case eRAP_MiddleTop: ap = eRAP_MiddleCenter; break;
-		case eRAP_MiddleCenter: ap = eRAP_MiddleBottom; break;
-		case eRAP_MiddleBottom: ap = eRAP_MiddleUnder; break;
-		case eRAP_MiddleUnder: ap = eRAP_RightOver; break;
-
-		case eRAP_RightOver: ap = eRAP_RightTop; break;
-		case eRAP_RightTop: ap = eRAP_RightCenter; break;
-		case eRAP_RightCenter: ap = eRAP_RightBottom; break;
-		case eRAP_RightBottom: ap = eRAP_RightUnder; break;
-		case eRAP_RightUnder: ap = eRAP_RMostOver; break;
-
-		case eRAP_RMostOver: ap = eRAP_RMostTop; break;
-		case eRAP_RMostTop: ap = eRAP_RMostCenter; break;
-		case eRAP_RMostCenter: ap = eRAP_RMostBottom; break;
-		case eRAP_RMostBottom: ap = eRAP_RMostUnder; break;
-		case eRAP_RMostUnder: ap = eRAP_LMostOver; break;
-		}
-	}
-
-protected:
-
 	MkSceneNode* m_PageNode;
-	//MkSceneNode* m_TargetNode;
-	unsigned int si;
-	eRectAlignmentPosition ap;
 
-	MkSceneNode* m_RectDummyNode;
-	unsigned int m_DummyIndex;
-
-	typedef struct _DummyTimer
-	{
-		unsigned int id;
-		int state;
-		MkTimeCounter counter;
-	}
-	DummyTimer;
-
-	MkDeque<DummyTimer> m_DummyTimer;
+	MkHashStr m_FocusWindowName;
+	MkTimeCounter m_TickCounter;
 };
 
 class TestFramework : public MkRenderFramework

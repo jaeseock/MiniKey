@@ -45,6 +45,16 @@ MkPanel::eBiggerSourceOp MkPanel::GetBiggerSourceOp(void) const
 	return static_cast<eBiggerSourceOp>(m_Attribute.GetValue(eBiggerSourceOpPosition, eBiggerSourceOpBandwidth));
 }
 
+void MkPanel::SetPanelSize(const MkFloat2& size)
+{
+	m_PanelSize = size;
+
+	if (m_TargetTextNodePtr != NULL)
+	{
+		m_TargetTextNodePtr->SetWidthRestriction(static_cast<int>(m_PanelSize.x));
+	}
+}
+
 void MkPanel::SetHorizontalReflection(bool enable)
 {
 	m_Attribute.Assign(eHorizontalReflection, enable);

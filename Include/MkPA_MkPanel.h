@@ -98,7 +98,7 @@ public:
 	eBiggerSourceOp GetBiggerSourceOp(void) const;
 
 	// panel size
-	inline void SetPanelSize(const MkFloat2& size) { m_PanelSize = size; } // resizing type이 eFollowSource일 때는 의미 없음
+	void SetPanelSize(const MkFloat2& size); // resizing type이 eFollowSource일 때는 의미 없음
 	inline const MkFloat2& GetPanelSize(void) const { return m_PanelSize; }
 
 	// panel pixel scroll position
@@ -160,7 +160,7 @@ public:
 	inline MkTextNode* GetTextNodePtr(void) { return m_TargetTextNodePtr; }
 	inline const MkTextNode* GetTextNodePtr(void) const { return m_TargetTextNodePtr; }
 
-	// GetTextNodePtr()로 얻어낸 text node 수정 후 반영을 위해 호출
+	// GetTextNodePtr()로 얻어낸 text node 수정이 발생했거나, panel size가 변경되었을 경우 반영을 위해 호출
 	// ex> sample test node는 "MkPA_MkTextNode.h"의 헤더 부분 참조
 	//	MkPanel* panel = sceneNode->GetPanel(L"Test");
 	//	MkTextNode* textNode = panel->GetTextNodePtr();

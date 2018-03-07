@@ -45,7 +45,10 @@ public:
 	bool IsActivating(const MkHashStr& windowName) const;
 
 	// 최상위 윈도우 여부 반환(modal 이거나 첫번째 activating window)
-	bool IsFrontWindow(const MkHashStr& windowName) const;
+	MkHashStr GetFrontWindowName(void) const;
+
+	// 포커스 윈도우명 반환. 없으면 공문자열
+	MkHashStr GetFocusWindowName(void) const;
 
 	// 활성화 지정
 	// modal 선언 가능. 단 이미 동작중인 modal window가 있을 경우 무시됨

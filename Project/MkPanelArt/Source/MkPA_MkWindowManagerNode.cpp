@@ -112,10 +112,20 @@ bool MkWindowManagerNode::IsActivating(const MkHashStr& windowName) const
 		((m_ActivatingWindows.FindFirstInclusion(MkArraySection(0), windowName) != MKDEF_ARRAY_ERROR) || (windowName == m_ModalWindow)) : false;
 }
 
-bool MkWindowManagerNode::IsFrontWindow(const MkHashStr& windowName) const
+MkHashStr MkWindowManagerNode::GetFrontWindowName(void) const
 {
-	return m_RootWindowList.Exist(windowName) ?
-		(((!m_ActivatingWindows.Empty()) && (windowName == m_ActivatingWindows[0])) || (windowName == m_ModalWindow)) : false;
+	if (!m_ModalWindow.Empty())
+		return m_ModalWindow;
+
+	if (!m_ActivatingWindows.Empty())
+		return m_ActivatingWindows[0];
+
+	return MkHashStr::EMPTY;
+}
+
+MkHashStr MkWindowManagerNode::GetFocusWindowName(void) const
+{
+	return m_CurrentFocusWindow;
 }
 
 void MkWindowManagerNode::ActivateWindow(const MkHashStr& windowName, bool modal)
@@ -628,7 +638,7 @@ void MkWindowManagerNode::Update(double currTime)
 	if (!m_ExclusiveOpenningWindow.Empty())
 	{
 		bool closeExclusiveOpenningWindow = true;
-		if (IsFrontWindow(m_ExclusiveOpenningWindow[0])) // 家加 window啊 front搁
+		if (m_ExclusiveOpenningWindow[0] == GetFrontWindowName()) // 家加 window啊 front搁
 		{
 			if (anyBtnPressed)
 			{

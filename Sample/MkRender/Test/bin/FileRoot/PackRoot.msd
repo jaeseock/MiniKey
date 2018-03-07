@@ -1,7 +1,7 @@
 ﻿//--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2018.01.17 (19:10:56)
+//   - time stamp : 2018.03.07 (17:08:14)
 //   - exporter   : pc (Test)
 //--------------------------------------------------------------------//
 
@@ -16,99 +16,11 @@ Node "[SUBNODES]"
 		{
 			Node "ImgTest" : "MkPanel"
 			{
-				uint Attribute = 26;
+				uint Attribute = 18;
 				str ImagePath = "Image\s01.jpg";
 				float LocalDepth = 9999.000;
-				vec2 PanelSize = (450.000, 250.000);
-			}
-
-			Node "TextTest" : "MkPanel"
-			{
-				uint Attribute = 26;
-				float LocalDepth = 9998.000;
-				vec2 PanelSize = (110.000, 250.000);
-				bool TextNodeWR = true;
-
-				Node "TextNodeData"
-				{
-					int LFV = 10;
-					str Seq = // [2]
-						"1st" /
-						"2st";
-					str Style = "Desc:Title";
-					str Type = "LargeBold";
-
-					Node "1st"
-					{
-						str Text = "[ 첫번째 제목입니당 ]";
-
-						Node "Sub list"
-						{
-							int LFH = 8;
-							int LFV = 3;
-							str Seq = // [2]
-								"일번이고" /
-								"이번이구나";
-							str Style = "Desc:Normal";
-							str Type = "Medium";
-
-							Node "이번이구나"
-							{
-								str Text = "- 평범 항목 두번째인데<LF>- 자동 개행의 유일한 방법";
-							}
-
-							Node "일번이고"
-							{
-								str Text = "<LF>- 평범 항목 첫번째이고<LF>";
-							}
-						}
-					}
-
-					Node "2st"
-					{
-						str Text = "<LF>[ 이거이 두번째 제목 ]";
-
-						Node "0"
-						{
-							int LFV = 3;
-							str Seq = // [2]
-								"0" /
-								"1";
-							str Style = "Desc:Normal";
-							str Type = "Medium";
-
-							Node "0"
-							{
-								str Text = "<LF>  - 내용 항목 첫번째";
-							}
-
-							Node "1"
-							{
-								str Seq = // [3]
-									"100" /
-									"200" /
-									"300";
-
-								Node "100"
-								{
-									str Text = "<LF>  - 내용 항목 두번째인데 ";
-								}
-
-								Node "200"
-								{
-									str Style = "Desc:Highlight";
-									str Text = "<% 바꿔주시용 %>";
-									str Type = "Special";
-								}
-
-								Node "300"
-								{
-									str Text = " <- 바꾸고 강조   <LF>  - 막줄<LF>";
-								}
-							}
-						}
-					}
-				}
+				vec2 PanelSize = (909.000, 505.000);
+				str SOSName = "HorizontalChange";
 			}
 		}
 
@@ -127,20 +39,15 @@ Node "[SUBNODES]"
 					}
 				}
 			}
-
-			Node "RectDummy" : "MkSceneNode"
-			{
-				float LocalDepth = 9997.000;
-			}
 		}
 	}
 
 	Node "WinMgr" : "MkWindowManagerNode"
 	{
 		str ActivateWins = // [3]
+			"Win(1)" /
 			"Win(3)" /
-			"Win(2)" /
-			"Win(1)";
+			"Win(2)";
 		str DeactivateWins = "MsgBox";
 
 		Node "[SUBNODES]"
@@ -254,8 +161,8 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 733.333;
-				vec2 LocalPosition = (400.000, 600.000);
+				float LocalDepth = 200.000;
+				vec2 LocalPosition = (632.000, 520.000);
 				str ThemeName = "Default";
 
 				Node "[SUBNODES]"
@@ -421,16 +328,16 @@ Node "[SUBNODES]"
 			{
 				uint Attribute = 197891;
 				int CaptionAlignPos = 50;
-				str CaptionString = "(2) 코레가 타이틀데스B";
+				str CaptionString = "(2) 리스트 + 프로그레스 + client size 변경";
 				str CaptionTextName = // [3]
 					"Theme" /
 					"Default" /
 					"Small";
-				vec2 ClientSize = (344.000, 12.000);
+				vec2 ClientSize = (354.000, 12.000);
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 466.667;
+				float LocalDepth = 733.333;
 				vec2 LocalPosition = (200.000, 500.000);
 				str ThemeName = "Default";
 
@@ -440,7 +347,7 @@ Node "[SUBNODES]"
 					{
 						int AlignPosition = 34;
 						uint Attribute = 66305;
-						vec2 ClientSize = (350.000, 250.000);
+						vec2 ClientSize = (360.000, 250.000);
 						str ComponentType = "eCT_DefaultBox";
 						int HangingType = 3;
 						float LocalDepth = 0.100;
@@ -495,7 +402,7 @@ Node "[SUBNODES]"
 							{
 								vec2 AlignOffset = (10.000, -160.000);
 								int AlignPosition = 34;
-								vec2 ClientSize = (250.000, 16.000);
+								vec2 ClientSize = (215.000, 16.000);
 								str ComponentType = "eCT_DefaultBox";
 								int CurrValue = 50;
 								str FrameType = "eFT_Medium";
@@ -504,6 +411,109 @@ Node "[SUBNODES]"
 								int MaxValue = 200;
 								int ShowProgMode = 2;
 								str ThemeName = "Default";
+							}
+
+							Node "TextGuide" : "MkWindowThemedNode"
+							{
+								vec2 AlignOffset = (240.000, -20.000);
+								int AlignPosition = 34;
+								vec2 ClientSize = (110.000, 220.000);
+								str ComponentType = "eCT_GuideBox";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (243.000, 7.000);
+								str ThemeName = "Default";
+
+								Node "[PANELS]"
+								{
+									Node "TextTest" : "MkPanel"
+									{
+										uint Attribute = 26;
+										float LocalDepth = -1.000;
+										vec2 PanelSize = (110.000, 220.000);
+										bool TextNodeWR = true;
+
+										Node "TextNodeData"
+										{
+											int LFV = 10;
+											str Seq = // [2]
+												"1st" /
+												"2st";
+											str Style = "Desc:Title";
+											str Type = "LargeBold";
+
+											Node "1st"
+											{
+												str Text = "[ 첫번째 제목입니당 ]";
+
+												Node "Sub list"
+												{
+													int LFH = 8;
+													int LFV = 3;
+													str Seq = // [2]
+														"일번이고" /
+														"이번이구나";
+													str Style = "Desc:Normal";
+													str Type = "Medium";
+
+													Node "이번이구나"
+													{
+														str Text = "- 평범 항목 두번째인데<LF>- 자동 개행의 유일한 방법";
+													}
+
+													Node "일번이고"
+													{
+														str Text = "<LF>- 평범 항목 첫번째이고<LF>";
+													}
+												}
+											}
+
+											Node "2st"
+											{
+												str Text = "<LF>[ 이거이 두번째 제목 ]";
+
+												Node "0"
+												{
+													int LFV = 3;
+													str Seq = // [2]
+														"0" /
+														"1";
+													str Style = "Desc:Normal";
+													str Type = "Medium";
+
+													Node "0"
+													{
+														str Text = "<LF>  - 내용 항목 첫번째";
+													}
+
+													Node "1"
+													{
+														str Seq = // [3]
+															"100" /
+															"200" /
+															"300";
+
+														Node "100"
+														{
+															str Text = "<LF>  - 내용 항목 두번째인데 ";
+														}
+
+														Node "200"
+														{
+															str Style = "Desc:Highlight";
+															str Text = "<% 바꿔주시용 %>";
+															str Type = "Special";
+														}
+
+														Node "300"
+														{
+															str Text = " <- 바꾸고 강조   <LF>  - 막줄<LF>";
+														}
+													}
+												}
+											}
+										}
+									}
+								}
 							}
 						}
 					}
@@ -523,7 +533,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 200.000;
+				float LocalDepth = 466.667;
 				vec2 LocalPosition = (100.000, 400.000);
 				str ThemeName = "Default";
 
