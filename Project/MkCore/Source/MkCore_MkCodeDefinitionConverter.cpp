@@ -95,8 +95,22 @@ bool MkCodeDefinitionConverter::Convert(const MkPathName& filePath, const MkStr&
 	if (exportTo.Empty())
 		return __MK_CDC_ERROR(L"출력 파일 경로 지정이 되어 있지 않음");
 
+	MkPathName exportPath = exportTo;
 	MkPathName exportFilePath;
-	exportFilePath.ConvertToRootBasisAbsolutePath(exportTo);
+
+	if (!exportPath.IsAbsolutePath())
+	{
+		if (filePath.IsAbsolutePath())
+		{
+			exportFilePath = filePath.GetPath();
+			exportFilePath += exportTo;
+		}
+		else
+		{
+			exportFilePath.ConvertToRootBasisAbsolutePath(exportTo);
+		}
+	}
+	
 	if (exportFilePath.IsDirectoryPath())
 		return __MK_CDC_ERROR(L"출력 파일명이 정상적인 파일명이 아님");
 

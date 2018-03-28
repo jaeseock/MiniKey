@@ -49,7 +49,7 @@ public:
 	MkInt2 GetScreenSize(void) const;
 
 	// 지정된 영역 정보 반환
-	inline const MkFloatRect& GetRegionRect(void) const { return m_RegionRect; }
+	MkFloatRect GetRegionRect(void) const;
 
 	// 텍스쳐 참조 반환
 	inline unsigned int GetTextureCount(void) const { return m_TargetTexture.GetSize(); }

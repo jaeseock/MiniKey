@@ -89,6 +89,8 @@ public:
 	// scene portal을 부모로 두었을 경우 갱신 관련 정보 설정
 	void __SetScenePortalLegacy(bool cursorInside, const MkIntRect& systemRect);
 
+	const MkInt2& __GetSystemRectSize(void) const { return m_SystemRect.size; }
+
 protected:
 
 	typedef struct __ActivationEvent
@@ -139,6 +141,7 @@ protected:
 
 	// 대상 영역 지정
 	MkIntRect m_SystemRect;
+	MkInt2 m_LastSystemSize;
 
 	// 부모 scene portal로부터 갱신 정보를 받았는지 여부
 	bool m_HasScenePortalLegacy;

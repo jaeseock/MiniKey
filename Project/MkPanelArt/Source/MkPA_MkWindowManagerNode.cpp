@@ -162,6 +162,7 @@ const MkStr NODE_EVT_NAME[] =
 	MK_VALUE_TO_STRING(ePA_SNE_ChangeTheme),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorEntered),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorLeft),
+	MK_VALUE_TO_STRING(ePA_SNE_CursorMoved),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnPressed),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnReleased),
 	MK_VALUE_TO_STRING(ePA_SNE_CursorLBtnDBClicked),
@@ -300,6 +301,7 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 			}
 			break;
 
+		case ePA_SNE_CursorMoved:
 		case ePA_SNE_CursorLBtnPressed:
 		case ePA_SNE_CursorLBtnReleased:
 		case ePA_SNE_CursorLBtnDBClicked:
@@ -427,7 +429,10 @@ void MkWindowManagerNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 		}
 	}
 
-	MK_DEV_PANEL.MsgToLog(msg);
+	if (eventType != ePA_SNE_CursorMoved) // 해당 이벤트는 너무 많이 발생
+	{
+		MK_DEV_PANEL.MsgToLog(msg);
+	}
 
 #endif
 }
@@ -938,6 +943,20 @@ void MkWindowManagerNode::Update(double currTime)
 	{
 		m_CurrentFocusWindow = focusWindowName;
 		m_RootWindowList[m_CurrentFocusWindow]->SendNodeCommandTypeEvent(ePA_SNE_OnFocus, NULL);
+	}
+
+	//------------------------------------------------------------------------------------------------//
+	// 해상도가 변경되었으면 재정렬 명령
+	//------------------------------------------------------------------------------------------------//
+
+	if (m_LastSystemSize != m_SystemRect.size)
+	{
+		MK_INDEXING_LOOP(m_ActivatingWindows, i)
+		{
+			m_RootWindowList[m_ActivatingWindows[i]]->SetAlignmentCommand();
+		}
+
+		m_LastSystemSize = m_SystemRect.size;
 	}
 
 	//------------------------------------------------------------------------------------------------//

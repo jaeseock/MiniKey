@@ -1,0 +1,6 @@
+﻿
+Node "OBJ_"
+{
+	int2 Size = (32, 32);
+	int2 Table = (8, 1);
+}

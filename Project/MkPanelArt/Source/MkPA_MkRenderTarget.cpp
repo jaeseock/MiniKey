@@ -46,13 +46,6 @@ bool MkRenderTarget::SetUp(eTargetType type, unsigned int count, const MkInt2& s
 
 		ok = (success == count);
 	}
-
-	if (ok)
-	{
-		MkInt2 ss = GetScreenSize();
-		m_RegionRect.size = MkFloat2(static_cast<float>(ss.x), static_cast<float>(ss.y));
-	}
-
 	return ok;
 }
 
@@ -90,6 +83,15 @@ MkInt2 MkRenderTarget::GetScreenSize(void) const
 		break;
 	}
 	return MkInt2::Zero;
+}
+
+MkFloatRect MkRenderTarget::GetRegionRect(void) const
+{
+	MkInt2 ss = GetScreenSize();
+	MkFloatRect rr;
+	rr.size.x = static_cast<float>(ss.x);
+	rr.size.y = static_cast<float>(ss.y);
+	return rr;
 }
 
 const MkRenderToTexture* MkRenderTarget::GetTargetTexture(unsigned int index) const

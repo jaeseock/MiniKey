@@ -46,11 +46,15 @@ public:
 	inline const MkFloat2& GetCameraOffset(void) { return m_CameraOffset; }
 
 	// 렌더타겟 영역 반환
-	inline const MkFloatRect& GetRegionRect(void) { return m_RenderTarget.GetRegionRect(); }
+	inline MkFloatRect GetRegionRect(void) { return m_RenderTarget.GetRegionRect(); }
 
 	// 보이기 설정/반환
 	inline void SetVisible(bool visible) { m_Visible = visible; }
 	inline bool GetVisible(void) const { return m_Visible; }
+
+	// 렌더타겟 초기화 설정
+	inline void SetClearLastRenderTarget(bool clear) { m_ClearLastRenderTarget = clear; }
+	inline bool GetClearLastRenderTarget(void) const { return m_ClearLastRenderTarget; }
 
 	// 렌더 타겟이 eTexture일 경우 텍스쳐 참조 반환
 	virtual MkBaseTexture* GetTargetTexture(unsigned int index = 0) const;
@@ -75,6 +79,7 @@ protected:
 protected:
 
 	bool m_Visible;
+	bool m_ClearLastRenderTarget;
 	
 	const MkSceneNode* m_TargetSceneNode;
 	MkRenderTarget m_RenderTarget;

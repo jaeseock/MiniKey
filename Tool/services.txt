@@ -1,0 +1,303 @@
+
+// 서비스 타입
+Node "Korea - Playwith(web launch)"
+{
+	// 해당 서비스 클라이언트 경로(필수)
+	str #ClientPath = "D:\tmp\oh yeah 01";
+
+	// 청크 파일 포맷(옵션)
+	str #ChunkPrefix = "MK_PACK_";
+	str #ChunkExtension = "mpc";
+
+	// 기본 정보 레지스트리 등록(필수)
+	Node "[RegisterProjectInfo]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 01 (웹런칭)";
+
+		// 프로젝트(최소 하나는 필수)
+		Node "테스트 어플 01 (웹런칭)"
+		{
+			// 퍼블리셔 이름(옵션)
+			str #PublisherName = "Playwith-GAMES Entertainment";
+
+			// 아이콘 파일 경로(옵션)
+			str #IconFile = "Kuntara.ico";
+
+			// 홈페이지 주소(옵션)
+			str #HomePage = "http://www.kuntara.co.kr";
+
+			// 삭제 프로그램 경로(필수)
+			str #UninstallApp = "Uninstall.exe";
+		}
+	}
+
+	// 웹 스타트용 custom URL scheme 등록(옵션)
+	Node "[RegisterCustomURLScheme]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "pwkopw";
+
+		// 프로토콜
+		Node "pwkopw"
+		{
+			// 대상 프로그램 경로(필수)
+			str #TargetApp = "Starter.exe";
+
+			// 인자를 받을지 여부(옵션)
+			bool #AcceptArg = true;
+		}
+	}
+
+	// 바탕화면 숏컷(옵션)
+	Node "[DesktopDirectoryShortcut]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 01 (웹런칭)";
+
+		// 숏컷 이름
+		Node "테스트 어플 01 (웹런칭)"
+		{
+			// 대상 URL 경로(대상 파일 경로와 배타적. 둘 중 하나 필수)
+			str #TargetURL = "http://www.kuntara.co.kr";
+
+			// 아이콘 파일 경로(옵션)
+			str #IconFile = "Kuntara.ico";
+
+			// 설명(옵션)
+			str #Desc = "어플 01 온라인을 실행합니다.";
+		}
+	}
+
+	// 시작 프로그램 숏컷(옵션)
+	Node "[ProgramsShortcut]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 01 (웹런칭)";
+
+		// 폴더명
+		Node "테스트 어플 01 (웹런칭)"
+		{
+			// 숏컷 이름
+			Node "어플 01 온라인 삭제"
+			{
+				// 대상 파일 경로(대상 URL 경로와 배타적. 둘 중 하나 필수)
+				str #TargetApp = "Uninstall.exe";
+
+				// 아이콘 파일 경로(옵션)
+				str #IconFile = "Uninstall.exe";
+
+				// 설명(옵션)
+				str #Desc = "어플 01 온라인을 삭제합니다.";
+			}
+
+			// 숏컷 이름
+			Node "어플 01 온라인 실행"
+			{
+				// 대상 URL 경로(대상 파일 경로와 배타적. 둘 중 하나 필수)
+				str #TargetURL = "http://www.kuntara.co.kr";
+
+				// 아이콘 파일 경로(옵션)
+				str #IconFile = "Kuntara.exe";
+
+				// 설명(옵션)
+				str #Desc = "어플 01 온라인을 실행합니다.";
+			}
+		}
+	}
+}
+
+// 서비스 타입
+Node "Korea - Playwith(client launch)"
+{
+	// 해당 서비스 클라이언트 경로(필수)
+	str #ClientPath = "D:\tmp\oh yeah 02";
+
+	// 기본 정보 레지스트리 등록(필수)
+	Node "[RegisterProjectInfo]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 02 (클라 로그인)";
+
+		// 프로젝트(최소 하나는 필수)
+		Node "테스트 어플 02 (클라 로그인)"
+		{
+			// 퍼블리셔 이름(옵션)
+			str #PublisherName = "Playwith-GAMES Entertainment";
+
+			// 아이콘 파일 경로(옵션)
+			str #IconFile = "Kuntara.ico";
+
+			// 홈페이지 주소(옵션)
+			str #HomePage = "http://www.kuntara.co.kr";
+
+			// 삭제 프로그램 경로(필수)
+			str #UninstallApp = "Uninstall.exe";
+		}
+	}
+
+	// 바탕화면 숏컷(옵션)
+	Node "[DesktopDirectoryShortcut]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 02 (클라 로그인)";
+
+		// 숏컷 이름
+		Node "테스트 어플 02 (클라 로그인)"
+		{
+			// 대상 파일 경로(대상 URL 경로와 배타적. 둘 중 하나 필수)
+			str #TargetApp = "Starter.exe";
+
+			// 아이콘 파일 경로(옵션)
+			str #IconFile = "Kuntara.ico";
+
+			// 설명(옵션)
+			str #Desc = "어플 02 온라인을 실행합니다.";
+		}
+	}
+
+	// 시작 프로그램 숏컷(옵션)
+	Node "[ProgramsShortcut]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 02 (클라 로그인)";
+
+		// 폴더명
+		Node "테스트 어플 02 (클라 로그인)"
+		{
+			// 숏컷 이름
+			Node "어플 02 온라인 삭제"
+			{
+				// 대상 파일 경로(대상 URL 경로와 배타적. 둘 중 하나 필수)
+				str #TargetApp = "Uninstall.exe";
+
+				// 아이콘 파일 경로(옵션)
+				str #IconFile = "Uninstall.exe";
+
+				// 설명(옵션)
+				str #Desc = "어플 02 온라인을 삭제합니다.";
+			}
+
+			// 숏컷 이름
+			Node "어플 02 온라인 실행"
+			{
+				// 대상 파일 경로(대상 URL 경로와 배타적. 둘 중 하나 필수)
+				str #TargetApp = "Starter.exe";
+
+				// 아이콘 파일 경로(옵션)
+				str #IconFile = "Kuntara.exe";
+
+				// 설명(옵션)
+				str #Desc = "어플 02 온라인을 실행합니다.";
+			}
+		}
+	}
+}
+
+// 서비스 타입
+Node "Korea - Naver(web launch)"
+{
+	// 해당 서비스 클라이언트 경로(필수)
+	str #ClientPath = "D:\tmp\oh yeah 03";
+
+	// 기본 정보 레지스트리 등록(필수)
+	Node "[RegisterProjectInfo]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 03 (눼이버)";
+
+		// 프로젝트(최소 하나는 필수)
+		Node "테스트 어플 03 (눼이버)"
+		{
+			// 퍼블리셔 이름(옵션)
+			str #PublisherName = "Naver";
+
+			// 아이콘 파일 경로(옵션)
+			str #IconFile = "Kuntara.ico";
+
+			// 홈페이지 주소(옵션)
+			str #HomePage = "http://www.kuntara.co.kr";
+
+			// 삭제 프로그램 경로(필수)
+			str #UninstallApp = "Uninstall.exe";
+		}
+	}
+
+	// 웹 스타트용 custom URL scheme 등록(옵션)
+	Node "[RegisterCustomURLScheme]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "pwkonv";
+
+		// 프로토콜
+		Node "pwkonv"
+		{
+			// 대상 프로그램 경로(필수)
+			str #TargetApp = "Starter.exe";
+
+			// 인자를 받을지 여부(옵션)
+			bool #AcceptArg = true;
+		}
+	}
+
+	// 바탕화면 숏컷(옵션)
+	Node "[DesktopDirectoryShortcut]"
+	{
+		// 언인스톨시 해당 노드 삭제(옵션)
+		str #UninstallList = "테스트 어플 03 (눼이버)";
+
+		// 숏컷 이름
+		Node "테스트 어플 03 (눼이버)"
+		{
+			// 대상 URL 경로(대상 파일 경로와 배타적. 둘 중 하나 필수)
+			str #TargetURL = "http://www.kuntara.co.kr";
+
+			// 아이콘 파일 경로(옵션)
+			str #IconFile = "Kuntara.ico";
+
+			// 설명(옵션)
+			str #Desc = "어플 03 온라인을 실행합니다.";
+		}
+	}
+
+	// 시작 프로그램 숏컷(옵션)
+	Node "[ProgramsShortcut]"
+	{
+		// 폴더명
+		Node "네이버 게임"
+		{
+			// 언인스톨시 해당 노드 삭제(옵션)
+			str #UninstallList = "어플 03 온라인";
+
+			// 폴더명
+			Node "어플 03 온라인"
+			{
+				// 숏컷 이름
+				Node "어플 03 온라인 삭제"
+				{
+					// 대상 파일 경로(대상 URL 경로와 배타적. 둘 중 하나 필수)
+					str #TargetApp = "Uninstall.exe";
+
+					// 아이콘 파일 경로(옵션)
+					str #IconFile = "Uninstall.exe";
+
+					// 설명(옵션)
+					str #Desc = "어플 03 온라인을 삭제합니다.";
+				}
+
+				// 숏컷 이름
+				Node "어플 03 온라인 실행"
+				{
+					// 대상 URL 경로(대상 파일 경로와 배타적. 둘 중 하나 필수)
+					str #TargetURL = "http://www.kuntara.co.kr";
+
+					// 아이콘 파일 경로(옵션)
+					str #IconFile = "Kuntara.exe";
+
+					// 설명(옵션)
+					str #Desc = "어플 03 온라인을 실행합니다.";
+				}
+			}
+		}
+	}
+}

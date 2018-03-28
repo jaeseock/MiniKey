@@ -172,7 +172,12 @@ bool MkDrawSceneNodeStep::Draw(void)
 
 		if (m_RenderTarget.__BeginScene())
 		{
-			m_RenderTarget.__Clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER); // 렌더타겟 공유를 하지 않으므로 그냥 날림
+			DWORD rtClearFlag = D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL;
+			if (m_ClearLastRenderTarget)
+			{
+				rtClearFlag |= D3DCLEAR_TARGET;
+			}
+			m_RenderTarget.__Clear(rtClearFlag);
 
 			// camera
 			m_Camera.UpdateViewProjectionMatrix();
@@ -278,6 +283,7 @@ void MkDrawSceneNodeStep::ReloadResource(LPDIRECT3DDEVICE9 device)
 MkDrawSceneNodeStep::MkDrawSceneNodeStep() : MkBaseResetableResource()
 {
 	m_Visible = true;
+	m_ClearLastRenderTarget = false;
 }
 
 void MkDrawSceneNodeStep::_UpdateCameraInfo(void)

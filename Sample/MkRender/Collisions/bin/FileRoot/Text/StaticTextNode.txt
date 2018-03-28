@@ -1,0 +1,126 @@
+
+Node "_Sample"
+{
+	str Type = "LargeBold";
+	str Style = "Desc:Title";
+	int LFV = 10;
+	str Seq = "1st" / "2st";
+
+	Node "1st"
+	{
+		str Text = "[ 첫번째 제목입니당 ]";
+		
+		Node "Sub list"
+		{
+			str Type = "Medium";
+			str Style = "Desc:Normal";
+			int LFV = 3;
+			int LFH = 8;
+			str Seq = "일번이고" / "이번이구나";
+			
+			Node "일번이고"
+			{
+				str Text = "<LF>- 평범 항목 첫번째이고<LF>";
+			}
+			
+			Node "이번이구나"
+			{
+				str Text =
+					"- 평범 항목 두번째인데" /
+					"- 자동 개행의 유일한 방법";
+			}
+		}
+	}
+
+	Node "2st"
+	{
+		str Text = "<LF>[ 이거이 두번째 제목 ]";
+		
+		Node "0"
+		{
+			str Type = "Medium";
+			str Style = "Desc:Normal";
+			int LFV = 3;
+
+			Node "0"
+			{
+				str Text = "<LF>  - 내용 항목 첫번째";
+			}
+
+			Node "1"
+			{
+				Node "100"
+				{
+					str Text = "<LF>  - 내용 항목 두번째인데 ";
+				}
+				
+				Node "200"
+				{
+					str Type = "Special";
+					str Style = "Desc:Highlight";
+					str Text = "<% 바꿔주시용 %>";
+				}
+				
+				Node "300"
+				{
+					str Text = " <- 바꾸고 강조   " / "  - 막줄<LF>";
+				}
+			}
+		}
+	}
+}
+
+Node "WindowTitle"
+{
+	str Type = "Medium";
+	str Style = "WindowTitle:Back";
+
+	Node "0"
+	{
+		str Text = "윈도우 ";
+	}
+
+	Node "1"
+	{
+		str Style = "WindowTitle:Front";
+		str Text = "타이틀";
+	}
+	
+	Node "2"
+	{
+		str Text = " 샘플!";
+	}
+}
+
+Node "Theme"
+{
+	Node "Default"
+	{
+		Node "Small"
+		{
+			str Type = "Small";
+			str Style = "WindowTitle:Front";
+		}
+		
+		Node "Medium"
+		{
+			str Type = "Medium";
+			str Style = "WindowTitle:Front";
+		}
+		
+		Node "Large"
+		{
+			str Type = "Large";
+			str Style = "WindowTitle:Front";
+		}
+	}
+}
+
+Node "Test"
+{
+	Node "CheckBox"
+	{
+		str Type = "Small";
+		str Text = "체크박스 샘플";
+	}
+}

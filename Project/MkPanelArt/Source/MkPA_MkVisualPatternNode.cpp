@@ -4,6 +4,7 @@
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkVisualPatternNode.h"
+#include "MkPA_MkWindowManagerNode.h"
 
 
 const MkHashStr MkVisualPatternNode::ObjKey_AlignPosition(L"AlignPosition");
@@ -118,19 +119,33 @@ MkVisualPatternNode::MkVisualPatternNode(const MkHashStr& name) : MkSceneNode(na
 void MkVisualPatternNode::_UpdateAlignment(void)
 {
 	const MkFloatRect& targetRect = GetAlignmentTargetIsWindowRect() ? this->GetWindowRect() : this->GetClientRect();
-	if (targetRect.SizeIsNotZero() && (m_ParentNodePtr != NULL) && m_ParentNodePtr->IsDerivedFrom(ePA_SNT_VisualPatternNode))
+	if (targetRect.SizeIsNotZero() && (m_ParentNodePtr != NULL))
 	{
-		const MkVisualPatternNode* parentVPNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
-		if (parentVPNode != NULL)
+		MkFloatRect pivotRect;
+		if (m_ParentNodePtr->IsDerivedFrom(ePA_SNT_VisualPatternNode))
 		{
-			const MkFloatRect& pivotRect = GetAlignmentPivotIsWindowRect() ? parentVPNode->GetWindowRect() : parentVPNode->GetClientRect();
-			if (pivotRect.SizeIsNotZero())
+			const MkVisualPatternNode* parentOriginNode = dynamic_cast<const MkVisualPatternNode*>(m_ParentNodePtr);
+			if (parentOriginNode != NULL)
 			{
-				MkFloat2 snapPos = pivotRect.GetSnapPosition
-					(MkFloatRect(GetLocalPosition() + targetRect.position, targetRect.size), m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
-
-				SetLocalPosition(snapPos + m_AlignmentOffset - targetRect.position);
+				pivotRect = GetAlignmentPivotIsWindowRect() ? parentOriginNode->GetWindowRect() : parentOriginNode->GetClientRect();
 			}
+		}
+		else if (m_ParentNodePtr->IsDerivedFrom(ePA_SNT_WindowManagerNode))
+		{
+			const MkWindowManagerNode* parentOriginNode = dynamic_cast<const MkWindowManagerNode*>(m_ParentNodePtr);
+			if (parentOriginNode != NULL)
+			{
+				pivotRect.size.x = static_cast<float>(parentOriginNode->__GetSystemRectSize().x);
+				pivotRect.size.y = static_cast<float>(parentOriginNode->__GetSystemRectSize().y);
+			}
+		}
+
+		if (pivotRect.SizeIsNotZero())
+		{
+			MkFloat2 snapPos = pivotRect.GetSnapPosition
+				(MkFloatRect(GetLocalPosition() + targetRect.position, targetRect.size), m_AlignmentPosition, MkFloat2::Zero, false); // border is zero
+
+			SetLocalPosition(snapPos + m_AlignmentOffset - targetRect.position);
 		}
 	}
 }

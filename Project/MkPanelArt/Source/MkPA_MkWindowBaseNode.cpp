@@ -123,6 +123,11 @@ void MkWindowBaseNode::UpdateCursorInput
 			}
 		}
 
+		if (!movement.IsZero())
+		{
+			_StartCursorReport(ePA_SNE_CursorMoved, position);
+		}
+
 		if (wheelDelta != 0)
 		{
 			MkDataNode arg;

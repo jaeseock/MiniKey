@@ -115,8 +115,8 @@ void MkSliderControlNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 		_ApplyValueToSliderButton();
 	}
 
-	// 수직 slider인데 wheel이 움직였으면 value 변경, event 소멸
-	if ((eventType == ePA_SNE_WheelMoved) && (!m_Horizontal) && (argument != NULL))
+	// wheel이 움직였으면 value 변경, event 소멸
+	if ((eventType == ePA_SNE_WheelMoved) && (argument != NULL))
 	{
 		int delta;
 		if (argument->GetData(MkWindowBaseNode::ArgKey_WheelDelta, delta, 0))

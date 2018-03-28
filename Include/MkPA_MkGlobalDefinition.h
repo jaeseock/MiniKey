@@ -82,6 +82,7 @@ enum ePA_SceneNodeEvent
 	// MkWindowBaseNode
 	ePA_SNE_CursorEntered,
 	ePA_SNE_CursorLeft,
+	ePA_SNE_CursorMoved, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
 	ePA_SNE_CursorLBtnPressed, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
 	ePA_SNE_CursorLBtnReleased, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
 	ePA_SNE_CursorLBtnDBClicked, // ArgKey_CursorLocalPosition : MkVec2(local x, y), ArgKey_CursorWorldPosition : MkVec2(world x, y)
