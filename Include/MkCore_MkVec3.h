@@ -125,7 +125,7 @@ public:
 	inline float SquaredLength(void) const { return (x * x + y * y + z * z); }
 
 	// 길이를 구함
-	inline float Length(void) const { return sqrt(SquaredLength()); }
+	inline float Length(void) const { return sqrtf(SquaredLength()); }
 
 	// 내적
 	inline float DotProduct(const MkVec3& vec) const { return (x * vec.x + y * vec.y + z * vec.z); }
@@ -180,9 +180,9 @@ public:
 	// 가장 큰 축을 결정
 	inline eAxis GetGreatestAxis(void) const
 	{
-		float ax = abs(x);
-		float ay = abs(y);
-		float az = abs(z);
+		float ax = fabsf(x);
+		float ay = fabsf(y);
+		float az = fabsf(z);
 		if ((ax >= ay) && (ax >= az)) return (x >= 0.f) ? ePositiveX : eNegativeX;
 		if ((ay >= ax) && (ay >= az)) return (y >= 0.f) ? ePositiveY : eNegativeY;
 		if ((az >= ax) && (az >= ay)) return (z >= 0.f) ? ePositiveZ : eNegativeZ;

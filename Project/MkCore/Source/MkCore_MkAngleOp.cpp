@@ -54,12 +54,12 @@ float MkAngleOp::GetRotatationDelta(float radius, float movementDelta)
 
 float MkAngleOp::Sin(float radian)
 {
-	return sin(radian);
+	return sinf(radian);
 }
 
 float MkAngleOp::Cos(float radian)
 {
-	return cos(radian);
+	return cosf(radian);
 }
 
 float MkAngleOp::Tan(float radian)
@@ -68,22 +68,22 @@ float MkAngleOp::Tan(float radian)
 
 	// tan의 경우 sin / cos이므로 cos이 0이 되는 0.5*PI와 1.5*PI는 존재하지 않음
 	return (MkFloatOp::CloseToNear(unitRadian, MKDEF_PI * 0.5f) || MkFloatOp::CloseToNear(unitRadian, MKDEF_PI * 1.5f)) ?
-		FLT_MAX : tan(unitRadian);
+		FLT_MAX : tanf(unitRadian);
 }
 
 float MkAngleOp::ASin(float value)
 {
-	return asin(Clamp<float>(value, -1.f, 1.f));
+	return asinf(Clamp<float>(value, -1.f, 1.f));
 }
 
 float MkAngleOp::ACos(float value)
 {
-	return acos(Clamp<float>(value, -1.f, 1.f));
+	return acosf(Clamp<float>(value, -1.f, 1.f));
 }
 
 float MkAngleOp::ATan(float value)
 {
-	return atan(Clamp<float>(value, -1.f, 1.f));
+	return atanf(Clamp<float>(value, -1.f, 1.f));
 }
 
 //------------------------------------------------------------------------------------------------//

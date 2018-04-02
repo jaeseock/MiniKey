@@ -7,7 +7,7 @@
 
 float MkFloatOp::SnapToLowerBound(float source, float grid)
 {
-	return (floor(source / grid) * grid);
+	return (floorf(source / grid) * grid);
 }
 
 double MkFloatOp::SnapToLowerBound(double source, double grid)
@@ -17,7 +17,7 @@ double MkFloatOp::SnapToLowerBound(double source, double grid)
 
 float MkFloatOp::SnapToUpperBound(float source, float grid)
 {
-	return (ceil(source / grid) * grid);
+	return (ceilf(source / grid) * grid);
 }
 
 double MkFloatOp::SnapToUpperBound(double source, double grid)
@@ -37,7 +37,7 @@ double MkFloatOp::GetRemainder(double source, double divider)
 
 float MkFloatOp::RoundingOff(float source)
 {
-	return floor(source + 0.5f);
+	return floorf(source + 0.5f);
 }
 
 double MkFloatOp::RoundingOff(double source)
@@ -93,7 +93,7 @@ float MkFloatOp::LinearInterpolate(float a, float b, float fraction)
 
 float MkFloatOp::CosineInterpolate(float a, float b, float fraction)
 {
-	float f = (1.f - cos(fraction * MKDEF_PI)) * 0.5f;
+	float f = (1.f - cosf(fraction * MKDEF_PI)) * 0.5f;
 	return LinearInterpolate(a, b, f);
 }
 

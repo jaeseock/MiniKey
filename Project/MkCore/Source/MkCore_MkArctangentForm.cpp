@@ -19,8 +19,8 @@ bool MkArctangentForm::SetUp(float frontRange, float backRange)
 		return false;
 	}
 
-	m_BeginWeight = atan(m_FrontRange * MKDEF_ARCTAN_SEED_GEN_RADIAN);
-	m_EndWeight = atan(backRange * MKDEF_ARCTAN_SEED_GEN_RADIAN) - m_BeginWeight;
+	m_BeginWeight = atanf(m_FrontRange * MKDEF_ARCTAN_SEED_GEN_RADIAN);
+	m_EndWeight = atanf(backRange * MKDEF_ARCTAN_SEED_GEN_RADIAN) - m_BeginWeight;
 
 	return true;
 }
@@ -34,7 +34,7 @@ float MkArctangentForm::GetGraph(float x) const
 	x = Clamp<float>(x, 0.f, 1.f);
 
 	// atan
-	float atValue = atan((x * m_LengthOfRange + m_FrontRange) * MKDEF_ARCTAN_SEED_GEN_RADIAN) - m_BeginWeight;
+	float atValue = atanf((x * m_LengthOfRange + m_FrontRange) * MKDEF_ARCTAN_SEED_GEN_RADIAN) - m_BeginWeight;
 
 	// convert to 0 ~ 1
 	return (atValue / m_EndWeight);

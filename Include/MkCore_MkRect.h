@@ -206,12 +206,12 @@ public:
 			MkFloat2 direction(static_cast<float>(toTarget.x), static_cast<float>(toTarget.y));
 
 			// 방향 단위벡터를 구함. 중점이 겹치면 (0.f, -1.f)를, 아니면 자신 중점부터 rect 중점까지의 벡터를 사용
-			float length = sqrt(direction.x * direction.x + direction.y * direction.y);
+			float length = sqrtf(direction.x * direction.x + direction.y * direction.y);
 			direction = (length == 0.f) ? MkFloat2(0.f, -1.f) : (direction / length);
 
 			// 이동할 벡터 결정
-			float xRate = (direction.x == 0) ? FLT_MAX : abs(static_cast<float>(intersection.size.x) / direction.x); // x축 배율
-			float yRate = (direction.y == 0) ? FLT_MAX : abs(static_cast<float>(intersection.size.y) / direction.y); // y축 배율
+			float xRate = (direction.x == 0) ? FLT_MAX : fabsf(static_cast<float>(intersection.size.x) / direction.x); // x축 배율
+			float yRate = (direction.y == 0) ? FLT_MAX : fabsf(static_cast<float>(intersection.size.y) / direction.y); // y축 배율
 			direction *= GetMin<float>(xRate, yRate);
 			MkType2<DataType> movement(static_cast<DataType>(direction.x), static_cast<DataType>(direction.y));
 

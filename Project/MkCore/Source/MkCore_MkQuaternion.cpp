@@ -22,7 +22,7 @@ void MkQuaternion::FromMat3(const MkMat3& mat)
 	if (trace > 0.f)
 	{
 		// |w| > 1/2, may as well choose w > 1/2
-		float root = sqrt(trace + 1.0f); // 2w
+		float root = sqrtf(trace + 1.0f); // 2w
 		w = 0.5f * root;
 		root = 0.5f / root; // 1/(4w)
 		x = (mat.m[2][1] - mat.m[1][2]) * root;
@@ -40,7 +40,7 @@ void MkQuaternion::FromMat3(const MkMat3& mat)
 		int j = s_next[i];
 		int k = s_next[j];
 
-		float root = sqrt(mat.m[i][i] - mat.m[j][j] - mat.m[k][k] + 1.f);
+		float root = sqrtf(mat.m[i][i] - mat.m[j][j] - mat.m[k][k] + 1.f);
 		float* apkQuat[3] = {&x, &y, &z};
 		*apkQuat[i] = 0.5f * root;
 		root = 0.5f / root;
@@ -95,7 +95,7 @@ void MkQuaternion::ToAxisRadian(MkVec3& axis, float& radian) const
 	{
 		radian = 2.f * MkAngleOp::ACos(w);
 		//radian = -2.f * MkAngleOp::ACos(w); // CCW
-		float invLength = 1.f / sqrt(sqrLength);
+		float invLength = 1.f / sqrtf(sqrLength);
 		axis.x = x * invLength;
 		axis.y = y * invLength;
 		axis.z = z * invLength;
@@ -166,13 +166,13 @@ MkQuaternion MkQuaternion::Slerp(float t, const MkQuaternion& startQ, const MkQu
 		tmpQ = endQ;
 	}
 
-	if (abs(dotValue) < 1.f)
+	if (fabsf(dotValue) < 1.f)
 	{
-		float sinValue = sqrt(1.f - dotValue * dotValue);
-		float angle = atan2(sinValue, dotValue);
+		float sinValue = sqrtf(1.f - dotValue * dotValue);
+		float angle = atan2f(sinValue, dotValue);
 		float invSin = 1.f / sinValue;
-		float coeff0 = sin((1.f - t) * angle) * invSin;
-		float coeff1 = sin(t * angle) * invSin;
+		float coeff0 = sinf((1.f - t) * angle) * invSin;
+		float coeff1 = sinf(t * angle) * invSin;
 		return (coeff0 * startQ + coeff1 * tmpQ);
 	}
 

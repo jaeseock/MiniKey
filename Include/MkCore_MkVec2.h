@@ -103,7 +103,7 @@ public:
 	inline float SquaredLength(void) const { return (x * x + y * y); }
 
 	// 길이를 구함
-	inline float Length(void) const { return sqrt(SquaredLength()); }
+	inline float Length(void) const { return sqrtf(SquaredLength()); }
 
 	// 내적
 	inline float DotProduct(const MkVec2& vec) const { return (x * vec.x + y * vec.y); }

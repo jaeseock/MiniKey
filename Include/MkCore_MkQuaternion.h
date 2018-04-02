@@ -220,7 +220,7 @@ public:
 	// 길이를 구함
 	inline float Length(void) const
 	{
-		return sqrt(SquaredLength());
+		return sqrtf(SquaredLength());
 	}
 
 	// 내적

@@ -186,7 +186,7 @@ protected:
 			float squared = cd * cd + nd * nd;
 			if (squared > 9.f)
 			{
-				float t = 3.f / sqrt(squared);
+				float t = 3.f / sqrtf(squared);
 				currFactor = t * cd * delta;
 				nextFactor = t * nd * delta;
 			}
