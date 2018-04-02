@@ -96,7 +96,7 @@ MkFloatRect MkRenderTarget::GetRegionRect(void) const
 
 const MkRenderToTexture* MkRenderTarget::GetTargetTexture(unsigned int index) const
 {
-	return m_TargetTexture.IsValidIndex(index) ? m_TargetTexture[index] : NULL;
+	return m_TargetTexture.IsValidIndex(index) ? m_TargetTexture[index].GetPtr() : NULL;
 }
 
 bool MkRenderTarget::__BeginScene(void)
