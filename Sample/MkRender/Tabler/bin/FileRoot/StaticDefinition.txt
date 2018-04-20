@@ -1,0 +1,10 @@
+
+Node "Stage"
+{
+	vec2 ResourceTileSize = (64, 64);
+
+	int2 FieldSizeRange = (3, 3) / (5, 5);
+
+	uint DefaultResourceSlotSize = 6;
+	uint MaxResourceSlotSize = 12;
+}

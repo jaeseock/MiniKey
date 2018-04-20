@@ -1,0 +1,170 @@
+
+str Group = "Stage"; // (opt)그룹명
+
+// subset definition
+/*
+Node "PRIFIX(single일 경우 NAME)"
+{
+	int2 Position = (0, 0); // (opt)위치. 기본값은 (0, 0)
+	int2 Size = (101, 101); // 크기
+	int2 Table = (1, 1); // (opt)테이블의 행렬(xy). 기본값은 (1, 1). 기본값이 (1, 1)이 아닐 경우(복수의 subset 의미) PRIFIX 뒤에 numbering이 붙음
+	int2 Offset = (101, 101); // (opt)Table에서 복수의 subset을 의미할 경우 다음 subset 탐색시의 이동 거리. 수평이동시 x, 수직이동시 y 사용. 기본값은 Size
+}
+*/
+
+Node "ResBG_Normal"
+{
+	int2 Position = (0, 0);
+	int2 Size = (64, 64);
+}
+
+Node "ResBG_Dark"
+{
+	int2 Position = (64, 0);
+	int2 Size = (64, 64);
+}
+
+Node "ResBG_Light"
+{
+	int2 Position = (128, 0);
+	int2 Size = (64, 64);
+}
+
+Node "Slot_Empty"
+{
+	int2 Position = (192, 0);
+	int2 Size = (64, 64);
+}
+
+Node "PlayerColor_"
+{
+	int2 Position = (0, 64);
+	int2 Size = (64, 64);
+	int2 Table = (4, 1);
+}
+
+Node "ResIndexLight_0"
+{
+	int2 Position = (0, 128);
+	int2 Size = (16, 34);
+}
+
+Node "ResIndexLight_1"
+{
+	int2 Position = (24, 128);
+	int2 Size = (24, 34);
+}
+
+Node "ResIndexLight_2"
+{
+	int2 Position = (48, 128);
+	int2 Size = (25, 34);
+}
+
+Node "ResIndexLight_3"
+{
+	int2 Position = (74, 128);
+	int2 Size = (25, 34);
+}
+
+Node "ResIndexLight_4"
+{
+	int2 Position = (101, 128);
+	int2 Size = (24, 34);
+}
+
+Node "ResIndexLight_5"
+{
+	int2 Position = (126, 128);
+	int2 Size = (25, 34);
+}
+
+Node "ResIndexLight_6"
+{
+	int2 Position = (152, 128);
+	int2 Size = (24, 34);
+}
+
+Node "ResIndexLight_7"
+{
+	int2 Position = (177, 128);
+	int2 Size = (26, 34);
+}
+
+Node "ResIndexLight_8"
+{
+	int2 Position = (203, 128);
+	int2 Size = (25, 34);
+}
+
+Node "ResIndexDark_0"
+{
+	int2 Position = (0, 162);
+	int2 Size = (16, 34);
+}
+
+Node "ResIndexDark_1"
+{
+	int2 Position = (24, 162);
+	int2 Size = (24, 34);
+}
+
+Node "ResIndexDark_2"
+{
+	int2 Position = (48, 162);
+	int2 Size = (25, 34);
+}
+
+Node "ResIndexDark_3"
+{
+	int2 Position = (74, 162);
+	int2 Size = (25, 34);
+}
+
+Node "ResIndexDark_4"
+{
+	int2 Position = (101, 162);
+	int2 Size = (24, 34);
+}
+
+Node "ResIndexDark_5"
+{
+	int2 Position = (126, 162);
+	int2 Size = (25, 34);
+}
+
+Node "ResIndexDark_6"
+{
+	int2 Position = (152, 162);
+	int2 Size = (24, 34);
+}
+
+Node "ResIndexDark_7"
+{
+	int2 Position = (177, 162);
+	int2 Size = (26, 34);
+}
+
+Node "ResIndexDark_8"
+{
+	int2 Position = (203, 162);
+	int2 Size = (25, 34);
+}
+
+Node "Set3"
+{
+	int2 Position = (0, 196);
+	int2 Size = (36, 31);
+}
+
+Node "Set4"
+{
+	int2 Position = (36, 196);
+	int2 Size = (30, 30);
+}
+
+Node "Set5"
+{
+	int2 Position = (66, 196);
+	int2 Size = (39, 36);
+}

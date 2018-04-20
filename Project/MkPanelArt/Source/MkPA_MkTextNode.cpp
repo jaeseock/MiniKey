@@ -504,6 +504,10 @@ void MkTextNode::Build(void)
 
 	_ApplySingleLineOutputData(lineData, maxFontHeight);
 
+	if (m_WholePixelSize.x > 0)
+	{
+		m_WholePixelSize.x += 1; // font style에서 outline이나 shadow를 사용 할 경우 1px 증가 할 수 있으므로 버퍼를 둠
+	}
 	m_WholePixelSize.y += maxFontHeight;
 	m_OutputDataList.OptimizeMemory();
 }

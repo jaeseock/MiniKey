@@ -95,6 +95,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Collisions", "Sample\MkRend
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tabler", "Sample\MkRender\Tabler\Tabler.vcproj", "{35CDB1B5-DED1-460D-9B79-87D2F921F2AC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC} = {30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -216,6 +222,12 @@ Global
 		{2813832E-235F-4D45-A46F-A6998750E1A0}.Release|Win32.Build.0 = Release|Win32
 		{2813832E-235F-4D45-A46F-A6998750E1A0}.Shipping|Win32.ActiveCfg = Release|Win32
 		{2813832E-235F-4D45-A46F-A6998750E1A0}.Shipping|Win32.Build.0 = Release|Win32
+		{35CDB1B5-DED1-460D-9B79-87D2F921F2AC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{35CDB1B5-DED1-460D-9B79-87D2F921F2AC}.Debug|Win32.Build.0 = Debug|Win32
+		{35CDB1B5-DED1-460D-9B79-87D2F921F2AC}.Release|Win32.ActiveCfg = Release|Win32
+		{35CDB1B5-DED1-460D-9B79-87D2F921F2AC}.Release|Win32.Build.0 = Release|Win32
+		{35CDB1B5-DED1-460D-9B79-87D2F921F2AC}.Shipping|Win32.ActiveCfg = Shipping|Win32
+		{35CDB1B5-DED1-460D-9B79-87D2F921F2AC}.Shipping|Win32.Build.0 = Shipping|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
