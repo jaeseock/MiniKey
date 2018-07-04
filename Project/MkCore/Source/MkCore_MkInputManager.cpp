@@ -36,6 +36,8 @@ void MkInputManager::SetUp(HWND targetWindowHandle)
 	keyCodeList.PushBack(VK_CONTROL);
 	keyCodeList.PushBack(VK_ESCAPE);
 	keyCodeList.PushBack(VK_SPACE);
+	keyCodeList.PushBack(VK_OEM_PLUS);
+	keyCodeList.PushBack(VK_OEM_MINUS);
 
 	// 방향키 등록
 	keyCodeList.PushBack(VK_LEFT);

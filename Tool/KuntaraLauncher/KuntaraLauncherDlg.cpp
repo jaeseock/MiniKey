@@ -66,6 +66,9 @@ BOOL CKuntaraLauncherDlg::OnInitDialog()
 
 	CDialog::OnInitDialog();
 
+	SetWindowTextW("Kuntara Launcher");
+	ModifyStyle(0, WS_SYSMENU, 0);
+
 	if (!APP_MGR.GetApplication().SetUpFramework(m_hWnd, L"", true, false))
 	{
 		AfxGetMainWnd()->PostMessage(WM_CLOSE);

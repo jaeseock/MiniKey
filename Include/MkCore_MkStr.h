@@ -159,6 +159,10 @@ public:
 	// (NOTE) 공문자 허용하지 않음
 	bool IsDigit(void) const;
 
+	// 해당 문자열의 유니코드 대역폭을 조사해 코드 페이지 반환
+	// (NOTE) 다국어가 섞여 있는 경우 우선순위가 높은 CP를 반환(ex> 영어, 한자, 일본어가 섞여 있을 경우 일본어로 인식)
+	unsigned int GetRepresentativeCodePage(void) const;
+
 	// 포인터 반환
 	// std::wstring 형태를 원할 경우 직접할당 가능
 	// ex>

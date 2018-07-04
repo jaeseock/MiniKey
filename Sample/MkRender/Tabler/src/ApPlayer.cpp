@@ -1,5 +1,7 @@
 
 #include "MkCore_MkCheck.h"
+#include "MkCore_MkDevPanel.h"
+#include "MkCore_MkPairArray.h"
 
 #include "MkPA_MkSceneNode.h"
 #include "MkPA_MkTextNode.h"
@@ -22,11 +24,11 @@ bool ApPlayer::SetUp(unsigned int sequence, const MkStr& name, eStandPosition sP
 	MK_CHECK(m_SceneNode != NULL, L"m_SceneNode가 NULL임")
 		return false;
 
+	// slot node
 	MkSceneNode* slotNode = m_SceneNode->CreateChildNode(L"Slot");
 	MK_CHECK(slotNode != NULL, L"slotNode가 NULL임")
 		return false;
-
-	// position
+	
 	MkFloat2 localPos;
 	switch (m_StandPosition)
 	{
@@ -40,6 +42,16 @@ bool ApPlayer::SetUp(unsigned int sequence, const MkStr& name, eStandPosition sP
 	if (m_StandPosition != eSP_Down)
 	{
 		slotNode->SetLocalScale(0.5f);
+	}
+
+	// pick node
+	if (m_StandPosition == eSP_Down)
+	{
+		MkSceneNode* pickNode = m_SceneNode->CreateChildNode(L"Pick");
+		MK_CHECK(pickNode != NULL, L"pickNode가 NULL임")
+			return false;
+
+		pickNode->SetLocalPosition(MkFloat2(0.f, 138.f) + ApStaticDefinition::Instance().GetResourceTileSize() * 0.5f);
 	}
 
 	// empty slot
@@ -130,7 +142,7 @@ bool ApPlayer::HasEmptyResourceSlot(void) const
 	return (m_ResourceSlot.GetSize() < m_MaxResourceSlotSize);
 }
 
-bool ApPlayer::AddResource(unsigned int key, const ApResourceType& type)
+bool ApPlayer::AddResource(unsigned int key, const ApResourceType& type, const MkTimeState& timeState)
 {
 	bool ok = ((m_SceneNode != NULL) && HasEmptyResourceSlot());
 	if (ok)
@@ -145,6 +157,7 @@ bool ApPlayer::AddResource(unsigned int key, const ApResourceType& type)
 
 		ApResourceUnit& resUnit = m_ResourcePool.Create(key);
 		resUnit.SetUp(type, resNode, L"Image\\stage_total.png");
+		resUnit.ApplyCreationEffect(timeState);
 
 		//
 		resUnit.PlayerCommand_Wait();
@@ -155,11 +168,140 @@ bool ApPlayer::AddResource(unsigned int key, const ApResourceType& type)
 	return ok;
 }
 
-void ApPlayer::UpdateSlotPosition(void)
+bool ApPlayer::SelectResource(unsigned int slotIndex)
 {
+	MK_DEV_PANEL.MsgToLog(MkStr(slotIndex));
+
+	if (!m_ResourceSlot.IsValidIndex(slotIndex))
+		return false;
+
+	MkSceneNode* pickNode = m_SceneNode->GetChildNode(L"Pick");
+	
+	unsigned int key = m_ResourceSlot[slotIndex];
+	ApResourceUnit& targetUnit = m_ResourcePool[key];
+
+	// select
+	if (targetUnit.GetBackgroundType() == ApResourceUnit::eBT_Owned)
+	{
+		if (m_SelectionSlot.GetSize() == 6) // max
+			return false;
+
+		m_SelectionSlot.PushBack(key);
+		
+		if (!targetUnit.PlayerCommand_Pick())
+			return false;
+
+		ApResourceUnit& newUnit = m_SelectionPool.Create(key);
+		MkSceneNode* resNode = NULL;
+		if (pickNode != NULL)
+		{
+			resNode = pickNode->CreateChildNode(MkStr(key));
+			MK_CHECK(resNode != NULL, L"resNode가 NULL임")
+				return false;
+		}
+		newUnit.SetUp(targetUnit.GetType(), resNode, L"Image\\stage_total.png");
+		newUnit.PlayerCommand_Wait();
+	}
+	// cancel
+	else
+	{
+		if (!targetUnit.PlayerCommand_Wait())
+			return false;
+
+		if (pickNode != NULL)
+		{
+			pickNode->RemoveChildNode(MkStr(key));
+		}
+
+		m_SelectionPool.Erase(key);
+
+		unsigned int selPos = m_SelectionSlot.FindFirstInclusion(MkArraySection(0), key);
+		if (selPos != MKDEF_ARRAY_ERROR)
+		{
+			m_SelectionSlot.Erase(MkArraySection(selPos, 1));
+		}
+	}
+
+	_UpdatePickNode(pickNode);
+	_FindSet();
+	return true;
+}
+
+bool ApPlayer::SelectResource(const MkFloat2& hitPos)
+{
+	MK_INDEXING_LOOP(m_ResourceSlot, i)
+	{
+		if (m_ResourcePool[m_ResourceSlot[i]].HitTest(hitPos))
+		{
+			return SelectResource(i);
+		}
+	}
+	return false;
+}
+
+void ApPlayer::ClearSelection(void)
+{
+	MkSceneNode* pickNode = m_SceneNode->GetChildNode(L"Pick");
+	if (pickNode != NULL)
+	{
+		pickNode->Clear();
+	}
+	m_SelectionPool.Clear();
+	m_SelectionSlot.Clear();
+}
+
+void ApPlayer::ConsumeSelection(void)
+{
+	MkSceneNode* slotNode = m_SceneNode->GetChildNode(L"Slot");
+	MK_INDEXING_LOOP(m_SelectionSlot, i)
+	{
+		unsigned int key = m_SelectionSlot[i];
+		if (slotNode != NULL)
+		{
+			slotNode->RemoveChildNode(MkStr(key));
+		}
+		m_ResourcePool.Erase(key);
+
+		unsigned int slotPos = m_ResourceSlot.FindFirstInclusion(MkArraySection(0), key);
+		if (slotPos != MKDEF_ARRAY_ERROR)
+		{
+			m_ResourceSlot.Erase(MkArraySection(slotPos, 1));
+		}
+	}
+
+	if (!m_SelectionSlot.Empty())
+	{
+		UpdateResourceSlotPosition();
+	}
+
+	ClearSelection();
+}
+
+void ApPlayer::UpdateResourceSlotPosition(void)
+{
+	// sort
+	MkPairArray<unsigned int, unsigned int> sorter(m_ResourceSlot.GetSize()); // type, key
+	MK_INDEXING_LOOP(m_ResourceSlot, i)
+	{
+		unsigned int key = m_ResourceSlot[i];
+		sorter.PushBack(m_ResourcePool[key].GetType().GetValue(), key);
+	}
+	sorter.SortInAscendingOrder();
+	m_ResourceSlot = sorter.GetFields();
+
+	// reposition
 	for (unsigned int i=0; i<ApStaticDefinition::Instance().GetMaxResourceSlotSize(); ++i)
 	{
 		_UpdateSlotPosition(i);
+	}
+}
+
+void ApPlayer::Update(const MkTimeState& timeState)
+{
+	MkMapLooper<unsigned int, ApResourceUnit> looper(m_ResourcePool);
+	MK_STL_LOOP(looper)
+	{
+		looper.GetCurrentField().Update(timeState);
 	}
 }
 
@@ -218,6 +360,26 @@ MkFloat2 ApPlayer::_GetEmptySlotPosition(unsigned int index) const
 		break;
 	}
 	return localPos;
+}
+
+void ApPlayer::_UpdatePickNode(MkSceneNode* pickNode)
+{
+	if (pickNode != NULL)
+	{
+		MK_INDEXING_LOOP(m_SelectionSlot, i)
+		{
+			unsigned int key = m_SelectionSlot[i];
+			MkSceneNode* resNode = pickNode->GetChildNode(MkStr(key));
+			if (resNode != NULL)
+			{
+				resNode->SetLocalPosition(MkFloat2(ApStaticDefinition::Instance().GetResourceTileSize().x * static_cast<float>(i), 0.f));
+			}
+		}
+	}
+}
+
+void ApPlayer::_FindSet(void)
+{
 }
 
 //------------------------------------------------------------------------------------------------//

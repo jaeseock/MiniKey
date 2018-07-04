@@ -13,6 +13,8 @@ public:
 	bool SetUp(const MkUInt2& size, MkSceneNode* parentSceneNode);
 
 	inline const MkUInt2& GetFieldSize(void) const { return m_FieldSize; }
+
+	void Update(const MkTimeState& timeState);
 	
 	ApField();
 

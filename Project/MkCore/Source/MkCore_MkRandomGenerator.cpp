@@ -28,7 +28,7 @@ double MkRandomGenerator::GetRandomValue(void)
 	double v2 = static_cast<double>(m_Seed[2]) / 30323.;
 
 	double x = v0 + v1 + v2; // 0. ~ 3.
-	return (x - floorf(x)); // 소수부 반환
+	return (x - floor(x)); // 소수부 반환
 }
 
 unsigned int MkRandomGenerator::GetRandomNumber(unsigned int offset)

@@ -31,6 +31,7 @@
 // static value
 static unsigned int gCurrentCodePage = CP_ACP;
 static MkArray<wchar_t> gBlankTag;
+static MkMap<unsigned int, unsigned int> gUnicodeBandwidth;
 
 //------------------------------------------------------------------------------------------------//
 
@@ -66,6 +67,33 @@ void MkStr::SetUp(unsigned int codePage)
 		gBlankTag.PushBack(MKDEF_WCHAR_LINEFEED);
 		gBlankTag.PushBack(MKDEF_WCHAR_RETURN);
 		gBlankTag.PushBack(MKDEF_WCHAR_SPACE);
+	}
+
+	// https://namu.wiki/w/%EC%9C%A0%EB%8B%88%EC%BD%94%EB%93%9C#s-4.1
+	// BMP만 대상으로 함
+	if (gUnicodeBandwidth.Empty())
+	{
+		gUnicodeBandwidth.Create(0, 0); // ansi. 무시
+		gUnicodeBandwidth.Create(0x80, 1252); // latin. 유럽권은 어지간하면 이거 하나로 커버 됨
+		gUnicodeBandwidth.Create(0x250, 0); // 무시
+		gUnicodeBandwidth.Create(0x370, 737); // Greek
+		gUnicodeBandwidth.Create(0x400, 1251); // Cyrillic
+		gUnicodeBandwidth.Create(0x530, 0); // 무시
+		gUnicodeBandwidth.Create(0xE00, 874); // Thai
+		gUnicodeBandwidth.Create(0xE80, 0); // 무시
+		gUnicodeBandwidth.Create(0x3040, 932); // Japanese
+		gUnicodeBandwidth.Create(0x3100, 0); // 무시
+		gUnicodeBandwidth.Create(0x31F0, 932); // Japanese
+		gUnicodeBandwidth.Create(0x3200, 0); // 무시
+		gUnicodeBandwidth.Create(0x3400, 932); // Chinese. 한중일 통합 한자 확장 A
+		gUnicodeBandwidth.Create(0x4DC0, 0); // 무시
+		gUnicodeBandwidth.Create(0x4E00, 932); // Chinese. 한중일 통합 한자
+		gUnicodeBandwidth.Create(0xA000, 0); // 무시
+		gUnicodeBandwidth.Create(0xAC00, 949); // 완성형 한글(조합형은 무시)
+		gUnicodeBandwidth.Create(0xD7B0, 0); // 무시
+		gUnicodeBandwidth.Create(0xF900, 932); // Chinese. 한중일 통합 한자
+		gUnicodeBandwidth.Create(0xFB00, 0); // 무시
+		
 	}
 }
 
@@ -397,6 +425,16 @@ bool MkStr::IsDigit(void) const
 			return false;
 	}
 	return true;
+}
+
+unsigned int MkStr::GetRepresentativeCodePage(void) const
+{
+	unsigned int codePage = 0;
+	MK_INDEXING_LOOP(m_Str, i)
+	{
+		//m_Str[i];
+	}
+	return codePage;
 }
 
 const wchar_t& MkStr::GetAt(unsigned int offset) const

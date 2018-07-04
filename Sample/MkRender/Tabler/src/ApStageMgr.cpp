@@ -1,6 +1,7 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkDevPanel.h"
+#include "MkCore_MkInputManager.h"
 
 #include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkSceneNode.h"
@@ -43,7 +44,7 @@ bool ApStageMgr::SetField(const MkUInt2& size, MkSceneNode* rootNode)
 	return true;
 }
 
-bool ApStageMgr::AddPlayer(const MkHashStr& name, ApPlayer::eStandPosition standPos, ApResourceUnit::eTeamColor teamColor, unsigned int initResSlotSize, unsigned int initResCount)
+bool ApStageMgr::AddPlayer(const MkHashStr& name, ApPlayer::eStandPosition standPos, ApResourceUnit::eTeamColor teamColor, unsigned int initResSlotSize)
 {
 	MkSceneNode* playerNode = m_StageNode->GetChildNode(L"<Player>");
 	if (playerNode == NULL)
@@ -56,14 +57,6 @@ bool ApStageMgr::AddPlayer(const MkHashStr& name, ApPlayer::eStandPosition stand
 	if (!player.SetUp(playerIndex, name, standPos, teamColor, initResSlotSize, playerNode))
 		return false;
 
-	// 시작 자원
-	initResCount = GetMin<unsigned int>(initResCount, initResSlotSize);
-	for (unsigned int i=0; i<initResCount; ++i)
-	{
-		_GenerateResource(playerIndex);
-	}
-
-	player.UpdateSlotPosition();
 	return true;
 }
 
@@ -78,9 +71,10 @@ void ApStageMgr::SetFlowInfo(unsigned int turnPerRound, unsigned int maxRound)
 	m_MaxRound = GetMax<unsigned int>(1, maxRound);
 
 	m_CurrTurn = 0;
-	m_MainState = eMS_Start;
-	//m_TurnState = eTS_Start;
-
+	m_LastMainState = eMS_None;
+	m_CurrMainState = eMS_Start;
+	m_CurrPlayerIndex = 0;
+	
 	MkTextNode textNode;
 	{
 		MkPanel& panel = m_StageNode->CreatePanel(L"TurnInfo");
@@ -88,8 +82,6 @@ void ApStageMgr::SetFlowInfo(unsigned int turnPerRound, unsigned int maxRound)
 		textNode.SetFontStyle(L"AP:Stage:TurnInfo");
 		panel.SetTextNode(textNode);
 		panel.SetLocalPosition(MkFloat2(50.f, 770.f));
-
-		_UpdateCurrentTurnInfoText(0);
 	}
 	{
 		MkPanel& panel = m_StageNode->CreatePanel(L"Msg");
@@ -102,24 +94,15 @@ void ApStageMgr::SetFlowInfo(unsigned int turnPerRound, unsigned int maxRound)
 
 void ApStageMgr::Update(const MkTimeState& timeState)
 {
-	switch (m_MainState)
+	switch (m_CurrMainState)
 	{
 	case eMS_Start: _UpdateMS_Start(timeState); break;
-	case eMS_Welcome: _UpdateMS_Welcome(timeState); break;
 	case eMS_Play: _UpdateMS_Play(timeState); break;
 	case eMS_Result: _UpdateMS_Result(timeState); break;
 	case eMS_Exit: _UpdateMS_Exit(timeState); break;
 	}
 
-	// msg
-	MkPanel* panel = m_StageNode->GetPanel(L"Msg");
-	if ((panel != NULL) && panel->GetVisible())
-	{
-		if (m_MsgCounter.OnTick(timeState))
-		{
-			panel->SetVisible(false);
-		}
-	}
+	_UpdateMS_All(timeState);	
 }
 
 void ApStageMgr::Clear(void)
@@ -136,32 +119,67 @@ ApStageMgr::ApStageMgr()
 
 //------------------------------------------------------------------------------------------------//
 
-bool ApStageMgr::_GenerateResource(unsigned int index)
+bool ApStageMgr::_GenerateRandomResource(unsigned int playerIndex, unsigned int count, bool showMsg, const MkTimeState& timeState)
 {
-	ApPlayer* player = GetPlayer(index);
+	ApPlayer* player = GetPlayer(playerIndex);
 	if (player != NULL)
 	{
-		if (player->HasEmptyResourceSlot())
+		unsigned int lastResID = m_CurrResourceID;
+		for (unsigned int i=0; i<count; ++i)
 		{
-			m_ResourceDice.SetMinMax(0, m_Field.GetFieldSize().x - 1);
-			unsigned int resRow = m_ResourceDice.GenerateRandomNumber();
-			m_ResourceDice.SetMinMax(0, m_Field.GetFieldSize().y - 1);
-			unsigned int resColumn = m_ResourceDice.GenerateRandomNumber();
-			ApResourceType resType(ApResourceType::eK_Normal, resRow, resColumn);
-
-			if (player->AddResource(m_CurrResourceID, resType))
+			if (player->HasEmptyResourceSlot())
 			{
-				MK_DEV_PANEL.MsgToLog(L"Generate res to " + player->GetName() + L" (" + MkStr(m_CurrResourceID) + L") " + MkStr(resType.GetRow()) + L"*" + MkStr(resType.GetColumn()));
+				m_ResourceDice.SetMinMax(0, m_Field.GetFieldSize().x - 1);
+				unsigned int resRow = m_ResourceDice.GenerateRandomNumber();
+				m_ResourceDice.SetMinMax(0, m_Field.GetFieldSize().y - 1);
+				unsigned int resColumn = m_ResourceDice.GenerateRandomNumber();
+				ApResourceType resType(ApResourceType::eK_Normal, resRow, resColumn);
 
-				++m_CurrResourceID;
-				return true;
+				if (player->AddResource(m_CurrResourceID, resType, timeState))
+				{
+					if (showMsg)
+					{
+						MkStr msg;
+						msg.Reserve(64);
+						msg += L"[";
+						msg += player->GetName();
+						msg += L"] 플레이어에게 (";
+						msg += resType.GetRow();
+						msg += L"-";
+						msg += resType.GetColumn();
+						msg += L") 자원이 생겼습니다.";
+						_SetMessageText(msg, timeState);
+					}
+					
+					MK_DEV_PANEL.MsgToLog(L"[" + player->GetName() + L"] (" + MkStr(m_CurrResourceID) + L") " + MkStr(resType.GetRow()) + L"-" + MkStr(resType.GetColumn()));
+
+					++m_CurrResourceID;
+				}
 			}
+			else
+			{
+				if (showMsg)
+				{
+					MkStr msg;
+					msg.Reserve(64);
+					msg += L"[";
+					msg += player->GetName();
+					msg += L"] 플레이어의 슬롯이 가득찬 상태입니다.";
+					_SetMessageText(msg, timeState);
+				}
+			}
+		}
+
+		if (lastResID < m_CurrResourceID)
+		{
+			player->UpdateResourceSlotPosition();
+			return true;
 		}
 	}
 	return false;
 }
 
-void ApStageMgr::_UpdateCurrentTurnInfoText(unsigned int currPlayer)
+void ApStageMgr::_UpdateCurrentTurnInfoText(bool showFlowTime, const MkTimeState& timeState)
 {
 	MkPanel* panel = m_StageNode->GetPanel(L"TurnInfo");
 	if (panel != NULL)
@@ -178,8 +196,15 @@ void ApStageMgr::_UpdateCurrentTurnInfoText(unsigned int currPlayer)
 		msg += L"/";
 		msg += m_MaxRound;
 		msg += L")라운드, [";
-		msg += m_Players[currPlayer].GetName();
-		msg += L"] 님의 턴";
+		msg += m_Players[m_CurrPlayerIndex].GetName();
+		msg += L"] 님의 차례.";
+
+		if (showFlowTime && (m_FlowCounter.GetTickCount() > 0.))
+		{
+			msg += L" > ";
+			float remainTime = static_cast<float>(m_FlowCounter.GetTickCount() - m_FlowCounter.GetTickTime(timeState));
+			msg += remainTime;
+		}
 
 		panel->GetTextNodePtr()->SetText(msg);
 		panel->BuildAndUpdateTextCache();
@@ -201,18 +226,46 @@ void ApStageMgr::_SetMessageText(const MkStr& msg, const MkTimeState& timeState)
 
 void ApStageMgr::_UpdateMS_Start(const MkTimeState& timeState)
 {
-	_SetMessageText(L"환영합니다. 잠시 후 게임이 시작됩니다.", timeState);
+	if (m_LastMainState == eMS_None)
+	{
+		// 시작 자원
+		MK_INDEXING_LOOP(m_Players, i)
+		{
+			unsigned int initResCount = m_Players[i].GetMaxResourceSlotSize() / 2;
+			_GenerateRandomResource(i, initResCount, false, timeState);
+		}
 
-	m_FlowCounter.SetUp(timeState, 2.);
-	m_MainState = eMS_Welcome;
-}
+		// start
+		_SetMessageText(L"환영합니다. 잠시 후 게임이 시작됩니다.", timeState);
 
-void ApStageMgr::_UpdateMS_Welcome(const MkTimeState& timeState)
-{
+		m_FlowCounter.SetUp(timeState, 3.);
+	}
+	else
+	{
+		if (m_FlowCounter.OnTick(timeState))
+		{
+			m_CurrMainState = eMS_Play;
+			m_LastPlayerState = ePS_None;
+			m_CurrPlayerState = ePS_GenerateResource;
+
+			m_FlowCounter.SetUp(timeState, 0.);
+		}
+	}
+
+	_UpdateCurrentTurnInfoText(false, timeState);
 }
 
 void ApStageMgr::_UpdateMS_Play(const MkTimeState& timeState)
 {
+	switch (m_CurrPlayerState)
+	{
+	case ePS_GenerateResource: _UpdatePS_GenerateResource(timeState); break;
+	case ePS_Action: _UpdatePS_Action(timeState); break;
+	case ePS_ApplyEvent: _UpdatePS_ApplyEvent(timeState); break;
+	case ePS_Next: _UpdatePS_Next(timeState); break;
+	}
+
+	m_LastPlayerState = m_CurrPlayerState;
 }
 
 void ApStageMgr::_UpdateMS_Result(const MkTimeState& timeState)
@@ -220,6 +273,114 @@ void ApStageMgr::_UpdateMS_Result(const MkTimeState& timeState)
 }
 
 void ApStageMgr::_UpdateMS_Exit(const MkTimeState& timeState)
+{
+}
+
+void ApStageMgr::_UpdateMS_All(const MkTimeState& timeState)
+{
+	m_Field.Update(timeState);
+
+	MK_INDEXING_LOOP(m_Players, i)
+	{
+		m_Players[i].Update(timeState);
+	}
+
+	// msg
+	MkPanel* panel = m_StageNode->GetPanel(L"Msg");
+	if ((panel != NULL) && panel->GetVisible())
+	{
+		if (m_MsgCounter.OnTick(timeState))
+		{
+			panel->SetVisible(false);
+		}
+	}
+
+	m_LastMainState = m_CurrMainState;
+}
+
+void ApStageMgr::_UpdatePS_GenerateResource(const MkTimeState& timeState)
+{
+	if (m_LastPlayerState == ePS_None)
+	{
+		_GenerateRandomResource(m_CurrPlayerIndex, 1, true, timeState);
+
+		ApPlayer* currPlayer = GetPlayer(m_CurrPlayerIndex);
+		if (currPlayer->GetStandPosition() == ApPlayer::eSP_Down)
+		{
+			m_FlowCounter.SetUp(timeState, 10.); // 나는 10초
+		}
+		else
+		{
+			m_FlowCounter.SetUp(timeState, 2.); // ai는 2초
+		}
+		
+		m_CurrPlayerState = ePS_Action;
+	}
+}
+
+void ApStageMgr::_UpdatePS_Action(const MkTimeState& timeState)
+{
+	ApPlayer* currPlayer = GetPlayer(m_CurrPlayerIndex);
+
+	if (m_FlowCounter.OnTick(timeState))
+	{
+		currPlayer->ClearSelection();
+
+		m_FlowCounter.SetUp(timeState, 0.);
+	}
+	else
+	{
+		// 나야나
+		if (currPlayer->GetStandPosition() == ApPlayer::eSP_Down)
+		{
+			// keyboard
+			if (MK_INPUT_MGR.GetKeyPressed(L'0'))
+			{
+				currPlayer->SelectResource(9);
+			}
+			for (wchar_t key = L'1'; key <= L'9'; ++key)
+			{
+				if (MK_INPUT_MGR.GetKeyPressed(static_cast<unsigned int>(key)))
+				{
+					currPlayer->SelectResource(static_cast<unsigned int>(key - L'1'));
+				}
+			}
+			if (MK_INPUT_MGR.GetKeyPressed(VK_OEM_MINUS))
+			{
+				currPlayer->SelectResource(10);
+			}
+			if (MK_INPUT_MGR.GetKeyPressed(VK_OEM_PLUS))
+			{
+				currPlayer->SelectResource(11);
+			}
+
+			// mouse
+			if (MK_INPUT_MGR.GetMouseLeftButtonPressed() || MK_INPUT_MGR.GetMouseLeftButtonDoubleClicked())
+			{
+				MkInt2 hitPos = MK_INPUT_MGR.GetAbsoluteMousePosition(true);
+				currPlayer->SelectResource(MkFloat2(static_cast<float>(hitPos.x), static_cast<float>(hitPos.y)));
+			}
+
+			// cheat : bonus resource
+			if (MK_INPUT_MGR.GetKeyPressed(VK_SPACE))
+			{
+				_GenerateRandomResource(m_CurrPlayerIndex, 1, true, timeState);
+			}
+		}
+		// 다른 플레이어
+		else
+		{
+		}
+	}
+
+	_UpdateCurrentTurnInfoText(true, timeState);
+}
+
+void ApStageMgr::_UpdatePS_ApplyEvent(const MkTimeState& timeState)
+{
+}
+
+void ApStageMgr::_UpdatePS_Next(const MkTimeState& timeState)
 {
 }
 

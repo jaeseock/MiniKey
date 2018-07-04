@@ -24,7 +24,7 @@ protected:
 	void _Clear(void);
 
 	void _AddPurgeDirectory(const MkStr& filePath, MkDataNode& purgeDirNode);
-	bool _PurgeEmptyDirectory(const MkDataNode& purgeDirNode);
+	bool _PurgeEmptyDirectory(MkDataNode& purgeDirNode);
 
 	void _BuildUploadCommand(const MkDataNode& structureNode, const MkPathName& currPath);
 

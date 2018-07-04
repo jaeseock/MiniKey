@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkPathName.h"
+#include "MkCore_MkTimeCounter.h"
 
 #include "ApResourceType.h"
 
@@ -62,6 +63,9 @@ public:
 	bool SetSetType(eSetType setType); // L"Set"
 	inline eSetType GetSetType(void) const { return m_SetType; }
 
+	// effect
+	void ApplyCreationEffect(const MkTimeState& timeState);
+
 	// field command
 	bool FieldCommand_Disable(void);
 	bool FieldCommand_Neutral(void);
@@ -71,10 +75,14 @@ public:
 
 	// player command
 	bool PlayerCommand_Wait(void);
-	bool PlayerCommand_Pick(eTeamColor teamColor);
+	bool PlayerCommand_Pick(void);
 
-	//inline const ApResourceType& GetType(void) const { return m_Type; }
+	inline const ApResourceType& GetType(void) const { return m_Type; }
 	//inline MkSceneNode* GetSceneNode(void) const { return m_SceneNode; }
+
+	bool HitTest(const MkFloat2& hitPos) const;
+
+	void Update(const MkTimeState& timeState);
 
 	ApResourceUnit();
 
@@ -96,4 +104,6 @@ protected:
 	eRowColumnType m_RowColumnType;
 	eTeamColor m_TeamColor;
 	eSetType m_SetType;
+
+	MkTimeCounter m_TimeCounter;
 };

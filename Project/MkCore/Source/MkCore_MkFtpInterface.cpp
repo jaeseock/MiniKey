@@ -193,6 +193,12 @@ bool MkFtpInterface::DeleteChildDirectory(const MkStr& name)
 	if (!_CheckConnection())
 		return false;
 
+	// 빈 디렉토리인지 확인
+	WIN32_FIND_DATA fd;
+	HINTERNET hObject = ::FtpFindFirstFile(m_Connect, name.GetPtr(), &fd, 0, NULL);
+	if (hObject != NULL)
+		return false;
+
 	return (::FtpRemoveDirectory(m_Connect, name.GetPtr()) == TRUE);
 }
 

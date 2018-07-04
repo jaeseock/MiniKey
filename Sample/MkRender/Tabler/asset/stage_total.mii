@@ -12,159 +12,115 @@ Node "PRIFIX(single일 경우 NAME)"
 }
 */
 
-Node "ResBG_Normal"
+Node "TileBG_"
 {
 	int2 Position = (0, 0);
-	int2 Size = (64, 64);
+	int2 Size = (48, 48);
+	int2 Table = (5, 1);
 }
 
-Node "ResBG_Dark"
+Node "TileOverlay_Dark"
 {
-	int2 Position = (64, 0);
-	int2 Size = (64, 64);
+	int2 Position = (240, 0);
+	int2 Size = (48, 48);
 }
 
-Node "ResBG_Light"
+Node "Icon_Drop"
 {
-	int2 Position = (128, 0);
-	int2 Size = (64, 64);
+	int2 Position = (288, 0);
+	int2 Size = (48, 48);
 }
 
-Node "Slot_Empty"
+Node "Icon_Go"
 {
-	int2 Position = (192, 0);
-	int2 Size = (64, 64);
+	int2 Position = (336, 0);
+	int2 Size = (48, 48);
 }
 
-Node "PlayerColor_"
+Node "Icon_Clock"
 {
-	int2 Position = (0, 64);
-	int2 Size = (64, 64);
-	int2 Table = (4, 1);
+	int2 Position = (384, 0);
+	int2 Size = (48, 48);
 }
 
-Node "ResIndexLight_0"
+Node "TileRowLight_"
 {
-	int2 Position = (0, 128);
-	int2 Size = (16, 34);
+	int2 Position = (0, 48);
+	int2 Size = (48, 48);
+	int2 Table = (6, 1);
 }
 
-Node "ResIndexLight_1"
+Node "TileRowDark_"
 {
-	int2 Position = (24, 128);
-	int2 Size = (24, 34);
+	int2 Position = (0, 96);
+	int2 Size = (48, 48);
+	int2 Table = (6, 1);
 }
 
-Node "ResIndexLight_2"
+Node "TileRowDark_"
 {
-	int2 Position = (48, 128);
-	int2 Size = (25, 34);
+	int2 Position = (0, 144);
+	int2 Size = (48, 48);
+	int2 Table = (6, 1);
 }
 
-Node "ResIndexLight_3"
+Node "TileRowDark_"
 {
-	int2 Position = (74, 128);
-	int2 Size = (25, 34);
+	int2 Position = (0, 192);
+	int2 Size = (48, 48);
+	int2 Table = (6, 1);
 }
 
-Node "ResIndexLight_4"
+Node "TileIcon_Joker"
 {
-	int2 Position = (101, 128);
-	int2 Size = (24, 34);
+	int2 Position = (0, 240);
+	int2 Size = (48, 48);
 }
 
-Node "ResIndexLight_5"
+Node "TileIcon_Target"
 {
-	int2 Position = (126, 128);
-	int2 Size = (25, 34);
+	int2 Position = (48, 240);
+	int2 Size = (48, 48);
 }
 
-Node "ResIndexLight_6"
+Node "TileIcon_Grade2"
 {
-	int2 Position = (152, 128);
-	int2 Size = (24, 34);
+	int2 Position = (96, 240);
+	int2 Size = (48, 48);
 }
 
-Node "ResIndexLight_7"
+Node "TileIcon_Grade3"
 {
-	int2 Position = (177, 128);
-	int2 Size = (26, 34);
+	int2 Position = (144, 240);
+	int2 Size = (48, 48);
 }
 
-Node "ResIndexLight_8"
+Node "TileIcon_Grade4"
 {
-	int2 Position = (203, 128);
-	int2 Size = (25, 34);
+	int2 Position = (192, 240);
+	int2 Size = (48, 48);
 }
 
-Node "ResIndexDark_0"
+Node "TileIcon_Grade5"
 {
-	int2 Position = (0, 162);
-	int2 Size = (16, 34);
+	int2 Position = (240, 240);
+	int2 Size = (48, 48);
 }
 
-Node "ResIndexDark_1"
+Node "Bar_BG"
 {
-	int2 Position = (24, 162);
-	int2 Size = (24, 34);
+	int2 Position = (0, 288);
+	int2 Size = (480, 8);
 }
 
-Node "ResIndexDark_2"
+Node "Bar_HP"
 {
-	int2 Position = (48, 162);
-	int2 Size = (25, 34);
+	int2 Position = (0, 296);
+	int2 Size = (480, 8);
 }
 
-Node "ResIndexDark_3"
+Node "Bar_Time"
 {
-	int2 Position = (74, 162);
-	int2 Size = (25, 34);
-}
-
-Node "ResIndexDark_4"
-{
-	int2 Position = (101, 162);
-	int2 Size = (24, 34);
-}
-
-Node "ResIndexDark_5"
-{
-	int2 Position = (126, 162);
-	int2 Size = (25, 34);
-}
-
-Node "ResIndexDark_6"
-{
-	int2 Position = (152, 162);
-	int2 Size = (24, 34);
-}
-
-Node "ResIndexDark_7"
-{
-	int2 Position = (177, 162);
-	int2 Size = (26, 34);
-}
-
-Node "ResIndexDark_8"
-{
-	int2 Position = (203, 162);
-	int2 Size = (25, 34);
-}
-
-Node "Set3"
-{
-	int2 Position = (0, 196);
-	int2 Size = (36, 31);
-}
-
-Node "Set4"
-{
-	int2 Position = (36, 196);
-	int2 Size = (30, 30);
-}
-
-Node "Set5"
-{
-	int2 Position = (66, 196);
-	int2 Size = (39, 36);
+	int2 Position = (0, 304);
+	int2 Size = (480, 8);
 }

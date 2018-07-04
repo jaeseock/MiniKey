@@ -11,9 +11,6 @@
 
 bool ApResourceUnit::SetUp(const ApResourceType& type, MkSceneNode* sceneNode, const MkPathName& imagePath)
 {
-	MK_CHECK(sceneNode != NULL, L"sceneNode가 NULL임")
-		return false;
-
 	m_Type = type;
 	m_SceneNode = sceneNode;
 	m_ImagePath = imagePath;
@@ -63,8 +60,11 @@ bool ApResourceUnit::SetRowColumnType(eRowColumnType rcType)
 
 	if (ssPrefix.Empty())
 	{
-		m_SceneNode->DeletePanel(L"Row");
-		m_SceneNode->DeletePanel(L"Column");
+		if (m_SceneNode != NULL)
+		{
+			m_SceneNode->DeletePanel(L"Row");
+			m_SceneNode->DeletePanel(L"Column");
+		}
 		m_RowColumnType = rcType;
 		return true;
 	}
@@ -125,6 +125,16 @@ bool ApResourceUnit::SetSetType(eSetType setType)
 	return ok;
 }
 
+void ApResourceUnit::ApplyCreationEffect(const MkTimeState& timeState)
+{
+	m_TimeCounter.SetUp(timeState, 0.3);
+
+	if (m_SceneNode != NULL)
+	{
+		m_SceneNode->SetLocalDepth(-1.f);
+	}
+}
+
 bool ApResourceUnit::FieldCommand_Disable(void)
 {
 	return (SetBackgroundType(eBT_Disable) && SetRowColumnType(eRCT_None) && SetTeamColor(eTC_None) && SetSetType(eST_None));
@@ -166,9 +176,56 @@ bool ApResourceUnit::PlayerCommand_Wait(void)
 	return (SetBackgroundType(eBT_Owned) && SetRowColumnType(eRCT_Light) && SetTeamColor(eTC_None) && SetSetType(eST_None));
 }
 
-bool ApResourceUnit::PlayerCommand_Pick(eTeamColor teamColor)
+bool ApResourceUnit::PlayerCommand_Pick(void)
 {
-	return (SetBackgroundType(eBT_Owned) && SetRowColumnType(eRCT_Light) && SetTeamColor(teamColor) && SetSetType(eST_None));
+	return (SetBackgroundType(eBT_Combo) && SetRowColumnType(eRCT_Light) && SetTeamColor(eTC_None) && SetSetType(eST_None));
+}
+
+bool ApResourceUnit::HitTest(const MkFloat2& hitPos) const
+{
+	if (m_SceneNode != NULL)
+	{
+		MkFloatRect rect;
+		rect.position = m_SceneNode->GetWorldPosition() - ApStaticDefinition::Instance().GetResourceTileSize() * 0.5f;
+		rect.size = ApStaticDefinition::Instance().GetResourceTileSize();
+		return rect.CheckIntersection(hitPos);
+	}
+	return false;
+}
+
+void ApResourceUnit::Update(const MkTimeState& timeState)
+{
+	if (m_TimeCounter.GetTickCount() > 0.)
+	{
+		float localScale = 1.f;
+		if (m_TimeCounter.OnTick(timeState))
+		{
+			m_TimeCounter.SetUp(timeState, 0.);
+
+			if (m_SceneNode != NULL)
+			{
+				m_SceneNode->SetLocalDepth(0.f);
+			}
+		}
+		else
+		{
+			float tickRatio = m_TimeCounter.GetTickRatio(timeState);
+			
+			if (tickRatio < 0.5f) // 0.f -> 0.5f
+			{
+				localScale += tickRatio * 0.5f; // 1.f -> 1.25f
+			}
+			else // 0.5f -> 1.f
+			{
+				localScale += (1.f - tickRatio) * 0.5f; // 1.25f -> 1.f
+			}
+		}
+
+		if (m_SceneNode != NULL)
+		{
+			m_SceneNode->SetLocalScale(localScale);
+		}
+	}
 }
 
 ApResourceUnit::ApResourceUnit()
@@ -180,6 +237,9 @@ ApResourceUnit::ApResourceUnit()
 
 bool ApResourceUnit::_AddImagePanel(const MkHashStr& name, const MkPathName& imgPath, const MkHashStr& ssName, float localDepth)
 {
+	if (m_SceneNode == NULL)
+		return true;
+
 	MkPanel& panel = m_SceneNode->CreatePanel(name);
 	MK_CHECK(panel.SetTexture(imgPath, ssName), imgPath + L" : " + ssName.GetString() + L" 이미지 로딩 실패")
 		return false;
@@ -190,6 +250,9 @@ bool ApResourceUnit::_AddImagePanel(const MkHashStr& name, const MkPathName& img
 
 bool ApResourceUnit::_AddImagePanelToCenter(const MkHashStr& name, const MkPathName& imgPath, const MkHashStr& ssName, float localDepth)
 {
+	if (m_SceneNode == NULL)
+		return true;
+
 	if (!_AddImagePanel(name, imgPath, ssName, localDepth))
 		return false;
 
@@ -201,6 +264,9 @@ bool ApResourceUnit::_AddImagePanelToCenter(const MkHashStr& name, const MkPathN
 
 bool ApResourceUnit::_AddImagePanelToLeftTop(const MkHashStr& name, const MkPathName& imgPath, const MkHashStr& ssName, float localDepth)
 {
+	if (m_SceneNode == NULL)
+		return true;
+
 	if (!_AddImagePanel(name, imgPath, ssName, localDepth))
 		return false;
 
@@ -215,6 +281,9 @@ bool ApResourceUnit::_AddImagePanelToLeftTop(const MkHashStr& name, const MkPath
 
 bool ApResourceUnit::_AddImagePanelToRightBottom(const MkHashStr& name, const MkPathName& imgPath, const MkHashStr& ssName, float localDepth)
 {
+	if (m_SceneNode == NULL)
+		return true;
+
 	if (!_AddImagePanel(name, imgPath, ssName, localDepth))
 		return false;
 
@@ -231,7 +300,10 @@ bool ApResourceUnit::_UpdateImagePanelToCenter(const MkHashStr& name, const MkHa
 {
 	if (ssName.Empty())
 	{
-		m_SceneNode->DeletePanel(name);
+		if (m_SceneNode != NULL)
+		{
+			m_SceneNode->DeletePanel(name);
+		}
 		return true;
 	}
 	return _AddImagePanelToCenter(name, m_ImagePath, ssName, localDepth);

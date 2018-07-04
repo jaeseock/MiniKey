@@ -70,6 +70,17 @@ bool ApField::SetUp(const MkUInt2& size, MkSceneNode* parentSceneNode)
 	return true;
 }
 
+void ApField::Update(const MkTimeState& timeState)
+{
+	MK_INDEXING_LOOP(m_Tiles, i)
+	{
+		MK_INDEXING_LOOP(m_Tiles[i], j)
+		{
+			m_Tiles[i][j].Update(timeState);
+		}
+	}
+}
+
 ApField::ApField()
 {
 	m_SceneNode = NULL;

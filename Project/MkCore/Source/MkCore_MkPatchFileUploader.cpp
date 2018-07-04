@@ -99,30 +99,6 @@ bool MkPatchFileUploader::StartUploading
 	}
 	MK_DEV_PANEL.MsgToLog(L"> " + MkStr(uploadDirCount) + L"개의 디렉토리에 " + MkStr(uploadFileCount) + L"개의 파일 업로드 존재.");
 	MK_DEV_PANEL.InsertEmptyLine();
-
-	MkStr msg;
-	msg.Reserve(1024 * 1024 * 10);
-	msg += m_UploadCommand.GetSize();
-	msg += MkStr::LF;
-	MK_INDEXING_LOOP(m_UploadCommand, i)
-	{
-		switch (m_UploadCommand[i].command)
-		{
-		case eMoveToChild:
-			msg += L"MoveToChild : ";
-			msg += m_UploadCommand[i].target;
-			break;
-		case eMoveToParent:
-			msg += L"MoveToParent";
-			break;
-		case eUploadFile:
-			msg += L"UploadFile : ";
-			msg += m_UploadCommand[i].target;
-			break;
-		}
-
-		msg += MkStr::LF;
-	}
 	
 	// ftp 연결
 	MK_DEV_PANEL.MsgToLog(L"> URL : " + url);
@@ -355,7 +331,7 @@ void MkPatchFileUploader::_AddPurgeDirectory(const MkStr& filePath, MkDataNode& 
 	}
 }
 
-bool MkPatchFileUploader::_PurgeEmptyDirectory(const MkDataNode& purgeDirNode)
+bool MkPatchFileUploader::_PurgeEmptyDirectory(MkDataNode& purgeDirNode)
 {
 	MkArray<MkHashStr> dirs;
 	purgeDirNode.GetChildNodeList(dirs);
@@ -366,7 +342,7 @@ bool MkPatchFileUploader::_PurgeEmptyDirectory(const MkDataNode& purgeDirNode)
 		// ftp에서 해당 dir로 이동 가능하면 네트워크상에서 존재한다는 의미. 삭제 시도
 		if (m_FTP.MoveToChild(dirName.GetString(), false))
 		{
-			const MkDataNode& childNode = *purgeDirNode.GetChildNode(dirName);
+			MkDataNode& childNode = *purgeDirNode.GetChildNode(dirName);
 
 			// 해당 노드에 자식이 존재하면 depth를 높여 재귀
 			if (childNode.GetChildNodeCount() > 0)
@@ -379,16 +355,17 @@ bool MkPatchFileUploader::_PurgeEmptyDirectory(const MkDataNode& purgeDirNode)
 			if (!m_FTP.MoveToParent())
 				return false;
 
-			// 해당 디렉토리 삭제 시도. 성공여부는 중요하지 않음
-			if (m_FTP.DeleteChildDirectory(dirName.GetString()))
+			// 자식이 없으면 해당 디렉토리 삭제 시도
+			if ((childNode.GetChildNodeCount() == 0) && m_FTP.DeleteChildDirectory(dirName.GetString()))
 			{
+				purgeDirNode.RemoveChildNode(dirName); // 해당 노드 삭제
+
 				MkStr currPath;
 				m_FTP.GetCurrentPath(currPath, true);
 				currPath.ReplaceKeyword(L"/", L"\\");
 				currPath += L"\\";
 				currPath += dirName.GetString();
 				currPath.PopFront(MkPatchFileGenerator::PatchDataDirName.GetSize() + 1);
-
 				MK_DEV_PANEL.MsgToLog(L"  - " + currPath);
 			}
 		}

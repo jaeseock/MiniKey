@@ -44,16 +44,16 @@ bool ApStagePlayPage::SetUp(MkDataNode& sharingNode)
 	m_StageMgr.SetField(MkUInt2(5, 5), m_SceneRootNode);
 
 	// player - me
-	m_StageMgr.AddPlayer(L"나에용", ApPlayer::eSP_Down, ApResourceUnit::eTC_Red, 12, 4);
+	m_StageMgr.AddPlayer(L"나에용", ApPlayer::eSP_Down, ApResourceUnit::eTC_Red, 12);
 
 	// player - enemy
-	m_StageMgr.AddPlayer(L"상대 1", ApPlayer::eSP_Left, ApResourceUnit::eTC_Green, 12, 4);
+	m_StageMgr.AddPlayer(L"상대 1", ApPlayer::eSP_Left, ApResourceUnit::eTC_Green, 12);
 
 	// player - enemy
-	m_StageMgr.AddPlayer(L"상대 2", ApPlayer::eSP_Top, ApResourceUnit::eTC_Yellow, 12, 4);
+	m_StageMgr.AddPlayer(L"상대 2", ApPlayer::eSP_Top, ApResourceUnit::eTC_Yellow, 12);
 
 	// player - enemy
-	m_StageMgr.AddPlayer(L"상대 3", ApPlayer::eSP_Right, ApResourceUnit::eTC_Cyan, 12, 4);
+	m_StageMgr.AddPlayer(L"상대 3", ApPlayer::eSP_Right, ApResourceUnit::eTC_Cyan, 12);
 
 	// flow
 	m_StageMgr.SetFlowInfo(5, 10);

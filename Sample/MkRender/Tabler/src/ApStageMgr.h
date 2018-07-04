@@ -5,7 +5,6 @@
 
 #include "MkCore_MkType2.h"
 #include "MkCore_MkUniformDice.h"
-#include "MkCore_MkTimeCounter.h"
 
 #include "ApField.h"
 #include "ApPlayer.h"
@@ -19,26 +18,26 @@ public:
 	bool SetField(const MkUInt2& size, MkSceneNode* rootNode);
 
 	// player
-	bool AddPlayer(const MkHashStr& name, ApPlayer::eStandPosition standPos, ApResourceUnit::eTeamColor teamColor, unsigned int initResSlotSize, unsigned int initResCount);
+	bool AddPlayer(const MkHashStr& name, ApPlayer::eStandPosition standPos, ApResourceUnit::eTeamColor teamColor, unsigned int initResSlotSize);
 	ApPlayer* GetPlayer(unsigned int index);
 
 	// flow
 	enum eMainState
 	{
+		eMS_None = -1,
 		eMS_Start = 0,
-		eMS_Welcome,
 		eMS_Play,
 		eMS_Result,
 		eMS_Exit
 	};
 
-	enum eTurnState
+	enum ePlayerState
 	{
-		eTS_Start = 0,
-		eTS_GenerateResource,
-		eTS_Action,
-		eTS_ApplyEvent,
-		eTS_Next
+		ePS_None = -1,
+		ePS_GenerateResource = 0,
+		ePS_Action,
+		ePS_ApplyEvent,
+		ePS_Next
 	};
 
 	void SetFlowInfo(unsigned int turnPerRound, unsigned int maxRound);
@@ -52,16 +51,21 @@ public:
 
 protected:
 
-	bool _GenerateResource(unsigned int index);
+	bool _GenerateRandomResource(unsigned int playerIndex, unsigned int count, bool showMsg, const MkTimeState& timeState);
 
-	void _UpdateCurrentTurnInfoText(unsigned int currPlayer);
+	void _UpdateCurrentTurnInfoText(bool showFlowTime, const MkTimeState& timeState);
 	void _SetMessageText(const MkStr& msg, const MkTimeState& timeState);
 
 	void _UpdateMS_Start(const MkTimeState& timeState);
-	void _UpdateMS_Welcome(const MkTimeState& timeState);
 	void _UpdateMS_Play(const MkTimeState& timeState);
 	void _UpdateMS_Result(const MkTimeState& timeState);
 	void _UpdateMS_Exit(const MkTimeState& timeState);
+	void _UpdateMS_All(const MkTimeState& timeState);
+
+	void _UpdatePS_GenerateResource(const MkTimeState& timeState);
+	void _UpdatePS_Action(const MkTimeState& timeState);
+	void _UpdatePS_ApplyEvent(const MkTimeState& timeState);
+	void _UpdatePS_Next(const MkTimeState& timeState);
 
 protected:
 
@@ -82,8 +86,12 @@ protected:
 	unsigned int m_MaxRound;
 
 	unsigned int m_CurrTurn;
-	eMainState m_MainState;
-	eTurnState m_TurnState;
+	eMainState m_CurrMainState;
+	eMainState m_LastMainState;
+
+	unsigned int m_CurrPlayerIndex;
+	ePlayerState m_CurrPlayerState;
+	ePlayerState m_LastPlayerState;
 	MkTimeCounter m_FlowCounter;
 
 	// message
