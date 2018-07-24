@@ -992,6 +992,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="opt. Recover patch source"
+					>
+					<File
+						RelativePath=".\Source\MkCore_MkPatchSrcRecovery.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkCore_MkPatchSrcRecovery.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

@@ -253,6 +253,7 @@ void MkPatchFileDownloader::Update(void)
 					relPathInClient = relPathInServer;
 					relPathInServer.ReplaceKeyword(L"\\", L"/"); // ex> AAA/BBB/abc.mmd.rp
 					MkStr urlPath = m_DataRootURL + relPathInServer; // ex> http://210.207.252.151/Test/data/AAA/BBB/abc.mmd.rp
+					MK_DEV_PANEL.MsgToLog(L" ∇ " + relPathInServer);
 
 					// local. 압축 여부에 따라 그대로 다운, 혹은 다운 후 압축해제
 					MkPathName localFilePathForComp = m_TempDataPath + relPathInClient; // 압축. ex> D:\\Client\\__TempRep\\data\\AAA\\BBB\\abc.mmd.rp

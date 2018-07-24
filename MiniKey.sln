@@ -107,6 +107,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Aspick", "Sample\MkRender\A
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimplePatchSrcRecovery", "Tool\SimplePatchSrcRecovery\SimplePatchSrcRecovery.vcproj", "{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -240,6 +245,12 @@ Global
 		{36E3BD25-FC7D-45C6-82E4-EBC1BA6C43DF}.Release|Win32.Build.0 = Release|Win32
 		{36E3BD25-FC7D-45C6-82E4-EBC1BA6C43DF}.Shipping|Win32.ActiveCfg = Shipping|Win32
 		{36E3BD25-FC7D-45C6-82E4-EBC1BA6C43DF}.Shipping|Win32.Build.0 = Shipping|Win32
+		{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}.Debug|Win32.Build.0 = Debug|Win32
+		{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}.Release|Win32.ActiveCfg = Release|Win32
+		{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}.Release|Win32.Build.0 = Release|Win32
+		{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}.Shipping|Win32.ActiveCfg = Release|Win32
+		{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
