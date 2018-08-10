@@ -44,7 +44,7 @@
 // MkFocusProfiler를 통해 포커싱 내의 프로파일링 수행 가능
 // ex>
 //	{
-//		MkFocusProfiler _fp(L"key");
+//		MkFocusProfiler _fp(L"key", false);
 //		...
 //		if (...) return;
 //		...
@@ -172,12 +172,13 @@ class MkFocusProfiler
 {
 public:
 
-	MkFocusProfiler(const MkHashStr& key);
+	MkFocusProfiler(const MkHashStr& key, bool flushAndLog);
 	~MkFocusProfiler();
 
 protected:
 
 	MkHashStr m_Key;
+	bool m_FlushAndLog;
 };
 
 //------------------------------------------------------------------------------------------------//
