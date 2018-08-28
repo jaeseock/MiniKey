@@ -966,10 +966,10 @@ bool MkPathName::SetWrittenTime(int year, int month, int day, int hour, int min,
 	tmpPath.ConvertToRootBasisAbsolutePath(*this);
 	if (tmpPath.CheckAvailable())
 	{
-		HANDLE hFile = CreateFile
-			(tmpPath.GetPtr(), GENERIC_READ | GENERIC_WRITE , FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
-
-		MK_CHECK(hFile != INVALID_HANDLE_VALUE, *this + L" 파일 오픈 실패")
+		HANDLE hFile = ::CreateFile
+				(tmpPath.GetPtr(), GENERIC_READ | GENERIC_WRITE , FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS, NULL);
+		
+		if (hFile == INVALID_HANDLE_VALUE)
 			return false;
 
 		SYSTEMTIME st;
@@ -983,10 +983,10 @@ bool MkPathName::SetWrittenTime(int year, int month, int day, int hour, int min,
 		st.wMilliseconds = 0;
 
 		FILETIME ft;
-		SystemTimeToFileTime(&st, &ft);
-		LocalFileTimeToFileTime(&ft, &ft);
-		bool ok = (SetFileTime(hFile, NULL, NULL, &ft) != 0);
-		CloseHandle(hFile);
+		::SystemTimeToFileTime(&st, &ft);
+		::LocalFileTimeToFileTime(&ft, &ft);
+		bool ok = (::SetFileTime(hFile, NULL, NULL, &ft) != 0);
+		::CloseHandle(hFile);
 		return ok;
 	}
 	return false;

@@ -161,10 +161,9 @@ bool MkPatchStarter::StartLauncher(const MkStr& url, const wchar_t* arg, bool up
 				tmpLauncherFilePath.MoveCurrentFile(localLauncherFilePath);
 
 				// 파일 수정시간 변경
-				if (!localLauncherFilePath.SetWrittenTime(origWrittenTime))
-				{
-					errorMsg = localLauncherFilePath + L"\n파일 수정시간 변경 실패";
-				}
+				// 실패하더라도 실행에는 이상이 없으므로 그대로진행
+				// 단 다음 패치시 다시 다운로드 시도
+				localLauncherFilePath.SetWrittenTime(origWrittenTime);
 			}
 		}
 	}

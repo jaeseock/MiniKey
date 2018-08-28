@@ -736,7 +736,62 @@ void MkFileSystem::_RegisterPathListToSearchTable(const MkArray<MkPathName>& mem
 			fbi.blockIndex = blockOffset + i;
 			MkPathName currPath = memberFilePathList[i];
 			currPath.ToLower();
-			m_SearchTable.Create(currPath, fbi);
+
+			MkHashStr currKey = currPath;
+			if (m_SearchTable.Exist(currKey)) // 같은 경로의 파일이 복수의 청크에 존재
+			{
+				if ((MkDevPanel::InstancePtr() != NULL) && MK_DEV_PANEL.IsEnable())
+				{
+					MkStr errMsg;
+					errMsg.Reserve(1024);
+
+					FileBlockIndex last_fbi = m_SearchTable[currKey];
+					errMsg += L"MkFileSystem> 같은 경로의 파일이 복수의 청크에 존재";
+					errMsg += MkStr::CRLF;
+					errMsg += currPath;
+					errMsg += MkStr::CRLF;
+					errMsg += L"  - 기존 파일 정보 : ";
+					errMsg += last_fbi.chunkIndex;
+					errMsg += L"번 청크, ";
+					errMsg += last_fbi.blockIndex;
+					errMsg += L"번 블록";
+					
+
+					unsigned int originalSize, dataSize, writtenTime;
+					if (m_ChunkTable[last_fbi.chunkIndex].GetBlockInfo(last_fbi.blockIndex, originalSize, dataSize, writtenTime))
+					{
+						errMsg += L", 크기 : ";
+						errMsg += originalSize;
+						errMsg += L" > ";
+						errMsg += dataSize;
+						errMsg += L", 수정시간 : ";
+						errMsg += writtenTime;
+					}
+
+					errMsg += MkStr::CRLF;
+					errMsg += L"  - 중복 파일 정보 : ";
+					errMsg += fbi.chunkIndex;
+					errMsg += L"번 청크, ";
+					errMsg += fbi.blockIndex;
+					errMsg += L"번 블록";
+
+					if (m_ChunkTable[fbi.chunkIndex].GetBlockInfo(fbi.blockIndex, originalSize, dataSize, writtenTime))
+					{
+						errMsg += L", 크기 : ";
+						errMsg += originalSize;
+						errMsg += L" > ";
+						errMsg += dataSize;
+						errMsg += L", 수정시간 : ";
+						errMsg += writtenTime;
+					}
+
+					MK_DEV_PANEL.MsgToLog(errMsg);
+				}
+			}
+			else
+			{
+				m_SearchTable.Create(currPath, fbi);
+			}
 		}
 	}
 }

@@ -364,9 +364,11 @@ void MkPatchFileDownloader::Update(void)
 					}
 
 					// 파일 수정시간 변경
+					// 어떤 사유로 실패하더라도 실행에는 문제가 없으므로 그대로 진행
+					// 대신 해당 파일은 다음 패치때 다시 다운로드 됨
 					if (!localFilePathForOrig.SetWrittenTime(fileInfo.writtenTime))
 					{
-						m_ErrorMsg = localFilePathForOrig + L"\n파일 수정시간 변경 실패";
+						MK_DEV_PANEL.MsgToLog(L"  파일 수정시간 변경 실패");
 					}
 				}
 				while (false);
