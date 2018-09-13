@@ -46,12 +46,13 @@ public:
 	// (in) relativeFilePath : 파일 시스템상에서 사용될 가상의 상대 파일 경로
 	// (in) chunkFileInterface : chunk file이 오픈된 쓰기 interface
 	// (in) percentageForCompressing : 압축 경계
+	// (in) writtenTime : 외부에서 주어진 수정 시간. 0이면 원본 파일의 것을 사용
 	// return : 블록 크기(기록된 크기==증가된 파일 크기==m_BlockSize) 반환
 	//          패킹중 문제가 발생하거나 원본 파일 크기가 0이면 0 반환
 	// (NOTE) chunkFileInterface 유효성 검사 하지 않음
 	unsigned int SetUpFromOriginalFileAndAttachToChunkFile
 		(const MkPathName& absoluteOriginalFilePath, const MkPathName& relativeFilePath,
-		MkInterfaceForFileWriting& chunkFileInterface, unsigned int percentageForCompressing);
+		MkInterfaceForFileWriting& chunkFileInterface, unsigned int percentageForCompressing, unsigned int writtenTime);
 
 	// 청크 파일로부터 블록 구성
 	// (in) chunkFileInterface : 청크파일이 오픈되어 블록 시작 위치를 가리키고 있는 file reading interface

@@ -172,6 +172,7 @@ class MkFocusProfiler
 {
 public:
 
+	MkFocusProfiler(const MkHashStr& key);
 	MkFocusProfiler(const MkHashStr& key, bool flushAndLog);
 	~MkFocusProfiler();
 

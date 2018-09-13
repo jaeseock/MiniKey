@@ -17,14 +17,14 @@
 
 unsigned int MkFileBlock::SetUpFromOriginalFileAndAttachToChunkFile
 (const MkPathName& absoluteOriginalFilePath, const MkPathName& relativeFilePath,
- MkInterfaceForFileWriting& chunkFileInterface, unsigned int percentageForCompressing)
+ MkInterfaceForFileWriting& chunkFileInterface, unsigned int percentageForCompressing, unsigned int writtenTime)
 {
 	// relativeFilePath 유효성 검사
 	MK_CHECK((!relativeFilePath.Empty()) && (!relativeFilePath.IsAbsolutePath()) && (!relativeFilePath.IsDirectoryPath()), L"파일 패킹중 비정상 상대경로 입력 : " + relativeFilePath)
 		return 0;
 
 	// 파일 체크 겸 수정시간 추출
-	m_WrittenTime = absoluteOriginalFilePath.GetWrittenTime();
+	m_WrittenTime = (writtenTime == 0) ? absoluteOriginalFilePath.GetWrittenTime() : writtenTime;
 	MK_CHECK(m_WrittenTime != MKDEF_ARRAY_ERROR, absoluteOriginalFilePath + L" 경로의 원본 파일이 없음")
 		return 0;
 

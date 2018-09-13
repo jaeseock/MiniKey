@@ -19,6 +19,17 @@ public:
 	// 상대 파일 경로 배열 참조
 	inline MkArray<MkPathName>& GetRelativeFilePathList(void) { return m_RelativeFilePathList; }
 
+	// 단일 파일 추가
+	inline void AddRelativeFilePath(const MkPathName& relativeFilePath, unsigned int writtenTime = 0)
+	{
+		m_RelativeFilePathList.PushBack(relativeFilePath);
+
+		if (writtenTime != 0)
+		{
+			m_OuterWrittenTimeTable.Create(m_RelativeFilePathList.GetSize() - 1, writtenTime);
+		}
+	}
+
 	// 상대 파일 경로 반환
 	inline const MkPathName& GetRelativeFilePath(unsigned int index) const { return m_RelativeFilePathList[index]; }
 
@@ -34,9 +45,23 @@ public:
 		return m_TemporaryAbsoluteOriginalFilePath;
 	}
 
+	// 외부 수정시간 반환
+	inline unsigned int GetOuterWrittenTime(unsigned int index) const { return m_OuterWrittenTimeTable.Exist(index) ? m_OuterWrittenTimeTable[index] : 0; }
+
 	// size만큼 삭제
 	inline void PopBack(unsigned int size)
 	{
+		unsigned int lastSize = m_RelativeFilePathList.GetSize();
+		if ((lastSize > 0) && (size > 0))
+		{
+			unsigned int index = (size < lastSize) ? (lastSize - size) : 0;
+			while (index < lastSize)
+			{
+				m_OuterWrittenTimeTable.Erase(index);
+				++index;
+			}
+		}
+
 		m_RelativeFilePathList.PopBack(size);
 	}
 
@@ -50,12 +75,14 @@ public:
 	{
 		m_AbsolutePathOfBaseDirectory.Clear();
 		m_RelativeFilePathList.Clear();
+		m_OuterWrittenTimeTable.Clear();
 	}
 
 protected:
 
 	MkPathName m_AbsolutePathOfBaseDirectory;
 	MkArray<MkPathName> m_RelativeFilePathList;
+	MkMap<unsigned int, unsigned int> m_OuterWrittenTimeTable;
 	MkPathName m_TemporaryAbsoluteOriginalFilePath;
 };
 

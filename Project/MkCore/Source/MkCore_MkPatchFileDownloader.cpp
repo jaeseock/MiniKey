@@ -12,6 +12,9 @@
 
 
 const MkStr MkPatchFileDownloader::TemporaryRepositoryDirName(L"__TempRep\\");
+const MkStr MkPatchFileDownloader::PatchLegacyFileName(L"MkPatchLegacy");
+
+const static MkHashStr MKDEF_PL_FWT_NODE_NAME = L"[FileWrittenTime]";
 
 
 //------------------------------------------------------------------------------------------------//
@@ -32,6 +35,13 @@ bool MkPatchFileDownloader::CheckAndDownloadPatchFile(const MkStr& url, bool use
 		m_DataRootURL += L"/"; // ex> http://210.207.252.151/Test/data/
 
 		m_UseFileSystem = useFileSystem;
+
+		m_PatchLegacyNode.Clear();
+		m_PatchLegacyFilePath = MkPathName::GetRootDirectory() + MkPatchFileDownloader::PatchLegacyFileName + L"." + MkDataNode::DefaultFileExtension; // ex> D:\\Client\\MkPatchLegacy.mmd
+		if (m_PatchLegacyFilePath.CheckAvailable())
+		{
+			m_PatchLegacyNode.Load(m_PatchLegacyFilePath);
+		}
 
 		m_ErrorMsg.Clear();
 		m_MainState = eDownloadPatchInfoFile;
@@ -144,6 +154,21 @@ void MkPatchFileDownloader::Update(void)
 
 						// file system상에 있으면 삭제
 						MkFileManager::Instance().GetFileSystem().RemoveFile(targetFilePath);
+
+						// 패치 잔여 정보에 있으면 삭제
+						MkDataNode* fwtNode = m_PatchLegacyNode.GetChildNode(MKDEF_PL_FWT_NODE_NAME);
+						if (fwtNode != NULL)
+						{
+							MkStr lowerKey = targetFilePath;
+							lowerKey.ToLower();
+							fwtNode->RemoveChildNode(MkHashStr(lowerKey));
+						}
+					}
+
+					MkDataNode* fwtNode = m_PatchLegacyNode.GetChildNode(MKDEF_PL_FWT_NODE_NAME);
+					if ((fwtNode != NULL) && (fwtNode->GetChildNodeCount() == 0))
+					{
+						m_PatchLegacyNode.RemoveChildNode(MKDEF_PL_FWT_NODE_NAME);
 					}
 
 					MK_DEV_PANEL.InsertEmptyLine();
@@ -291,7 +316,7 @@ void MkPatchFileDownloader::Update(void)
 			}
 			else if (downState == MkFileDownInfo::eDS_Complete) // 완료
 			{
-				const _DownloadFileInfo& fileInfo = m_DownloadFileInfoList[m_CurrentProgress];
+				_DownloadFileInfo& fileInfo = m_DownloadFileInfoList[m_CurrentProgress];
 
 				MkPathName localFilePathForOrig = m_TempDataPath + fileInfo.filePath; // 비압축. ex> D:\\Client\\__TempRep\\data\\AAA\\BBB\\abc.mmd
 				bool compressed = (fileInfo.compSize > 0);
@@ -363,13 +388,8 @@ void MkPatchFileDownloader::Update(void)
 						m_SuccessDownloadSize += fileInfo.origSize;
 					}
 
-					// 파일 수정시간 변경
-					// 어떤 사유로 실패하더라도 실행에는 문제가 없으므로 그대로 진행
-					// 대신 해당 파일은 다음 패치때 다시 다운로드 됨
-					if (!localFilePathForOrig.SetWrittenTime(fileInfo.writtenTime))
-					{
-						MK_DEV_PANEL.MsgToLog(L"  파일 수정시간 변경 실패");
-					}
+					// 파일 수정시간 변경 시도. 실패 가능성 존재
+					localFilePathForOrig.SetWrittenTime(fileInfo.writtenTime);
 				}
 				while (false);
 
@@ -399,6 +419,8 @@ void MkPatchFileDownloader::Update(void)
 			}
 			else
 			{
+				MK_DEV_PANEL.MsgToLog(L"  " + m_ErrorMsg);
+
 				m_MainState = eShowFailedResult;
 				m_MaxProgress = 0;
 				m_CurrentProgress = 0;
@@ -409,12 +431,20 @@ void MkPatchFileDownloader::Update(void)
 			m_CurrentDownInfo = NULL;
 		}
 		break;
-		
 
 	case eUpdateFiles:
 		{
 			if (m_CurrentProgress == m_MaxProgress)
 			{
+				if (m_PatchLegacyNode.GetChildNodeCount() > 0)
+				{
+					m_PatchLegacyNode.SaveToBinary(m_PatchLegacyFilePath);
+
+					MK_DEV_PANEL.MsgToLog(L"> " + m_PatchLegacyFilePath);
+					MK_DEV_PANEL.MsgToLog(L"  패치 잔여 정보를 기록했습니다.");
+					MK_DEV_PANEL.InsertEmptyLine();
+				}
+
 				MkPathName localTempDir = MkPathName::GetRootDirectory() + TemporaryRepositoryDirName; // ex> D:\\Client\\__TempRep
 				localTempDir.DeleteCurrentDirectory(true);
 
@@ -437,14 +467,51 @@ void MkPatchFileDownloader::Update(void)
 				{
 					MkPathName realFilePath;
 					realFilePath.ConvertToRootBasisAbsolutePath(fileInfo.filePath); // ex> D:\\Client\\AAA\\BBB\\abc.mmd
-					if (!tempFilePath.CopyCurrentFile(realFilePath, false)) // overwrite
+					if (tempFilePath.CopyCurrentFile(realFilePath, false)) // overwrite
+					{
+						// 파일 수정시간 기록이 실패했을 경우 재패치를 피하기 위해 별도의 기록을 패치 잔여 정보에 남김
+						if (realFilePath.GetWrittenTime() != fileInfo.writtenTime)
+						{
+							// ex>
+							//	Node "[FileWrittenTime]"
+							//	{
+							//		Node "aaa\\bbb\\abc.mmd"
+							//		{
+							//			uint #WT = 1234567;
+							//		}
+							//	}
+							MkDataNode* fwtNode = m_PatchLegacyNode.ChildExist(MKDEF_PL_FWT_NODE_NAME) ?
+								m_PatchLegacyNode.GetChildNode(MKDEF_PL_FWT_NODE_NAME) : m_PatchLegacyNode.CreateChildNode(MKDEF_PL_FWT_NODE_NAME);
+
+							if (fwtNode != NULL)
+							{
+								MkStr lowerKey = fileInfo.filePath;
+								lowerKey.ToLower();
+								MkHashStr fileKey = lowerKey;
+
+								MkDataNode* fileNode = fwtNode->ChildExist(fileKey) ? fwtNode->GetChildNode(fileKey) : fwtNode->CreateChildNode(fileKey);
+								if (fileNode != NULL)
+								{
+									if (fileNode->IsValidKey(MkPathName::KeyWrittenTime))
+									{
+										fileNode->SetData(MkPathName::KeyWrittenTime, fileInfo.writtenTime, 0);
+									}
+									else
+									{
+										fileNode->CreateUnit(MkPathName::KeyWrittenTime, fileInfo.writtenTime);
+									}
+								}
+							}
+						}
+					}
+					else
 					{
 						m_ErrorMsg = fileInfo.filePath + L"\n복사 오류.";
 					}
 				}
 				else
 				{
-					if (!MkFileManager::Instance().GetFileSystem().UpdateFromOriginalFile(m_TempDataPath, fileInfo.filePath))
+					if (!MkFileManager::Instance().GetFileSystem().UpdateFromOriginalFile(m_TempDataPath, fileInfo.filePath, fileInfo.writtenTime))
 					{
 						m_ErrorMsg = fileInfo.filePath + L"\n갱신 오류.";
 					}
@@ -594,9 +661,38 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 		}
 
 		bool realFileExist = realPath.CheckAvailable();
-		bool downTheFile = (realFileExist) ?
-			((realPath.GetFileSize() != patchOrigSize) || (realPath.GetWrittenTime() != patchWrittenTime)) :
-			(posOnRealPath || (MkFileManager::Instance().GetFileSystem().GetFileDifference(filePath, patchOrigSize, patchWrittenTime) != 0));
+		bool downTheFile = false;
+		if (realFileExist)
+		{
+			downTheFile = (realPath.GetFileSize() != patchOrigSize); // 크기 비교
+			if (!downTheFile)
+			{
+				unsigned int writtenTimeOfRealFile = realPath.GetWrittenTime();
+				downTheFile = (writtenTimeOfRealFile != patchWrittenTime); // 수정시간 비교
+				if (downTheFile)
+				{
+					MkDataNode* fwtNode = m_PatchLegacyNode.GetChildNode(MKDEF_PL_FWT_NODE_NAME);
+					if (fwtNode != NULL)
+					{
+						MkStr lowerKey = filePath;
+						lowerKey.ToLower();
+						MkDataNode* fileNode = fwtNode->GetChildNode(MkHashStr(lowerKey));
+						if (fileNode != NULL)
+						{
+							unsigned int writtenTimeInLegacy = 0;
+							if (fileNode->GetData(MkPathName::KeyWrittenTime, writtenTimeInLegacy, 0))
+							{
+								downTheFile = (writtenTimeOfRealFile != writtenTimeInLegacy);
+							}
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			downTheFile = (posOnRealPath || (MkFileManager::Instance().GetFileSystem().GetFileDifference(filePath, patchOrigSize, patchWrittenTime) != 0));
+		}
 
 		// 다운 대상이면 이미 받아 놓은 임시 파일이 있는지 검사해 없거나 다르면 다운
 		if (downTheFile)

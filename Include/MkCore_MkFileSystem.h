@@ -190,12 +190,13 @@ public:
 	// 존재하지 않는 파일이면 추가. 이미 존재하는 파일의 경우 파일 크기가 0일 경우 삭제, 그렇지 않으면 갱신
 	// (in) absolutePathOfBaseDirectory : root로 간주 될 원본 디렉토리 절대경로
 	// (in) relativePathOfFile : root이후의 파일 상대 경로. 이후 검색의 key(file path)로 사용됨
+	// (in) writtenTime : 주어진 파일 수정 시간. 0일 경우 원본 파일의 것을 사용
 	// return : 성공 여부
 	// ex>
 	//	L"c:\\_Tmp\\Text\\test.txt" 파일을 파일 시스템에 L"Text\\test.txt"로 갱신하려 할 경우,
 	//	absolutePathOfBaseDirectory : L"c:\\_Tmp\\"
 	//	relativePathOfFile : L"Text\\test.txt"
-	bool UpdateFromOriginalFile(const MkPathName& absolutePathOfBaseDirectory, const MkPathName& relativePathOfFile);
+	bool UpdateFromOriginalFile(const MkPathName& absolutePathOfBaseDirectory, const MkPathName& relativePathOfFile, unsigned int writtenTime = 0);
 
 	// 패킹 시스템에 주어진 디렉토리 하위의 모든 파일 갱신(디렉토리 구조대로 갱신 됨)
 	// 존재하지 않는 파일이면 추가. 이미 존재하는 파일의 경우 파일 크기가 0일 경우 삭제, 그렇지 않으면 갱신

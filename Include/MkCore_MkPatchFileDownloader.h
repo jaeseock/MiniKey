@@ -80,6 +80,9 @@ protected:
 	MkDataNode m_PatchInfoNode;
 	MkArray<_DownloadFileInfo> m_DownloadFileInfoList;
 
+	MkPathName m_PatchLegacyFilePath;
+	MkDataNode m_PatchLegacyNode;
+
 	MkFileDownInfo* m_CurrentDownInfo;
 
 	unsigned __int64 m_TotalDownloadSize;
@@ -98,6 +101,9 @@ public:
 
 	// 임시 다운로드 저장소 디렉토리명
 	static const MkStr TemporaryRepositoryDirName;
+
+	// 패치 잔여 정보 파일명
+	static const MkStr PatchLegacyFileName;
 };
 
 //------------------------------------------------------------------------------------------------//

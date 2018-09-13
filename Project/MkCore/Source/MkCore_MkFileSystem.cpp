@@ -456,7 +456,7 @@ bool MkFileSystem::RemoveFile(const MkPathName& filePath)
 	return ok;
 }
 
-bool MkFileSystem::UpdateFromOriginalFile(const MkPathName& absolutePathOfBaseDirectory, const MkPathName& relativePathOfFile)
+bool MkFileSystem::UpdateFromOriginalFile(const MkPathName& absolutePathOfBaseDirectory, const MkPathName& relativePathOfFile, unsigned int writtenTime)
 {
 	// 경로 유효성 검사
 	MK_CHECK(!m_AbsoluteWorkingDirectoryPath.Empty(), L"MkFileSystem 초기화 선행")
@@ -493,7 +493,7 @@ bool MkFileSystem::UpdateFromOriginalFile(const MkPathName& absolutePathOfBaseDi
 
 	// 파일 경로 리스트
 	MkFilePathListContainer filePathListContainer(absSrcFileDir);
-	filePathListContainer.GetRelativeFilePathList().PushBack(relativePathOfFile);
+	filePathListContainer.AddRelativeFilePath(relativePathOfFile, writtenTime);
 
 	// 존재하는 청크 중 가이드라인보다 크기가 작은 청크 하나를 검색
 	unsigned int chunkIndex = m_ChunkTable.GetSize();

@@ -56,7 +56,7 @@ bool MkFileChunk::AttachOriginalFiles
 
 		MkFileBlock& currBlock = m_BlockList.PushBack();
 		unsigned int blockSize = currBlock.SetUpFromOriginalFileAndAttachToChunkFile
-			(filePathListContainer.GetAbsoluteOriginalFilePath(i), currPath, chunkFileInterface, percentageForCompressing);
+			(filePathListContainer.GetAbsoluteOriginalFilePath(i), currPath, chunkFileInterface, percentageForCompressing, filePathListContainer.GetOuterWrittenTime(i));
 
 		if (blockSize == 0)
 		{
