@@ -38,9 +38,11 @@ bool MkPatchFileDownloader::CheckAndDownloadPatchFile(const MkStr& url, bool use
 
 		m_PatchLegacyNode.Clear();
 		m_PatchLegacyFilePath = MkPathName::GetRootDirectory() + MkPatchFileDownloader::PatchLegacyFileName + L"." + MkDataNode::DefaultFileExtension; // ex> D:\\Client\\MkPatchLegacy.mmd
-		if (m_PatchLegacyFilePath.CheckAvailable())
+		if (m_PatchLegacyFilePath.CheckAvailable() && m_PatchLegacyNode.Load(m_PatchLegacyFilePath))
 		{
-			m_PatchLegacyNode.Load(m_PatchLegacyFilePath);
+			MK_DEV_PANEL.MsgToLog(L"> " + m_PatchLegacyFilePath);
+			MK_DEV_PANEL.MsgToLog(L"  패치 잔여 정보 파일 로드.");
+			MK_DEV_PANEL.InsertEmptyLine();
 		}
 
 		m_ErrorMsg.Clear();
@@ -682,7 +684,7 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 							unsigned int writtenTimeInLegacy = 0;
 							if (fileNode->GetData(MkPathName::KeyWrittenTime, writtenTimeInLegacy, 0))
 							{
-								downTheFile = (writtenTimeOfRealFile != writtenTimeInLegacy);
+								downTheFile = (writtenTimeInLegacy != patchWrittenTime);
 							}
 						}
 					}
