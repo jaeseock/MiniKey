@@ -45,6 +45,11 @@ public:
 	static void SetGlobalCodePage(unsigned int codePage);
 	static unsigned int GetGlobalCodePage(void);
 
+	// LANGID
+	// ex> primary id : LANG_SPANISH, sub id : SUBLANG_SPANISH_MEXICAN
+	static unsigned short GetPrimaryLanguageID(void);
+	static unsigned short GetSubLanguageID(void);
+
 	//------------------------------------------------------------------------------------------------//
 	// 생성자
 	// 원칙적으로 char 타입은 배제

@@ -14,15 +14,6 @@
 #include "MkCore_MkStr.h"
 
 
-// CP_ACP 0
-// CP_KOREAN 949
-// CP_JAPANESE 932
-// CP_CHINESE_SIMPLIFIED 936 // 간체. 중국 본토
-// CP_CHINESE_TRADITIONAL 950 // 번체. 한국, 대만, 일본
-// CP_USA 437
-// CP_THAILAND 874
-// CP_GERMANY 1252
-
 #define MKDEF_WCHAR_TAP L'\t'
 #define MKDEF_WCHAR_LINEFEED L'\n'
 #define MKDEF_WCHAR_RETURN L'\r'
@@ -100,6 +91,9 @@ void MkStr::SetUp(unsigned int codePage)
 void MkStr::SetGlobalCodePage(unsigned int codePage) { gCurrentCodePage = codePage; }
 
 unsigned int MkStr::GetGlobalCodePage(void) { return gCurrentCodePage; }
+
+unsigned short GetPrimaryLanguageID(void) { return PRIMARYLANGID(::GetUserDefaultUILanguage()); }
+unsigned short GetSubLanguageID(void) { return SUBLANGID(::GetUserDefaultUILanguage()); }
 
 //------------------------------------------------------------------------------------------------//
 
