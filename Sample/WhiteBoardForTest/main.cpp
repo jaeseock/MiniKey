@@ -51,18 +51,6 @@ class TestFramework : public MkBaseFramework
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
-		MkFtpInterface ftpInterface;
-		if (ftpInterface.Connect(L"210.207.252.151", L"test", L"eloadev", L"eloadev1234"))
-		{
-			ftpInterface.MoveToChild(L"A", true);
-			ftpInterface.MoveToChild(L"B", true);
-			ftpInterface.MoveToParent();
-			ftpInterface.DeleteChildDirectory(L"B");
-			ftpInterface.MoveToParent();
-			ftpInterface.DeleteChildDirectory(L"A");
-
-			int k = 0;
-		}
 #if DEF_STEAM_LOGIN
 		if ( SteamAPI_RestartAppIfNecessary( 838330 ) )
 			return false; // EXIT_FAILURE

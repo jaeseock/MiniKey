@@ -3,14 +3,16 @@
 
 //------------------------------------------------------------------------------------------------//
 // reference counter로 메모리를 공유하는 shared smart pointer
-// 일반적인 사용법과 같이 NULL을 할당하면 해제 명령임
+// 일반적인 사용법과 같이 포인터 객체에 NULL이 할당되거나 소멸하면 해제 명령임
 //
 // 디버깅을 위해 MKDEF_SHOW_SHARED_POINTER_REF_INFO 플래그가 TRUE일 경우 instance name 할당 가능
-// SetInstanceName()으로 이름이 할당 된 객체의 참조 정보 추적
+// SetInstanceName()으로 이름이 할당 된 객체의 참조 정보(생성/참조증감/삭제) 추적
 // ex>
-//	MkSceneNodePtr pnode;
-//	pnode.SetInstanceName(L"parent");
-//	pnode = new MkSceneNode(L"parent");
+//	typedef MkSharedPointer<TestClass> TestClassPtr;
+//	...
+//	TestClassPtr pInstance;
+//	pInstance.SetInstanceName(L"test_01");
+//	pInstance = new TestClass; // 이 객체의 참조 정보는 모니터링됨
 //
 // (NOTE) 스마트 포인터는 에러가 곧 크래쉬이기 때문에 어설픈 예외처리는 오히려 폭탄을
 // 안고 가는 격이나 마찬가지. 따라서 에러 발생시 바로 assert로 터트림
