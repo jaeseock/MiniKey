@@ -600,6 +600,11 @@ public:
 	bool WriteToTextFile(const MkPathName& filePath, bool overwrite = true, bool ANSI = true) const;
 
 	//------------------------------------------------------------------------------------------------//
+	// utility
+	//------------------------------------------------------------------------------------------------//
+
+	// 현 시점에서의 GetLastError() 번호와 메세지로 채움
+	void GetLastErrorMessage(void);
 
 protected:
 

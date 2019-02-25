@@ -1476,6 +1476,27 @@ bool MkStr::WriteToTextFile(const MkPathName& filePath, bool overwrite, bool ANS
 
 //------------------------------------------------------------------------------------------------//
 
+void MkStr::GetLastErrorMessage(void)
+{
+	DWORD errCode = ::GetLastError();
+
+	// 영어가 가장 정확함
+	wchar_t* errMsg;
+	::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, errCode, MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), reinterpret_cast<LPWSTR>(&errMsg), 0, NULL);
+
+	Clear();
+	Reserve(512);
+	*this += L"(";
+	*this += static_cast<int>(errCode);
+	*this += L") ";
+	*this += errMsg;
+
+	::LocalFree(errMsg);
+}
+
+//------------------------------------------------------------------------------------------------//
+
 bool MkStr::_IsBlank(wchar_t character) const
 {
 	return ((character == MKDEF_WCHAR_TAP) ||
