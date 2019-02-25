@@ -112,9 +112,7 @@ bool MkVisitWebPage::Post(const MkStr& url, const MkStr& postData, MkStr& buffer
 		if (hObject == NULL)
 			break;
 
-		std::string postStr;
-		MkStringOp::ConvertString(postData.GetPtr(), postStr, CP_UTF8);
-		
+		/*
 		MkStr postHeader;
 		postHeader.Reserve(512);
 		postHeader += L"Accept: text/*";
@@ -126,9 +124,14 @@ bool MkVisitWebPage::Post(const MkStr& url, const MkStr& postData, MkStr& buffer
 		postHeader += L"Content-length: ";
 		postHeader += postStr.size();
 		postHeader += MkStr::CRLF;
-
+		*/
+		MkStr postHeader = L"Content-Type:application/x-www-form-urlencoded\r\nAccept-Encoding:gzip, deflate\r\nConnection:Keep-Alive\r\n";
+		
 		if (::HttpAddRequestHeaders(hObject, postHeader.GetPtr(), -1L, HTTP_ADDREQ_FLAG_REPLACE | HTTP_ADDREQ_FLAG_ADD) == FALSE)
 			break;
+
+		std::string postStr;
+		MkStringOp::ConvertString(postData.GetPtr(), postStr, CP_UTF8);
 
 		if (::HttpSendRequest(hObject, NULL, 0, const_cast<char*>(postStr.c_str()), postStr.size()) == FALSE)
 		{
