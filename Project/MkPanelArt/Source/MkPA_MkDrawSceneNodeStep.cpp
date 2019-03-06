@@ -53,6 +53,9 @@ bool MkDrawSceneNodeStep::Draw(void)
 
 	// 유효 object 리스트
 	MkPairArray<float, const MkSceneRenderObject*> validObjectList(MKDEF_DEF_OBJECT_BUFFER_SIZE);
+
+	// 실제 집합이 저장 될 이중 테이블
+	MkArray< MkArray<const MkSceneRenderObject*> > unions;
 	
 	// camera AABR
 	const MkFloat2& camSize = m_Camera.GetSize();
@@ -104,8 +107,8 @@ bool MkDrawSceneNodeStep::Draw(void)
 
 		MK_DRAWING_MONITOR.IncreaseValidMaterialCounter(materialLink.GetSize());
 
-		// 실제 집합이 저장 될 이중 테이블
-		MkArray< MkArray<const MkSceneRenderObject*> > unions(validObjectCount); // 최악의 경우 모든 object가 독자적으로 잡힐 수 있음
+		// 최악의 경우 모든 object가 독자적으로 잡힐 수 있음
+		unions.Reserve(validObjectCount);
 
 		// 가장 뒤쪽의 object부터 순회하며 재질별 리스트 구성
 		unsigned int j;
@@ -169,79 +172,79 @@ bool MkDrawSceneNodeStep::Draw(void)
 		
 		// draw object
 		MK_DRAWING_MONITOR.IncreaseObjectUnionCounter(unions.GetSize());
-
-		if (m_RenderTarget.__BeginScene())
-		{
-			DWORD rtClearFlag = D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL;
-			if (m_ClearLastRenderTarget)
-			{
-				rtClearFlag |= D3DCLEAR_TARGET;
-			}
-			m_RenderTarget.__Clear(rtClearFlag);
-
-			// camera
-			m_Camera.UpdateViewProjectionMatrix();
-			MK_RENDER_STATE.UpdateViewProjectionTransform(m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix());
-
-			// union 순회
-			MK_INDEXING_LOOP(unions, i)
-			{
-				MkArray<const MkSceneRenderObject*>& currUnion = unions[i];
-
-				// union은 동일 재질을 참조하므로 아무거나 하나만 적용하면 됨
-				currUnion[0]->__ApplyRenderState();
-
-				// vertex buffer 구성해 draw call
-				// rect나 line 종류는 버텍스버퍼 세심하게 콘트를 하는 것에 비해 DrawPrimitiveUP를 써도 퍼포먼스 차이가 거의 없음
-				unsigned int dataSize = 0;
-				D3DPRIMITIVETYPE primType;
-				unsigned int primCount;
-				unsigned int stride;
-
-				switch (currUnion[0]->GetObjectType())
-				{
-				case ePA_SOT_Panel:
-					dataSize = currUnion.GetSize() * sizeof(MkPanel::VertexData) * 6;
-					primType = D3DPT_TRIANGLELIST;
-					primCount = currUnion.GetSize() * 2;
-					stride = sizeof(MkPanel::VertexData);
-					break;
-
-				case ePA_SOT_LineShape:
-					{
-						unsigned int dataBlockCnt = 0;
-						MK_INDEXING_LOOP(currUnion, i)
-						{
-							dataBlockCnt += currUnion[i]->__GetVertexDataBlockSize();
-						}
-
-						dataSize = dataBlockCnt * sizeof(MkLineShape::SegmentData);
-						primType = D3DPT_LINELIST;
-						primCount = dataBlockCnt;
-						stride = sizeof(MkLineShape::PointData);
-					}
-					break;
-				}
-
-				if (dataSize > 0)
-				{
-					MkByteArray vertexData(dataSize);
-
-					MK_INDEXING_LOOP(currUnion, j)
-					{
-						currUnion[j]->__FillVertexData(vertexData);
-					}
-
-					device->DrawPrimitiveUP(primType, primCount, vertexData.GetPtr(), stride);
-				}
-			}
-
-			m_RenderTarget.__EndScene();
-
-			drawn = true;
-		}
 	}
 
+	if (m_RenderTarget.__BeginScene())
+	{
+		DWORD rtClearFlag = D3DCLEAR_ZBUFFER; // D3DCLEAR_STENCIL는 사용하지 않음
+		if (m_ClearLastRenderTarget)
+		{
+			rtClearFlag |= D3DCLEAR_TARGET;
+		}
+		m_RenderTarget.__Clear(rtClearFlag);
+
+		// camera
+		m_Camera.UpdateViewProjectionMatrix();
+		MK_RENDER_STATE.UpdateViewProjectionTransform(m_Camera.GetViewMatrix(), m_Camera.GetProjectionMatrix());
+
+		// union 순회
+		MK_INDEXING_LOOP(unions, i)
+		{
+			MkArray<const MkSceneRenderObject*>& currUnion = unions[i];
+
+			// union은 동일 재질을 참조하므로 아무거나 하나만 적용하면 됨
+			currUnion[0]->__ApplyRenderState();
+
+			// vertex buffer 구성해 draw call
+			// rect나 line 종류는 버텍스버퍼 세심하게 콘트를 하는 것에 비해 DrawPrimitiveUP를 써도 퍼포먼스 차이가 거의 없음
+			unsigned int dataSize = 0;
+			D3DPRIMITIVETYPE primType;
+			unsigned int primCount;
+			unsigned int stride;
+
+			switch (currUnion[0]->GetObjectType())
+			{
+			case ePA_SOT_Panel:
+				dataSize = currUnion.GetSize() * sizeof(MkPanel::VertexData) * 6;
+				primType = D3DPT_TRIANGLELIST;
+				primCount = currUnion.GetSize() * 2;
+				stride = sizeof(MkPanel::VertexData);
+				break;
+
+			case ePA_SOT_LineShape:
+				{
+					unsigned int dataBlockCnt = 0;
+					MK_INDEXING_LOOP(currUnion, i)
+					{
+						dataBlockCnt += currUnion[i]->__GetVertexDataBlockSize();
+					}
+
+					dataSize = dataBlockCnt * sizeof(MkLineShape::SegmentData);
+					primType = D3DPT_LINELIST;
+					primCount = dataBlockCnt;
+					stride = sizeof(MkLineShape::PointData);
+				}
+				break;
+			}
+
+			if (dataSize > 0)
+			{
+				MkByteArray vertexData(dataSize);
+
+				MK_INDEXING_LOOP(currUnion, j)
+				{
+					currUnion[j]->__FillVertexData(vertexData);
+				}
+
+				device->DrawPrimitiveUP(primType, primCount, vertexData.GetPtr(), stride);
+			}
+		}
+
+		m_RenderTarget.__EndScene();
+
+		drawn = true;
+	}
+	
 	return drawn;
 }
 
@@ -284,6 +287,7 @@ MkDrawSceneNodeStep::MkDrawSceneNodeStep() : MkBaseResetableResource()
 {
 	m_Visible = true;
 	m_ClearLastRenderTarget = false;
+	SetSceneNode(NULL);
 }
 
 void MkDrawSceneNodeStep::_UpdateCameraInfo(void)

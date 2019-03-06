@@ -178,6 +178,23 @@ public:
 	// 그려질 대상(image, text, mask)의 크기를 반환
 	inline const MkFloat2& GetTextureSize(void) const { return m_TextureSize; }
 
+	// 설정된 텍스쳐의 픽셀 정보 반환
+	// ex>
+	//	MkPanel& p = ...
+	//
+	//	MkArray<MkColor> buffer;
+	//	p.GetPlxelTable(buffer);
+	//
+	//	MkUInt2 ts(static_cast<unsigned int>(p.GetTextureSize().x), static_cast<unsigned int>(p.GetTextureSize().y));
+	//	for (unsigned int y=0; y<ts.y; ++y)
+	//	{
+	//		for (unsigned int x=0; x<ts.x; ++x)
+	//		{
+	//			MkColor c = buffer[y * ts.x + x];
+	//		}
+	//	}
+	bool GetPlxelTable(MkArray<MkColor>& buffer);
+
 	//------------------------------------------------------------------------------------------------//
 
 	inline MkSceneNode* GetParentNode(void) const { return m_ParentNode; }

@@ -224,6 +224,20 @@ MkWindowTagNode::MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(na
 	m_LengthOfBetweenIconAndText = MKDEF_PA_DEFAULT_LENGTH_BETWEEN_WIN_COMPONENT_X;
 }
 
+MkFloat2 MkWindowTagNode::_ConvertToEvenValue(const MkFloat2& value) const
+{
+	MkFloat2 result = value;
+	if ((static_cast<int>(result.x) % 2) == 1)
+	{
+		result.x += 1.f;
+	}
+	if ((static_cast<int>(result.y) % 2) == 1)
+	{
+		result.y += 1.f;
+	}
+	return result;
+}
+
 bool MkWindowTagNode::_UpdateIcon(void)
 {
 	m_UpdateCommand.Set(eUC_Region); // icon이 변경되면 region도 갱신되어야 함
@@ -268,18 +282,18 @@ bool MkWindowTagNode::_UpdateRegion(void)
 
 	if ((iconPanel != NULL) && (textPanel == NULL)) // icon만 존재
 	{
-		m_WindowRect.size = m_ClientRect.size = iconPanel->GetTextureSize();
+		m_WindowRect.size = m_ClientRect.size = _ConvertToEvenValue(iconPanel->GetTextureSize());
 		iconPanel->SetLocalPosition(MkFloat2::Zero);
 	}
 	else if ((iconPanel == NULL) && (textPanel != NULL)) // text만 존재
 	{
-		m_WindowRect.size = m_ClientRect.size = textPanel->GetTextureSize();
+		m_WindowRect.size = m_ClientRect.size = _ConvertToEvenValue(textPanel->GetTextureSize());
 		textPanel->SetLocalPosition(MkFloat2::Zero);
 	}
 	else if ((iconPanel != NULL) && (textPanel != NULL)) // icon, text 모두 존재
 	{
-		MkFloatRect iconRect(MkFloat2::Zero, iconPanel->GetTextureSize());
-		MkFloatRect textRect(MkFloat2(iconRect.size.x + m_LengthOfBetweenIconAndText, 0.f), textPanel->GetTextureSize());
+		MkFloatRect iconRect(MkFloat2::Zero, _ConvertToEvenValue(iconPanel->GetTextureSize()));
+		MkFloatRect textRect(MkFloat2(iconRect.size.x + m_LengthOfBetweenIconAndText, 0.f), _ConvertToEvenValue(textPanel->GetTextureSize()));
 
 		MkFloatRect totalRect;
 		totalRect.UpdateToUnion(iconRect);

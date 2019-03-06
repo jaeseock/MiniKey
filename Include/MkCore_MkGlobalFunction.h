@@ -85,7 +85,7 @@ inline DataType LinearInterpolate(const DataType& a, const DataType& b, float fr
 //------------------------------------------------------------------------------------------------//
 // (a / b)를 퍼센트값으로 변환해 반환
 // ex>
-//	int rlt = ConvertToPercentage<float, int>(8.f, 20.f); // 40
+//	int rlt = ConvertToPercentage<float, int>(8.f, 20.f); // 40%
 //------------------------------------------------------------------------------------------------//
 
 template<class DataType, class ResultType>
@@ -99,7 +99,7 @@ inline ResultType ConvertToPercentage(const DataType& a, const DataType& b)
 //------------------------------------------------------------------------------------------------//
 // 퍼센트값 적용해 반환
 // ex>
-//	int rlt = ConvertToPercentage<float, int>(8.f, 20.f); // 40
+//	float rlt = ApplyPercentage<float, int>(8.f, 20); // 1.6f
 //------------------------------------------------------------------------------------------------//
 
 template<class DataType, class PercentageType>

@@ -221,6 +221,36 @@ bool MkBaseTexture::SaveToPNG(const MkPathName& filePath) const
 	return ((m_Surface != NULL) && (D3DXSaveSurfaceToFile(fullPath, D3DXIFF_PNG, m_Surface, NULL, NULL) == D3D_OK));
 }
 
+bool MkBaseTexture::GetPixelTable(MkArray<MkColor>& buffer)
+{
+	if (m_Texture == NULL)
+		return false;
+
+	unsigned int totalPixels = static_cast<unsigned int>(m_Size.x * m_Size.y);
+	if (totalPixels == 0)
+		return false;
+
+	D3DLOCKED_RECT rect;
+	if (m_Texture->LockRect(0, &rect, NULL, D3DLOCK_DISCARD) != D3D_OK)
+		return false;
+
+	if (((rect.Pitch / m_Size.x) == sizeof(DWORD)) && ((rect.Pitch % m_Size.x) == 0))
+	{
+		buffer.Reserve(totalPixels);
+
+		DWORD* pColor = reinterpret_cast<DWORD*>(rect.pBits);
+		unsigned int index = 0;
+		while (index < totalPixels)
+		{
+			D3DXCOLOR c = pColor[index];
+			buffer.PushBack(MkColor(c.r, c.g, c.b, c.a));
+			++index;
+		}
+	}
+	m_Texture->UnlockRect(0);
+	return (buffer.GetSize() == totalPixels);
+}
+
 bool MkBaseTexture::IsAlphaFormat(D3DFORMAT format)
 {
 	switch (format)

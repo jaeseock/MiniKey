@@ -93,6 +93,9 @@ public:
 	// 파일로 저장
 	bool SaveToPNG(const MkPathName& filePath) const;
 
+	// 픽셀 정보 반환
+	bool GetPixelTable(MkArray<MkColor>& buffer);
+
 	// 해당 포맷이 알파 포맷인지 체크
 	static bool IsAlphaFormat(D3DFORMAT format);
 

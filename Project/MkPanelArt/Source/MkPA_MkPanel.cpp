@@ -234,6 +234,14 @@ void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 	}
 }
 
+bool MkPanel::GetPlxelTable(MkArray<MkColor>& buffer)
+{
+	if (m_Texture == NULL)
+		return false;
+
+	return m_Texture->GetPixelTable(buffer);
+}
+
 void MkPanel::Clear(void)
 {
 	m_PixelScrollPosition.Clear();
