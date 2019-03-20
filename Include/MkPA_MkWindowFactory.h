@@ -75,7 +75,8 @@ public:
 
 	enum eMsgBoxButton
 	{
-		eMBB_OK = 0, // OkButtonName
+		eMBB_None = 0, // only close btn
+		eMBB_OK, // OkButtonName
 		eMBB_OkCancel // OkButtonName, CancelButtonName
 	};
 

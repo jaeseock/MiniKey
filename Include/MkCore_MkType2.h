@@ -92,6 +92,11 @@ public:
 		return ((x > static_cast<DataType>(0)) && (y > static_cast<DataType>(0)));
 	}
 
+	inline bool IsNegative(void) const
+	{
+		return ((x < static_cast<DataType>(0)) && (y < static_cast<DataType>(0)));
+	}
+
 	// pt와 비교해 작은쪽을 저장
 	inline void CompareAndKeepMin(const MkType2& pt)
 	{

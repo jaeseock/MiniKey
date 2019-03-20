@@ -98,6 +98,10 @@ public:
 	// (NOTE) 대상 노드(자신)는 최소한 한 번 이상 Update()를 통해 world transform이 갱신된 상태이어야 함
 	bool PickPanel(MkArray<MkPanel*>& buffer, const MkFloat2& worldPoint, float startDepth = 0.f, const MkBitField32& attrCondition = MkBitField32::EMPTY) const;
 
+	// PickPanel()의 단순화. hit한 최상위 패널만 반환
+	// (NOTE) PickPanel()의 조건과 주의를 모두 따름
+	MkPanel* PickPanel(const MkFloat2& worldPoint, const MkBitField32& attrCondition = MkBitField32::EMPTY) const;
+
 	//------------------------------------------------------------------------------------------------//
 	// line shape 관리
 	//------------------------------------------------------------------------------------------------//

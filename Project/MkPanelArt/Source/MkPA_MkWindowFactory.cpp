@@ -197,7 +197,7 @@ MkTitleBarControlNode* MkWindowFactory::_CreateMessageBox
 	{
 		do
 		{
-			titleNode->SetTitleBar(m_ThemeName, m_FrameType, 10.f, false); // length는 의미 없음. 이후 body frame에서 재설정 할 것임
+			titleNode->SetTitleBar(m_ThemeName, m_FrameType, 10.f, (btnType == eMBB_None)); // length는 의미 없음. 이후 body frame에서 재설정 할 것임
 			titleNode->SetIcon(iconType);
 
 			if (titleTextName.Empty())
@@ -216,6 +216,7 @@ MkTitleBarControlNode* MkWindowFactory::_CreateMessageBox
 
 			// body frame dispositioner
 			MkWindowDispositioner windowDispositioner;
+			windowDispositioner.SetMargin(MkFloat2(8.f, 8.f)); // border
 			windowDispositioner.AddNewLine(); // title에 해당하는 빈 영역
 			windowDispositioner.AddDummyToCurrentLine(titleNode->CalculateWindowSize());
 
@@ -239,37 +240,41 @@ MkTitleBarControlNode* MkWindowFactory::_CreateMessageBox
 				callBackWindow->GetWindowPath(callbackTarget);
 			}
 
-			// create ok btn
-			MkWindowBaseNode* okBtn = CreateOkButtonNode();
-			if (okBtn == NULL)
-				break;
-
-			bodyFrame->AttachChildNode(okBtn);
-
-			if (!callbackTarget.Empty())
-			{
-				okBtn->SetCallBackTargetWindowPath(callbackTarget);
-			}
-
-			windowDispositioner.AddNewLine(MkWindowDispositioner::eLHA_Center); // button set도 중앙 정렬
-			windowDispositioner.AddRectToCurrentLine(okBtn->GetNodeName(), okBtn->CalculateWindowSize());
-
-			// create cancel btn
+			MkWindowBaseNode* okBtn = NULL;
 			MkWindowBaseNode* cancelBtn = NULL;
-			if (btnType == eMBB_OkCancel)
+			if (btnType != eMBB_None)
 			{
-				cancelBtn = CreateCancelButtonNode();
-				if (cancelBtn == NULL)
+				// create ok btn
+				okBtn = CreateOkButtonNode();
+				if (okBtn == NULL)
 					break;
-				
-				bodyFrame->AttachChildNode(cancelBtn);
+
+				bodyFrame->AttachChildNode(okBtn);
 
 				if (!callbackTarget.Empty())
 				{
-					cancelBtn->SetCallBackTargetWindowPath(callbackTarget);
+					okBtn->SetCallBackTargetWindowPath(callbackTarget);
 				}
 
-				windowDispositioner.AddRectToCurrentLine(cancelBtn->GetNodeName(), cancelBtn->CalculateWindowSize());
+				windowDispositioner.AddNewLine(MkWindowDispositioner::eLHA_Center); // button set도 중앙 정렬
+				windowDispositioner.AddRectToCurrentLine(okBtn->GetNodeName(), okBtn->CalculateWindowSize());
+
+				// create cancel btn
+				if (btnType == eMBB_OkCancel)
+				{
+					cancelBtn = CreateCancelButtonNode();
+					if (cancelBtn == NULL)
+						break;
+					
+					bodyFrame->AttachChildNode(cancelBtn);
+
+					if (!callbackTarget.Empty())
+					{
+						cancelBtn->SetCallBackTargetWindowPath(callbackTarget);
+					}
+
+					windowDispositioner.AddRectToCurrentLine(cancelBtn->GetNodeName(), cancelBtn->CalculateWindowSize());
+				}
 			}
 
 			// dispositioner 계산
@@ -277,6 +282,7 @@ MkTitleBarControlNode* MkWindowFactory::_CreateMessageBox
 
 			// body frame size
 			MkFloat2 clientSize = windowDispositioner.GetRegion();
+			//clientSize += MkFloat2(10.f, 10.f); // border
 			bodyFrame->SetBodyFrame(m_ThemeName, bodyType, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, clientSize);
 
 			// 하위 node 위치 반영

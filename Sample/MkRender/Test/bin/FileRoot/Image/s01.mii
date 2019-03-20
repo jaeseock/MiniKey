@@ -1,9 +1,9 @@
 
-str Group = "Sample"; // (opt)그룹명
+str __#Group = "Sample"; // (opt)그룹명
 
 // subset definition
 /*
-Node "PRIFIX(single일 경우 NAME)"
+Node "PREFIX(single일 경우 NAME)"
 {
 	int2 Position = (0, 0); // (opt)위치. 기본값은 (0, 0)
 	int2 Size = (101, 101); // 크기
@@ -49,6 +49,7 @@ Node "NAME"
 	float TotalRange = 4.5; // 총 시간 구간의 길이(sec)
 	str SubsetList = "P_0" / "P_1" / "P_2"; // subset list. MkDataNode의 automation 기능 추천(해당 문장은 str SubsetList = "~" / "P_" / "0" / "2";와 동일)
 	float TimeList = 0 / 1.5 / 3; // (opt)subset list와 1:1 대응되는 등장 시간. 없으면 Range를 Subset 갯수만큼 균일하게 쪼개서 사용
+	str Pivot = "LB"; // (opt) 축 기준. 기본값은 LB(left-bottom). "LT", "LC", "LB", "MT", "MC", "MB", "RT", "RC", "RB" 9가지가 존재
 	bool Loop = yes; // (opt)루핑 여부. 기본값은 true
 }
 */

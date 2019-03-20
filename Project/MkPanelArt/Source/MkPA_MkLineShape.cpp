@@ -107,7 +107,7 @@ bool MkLineShape::__CheckDrawable(void) const
 {
 	return
 		(GetVisible() && // 보이기 활성화 중이고
-		m_AABR.size.IsPositive()); // 유효한 크기가 존재하면 true
+		(!m_AABR.size.IsZero())); // 유효한 크기가 존재하면 true
 }
 
 void MkLineShape::__FillVertexData(MkByteArray& buffer) const

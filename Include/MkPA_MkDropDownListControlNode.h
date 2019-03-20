@@ -44,6 +44,12 @@ public:
 	// item 추가. 동일 key의 item이 존재하면 삭제 후 추가
 	void AddItem(const MkHashStr& uniqueKey, const MkStr& message);
 
+	// 존재하는 item의 표시문구 설정
+	bool SetItemMessage(const MkHashStr& uniqueKey, const MkStr& message);
+
+	// item 존재 여부 반환
+	bool ItemExist(const MkHashStr& uniqueKey) const;
+
 	// item 삭제
 	bool RemoveItem(const MkHashStr& uniqueKey);
 
@@ -59,6 +65,9 @@ public:
 	// 대상 item 지정/반환
 	void SetTargetItemKey(const MkHashStr& uniqueKey);
 	inline const MkHashStr& GetTargetItemKey(void) const { return m_TargetItemKey; }
+
+	void SortItemSequenceInAscendingOrder(void); // 오름차순 (ex> 1, 2, 3, ...)
+	void SortItemSequenceInDescendingOrder(void); // 내림차순 (ex> 10, 9, 8, ...)
 
 	//------------------------------------------------------------------------------------------------//
 	// event

@@ -159,6 +159,20 @@ MkWindowTagNode* MkListBoxControlNode::AddItem(const MkHashStr& uniqueKey, const
 	return tagNode;
 }
 
+bool MkListBoxControlNode::SetItemMessage(const MkHashStr& uniqueKey, const MkStr& message)
+{
+	if (m_ItemData.Exist(uniqueKey))
+	{
+		MkWindowTagNode* tagNode = m_ItemData[uniqueKey].tagNode;
+		if (tagNode != NULL)
+		{
+			tagNode->SetTextName(MK_STATIC_RES.GetWindowThemeSet().GetCaptionTextNode(GetThemeName(), m_FrameType), message);
+			return true;
+		}
+	}
+	return false;
+}
+
 bool MkListBoxControlNode::RemoveItem(const MkHashStr& uniqueKey)
 {
 	bool ok = m_ItemData.Exist(uniqueKey);

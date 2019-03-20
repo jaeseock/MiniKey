@@ -1,0 +1,621 @@
+
+Node "FontResource"
+{
+	Node "FontType"
+	{
+		// Node "Category"
+		// {
+		//	str FontFilePath = "xxx.ttf" / "yyy.ttf" / ...;
+		//
+		//	Node "TypeName"
+		//	{
+		//		str face = "GulimChe"; // ¸¼Àº°íµñ, ³ª´®°íµñ, ...
+		//		uint size = 12;
+		//		int thickness = 0; // 0:eThin, 1:eMedium, 2:eThick, 3:eFull
+		//	}
+		// }
+		
+		str DefaultType = "¸¼Àº°íµñ";
+			
+		Node "¸¼Àº°íµñ"
+		{
+			Node "DefaultT" // duty
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 12;
+				int thickness = 0;
+			}
+			
+			Node "Small"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 12;
+				int thickness = 0;
+			}
+			
+			Node "SmallBold"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 12;
+				int thickness = 2;
+			}
+			
+			Node "Medium"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 14;
+				int thickness = 0;
+			}
+			
+			Node "MediumBold"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 14;
+				int thickness = 2;
+			}
+			
+			Node "Large"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 16;
+				int thickness = 0;
+			}
+			
+			Node "LargeBold"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 16;
+				int thickness = 2;
+			}
+			
+			Node "Special"
+			{
+				str face = "¸¼Àº°íµñ";
+				uint size = 20;
+				int thickness = 2;
+			}
+		}
+	}
+
+	Node "FontColor"
+	{
+		// predefined colors (BlackC, WhiteC, LightGrayC, DarkGrayC, RedC, GreenC, BlueC, YellowC, CianC, PinkC, VioletC, OrangeC)
+	}
+
+	Node "FontStyle"
+	{
+		// predefined styles (BlackS, WhiteS, LightGrayS, DarkGrayS, RedS, GreenS, BlueS, YellowS, CianS, PinkS, VioletS, OrangeS)
+		
+		//Node "EX"
+		//{
+		//	str textColor = "WhiteC"; // a predefined color, or a child of Node "FontColor"
+		//	int mode = 2; // 0:eNormal, 1:eOutline, 2:eShadow
+		//	str modeColor = "RedC"; // same as textColor
+		//}
+		
+		Node "DefaultS" // duty
+		{
+			str textColor = "WhiteC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "WindowTitle:Front"
+		{
+			str textColor = "WhiteC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "WindowTitle:Back"
+		{
+			str textColor = "LightGrayC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Title"
+		{
+			str textColor = "GreenS";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Normal"
+		{
+			str textColor = "WhiteC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Highlight"
+		{
+			str textColor = "CianC";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+		
+		Node "Desc:Notice"
+		{
+			str textColor = "RedS";
+			int mode = 2;
+			str modeColor = "DarkGrayC";
+		}
+	}
+}
+
+Node "StaticResource"
+{
+	str TextNode = "Text\StaticTextNode.txt";
+	
+	Node "Theme"
+	{
+		Node "Default" // duty. all components are also duty
+		{
+			// setting
+			str ImagePath = "Default\theme_default.png"; // duty
+			
+			Node "eFT_Small"
+			{
+				float FrameSize = 12;
+				str CaptionTextNode = "Theme" / "Default" / "Small";
+				str EditTextNode = "Theme" / "Default" / "Small";
+			}
+			
+			Node "eFT_Medium"
+			{
+				float FrameSize = 16;
+				str CaptionTextNode = "Theme" / "Default" / "Medium";
+				str EditTextNode = "Theme" / "Default" / "Medium";
+			}
+			
+			Node "eFT_Large"
+			{
+				float FrameSize = 22;
+				str CaptionTextNode = "Theme" / "Default" / "Large";
+				str EditTextNode = "Theme" / "Default" / "Large";
+			}
+			
+			/*
+			Node "COMPONENT_NAME" // COMPONENT_NAMEÀº MkWindowThemeData::eComponentType, STATE_KEY´Â MkWindowThemeFormData::eState ÂüÁ¶
+			{
+				str STATE_KEY = ""; // empty unit data
+				str STATE_KEY = "Default_0"; // 1°³. eUT_Image
+				str STATE_KEY = "~" / "Default_" / "0" / "3" / "5" / "8"; // 8°³. eUT_Edge
+				str STATE_KEY = "~" / "Default_" / "0" / "8"; // 9°³. eUT_Table
+			}
+			
+			Node "COMPONENT_NAME" // eFT_SingleUnit
+			{
+				str eS_Single = ...;
+			}
+			Node "COMPONENT_NAME" // eFT_DualUnit
+			{
+				str eS_Back = ...;
+				str eS_Front = ...;
+			}
+			Node "COMPONENT_NAME" // eFT_QuadUnit
+			{
+				str eS_Normal = ...;
+				str eS_Focus = ...;
+				str eS_Pushing = ...;
+				str eS_Disable = ...;
+			}
+			*/
+			
+			// component
+			Node "eCT_ShadowBox" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "SdwE_" / "0" / "3" / "5" / "8"; // eUT_Edge
+			}
+			
+			Node "eCT_DefaultBox" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "DefT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_NoticeBox" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "NotT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_StaticBox" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "SttT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_GuideBox" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "GuiE_" / "0" / "3" / "5" / "8"; // eUT_Edge
+			}
+			
+			Node "eCT_FlatBox" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "BtnFlatT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_Title" // eFT_DualUnit
+			{
+				str eS_Back = "~" / "TtlTB_" / "0" / "8"; // eUT_Table
+				str eS_Front = "~" / "TtlTF_" / "0" / "8";
+			}
+			
+			Node "eCT_NormalBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "BtnNormTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnNormTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnNormTP_" / "0" / "8";
+				str eS_Disable = "~" / "BtnNormTD_" / "0" / "8";
+			}
+			
+			Node "eCT_OKBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "BtnOkTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnOkTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnOkTP_" / "0" / "8";
+				str eS_Disable = "~" / "BtnOkTD_" / "0" / "8";
+			}
+			
+			Node "eCT_CancelBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "BtnClTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnClTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnClTP_" / "0" / "8";
+				str eS_Disable = "~" / "BtnClTD_" / "0" / "8";
+			}
+			
+			Node "eCT_CheckBoxBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "GuiE_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "NotT_" / "0" / "8";
+				str eS_Pushing = "~" / "GuiE_" / "0" / "8";
+				str eS_Disable = "~" / "GuiE_" / "0" / "8";
+			}
+			
+			Node "eCT_FlatBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "BtnFlatT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnFlatT_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnFlatT_" / "0" / "8";
+				str eS_Disable = "~" / "BtnFlatT_" / "0" / "8";
+			}
+			
+			Node "eCT_GuideBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "BtnGuideTN_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "BtnGuideTF_" / "0" / "8";
+				str eS_Pushing = "~" / "BtnGuideTF_" / "0" / "8";
+				str eS_Disable = "~" / "BtnGuideTD_" / "0" / "8";
+			}
+			
+			Node "eCT_GuideLine" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "LineGuideE_" / "0" / "3" / "5" / "8"; // eUT_Edge
+			}
+			
+			Node "eCT_YellowZone" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "SelYeT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_BlueZone" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "SelBlT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_RedOutlineZone" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "SelRgT_" / "0" / "3" / "5" / "8"; // eUT_Edge
+			}
+			
+			Node "eCT_DarkZone" // eFT_SingleUnit
+			{
+				str eS_Single = "~" / "DknT_" / "0" / "8"; // eUT_Table
+			}
+			
+			Node "eCT_YellowSelBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "EmptyT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "SelYeT_" / "0" / "8";
+				str eS_Pushing = "~" / "SelYeT_" / "0" / "8";
+				str eS_Disable = "~" / "SelDT_" / "0" / "8";
+			}
+			
+			Node "eCT_BlueSelBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "EmptyT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "SelBlT_" / "0" / "8";
+				str eS_Pushing = "~" / "SelBlT_" / "0" / "8";
+				str eS_Disable = "~" / "SelDT_" / "0" / "8";
+			}
+			
+			Node "eCT_RedOutlineSelBtn" // eFT_QuadUnit
+			{
+				str eS_Normal = "~" / "EmptyT_" / "0" / "8"; // eUT_Table
+				str eS_Focus = "~" / "SelRgT_" / "0" / "8";
+				str eS_Pushing = "~" / "SelRgT_" / "0" / "8";
+				str eS_Disable = "~" / "SelDT_" / "0" / "8";
+			}
+			
+			Node "eCT_RedLEDBtnSmall" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnRI16N"; // eUT_Image
+				str eS_Focus = "BtnRI16F";
+				str eS_Pushing = "BtnRI16P";
+				str eS_Disable = "BtnRI16D";
+			}
+			
+			Node "eCT_RedLEDBtnMedium" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnRI16N"; // eUT_Image
+				str eS_Focus = "BtnRI16F";
+				str eS_Pushing = "BtnRI16P";
+				str eS_Disable = "BtnRI16D";
+			}
+			
+			Node "eCT_RedLEDBtnLarge" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnRI22N"; // eUT_Image
+				str eS_Focus = "BtnRI22F";
+				str eS_Pushing = "BtnRI22P";
+				str eS_Disable = "BtnRI22D";
+			}
+			
+			Node "eCT_GreenLEDBtnSmall" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnGI16N"; // eUT_Image
+				str eS_Focus = "BtnGI16F";
+				str eS_Pushing = "BtnGI16P";
+				str eS_Disable = "BtnGI16D";
+			}
+			
+			Node "eCT_GreenLEDBtnMedium" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnGI16N"; // eUT_Image
+				str eS_Focus = "BtnGI16F";
+				str eS_Pushing = "BtnGI16P";
+				str eS_Disable = "BtnGI16D";
+			}
+			
+			Node "eCT_GreenLEDBtnLarge" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnGI22N"; // eUT_Image
+				str eS_Focus = "BtnGI22F";
+				str eS_Pushing = "BtnGI22P";
+				str eS_Disable = "BtnGI22D";
+			}
+			
+			Node "eCT_BlueLEDBtnSmall" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnBI16N"; // eUT_Image
+				str eS_Focus = "BtnBI16F";
+				str eS_Pushing = "BtnBI16P";
+				str eS_Disable = "BtnBI16D";
+			}
+			
+			Node "eCT_BlueLEDBtnMedium" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnBI16N"; // eUT_Image
+				str eS_Focus = "BtnBI16F";
+				str eS_Pushing = "BtnBI16P";
+				str eS_Disable = "BtnBI16D";
+			}
+			
+			Node "eCT_BlueLEDBtnLarge" // eFT_QuadUnit
+			{
+				str eS_Normal = "BtnBI22N"; // eUT_Image
+				str eS_Focus = "BtnBI22F";
+				str eS_Pushing = "BtnBI22P";
+				str eS_Disable = "BtnBI22D";
+			}
+			
+			Node "eCT_NoticeIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "NotiI16"; // eUT_Image
+			}
+			
+			Node "eCT_NoticeIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "NotiI16"; // eUT_Image
+			}
+			
+			Node "eCT_NoticeIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "NotiI22"; // eUT_Image
+			}
+
+			Node "eCT_InformationIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "InfoI16"; // eUT_Image
+			}
+			
+			Node "eCT_InformationIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "InfoI16"; // eUT_Image
+			}
+			
+			Node "eCT_InformationIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "InfoI22"; // eUT_Image
+			}
+
+			Node "eCT_WarningIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "WarningI16"; // eUT_Image
+			}
+			
+			Node "eCT_WarningIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "WarningI16"; // eUT_Image
+			}
+			
+			Node "eCT_WarningIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "WarningI22"; // eUT_Image
+			}
+
+			Node "eCT_WindowIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "WindowI16"; // eUT_Image
+			}
+			
+			Node "eCT_WindowIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "WindowI16"; // eUT_Image
+			}
+			
+			Node "eCT_WindowIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "WindowI22"; // eUT_Image
+			}
+
+			Node "eCT_EditModeIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "EditI16"; // eUT_Image
+			}
+			
+			Node "eCT_EditModeIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "EditI16"; // eUT_Image
+			}
+			
+			Node "eCT_EditModeIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "EditI22"; // eUT_Image
+			}
+
+			Node "eCT_LeftArrowIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "LArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_LeftArrowIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "LArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_LeftArrowIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "LArrowI22"; // eUT_Image
+			}
+
+			Node "eCT_RightArrowIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "RArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_RightArrowIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "RArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_RightArrowIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "RArrowI22"; // eUT_Image
+			}
+
+			Node "eCT_UpArrowIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "UArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_UpArrowIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "UArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_UpArrowIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "UArrowI22"; // eUT_Image
+			}
+
+			Node "eCT_DownArrowIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "DArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_DownArrowIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "DArrowI16"; // eUT_Image
+			}
+			
+			Node "eCT_DownArrowIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "DArrowI22"; // eUT_Image
+			}
+
+			Node "eCT_CheckMarkIconSmall" // eFT_SingleUnit
+			{
+				str eS_Single = "CheckI16"; // eUT_Image
+			}
+			
+			Node "eCT_CheckMarkIconMedium" // eFT_SingleUnit
+			{
+				str eS_Single = "CheckI16"; // eUT_Image
+			}
+			
+			Node "eCT_CheckMarkIconLarge" // eFT_SingleUnit
+			{
+				str eS_Single = "CheckI22"; // eUT_Image
+			}
+			
+			Node "eCT_CustomForm"
+			{
+				Node "TestBtn01" // eFT_QuadUnit
+				{
+					str eS_Normal = "BtnBI22N"; // eUT_Image
+					str eS_Focus = "BtnBI22F";
+					str eS_Pushing = "BtnBI22P";
+					str eS_Disable = "BtnBI22D";
+				}
+				
+				Node "TestBtn02" // eFT_QuadUnit
+				{
+					str eS_Normal = "BtnRI22N"; // eUT_Image
+					str eS_Focus = "BtnRI22F";
+					str eS_Pushing = "BtnRI22P";
+					str eS_Disable = "BtnRI22D";
+				}
+			}
+		}
+	}
+}
+
+Node "CursorType" // Ä¿¼­ ÁöÁ¤¿¡ ´ëÇØ¼­´Â MkCursorManager::eCursorType ÂüÁ¶
+{
+	Node "eNormal"
+	{
+		str FilePath = "Default\cursor_normal.png";
+		int2 Hotspot = (1, 1);
+	}
+	
+	Node "eExcutable"
+	{
+		str FilePath = "Default\cursor_excutable.png";
+		int2 Hotspot = (1, 1);
+	}
+	
+	Node "eDisable"
+	{
+		str FilePath = "Default\cursor_disable.png";
+		int2 Hotspot = (1, 1);
+	}
+	
+	Node "eMovable"
+	{
+		str FilePath = "Default\cursor_movable.png";
+		int2 Hotspot = (8, 8);
+	}
+	
+	Node "eMoving"
+	{
+		str FilePath = "Default\cursor_moving.png";
+		int2 Hotspot = (8, 8);
+	}
+	
+	Node "eTextCursor"
+	{
+		str FilePath = "Default\cursor_textcursor.png";
+		int2 Hotspot = (3, 2);
+	}
+}

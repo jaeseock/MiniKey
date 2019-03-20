@@ -1,0 +1,196 @@
+﻿//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path  : d:\Solutions\MiniKey\MiniKey\Tool\MiniKeyImageInfoEditor\bin\FileRoot\Image\tank_sprite.mii
+//   - time stamp : 2019.03.19 (15:52:04)
+//   - exporter   : pc (MiniKeyImageInfoEditor)
+//--------------------------------------------------------------------//
+
+
+str __#Group = "Tank";
+
+Node "#FireGun"
+{
+	str SubsetList = // [5]
+		"FireGun_0" /
+		"FireGun_1" /
+		"FireGun_2" /
+		"FireGun_3" /
+		"FireGun_4";
+	float TimeList = // [5]
+		0.000 / 0.067 / 0.133 / 0.200 / 0.267;
+	float TotalRange = 0.333;
+}
+
+Node "#Idle"
+{
+	str SubsetList = // [4]
+		"Idle_0" /
+		"Idle_1" /
+		"Idle_2" /
+		"Idle_3";
+	float TimeList = // [4]
+		0.000 / 0.233 / 0.500 / 0.733;
+	float TotalRange = 1.000;
+}
+
+Node "#Walk"
+{
+	str SubsetList = "Walk_00";
+	float TotalRange = 1.000;
+}
+
+Node "FireGun_0"
+{
+	int2 Position = (5, 458);
+	int2 Size = (73, 61);
+}
+
+Node "FireGun_1"
+{
+	int2 Position = (96, 458);
+	int2 Size = (97, 61);
+}
+
+Node "FireGun_2"
+{
+	int2 Position = (207, 458);
+	int2 Size = (106, 61);
+}
+
+Node "FireGun_3"
+{
+	int2 Position = (324, 458);
+	int2 Size = (105, 61);
+}
+
+Node "FireGun_4"
+{
+	int2 Position = (443, 458);
+	int2 Size = (104, 61);
+}
+
+Node "Idle_0"
+{
+	int2 Position = (10, 21);
+	int2 Size = (73, 61);
+}
+
+Node "Idle_1"
+{
+	int2 Position = (98, 21);
+	int2 Size = (73, 61);
+}
+
+Node "Idle_2"
+{
+	int2 Position = (186, 21);
+	int2 Size = (73, 61);
+}
+
+Node "Idle_3"
+{
+	int2 Position = (276, 21);
+	int2 Size = (73, 61);
+}
+
+Node "Walk_00"
+{
+	int2 Position = (14, 282);
+	int2 Size = (73, 62);
+}
+
+Node "Walk_01"
+{
+	int2 Position = (103, 283);
+	int2 Size = (71, 61);
+}
+
+Node "Walk_02"
+{
+	int2 Position = (186, 283);
+	int2 Size = (71, 61);
+}
+
+Node "Walk_03"
+{
+	int2 Position = (272, 283);
+	int2 Size = (69, 61);
+}
+
+Node "Walk_04"
+{
+	int2 Position = (357, 283);
+	int2 Size = (69, 61);
+}
+
+Node "Walk_05"
+{
+	int2 Position = (441, 283);
+	int2 Size = (65, 61);
+}
+
+Node "Walk_06"
+{
+	int2 Position = (524, 283);
+	int2 Size = (65, 61);
+}
+
+Node "Walk_07"
+{
+	int2 Position = (606, 283);
+	int2 Size = (65, 61);
+}
+
+Node "Walk_08"
+{
+	int2 Position = (13, 357);
+	int2 Size = (65, 62);
+}
+
+Node "Walk_09"
+{
+	int2 Position = (100, 358);
+	int2 Size = (65, 61);
+}
+
+Node "Walk_10"
+{
+	int2 Position = (181, 358);
+	int2 Size = (65, 61);
+}
+
+Node "Walk_11"
+{
+	int2 Position = (262, 358);
+	int2 Size = (69, 61);
+}
+
+Node "Walk_12"
+{
+	int2 Position = (348, 358);
+	int2 Size = (69, 61);
+}
+
+Node "Walk_13"
+{
+	int2 Position = (433, 358);
+	int2 Size = (71, 61);
+}
+
+Node "Walk_14"
+{
+	int2 Position = (524, 358);
+	int2 Size = (71, 61);
+}
+
+Node "Walk_15"
+{
+	int2 Position = (610, 358);
+	int2 Size = (72, 61);
+}
+
+Node "_NONAME_1"
+{
+	int2 Position = (89, 555);
+	int2 Size = (63, 90);
+}

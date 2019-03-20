@@ -221,7 +221,7 @@ bool MkBaseTexture::SaveToPNG(const MkPathName& filePath) const
 	return ((m_Surface != NULL) && (D3DXSaveSurfaceToFile(fullPath, D3DXIFF_PNG, m_Surface, NULL, NULL) == D3D_OK));
 }
 
-bool MkBaseTexture::GetPixelTable(MkArray<MkColor>& buffer)
+bool MkBaseTexture::GetPixelTable(MkArray<D3DCOLOR>& buffer)
 {
 	if (m_Texture == NULL)
 		return false;
@@ -243,7 +243,7 @@ bool MkBaseTexture::GetPixelTable(MkArray<MkColor>& buffer)
 		while (index < totalPixels)
 		{
 			D3DXCOLOR c = pColor[index];
-			buffer.PushBack(MkColor(c.r, c.g, c.b, c.a));
+			buffer.PushBack(MkColor(c.r, c.g, c.b, c.a).ConvertToD3DCOLOR());
 			++index;
 		}
 	}

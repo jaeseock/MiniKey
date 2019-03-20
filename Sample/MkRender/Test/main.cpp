@@ -385,7 +385,7 @@ public:
 				MkPanel* imagePanel = m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"Main")->GetPanel(L"ImgTest");
 				MkHashStr currSN = imagePanel->GetSubsetOrSequenceName();
 				MkArray<MkHashStr> seqs;
-				imagePanel->GetAllSequences(seqs);
+				imagePanel->GetTexturePtr()->GetImageInfo().GetSequences().GetKeyList(seqs);
 
 				if (currSN.Empty())
 				{

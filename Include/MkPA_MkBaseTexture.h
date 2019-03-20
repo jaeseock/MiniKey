@@ -87,14 +87,26 @@ public:
 	inline const MkHashStr& GetPoolKey(void) const { return m_PoolKey; }
 
 	// image info
+	inline MkImageInfo& GetImageInfo(void) { return m_Info; }
 	inline const MkImageInfo& GetImageInfo(void) const { return m_Info; }
 	inline void ResetDefaultSubsetInfo(const MkInt2& srcSize, const MkInt2& realSize) { m_Info.ResetDefaultSubsetInfo(srcSize, realSize); }
 
-	// 파일로 저장
+	// 이미지를 PNG 파일로 저장
 	bool SaveToPNG(const MkPathName& filePath) const;
 
-	// 픽셀 정보 반환
-	bool GetPixelTable(MkArray<MkColor>& buffer);
+	//  픽셀 정보 반환
+	// ex>
+	//	MkArray<D3DCOLOR> buffer;
+	//	texture->GetPixelTable(buffer);
+	//
+	//	for (unsigned int y=0; y<img_y; ++y)
+	//	{
+	//		for (unsigned int x=0; x<img_x; ++x)
+	//		{
+	//			MkColor c(buffer[y * img_x + x]);
+	//		}
+	//	}
+	bool GetPixelTable(MkArray<D3DCOLOR>& buffer);
 
 	// 해당 포맷이 알파 포맷인지 체크
 	static bool IsAlphaFormat(D3DFORMAT format);

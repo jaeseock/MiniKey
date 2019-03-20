@@ -4,7 +4,7 @@
 #include "MkPA_MkImageInfo.h"
 
 
-const static MkHashStr GROUP_KEY = L"Group";
+const static MkHashStr GROUP_KEY = L"__#Group";
 
 const static MkHashStr POSITION_KEY = L"Position";
 const static MkHashStr SIZE_KEY = L"Size";
@@ -14,6 +14,7 @@ const static MkHashStr OFFSET_KEY = L"Offset";
 const static MkHashStr TOTAL_RANGE_KEY = L"TotalRange";
 const static MkHashStr SUBSET_LIST_KEY = L"SubsetList";
 const static MkHashStr TIME_LIST_KEY = L"TimeList";
+const static MkHashStr PIVOT_KEY = L"Pivot";
 const static MkHashStr LOOP_KEY = L"Loop";
 
 //------------------------------------------------------------------------------------------------//
@@ -26,12 +27,7 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 	MkFloat2 fImageSize(static_cast<float>(imageSize.x), static_cast<float>(imageSize.y));
 
 	// empty subset
-	Subset& emptySubset = m_Subsets.Create(MkHashStr::EMPTY);
-	emptySubset.rectSize = fImageSize;
-	emptySubset.uv[MkFloatRect::eLeftTop] = MkFloat2::Zero;
-	emptySubset.uv[MkFloatRect::eRightTop] = MkFloat2(1.f, 0.f);
-	emptySubset.uv[MkFloatRect::eLeftBottom] = MkFloat2(0.f, 1.f);
-	emptySubset.uv[MkFloatRect::eRightBottom] = MkFloat2(1.f, 1.f);
+	_CreateEmptySubset(fImageSize);
 
 	if (node == NULL)
 		return;
@@ -71,7 +67,7 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 				// single subset
 				if ((table.x == 1) && (table.y == 1))
 				{
-					_RegisterSubset(childName, fSubsetSize, position, fImageSize, fUVSize);
+					_UpdateSubset(childName, fSubsetSize, position, fImageSize, fUVSize);
 				}
 				// multi subset
 				else
@@ -84,7 +80,7 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 					{
 						for (int x = 0; x < table.x; ++x)
 						{
-							_RegisterSubset(childName.GetString() + MkStr(y * table.x + x), fSubsetSize, currPivot, fImageSize, fUVSize);
+							_UpdateSubset(childName.GetString() + MkStr(y * table.x + x), fSubsetSize, currPivot, fImageSize, fUVSize);
 							currPivot.x += offset.x;
 						}
 						currPivot.x = position.x;
@@ -106,6 +102,34 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 
 				MkArray<float> timeList;
 				childNode.GetData(TIME_LIST_KEY, timeList);
+
+				eRectAlignmentPosition pivot = eRAP_LeftBottom;
+				MkStr pivotBuffer;
+				if (childNode.GetData(PIVOT_KEY, pivotBuffer, 0) && (pivotBuffer.GetSize() == 2))
+				{
+					pivotBuffer.ToUpper();
+					const wchar_t& frontChar = pivotBuffer.GetAt(0);
+					const wchar_t& rearChar = pivotBuffer.GetAt(1);
+
+					if (frontChar == L'L')
+					{
+						if (rearChar == L'T') { pivot = eRAP_LeftTop; }
+						else if (rearChar == L'C') { pivot = eRAP_LeftCenter; }
+						else if (rearChar == L'B') { pivot = eRAP_LeftBottom; }
+					}
+					else if (frontChar == L'M')
+					{
+						if (rearChar == L'T') { pivot = eRAP_MiddleTop; }
+						else if (rearChar == L'C') { pivot = eRAP_MiddleCenter; }
+						else if (rearChar == L'B') { pivot = eRAP_MiddleBottom; }
+					}
+					else if (frontChar == L'R')
+					{
+						if (rearChar == L'T') { pivot = eRAP_RightTop; }
+						else if (rearChar == L'C') { pivot = eRAP_RightCenter; }
+						else if (rearChar == L'B') { pivot = eRAP_RightBottom; }
+					}
+				}
 
 				bool loop = true;
 				childNode.GetData(LOOP_KEY, loop, 0);
@@ -137,18 +161,21 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 						}
 					}
 
-					MK_CHECK(invalidFrame > 0, childName.GetString() + L" 노드의 " + TIME_LIST_KEY.GetString() + L" 값에 후퇴 프레임 존재 : " + MkStr(invalidFrame))
+					MK_CHECK(invalidFrame == 0, childName.GetString() + L" 노드의 " + TIME_LIST_KEY.GetString() + L" 값에 후퇴 프레임 존재 : " + MkStr(invalidFrame))
 						break;
+
+					timeList[0] = 0.f; // 최초 프레임은 0.부터 시작해야 함
 				}
 
 				// 등록
 				Sequence& seq = m_Sequences.Create(childName);
 				seq.totalRange = totalRange;
+				seq.pivot = pivot;
 				seq.loop = loop;
 
 				MK_INDEXING_LOOP(timeList, j)
 				{
-					seq.tracks.Create(timeList[j], subsetList[j]);
+					seq.tracks.Create(static_cast<double>(timeList[j]), subsetList[j]);
 				}
 			}
 			else
@@ -183,6 +210,84 @@ void MkImageInfo::SetUp(const MkInt2& imageSize, const MkDataNode* node)
 		m_Sequences.Erase(killList);
 		m_Sequences.Rehash();
 	}
+}
+
+bool MkImageInfo::SaveToFile(const MkPathName& filePath, bool textFormat) const
+{
+	MkDataNode node;
+
+	// group
+	if (!m_Group.Empty())
+	{
+		node.CreateUnit(GROUP_KEY, m_Group.GetString());
+	}
+
+	// subset
+	{
+		MkConstHashMapLooper<MkHashStr, Subset> looper(m_Subsets);
+		MK_STL_LOOP(looper)
+		{
+			if (!looper.GetCurrentKey().Empty())
+			{
+				const Subset& ss = looper.GetCurrentField();
+
+				MkDataNode* childNode = node.CreateChildNode(looper.GetCurrentKey());
+				if (!ss.position.IsZero())
+				{
+					childNode->CreateUnit(POSITION_KEY, ss.position);
+				}
+				childNode->CreateUnit(SIZE_KEY, MkInt2(static_cast<int>(ss.rectSize.x), static_cast<int>(ss.rectSize.y)));
+			}
+		}
+	}
+
+	// sequence
+	{
+		MkConstHashMapLooper<MkHashStr, Sequence> looper(m_Sequences);
+		MK_STL_LOOP(looper)
+		{
+			const Sequence& sq = looper.GetCurrentField();
+
+			MkDataNode* childNode = node.CreateChildNode(looper.GetCurrentKey());
+
+			childNode->CreateUnit(TOTAL_RANGE_KEY, static_cast<float>(sq.totalRange));
+			switch (sq.pivot)
+			{
+			case eRAP_LeftTop: childNode->CreateUnit(PIVOT_KEY, L"LT"); break;
+			case eRAP_LeftCenter: childNode->CreateUnit(PIVOT_KEY, L"LC"); break;
+			case eRAP_MiddleTop: childNode->CreateUnit(PIVOT_KEY, L"MT"); break;
+			case eRAP_MiddleCenter: childNode->CreateUnit(PIVOT_KEY, L"MC"); break;
+			case eRAP_MiddleBottom: childNode->CreateUnit(PIVOT_KEY, L"MB"); break;
+			case eRAP_RightTop: childNode->CreateUnit(PIVOT_KEY, L"RT"); break;
+			case eRAP_RightCenter: childNode->CreateUnit(PIVOT_KEY, L"RC"); break;
+			case eRAP_RightBottom: childNode->CreateUnit(PIVOT_KEY, L"RB"); break;
+			}
+			if (!sq.loop)
+			{
+				childNode->CreateUnit(LOOP_KEY, sq.loop);
+			}
+
+			MkArray<double> dTimeList;
+			sq.tracks.GetKeyList(dTimeList);
+
+			MkArray<float> timeList(dTimeList.GetSize());
+			MK_INDEXING_LOOP(dTimeList, i)
+			{
+				timeList.PushBack(static_cast<float>(dTimeList[i]));
+			}
+
+			if (timeList.GetSize() > 1) // 두 개 이상이어야 의미가 있음
+			{
+				childNode->CreateUnit(TIME_LIST_KEY, timeList);
+			}
+
+			MkArray<MkHashStr> subsetList;
+			sq.tracks.GetFieldList(subsetList);
+			childNode->CreateUnitEx(SUBSET_LIST_KEY, subsetList);
+		}
+	}
+
+	return (textFormat) ? node.SaveToText(filePath) : node.SaveToBinary(filePath);
 }
 
 void MkImageInfo::ResetDefaultSubsetInfo(const MkInt2& srcSize, const MkInt2& realSize)
@@ -231,6 +336,14 @@ const MkImageInfo::Subset* MkImageInfo::GetCurrentSubsetPtr(const MkHashStr& sub
 	return subsetName.Empty() ? NULL : &m_Subsets[subsetName];
 }
 
+eRectAlignmentPosition MkImageInfo::GetCurrentPivot(const MkHashStr& subsetOrSequenceName) const
+{
+	if (m_Subsets.Exist(subsetOrSequenceName))
+		return eRAP_LeftBottom;
+
+	return m_Sequences.Exist(subsetOrSequenceName) ? m_Sequences[subsetOrSequenceName].pivot : eRAP_LeftBottom;
+}
+
 void MkImageInfo::Clear(void)
 {
 	m_Group.Clear();
@@ -247,9 +360,109 @@ MkImageInfo& MkImageInfo::operator = (const MkImageInfo& source)
 	return *this;
 }
 */
-void MkImageInfo::_RegisterSubset(const MkHashStr& name, const MkFloat2& subsetSize, const MkInt2& pivot, const MkFloat2& imgSize, const MkFloat2& uvSize)
+
+void MkImageInfo::UpdateSubset(const MkHashStr& name, const MkIntRect& subsetRect, const MkInt2& imgSize)
 {
-	Subset& ss = m_Subsets.Create(name);
+	MkFloat2 fSubsetSize(static_cast<float>(subsetRect.size.x), static_cast<float>(subsetRect.size.y));
+	MkFloat2 fImageSize(static_cast<float>(imgSize.x), static_cast<float>(imgSize.y));
+	MkFloat2 fUVSize(fSubsetSize.x / fImageSize.x, fSubsetSize.y / fImageSize.y);
+
+	_UpdateSubset(name, fSubsetSize, subsetRect.position, fImageSize, fUVSize);
+}
+
+void MkImageInfo::SetGroup(const MkHashStr& name)
+{
+	m_Group = name;
+}
+
+void MkImageInfo::UpdateSubset(const MkHashMap<MkHashStr, MkIntRect>& subsets, const MkInt2& imgSize)
+{
+	m_Subsets.Clear();
+	_CreateEmptySubset(MkFloat2(static_cast<float>(imgSize.x), static_cast<float>(imgSize.y)));
+
+	MkConstHashMapLooper<MkHashStr, MkIntRect> looper(subsets);
+	MK_STL_LOOP(looper)
+	{
+		UpdateSubset(looper.GetCurrentKey(), looper.GetCurrentField(), imgSize);
+	}
+}
+
+void MkImageInfo::ChangeSubset(const MkHashStr& lastName, const MkHashStr& currName)
+{
+	if (m_Subsets.Exist(lastName) && (!m_Subsets.Exist(currName)))
+	{
+		m_Subsets.Create(currName, m_Subsets[lastName]);
+		m_Subsets.Erase(lastName);
+
+		// sequence에 등록된 subset이면 갱신
+		MkHashMapLooper<MkHashStr, Sequence> seqLooper(m_Sequences);
+		MK_STL_LOOP(seqLooper)
+		{
+			MkMapLooper<double, MkHashStr> trackLooper(seqLooper.GetCurrentField().tracks);
+			MK_STL_LOOP(trackLooper)
+			{
+				if (trackLooper.GetCurrentField() == lastName)
+				{
+					trackLooper.GetCurrentField() = currName;
+				}
+			}
+		}
+	}
+}
+
+void MkImageInfo::RemoveSubset(const MkHashStr& name)
+{
+	m_Subsets.Erase(name);
+}
+
+void MkImageInfo::UpdateSequence(const MkHashStr& name, const Sequence& sequence)
+{
+	Sequence& s = m_Sequences.Exist(name) ? m_Sequences[name] : m_Sequences.Create(name);
+	s = sequence;
+}
+
+void MkImageInfo::UpdateSequence(const MkHashMap<MkHashStr, Sequence>& sequences)
+{
+	m_Sequences.Clear();
+
+	MkConstHashMapLooper<MkHashStr, Sequence> looper(sequences);
+	MK_STL_LOOP(looper)
+	{
+		UpdateSequence(looper.GetCurrentKey(), looper.GetCurrentField());
+	}
+}
+
+void MkImageInfo::ChangeSequence(const MkHashStr& lastName, const MkHashStr& currName)
+{
+	if (m_Sequences.Exist(lastName) && (!m_Sequences.Exist(currName)))
+	{
+		m_Sequences.Create(currName, m_Sequences[lastName]);
+		m_Sequences.Erase(lastName);
+	}
+}
+
+void MkImageInfo::RemoveSequence(const MkHashStr& name)
+{
+	if (m_Sequences.Exist(name))
+	{
+		m_Sequences.Erase(name);
+	}
+}
+
+void MkImageInfo::_CreateEmptySubset(const MkFloat2& imgSize)
+{
+	Subset& emptySubset = m_Subsets.Create(MkHashStr::EMPTY);
+	emptySubset.rectSize = imgSize;
+	emptySubset.uv[MkFloatRect::eLeftTop] = MkFloat2::Zero;
+	emptySubset.uv[MkFloatRect::eRightTop] = MkFloat2(1.f, 0.f);
+	emptySubset.uv[MkFloatRect::eLeftBottom] = MkFloat2(0.f, 1.f);
+	emptySubset.uv[MkFloatRect::eRightBottom] = MkFloat2(1.f, 1.f);
+}
+
+void MkImageInfo::_UpdateSubset(const MkHashStr& name, const MkFloat2& subsetSize, const MkInt2& pivot, const MkFloat2& imgSize, const MkFloat2& uvSize)
+{
+	Subset& ss = m_Subsets.Exist(name) ? m_Subsets[name] : m_Subsets.Create(name);
+	ss.position = pivot;
 	ss.rectSize = subsetSize;
 
 	const float offset = 0.00001f; // floating 계산의 오류 보정. 현실적으로 만단위 크기의 texture를 사용하지는 않을 것이므로 이 정도의 해상도로 결정

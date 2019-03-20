@@ -36,9 +36,10 @@ void MkInputManager::SetUp(HWND targetWindowHandle)
 	keyCodeList.PushBack(VK_CONTROL);
 	keyCodeList.PushBack(VK_ESCAPE);
 	keyCodeList.PushBack(VK_SPACE);
+	keyCodeList.PushBack(VK_DELETE);
 	keyCodeList.PushBack(VK_OEM_PLUS);
 	keyCodeList.PushBack(VK_OEM_MINUS);
-
+	
 	// 방향키 등록
 	keyCodeList.PushBack(VK_LEFT);
 	keyCodeList.PushBack(VK_UP);
@@ -235,6 +236,9 @@ MkStr MkInputManager::ConvertKeyCodeToString(unsigned int keyCode)
 	case VK_CONTROL: return L"VK_CONTROL";
 	case VK_ESCAPE: return L"VK_ESCAPE";
 	case VK_SPACE: return L"VK_SPACE";
+	case VK_DELETE: return L"VK_DELETE";
+	case VK_OEM_PLUS: return L"VK_OEM_PLUS";
+	case VK_OEM_MINUS: return L"VK_OEM_MINUS";
 
 	case VK_LEFT: return L"VK_LEFT";
 	case VK_UP: return L"VK_UP";

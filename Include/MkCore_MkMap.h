@@ -229,7 +229,7 @@ public:
 	{
 		if (!keyList.Empty())
 		{
-			BS_ARRAY_LOOP(keyList, i)
+			MK_INDEXING_LOOP(keyList, i)
 			{
 				m_Pair.erase(keyList[i]);
 			}

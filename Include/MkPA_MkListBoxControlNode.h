@@ -48,6 +48,9 @@ public:
 	// item 추가. 동일 key의 item이 존재하면 삭제 후 추가
 	MkWindowTagNode* AddItem(const MkHashStr& uniqueKey, const MkStr& message);
 
+	// 존재하는 item의 표시문구 설정
+	bool SetItemMessage(const MkHashStr& uniqueKey, const MkStr& message);
+
 	// item 삭제
 	bool RemoveItem(const MkHashStr& uniqueKey);
 

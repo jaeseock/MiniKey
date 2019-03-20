@@ -73,11 +73,30 @@ void MkDropDownListControlNode::AddItem(const MkHashStr& uniqueKey, const MkStr&
 		MkWindowTagNode* tagNode = m_ListBoxControlNode->AddItem(uniqueKey, message);
 
 		// 기존 target item이 없으면 최초 등록된 item을 대상으로 삼음
-		if ((tagNode != NULL) && m_TargetItemKey.Empty())
+		if (m_TargetItemKey.Empty())
 		{
 			SetTargetItemKey(uniqueKey);
 		}
 	}
+}
+
+bool MkDropDownListControlNode::SetItemMessage(const MkHashStr& uniqueKey, const MkStr& message)
+{
+	if ((m_ListBoxControlNode != NULL) && (m_ListBoxControlNode->SetItemMessage(uniqueKey, message)))
+	{
+		if (uniqueKey == m_TargetItemKey)
+		{
+			const MkWindowTagNode* tagNode = m_ListBoxControlNode->GetItemTag(m_TargetItemKey);
+			_SetTextToSelectionTag(tagNode);
+		}
+		return true;
+	}
+	return false;
+}
+
+bool MkDropDownListControlNode::ItemExist(const MkHashStr& uniqueKey) const
+{
+	return (m_ListBoxControlNode == NULL) ? false : (m_ListBoxControlNode->GetItemTag(uniqueKey) != NULL);
 }
 
 bool MkDropDownListControlNode::RemoveItem(const MkHashStr& uniqueKey)
@@ -131,6 +150,22 @@ void MkDropDownListControlNode::SetTargetItemKey(const MkHashStr& uniqueKey)
 		MkDataNode arg;
 		arg.CreateUnitEx(MkListBoxControlNode::ArgKey_Item, m_TargetItemKey);
 		StartNodeReportTypeEvent(ePA_SNE_DropDownItemSet, &arg);
+	}
+}
+
+void MkDropDownListControlNode::SortItemSequenceInAscendingOrder(void)
+{
+	if (m_ListBoxControlNode != NULL)
+	{
+		m_ListBoxControlNode->SortItemSequenceInAscendingOrder();
+	}
+}
+
+void MkDropDownListControlNode::SortItemSequenceInDescendingOrder(void)
+{
+	if (m_ListBoxControlNode != NULL)
+	{
+		m_ListBoxControlNode->SortItemSequenceInDescendingOrder();
 	}
 }
 

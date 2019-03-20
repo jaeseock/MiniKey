@@ -1,0 +1,24 @@
+
+Node "Theme"
+{
+	Node "Default"
+	{
+		Node "Small"
+		{
+			str Type = "Small";
+			str Style = "WindowTitle:Front";
+		}
+		
+		Node "Medium"
+		{
+			str Type = "Medium";
+			str Style = "WindowTitle:Front";
+		}
+		
+		Node "Large"
+		{
+			str Type = "Large";
+			str Style = "WindowTitle:Front";
+		}
+	}
+}

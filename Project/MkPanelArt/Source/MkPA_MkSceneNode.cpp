@@ -103,6 +103,37 @@ bool MkSceneNode::PickPanel
 	return !buffer.Empty();
 }
 
+MkPanel* MkSceneNode::PickPanel(const MkFloat2& worldPoint, const MkBitField32& attrCondition) const
+{
+	if (GetVisible() && m_TotalAABR.CheckIntersection(worldPoint))
+	{
+		// attribute를 만족하면 직계 panel 상대로 검사
+		if (m_Attribute.CheckInclusion(attrCondition) && m_PanelAABR.CheckIntersection(worldPoint))
+		{
+			MkConstHashMapLooper<MkHashStr, MkPanel> looper(m_Panels);
+			MK_STL_LOOP(looper)
+			{
+				const MkPanel& currPanel = looper.GetCurrentField();
+				if (currPanel.__CheckDrawable() && currPanel.__CheckWorldIntersection(worldPoint)) // 그려지는 panel만 대상으로 함
+					return const_cast<MkPanel*>(&currPanel);
+			}
+		}
+
+		// 하위 node 상대로 검사
+		if (!m_ChildrenNode.Empty())
+		{
+			MkConstHashMapLooper<MkHashStr, MkSceneNode*> looper(m_ChildrenNode);
+			MK_STL_LOOP(looper)
+			{
+				MkPanel* hitPanel = looper.GetCurrentField()->PickPanel(worldPoint, attrCondition);
+				if (hitPanel != NULL)
+					return hitPanel;
+			}
+		}
+	}
+	return NULL;
+}
+
 MkLineShape& MkSceneNode::CreateLine(const MkHashStr& name)
 {
 	DeleteLine(name);

@@ -956,6 +956,12 @@ void MkWindowManagerNode::Update(double currTime)
 			m_RootWindowList[m_ActivatingWindows[i]]->SetAlignmentCommand();
 		}
 
+		if (!m_ModalWindow.Empty())
+		{
+			m_RootWindowList[m_ModalWindow]->SetAlignmentCommand();
+			updateModalEffectDepth = true;
+		}
+
 		m_LastSystemSize = m_SystemRect.size;
 	}
 

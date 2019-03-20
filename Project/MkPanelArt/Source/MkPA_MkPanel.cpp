@@ -7,6 +7,7 @@
 #include "MkPA_MkStaticResourceContainer.h"
 #include "MkPA_MkBitmapPool.h"
 #include "MkPA_MkRenderStateSetter.h"
+#include "MkPA_MkFontManager.h"
 #include "MkPA_MkDrawTextNodeStep.h"
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkSceneNode.h"
@@ -131,14 +132,25 @@ bool MkPanel::SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, dou
 	return ok;
 }
 
-unsigned int MkPanel::GetAllSubsets(MkArray<MkHashStr>& keyList) const
+float MkPanel::GetSequenceProgress(double currTime, bool ignoreLoop) const
 {
-	return (m_Texture == NULL) ? 0 : m_Texture->GetImageInfo().GetAllSubsets(keyList);
-}
+	if ((m_Texture == NULL) || m_SubsetOrSequenceName.Empty())
+		return 0.f;
 
-unsigned int MkPanel::GetAllSequences(MkArray<MkHashStr>& keyList) const
-{
-	return (m_Texture == NULL) ? 0 : m_Texture->GetImageInfo().GetAllSequences(keyList);
+	const MkImageInfo& info = GetTexturePtr()->GetImageInfo();
+	if (!info.GetSequences().Exist(m_SubsetOrSequenceName))
+		return 0.f;
+	
+	currTime -= m_SequenceStartTime;
+	currTime += m_SequenceTimeOffset;
+
+	if (currTime >= 0.)
+	{
+		const MkImageInfo::Sequence& seq = info.GetSequences()[m_SubsetOrSequenceName];
+		currTime = (ignoreLoop || seq.loop) ? MkFloatOp::GetRemainder(currTime, seq.totalRange) : GetMin<double>(currTime, seq.totalRange);
+		return static_cast<float>(currTime / seq.totalRange);
+	}
+	return 0.f;
 }
 
 void MkPanel::SetTextNode(const MkTextNode& source, bool restrictToPanelWidth)
@@ -179,6 +191,15 @@ void MkPanel::SetTextNode(const MkArray<MkHashStr>& name, bool restrictToPanelWi
 {
 	m_TargetTextNodeName = name;
 	const MkTextNode& textNode = MK_STATIC_RES.GetTextNode(m_TargetTextNodeName);
+	SetTextNode(textNode, restrictToPanelWidth);
+}
+
+void MkPanel::SetTextMsg(const MkStr& msg, bool restrictToPanelWidth)
+{
+	MkTextNode textNode;
+	textNode.SetFontType(MkFontManager::DefaultT);
+	textNode.SetFontStyle(MkFontManager::DefaultS);
+	textNode.SetText(msg);
 	SetTextNode(textNode, restrictToPanelWidth);
 }
 
@@ -232,14 +253,6 @@ void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 
 		MK_DELETE(m_DrawStep);
 	}
-}
-
-bool MkPanel::GetPlxelTable(MkArray<MkColor>& buffer)
-{
-	if (m_Texture == NULL)
-		return false;
-
-	return m_Texture->GetPixelTable(buffer);
 }
 
 void MkPanel::Clear(void)
@@ -470,7 +483,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 			bool srcSizeChanged = false;
 
 			// 휘발성 local rect
-			MkFloatRect internalRect;
+			MkFloatRect localVisibleRect;
 			
 			// x size, u
 			if (m_PanelSize.x > m_TextureSize.x) // smaller src
@@ -484,7 +497,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 					srcSizeChanged = true;
 					break;
 				case eAttachToLeftTop: // panel과 source 크기를 모두 유지. panel의 left-top을 기준으로 출력
-					internalRect.size.x = m_TextureSize.x - m_PanelSize.x;
+					localVisibleRect.size.x = m_TextureSize.x - m_PanelSize.x;
 					break;
 				}
 			}
@@ -526,8 +539,8 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 					srcSizeChanged = true;
 					break;
 				case eAttachToLeftTop: // panel과 source 크기를 모두 유지. panel의 left-top을 기준으로 출력
-					internalRect.position.y = m_PanelSize.y - m_TextureSize.y;
-					internalRect.size.y = -internalRect.position.y;
+					localVisibleRect.position.y = m_PanelSize.y - m_TextureSize.y;
+					localVisibleRect.size.y = -localVisibleRect.position.y;
 					break;
 				}
 			}
@@ -577,9 +590,26 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 				m_UV[MkFloatRect::eRightBottom].y = ssPtr->uv[MkFloatRect::eRightBottom].y;
 			}
 
+			localVisibleRect.size += m_PanelSize;
+
+			// pivot
+			eRectAlignmentPosition pivot = m_Texture->GetImageInfo().GetCurrentPivot(m_SubsetOrSequenceName);
+			if (pivot != eRAP_LeftBottom)
+			{
+				switch (GetHorizontalRectAlignmentType(pivot))
+				{
+				case eRAT_Middle: localVisibleRect.position.x -= MkFloatOp::SnapToUpperBound(localVisibleRect.size.x * 0.5f, 1.f); break;
+				case eRAT_Right: localVisibleRect.position.x -= localVisibleRect.size.x; break;
+				}
+				switch (GetVerticalRectAlignmentType(pivot))
+				{
+				case eRAT_Top: localVisibleRect.position.y -= localVisibleRect.size.y; break;
+				case eRAT_Center: localVisibleRect.position.y -= MkFloatOp::SnapToUpperBound(localVisibleRect.size.y * 0.5f, 1.f); break;
+				}
+			}
+
 			// vertices
-			internalRect.size += m_PanelSize;
-			m_Transform.GetWorldVertices(internalRect, m_WorldVertice);
+			m_Transform.GetWorldVertices(localVisibleRect, m_WorldVertice);
 
 			// filtering mode. 이미지 원본을 확대/축소 할 경우 point보다는 linear filtering이 유리
 			// 원칙적으로는 최종 출력 rect로 비교해야 하지만 잘라 그리기의 경우 uv로부터 size를 역산해야되는데 floating 계산 특성상 발생하는

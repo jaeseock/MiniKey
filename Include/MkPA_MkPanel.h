@@ -135,11 +135,12 @@ public:
 	// (NOTE) 호출 전 texture가 설정되어 있어야 함
 	bool SetSubsetOrSequenceName(const MkHashStr& subsetOrSequenceName, double timeOffset = 0.);
 	inline const MkHashStr& GetSubsetOrSequenceName(void) const { return m_SubsetOrSequenceName; }
-	unsigned int GetAllSubsets(MkArray<MkHashStr>& keyList) const;
-	unsigned int GetAllSequences(MkArray<MkHashStr>& keyList) const;
-
+	
 	inline void SetSequenceTimeOffset(double offset) { m_SequenceTimeOffset = offset; }
 	inline double GetSequenceTimeOffset(void) const { return m_SequenceTimeOffset; }
+
+	// 현재 지정된 sequence의 진행도(0. ~ 1.)를 반환
+	float GetSequenceProgress(double currTime, bool ignoreLoop = false) const;
 
 	// text node 설정
 	// 호출시 Build() 수행
@@ -154,6 +155,9 @@ public:
 	// 해당 이름의 text node를 static resource container에서 불러와 설정
 	// (NOTE) static으로 여겨지기 때문에 GetTextNodePtr()로 얻어온 복사본을 수정하더라도 저장시 수정 내용이 반영되지 않음
 	void SetTextNode(const MkArray<MkHashStr>& name, bool restrictToPanelWidth = false);
+
+	// 기본 스타일로 msg를 표기. deco 기능은 전혀 없지만 간편함
+	void SetTextMsg(const MkStr& msg, bool restrictToPanelWidth = false);
 
 	// 설정된 text node 정보 반환
 	inline const MkArray<MkHashStr>& GetTextNodeName(void) const { return m_TargetTextNodeName; }
@@ -178,22 +182,8 @@ public:
 	// 그려질 대상(image, text, mask)의 크기를 반환
 	inline const MkFloat2& GetTextureSize(void) const { return m_TextureSize; }
 
-	// 설정된 텍스쳐의 픽셀 정보 반환
-	// ex>
-	//	MkPanel& p = ...
-	//
-	//	MkArray<MkColor> buffer;
-	//	p.GetPlxelTable(buffer);
-	//
-	//	MkUInt2 ts(static_cast<unsigned int>(p.GetTextureSize().x), static_cast<unsigned int>(p.GetTextureSize().y));
-	//	for (unsigned int y=0; y<ts.y; ++y)
-	//	{
-	//		for (unsigned int x=0; x<ts.x; ++x)
-	//		{
-	//			MkColor c = buffer[y * ts.x + x];
-	//		}
-	//	}
-	bool GetPlxelTable(MkArray<MkColor>& buffer);
+	// 텍스쳐 참조 반환
+	inline const MkBaseTexture* GetTexturePtr(void) const { return m_Texture.GetPtr(); }
 
 	//------------------------------------------------------------------------------------------------//
 

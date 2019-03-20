@@ -226,16 +226,7 @@ MkWindowTagNode::MkWindowTagNode(const MkHashStr& name) : MkVisualPatternNode(na
 
 MkFloat2 MkWindowTagNode::_ConvertToEvenValue(const MkFloat2& value) const
 {
-	MkFloat2 result = value;
-	if ((static_cast<int>(result.x) % 2) == 1)
-	{
-		result.x += 1.f;
-	}
-	if ((static_cast<int>(result.y) % 2) == 1)
-	{
-		result.y += 1.f;
-	}
-	return result;
+	return MkFloat2(MkFloatOp::SnapToUpperBound(value.x, 2.f), value.y);
 }
 
 bool MkWindowTagNode::_UpdateIcon(void)

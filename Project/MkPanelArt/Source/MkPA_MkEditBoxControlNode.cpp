@@ -134,6 +134,7 @@ void MkEditBoxControlNode::__GainInputFocus(void)
 {
 	SetComponentType(MkWindowThemeData::eCT_NoticeBox);
 
+	_SetPanelEnable(CursorPanelName, true);
 	_UpdateCursorAndSelection();
 }
 
@@ -362,11 +363,11 @@ void MkEditBoxControlNode::_UpdateCursorAndSelection(void)
 			// normal cursor
 			if (m_SelStart == m_SelEnd)
 			{
-				MkPanel* panel = _SetPanelEnable(CursorPanelName, true);
+				MkPanel* panel = GetPanel(CursorPanelName);
 				_SetPanelEnable(SelectionPanelName, false);
 
 				localPos.x += _GetTextLength(fontType, m_Text, 0, m_SelStart) - scrollPos;
-				localPos.x -= panel->GetTextureSize().x * 0.5f;
+				localPos.x -= MkFloatOp::SnapToUpperBound(panel->GetTextureSize().x * 0.4f, 1.f);
 				panel->SetLocalPosition(localPos);
 			}
 			// selection
