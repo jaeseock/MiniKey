@@ -1,7 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "Project\Zlib\zlib.vcproj", "{3FFDBB50-6E27-4E66-B1EC-750663C9D784}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Ogg", "Project\Ogg\Ogg.vcproj", "{F393C5DD-F712-47CE-9183-38AE74F69464}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Vorbis", "Project\Vorbis\Vorbis.vcproj", "{1D14FD43-951E-4BFA-AB57-116744B27658}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VorbisFile", "Project\Vorbis\VorbisFile.vcproj", "{79A26180-E3F6-4884-8723-352020CF56C3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1D14FD43-951E-4BFA-AB57-116744B27658} = {1D14FD43-951E-4BFA-AB57-116744B27658}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,6 +25,24 @@ Global
 		{3FFDBB50-6E27-4E66-B1EC-750663C9D784}.Release|Win32.Build.0 = Release|Win32
 		{3FFDBB50-6E27-4E66-B1EC-750663C9D784}.Shipping|Win32.ActiveCfg = Shipping|Win32
 		{3FFDBB50-6E27-4E66-B1EC-750663C9D784}.Shipping|Win32.Build.0 = Shipping|Win32
+		{F393C5DD-F712-47CE-9183-38AE74F69464}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F393C5DD-F712-47CE-9183-38AE74F69464}.Debug|Win32.Build.0 = Debug|Win32
+		{F393C5DD-F712-47CE-9183-38AE74F69464}.Release|Win32.ActiveCfg = Release|Win32
+		{F393C5DD-F712-47CE-9183-38AE74F69464}.Release|Win32.Build.0 = Release|Win32
+		{F393C5DD-F712-47CE-9183-38AE74F69464}.Shipping|Win32.ActiveCfg = Shipping|Win32
+		{F393C5DD-F712-47CE-9183-38AE74F69464}.Shipping|Win32.Build.0 = Shipping|Win32
+		{1D14FD43-951E-4BFA-AB57-116744B27658}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1D14FD43-951E-4BFA-AB57-116744B27658}.Debug|Win32.Build.0 = Debug|Win32
+		{1D14FD43-951E-4BFA-AB57-116744B27658}.Release|Win32.ActiveCfg = Release|Win32
+		{1D14FD43-951E-4BFA-AB57-116744B27658}.Release|Win32.Build.0 = Release|Win32
+		{1D14FD43-951E-4BFA-AB57-116744B27658}.Shipping|Win32.ActiveCfg = Shipping|Win32
+		{1D14FD43-951E-4BFA-AB57-116744B27658}.Shipping|Win32.Build.0 = Shipping|Win32
+		{79A26180-E3F6-4884-8723-352020CF56C3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{79A26180-E3F6-4884-8723-352020CF56C3}.Debug|Win32.Build.0 = Debug|Win32
+		{79A26180-E3F6-4884-8723-352020CF56C3}.Release|Win32.ActiveCfg = Release|Win32
+		{79A26180-E3F6-4884-8723-352020CF56C3}.Release|Win32.Build.0 = Release|Win32
+		{79A26180-E3F6-4884-8723-352020CF56C3}.Shipping|Win32.ActiveCfg = Shipping|Win32
+		{79A26180-E3F6-4884-8723-352020CF56C3}.Shipping|Win32.Build.0 = Shipping|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

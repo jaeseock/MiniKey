@@ -144,6 +144,8 @@ void MkInterfaceForDataReading::SetCurrentPosition(unsigned int newPosition)
 
 unsigned int MkInterfaceForDataReading::GetCurrentPosition(void) const { return m_CurrentPosition; }
 
+unsigned int MkInterfaceForDataReading::GetEndPosition(void) const { return m_EndPosition; }
+
 MkInterfaceForDataReading::MkInterfaceForDataReading()
 {
 	m_SourcePtr = NULL;

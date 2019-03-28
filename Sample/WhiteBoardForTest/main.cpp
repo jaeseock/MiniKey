@@ -6,11 +6,9 @@
 #include <windows.h>
 
 #include "MkCore_MkDevPanel.h"
+#include "MkCore_MkInputManager.h"
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
-#include "MkCore_MkVisitWebPage.h"
-
-#include "MkCore_MkFtpInterface.h"
 
 // steam -----------------------------------------------------
 #if DEF_STEAM_LOGIN
@@ -40,6 +38,72 @@ extern "C" void __cdecl SteamAPIDebugTextHook( int nSeverity, const char *pchDeb
 		(void)x;
 	}
 }
+
+class _SteamBillingCallback
+{
+public:
+	inline void SetCashProductIndex(unsigned int productIndex) { m_CashProductIndex = productIndex; }
+	inline void SetOrderID(unsigned __int64 orderID) { m_OrderID = orderID; }
+
+	_SteamBillingCallback()
+	{
+		SetCashProductIndex(0);
+		SetOrderID(0);
+	}
+
+private:
+	STEAM_CALLBACK(_SteamBillingCallback, _MicroTxnAuthorizationResponse, MicroTxnAuthorizationResponse_t);
+
+	unsigned int m_CashProductIndex;
+	unsigned __int64 m_OrderID;
+};
+
+void _SteamBillingCallback::_MicroTxnAuthorizationResponse(MicroTxnAuthorizationResponse_t* callback)
+{
+	UINT appID = callback->m_unAppID;
+	unsigned __int64 orderID = callback->m_ulOrderID;
+	BYTE auth = callback->m_bAuthorized;
+
+	/*
+	MkStr msg;
+	msg.Reserve(512);
+	msg += L"m_CashProductIndex : ";
+	msg += m_CashProductIndex;
+	msg += MkStr::CRLF;
+	msg += L"m_OrderID : ";
+	msg += m_OrderID;
+
+	msg += MkStr::CRLF;
+	msg += MkStr::CRLF;
+	msg += L"appID : ";
+	msg += appID;
+	msg += MkStr::CRLF;
+	msg += L"orderID : ";
+	msg += orderID;
+	msg += MkStr::CRLF;
+	msg += L"auth : ";
+	msg += static_cast<int>(auth);
+	
+	::MessageBox(NULL, msg.GetPtr(), L"STEAM CALLBACK", MB_OK);
+	*/
+
+	if ((appID == 838330) && (orderID == m_OrderID))
+	{
+		bool isTransaction = (auth != 0);
+
+		NETWORK::SendPacket<NETWORK::EloaPacketHeader> kSendPacket( PACKET::CZ_QRY_STEAM_FINALIZETXN );
+		kSendPacket << m_OrderID;
+		kSendPacket << m_CashProductIndex;
+		kSendPacket << isTransaction;
+		ClientNetwork::GetSingleton()->SendToSync( kSendPacket );
+	}
+}
+
+_SteamBillingCallback gSBCallback;
+
+// 서버에서 거래 패킷을 받으면 설정
+//gSBCallback.SetOrderID(ui64Orderid);
+//gSBCallback.SetCashProductIndex(productIndex);
 
 #endif
 
@@ -116,6 +180,11 @@ public:
 	virtual void Update(void)
 	{
 #if DEF_STEAM_LOGIN
+		// steam dlc
+		if (SteamApps()->BIsDlcInstalled(dlcID))
+		{
+		}
+
 		SteamAPI_RunCallbacks();
 #endif
 	}

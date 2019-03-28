@@ -11,7 +11,8 @@
 #define MKDEF_PREDEFINED_SYSTEM_INDEX_FILEIO 0 // MkLoadingThreadUnit
 #define MKDEF_PREDEFINED_SYSTEM_INDEX_DISPLAYMODE 1 // MkRenderingDevice
 #define MKDEF_PREDEFINED_SYSTEM_INDEX_TEXPOOL 2 // MkTextureAllocator
-// - 3 ~ MKDEF_BOARD_LINE_COUNT : reserved
+#define MKDEF_PREDEFINED_SYSTEM_INDEX_SOUNDBUFFER 3 // MkSoundManager
+// - 4 ~ MKDEF_BOARD_LINE_COUNT : reserved
 //------------------------------------------------------------------------------------------------//
 
 

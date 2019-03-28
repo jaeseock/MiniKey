@@ -78,6 +78,9 @@ public:
 	// 현재 탐색 위치 반환
 	unsigned int GetCurrentPosition(void) const;
 
+	// 종료 위치 반환
+	unsigned int GetEndPosition(void) const;
+
 	MkInterfaceForDataReading();
 
 protected:
