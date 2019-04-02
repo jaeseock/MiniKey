@@ -2,6 +2,7 @@
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkDataNode.h"
 
+#include "MkPA_MkBitmapPool.h"
 #include "MkPA_MkSceneNode.h"
 #include "MkPA_MkWindowThemeFormData.h"
 
@@ -24,9 +25,13 @@ const static MkHashStr QUAD_UNIT_POS_KEY[4] =
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTexture* texture, const MkDataNode& node)
+bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkDataNode& node)
 {
 	if (imagePath == NULL)
+		return false;
+
+	const MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(*imagePath);
+	MK_CHECK(texture != NULL, L"잘못된 이미지 경로 : " + imagePath->GetString())
 		return false;
 
 	m_ImagePathPtr = imagePath;
@@ -129,6 +134,11 @@ bool MkWindowThemeFormData::SetUp(const MkHashStr* imagePath, const MkBaseTextur
 	return true;
 }
 
+const MkHashStr& MkWindowThemeFormData::GetImagePath(void) const
+{
+	return (m_ImagePathPtr == NULL) ? MkHashStr::EMPTY : (*m_ImagePathPtr);
+}
+
 const MkHashStr& MkWindowThemeFormData::GetSubsetOrSequenceName(eState state, MkWindowThemeUnitData::ePosition position) const
 {
 	return ((state != eS_None) && _CheckState(state)) ? m_UnitList[state].GetSubsetOrSequenceName(position) : MkHashStr::EMPTY;
@@ -195,6 +205,7 @@ bool MkWindowThemeFormData::SetFormState(MkSceneNode* sceneNode, eState state) c
 
 MkWindowThemeFormData::MkWindowThemeFormData()
 {
+	m_ImagePathPtr = NULL;
 	m_FormType = eFT_None;
 	m_UnitType = MkWindowThemeUnitData::eUT_None;
 

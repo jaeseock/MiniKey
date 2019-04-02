@@ -229,6 +229,21 @@ public:
 		btnExtra->SetAlignmentOffset(MkFloat2(10.f, -90.f - 120.f));
 		bodyFrame->AttachChildNode(btnExtra);
 
+		// custom btn
+		MkWindowBaseNode* customBtnNode = MkWindowBaseNode::CreateChildNode(bodyFrame, L"Custom_01");
+		customBtnNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		customBtnNode->SetCustomForm(L"TestBtn01");
+		customBtnNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		customBtnNode->SetLocalPosition(MkFloat2(160.f, 60.f));
+		customBtnNode->SetLocalDepth(-1.f);
+
+		customBtnNode = MkWindowBaseNode::CreateChildNode(bodyFrame, L"Custom_02");
+		customBtnNode->SetThemeName(MkWindowThemeData::DefaultThemeName);
+		customBtnNode->SetCustomForm(L"TestBtn02");
+		customBtnNode->SetFormState(MkWindowThemeFormData::eS_Default);
+		customBtnNode->SetLocalPosition(MkFloat2(240.f, 5.f));
+		customBtnNode->SetLocalDepth(-2.f);
+
 		/*
 		// control box : dummy
 		MkWindowBaseNode* controlWin = __TSI_SceneNodeDerivedInstanceOp<_ControlBoxNode>::Alloc(NULL, L"ControlDummy");

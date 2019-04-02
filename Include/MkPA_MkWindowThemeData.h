@@ -8,6 +8,7 @@
 // window system의 visual 담당
 //------------------------------------------------------------------------------------------------//
 
+#include "MkCore_MkDeque.h"
 #include "MkCore_MkMap.h"
 #include "MkCore_MkHashMap.h"
 #include "MkPA_MkWindowThemeFormData.h"
@@ -169,7 +170,7 @@ public:
 	void Clear(void);
 
 	// setting 반환
-	inline const MkHashStr& GetImageFilePath(void) const { return m_ImageFilePath; }
+	inline const MkDeque<MkHashStr>& GetImageFilePath(void) const { return m_ImageFilePath; }
 	float GetFrameSize(eFrameType frameType) const;
 	const MkArray<MkHashStr>& GetCaptionTextNode(eFrameType frameType) const;
 	const MkArray<MkHashStr>& GetEditTextNode(eFrameType frameType) const;
@@ -195,8 +196,15 @@ public:
 
 protected:
 
+	bool _LoadThemeImagePath(const MkDataNode& node);
+	unsigned int _LoadFormImageIndex(const MkDataNode& node);
+
+
+
+protected:
+
 	// setting
-	MkHashStr m_ImageFilePath;
+	MkDeque<MkHashStr> m_ImageFilePath;
 	float m_FrameSize[eFT_Max];
 	MkArray<MkHashStr> m_CaptionTextNode[eFT_Max];
 	MkArray<MkHashStr> m_EditTextNode[eFT_Max];

@@ -1,7 +1,7 @@
 ﻿//--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path  : PackRoot.msd
-//   - time stamp : 2018.03.07 (17:08:14)
+//   - time stamp : 2019.04.02 (20:58:56)
 //   - exporter   : pc (Test)
 //--------------------------------------------------------------------//
 
@@ -20,7 +20,6 @@ Node "[SUBNODES]"
 				str ImagePath = "Image\s01.jpg";
 				float LocalDepth = 9999.000;
 				vec2 PanelSize = (909.000, 505.000);
-				str SOSName = "HorizontalChange";
 			}
 		}
 
@@ -45,9 +44,9 @@ Node "[SUBNODES]"
 	Node "WinMgr" : "MkWindowManagerNode"
 	{
 		str ActivateWins = // [3]
-			"Win(1)" /
 			"Win(3)" /
-			"Win(2)";
+			"Win(2)" /
+			"Win(1)";
 		str DeactivateWins = "MsgBox";
 
 		Node "[SUBNODES]"
@@ -61,7 +60,7 @@ Node "[SUBNODES]"
 					"Theme" /
 					"Default" /
 					"Small";
-				vec2 ClientSize = (180.000, 12.000);
+				vec2 ClientSize = (188.000, 12.000);
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 3;
@@ -75,7 +74,7 @@ Node "[SUBNODES]"
 					{
 						int AlignPosition = 34;
 						uint Attribute = 66305;
-						vec2 ClientSize = (186.000, 96.000);
+						vec2 ClientSize = (194.000, 104.000);
 						str ComponentType = "eCT_NoticeBox";
 						int HangingType = 3;
 						float LocalDepth = 0.100;
@@ -86,7 +85,7 @@ Node "[SUBNODES]"
 						{
 							Node "__#WC:Cancel" : "MkWindowBaseNode"
 							{
-								vec2 AlignOffset = (96.000, 4.000);
+								vec2 AlignOffset = (100.000, 8.000);
 								int AlignPosition = 66;
 								vec2 ClientSize = (80.000, 12.000);
 								str ComponentType = "eCT_CancelBtn";
@@ -110,7 +109,7 @@ Node "[SUBNODES]"
 
 							Node "__#WC:OAOTag" : "MkWindowTagNode"
 							{
-								vec2 AlignOffset = (29.000, 30.000);
+								vec2 AlignOffset = (32.500, 34.000);
 								int AlignPosition = 66;
 								float LocalDepth = -0.100;
 								str TextMsg = "너무너무 잘생겨서<LF>어케 할지를 모르겠으용<LF>~(-_-)~";
@@ -122,7 +121,7 @@ Node "[SUBNODES]"
 
 							Node "__#WC:Ok" : "MkWindowBaseNode"
 							{
-								vec2 AlignOffset = (4.000, 4.000);
+								vec2 AlignOffset = (8.000, 8.000);
 								int AlignPosition = 66;
 								vec2 ClientSize = (80.000, 12.000);
 								str ComponentType = "eCT_OKBtn";
@@ -161,8 +160,8 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 200.000;
-				vec2 LocalPosition = (632.000, 520.000);
+				float LocalDepth = 733.333;
+				vec2 LocalPosition = (400.000, 600.000);
 				str ThemeName = "Default";
 
 				Node "[SUBNODES]"
@@ -337,7 +336,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 733.333;
+				float LocalDepth = 466.667;
 				vec2 LocalPosition = (200.000, 500.000);
 				str ThemeName = "Default";
 
@@ -533,7 +532,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 466.667;
+				float LocalDepth = 200.000;
 				vec2 LocalPosition = (100.000, 400.000);
 				str ThemeName = "Default";
 
@@ -582,7 +581,7 @@ Node "[SUBNODES]"
 							{
 								vec2 AlignOffset = (10.000, -90.000);
 								int AlignPosition = 34;
-								vec2 ClientSize = (120.000, 24.000);
+								vec2 ClientSize = (121.000, 24.000);
 								str ComponentType = "eCT_NormalBtn";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 133.000);
@@ -594,7 +593,7 @@ Node "[SUBNODES]"
 									{
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
-										vec2 LocalPosition = (3.000, 3.000);
+										vec2 LocalPosition = (2.500, 3.000);
 										str TextMsg = "개행하는 텍스트?<LF>버튼 사이즈 자동 조정";
 										str TextName = // [3]
 											"Theme" /
@@ -608,7 +607,7 @@ Node "[SUBNODES]"
 							{
 								vec2 AlignOffset = (10.000, -180.000);
 								int AlignPosition = 34;
-								vec2 ClientSize = (80.000, 12.000);
+								vec2 ClientSize = (81.000, 12.000);
 								str ComponentType = "eCT_BlueSelBtn";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 55.000);
@@ -620,7 +619,7 @@ Node "[SUBNODES]"
 									{
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
-										vec2 LocalPosition = (3.000, 3.000);
+										vec2 LocalPosition = (2.500, 3.000);
 										str TextMsg = "파랑 선택 버튼";
 										str TextName = // [3]
 											"Theme" /
@@ -634,7 +633,7 @@ Node "[SUBNODES]"
 							{
 								vec2 AlignOffset = (10.000, -210.000);
 								int AlignPosition = 34;
-								vec2 ClientSize = (116.000, 12.000);
+								vec2 ClientSize = (117.000, 12.000);
 								str ComponentType = "eCT_RedOutlineSelBtn";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 25.000);
@@ -646,7 +645,7 @@ Node "[SUBNODES]"
 									{
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
-										vec2 LocalPosition = (3.000, 3.000);
+										vec2 LocalPosition = (2.500, 3.000);
 										str TextMsg = "가이드라인 선택 버튼";
 										str TextName = // [3]
 											"Theme" /
@@ -660,7 +659,7 @@ Node "[SUBNODES]"
 							{
 								vec2 AlignOffset = (10.000, -150.000);
 								int AlignPosition = 34;
-								vec2 ClientSize = (80.000, 12.000);
+								vec2 ClientSize = (81.000, 12.000);
 								str ComponentType = "eCT_YellowSelBtn";
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 85.000);
@@ -672,7 +671,7 @@ Node "[SUBNODES]"
 									{
 										int AlignPosition = 51;
 										float LocalDepth = -0.100;
-										vec2 LocalPosition = (3.000, 3.000);
+										vec2 LocalPosition = (2.500, 3.000);
 										str TextMsg = "노랑 선택 버튼";
 										str TextName = // [3]
 											"Theme" /
@@ -697,6 +696,24 @@ Node "[SUBNODES]"
 								float LocalDepth = -1.000;
 								vec2 LocalPosition = (13.000, 205.000);
 								bool OnCheck = true;
+								str ThemeName = "Default";
+							}
+
+							Node "Custom_01" : "MkWindowBaseNode"
+							{
+								vec2 ClientSize = (101.000, 101.000);
+								str CustomFormName = "TestBtn01";
+								float LocalDepth = -1.000;
+								vec2 LocalPosition = (160.000, 60.000);
+								str ThemeName = "Default";
+							}
+
+							Node "Custom_02" : "MkWindowBaseNode"
+							{
+								vec2 ClientSize = (101.000, 101.000);
+								str CustomFormName = "TestBtn02";
+								float LocalDepth = -2.000;
+								vec2 LocalPosition = (240.000, 5.000);
 								str ThemeName = "Default";
 							}
 

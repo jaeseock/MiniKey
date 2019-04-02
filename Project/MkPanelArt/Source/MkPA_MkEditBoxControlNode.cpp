@@ -292,8 +292,10 @@ void MkEditBoxControlNode::_DefaultSetUp(bool useHistory)
 	selPanel.SetVisible(false);
 
 	const MkWindowThemeFormData* selZoneFD = MK_STATIC_RES.GetWindowThemeSet().GetFormData(GetThemeName(), MkWindowThemeData::eCT_YellowZone, MkHashStr::EMPTY);
-	selPanel.SetTexture(MK_STATIC_RES.GetWindowThemeSet().GetImageFilePath(GetThemeName()),
-		(selZoneFD == NULL) ? MkHashStr::EMPTY : selZoneFD->GetSubsetOrSequenceName(MkWindowThemeFormData::eS_Default, MkWindowThemeUnitData::eP_MC));
+	if (selZoneFD != NULL)
+	{
+		selPanel.SetTexture(selZoneFD->GetImagePath(), selZoneFD->GetSubsetOrSequenceName(MkWindowThemeFormData::eS_Default, MkWindowThemeUnitData::eP_MC));
+	}
 
 	// text panel
 	MkPanel& textPanel = CreatePanel(TextPanelName);

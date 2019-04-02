@@ -155,11 +155,7 @@ bool MkWindowThemeData::SetUp(const MkDataNode& node)
 	bool notDefaultTheme = (node.GetNodeName() != DefaultThemeName);
 
 	// setting : image path. duty
-	MK_CHECK(node.GetDataEx(L"ImagePath", m_ImageFilePath, 0) && (!m_ImageFilePath.Empty()), node.GetNodeName().GetString() + L" theme node에 ImagePath 경로가 없음")
-		return false;
-
-	MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(m_ImageFilePath);
-	MK_CHECK(texture != NULL, L"잘못된 이미지 경로 : " + m_ImageFilePath.GetString())
+	if (!_LoadThemeImagePath(node))
 		return false;
 
 	// setting:: frame. default theme만 duty
@@ -240,7 +236,8 @@ bool MkWindowThemeData::SetUp(const MkDataNode& node)
 		{
 			eComponentType compType = static_cast<eComponentType>(i);
 			MkWindowThemeFormData& fd = m_RegularComponents.Create(compType);
-			MK_CHECK(fd.SetUp(&m_ImageFilePath, texture, *node.GetChildNode(currTargetName)), node.GetNodeName().GetString() + L" theme node의 " + currTargetName.GetString() + L" component 구성 실패")
+			const MkDataNode& formDataNode = *node.GetChildNode(currTargetName);
+			MK_CHECK(fd.SetUp(&m_ImageFilePath[_LoadFormImageIndex(formDataNode)], formDataNode), node.GetNodeName().GetString() + L" theme node의 " + currTargetName.GetString() + L" component 구성 실패")
 				return false;
 
 			// setup이 완료되었으면 form type 점검
@@ -261,13 +258,17 @@ bool MkWindowThemeData::SetUp(const MkDataNode& node)
 		{
 			const MkHashStr& cfName = formKeyList[i];
 			MkWindowThemeFormData& fd = m_CustomForms->Create(cfName);
-			MK_CHECK(fd.SetUp(&m_ImageFilePath, texture, *customFormNode.GetChildNode(cfName)), node.GetNodeName().GetString() + L" theme node의 " + CustomFormName.GetString() + L" component, " + cfName.GetString() + L" 구성 실패")
+			const MkDataNode& formDataNode = *customFormNode.GetChildNode(cfName);
+			MK_CHECK(fd.SetUp(&m_ImageFilePath[_LoadFormImageIndex(formDataNode)], formDataNode), node.GetNodeName().GetString() + L" theme node의 " + CustomFormName.GetString() + L" component, " + cfName.GetString() + L" 구성 실패")
 				return false;
 		}
 	}
 
 	// 설정이 끝났으니 사용 될 때까지 texture 해제
-	MK_BITMAP_POOL.UnloadBitmapTexture(m_ImageFilePath);
+	MK_INDEXING_LOOP(m_ImageFilePath, i)
+	{
+		MK_BITMAP_POOL.UnloadBitmapTexture(m_ImageFilePath[i]);
+	}
 
 	MkStr compMsg = (m_RegularComponents.GetSize() == eCT_RegularMax) ? L"FULL" : MkStr(m_RegularComponents.GetSize());
 	MK_DEV_PANEL.MsgToLog(L"   - theme name : " + node.GetNodeName().GetString() + L" (" + compMsg + L" component)", false);
@@ -459,6 +460,32 @@ MkWindowThemeData::MkWindowThemeData()
 	m_FrameSize[eFT_Small] = 0.f;
 	m_FrameSize[eFT_Medium] = 0.f;
 	m_FrameSize[eFT_Large] = 0.f;
+}
+
+//------------------------------------------------------------------------------------------------//
+
+bool MkWindowThemeData::_LoadThemeImagePath(const MkDataNode& node)
+{
+	MkArray<MkHashStr> paths;
+	MK_CHECK(node.GetDataEx(L"ImagePath", paths) && (!paths.Empty()), node.GetNodeName().GetString() + L" theme node에 ImagePath 경로가 없음")
+		return false;
+
+	MK_INDEXING_LOOP(paths, i)
+	{
+		const MkHashStr& imagePath = paths[i];
+		MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(imagePath);
+		MK_CHECK(texture != NULL, L"잘못된 이미지 경로 : " + imagePath.GetString())
+			return false;
+
+		m_ImageFilePath.PushBack(imagePath);
+	}
+	return true;
+}
+
+unsigned int MkWindowThemeData::_LoadFormImageIndex(const MkDataNode& node)
+{
+	unsigned int index = 0xffffffff;
+	return (node.GetData(L"ImageIndex", index, 0) && m_ImageFilePath.IsValidIndex(index)) ? index : 0;
 }
 
 //------------------------------------------------------------------------------------------------//

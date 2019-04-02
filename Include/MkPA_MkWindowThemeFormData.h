@@ -59,7 +59,7 @@ public:
 
 	// 초기화
 	// node 구성에 따라 form type이 결정 됨
-	bool SetUp(const MkHashStr* imagePath, const MkBaseTexture* texture, const MkDataNode& node);
+	bool SetUp(const MkHashStr* imagePath, const MkDataNode& node);
 
 	// form type 반환
 	inline eFormType GetFormType(void) const { return m_FormType; }
@@ -77,6 +77,9 @@ public:
 	inline float GetRightMargin(void) const { return m_Margin[1]; }
 	inline float GetTopMargin(void) const { return m_Margin[2]; }
 	inline float GetBottomMargin(void) const { return m_Margin[3]; }
+
+	// form의 이미지 경로 반환
+	const MkHashStr& GetImagePath(void) const;
 
 	// 해당 state & position의 subset or sequence name 반환
 	const MkHashStr& GetSubsetOrSequenceName(eState state, MkWindowThemeUnitData::ePosition position) const;

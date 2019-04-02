@@ -85,15 +85,6 @@ const MkArray<MkHashStr>& MkWindowThemeSet::GetEditTextNode(const MkHashStr& the
 	return m_Themes[MkWindowThemeData::DefaultThemeName].GetEditTextNode(frameType);
 }
 
-const MkHashStr& MkWindowThemeSet::GetImageFilePath(const MkHashStr& themeName) const
-{
-	if (m_Themes.Empty())
-		return MkHashStr::EMPTY;
-
-	const MkWindowThemeData& themeData = m_Themes.Exist(themeName) ? m_Themes[themeName] : m_Themes[MkWindowThemeData::DefaultThemeName];
-	return themeData.GetImageFilePath();
-}
-
 void MkWindowThemeSet::UnloadUnusedThemeImage(void)
 {
 	if (!m_UsedThemes.Empty())
@@ -102,16 +93,27 @@ void MkWindowThemeSet::UnloadUnusedThemeImage(void)
 		MK_INDEXING_LOOP(usedThemes, i)
 		{
 			const MkHashStr& targetTheme = usedThemes[i];
-			const MkHashStr& imageFilePath = m_Themes[targetTheme].GetImageFilePath();
+			const MkDeque<MkHashStr>& paths = m_Themes[targetTheme].GetImageFilePath();
 
-			MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(imageFilePath);
-			unsigned int refCounter = MK_SHARED_PTR_MGR.GetReferenceCounter(MK_PTR_TO_ID64(texture));
-			if (refCounter == 1) // bitmap pool에 물려 있는 곳 말고는 참조된 곳이 없다는 의미
+			unsigned int killCount = 0;
+			MK_INDEXING_LOOP(paths, j)
 			{
-				MK_BITMAP_POOL.UnloadBitmapTexture(imageFilePath);
-				m_UsedThemes.Erase(MkArraySection(i, 1));
+				const MkHashStr& imageFilePath = paths[j];
 
-				MK_DEV_PANEL.MsgToLog(L"theme 자원 해제 : " + targetTheme.GetString(), false);
+				MkBaseTexture* texture = MK_BITMAP_POOL.GetBitmapTexture(imageFilePath);
+				unsigned int refCounter = MK_SHARED_PTR_MGR.GetReferenceCounter(MK_PTR_TO_ID64(texture));
+				if (refCounter == 1) // bitmap pool에 물려 있는 곳 말고는 참조된 곳이 없다는 의미
+				{
+					MK_BITMAP_POOL.UnloadBitmapTexture(imageFilePath);
+					++killCount;
+				}
+
+				if (killCount == paths.GetSize())
+				{
+					m_UsedThemes.Erase(MkArraySection(i, 1));
+
+					MK_DEV_PANEL.MsgToLog(L"theme 자원 해제 : " + targetTheme.GetString(), false);
+				}
 			}
 		}
 	}

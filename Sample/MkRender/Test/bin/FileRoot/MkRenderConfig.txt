@@ -273,7 +273,7 @@ Node "StaticResource"
 		Node "Default" // duty. all components are also duty
 		{
 			// setting
-			str ImagePath = "Default\theme_default.png"; // duty
+			str ImagePath = "Default\theme_default.png" / "Image\s01.jpg"; // duty. at least one
 			
 			Node "eFT_Small"
 			{
@@ -299,6 +299,7 @@ Node "StaticResource"
 			/*
 			Node "COMPONENT_NAME" // COMPONENT_NAME은 MkWindowThemeData::eComponentType, STATE_KEY는 MkWindowThemeFormData::eState 참조
 			{
+				uint ImageIndex = 0; // (opt) index of [ImagePath]. default is 0
 				str STATE_KEY = ""; // empty unit data
 				str STATE_KEY = "Default_0"; // 1개. eUT_Image
 				str STATE_KEY = "~" / "Default_" / "0" / "3" / "5" / "8"; // 8개. eUT_Edge
@@ -683,18 +684,20 @@ Node "StaticResource"
 			{
 				Node "TestBtn01" // eFT_QuadUnit
 				{
-					str eS_Normal = "BtnBI22N"; // eUT_Image
-					str eS_Focus = "BtnBI22F";
-					str eS_Pushing = "BtnBI22P";
-					str eS_Disable = "BtnBI22D";
+					uint ImageIndex = 1;
+					str eS_Normal = "FaceH_0"; // eUT_Image
+					str eS_Focus = "FaceH_1";
+					str eS_Pushing = "FaceH_2";
+					str eS_Disable = "FaceH_3";
 				}
 				
 				Node "TestBtn02" // eFT_QuadUnit
 				{
-					str eS_Normal = "BtnRI22N"; // eUT_Image
-					str eS_Focus = "BtnRI22F";
-					str eS_Pushing = "BtnRI22P";
-					str eS_Disable = "BtnRI22D";
+					uint ImageIndex = 1;
+					str eS_Normal = "FaceH_4"; // eUT_Image
+					str eS_Focus = "FaceH_5";
+					str eS_Pushing = "FaceH_6";
+					str eS_Disable = "FaceH_7";
 				}
 			}
 		}
