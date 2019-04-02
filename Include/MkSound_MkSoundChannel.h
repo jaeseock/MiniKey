@@ -45,7 +45,7 @@ public:
 
 protected:
 
-	void _CutSize(unsigned int targetSize);
+	void _SizeCut(unsigned int targetSize);
 
 	typedef struct __PlayUnit
 	{

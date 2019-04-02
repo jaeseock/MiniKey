@@ -15,7 +15,7 @@ void MkSoundChannel::SetTimeGapAtSameSource(double gap)
 void MkSoundChannel::SetMaxInterfaceSize(unsigned int size)
 {
 	m_MaxInterfaceSize = size;
-	_CutSize(m_MaxInterfaceSize);
+	_SizeCut(m_MaxInterfaceSize);
 }
 
 void MkSoundChannel::Play(const MkHashStr& filePath, bool loop)
@@ -42,7 +42,7 @@ void MkSoundChannel::Play(const MkHashStr& filePath, bool loop)
 		}
 
 		// 추가
-		_CutSize(m_MaxInterfaceSize - 1);
+		_SizeCut(m_MaxInterfaceSize - 1);
 		
 		_PlayUnit& pu = m_Queue.PushBack();
 		pu.sound = new MkSoundInterface;
@@ -91,17 +91,17 @@ MkSoundChannel::MkSoundChannel()
 
 //------------------------------------------------------------------------------------------------//
 
-void MkSoundChannel::_CutSize(unsigned int targetSize)
+void MkSoundChannel::_SizeCut(unsigned int targetSize)
 {
-	if (targetSize < m_Queue.GetSize())
+	unsigned int cnt = m_Queue.GetSize();
+	if (targetSize < cnt)
 	{
 		// 재생중이지 않은 인터페이스 정리
-		MkDeque<_PlayUnit> buffer;
-		while (!m_Queue.Empty())
+		for (unsigned int i=0; i<cnt; ++i)
 		{
 			if (m_Queue[0].sound->IsPlaying())
 			{
-				buffer.PushBack(m_Queue[0]); // 가장 앞이 재생중이면 뒤로 돌리고
+				m_Queue.PushBack(m_Queue[0]); // 가장 앞이 재생중이면 뒤로 돌리고
 			}
 			else
 			{
@@ -109,7 +109,6 @@ void MkSoundChannel::_CutSize(unsigned int targetSize)
 			}
 			m_Queue.PopFront();
 		}
-		m_Queue = buffer;
 
 		// 그래도 부족하면 그만큼 앞부터 삭제
 		while (targetSize < m_Queue.GetSize())
