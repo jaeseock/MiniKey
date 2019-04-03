@@ -682,9 +682,10 @@ Node "StaticResource"
 			
 			Node "eCT_CustomForm"
 			{
+				uint ImageIndex = 1;
+				
 				Node "TestBtn01" // eFT_QuadUnit
 				{
-					uint ImageIndex = 1;
 					str eS_Normal = "FaceH_0"; // eUT_Image
 					str eS_Focus = "FaceH_1";
 					str eS_Pushing = "FaceH_2";
@@ -693,7 +694,6 @@ Node "StaticResource"
 				
 				Node "TestBtn02" // eFT_QuadUnit
 				{
-					uint ImageIndex = 1;
 					str eS_Normal = "FaceH_4"; // eUT_Image
 					str eS_Focus = "FaceH_5";
 					str eS_Pushing = "FaceH_6";

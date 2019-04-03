@@ -197,7 +197,7 @@ public:
 protected:
 
 	bool _LoadThemeImagePath(const MkDataNode& node);
-	unsigned int _LoadFormImageIndex(const MkDataNode& node);
+	unsigned int _LoadFormImageIndex(const MkDataNode& node, unsigned int parentImageIndex = 0);
 
 
 

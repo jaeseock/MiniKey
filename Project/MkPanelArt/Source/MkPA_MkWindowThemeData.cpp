@@ -10,6 +10,8 @@
 
 const MkHashStr MkWindowThemeData::DefaultThemeName(L"Default");
 
+const static MkHashStr KEY_IMAGE_INDEX = L"ImageIndex";
+
 
 const MkHashStr MkWindowThemeData::ComponentTypeName[eCT_RegularMax] =
 {
@@ -250,6 +252,7 @@ bool MkWindowThemeData::SetUp(const MkDataNode& node)
 	if (node.ChildExist(CustomFormName))
 	{
 		const MkDataNode& customFormNode = *node.GetChildNode(CustomFormName);
+		unsigned int parentImageIndex = _LoadFormImageIndex(customFormNode);
 		m_CustomForms = new MkHashMap<MkHashStr, MkWindowThemeFormData>;
 
 		MkArray<MkHashStr> formKeyList;
@@ -259,7 +262,7 @@ bool MkWindowThemeData::SetUp(const MkDataNode& node)
 			const MkHashStr& cfName = formKeyList[i];
 			MkWindowThemeFormData& fd = m_CustomForms->Create(cfName);
 			const MkDataNode& formDataNode = *customFormNode.GetChildNode(cfName);
-			MK_CHECK(fd.SetUp(&m_ImageFilePath[_LoadFormImageIndex(formDataNode)], formDataNode), node.GetNodeName().GetString() + L" theme node의 " + CustomFormName.GetString() + L" component, " + cfName.GetString() + L" 구성 실패")
+			MK_CHECK(fd.SetUp(&m_ImageFilePath[_LoadFormImageIndex(formDataNode, parentImageIndex)], formDataNode), node.GetNodeName().GetString() + L" theme node의 " + CustomFormName.GetString() + L" component, " + cfName.GetString() + L" 구성 실패")
 				return false;
 		}
 	}
@@ -482,10 +485,10 @@ bool MkWindowThemeData::_LoadThemeImagePath(const MkDataNode& node)
 	return true;
 }
 
-unsigned int MkWindowThemeData::_LoadFormImageIndex(const MkDataNode& node)
+unsigned int MkWindowThemeData::_LoadFormImageIndex(const MkDataNode& node, unsigned int parentImageIndex)
 {
 	unsigned int index = 0xffffffff;
-	return (node.GetData(L"ImageIndex", index, 0) && m_ImageFilePath.IsValidIndex(index)) ? index : 0;
+	return (node.GetData(KEY_IMAGE_INDEX, index, 0) && m_ImageFilePath.IsValidIndex(index)) ? index : parentImageIndex;
 }
 
 //------------------------------------------------------------------------------------------------//
