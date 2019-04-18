@@ -88,79 +88,94 @@ bool MkDrawSceneNodeStep::Draw(void)
 		_MaterialLink;
 
 		// 재질별 정보 보관소
+		unsigned int effectCount = 0;
 		MkMap<MkSceneRenderObject::MaterialKey, _MaterialLink> materialLink; // map은 심히 느리지만 다른 적합한 컨테이너가 없음...;;
 		MK_INDEXING_LOOP(objList, i)
 		{
-			const MkSceneRenderObject::MaterialKey& materialKey = objList[i]->__GetMaterialKey();
-			if (materialLink.Exist(materialKey))
+			if (objList[i]->__IsShaderEffectApplied()) // shader effect 적용 중인 object는 material key를 사용하지 않음
 			{
-				++materialLink[materialKey].allocCount;
+				++effectCount;
 			}
 			else
 			{
-				_MaterialLink& ml = materialLink.Create(materialKey);
-				ml.allocCount = 1;
-				ml.currUnionIndex = -1;
-				ml.lastRefIndex = -1;
+				const MkSceneRenderObject::MaterialKey& materialKey = objList[i]->__GetMaterialKey();
+				if (materialLink.Exist(materialKey))
+				{
+					++materialLink[materialKey].allocCount;
+				}
+				else
+				{
+					_MaterialLink& ml = materialLink.Create(materialKey);
+					ml.allocCount = 1;
+					ml.currUnionIndex = -1;
+					ml.lastRefIndex = -1;
+				}
 			}
 		}
 
-		MK_DRAWING_MONITOR.IncreaseValidMaterialCounter(materialLink.GetSize());
+		MK_DRAWING_MONITOR.IncreaseValidMaterialCounter(effectCount + materialLink.GetSize());
 
 		// 최악의 경우 모든 object가 독자적으로 잡힐 수 있음
 		unions.Reserve(validObjectCount);
 
 		// 가장 뒤쪽의 object부터 순회하며 재질별 리스트 구성
-		unsigned int j;
-		bool newUnion;
-
 		MK_INDEXING_LOOP(objList, i)
 		{
-			const MkSceneRenderObject::MaterialKey& materialKey = objList[i]->__GetMaterialKey();
-			_MaterialLink& ml = materialLink[materialKey];
-
-			// 재질 별 최초 그려지거나 마지막 object면 바로 등록
-			if (ml.currUnionIndex == -1)
+			// shader effect 적용 중인 object는 독자 union으로 인식
+			if (objList[i]->__IsShaderEffectApplied())
 			{
-				newUnion = true;
+				unions.PushBack().PushBack(objList[i]);
 			}
-			// 그렇지 않으면 샌드위치 상태인지 검사
 			else
 			{
-				newUnion = false;
+				unsigned int j;
+				bool newUnion;
 
-				const MkFloatRect& currAABR = objList[i]->GetWorldAABR();
+				const MkSceneRenderObject::MaterialKey& materialKey = objList[i]->__GetMaterialKey();
+				_MaterialLink& ml = materialLink[materialKey];
 
-				// 해당 재질의 마지막 집합 시작 object 이후부터 현 rect 사이 순회
-				for (j=(ml.lastRefIndex + 1); j<i; ++j)
+				// 재질 별 최초 그려지거나 마지막 object면 바로 등록
+				if (ml.currUnionIndex == -1)
 				{
-					if (objList[j]->__GetMaterialKey() == materialKey)
+					newUnion = true;
+				}
+				// 그렇지 않으면 샌드위치 상태인지 검사
+				else
+				{
+					newUnion = false;
+
+					const MkFloatRect& currAABR = objList[i]->GetWorldAABR();
+
+					// 해당 재질의 마지막 집합 시작 object 이후부터 현 rect 사이 순회
+					for (j=(ml.lastRefIndex + 1); j<i; ++j)
 					{
-						if (ml.lastRefIndex == (i-1)) // 같은 재질이 연속되면 체크위치 갱신
+						if (objList[j]->__GetMaterialKey() == materialKey)
 						{
-							ml.lastRefIndex = i;
+							if (ml.lastRefIndex == (i-1)) // 같은 재질이 연속되면 체크위치 갱신
+							{
+								ml.lastRefIndex = i;
+							}
+						}
+						else if (currAABR.CheckIntersection(objList[j]->GetWorldAABR())) // 재질이 다르면 충돌 검출
+						{
+							// 충돌이 발생했다면 현재 집합과 현 rect 사이에 사이에 샌드위치 상태인 다른 재질을 가진 object가 존재한다는 의미이니 새 집합 시작
+							newUnion = true;
+							break;
 						}
 					}
-					else if (currAABR.CheckIntersection(objList[j]->GetWorldAABR())) // 재질이 다르면 충돌 검출
-					{
-						// 충돌이 발생했다면 현재 집합과 현 rect 사이에 사이에 샌드위치 상태인 다른 재질을 가진 object가 존재한다는 의미이니 새 집합 시작
-						newUnion = true;
-						break;
-					}
 				}
+
+				if (newUnion)
+				{
+					ml.currUnionIndex = unions.GetSize();
+					unions.PushBack().Reserve(ml.allocCount);
+
+					ml.lastRefIndex = i;
+				}
+
+				unions[ml.currUnionIndex].PushBack(objList[i]);
+				--ml.allocCount;
 			}
-
-			if (newUnion)
-			{
-				ml.currUnionIndex = unions.GetSize();
-				unions.PushBack().Reserve(ml.allocCount);
-
-				ml.lastRefIndex = i;
-			}
-
-			MkArray<const MkSceneRenderObject*>& currUnion = unions[ml.currUnionIndex];
-			currUnion.PushBack(objList[i]);
-			--ml.allocCount;
 		}
 
 		// union을 순회하며 독자적인 draw step이 존재 할 경우 실행
@@ -192,51 +207,63 @@ bool MkDrawSceneNodeStep::Draw(void)
 		{
 			MkArray<const MkSceneRenderObject*>& currUnion = unions[i];
 
-			// union은 동일 재질을 참조하므로 아무거나 하나만 적용하면 됨
-			currUnion[0]->__ApplyRenderState();
-
-			// vertex buffer 구성해 draw call
-			// rect나 line 종류는 버텍스버퍼 세심하게 콘트를 하는 것에 비해 DrawPrimitiveUP를 써도 퍼포먼스 차이가 거의 없음
-			unsigned int dataSize = 0;
-			D3DPRIMITIVETYPE primType;
-			unsigned int primCount;
-			unsigned int stride;
-
-			switch (currUnion[0]->GetObjectType())
+			// shader effect 적용 중인 union(object 하나)
+			if (currUnion[0]->__IsShaderEffectApplied())
 			{
-			case ePA_SOT_Panel:
-				dataSize = currUnion.GetSize() * sizeof(MkPanel::VertexData) * 6;
-				primType = D3DPT_TRIANGLELIST;
-				primCount = currUnion.GetSize() * 2;
-				stride = sizeof(MkPanel::VertexData);
-				break;
+				currUnion[0]->__DrawWithShaderEffect(device);
+			}
+			// 일반 union. 같은 재질을 가진 여러 오브젝트를 동시에 그림
+			else
+			{
+				device->SetVertexShader(NULL);
+				device->SetPixelShader(NULL);
 
-			case ePA_SOT_LineShape:
+				// union은 동일 재질을 참조하므로 아무거나 하나만 적용하면 됨
+				currUnion[0]->__ApplyRenderState();
+
+				// vertex buffer 구성해 draw call
+				// rect나 line 종류는 버텍스버퍼 세심하게 콘트를 하는 것에 비해 DrawPrimitiveUP를 써도 퍼포먼스 차이가 거의 없음
+				unsigned int stride = 0;
+				unsigned int dataSize = 0;
+				D3DPRIMITIVETYPE primType;
+				unsigned int primCount;
+
+				switch (currUnion[0]->GetObjectType())
 				{
-					unsigned int dataBlockCnt = 0;
-					MK_INDEXING_LOOP(currUnion, i)
+				case ePA_SOT_Panel:
+					stride = sizeof(float) * 5;
+					dataSize = currUnion.GetSize() * stride * 6;
+					primType = D3DPT_TRIANGLELIST;
+					primCount = currUnion.GetSize() * 2;
+					break;
+
+				case ePA_SOT_LineShape:
 					{
-						dataBlockCnt += currUnion[i]->__GetVertexDataBlockSize();
+						unsigned int dataBlockCnt = 0;
+						MK_INDEXING_LOOP(currUnion, i)
+						{
+							dataBlockCnt += currUnion[i]->__GetVertexDataBlockSize();
+						}
+
+						stride = sizeof(MkLineShape::PointData);
+						dataSize = dataBlockCnt * sizeof(MkLineShape::SegmentData);
+						primType = D3DPT_LINELIST;
+						primCount = dataBlockCnt;
+					}
+					break;
+				}
+
+				if (dataSize > 0)
+				{
+					MkByteArray vertexData(dataSize);
+
+					MK_INDEXING_LOOP(currUnion, j)
+					{
+						currUnion[j]->__FillVertexData(vertexData);
 					}
 
-					dataSize = dataBlockCnt * sizeof(MkLineShape::SegmentData);
-					primType = D3DPT_LINELIST;
-					primCount = dataBlockCnt;
-					stride = sizeof(MkLineShape::PointData);
+					device->DrawPrimitiveUP(primType, primCount, vertexData.GetPtr(), stride);
 				}
-				break;
-			}
-
-			if (dataSize > 0)
-			{
-				MkByteArray vertexData(dataSize);
-
-				MK_INDEXING_LOOP(currUnion, j)
-				{
-					currUnion[j]->__FillVertexData(vertexData);
-				}
-
-				device->DrawPrimitiveUP(primType, primCount, vertexData.GetPtr(), stride);
 			}
 		}
 

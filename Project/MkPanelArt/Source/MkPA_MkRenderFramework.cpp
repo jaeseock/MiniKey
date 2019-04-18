@@ -7,7 +7,7 @@
 #include "MkPA_MkBitmapPool.h"
 #include "MkPA_MkCursorManager.h"
 #include "MkPA_MkRenderStateSetter.h"
-//#include "MkPA_MkShaderEffectPool.h"
+#include "MkPA_MkShaderEffectPool.h"
 //#include "MkS2D_MkS2DCheatMessage.h"
 #include "MkPA_MkDrawingMonitor.h"
 #include "MkPA_MkRenderer.h"
@@ -54,13 +54,13 @@ bool MkRenderFramework::SetUp(int clientWidth, int clientHeight, bool fullScreen
 	m_InstanceDeallocator.RegisterInstance(new MkRenderStateSetter());
 
 	// 8.
-	//m_InstanceDeallocator.RegisterInstance(new MkShaderEffectPool());
-	//MK_RESETABLE_RESPOOL.RegisterResource(MkShaderEffectPool::InstancePtr());
-
-	// 8.
-	m_InstanceDeallocator.RegisterInstance(new MkDrawingMonitor());
+	m_InstanceDeallocator.RegisterInstance(new MkShaderEffectPool());
+	MK_RESETABLE_RESPOOL.RegisterResource(MkShaderEffectPool::InstancePtr());
 
 	// 9.
+	m_InstanceDeallocator.RegisterInstance(new MkDrawingMonitor());
+
+	// 10.
 	m_InstanceDeallocator.RegisterInstance(new MkRenderer());
 
 	// 렌더러 초기화

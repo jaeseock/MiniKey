@@ -742,3 +742,8 @@ Node "CursorType" // 커서 지정에 대해서는 MkCursorManager::eCursorType 참조
 		int2 Hotspot = (3, 2);
 	}
 }
+
+Node "Shader"
+{
+	str FilePath = "Shader\ttt.fxo";
+}

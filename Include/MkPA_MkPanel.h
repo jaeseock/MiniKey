@@ -30,6 +30,7 @@ class MkDrawStepInterface;
 class MkDrawTextNodeStep;
 class MkTextNode;
 class MkSceneNode;
+class MkShaderEffectSetting;
 
 class MkPanel : public MkSceneRenderObject
 {
@@ -186,8 +187,46 @@ public:
 	inline const MkBaseTexture* GetTexturePtr(void) const { return m_Texture.GetPtr(); }
 
 	//------------------------------------------------------------------------------------------------//
+	// shader effect
+	//------------------------------------------------------------------------------------------------//
+
+	// effect 설정
+	// (NOTE) 기존 설정되어 있던 technique, texture, UDP값은 모두 삭제 됨
+	bool SetShaderEffect(const MkHashStr& name);
+	inline const MkHashStr& GetShaderEffect(void) const { return m_ShaderEffectName; }
+
+	// effect에 복수의 technique이 존재 할 경우 대상 technique 지정
+	bool SetTechnique(const MkHashStr& name);
+
+	// effect용 texture 설정
+	// 기본 texture가 0번 texture(eS_Texture0 - TEXTURE0)로 인식 됨
+	// sequence에 적용되는 time은 기본 texture의 것을 그대로 사용
+	bool SetEffectTexture1(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
+	bool SetEffectTexture1(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
+	bool SetEffectTexture2(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
+	bool SetEffectTexture2(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
+	bool SetEffectTexture3(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
+	bool SetEffectTexture3(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
+
+	bool SetEffectSubsetOrSequenceName1(const MkHashStr& subsetOrSequenceName);
+	bool SetEffectSubsetOrSequenceName2(const MkHashStr& subsetOrSequenceName);
+	bool SetEffectSubsetOrSequenceName3(const MkHashStr& subsetOrSequenceName);
+
+	// UDP 설정. fxo에 정의된 data type(float, float2~4)과 동일해야 함
+	void SetUserDefinedProperty(const MkHashStr& name, float x);
+	void SetUserDefinedProperty(const MkHashStr& name, float x, float y);
+	void SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z);
+	void SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z, float w);
+
+	// effect 해제
+	// (NOTE) 기존 설정되어 있던 technique, texture, UDP값도 모두 삭제 됨
+	void ClearShaderEffect(void);
+
+	//------------------------------------------------------------------------------------------------//
 
 	inline MkSceneNode* GetParentNode(void) const { return m_ParentNode; }
+
+	void ClearMainTexture(void);
 
 	// 해제
 	void Clear(void);
@@ -200,6 +239,8 @@ public:
 	virtual void __ExcuteCustomDrawStep(void);
 	virtual void __FillVertexData(MkByteArray& buffer) const;
 	virtual void __ApplyRenderState(void) const;
+	virtual bool __IsShaderEffectApplied(void) const;
+	virtual void __DrawWithShaderEffect(LPDIRECT3DDEVICE9 device) const;
 
 	virtual void Load(const MkDataNode& node);
 	virtual void Save(MkDataNode& node) const;
@@ -209,12 +250,6 @@ public:
 public:
 
 	//------------------------------------------------------------------------------------------------//
-
-	typedef struct _VertexData
-	{
-		float x, y, z, u, v;
-	}
-	VertexData;
 
 	inline void __SetParentNode(MkSceneNode* parentNode) { m_ParentNode = parentNode; }
 
@@ -245,6 +280,8 @@ protected:
 		eVerticalReflection // v
 	};
 
+	void _UpdateEffectUV(unsigned int index, double currentTimeStamp);
+
 	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkByteArray& buffer) const;
 
 	float _GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const;
@@ -273,16 +310,24 @@ protected:
 	// texture
 	MkBaseTexturePtr m_Texture;
 	MkHashStr m_SubsetOrSequenceName;
+	MkFloat2 m_TextureSize;
 	double m_SequenceStartTime;
 	double m_SequenceTimeOffset;
-	MkFloat2 m_TextureSize;
 
+	MkBaseTexturePtr m_EffectTexture[3];
+	MkHashStr m_EffectSubsetOrSequenceName[3];
+	MkFloat2 m_EffectUV[3][MkFloatRect::eMaxPointName];
+	
 	// text node
 	MkArray<MkHashStr> m_TargetTextNodeName;
 	MkTextNode* m_TargetTextNodePtr;
 
 	// custom draw step
 	MkDrawStepInterface* m_DrawStep;
+
+	// shader effect
+	MkHashStr m_ShaderEffectName;
+	MkShaderEffectSetting* m_ShaderEffectSetting;
 
 public:
 
@@ -296,5 +341,3 @@ public:
 	static const MkHashStr ObjKey_TextNodeData;
 	static const MkHashStr ObjKey_TextNodeWidthRestriction;
 };
-
-MKDEF_DECLARE_FIXED_SIZE_TYPE(MkPanel::VertexData)

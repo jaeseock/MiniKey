@@ -8,6 +8,9 @@
 #include "MkPA_MkBitmapPool.h"
 #include "MkPA_MkRenderStateSetter.h"
 #include "MkPA_MkFontManager.h"
+#include "MkPA_MkShaderEffect.h"
+#include "MkPA_MkShaderEffectSetting.h"
+#include "MkPA_MkShaderEffectPool.h"
 #include "MkPA_MkDrawTextNodeStep.h"
 #include "MkPA_MkDrawSceneNodeStep.h"
 #include "MkPA_MkSceneNode.h"
@@ -88,7 +91,7 @@ bool MkPanel::GetVisible(void) const
 
 bool MkPanel::SetTexture(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName, double timeOffset)
 {
-	Clear();
+	ClearMainTexture();
 
 	if (texture == NULL)
 		return false;
@@ -155,7 +158,7 @@ float MkPanel::GetSequenceProgress(double currTime, bool ignoreLoop) const
 
 void MkPanel::SetTextNode(const MkTextNode& source, bool restrictToPanelWidth)
 {
-	Clear();
+	ClearMainTexture();
 
 	do
 	{
@@ -227,7 +230,7 @@ void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 	MK_CHECK((m_PanelSize.x >= 1.f) && (m_PanelSize.y >= 1.f), L"유효한 panel size가 설정되어 있어야 함")
 		return;
 
-	Clear();
+	ClearMainTexture();
 
 	if (sceneNode != NULL)
 	{
@@ -255,7 +258,168 @@ void MkPanel::SetMaskingNode(const MkSceneNode* sceneNode)
 	}
 }
 
-void MkPanel::Clear(void)
+bool MkPanel::SetShaderEffect(const MkHashStr& name)
+{
+	if (name == m_ShaderEffectName)
+		return true;
+
+	if (!m_ShaderEffectName.Empty())
+	{
+		ClearShaderEffect();
+	}
+
+	MkShaderEffect* effect = MK_SHADER_POOL.GetShaderEffect(name);
+	if (effect == NULL)
+		return false;
+
+	m_ShaderEffectSetting = effect->CreateEffectSetting();
+	bool ok = (m_ShaderEffectSetting != NULL);
+	if (ok)
+	{
+		m_ShaderEffectName = name;
+	}
+	return ok;
+}
+
+void MkPanel::ClearShaderEffect(void)
+{
+	m_ShaderEffectName.Clear();
+	MK_DELETE(m_ShaderEffectSetting);
+
+	m_EffectTexture[0] = NULL;
+	m_EffectTexture[1] = NULL;
+	m_EffectTexture[2] = NULL;
+	m_EffectSubsetOrSequenceName[0].Clear();
+	m_EffectSubsetOrSequenceName[1].Clear();
+	m_EffectSubsetOrSequenceName[2].Clear();
+}
+
+bool MkPanel::SetTechnique(const MkHashStr& name)
+{
+	if (m_ShaderEffectName.Empty() || (m_ShaderEffectSetting == NULL))
+		return false;
+
+	MkShaderEffect* effect = MK_SHADER_POOL.GetShaderEffect(m_ShaderEffectName);
+	if ((effect == NULL) || (!effect->IsValidTechnique(name)))
+		return false;
+
+	m_ShaderEffectSetting->SetTechnique(name);
+	return true;
+}
+
+bool MkPanel::SetEffectTexture1(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
+{
+	m_EffectTexture[0] = NULL;
+	m_EffectSubsetOrSequenceName[0].Clear();
+
+	if (texture == NULL)
+		return false;
+
+	m_EffectTexture[0] = const_cast<MkBaseTexture*>(texture); // ref++
+	return SetEffectSubsetOrSequenceName1(subsetOrSequenceName);
+}
+bool MkPanel::SetEffectTexture1(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName)
+{
+	return SetEffectTexture1(imagePath.Empty() ? NULL : MK_BITMAP_POOL.GetBitmapTexture(imagePath), subsetOrSequenceName);
+}
+
+bool MkPanel::SetEffectTexture2(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
+{
+	m_EffectTexture[1] = NULL;
+	m_EffectSubsetOrSequenceName[1].Clear();
+
+	if (texture == NULL)
+		return false;
+
+	m_EffectTexture[1] = const_cast<MkBaseTexture*>(texture); // ref++
+	return SetEffectSubsetOrSequenceName2(subsetOrSequenceName);
+}
+
+bool MkPanel::SetEffectTexture2(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName)
+{
+	return SetEffectTexture2(imagePath.Empty() ? NULL : MK_BITMAP_POOL.GetBitmapTexture(imagePath), subsetOrSequenceName);
+}
+
+bool MkPanel::SetEffectTexture3(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
+{
+	m_EffectTexture[2] = NULL;
+	m_EffectSubsetOrSequenceName[2].Clear();
+
+	if (texture == NULL)
+		return false;
+
+	m_EffectTexture[2] = const_cast<MkBaseTexture*>(texture); // ref++
+	return SetEffectSubsetOrSequenceName3(subsetOrSequenceName);
+}
+
+bool MkPanel::SetEffectTexture3(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName)
+{
+	return SetEffectTexture3(imagePath.Empty() ? NULL : MK_BITMAP_POOL.GetBitmapTexture(imagePath), subsetOrSequenceName);
+}
+
+bool MkPanel::SetEffectSubsetOrSequenceName1(const MkHashStr& subsetOrSequenceName)
+{
+	bool ok = ((m_EffectTexture[0] != NULL) && m_EffectTexture[0]->GetImageInfo().IsValidName(subsetOrSequenceName));
+	if (ok)
+	{
+		m_EffectSubsetOrSequenceName[0] = subsetOrSequenceName;
+	}
+	return ok;
+}
+
+bool MkPanel::SetEffectSubsetOrSequenceName2(const MkHashStr& subsetOrSequenceName)
+{
+	bool ok = ((m_EffectTexture[1] != NULL) && m_EffectTexture[1]->GetImageInfo().IsValidName(subsetOrSequenceName));
+	if (ok)
+	{
+		m_EffectSubsetOrSequenceName[1] = subsetOrSequenceName;
+	}
+	return ok;
+}
+
+bool MkPanel::SetEffectSubsetOrSequenceName3(const MkHashStr& subsetOrSequenceName)
+{
+	bool ok = ((m_EffectTexture[2] != NULL) && m_EffectTexture[2]->GetImageInfo().IsValidName(subsetOrSequenceName));
+	if (ok)
+	{
+		m_EffectSubsetOrSequenceName[2] = subsetOrSequenceName;
+	}
+	return ok;
+}
+
+void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x)
+{
+	if (m_ShaderEffectSetting != NULL)
+	{
+		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, 0.f, 0.f, 0.f));
+	}
+}
+
+void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y)
+{
+	if (m_ShaderEffectSetting != NULL)
+	{
+		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, 0.f, 0.f));
+	}
+}
+
+void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z)
+{
+	if (m_ShaderEffectSetting != NULL)
+	{
+		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, z, 0.f));
+	}
+}
+
+void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z, float w)
+{
+	if (m_ShaderEffectSetting != NULL)
+	{
+		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, z, w));
+	}
+}
+
+void MkPanel::ClearMainTexture(void)
 {
 	m_PixelScrollPosition.Clear();
 	m_Texture = NULL;
@@ -265,6 +429,12 @@ void MkPanel::Clear(void)
 	m_TargetTextNodeName.Clear();
 	MK_DELETE(m_TargetTextNodePtr);
 	MK_DELETE(m_DrawStep);
+}
+
+void MkPanel::Clear(void)
+{
+	ClearMainTexture();
+	ClearShaderEffect();
 }
 
 void MkPanel::__ExcuteCustomDrawStep(void)
@@ -302,6 +472,56 @@ void MkPanel::__ApplyRenderState(void) const
 	{
 		m_Texture->UpdateRenderState(m_MaterialKey.m_SubKey);
 	}
+}
+
+bool MkPanel::__IsShaderEffectApplied(void) const
+{
+	return (m_ShaderEffectSetting != NULL);
+}
+
+void MkPanel::__DrawWithShaderEffect(LPDIRECT3DDEVICE9 device) const
+{
+	// 예외처리 하지 않음
+	DWORD fvf = MKDEF_PANEL_FVF;
+	unsigned int stride;
+	
+	if (m_EffectTexture[2] != NULL)
+	{
+		fvf |= D3DFVF_TEX2 | D3DFVF_TEXCOORDSIZE2(1) | D3DFVF_TEX3 | D3DFVF_TEXCOORDSIZE2(2) | D3DFVF_TEX4 | D3DFVF_TEXCOORDSIZE2(3);
+		stride = sizeof(float) * 11;
+	}
+	else if (m_EffectTexture[1] != NULL)
+	{
+		fvf |= D3DFVF_TEX2 | D3DFVF_TEXCOORDSIZE2(1) | D3DFVF_TEX3 | D3DFVF_TEXCOORDSIZE2(2);
+		stride = sizeof(float) * 9;
+	}
+	else if (m_EffectTexture[0] != NULL)
+	{
+		fvf |= D3DFVF_TEX2 | D3DFVF_TEXCOORDSIZE2(1);
+		stride = sizeof(float) * 7;
+	}
+	else
+	{
+		stride = sizeof(float) * 5;
+	}
+
+	//MkHashStr m_EffectSubsetOrSequenceName[3];
+
+	MK_RENDER_STATE.UpdateFVF(fvf);
+
+	MkShaderEffect* effect = MK_SHADER_POOL.GetShaderEffect(m_ShaderEffectName);
+
+	MkByteArray vertexData(stride * 6);
+	__FillVertexData(vertexData);
+
+	unsigned int passCount = effect->BeginTechnique(m_ShaderEffectSetting);
+	for (unsigned int i=0; i<passCount; ++i)
+	{
+		effect->BeginPass(i);
+		device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 2, vertexData.GetPtr(), stride);
+		effect->EndPass();
+	}
+	effect->EndTechnique();
 }
 
 void MkPanel::Load(const MkDataNode& node)
@@ -461,10 +681,16 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 	// alpha
 	m_MaterialKey.m_SubKey = static_cast<DWORD>(m_Transform.GetWorldAlpha() * 255.f);
 
+	if (m_ShaderEffectSetting != NULL)
+	{
+		m_ShaderEffectSetting->SetAlpha(m_Transform.GetWorldAlpha());
+	}
+
 	// world vertex and uv
 	if (m_Texture != NULL)
 	{
-		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, currTime - m_SequenceStartTime + m_SequenceTimeOffset);
+		double currentTimeStamp = currTime - m_SequenceStartTime + m_SequenceTimeOffset;
+		const MkImageInfo::Subset* ssPtr = m_Texture->GetImageInfo().GetCurrentSubsetPtr(m_SubsetOrSequenceName, currentTimeStamp);
 		if (ssPtr == NULL)
 		{
 			m_WorldVertice[MkFloatRect::eLeftTop] = m_Transform.GetWorldPosition();
@@ -631,6 +857,15 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 
 			m_AABR.position = minPt;
 			m_AABR.size = maxPt - minPt;
+
+			if (m_ShaderEffectSetting != NULL)
+			{
+				m_ShaderEffectSetting->SetTexture0(m_Texture.GetPtr());
+
+				_UpdateEffectUV(0, currentTimeStamp);
+				_UpdateEffectUV(1, currentTimeStamp);
+				_UpdateEffectUV(2, currentTimeStamp);
+			}
 		}
 	}
 }
@@ -673,21 +908,84 @@ MkPanel::MkPanel(void) : MkSceneRenderObject()
 
 	m_TargetTextNodePtr = NULL;
 	m_DrawStep = NULL;
+
+	m_ShaderEffectSetting = NULL;
+}
+
+void MkPanel::_UpdateEffectUV(unsigned int index, double currentTimeStamp)
+{
+	const MkImageInfo::Subset* ssPtr =
+		(m_EffectTexture[index] == NULL) ? NULL : m_EffectTexture[index]->GetImageInfo().GetCurrentSubsetPtr(m_EffectSubsetOrSequenceName[index], currentTimeStamp);
+
+	if (ssPtr == NULL)
+	{
+		m_EffectUV[index][MkFloatRect::eLeftTop] = MkFloat2::Zero;
+		m_EffectUV[index][MkFloatRect::eRightTop] = MkFloat2(1.f, 0.f);
+		m_EffectUV[index][MkFloatRect::eLeftBottom] = MkFloat2(0.f, 1.f);
+		m_EffectUV[index][MkFloatRect::eRightBottom] = MkFloat2(1.f, 1.f);
+	}
+	else
+	{
+		memcpy_s(m_EffectUV[index], sizeof(MkFloat2) * MkFloatRect::eMaxPointName, ssPtr->uv, sizeof(MkFloat2) * MkFloatRect::eMaxPointName);
+
+		switch (index)
+		{
+		case 0: m_ShaderEffectSetting->SetTexture1(m_EffectTexture[index].GetPtr()); break;
+		case 1: m_ShaderEffectSetting->SetTexture2(m_EffectTexture[index].GetPtr()); break;
+		case 2: m_ShaderEffectSetting->SetTexture3(m_EffectTexture[index].GetPtr()); break;
+		}
+	}
 }
 
 void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkByteArray& buffer) const
 {
-	VertexData vd;
+	unsigned int size = 5;
+	if (m_EffectTexture[2] != NULL)
+	{
+		size = 11;
+	}
+	else if (m_EffectTexture[1] != NULL)
+	{
+		size = 9;
+	}
+	else if (m_EffectTexture[0] != NULL)
+	{
+		size = 7;
+	}
+
+	MkArray<float> data(size);
+
 	const MkFloat2& wv = m_WorldVertice[pn];
-	vd.x = wv.x;
-	vd.y = wv.y;
-	vd.z = m_Transform.GetWorldDepth();
+	data.PushBack(wv.x);
+	data.PushBack(wv.y);
+	data.PushBack(m_Transform.GetWorldDepth());
 
 	const MkFloat2& uv = m_UV[pn];
-	vd.u = (hr) ? (1.f - uv.x) : uv.x;
-	vd.v = (vr) ? (1.f - uv.y) : uv.y;
+	data.PushBack((hr) ? (1.f - uv.x) : uv.x);
+	data.PushBack((vr) ? (1.f - uv.y) : uv.y);
 
-	MkByteArrayHelper<VertexData>::PushBack(buffer, vd);
+	if (size > 5)
+	{
+		const MkFloat2& uv1 = m_EffectUV[0][pn];
+		data.PushBack((hr) ? (1.f - uv1.x) : uv1.x);
+		data.PushBack((vr) ? (1.f - uv1.y) : uv1.y);
+
+		if (size > 7)
+		{
+			const MkFloat2& uv2 = m_EffectUV[1][pn];
+			data.PushBack((hr) ? (1.f - uv2.x) : uv2.x);
+			data.PushBack((vr) ? (1.f - uv2.y) : uv2.y);
+
+			if (size > 9)
+			{
+				const MkFloat2& uv3 = m_EffectUV[2][pn];
+				data.PushBack((hr) ? (1.f - uv3.x) : uv3.x);
+				data.PushBack((vr) ? (1.f - uv3.y) : uv3.y);
+			}
+		}
+	}
+
+	MkByteArrayHelper<float>::PushBack(buffer, data);
 }
 
 float MkPanel::_GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const

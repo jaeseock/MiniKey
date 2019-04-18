@@ -136,6 +136,12 @@ public:
 	// render state 반영
 	virtual void __ApplyRenderState(void) const {}
 
+	// shader effect 적용여부 반환
+	virtual bool __IsShaderEffectApplied(void) const { return false; }
+
+	// shader effect 적용해 그리기
+	virtual void __DrawWithShaderEffect(LPDIRECT3DDEVICE9 device) const {}
+
 	virtual ~MkSceneRenderObject() {}
 
 protected:

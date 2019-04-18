@@ -29,12 +29,9 @@ bool MkSoundBuffer::SetUp(LPDIRECTSOUND directSound, const MkPathName& filePath)
 		if ((!isWave) && (!isOgg))
 			break;
 
-		MkPathName fullPath;
-		fullPath.ConvertToRootBasisAbsolutePath(filePath);
-
 		// file data
 		MkByteArray srcData;
-		MK_CHECK(MkFileManager::GetFileData(fullPath, srcData), L"음원 파일 로딩 실패 : " + filePath)
+		MK_CHECK(MkFileManager::GetFileData(filePath, srcData), L"음원 파일 로딩 실패 : " + filePath)
 			break;
 
 		if (srcData.Empty())

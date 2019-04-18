@@ -101,7 +101,7 @@ public:
 	
 	//------------------------------------------------------------------------------------------------//
 
-	virtual void Update(double currTime = 0.);
+	//virtual void Update(double currTime = 0.);
 
 	virtual void Clear(void);
 
@@ -114,6 +114,8 @@ protected:
 
 	void _StartCursorReport(ePA_SceneNodeEvent evt, const MkInt2& position);
 	void _StartHoldingCheck(ePA_SceneNodeEvent evt, const MkInt2& position);
+
+	void _SetTooltipVisible(bool visible);
 
 protected:
 

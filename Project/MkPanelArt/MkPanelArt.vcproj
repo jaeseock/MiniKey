@@ -302,6 +302,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\Source\MkPA_MkShaderEffectPool.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkPA_MkShaderEffectPool.h"
+					>
+				</File>
+				<File
 					RelativePath=".\Source\MkPA_MkStaticResourceContainer.cpp"
 					>
 				</File>
@@ -398,6 +406,22 @@
 					</File>
 					<File
 						RelativePath="..\..\Include\MkPA_MkWindowThemeUnitData.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="Shader"
+					>
+					<File
+						RelativePath=".\Source\MkPA_MkShaderEffect.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkShaderEffect.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkPA_MkShaderEffectSetting.h"
 						>
 					</File>
 				</Filter>

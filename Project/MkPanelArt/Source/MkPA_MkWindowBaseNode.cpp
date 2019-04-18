@@ -58,6 +58,8 @@ void MkWindowBaseNode::UpdateCursorInput
 
 		if (!m_CursorInside)
 		{
+			_SetTooltipVisible(true);
+
 			StartNodeReportTypeEvent(ePA_SNE_CursorEntered, NULL);
 		}
 
@@ -142,6 +144,8 @@ void MkWindowBaseNode::UpdateCursorInput
 			SetFormState(MkWindowThemeFormData::eS_Normal);
 		}
 
+		_SetTooltipVisible(false);
+
 		StartNodeReportTypeEvent(ePA_SNE_CursorLeft, NULL);
 
 		m_HoldingEventType = ePA_SNE_None;
@@ -157,6 +161,8 @@ void MkWindowBaseNode::Activate(void)
 
 void MkWindowBaseNode::Deactivate(void)
 {
+	_SetTooltipVisible(false);
+
 	SetFormState(MkWindowThemeFormData::eS_Default);
 }
 
@@ -229,21 +235,6 @@ void MkWindowBaseNode::SendNodeCommandTypeEvent(ePA_SceneNodeEvent eventType, Mk
 }
 
 //------------------------------------------------------------------------------------------------//
-
-void MkWindowBaseNode::Update(double currTime)
-{
-	// tooltip 상태 갱신
-	if (ChildExist(ToolTipName))
-	{
-		MkSceneNode* tooltipNode = GetChildNode(ToolTipName);
-		if (tooltipNode != NULL)
-		{
-			tooltipNode->SetVisible(m_CursorInside);
-		}
-	}
-
-	MkWindowThemedNode::Update(currTime);
-}
 
 void MkWindowBaseNode::Clear(void)
 {
@@ -341,6 +332,18 @@ void MkWindowBaseNode::_StartHoldingCheck(ePA_SceneNodeEvent evt, const MkInt2& 
 		_StartCursorReport(evt, position);
 
 		m_HoldingEventType = ePA_SNE_None;
+	}
+}
+
+void MkWindowBaseNode::_SetTooltipVisible(bool visible)
+{
+	if (ChildExist(ToolTipName))
+	{
+		MkSceneNode* tooltipNode = GetChildNode(ToolTipName);
+		if (tooltipNode != NULL)
+		{
+			tooltipNode->SetVisible(visible);
+		}
 	}
 }
 

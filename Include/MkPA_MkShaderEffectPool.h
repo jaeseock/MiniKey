@@ -2,7 +2,7 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// global instance - shader effect(fx) pool
+// global instance - compiled shader effect(fxo) pool
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkSingletonPattern.h"
@@ -15,20 +15,19 @@
 #define MK_SHADER_POOL MkShaderEffectPool::Instance()
 
 
-class MkPathName;
 class MkShaderEffect;
 
 class MkShaderEffectPool : public MkBaseResetableResource, public MkSingletonPattern<MkShaderEffectPool>
 {
 public:
 	
-	void SetUp(const MkPathName& shaderDirectory);
+	void SetUp(const MkArray<MkStr>& filePathList);
+
+	MkShaderEffect* GetShaderEffect(const MkHashStr& name) const;
 
 	void Clear(void);
 
-	void SetImageRectVertexDeclaration(void);
-
-	MkShaderEffect* GetShaderEffect(const MkHashStr& name) const;
+	//void SetImageRectVertexDeclaration(void);
 
 	//------------------------------------------------------------------------------------------------//
 	// MkBaseResetableResource
@@ -42,18 +41,8 @@ public:
 
 protected:
 
-	typedef struct __EffectData
-	{
-		MkShaderEffect* effect;
-		unsigned int fileSize;
-		unsigned int fileWrittenTime;
-	}
-	_EffectData;
-
-protected:
-
-	MkHashMap<MkHashStr, _EffectData> m_Pool;
+	MkHashMap<MkHashStr, MkShaderEffect*> m_Pool;
 
 	// for 2d effect
-	LPDIRECT3DVERTEXDECLARATION9 m_VertexDecl;
+	//LPDIRECT3DVERTEXDECLARATION9 m_VertexDecl;
 };

@@ -2,28 +2,31 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// shader effect(fx)
-// 실시간 뽀샵질(2D 처리)만 해당되므로 볼륨을 크게 줄일 수 있음
-// - vs는 실질적으로 광원 없고 기본적인 wvp연산과 uv만 있으면 되므로 기본 하나만 남기고 버림
-// - ps는 유지
+// orthogonal camera
+// 2d에서 perspective camera는 사용하지 않음
 //------------------------------------------------------------------------------------------------//
 
-#include "MkPA_MkD3DDefinition.h"
-#include "MkCore_MkMap.h"
 #include "MkCore_MkHashStr.h"
+#include "MkCore_MkMap.h"
+#include "MkCore_MkHashMap.h"
+#include "MkCore_MkValueDecision.h"
+
+#include "MkPA_MkD3DDefinition.h"
+//#include "MkPA_MkBaseResetableResource.h"
 
 
 class MkPathName;
 class MkBaseTexture;
-class MkShaderEffectAssignPack;
+class MkShaderEffectSetting;
 
 class MkShaderEffect
 {
 public:
 
 	//------------------------------------------------------------------------------------------------//
-	// 문맥 정보 키워드
+	// 문맥 정보 키워드. 3d가 아닌 2d에는 필요한 문맥 정보가 많지 않다
 	// (NOTE) 변경시 MkShaderEffect 수정은 물론 MkShaderEffectAssignPack에도 반영 할 것
+	// https://docs.microsoft.com/en-us/windows/desktop/direct3dhlsl/dx-graphics-hlsl-semantics
 	//------------------------------------------------------------------------------------------------//
 
 	enum eSemantic
@@ -31,57 +34,47 @@ public:
 		eS_None = -1,
 
 		// transform(ePT_Matrix)
-		eS_WorldViewProjection = 0, // WORLDVIEWPROJECTION
+//		eS_WorldViewProjection = 0, // WORLDVIEWPROJECTION
 
 		// alpha(ePT_Float)
-		eS_Alpha, // ALPHA
+		eS_Alpha = 0, // ALPHA
 
-		// texture(ePT_Texture). default 가능(ex> texture diffuseTex : TEXTURE0 <string def = "map\bg.png";>;)
-		eS_DiffuseTexture, // DIFFUSETEX
-		eS_ShaderTexture0, // SHADERTEX0
-		eS_ShaderTexture1, // SHADERTEX1
-		eS_ShaderTexture2, // SHADERTEX2
+		// texture(ePT_Texture)
+		// 초기경로 지정 가능(ex> texture diffuseTex : TEXTURE0 <string path = "map\bg.png";>;)
+		eS_Texture0, // TEXTURE0
+		eS_Texture1, // TEXTURE1
+		eS_Texture2, // TEXTURE2
+		eS_Texture3, // TEXTURE3
 
-		// texture size(ePT_Float2)
-		eS_DiffuseTexSize, // DTEXSIZE
-		eS_ShaderTexSize0, // STEXSIZE0
-		eS_ShaderTexSize1, // STEXSIZE1
-		eS_ShaderTexSize2, // STEXSIZE2
-
-		// user defined property(ePT_Float4). default 가능(ex> float4 colorFactor : UDP <string def = "1, 0.5, 0.2, 1";>;)
-		eS_UDP0, // UDP0
-		eS_UDP1, // UDP1
-		eS_UDP2, // UDP2
-		eS_UDP3, // UDP3
-
-		eS_Max
+		// user defined property(ePT_Float, ePT_Float2, ePT_Float3, ePT_Float4)
+		// ex> float4 colorFactor : UDP = float4(1.f, 0.5f, 0.2f, 1.f);
+		eS_UDP // UDP
 	};
 
-	//------------------------------------------------------------------------------------------------//
+	// 초기화
+	bool SetUp(const MkPathName& filePath);
 
-	// fxo 파일로 초기화
-	bool SetUp(const MkHashStr& name, const MkPathName& filePath);
+	// 사용 가능한 technique여부 반환
+	bool IsValidTechnique(const MkHashStr& name) const;
 
-	// effect 이름 반환
-	inline const MkHashStr& GetName(void) const { return m_Name; }
-
-	// 해제
-	void Clear(void);
+	// per object
+	MkShaderEffectSetting* CreateEffectSetting(void) const;
 
 	// draw
-	unsigned int BeginTechnique(const MkShaderEffectAssignPack& objectPack);
+	unsigned int BeginTechnique(const MkShaderEffectSetting* objectSetting);
 	void BeginPass(unsigned int index);
 	void EndPass(void);
 	void EndTechnique(void);
 
+	// 해제
+	void Clear(void);
+
 	// device lost
 	void UnloadResource(void);
 	void ReloadResource(void);
-
-public:
-
+	
 	MkShaderEffect();
-	~MkShaderEffect() { Clear(); }
+	virtual ~MkShaderEffect() { Clear(); }
 
 protected:
 
@@ -101,28 +94,34 @@ protected:
 	static eSemantic _GetSemantic(const MkHashStr& key);
 	static eParamType _GetParamType(const D3DXPARAMETER_DESC& desc);
 
-	bool _GetAnnotation(D3DXHANDLE paramHandle, const char* name, MkStr& buffer) const; // name-string만 취급
-	MkBaseTexture* _GetDefaultTexture(D3DXHANDLE paramHandle) const;
-	bool _GetDefaultVector4(D3DXHANDLE paramHandle, D3DXVECTOR4& buffer) const;
-	void _UpdateDefaultFromAnnotation(eSemantic semantic, D3DXHANDLE paramHandle);
+	bool _GetStringAnnotation(D3DXHANDLE paramHandle, const char* name, MkStr& buffer) const;
 
-	void _ApplyAssignPack(eSemantic semantic, const MkShaderEffectAssignPack& objectPack);
+	template<class DataType>
+	class _ParameterInfo
+	{
+	public:
+		D3DXHANDLE handle;
+		eParamType paramType;
+		DataType defValue;
+		MkValueDecision<DataType> currValue;
+
+		void SetUp(D3DXHANDLE h, eParamType pt, DataType dv);
+		_ParameterInfo();
+	};
 
 protected:
 
-	MkHashStr m_Name;
+	MkHashStr m_EffectName; // 이펙트 이름. 파일명
 
-	LPD3DXEFFECT m_Effect;
+	MkHashMap<MkHashStr, D3DXHANDLE> m_Techniques; // 보유 테크닉
 
-	// semantic
-	MkMap<eSemantic, D3DXHANDLE> m_SemanticParameters;
-	MkArray<eSemantic> m_OwnedSemanticList;
+	LPD3DXEFFECT m_Effect; // 이펙트 객체
 
-	// default value
-	MkShaderEffectAssignPack* m_DefaultPack;
-
-public:
-
-	static const MkHashStr SemanticKey[eS_Max];
-	static const eParamType SemanticParamType[eS_Max];
+	_ParameterInfo<MkHashStr> m_Technique;
+	_ParameterInfo<float> m_Alpha;
+	_ParameterInfo<MkBaseTexture*> m_Texture0;
+	_ParameterInfo<MkBaseTexture*> m_Texture1;
+	_ParameterInfo<MkBaseTexture*> m_Texture2;
+	_ParameterInfo<MkBaseTexture*> m_Texture3;
+	MkHashMap< MkHashStr, _ParameterInfo<D3DXVECTOR4> > m_UDP;
 };

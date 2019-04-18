@@ -51,6 +51,8 @@
 #include "MkPA_MkWindowFactory.h"
 #include "MkCore_MkTimeCounter.h"
 
+#include "MkPA_MkShaderEffect.h"
+
 //------------------------------------------------------------------------------------------------//
 
 // TestPage ¼±¾ð
@@ -59,12 +61,16 @@ class TestPage : public MkBasePage
 public:
 	virtual bool SetUp(MkDataNode& sharingNode)
 	{
+		//
 		m_PageNode = new MkSceneNode(L"<Page>");
 		MkSceneNode* rootNode = m_PageNode->CreateChildNode(L"<Root>");
 		MkSceneNode* mainNode = rootNode->CreateChildNode(L"Main");
 		
 		MkSceneNode* bgNode = mainNode->CreateChildNode(L"BG");
-		bgNode->CreatePanel(L"P").SetTexture(L"Image\\rohan_screenshot.png");
+		MkPanel& bgPanel = bgNode->CreatePanel(L"P");
+		bgPanel.SetTexture(L"Image\\rohan_screenshot.png");
+		bgPanel.SetEffectTexture1(L"Image\\s01.jpg");
+		bgPanel.SetShaderEffect(L"ttt");
 		bgNode->SetLocalDepth(10000.f);
 
 		MkPanel& ip = mainNode->CreatePanel(L"ImgTest");
@@ -111,7 +117,7 @@ public:
 
 		// window A : MkSliderControlNode
 		MkSliderControlNode* vSliderNode = MkSliderControlNode::CreateChildNode(bodyClient, L"Slider");
-		vSliderNode->SetVerticalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 150.f, 5, 15, 12);
+		vSliderNode->SetVerticalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 150.f, 0, 100, 50);
 		vSliderNode->SetAlignmentPosition(eRAP_LeftTop);
 		vSliderNode->SetAlignmentOffset(MkFloat2(10.f, -30.f));
 		vSliderNode->SetLocalDepth(-1.f);
@@ -395,10 +401,11 @@ public:
 
 		if (m_PageNode != NULL)
 		{
+			MkHashStr currSN;
 			if (m_TickCounter.OnTick(timeState))
 			{
 				MkPanel* imagePanel = m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"Main")->GetPanel(L"ImgTest");
-				MkHashStr currSN = imagePanel->GetSubsetOrSequenceName();
+				currSN = imagePanel->GetSubsetOrSequenceName();
 				MkArray<MkHashStr> seqs;
 				imagePanel->GetTexturePtr()->GetImageInfo().GetSequences().GetKeyList(seqs);
 
@@ -597,6 +604,7 @@ public:
 				{
 					const float movement = static_cast<float>(timeState.elapsed) * 300.f;
 
+					bool focusIsWin1 = m_FocusWindowName.Equals(0, L"Win(1)");
 					bool focusIsWin2 = m_FocusWindowName.Equals(0, L"Win(2)");
 					MkFloat2 win2SizeOffset;
 
@@ -629,6 +637,27 @@ public:
 						frontNode->SetLocalPosition(localPos);
 
 						if (focusIsWin2) win2SizeOffset.y += movement;
+					}
+
+					if (focusIsWin1)
+					{
+						MkSceneNode* bodyNode = frontNode->GetChildNode(L"BodyFrame");
+						MkSceneNode* bodyClient = bodyNode->GetChildNode(L"BodyClient");
+						MkSceneNode* slideNode = bodyClient->GetChildNode(L"Slider");
+						MkSliderControlNode* vSliderNode = dynamic_cast<MkSliderControlNode*>(slideNode);
+						int val = vSliderNode->GetSliderValue();
+						float fac = static_cast<float>(val) / 100.f;
+
+						MkSceneNode* rootNode = m_PageNode->GetChildNode(L"<Root>");
+						MkSceneNode* mainNode = rootNode->GetChildNode(L"Main");
+						MkSceneNode* bgNode = mainNode->GetChildNode(L"BG");
+						MkPanel* bgPanel = bgNode->GetPanel(L"P");
+						bgPanel->SetUserDefinedProperty(L"blendingWeight", fac, fac, fac);
+
+						if (!currSN.Empty())
+						{
+							bgPanel->SetEffectSubsetOrSequenceName1(currSN);
+						}
 					}
 
 					if (focusIsWin2)
