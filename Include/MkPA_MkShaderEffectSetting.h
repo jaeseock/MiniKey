@@ -2,7 +2,11 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// per object shader effect setting
+// object별 shader effect 설정
+// - technique
+// - alpha
+// - texture0, 1, 2, 3으로 총 4개까지 설정 가능
+// - user defined property(shader code에 선언된 변수명으로 설정)
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkHashStr.h"

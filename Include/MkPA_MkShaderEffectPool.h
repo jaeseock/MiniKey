@@ -27,8 +27,6 @@ public:
 
 	void Clear(void);
 
-	//void SetImageRectVertexDeclaration(void);
-
 	//------------------------------------------------------------------------------------------------//
 	// MkBaseResetableResource
 	//------------------------------------------------------------------------------------------------//
@@ -36,13 +34,10 @@ public:
 	virtual void UnloadResource(void);
 	virtual void ReloadResource(LPDIRECT3DDEVICE9 device);
 
-	MkShaderEffectPool();
+	MkShaderEffectPool() {}
 	virtual ~MkShaderEffectPool() { Clear(); }
 
 protected:
 
 	MkHashMap<MkHashStr, MkShaderEffect*> m_Pool;
-
-	// for 2d effect
-	//LPDIRECT3DVERTEXDECLARATION9 m_VertexDecl;
 };

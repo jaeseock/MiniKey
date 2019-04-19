@@ -38,13 +38,6 @@ void MkShaderEffectPool::SetUp(const MkArray<MkStr>& filePathList)
 			}
 		}
 	}
-
-	//if (m_VertexDecl == NULL)
-	//{
-	//	D3DVERTEXELEMENT9 vertexElement[MAX_FVF_DECL_SIZE];
-	//	D3DXDeclaratorFromFVF(MKDEF_PANEL_FVF, vertexElement);
-	//	device->CreateVertexDeclaration(vertexElement, &m_VertexDecl);
-	//}
 }
 
 MkShaderEffect* MkShaderEffectPool::GetShaderEffect(const MkHashStr& name) const
@@ -60,18 +53,7 @@ void MkShaderEffectPool::Clear(void)
 		delete looper.GetCurrentField();
 	}
 	m_Pool.Clear();
-
-	//MK_RELEASE(m_VertexDecl);
 }
-
-//void MkShaderEffectPool::SetImageRectVertexDeclaration(void)
-//{
-//	LPDIRECT3DDEVICE9 device = MK_DEVICE_MGR.GetDevice();
-//	if ((device != NULL) && (m_VertexDecl != NULL))
-//	{
-//		device->SetVertexDeclaration(m_VertexDecl);
-//	}
-//}
 
 void MkShaderEffectPool::UnloadResource(void)
 {
@@ -89,11 +71,6 @@ void MkShaderEffectPool::ReloadResource(LPDIRECT3DDEVICE9 device)
 	{
 		looper.GetCurrentField()->ReloadResource();
 	}
-}
-
-MkShaderEffectPool::MkShaderEffectPool() : MkBaseResetableResource(), MkSingletonPattern<MkShaderEffectPool>()
-{
-	//m_VertexDecl = NULL;
 }
 
 //------------------------------------------------------------------------------------------------//

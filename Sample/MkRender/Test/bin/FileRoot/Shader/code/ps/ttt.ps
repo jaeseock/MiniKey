@@ -10,12 +10,11 @@ sampler addMap = sampler_state { Texture = (addTex); };
 
 float4 PS(float2 uv0 : TEXCOORD0, float2 uv1 : TEXCOORD1) : COLOR
 {
-  float4 diffuseColor = tex2D(baseMap, uv0);
+  float4 baseColor = tex2D(baseMap, uv0);
+  float4 addColor = tex2D(addMap, uv1);
+  float3 diffuseColor = baseColor.rgb + addColor.rgb * 0.15f;
   float luminance = 0.299f * diffuseColor.r + 0.587f * diffuseColor.g + 0.114f * diffuseColor.b;
   float3 offset = (float3(luminance, luminance, luminance) - diffuseColor.rgb) * blendingWeight;
-  float4 addColor = tex2D(addMap, uv1);
-
-  return float4(diffuseColor.rgb + offset + addColor.rgb * 0.15f, diffuseColor.a);
+  
+  return float4(diffuseColor.rgb + offset, baseColor.a);
 }
-
-// approximately 7 instruction slots used (1 texture, 6 arithmetic)

@@ -2,8 +2,9 @@
 
 
 //------------------------------------------------------------------------------------------------//
-// orthogonal camera
-// 2d에서 perspective camera는 사용하지 않음
+// shader effect
+// 하나의 fxo에 대응
+// 하나 혹은 복수의 technique를 가지고 있으며 object는 이 중 하나의 technique에 대응
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkHashStr.h"
@@ -12,7 +13,6 @@
 #include "MkCore_MkValueDecision.h"
 
 #include "MkPA_MkD3DDefinition.h"
-//#include "MkPA_MkBaseResetableResource.h"
 
 
 class MkPathName;
@@ -24,17 +24,13 @@ class MkShaderEffect
 public:
 
 	//------------------------------------------------------------------------------------------------//
-	// 문맥 정보 키워드. 3d가 아닌 2d에는 필요한 문맥 정보가 많지 않다
-	// (NOTE) 변경시 MkShaderEffect 수정은 물론 MkShaderEffectAssignPack에도 반영 할 것
+	// 문맥 정보 키워드. 3d가 아닌 2d에는 필요한 정보가 많지 않다
 	// https://docs.microsoft.com/en-us/windows/desktop/direct3dhlsl/dx-graphics-hlsl-semantics
 	//------------------------------------------------------------------------------------------------//
 
 	enum eSemantic
 	{
 		eS_None = -1,
-
-		// transform(ePT_Matrix)
-//		eS_WorldViewProjection = 0, // WORLDVIEWPROJECTION
 
 		// alpha(ePT_Float)
 		eS_Alpha = 0, // ALPHA
@@ -110,8 +106,6 @@ protected:
 	};
 
 protected:
-
-	MkHashStr m_EffectName; // 이펙트 이름. 파일명
 
 	MkHashMap<MkHashStr, D3DXHANDLE> m_Techniques; // 보유 테크닉
 

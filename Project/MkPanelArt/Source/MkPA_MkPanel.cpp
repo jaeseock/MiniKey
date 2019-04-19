@@ -309,14 +309,7 @@ bool MkPanel::SetTechnique(const MkHashStr& name)
 
 bool MkPanel::SetEffectTexture1(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
 {
-	m_EffectTexture[0] = NULL;
-	m_EffectSubsetOrSequenceName[0].Clear();
-
-	if (texture == NULL)
-		return false;
-
-	m_EffectTexture[0] = const_cast<MkBaseTexture*>(texture); // ref++
-	return SetEffectSubsetOrSequenceName1(subsetOrSequenceName);
+	return _SetEffectTexture(0, texture, subsetOrSequenceName);
 }
 bool MkPanel::SetEffectTexture1(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName)
 {
@@ -325,14 +318,7 @@ bool MkPanel::SetEffectTexture1(const MkHashStr& imagePath, const MkHashStr& sub
 
 bool MkPanel::SetEffectTexture2(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
 {
-	m_EffectTexture[1] = NULL;
-	m_EffectSubsetOrSequenceName[1].Clear();
-
-	if (texture == NULL)
-		return false;
-
-	m_EffectTexture[1] = const_cast<MkBaseTexture*>(texture); // ref++
-	return SetEffectSubsetOrSequenceName2(subsetOrSequenceName);
+	return _SetEffectTexture(1, texture, subsetOrSequenceName);
 }
 
 bool MkPanel::SetEffectTexture2(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName)
@@ -342,14 +328,7 @@ bool MkPanel::SetEffectTexture2(const MkHashStr& imagePath, const MkHashStr& sub
 
 bool MkPanel::SetEffectTexture3(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
 {
-	m_EffectTexture[2] = NULL;
-	m_EffectSubsetOrSequenceName[2].Clear();
-
-	if (texture == NULL)
-		return false;
-
-	m_EffectTexture[2] = const_cast<MkBaseTexture*>(texture); // ref++
-	return SetEffectSubsetOrSequenceName3(subsetOrSequenceName);
+	return _SetEffectTexture(2, texture, subsetOrSequenceName);
 }
 
 bool MkPanel::SetEffectTexture3(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName)
@@ -359,32 +338,17 @@ bool MkPanel::SetEffectTexture3(const MkHashStr& imagePath, const MkHashStr& sub
 
 bool MkPanel::SetEffectSubsetOrSequenceName1(const MkHashStr& subsetOrSequenceName)
 {
-	bool ok = ((m_EffectTexture[0] != NULL) && m_EffectTexture[0]->GetImageInfo().IsValidName(subsetOrSequenceName));
-	if (ok)
-	{
-		m_EffectSubsetOrSequenceName[0] = subsetOrSequenceName;
-	}
-	return ok;
+	return _SetEffectSubsetOrSequenceName(0, subsetOrSequenceName);
 }
 
 bool MkPanel::SetEffectSubsetOrSequenceName2(const MkHashStr& subsetOrSequenceName)
 {
-	bool ok = ((m_EffectTexture[1] != NULL) && m_EffectTexture[1]->GetImageInfo().IsValidName(subsetOrSequenceName));
-	if (ok)
-	{
-		m_EffectSubsetOrSequenceName[1] = subsetOrSequenceName;
-	}
-	return ok;
+	return _SetEffectSubsetOrSequenceName(1, subsetOrSequenceName);
 }
 
 bool MkPanel::SetEffectSubsetOrSequenceName3(const MkHashStr& subsetOrSequenceName)
 {
-	bool ok = ((m_EffectTexture[2] != NULL) && m_EffectTexture[2]->GetImageInfo().IsValidName(subsetOrSequenceName));
-	if (ok)
-	{
-		m_EffectSubsetOrSequenceName[2] = subsetOrSequenceName;
-	}
-	return ok;
+	return _SetEffectSubsetOrSequenceName(2, subsetOrSequenceName);
 }
 
 void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x)
@@ -910,6 +874,28 @@ MkPanel::MkPanel(void) : MkSceneRenderObject()
 	m_DrawStep = NULL;
 
 	m_ShaderEffectSetting = NULL;
+}
+
+bool MkPanel::_SetEffectTexture(unsigned int index, const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
+{
+	m_EffectTexture[index] = NULL;
+	m_EffectSubsetOrSequenceName[index].Clear();
+
+	if (texture == NULL)
+		return false;
+
+	m_EffectTexture[index] = const_cast<MkBaseTexture*>(texture); // ref++
+	return _SetEffectSubsetOrSequenceName(index, subsetOrSequenceName);
+}
+
+bool MkPanel::_SetEffectSubsetOrSequenceName(unsigned int index, const MkHashStr& subsetOrSequenceName)
+{
+	bool ok = ((m_EffectTexture[index] != NULL) && m_EffectTexture[index]->GetImageInfo().IsValidName(subsetOrSequenceName));
+	if (ok)
+	{
+		m_EffectSubsetOrSequenceName[index] = subsetOrSequenceName;
+	}
+	return ok;
 }
 
 void MkPanel::_UpdateEffectUV(unsigned int index, double currentTimeStamp)

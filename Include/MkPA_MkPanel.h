@@ -191,7 +191,7 @@ public:
 	//------------------------------------------------------------------------------------------------//
 
 	// effect 설정
-	// (NOTE) 기존 설정되어 있던 technique, texture, UDP값은 모두 삭제 됨
+	// (NOTE) 변경시 기존 설정되어 있던 technique, texture, UDP값은 모두 삭제 됨
 	bool SetShaderEffect(const MkHashStr& name);
 	inline const MkHashStr& GetShaderEffect(void) const { return m_ShaderEffectName; }
 
@@ -199,7 +199,7 @@ public:
 	bool SetTechnique(const MkHashStr& name);
 
 	// effect용 texture 설정
-	// 기본 texture가 0번 texture(eS_Texture0 - TEXTURE0)로 인식 됨
+	// 기본 texture가 0번으로(TEXTURE0) 인식 됨
 	// sequence에 적용되는 time은 기본 texture의 것을 그대로 사용
 	bool SetEffectTexture1(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
 	bool SetEffectTexture1(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
@@ -280,12 +280,12 @@ protected:
 		eVerticalReflection // v
 	};
 
+	bool _SetEffectTexture(unsigned int index, const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName);
+	bool _SetEffectSubsetOrSequenceName(unsigned int index, const MkHashStr& subsetOrSequenceName);
 	void _UpdateEffectUV(unsigned int index, double currentTimeStamp);
 
 	void _FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkByteArray& buffer) const;
-
 	float _GetCrossProduct(MkFloatRect::ePointName from, MkFloatRect::ePointName to, const MkFloat2& point) const;
-
 	void _UpdateTextNodeTexture(MkDrawTextNodeStep* drawStep);
 
 protected:

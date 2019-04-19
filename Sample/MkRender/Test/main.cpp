@@ -117,7 +117,7 @@ public:
 
 		// window A : MkSliderControlNode
 		MkSliderControlNode* vSliderNode = MkSliderControlNode::CreateChildNode(bodyClient, L"Slider");
-		vSliderNode->SetVerticalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 150.f, 0, 100, 50);
+		vSliderNode->SetVerticalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 150.f, 0, 10, 5);
 		vSliderNode->SetAlignmentPosition(eRAP_LeftTop);
 		vSliderNode->SetAlignmentOffset(MkFloat2(10.f, -30.f));
 		vSliderNode->SetLocalDepth(-1.f);
@@ -401,9 +401,12 @@ public:
 
 		if (m_PageNode != NULL)
 		{
+			bool aniChanged = false;
 			MkHashStr currSN;
 			if (m_TickCounter.OnTick(timeState))
 			{
+				aniChanged = true;
+
 				MkPanel* imagePanel = m_PageNode->GetChildNode(L"<Root>")->GetChildNode(L"Main")->GetPanel(L"ImgTest");
 				currSN = imagePanel->GetSubsetOrSequenceName();
 				MkArray<MkHashStr> seqs;
@@ -589,6 +592,7 @@ public:
 						MK_DEV_PANEL.MsgToFreeboard(10, MkStr::EMPTY);
 						MK_DEV_PANEL.MsgToFreeboard(11, MkStr::EMPTY);
 						MK_DEV_PANEL.MsgToFreeboard(12, MkStr::EMPTY);
+						MK_DEV_PANEL.MsgToFreeboard(13, MkStr::EMPTY);
 					}
 					else
 					{
@@ -596,6 +600,7 @@ public:
 						MK_DEV_PANEL.MsgToFreeboard(10, L"   방향키 : 이동");
 						MK_DEV_PANEL.MsgToFreeboard(11, L"   Q/E 키 : 좌회전/우회전, W 키 : 회전 초기화");
 						MK_DEV_PANEL.MsgToFreeboard(12, L"   A/D 키 : 축소/확대, S 키 : 크기 초기화");
+						MK_DEV_PANEL.MsgToFreeboard(13, m_FocusWindowName.Equals(0, L"Win(1)") ? L"   수직 슬라이더 바 : 배경 이미지 흑백화(shader effect) 수준" : MkStr::EMPTY);
 					}
 				}
 				
@@ -603,8 +608,6 @@ public:
 				if (frontNode != NULL)
 				{
 					const float movement = static_cast<float>(timeState.elapsed) * 300.f;
-
-					bool focusIsWin1 = m_FocusWindowName.Equals(0, L"Win(1)");
 					bool focusIsWin2 = m_FocusWindowName.Equals(0, L"Win(2)");
 					MkFloat2 win2SizeOffset;
 
@@ -639,25 +642,29 @@ public:
 						if (focusIsWin2) win2SizeOffset.y += movement;
 					}
 
-					if (focusIsWin1)
+					if (aniChanged)
+					{
+						MkSceneNode* rootNode = m_PageNode->GetChildNode(L"<Root>");
+						MkSceneNode* mainNode = rootNode->GetChildNode(L"Main");
+						MkSceneNode* bgNode = mainNode->GetChildNode(L"BG");
+						MkPanel* bgPanel = bgNode->GetPanel(L"P");
+						bgPanel->SetEffectSubsetOrSequenceName1(currSN);
+					}
+
+					if (m_FocusWindowName.Equals(0, L"Win(1)"))
 					{
 						MkSceneNode* bodyNode = frontNode->GetChildNode(L"BodyFrame");
 						MkSceneNode* bodyClient = bodyNode->GetChildNode(L"BodyClient");
 						MkSceneNode* slideNode = bodyClient->GetChildNode(L"Slider");
 						MkSliderControlNode* vSliderNode = dynamic_cast<MkSliderControlNode*>(slideNode);
 						int val = vSliderNode->GetSliderValue();
-						float fac = static_cast<float>(val) / 100.f;
+						float fac = static_cast<float>(val) / 10.f;
 
 						MkSceneNode* rootNode = m_PageNode->GetChildNode(L"<Root>");
 						MkSceneNode* mainNode = rootNode->GetChildNode(L"Main");
 						MkSceneNode* bgNode = mainNode->GetChildNode(L"BG");
 						MkPanel* bgPanel = bgNode->GetPanel(L"P");
 						bgPanel->SetUserDefinedProperty(L"blendingWeight", fac, fac, fac);
-
-						if (!currSN.Empty())
-						{
-							bgPanel->SetEffectSubsetOrSequenceName1(currSN);
-						}
 					}
 
 					if (focusIsWin2)

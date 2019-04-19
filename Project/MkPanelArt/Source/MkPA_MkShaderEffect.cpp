@@ -1,12 +1,21 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkFileManager.h"
-//#include "MkPA_MkProjectDefinition.h"
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkBitmapPool.h"
 #include "MkPA_MkShaderEffectSetting.h"
 #include "MkPA_MkShaderEffect.h"
 
+
+#define MACRO_UPDATE_TEXTURE(index) \
+	if (m_Texture##index.handle != NULL) \
+	{ \
+		MkBaseTexture* value = (objectSetting == NULL) ? m_Texture##index.defValue : objectSetting->GetTexture##index(); \
+		if (m_Texture##index.currValue.Commit(value)) \
+		{ \
+			m_Effect->SetTexture(m_Texture##index.handle, (value == NULL) ? NULL : value->GetTexture()); \
+		} \
+	}
 
 //------------------------------------------------------------------------------------------------//
 
@@ -39,8 +48,6 @@ bool MkShaderEffect::SetUp(const MkPathName& filePath)
 			break;
 
 		// 여기를 통과하면 성공
-		m_EffectName = filePath.GetFileName(false);
-
 		// technique 정보를 조사해 등록
 		for (unsigned int i=0; i<effectDesc.Techniques; ++i)
 		{
@@ -131,18 +138,10 @@ bool MkShaderEffect::SetUp(const MkPathName& filePath)
 						D3DXVECTOR4 defValue(0.f, 0.f, 0.f, 0.f);
 						switch (paramType)
 						{
-						case ePT_Float:
-							m_Effect->GetFloat(paramHandle, &defValue.x);
-							break;
-						case ePT_Float2:
-							m_Effect->GetFloatArray(paramHandle, &defValue.x, 2);
-							break;
-						case ePT_Float3:
-							m_Effect->GetFloatArray(paramHandle, &defValue.x, 3);
-							break;
-						case ePT_Float4:
-							m_Effect->GetVector(paramHandle, &defValue);
-							break;
+						case ePT_Float: m_Effect->GetFloat(paramHandle, &defValue.x); break;
+						case ePT_Float2: m_Effect->GetFloatArray(paramHandle, &defValue.x, 2); break;
+						case ePT_Float3: m_Effect->GetFloatArray(paramHandle, &defValue.x, 3); break;
+						case ePT_Float4: m_Effect->GetVector(paramHandle, &defValue); break;
 						}
 
 						m_UDP.Create(udpKey).SetUp(paramHandle, paramType, defValue);
@@ -229,41 +228,10 @@ unsigned int MkShaderEffect::BeginTechnique(const MkShaderEffectSetting* objectS
 			}
 		}
 
-		if (m_Texture0.handle != NULL)
-		{
-			MkBaseTexture* value = (objectSetting == NULL) ? m_Texture0.defValue : objectSetting->GetTexture0();
-			if (m_Texture0.currValue.Commit(value))
-			{
-				m_Effect->SetTexture(m_Texture0.handle, (value == NULL) ? NULL : value->GetTexture());
-			}
-		}
-
-		if (m_Texture1.handle != NULL)
-		{
-			MkBaseTexture* value = (objectSetting == NULL) ? m_Texture1.defValue : objectSetting->GetTexture1();
-			if (m_Texture1.currValue.Commit(value))
-			{
-				m_Effect->SetTexture(m_Texture1.handle, (value == NULL) ? NULL : value->GetTexture());
-			}
-		}
-
-		if (m_Texture2.handle != NULL)
-		{
-			MkBaseTexture* value = (objectSetting == NULL) ? m_Texture2.defValue : objectSetting->GetTexture2();
-			if (m_Texture2.currValue.Commit(value))
-			{
-				m_Effect->SetTexture(m_Texture2.handle, (value == NULL) ? NULL : value->GetTexture());
-			}
-		}
-
-		if (m_Texture3.handle != NULL)
-		{
-			MkBaseTexture* value = (objectSetting == NULL) ? m_Texture3.defValue : objectSetting->GetTexture3();
-			if (m_Texture3.currValue.Commit(value))
-			{
-				m_Effect->SetTexture(m_Texture3.handle, (value == NULL) ? NULL : value->GetTexture());
-			}
-		}
+		MACRO_UPDATE_TEXTURE(0);
+		MACRO_UPDATE_TEXTURE(1);
+		MACRO_UPDATE_TEXTURE(2);
+		MACRO_UPDATE_TEXTURE(3);
 		
 		if (!m_UDP.Empty())
 		{
@@ -327,7 +295,6 @@ void MkShaderEffect::EndTechnique(void)
 
 void MkShaderEffect::Clear(void)
 {
-	m_EffectName.Clear();
 	m_Techniques.Clear();
 	
 	m_Technique.SetUp(NULL, ePT_None, MkHashStr::EMPTY);
