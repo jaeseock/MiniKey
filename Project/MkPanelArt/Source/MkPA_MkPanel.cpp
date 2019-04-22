@@ -925,48 +925,50 @@ void MkPanel::_UpdateEffectUV(unsigned int index, double currentTimeStamp)
 
 void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkByteArray& buffer) const
 {
-	unsigned int size = 5;
+	MkArray<float> data;
 	if (m_EffectTexture[2] != NULL)
 	{
-		size = 11;
+		data.Fill(11);
 	}
 	else if (m_EffectTexture[1] != NULL)
 	{
-		size = 9;
+		data.Fill(9);
 	}
 	else if (m_EffectTexture[0] != NULL)
 	{
-		size = 7;
+		data.Fill(7);
+	}
+	else
+	{
+		data.Fill(5);
 	}
 
-	MkArray<float> data(size);
-
 	const MkFloat2& wv = m_WorldVertice[pn];
-	data.PushBack(wv.x);
-	data.PushBack(wv.y);
-	data.PushBack(m_Transform.GetWorldDepth());
+	data[0] = wv.x;
+	data[1] = wv.y;
+	data[2] = m_Transform.GetWorldDepth();
 
 	const MkFloat2& uv = m_UV[pn];
-	data.PushBack((hr) ? (1.f - uv.x) : uv.x);
-	data.PushBack((vr) ? (1.f - uv.y) : uv.y);
+	data[3] = (hr) ? (1.f - uv.x) : uv.x;
+	data[4] = (vr) ? (1.f - uv.y) : uv.y;
 
-	if (size > 5)
+	if (data.GetSize() > 5)
 	{
 		const MkFloat2& uv1 = m_EffectUV[0][pn];
-		data.PushBack((hr) ? (1.f - uv1.x) : uv1.x);
-		data.PushBack((vr) ? (1.f - uv1.y) : uv1.y);
+		data[5] = (hr) ? (1.f - uv1.x) : uv1.x;
+		data[6] = (vr) ? (1.f - uv1.y) : uv1.y;
 
-		if (size > 7)
+		if (data.GetSize() > 7)
 		{
 			const MkFloat2& uv2 = m_EffectUV[1][pn];
-			data.PushBack((hr) ? (1.f - uv2.x) : uv2.x);
-			data.PushBack((vr) ? (1.f - uv2.y) : uv2.y);
+			data[7] = (hr) ? (1.f - uv2.x) : uv2.x;
+			data[8] = (vr) ? (1.f - uv2.y) : uv2.y;
 
-			if (size > 9)
+			if (data.GetSize() > 9)
 			{
 				const MkFloat2& uv3 = m_EffectUV[2][pn];
-				data.PushBack((hr) ? (1.f - uv3.x) : uv3.x);
-				data.PushBack((vr) ? (1.f - uv3.y) : uv3.y);
+				data[9] = (hr) ? (1.f - uv3.x) : uv3.x;
+				data[10] = (vr) ? (1.f - uv3.y) : uv3.y;
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkFileManager.h"
+#include "MkCore_MkDevPanel.h"
 #include "MkPA_MkDeviceManager.h"
 #include "MkPA_MkBitmapPool.h"
 #include "MkPA_MkShaderEffectSetting.h"
@@ -47,8 +48,10 @@ bool MkShaderEffect::SetUp(const MkPathName& filePath)
 		if (effectDesc.Techniques == 0)
 			break;
 
-		// 여기를 통과하면 성공
+		// 여기까지 통과했으면 성공
 		// technique 정보를 조사해 등록
+		MK_DEV_PANEL.MsgToLog(L"Shader effect 등록 : " + filePath.GetFileName(false));
+
 		for (unsigned int i=0; i<effectDesc.Techniques; ++i)
 		{
 			D3DXHANDLE techniqueHandle = m_Effect->GetTechnique(i);
@@ -59,6 +62,8 @@ bool MkShaderEffect::SetUp(const MkPathName& filePath)
 			techName.ImportMultiByteString(techDesc.Name);
 
 			m_Techniques.Create(techName, techniqueHandle);
+
+			MK_DEV_PANEL.MsgToLog(L"   - " + techName);
 
 			if (i == 0) // default는 첫번째 테크닉
 			{

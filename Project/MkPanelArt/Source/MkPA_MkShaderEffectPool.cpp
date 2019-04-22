@@ -29,14 +29,17 @@ void MkShaderEffectPool::SetUp(const MkArray<MkStr>& filePathList)
 			if (effect->SetUp(currPath))
 			{
 				m_Pool.Create(name, effect);
-
-				MK_DEV_PANEL.MsgToLog(name.GetString() + L" effect »ý¼º");
 			}
 			else
 			{
 				delete effect;
 			}
 		}
+	}
+
+	if (!m_Pool.Empty())
+	{
+		MK_DEV_PANEL.InsertEmptyLine();
 	}
 }
 
