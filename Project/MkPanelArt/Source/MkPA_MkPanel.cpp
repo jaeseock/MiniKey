@@ -281,19 +281,6 @@ bool MkPanel::SetShaderEffect(const MkHashStr& name)
 	return ok;
 }
 
-void MkPanel::ClearShaderEffect(void)
-{
-	m_ShaderEffectName.Clear();
-	MK_DELETE(m_ShaderEffectSetting);
-
-	m_EffectTexture[0] = NULL;
-	m_EffectTexture[1] = NULL;
-	m_EffectTexture[2] = NULL;
-	m_EffectSubsetOrSequenceName[0].Clear();
-	m_EffectSubsetOrSequenceName[1].Clear();
-	m_EffectSubsetOrSequenceName[2].Clear();
-}
-
 bool MkPanel::SetTechnique(const MkHashStr& name)
 {
 	if (m_ShaderEffectName.Empty() || (m_ShaderEffectSetting == NULL))
@@ -305,6 +292,11 @@ bool MkPanel::SetTechnique(const MkHashStr& name)
 
 	m_ShaderEffectSetting->SetTechnique(name);
 	return true;
+}
+
+const MkHashStr& MkPanel::GetTechnique(void) const
+{
+	return (m_ShaderEffectSetting == NULL) ? MkHashStr::EMPTY : m_ShaderEffectSetting->GetTechnique();
 }
 
 bool MkPanel::SetEffectTexture1(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName)
@@ -336,51 +328,34 @@ bool MkPanel::SetEffectTexture3(const MkHashStr& imagePath, const MkHashStr& sub
 	return SetEffectTexture3(imagePath.Empty() ? NULL : MK_BITMAP_POOL.GetBitmapTexture(imagePath), subsetOrSequenceName);
 }
 
-bool MkPanel::SetEffectSubsetOrSequenceName1(const MkHashStr& subsetOrSequenceName)
+const MkBaseTexture* MkPanel::GetEffectTexturePtr1(void) const { return (m_EffectTexture[0] == NULL) ? NULL : m_EffectTexture[0].GetPtr(); }
+const MkBaseTexture* MkPanel::GetEffectTexturePtr2(void) const { return (m_EffectTexture[1] == NULL) ? NULL : m_EffectTexture[1].GetPtr(); }
+const MkBaseTexture* MkPanel::GetEffectTexturePtr3(void) const { return (m_EffectTexture[2] == NULL) ? NULL : m_EffectTexture[2].GetPtr(); }
+
+bool MkPanel::SetEffectSubsetOrSequenceName1(const MkHashStr& subsetOrSequenceName) { return _SetEffectSubsetOrSequenceName(0, subsetOrSequenceName); }
+bool MkPanel::SetEffectSubsetOrSequenceName2(const MkHashStr& subsetOrSequenceName) { return _SetEffectSubsetOrSequenceName(1, subsetOrSequenceName); }
+bool MkPanel::SetEffectSubsetOrSequenceName3(const MkHashStr& subsetOrSequenceName) { return _SetEffectSubsetOrSequenceName(2, subsetOrSequenceName); }
+
+bool MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x) { return SetUserDefinedProperty(name, x, 0.f, 0.f, 0.f); }
+bool MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y) { return SetUserDefinedProperty(name, x, y, 0.f, 0.f); }
+bool MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z) { return SetUserDefinedProperty(name, x, y, z, 0.f); }
+
+bool MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z, float w)
 {
-	return _SetEffectSubsetOrSequenceName(0, subsetOrSequenceName);
+	return (m_ShaderEffectSetting == NULL) ? false : m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, z, w));
 }
 
-bool MkPanel::SetEffectSubsetOrSequenceName2(const MkHashStr& subsetOrSequenceName)
+void MkPanel::ClearShaderEffect(void)
 {
-	return _SetEffectSubsetOrSequenceName(1, subsetOrSequenceName);
-}
+	m_ShaderEffectName.Clear();
+	MK_DELETE(m_ShaderEffectSetting);
 
-bool MkPanel::SetEffectSubsetOrSequenceName3(const MkHashStr& subsetOrSequenceName)
-{
-	return _SetEffectSubsetOrSequenceName(2, subsetOrSequenceName);
-}
-
-void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x)
-{
-	if (m_ShaderEffectSetting != NULL)
-	{
-		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, 0.f, 0.f, 0.f));
-	}
-}
-
-void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y)
-{
-	if (m_ShaderEffectSetting != NULL)
-	{
-		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, 0.f, 0.f));
-	}
-}
-
-void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z)
-{
-	if (m_ShaderEffectSetting != NULL)
-	{
-		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, z, 0.f));
-	}
-}
-
-void MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z, float w)
-{
-	if (m_ShaderEffectSetting != NULL)
-	{
-		m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, z, w));
-	}
+	m_EffectTexture[0] = NULL;
+	m_EffectTexture[1] = NULL;
+	m_EffectTexture[2] = NULL;
+	m_EffectSubsetOrSequenceName[0].Clear();
+	m_EffectSubsetOrSequenceName[1].Clear();
+	m_EffectSubsetOrSequenceName[2].Clear();
 }
 
 void MkPanel::ClearMainTexture(void)

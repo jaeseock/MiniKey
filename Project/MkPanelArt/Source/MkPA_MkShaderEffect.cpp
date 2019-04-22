@@ -204,7 +204,7 @@ MkShaderEffectSetting* MkShaderEffect::CreateEffectSetting(void) const
 		MkConstHashMapLooper< MkHashStr, _ParameterInfo<D3DXVECTOR4> > looper(m_UDP);
 		MK_STL_LOOP(looper)
 		{
-			instance->SetUDP(looper.GetCurrentKey(), looper.GetCurrentField().defValue);
+			instance->CreateUDP(looper.GetCurrentKey(), looper.GetCurrentField().defValue);
 		}
 	}
 	return instance;

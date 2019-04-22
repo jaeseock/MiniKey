@@ -197,6 +197,7 @@ public:
 
 	// effect에 복수의 technique이 존재 할 경우 대상 technique 지정
 	bool SetTechnique(const MkHashStr& name);
+	const MkHashStr& GetTechnique(void) const;
 
 	// effect용 texture 설정
 	// 기본 texture가 0번으로(TEXTURE0) 인식 됨
@@ -208,15 +209,23 @@ public:
 	bool SetEffectTexture3(const MkBaseTexture* texture, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
 	bool SetEffectTexture3(const MkHashStr& imagePath, const MkHashStr& subsetOrSequenceName = MkHashStr::EMPTY);
 
+	const MkBaseTexture* GetEffectTexturePtr1(void) const;
+	const MkBaseTexture* GetEffectTexturePtr2(void) const;
+	const MkBaseTexture* GetEffectTexturePtr3(void) const;
+
 	bool SetEffectSubsetOrSequenceName1(const MkHashStr& subsetOrSequenceName);
 	bool SetEffectSubsetOrSequenceName2(const MkHashStr& subsetOrSequenceName);
 	bool SetEffectSubsetOrSequenceName3(const MkHashStr& subsetOrSequenceName);
 
-	// UDP 설정. fxo에 정의된 data type(float, float2~4)과 동일해야 함
-	void SetUserDefinedProperty(const MkHashStr& name, float x);
-	void SetUserDefinedProperty(const MkHashStr& name, float x, float y);
-	void SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z);
-	void SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z, float w);
+	inline const MkHashStr& GetEffectSubsetOrSequenceName1(void) const { return m_EffectSubsetOrSequenceName[0]; }
+	inline const MkHashStr& GetEffectSubsetOrSequenceName2(void) const { return m_EffectSubsetOrSequenceName[1]; }
+	inline const MkHashStr& GetEffectSubsetOrSequenceName3(void) const { return m_EffectSubsetOrSequenceName[2]; }
+
+	// UDP 설정. shader에 정의된 변수명과 data type(float, float2~4)이 동일해야 함
+	bool SetUserDefinedProperty(const MkHashStr& name, float x);
+	bool SetUserDefinedProperty(const MkHashStr& name, float x, float y);
+	bool SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z);
+	bool SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z, float w);
 
 	// effect 해제
 	// (NOTE) 기존 설정되어 있던 technique, texture, UDP값도 모두 삭제 됨

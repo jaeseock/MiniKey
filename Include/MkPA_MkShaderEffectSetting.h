@@ -39,7 +39,8 @@ public:
 	inline void SetTexture3(MkBaseTexture* texture) { m_Texture3 = texture; }
 	inline MkBaseTexture* GetTexture3(void) const { return m_Texture3; }
 
-	inline void SetUDP(const MkHashStr& name, const D3DXVECTOR4& value) { if (m_UDP.Exist(name)) { m_UDP[name] = value; } else { m_UDP.Create(name, value); } }
+	inline void CreateUDP(const MkHashStr& name, const D3DXVECTOR4& value) { if (m_UDP.Exist(name)) { m_UDP[name] = value; } else { m_UDP.Create(name, value); } }
+	inline bool SetUDP(const MkHashStr& name, const D3DXVECTOR4& value) { bool ok = m_UDP.Exist(name); if (ok) { m_UDP[name] = value; } return ok; }
 	inline const D3DXVECTOR4& GetUDP(const MkHashStr& name) const { return m_UDP[name]; } // 예외처리 안함
 
 	MkShaderEffectSetting() {}
