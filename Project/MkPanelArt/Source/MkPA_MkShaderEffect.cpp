@@ -329,6 +329,16 @@ void MkShaderEffect::ReloadResource(void)
 	}
 }
 
+bool MkShaderEffect::GetDefaultUDP(const MkHashStr& name, D3DXVECTOR4& buffer) const
+{
+	bool ok = m_UDP.Exist(name);
+	if (ok)
+	{
+		buffer = m_UDP[name].defValue;
+	}
+	return ok;
+}
+
 MkShaderEffect::MkShaderEffect()
 {
 	m_Effect = NULL;

@@ -128,12 +128,12 @@ void MkMemoryToDataTextConverter::_InitiateHeaderMsg(MkStr& strBuffer, const MkP
 	// 헤더 구성
 	strBuffer += L"//--------------------------------------------------------------------//" + MkStr::LF;
 	strBuffer += L"// MiniKey data node text source" + MkStr::LF;
-	strBuffer += L"//   - file path  : " + MkStr(filePath) + MkStr::LF;
+	strBuffer += L"//   - file path : " + MkStr(filePath) + MkStr::LF;
 
 	if (MkSystemEnvironment::InstancePtr() != NULL)
 	{
 		strBuffer += L"//   - time stamp : " + MK_SYS_ENV.GetCurrentSystemDate() + L" (" + MK_SYS_ENV.GetCurrentSystemTime() + L")" + MkStr::LF;
-		strBuffer += L"//   - exporter   : " + MK_SYS_ENV.GetCurrentLogOnUserName() + L" (" + MkPathName::GetApplicationName() + L")" + MkStr::LF;
+		strBuffer += L"//   - exporter : " + MK_SYS_ENV.GetCurrentLogOnUserName() + L" (" + MkPathName::GetApplicationName() + L")" + MkStr::LF;
 	}
 
 	strBuffer += L"//--------------------------------------------------------------------//";

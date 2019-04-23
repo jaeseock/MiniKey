@@ -53,7 +53,7 @@ public:
 	// 사용 가능한 technique여부 반환
 	bool IsValidTechnique(const MkHashStr& name) const;
 
-	// per object
+	// 오브젝트 세팅용 인터페이스 생성해 반환. 초기값은 default
 	MkShaderEffectSetting* CreateEffectSetting(void) const;
 
 	// draw
@@ -68,6 +68,14 @@ public:
 	// device lost
 	void UnloadResource(void);
 	void ReloadResource(void);
+
+	// default value
+	inline const MkHashStr& GetDefaultTechnique(void) const { return m_Technique.defValue; }
+	inline MkBaseTexture* GetDefaultTexture0(void) const { return m_Texture0.defValue; }
+	inline MkBaseTexture* GetDefaultTexture1(void) const { return m_Texture1.defValue; }
+	inline MkBaseTexture* GetDefaultTexture2(void) const { return m_Texture2.defValue; }
+	inline MkBaseTexture* GetDefaultTexture3(void) const { return m_Texture3.defValue; }
+	bool GetDefaultUDP(const MkHashStr& name, D3DXVECTOR4& buffer) const;
 	
 	MkShaderEffect();
 	virtual ~MkShaderEffect() { Clear(); }

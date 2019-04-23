@@ -26,6 +26,9 @@ const MkHashStr MkPanel::ObjKey_SequenceTimeOffset(L"STimeOffset");
 const MkHashStr MkPanel::ObjKey_TextNodeName(L"TextNodeName");
 const MkHashStr MkPanel::ObjKey_TextNodeData(L"TextNodeData");
 const MkHashStr MkPanel::ObjKey_TextNodeWidthRestriction(L"TextNodeWR");
+const MkHashStr MkPanel::ObjKey_ShaderEffect(L"ShaderEffect");
+const MkHashStr MkPanel::ObjKey_EffectName(L"EffectName");
+const MkHashStr MkPanel::ObjKey_EffectUDP(L"UDP");
 
 //------------------------------------------------------------------------------------------------//
 
@@ -345,6 +348,27 @@ bool MkPanel::SetUserDefinedProperty(const MkHashStr& name, float x, float y, fl
 	return (m_ShaderEffectSetting == NULL) ? false : m_ShaderEffectSetting->SetUDP(name, D3DXVECTOR4(x, y, z, w));
 }
 
+bool MkPanel::GetUserDefinedProperty(const MkHashStr& name, float& x) const  { float y, z, w; return GetUserDefinedProperty(name, x, y, z, w); }
+bool MkPanel::GetUserDefinedProperty(const MkHashStr& name, float& x, float& y) const { float z, w; return GetUserDefinedProperty(name, x, y, z, w); }
+bool MkPanel::GetUserDefinedProperty(const MkHashStr& name, float& x, float& y, float& z) const { float w; return GetUserDefinedProperty(name, x, y, z, w); }
+
+bool MkPanel::GetUserDefinedProperty(const MkHashStr& name, float& x, float& y, float& z, float& w) const
+{
+	if (m_ShaderEffectSetting == NULL)
+		return false;
+
+	D3DXVECTOR4 buffer;
+	bool ok = m_ShaderEffectSetting->GetUDP(name, buffer);
+	if (ok)
+	{
+		x = buffer.x;
+		y = buffer.y;
+		z = buffer.z;
+		w = buffer.w;
+	}
+	return ok;
+}
+
 void MkPanel::ClearShaderEffect(void)
 {
 	m_ShaderEffectName.Clear();
@@ -444,8 +468,6 @@ void MkPanel::__DrawWithShaderEffect(LPDIRECT3DDEVICE9 device) const
 		stride = sizeof(float) * 5;
 	}
 
-	//MkHashStr m_EffectSubsetOrSequenceName[3];
-
 	MK_RENDER_STATE.UpdateFVF(fvf);
 
 	MkShaderEffect* effect = MK_SHADER_POOL.GetShaderEffect(m_ShaderEffectName);
@@ -498,6 +520,13 @@ void MkPanel::SetObjectTemplate(MkDataNode& node)
 	//ObjKey_TextNodeName
 	//ObjKey_TextNodeData
 	node.CreateUnit(ObjKey_TextNodeWidthRestriction, false);
+
+	// shader effect
+	//ObjKey_ShaderEffect
+	//ObjKey_EffectName
+	//ObjKey_ImagePath
+	//ObjKey_SubsetOrSequenceName
+	//ObjKey_EffectUDP
 }
 
 void MkPanel::LoadObject(const MkDataNode& node)
@@ -550,6 +579,69 @@ void MkPanel::LoadObject(const MkDataNode& node)
 		}
 	}
 	while (false);
+
+	// shader effect
+	ClearShaderEffect();
+	if (node.ChildExist(ObjKey_ShaderEffect))
+	{
+		const MkDataNode& shaderNode = *node.GetChildNode(ObjKey_ShaderEffect);
+
+		do
+		{
+			// effect name
+			MkArray<MkHashStr> effectName;
+			if ((!shaderNode.GetDataEx(ObjKey_EffectName, effectName)) || effectName.Empty() || effectName[0].Empty())
+				break;
+
+			if (!SetShaderEffect(effectName[0]))
+				break;
+
+			// technique
+			if (effectName.IsValidIndex(1))
+			{
+				SetTechnique(effectName[1]);
+			}
+
+			// texture image
+			MkArray<MkStr> imagePath;
+			shaderNode.GetData(ObjKey_ImagePath, imagePath);
+
+			MkArray<MkStr> subsetOrSeqName;
+			shaderNode.GetData(ObjKey_SubsetOrSequenceName, subsetOrSeqName);
+
+			if (imagePath.IsValidIndex(0) && subsetOrSeqName.IsValidIndex(0) && (!imagePath[0].Empty()))
+			{
+				SetEffectTexture1(imagePath[0], subsetOrSeqName[0]);
+			}
+			if (imagePath.IsValidIndex(1) && subsetOrSeqName.IsValidIndex(1) && (!imagePath[1].Empty()))
+			{
+				SetEffectTexture2(imagePath[1], subsetOrSeqName[1]);
+			}
+			if (imagePath.IsValidIndex(2) && subsetOrSeqName.IsValidIndex(2) && (!imagePath[2].Empty()))
+			{
+				SetEffectTexture3(imagePath[2], subsetOrSeqName[2]);
+			}
+
+			// udp
+			if (shaderNode.ChildExist(ObjKey_EffectUDP))
+			{
+				const MkDataNode& udpNode = *shaderNode.GetChildNode(ObjKey_EffectUDP);
+				MkArray<MkHashStr> keys;
+				udpNode.GetChildNodeList(keys);
+				MK_INDEXING_LOOP(keys, i)
+				{
+					const MkHashStr& currKey = keys[i];
+					MkArray<float> values;
+					udpNode.GetData(currKey, values);
+					if (values.GetSize() == 4)
+					{
+						SetUserDefinedProperty(currKey, values[0], values[1], values[2], values[3]);
+					}
+				}
+			}
+		}
+		while (false);
+	}
 }
 
 void MkPanel::SaveObject(MkDataNode& node) const
@@ -599,6 +691,124 @@ void MkPanel::SaveObject(MkDataNode& node) const
 			}
 		}
 		while (false);
+	}
+
+	// shader effect
+	if ((!m_ShaderEffectName.Empty()) && (m_ShaderEffectSetting != NULL))
+	{
+		MkShaderEffect* effect = MK_SHADER_POOL.GetShaderEffect(m_ShaderEffectName);
+		if (effect != NULL)
+		{
+			MkDataNode& shaderNode = *node.CreateChildNode(ObjKey_ShaderEffect);
+
+			// effect name
+			MkArray<MkStr> effectName(2);
+			effectName.PushBack(m_ShaderEffectName.GetString());
+
+			// technique
+			if (m_ShaderEffectSetting->GetTechnique() != effect->GetDefaultTechnique())
+			{
+				effectName.PushBack(m_ShaderEffectSetting->GetTechnique().GetString());
+			}
+
+			shaderNode.CreateUnit(ObjKey_EffectName, effectName);
+
+			// texture image
+			MkArray<MkStr> imagePath;
+			imagePath.Fill(3);
+			MkArray<MkStr> subsetOrSeqName;
+			subsetOrSeqName.Fill(3);
+
+			const MkBaseTexture* texture1 = GetEffectTexturePtr1();
+			if ((texture1 != NULL) && (texture1 != effect->GetDefaultTexture1()))
+			{
+				imagePath[0] = texture1->GetPoolKey().GetString();
+			}
+			
+			const MkBaseTexture* texture2 = GetEffectTexturePtr2();
+			if ((texture2 != NULL) && (texture2 != effect->GetDefaultTexture2()))
+			{
+				imagePath[1] = texture2->GetPoolKey().GetString();
+			}
+			
+			const MkBaseTexture* texture3 = GetEffectTexturePtr3();
+			if ((texture3 != NULL) && (texture3 != effect->GetDefaultTexture3()))
+			{
+				imagePath[2] = texture3->GetPoolKey().GetString();
+			}
+			
+			if (imagePath[2].Empty())
+			{
+				imagePath.PopBack();
+				subsetOrSeqName.PopBack();
+
+				if (imagePath[1].Empty())
+				{
+					imagePath.PopBack();
+					subsetOrSeqName.PopBack();
+
+					if (imagePath[0].Empty())
+					{
+						imagePath.Clear();
+						subsetOrSeqName.Clear();
+					}
+					else
+					{
+						subsetOrSeqName[0] = GetEffectSubsetOrSequenceName1().GetString();
+					}
+				}
+				else
+				{
+					subsetOrSeqName[1] = GetEffectSubsetOrSequenceName2().GetString();
+				}
+			}
+			else
+			{
+				subsetOrSeqName[2] = GetEffectSubsetOrSequenceName3().GetString();
+			}
+
+			if (!imagePath.Empty())
+			{
+				shaderNode.CreateUnit(ObjKey_ImagePath, imagePath);
+				shaderNode.CreateUnit(ObjKey_SubsetOrSequenceName, subsetOrSeqName);
+			}
+
+			// udp
+			const MkHashMap<MkHashStr, D3DXVECTOR4>& udps = m_ShaderEffectSetting->GetUDP();
+			if (!udps.Empty())
+			{
+				MkArray<MkHashStr> keys(udps.GetSize());
+				MkArray<D3DXVECTOR4> v4s(udps.GetSize());
+
+				MkConstHashMapLooper<MkHashStr, D3DXVECTOR4> looper(udps);
+				MK_STL_LOOP(looper)
+				{
+					D3DXVECTOR4 defValue;
+					if (effect->GetDefaultUDP(looper.GetCurrentKey(), defValue) && (looper.GetCurrentField() != defValue))
+					{
+						keys.PushBack(looper.GetCurrentKey());
+						v4s.PushBack(looper.GetCurrentField());
+					}
+				}
+
+				if (!keys.Empty())
+				{
+					MkDataNode& udpNode = *shaderNode.CreateChildNode(ObjKey_EffectUDP);
+					MK_INDEXING_LOOP(keys, i)
+					{
+						const D3DXVECTOR4& v4 = v4s[i];
+						MkArray<float> value;
+						value.Fill(4);
+						value[0] = v4.x;
+						value[1] = v4.y;
+						value[2] = v4.z;
+						value[3] = v4.w;
+
+						udpNode.CreateUnit(keys[i], value);
+					}
+				}
+			}
+		}
 	}
 }
 

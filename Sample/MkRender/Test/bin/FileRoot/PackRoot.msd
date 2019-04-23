@@ -1,8 +1,8 @@
 ﻿//--------------------------------------------------------------------//
 // MiniKey data node text source
-//   - file path  : PackRoot.msd
-//   - time stamp : 2019.04.02 (20:58:56)
-//   - exporter   : pc (Test)
+//   - file path : PackRoot.msd
+//   - time stamp : 2019.04.23 (15:39:14)
+//   - exporter : pc (Test)
 //--------------------------------------------------------------------//
 
 
@@ -35,6 +35,19 @@ Node "[SUBNODES]"
 					{
 						str ImagePath = "Image\rohan_screenshot.png";
 						vec2 PanelSize = (1024.000, 768.000);
+
+						Node "ShaderEffect"
+						{
+							str EffectName = "ttt";
+							str ImagePath = "Image\s01.jpg";
+							str SOSName = "VerticalChange";
+
+							Node "UDP"
+							{
+								float blendingWeight = // [4]
+									1.000 / 1.000 / 1.000 / 0.000;
+							}
+						}
 					}
 				}
 			}
@@ -44,9 +57,9 @@ Node "[SUBNODES]"
 	Node "WinMgr" : "MkWindowManagerNode"
 	{
 		str ActivateWins = // [3]
+			"Win(1)" /
 			"Win(3)" /
-			"Win(2)" /
-			"Win(1)";
+			"Win(2)";
 		str DeactivateWins = "MsgBox";
 
 		Node "[SUBNODES]"
@@ -160,8 +173,8 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 733.333;
-				vec2 LocalPosition = (400.000, 600.000);
+				float LocalDepth = 200.000;
+				vec2 LocalPosition = (311.000, 282.000);
 				str ThemeName = "Default";
 
 				Node "[SUBNODES]"
@@ -304,17 +317,16 @@ Node "[SUBNODES]"
 									{
 										vec2 AlignOffset = (10.000, -30.000);
 										int AlignPosition = 34;
-										int BeginValue = 5;
 										vec2 ClientSize = (0.000, 150.000);
 										str ComponentType = "eCT_GuideLine";
-										int CurrentValue = 12;
+										int CurrentValue = 10;
 										str FrameType = "eFT_Small";
 										float LineLength = 150.000;
 										float LocalDepth = -1.000;
 										vec2 LocalPosition = (13.000, 22.000);
 										bool ShowValue = true;
 										str ThemeName = "Default";
-										int ValueSize = 15;
+										int ValueSize = 10;
 									}
 								}
 							}
@@ -336,7 +348,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 466.667;
+				float LocalDepth = 733.333;
 				vec2 LocalPosition = (200.000, 500.000);
 				str ThemeName = "Default";
 
@@ -532,7 +544,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 200.000;
+				float LocalDepth = 466.667;
 				vec2 LocalPosition = (100.000, 400.000);
 				str ThemeName = "Default";
 

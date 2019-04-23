@@ -4,19 +4,32 @@
 //------------------------------------------------------------------------------------------------//
 // MaterialKey의 main key는 texture ptr, sub key는 object alpha. main key가 NULL이면 그려지지 않음
 //
-// 구성용 data node 샘플
-//
-//	Node "SampleRect" : "T_SRect" // 안전을 위해 MKDEF_S2D_BT_SRECT_TEMPLATE_NAME 상속 권장
+// ex>
+//	Node "ImgTest" : "MkPanel"
 //	{
-//		uint Alpha = 128;
-//		float Depth = 0.000;
-//		vec2 Position = (100.000, 200.000);
-//		bool Reflection = // [2]
-//			Yes / No;
-//		//str Resource = "map" / "Image\s03.jpg" / ""; // 이미지 출력
-//		str Resource = "odt" / "<%T:굴림12%><%S:샘플02%>샘플 메세지다요"; // original deco text 출력
-//		//str Resource = "sdt" / "SampleCategory" / "ErrorMsg" / "SampleMsg"; // scene deco text 출력
-//		bool Visible = Yes;
+//		uint Attribute = 18;
+//		str ImagePath = "Image\s01.jpg";
+//		float LocalDepth = 9999.000;
+//		vec2 PanelSize = (909.000, 505.000);
+//	}
+//
+//	Node "P" : "MkPanel"
+//	{
+//		str ImagePath = "Image\rohan_screenshot.png";
+//		vec2 PanelSize = (1024.000, 768.000);
+//
+//		Node "ShaderEffect"
+//		{
+//			str EffectName = "ttt";
+//			str ImagePath = "Image\s01.jpg";
+//			str SOSName = "VerticalChange";
+//
+//			Node "UDP"
+//			{
+//				float blendingWeight = // [4]
+//					1.000 / 1.000 / 1.000 / 0.000;
+//			}
+//		}
 //	}
 //------------------------------------------------------------------------------------------------//
 
@@ -227,6 +240,11 @@ public:
 	bool SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z);
 	bool SetUserDefinedProperty(const MkHashStr& name, float x, float y, float z, float w);
 
+	bool GetUserDefinedProperty(const MkHashStr& name, float& x) const;
+	bool GetUserDefinedProperty(const MkHashStr& name, float& x, float& y) const;
+	bool GetUserDefinedProperty(const MkHashStr& name, float& x, float& y, float& z) const;
+	bool GetUserDefinedProperty(const MkHashStr& name, float& x, float& y, float& z, float& w) const;
+
 	// effect 해제
 	// (NOTE) 기존 설정되어 있던 technique, texture, UDP값도 모두 삭제 됨
 	void ClearShaderEffect(void);
@@ -349,4 +367,9 @@ public:
 	static const MkHashStr ObjKey_TextNodeName;
 	static const MkHashStr ObjKey_TextNodeData;
 	static const MkHashStr ObjKey_TextNodeWidthRestriction;
+	static const MkHashStr ObjKey_ShaderEffect;
+		static const MkHashStr ObjKey_EffectName;
+		// ObjKey_ImagePath
+		// ObjKey_SubsetOrSequenceName
+		static const MkHashStr ObjKey_EffectUDP;
 };

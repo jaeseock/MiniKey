@@ -41,7 +41,9 @@ public:
 
 	inline void CreateUDP(const MkHashStr& name, const D3DXVECTOR4& value) { if (m_UDP.Exist(name)) { m_UDP[name] = value; } else { m_UDP.Create(name, value); } }
 	inline bool SetUDP(const MkHashStr& name, const D3DXVECTOR4& value) { bool ok = m_UDP.Exist(name); if (ok) { m_UDP[name] = value; } return ok; }
+	inline bool GetUDP(const MkHashStr& name, D3DXVECTOR4& buffer) const { bool ok = m_UDP.Exist(name); if (ok) { buffer = m_UDP[name]; } return ok; }
 	inline const D3DXVECTOR4& GetUDP(const MkHashStr& name) const { return m_UDP[name]; } // 예외처리 안함
+	inline const MkHashMap<MkHashStr, D3DXVECTOR4>& GetUDP(void) const { return m_UDP; }
 
 	MkShaderEffectSetting() {}
 	~MkShaderEffectSetting() {}
