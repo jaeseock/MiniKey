@@ -1,7 +1,7 @@
 ﻿//--------------------------------------------------------------------//
 // MiniKey data node text source
 //   - file path : PackRoot.msd
-//   - time stamp : 2019.04.23 (15:39:14)
+//   - time stamp : 2019.04.24 (15:43:07)
 //   - exporter : pc (Test)
 //--------------------------------------------------------------------//
 
@@ -17,7 +17,9 @@ Node "[SUBNODES]"
 			Node "ImgTest" : "MkPanel"
 			{
 				uint Attribute = 18;
-				str ImagePath = "Image\s01.jpg";
+				str ImagePath = // [2]
+					"Image\s01.jpg" /
+					"FullChange";
 				float LocalDepth = 9999.000;
 				vec2 PanelSize = (909.000, 505.000);
 			}
@@ -39,14 +41,9 @@ Node "[SUBNODES]"
 						Node "ShaderEffect"
 						{
 							str EffectName = "ttt";
-							str ImagePath = "Image\s01.jpg";
-							str SOSName = "VerticalChange";
-
-							Node "UDP"
-							{
-								float blendingWeight = // [4]
-									1.000 / 1.000 / 1.000 / 0.000;
-							}
+							str ImagePath = // [2]
+								"Image\s01.jpg" /
+								"FullChange";
 						}
 					}
 				}
@@ -57,9 +54,9 @@ Node "[SUBNODES]"
 	Node "WinMgr" : "MkWindowManagerNode"
 	{
 		str ActivateWins = // [3]
-			"Win(1)" /
 			"Win(3)" /
-			"Win(2)";
+			"Win(2)" /
+			"Win(1)";
 		str DeactivateWins = "MsgBox";
 
 		Node "[SUBNODES]"
@@ -173,8 +170,8 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 200.000;
-				vec2 LocalPosition = (311.000, 282.000);
+				float LocalDepth = 733.333;
+				vec2 LocalPosition = (400.000, 600.000);
 				str ThemeName = "Default";
 
 				Node "[SUBNODES]"
@@ -319,7 +316,7 @@ Node "[SUBNODES]"
 										int AlignPosition = 34;
 										vec2 ClientSize = (0.000, 150.000);
 										str ComponentType = "eCT_GuideLine";
-										int CurrentValue = 10;
+										int CurrentValue = 5;
 										str FrameType = "eFT_Small";
 										float LineLength = 150.000;
 										float LocalDepth = -1.000;
@@ -348,7 +345,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 733.333;
+				float LocalDepth = 466.667;
 				vec2 LocalPosition = (200.000, 500.000);
 				str ThemeName = "Default";
 
@@ -544,7 +541,7 @@ Node "[SUBNODES]"
 				str ComponentType = "eCT_Title";
 				str FrameType = "eFT_Small";
 				int IconType = 1;
-				float LocalDepth = 466.667;
+				float LocalDepth = 200.000;
 				vec2 LocalPosition = (100.000, 400.000);
 				str ThemeName = "Default";
 
@@ -568,22 +565,13 @@ Node "[SUBNODES]"
 							{
 								uint Attribute = 3;
 								uint Color = 4294901760;
-								uint Indice = // [2]
-									0 / 1;
 								float LDepth = -1.000;
-								vec2 LVertices = // [2]
-									(0.000, 0.000) / (200.000, 100.000);
 							}
 
 							Node "test white line" : "MkLineShape"
 							{
 								uint Attribute = 3;
-								uint Indice = // [6]
-									0 / 1 / 1 / 2 / 2 /
-									3;
 								float LDepth = -1.000;
-								vec2 LVertices = // [4]
-									(0.000, 0.000) / (-100.000, 200.000) / (-100.000, 300.000) / (50.000, 350.000);
 							}
 						}
 

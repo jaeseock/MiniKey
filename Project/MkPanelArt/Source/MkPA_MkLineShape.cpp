@@ -168,15 +168,15 @@ void MkLineShape::SetObjectTemplate(MkDataNode& node)
 	node.CreateUnit(ObjKey_Attribute, attr.m_Field);
 
 	// local vertices
-	MkArray<MkFloat2> fEmpty;
-	node.CreateUnitEx(ObjKey_LocalVertices, fEmpty);
+	//MkArray<MkFloat2> fEmpty;
+	//node.CreateUnitEx(ObjKey_LocalVertices, fEmpty);
 
 	// local depth
 	node.CreateUnit(ObjKey_LocalDepth, 0.f);
 
 	// indice
-	MkArray<unsigned int> uiEmpty;
-	node.CreateUnit(ObjKey_Indice, uiEmpty);
+	//MkArray<unsigned int> uiEmpty;
+	//node.CreateUnit(ObjKey_Indice, uiEmpty);
 
 	// color
 	node.CreateUnit(ObjKey_Color, MkColor::White.ConvertToD3DCOLOR());

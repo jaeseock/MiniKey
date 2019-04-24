@@ -8,7 +8,9 @@
 //	Node "ImgTest" : "MkPanel"
 //	{
 //		uint Attribute = 18;
-//		str ImagePath = "Image\s01.jpg";
+//		str ImagePath = // [2]
+//			"Image\s01.jpg" /
+//			"Panorama";
 //		float LocalDepth = 9999.000;
 //		vec2 PanelSize = (909.000, 505.000);
 //	}
@@ -21,8 +23,9 @@
 //		Node "ShaderEffect"
 //		{
 //			str EffectName = "ttt";
-//			str ImagePath = "Image\s01.jpg";
-//			str SOSName = "VerticalChange";
+//			str ImagePath = // [2]
+//				"Image\s01.jpg" /
+//				"Panorama";
 //
 //			Node "UDP"
 //			{
@@ -362,7 +365,6 @@ public:
 	static const MkHashStr ObjKey_PanelSize;
 	static const MkHashStr ObjKey_PixelScrollPosition;
 	static const MkHashStr ObjKey_ImagePath;
-	static const MkHashStr ObjKey_SubsetOrSequenceName;
 	static const MkHashStr ObjKey_SequenceTimeOffset;
 	static const MkHashStr ObjKey_TextNodeName;
 	static const MkHashStr ObjKey_TextNodeData;
@@ -370,6 +372,5 @@ public:
 	static const MkHashStr ObjKey_ShaderEffect;
 		static const MkHashStr ObjKey_EffectName;
 		// ObjKey_ImagePath
-		// ObjKey_SubsetOrSequenceName
 		static const MkHashStr ObjKey_EffectUDP;
 };

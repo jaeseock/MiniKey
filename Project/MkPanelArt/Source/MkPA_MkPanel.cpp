@@ -21,7 +21,6 @@ const MkHashStr MkPanel::ObjKey_Attribute(L"Attribute");
 const MkHashStr MkPanel::ObjKey_PanelSize(L"PanelSize");
 const MkHashStr MkPanel::ObjKey_PixelScrollPosition(L"PScrollPos");
 const MkHashStr MkPanel::ObjKey_ImagePath(L"ImagePath");
-const MkHashStr MkPanel::ObjKey_SubsetOrSequenceName(L"SOSName");
 const MkHashStr MkPanel::ObjKey_SequenceTimeOffset(L"STimeOffset");
 const MkHashStr MkPanel::ObjKey_TextNodeName(L"TextNodeName");
 const MkHashStr MkPanel::ObjKey_TextNodeData(L"TextNodeData");
@@ -513,7 +512,6 @@ void MkPanel::SetObjectTemplate(MkDataNode& node)
 
 	// texture image
 	node.CreateUnit(ObjKey_ImagePath, MkStr::EMPTY);
-	node.CreateUnit(ObjKey_SubsetOrSequenceName, MkStr::EMPTY);
 	node.CreateUnit(ObjKey_SequenceTimeOffset, 0.f);
 
 	// text node
@@ -525,7 +523,6 @@ void MkPanel::SetObjectTemplate(MkDataNode& node)
 	//ObjKey_ShaderEffect
 	//ObjKey_EffectName
 	//ObjKey_ImagePath
-	//ObjKey_SubsetOrSequenceName
 	//ObjKey_EffectUDP
 }
 
@@ -544,17 +541,14 @@ void MkPanel::LoadObject(const MkDataNode& node)
 	do
 	{
 		// texture image
-		MkStr imagePath;
-		node.GetData(ObjKey_ImagePath, imagePath, 0);
-		if (!imagePath.Empty())
+		MkArray<MkStr> imagePath;
+		node.GetData(ObjKey_ImagePath, imagePath);
+		if (imagePath.IsValidIndex(0))
 		{
-			MkStr subsetOrSeqName;
-			node.GetData(ObjKey_SubsetOrSequenceName, subsetOrSeqName, 0);
-
 			float stOffset = 0.f;
 			node.GetData(ObjKey_SequenceTimeOffset, stOffset, 0);
 
-			SetTexture(imagePath, subsetOrSeqName, static_cast<double>(stOffset));
+			SetTexture(imagePath[0], imagePath.IsValidIndex(1) ? imagePath[1] : MkHashStr::EMPTY, static_cast<double>(stOffset));
 			break;
 		}
 
@@ -606,20 +600,17 @@ void MkPanel::LoadObject(const MkDataNode& node)
 			MkArray<MkStr> imagePath;
 			shaderNode.GetData(ObjKey_ImagePath, imagePath);
 
-			MkArray<MkStr> subsetOrSeqName;
-			shaderNode.GetData(ObjKey_SubsetOrSequenceName, subsetOrSeqName);
-
-			if (imagePath.IsValidIndex(0) && subsetOrSeqName.IsValidIndex(0) && (!imagePath[0].Empty()))
+			if (imagePath.IsValidIndex(1) && (!imagePath[0].Empty()))
 			{
-				SetEffectTexture1(imagePath[0], subsetOrSeqName[0]);
+				SetEffectTexture1(imagePath[0], imagePath[1]);
 			}
-			if (imagePath.IsValidIndex(1) && subsetOrSeqName.IsValidIndex(1) && (!imagePath[1].Empty()))
+			if (imagePath.IsValidIndex(3) && (!imagePath[2].Empty()))
 			{
-				SetEffectTexture2(imagePath[1], subsetOrSeqName[1]);
+				SetEffectTexture2(imagePath[2], imagePath[3]);
 			}
-			if (imagePath.IsValidIndex(2) && subsetOrSeqName.IsValidIndex(2) && (!imagePath[2].Empty()))
+			if (imagePath.IsValidIndex(5) && (!imagePath[4].Empty()))
 			{
-				SetEffectTexture3(imagePath[2], subsetOrSeqName[2]);
+				SetEffectTexture3(imagePath[4], imagePath[5]);
 			}
 
 			// udp
@@ -664,8 +655,13 @@ void MkPanel::SaveObject(MkDataNode& node) const
 			const MkHashStr& poolKey = m_Texture->GetPoolKey();
 			if (!poolKey.Empty())
 			{
-				node.SetData(ObjKey_ImagePath, poolKey.GetString(), 0);
-				node.SetData(ObjKey_SubsetOrSequenceName, m_SubsetOrSequenceName.GetString(), 0);
+				MkArray<MkStr> imagePath(2);
+				imagePath.PushBack(poolKey.GetString());
+				if (!m_SubsetOrSequenceName.Empty())
+				{
+					imagePath.PushBack(m_SubsetOrSequenceName.GetString());
+				}
+				node.SetData(ObjKey_ImagePath, imagePath);
 				node.SetData(ObjKey_SequenceTimeOffset, static_cast<float>(m_SequenceTimeOffset), 0);
 				break;
 			}
@@ -715,62 +711,47 @@ void MkPanel::SaveObject(MkDataNode& node) const
 
 			// texture image
 			MkArray<MkStr> imagePath;
-			imagePath.Fill(3);
-			MkArray<MkStr> subsetOrSeqName;
-			subsetOrSeqName.Fill(3);
+			imagePath.Fill(6);
 
 			const MkBaseTexture* texture1 = GetEffectTexturePtr1();
 			if ((texture1 != NULL) && (texture1 != effect->GetDefaultTexture1()))
 			{
 				imagePath[0] = texture1->GetPoolKey().GetString();
+				imagePath[1] = GetEffectSubsetOrSequenceName1().GetString();
 			}
 			
 			const MkBaseTexture* texture2 = GetEffectTexturePtr2();
 			if ((texture2 != NULL) && (texture2 != effect->GetDefaultTexture2()))
 			{
-				imagePath[1] = texture2->GetPoolKey().GetString();
+				imagePath[2] = texture2->GetPoolKey().GetString();
+				imagePath[3] = GetEffectSubsetOrSequenceName2().GetString();
 			}
 			
 			const MkBaseTexture* texture3 = GetEffectTexturePtr3();
 			if ((texture3 != NULL) && (texture3 != effect->GetDefaultTexture3()))
 			{
-				imagePath[2] = texture3->GetPoolKey().GetString();
+				imagePath[4] = texture3->GetPoolKey().GetString();
+				imagePath[5] = GetEffectSubsetOrSequenceName3().GetString();
 			}
 			
-			if (imagePath[2].Empty())
+			if (imagePath[4].Empty())
 			{
-				imagePath.PopBack();
-				subsetOrSeqName.PopBack();
+				imagePath.PopBack(2);
 
-				if (imagePath[1].Empty())
+				if (imagePath[2].Empty())
 				{
-					imagePath.PopBack();
-					subsetOrSeqName.PopBack();
+					imagePath.PopBack(2);
 
 					if (imagePath[0].Empty())
 					{
 						imagePath.Clear();
-						subsetOrSeqName.Clear();
-					}
-					else
-					{
-						subsetOrSeqName[0] = GetEffectSubsetOrSequenceName1().GetString();
 					}
 				}
-				else
-				{
-					subsetOrSeqName[1] = GetEffectSubsetOrSequenceName2().GetString();
-				}
-			}
-			else
-			{
-				subsetOrSeqName[2] = GetEffectSubsetOrSequenceName3().GetString();
 			}
 
 			if (!imagePath.Empty())
 			{
 				shaderNode.CreateUnit(ObjKey_ImagePath, imagePath);
-				shaderNode.CreateUnit(ObjKey_SubsetOrSequenceName, subsetOrSeqName);
 			}
 
 			// udp
