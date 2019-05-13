@@ -5,10 +5,16 @@
 
 #include <windows.h>
 
+#include "minizip/unzip.h"
+
 #include "MkCore_MkDevPanel.h"
-#include "MkCore_MkInputManager.h"
+//#include "MkCore_MkInputManager.h"
+//#include "MkCore_MkFileManager.h"
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
+
+#include "MkCore_MkInterfaceForFileReading.h"
+#include "MkCore_MkInterfaceForZipFileReading.h"
 
 // steam -----------------------------------------------------
 #if DEF_STEAM_LOGIN
@@ -175,6 +181,89 @@ public:
 #endif
 
 		return true; // EXIT_SUCCESS
+	}
+
+	virtual void StartLooping(void)
+	{
+		/*
+		do
+		{
+			MkInterfaceForZipFileReading etcZip;
+			if (!etcZip.SetUp(L"etc\\etc.SPAK"))
+				break;
+
+			MkArray<MkStr> tokens;
+			{
+				MkByteArray byteArray;
+				etcZip.Read(L"etc\\crccheckfile.sst", byteArray);
+
+				MkStr crcCheckFileBuffer;
+				crcCheckFileBuffer.ReadTextStream(byteArray);
+				crcCheckFileBuffer.Tokenize(tokens, L"\n");
+			}
+			if (tokens.Empty())
+				break;
+
+			unsigned int fileSize = tokens[0].ToUnsignedInteger();
+			MkArray<MkPathName> crcFileList(fileSize);
+
+			unsigned int index = 1;
+			while (crcFileList.GetSize() < fileSize)
+			{
+				MkStr& currToken = tokens[index++];
+				currToken.RemoveRearSideBlank();
+				crcFileList.PushBack(currToken);
+			}
+
+			if (crcFileList.Empty())
+				break;
+
+			MkInterfaceForZipFileReading mapZip;
+			if (!mapZip.SetUp(L"map\\map.SPAK"))
+				break;
+
+			MkArray<DWORD> crcList;
+			crcList.Fill(crcFileList.GetSize());
+
+			unsigned int accCrc = 0;
+
+			MK_INDEXING_LOOP(crcFileList, i)
+			{
+				MkByteArray byteArray;
+				const MkPathName& currFile = crcFileList[i];
+				MkPathName fullPath;
+				fullPath.ConvertToRootBasisAbsolutePath(currFile);
+				if (fullPath.CheckAvailable())
+				{
+					MkInterfaceForFileReading frInterface;
+					frInterface.SetUp(fullPath);
+					frInterface.Read(byteArray, MkArraySection(0));
+					frInterface.Clear();
+				}
+				else if (currFile.CheckPrefix(L"etc"))
+				{
+					etcZip.Read(currFile, byteArray);
+				}
+				else if (currFile.CheckPrefix(L"map"))
+				{
+					mapZip.Read(currFile, byteArray);
+				}
+				else
+				{
+					// error
+				}
+
+				if (!byteArray.Empty())
+				{
+					accCrc = crc32(accCrc, byteArray.GetPtr(), byteArray.GetSize());
+				}
+			}
+
+			::MessageBox(m_MainWindow.GetWindowHandle(), MkStr(accCrc).GetPtr(), L"CRC", MB_OK);
+			MK_DEV_PANEL.MsgToLog(L"CRC : " + MkStr(accCrc));
+		}
+		while (false);
+		*/
 	}
 
 	virtual void Update(void)

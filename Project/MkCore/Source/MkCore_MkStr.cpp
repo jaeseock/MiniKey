@@ -200,7 +200,38 @@ MkStr& MkStr::operator = (const unsigned int& value)
 MkStr& MkStr::operator = (const float& value)
 {
 	wchar_t tmp[50];
-	swprintf_s(tmp, 50, L"%.3f", value);
+	swprintf_s(tmp, 50, L"%.5f", value);
+
+	int nullPos = 0;
+	int dotPos = -1;
+	for (int i=0; i<50; ++i)
+	{
+		const wchar_t& c = tmp[i];
+		if (c == NULL)
+		{
+			nullPos = i;
+			break;
+		}
+		else if (c == L'.')
+		{
+			dotPos = i;
+		}
+	}
+
+	if ((nullPos > 0) && (dotPos > -1))
+	{
+		for (int i=nullPos-1; i>=dotPos; --i)
+		{
+			wchar_t& c = tmp[i];
+			if ((c == L'0') || (c == L'.'))
+			{
+				c = NULL;
+			}
+			else
+				break;
+		}
+	}
+
 	*this = tmp;
 	return *this;
 }
@@ -208,7 +239,38 @@ MkStr& MkStr::operator = (const float& value)
 MkStr& MkStr::operator = (const double& value)
 {
 	wchar_t tmp[320];
-	swprintf_s(tmp, 320, L"%.3f", value);
+	swprintf_s(tmp, 320, L"%.5f", value);
+
+	int nullPos = 0;
+	int dotPos = -1;
+	for (int i=0; i<320; ++i)
+	{
+		const wchar_t& c = tmp[i];
+		if (c == NULL)
+		{
+			nullPos = i;
+			break;
+		}
+		else if (c == L'.')
+		{
+			dotPos = i;
+		}
+	}
+
+	if ((nullPos > 0) && (dotPos > -1))
+	{
+		for (int i=nullPos-1; i>=dotPos; --i)
+		{
+			wchar_t& c = tmp[i];
+			if ((c == L'0') || (c == L'.'))
+			{
+				c = NULL;
+			}
+			else
+				break;
+		}
+	}
+
 	*this = tmp;
 	return *this;
 }
@@ -247,17 +309,29 @@ MkStr& MkStr::operator = (const MkUInt2& pt)
 
 MkStr& MkStr::operator = (const MkVec2& value)
 {
-	wchar_t tmp[100];
-	swprintf_s(tmp, 100, L"(%.3f, %.3f)", value.x, value.y);
-	*this = tmp;
+	MkStr buffer;
+	buffer.Reserve(100);
+	buffer += L"(";
+	buffer += value.x;
+	buffer += L", ";
+	buffer += value.y;
+	buffer += L")";
+	*this = buffer;
 	return *this;
 }
 
 MkStr& MkStr::operator = (const MkVec3& value)
 {
-	wchar_t tmp[150];
-	swprintf_s(tmp, 150, L"(%-5.3f, %-5.3f, %-5.3f)", value.x, value.y, value.z);
-	*this = tmp;
+	MkStr buffer;
+	buffer.Reserve(150);
+	buffer += L"(";
+	buffer += value.x;
+	buffer += L", ";
+	buffer += value.y;
+	buffer += L", ";
+	buffer += value.z;
+	buffer += L")";
+	*this = buffer;
 	return *this;
 }
 
@@ -1306,7 +1380,7 @@ float MkStr::ToFloat(void) const
 	float result = static_cast<float>(_wtof(tmpBuf));
 	if (percentage)
 	{
-		result *= 0.01f; // 100% -> 1.f
+		result /= 100.f; // 100% -> 1.f
 	}
 	return result;
 }

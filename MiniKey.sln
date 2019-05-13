@@ -66,7 +66,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientInstaller", "Tool\Cli
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WhiteBoardForTest", "Sample\WhiteBoardForTest\WhiteBoardForTest.vcproj", "{0103EE0D-2A7F-45D2-978A-F27076AB5A63}"
 	ProjectSection(ProjectDependencies) = postProject
-		{B9A5CD10-E007-4D82-8CE4-D6BD8110B38B} = {B9A5CD10-E007-4D82-8CE4-D6BD8110B38B}
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject

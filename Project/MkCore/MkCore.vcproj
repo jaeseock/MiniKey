@@ -808,6 +808,22 @@
 					RelativePath="..\..\Include\MkCore_MkInterfaceForFileWriting.h"
 					>
 				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkInterfaceForZipFileReading.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkInterfaceForZipFileReading.h"
+					>
+				</File>
+				<File
+					RelativePath=".\Source\MkCore_MkInterfaceForZipFileWriting.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\Include\MkCore_MkInterfaceForZipFileWriting.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="File system"

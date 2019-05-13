@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VorbisFile", "Project\Vorbi
 		{1D14FD43-951E-4BFA-AB57-116744B27658} = {1D14FD43-951E-4BFA-AB57-116744B27658}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Minizip", "Project\Minizip\Minizip.vcproj", "{573D8D25-B18A-440D-9D27-5429F6946AC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,12 @@ Global
 		{79A26180-E3F6-4884-8723-352020CF56C3}.Release|Win32.Build.0 = Release|Win32
 		{79A26180-E3F6-4884-8723-352020CF56C3}.Shipping|Win32.ActiveCfg = Shipping|Win32
 		{79A26180-E3F6-4884-8723-352020CF56C3}.Shipping|Win32.Build.0 = Shipping|Win32
+		{573D8D25-B18A-440D-9D27-5429F6946AC8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{573D8D25-B18A-440D-9D27-5429F6946AC8}.Debug|Win32.Build.0 = Debug|Win32
+		{573D8D25-B18A-440D-9D27-5429F6946AC8}.Release|Win32.ActiveCfg = Release|Win32
+		{573D8D25-B18A-440D-9D27-5429F6946AC8}.Release|Win32.Build.0 = Release|Win32
+		{573D8D25-B18A-440D-9D27-5429F6946AC8}.Shipping|Win32.ActiveCfg = Shipping|Win32
+		{573D8D25-B18A-440D-9D27-5429F6946AC8}.Shipping|Win32.Build.0 = Shipping|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
