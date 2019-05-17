@@ -10,7 +10,7 @@ str #Target = "KR-DEV";
 str #Services = "KR-DEV" / "KR-IDC" / "US" / "CN";
 
 // 출력 파일 경로명
-str #ExportTo = "code_switch.h";
+str #ExportTo = "code_switch.h" / "code_switch.h" / "code_switch.h" / "code_switch.h";
 
 //----------------------------------------------------------------------------------//
 // 컨텐츠별 설정
