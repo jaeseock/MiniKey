@@ -89,31 +89,6 @@ bool MkCodeDefinitionConverter::Convert(const MkPathName& filePath, const MkStr&
 			return __MK_CDC_ERROR(MkStr(i) + L"번째 서비스 이름에 공문자가 포함되어 있음");
 	}
 
-	// export file path
-	MkStr exportTo;
-	node.GetData(KEY_ExportTo, exportTo, 0);
-	if (exportTo.Empty())
-		return __MK_CDC_ERROR(L"출력 파일 경로 지정이 되어 있지 않음");
-
-	MkPathName exportPath = exportTo;
-	MkPathName exportFilePath;
-
-	if (!exportPath.IsAbsolutePath())
-	{
-		if (filePath.IsAbsolutePath())
-		{
-			exportFilePath = filePath.GetPath();
-			exportFilePath += exportTo;
-		}
-		else
-		{
-			exportFilePath.ConvertToRootBasisAbsolutePath(exportTo);
-		}
-	}
-	
-	if (exportFilePath.IsDirectoryPath())
-		return __MK_CDC_ERROR(L"출력 파일명이 정상적인 파일명이 아님");
-
 	// target
 	if (!target.Empty())
 	{
@@ -130,10 +105,28 @@ bool MkCodeDefinitionConverter::Convert(const MkPathName& filePath, const MkStr&
 
 	MkStr targetServiceName;
 	node.GetData(KEY_Target, targetServiceName, 0);
-	if (!services.Exist(MkArraySection(0), targetServiceName))
+	unsigned int targetIndex = services.FindFirstInclusion(MkArraySection(0), targetServiceName);
+	if (targetIndex == MKDEF_ARRAY_ERROR)
 		return __MK_CDC_ERROR(L"서비스명 목록에 " + targetServiceName + L"은 포함되어 있지 않음");
 
 	MkHashStr targetServiceKey = targetServiceName;
+
+	// export file path
+	MkArray<MkStr> exportTo;
+	node.GetData(KEY_ExportTo, exportTo);
+	if (exportTo.Empty())
+		return __MK_CDC_ERROR(L"출력 파일 경로 지정이 되어 있지 않음");
+
+	if (exportTo.GetSize() != services.GetSize())
+		return __MK_CDC_ERROR(L"서비스 갯수와 출력 파일 경로 갯수가 다름");
+
+	MkPathName exportPath;
+	exportPath.ConvertToRootBasisAbsolutePath(filePath);
+	MkPathName exportFilePath = exportPath.GetPath();
+	exportFilePath += exportTo[targetIndex];
+	
+	if (exportFilePath.IsDirectoryPath())
+		return __MK_CDC_ERROR(L"출력 파일명이 정상적인 파일명이 아님");
 
 	// contents definition
 	MkArray<MkHashStr> contents;

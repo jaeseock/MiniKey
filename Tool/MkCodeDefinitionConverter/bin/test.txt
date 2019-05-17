@@ -10,7 +10,7 @@ str #Target = "KR-DEV";
 str #Services = "KR-DEV" / "KR-IDC" / "US" / "CN";
 
 // 출력 파일 경로명
-str #ExportTo = "codedef.h";
+str #ExportTo = "KR-DEV.h" / "KR-IDC.h" / "US.h" / "CN.h";
 
 //----------------------------------------------------------------------------------//
 // 컨텐츠별 설정

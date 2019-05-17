@@ -6,7 +6,7 @@
 //	str #Target = "KR-DEV";
 //
 //	str #Services = "KR-DEV" / "KR-IDC" / "US" / "CN";
-//	str #ExportTo = "test.h";
+//	str #ExportTo = "KR-DEV.h" / "KR-IDC.h" / "US.h" / "CN.h";
 //
 //	Node "DEF_TEST_INDEX"
 //	{

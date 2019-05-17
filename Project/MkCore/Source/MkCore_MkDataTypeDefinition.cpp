@@ -1,6 +1,5 @@
 
 #include "MkCore_MkBitField32.h"
-#include "MkCore_MkType2.h"
 #include "MkCore_MkRect.h"
 #include "MkCore_MkColor.h"
 #include "MkCore_MkMat3.h"

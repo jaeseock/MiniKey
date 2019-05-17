@@ -10,7 +10,7 @@ str #Target = "Cell";
 str #Services = "Stupid" / "Cell";
 
 // 출력 파일 경로명
-str #ExportTo = "codedef.h";
+str #ExportTo = "codedef.h" / "codedef.h";
 
 //----------------------------------------------------------------------------------//
 
