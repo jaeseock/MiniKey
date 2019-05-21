@@ -13,8 +13,8 @@
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
 
-#include "MkCore_MkInterfaceForFileReading.h"
-#include "MkCore_MkInterfaceForZipFileReading.h"
+//#include "MkCore_MkInterfaceForFileReading.h"
+//#include "MkCore_MkInterfaceForZipFileReading.h"
 
 // steam -----------------------------------------------------
 #if DEF_STEAM_LOGIN

@@ -187,8 +187,17 @@ bool MkExcelToMemoryConverter::_ParseTable
 			return false;
 
 		// 공통 템플릿명
-		MK_CHECK(reader.GetDataRC(dataStartPos.r, dataStartPos.c, dest.templateName), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(dataStartPos.r, dataStartPos.c) + L"위치 읽기 실패")
-			return false;
+		{
+			MkStr tmp;
+			MK_CHECK(reader.GetDataRC(dataStartPos.r, dataStartPos.c, tmp), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(dataStartPos.r, dataStartPos.c) + L"위치 읽기 실패")
+				return false;
+
+			if (!tmp.Empty())
+			{
+				MK_CHECK(_StringFilter(tmp, dest.templateName), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(dataStartPos.r, dataStartPos.c) + L"위치의 템플릿명이 정상적이지 않음 : " + tmp)
+					return false;
+			}
+		}
 
 		// 네임 리스트 읽기
 		MkArray<MkStr>& nameList = dest.name;
@@ -202,7 +211,11 @@ bool MkExcelToMemoryConverter::_ParseTable
 			MK_CHECK(!nameBuf.Empty(), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(namePos.r, namePos.c) + L"위치의 노드명이 비어있음")
 				return false;
 
-			nameList.PushBack(nameBuf);
+			MkStr tmp;
+			MK_CHECK(_StringFilter(nameBuf, tmp), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(namePos.r, namePos.c) + L"위치의 노드명이 정상적이지 않음 : " + nameBuf)
+				return false;
+
+			nameList.PushBack(tmp);
 			namePos += fieldDir;
 		}
 	}
@@ -267,6 +280,17 @@ bool MkExcelToMemoryConverter::_ParseTable
 			return false;
 		MK_CHECK(!keyBuf.Empty(), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(keyPos.r, keyPos.c) + L"위치의 키 값이 비어있음")
 			return false;
+
+		if ((typeIndex == MkTagDefinitionForDataNode::IndexMarkForNodeBegin) ||
+			(typeIndex == MkTagDefinitionForDataNode::IndexMarkForTemplateBegin) ||
+			(typeIndex == MkTagDefinitionForDataNode::IndexMarkForPushingTemplate))
+		{
+			MkStr tmp;
+			MK_CHECK(_StringFilter(keyBuf, tmp), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(keyPos.r, keyPos.c) + L"위치의 노드명이 정상적이지 않음 : " + keyBuf)
+				return false;
+			keyBuf = tmp;
+		}
+
 		dest.key.PushBack(keyBuf);
 
 		// field
@@ -282,10 +306,26 @@ bool MkExcelToMemoryConverter::_ParseTable
 				MK_CHECK(reader.GetDataRC(currFieldPos.r, currFieldPos.c, nodeNameBuf), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(currFieldPos.r, currFieldPos.c) + L"위치 읽기 실패")
 					return false;
 
+				if (!nodeNameBuf.Empty())
+				{
+					MkStr tmp;
+					MK_CHECK(_StringFilter(nodeNameBuf, tmp), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(currFieldPos.r, currFieldPos.c) + L"위치의 템플릿명이 정상적이지 않음 : " + nodeNameBuf)
+						return false;
+					nodeNameBuf = tmp;
+				}
+
 				currFieldPos += fieldDir;
 				MkStr sheetNameBuf;
 				MK_CHECK(reader.GetDataRC(currFieldPos.r, currFieldPos.c, sheetNameBuf), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(currFieldPos.r, currFieldPos.c) + L"위치 읽기 실패")
 					return false;
+
+				if (!sheetNameBuf.Empty())
+				{
+					MkStr tmp;
+					MK_CHECK(_StringFilter(sheetNameBuf, tmp), m_TargetFilePath + L" 파일 " + m_TargetSheetName + L" sheet의 " + MkExcelFileReader::ConvertPosition(currFieldPos.r, currFieldPos.c) + L"위치의 템플릿명이 정상적이지 않음 : " + sheetNameBuf)
+						return false;
+					sheetNameBuf = tmp;
+				}
 
 				MkArray<MkStr>& currArray = dest.data[0][i];
 				currArray.Reserve(2);

@@ -1,8 +1,8 @@
 ﻿//--------------------------------------------------------------------//
 // MiniKey data node text source
-//   - file path  : d:\Solutions\MiniKey\Tool\MMD Viewer\test.mmd
-//   - time stamp : 2018.02.23 (17:04:29)
-//   - exporter   : pc (MMD Viewer)
+//   - file path : d:\Solutions\MiniKey\MiniKey\Tool\MMD Viewer\test.mmd
+//   - time stamp : 2019.05.21 (14:03:22)
+//   - exporter : pc (MMD Viewer)
 //--------------------------------------------------------------------//
 
 
@@ -24,11 +24,11 @@ Template "T_Rect" : "T_Position"
 
 Template "T_VisibleState"
 {
-	vec3 bgColor = (0.200, 0.300, 0.400);
+	vec3 bgColor = (0.2, 0.3, 0.4);
 	bool focus = false;
 	int layer = 128;
 	vec3 valueSet = // [3]
-		(-1.000, -0.500, -0.500) / (0.000, 0.300, 0.300) / (0.800, -1.000, 0.400);
+		(-1, -0.5, -0.5) / (0, 0.3, 0.3) / (0.8, -1, 0.4);
 	bool visible = true;
 }
 
@@ -42,7 +42,7 @@ Template "T_WindowBase" : "T_Rect"
 			5B41975D /
 			28517129;
 		float aniKey = // [4]
-			1.000 / 2.500 / 4.600 / 10.000;
+			1 / 2.5 / 4.6 / 10;
 		str aniName = // [4]
 			"애니0" /
 			"애니1" /
@@ -66,7 +66,7 @@ Template "T_MonsterForm"
 		50 / 60 / 70;
 }
 
-Node "CharacterWindow" : "T_WindowBase"
+Node "Character Window" : "T_WindowBase"
 {
 	uint formID = 21;
 
@@ -76,10 +76,11 @@ Node "CharacterWindow" : "T_WindowBase"
 	{
 		int layer = 256;
 		str text = "새 \"비지블\" 스테이트<LF>입니당.";
+		bool visible = false;
 	}
 }
 
-Node "MonsterTable"
+Node "Monster Table"
 {
 	Node "Knight" : "T_MonsterForm"
 	{
