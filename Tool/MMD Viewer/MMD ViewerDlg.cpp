@@ -76,7 +76,7 @@ BOOL CMMDViewerDlg::OnInitDialog()
 
 	// minikey
 	if ((!m_MkApplication.Initialize(L"MMD_Viewer", L"#HDP=")) ||
-		(!m_MkApplication.SetUpFramework(m_hWnd, L"..\\FileRoot", true, false)))
+		(!m_MkApplication.SetUpFramework(m_hWnd, L"", true, false)))
 	{
 		AfxGetMainWnd()->PostMessage(WM_CLOSE);
 		return TRUE;

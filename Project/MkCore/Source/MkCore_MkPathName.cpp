@@ -1662,7 +1662,7 @@ unsigned int MkPathName::_GetFilePathFromDialog
 
 			while ((offset < allocSize) && (pathBuf[offset] != NULL))
 			{
-				offset += wcslen(&pathBuf[offset]) + 1;
+				offset += static_cast<unsigned int>(wcslen(&pathBuf[offset])) + 1;
 				++fileCount;
 			}
 
