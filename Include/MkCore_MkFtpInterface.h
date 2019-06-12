@@ -6,7 +6,7 @@
 //
 // ex>
 //	MkFtpInterface ftpInterface;
-//	if (ftpInterface.Connect(L"210.207.252.151", L"test", L"eloadev", L"eloadev1234"))
+//	if (ftpInterface.Connect(L"210.207.252.151", L"test", L"eloadev", L"eloadev1234", true))
 //	{
 //		ftpInterface.MoveToChild(L"A", true);
 //		ftpInterface.MoveToChild(L"B", true);
@@ -32,7 +32,7 @@ class MkFtpInterface
 public:
 
 	// 최초 접속
-	bool Connect(const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password);
+	bool Connect(const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode);
 
 	// 기존 정보로 재접속
 	bool Connect(void);
@@ -76,6 +76,7 @@ protected:
 	MkStr m_RemotePath;
 	MkStr m_UserName;
 	MkStr m_Password;
+	bool m_PassiveMode;
 
 	HINTERNET m_Session;
 	HINTERNET m_Connect;

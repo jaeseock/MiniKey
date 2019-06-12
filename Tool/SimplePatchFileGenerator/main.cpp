@@ -36,6 +36,7 @@ const static MkHashStr KEY_DestURL = L"URL";
 const static MkHashStr KEY_DestRemotePath = L"RemotePath";
 const static MkHashStr KEY_DestUserName = L"UserName";
 const static MkHashStr KEY_DestPassword = L"Password";
+const static MkHashStr KEY_PassiveMode = L"PassiveMode";
 const static MkHashStr KEY_Warning = L"Warning";
 
 static MkHashStr gTargetExport;
@@ -193,7 +194,7 @@ public:
 		}
 		else if (m_OnPacking == _eStartUploading)
 		{
-			if (m_PU.StartUploading(m_ExportInfo[0], m_ExportInfo[1], m_ExportInfo[2], m_ExportInfo[3], m_ExportInfo[4]))
+			if (m_PU.StartUploading(m_ExportInfo[0], m_ExportInfo[1], m_ExportInfo[2], m_ExportInfo[3], m_ExportInfo[4], m_ExportInfo[5].ToBool()))
 			{
 				m_OnPacking = _eUpdateUploading;
 			}
@@ -270,7 +271,7 @@ public:
 								const MkDataNode& currDestNode = *exportNode.GetChildNode(gTargetExport);
 
 								m_ExportInfo.Clear();
-								m_ExportInfo.Reserve(5);
+								m_ExportInfo.Reserve(6);
 
 								EnableWindow(m_PackingStartHandle, FALSE);
 								EnableWindow(m_UploadStartHandle, FALSE);
@@ -331,6 +332,11 @@ public:
 										if ((!currDestNode.GetData(KEY_DestPassword, password, 0)) || password.Empty())
 											break;
 										m_ExportInfo.PushBack(password);
+
+										// passive mode?. ¿É¼Ç
+										bool passiveMode = true;
+										currDestNode.GetData(KEY_PassiveMode, passiveMode, 0);
+										m_ExportInfo.PushBack(MkStr(passiveMode));
 
 										ok = true;
 

@@ -7,6 +7,7 @@
 #include "MkCore_MkDataNodeToMemoryConverter.h"
 #include "MkCore_MkMemoryToDataTextConverter.h"
 #include "MkCore_MkExcelToMemoryConverter.h"
+#include "MkCore_MkDataNodeToExcelConverter.h"
 #include "MkCore_MkDataNode.h"
 
 const MkHashStr MkDataNode::DataTypeTag(L"#_DataTypeTag");
@@ -168,6 +169,12 @@ bool MkDataNode::SaveToBinary(const MkPathName& filePath) const
 {
 	MkDataNodeToMemoryConverter dataNodeToMemoryConverter;
 	return dataNodeToMemoryConverter.ConvertToBinaryFile(*this, filePath);
+}
+
+bool MkDataNode::SaveToExcel(const MkPathName& filePath) const
+{
+	MkDataNodeToExcelConverter dataNodeToExcelConverter;
+	return dataNodeToExcelConverter.Convert(*this, filePath);
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -708,6 +715,24 @@ void MkDataNode::__GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNo
 	{
 		normalNodeList.SortInAscendingOrder();
 	}
+}
+
+bool MkDataNode::__SameForm(const MkDataNode& source) const
+{
+	if (GetChildNodeCount() != source.GetChildNodeCount())
+		return false;
+
+	if (!m_DataPack.SameForm(source.GetDataPack()))
+		return false;
+
+	MkArray<MkHashStr> childNodeList;
+	GetChildNodeList(childNodeList);
+	MK_INDEXING_LOOP(childNodeList, i)
+	{
+		if (!source.ChildExist(childNodeList[i]))
+			return false;
+	}
+	return true;
 }
 
 MkDataNode& MkDataNode::__GetTemplateRoot(void)

@@ -545,11 +545,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\Source\MkCore_MkExcelFileReader.cpp"
+					RelativePath=".\Source\MkCore_MkExcelFileInterface.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\Include\MkCore_MkExcelFileReader.h"
+					RelativePath="..\..\Include\MkCore_MkExcelFileInterface.h"
 					>
 				</File>
 				<File
@@ -887,6 +887,14 @@
 				<Filter
 					Name="Converting interface"
 					>
+					<File
+						RelativePath=".\Source\MkCore_MkDataNodeToExcelConverter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\Include\MkCore_MkDataNodeToExcelConverter.h"
+						>
+					</File>
 					<File
 						RelativePath=".\Source\MkCore_MkDataNodeToMemoryConverter.cpp"
 						>

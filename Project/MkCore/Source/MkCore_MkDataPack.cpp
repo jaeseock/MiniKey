@@ -253,6 +253,24 @@ bool MkDataPack::Equals(const MkDataPack& source, const MkHashStr& key) const
 	return m_UnitTable.Exist(key) ? source.Equals(key, *m_UnitTable[key]) : false;
 }
 
+bool MkDataPack::SameForm(const MkDataPack& source) const
+{
+	if (GetUnitCount() != source.GetUnitCount())
+		return false;
+
+	MkArray<MkHashStr> myOwn;
+	GetUnitKeyList(myOwn);
+	MK_INDEXING_LOOP(myOwn, i)
+	{
+		const MkHashStr& currKey = myOwn[i];
+
+		if ((!source.IsValidKey(currKey)) ||
+			(GetUnitType(currKey) != source.GetUnitType(currKey)))
+			return false;
+	}
+	return true;
+}
+
 MkDataPack& MkDataPack::operator = (const MkDataPack& source)
 {
 	Clear();

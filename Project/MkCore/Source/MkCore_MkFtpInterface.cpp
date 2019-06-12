@@ -10,12 +10,13 @@
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkFtpInterface::Connect(const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password)
+bool MkFtpInterface::Connect(const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode)
 {
 	m_URL = url;
 	m_RemotePath = remotePath;
 	m_UserName = userName;
 	m_Password = password;
+	m_PassiveMode = passiveMode;
 
 	return Connect();
 }
@@ -30,7 +31,7 @@ bool MkFtpInterface::Connect(void)
 		if (m_Session == NULL)
 			break;
 
-		m_Connect = ::InternetConnect(m_Session, m_URL.GetPtr(), 21, m_UserName.GetPtr(), m_Password.GetPtr(), INTERNET_SERVICE_FTP, INTERNET_FLAG_PASSIVE , 0);
+		m_Connect = ::InternetConnect(m_Session, m_URL.GetPtr(), 21, m_UserName.GetPtr(), m_Password.GetPtr(), INTERNET_SERVICE_FTP, (m_PassiveMode) ? INTERNET_FLAG_PASSIVE : 0, 0);
 		if (m_Connect == NULL)
 			break;
 
@@ -221,6 +222,7 @@ MkFtpInterface::MkFtpInterface()
 {
 	m_Session = NULL;
 	m_Connect = NULL;
+	m_PassiveMode = true;
 }
 
 //------------------------------------------------------------------------------------------------//

@@ -28,10 +28,10 @@ void CMMDViewerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON2, m_BT_ReloadCurrentFile);
 	DDX_Control(pDX, IDC_RADIO1, m_RB_BinaryFile);
 	DDX_Control(pDX, IDC_RADIO2, m_RB_TextFile);
+	DDX_Control(pDX, IDC_RADIO3, m_RB_ExcelFile);
 	DDX_Control(pDX, IDC_BUTTON3, m_BT_OverwriteCurrentFile);
 	DDX_Control(pDX, IDC_BUTTON4, m_BT_SaveCurrentFileAs);
 	DDX_Control(pDX, IDC_CHECK1, m_CB_AutoBackup);
-	DDX_Control(pDX, IDC_BUTTON5, m_BT_OpenCurrentTextFile);
 	DDX_Control(pDX, IDC_BUTTON6, m_BT_OpenCurrentFolder);
 	DDX_Control(pDX, IDC_EDIT1, m_EB_HierarchyView);
 	DDX_Control(pDX, IDC_TREE1, m_TC_NodeView);
@@ -61,7 +61,6 @@ BEGIN_MESSAGE_MAP(CMMDViewerDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON2, &CMMDViewerDlg::OnBnClickedReloadCurrentFile)
 	ON_BN_CLICKED(IDC_BUTTON3, &CMMDViewerDlg::OnBnClickedOverwriteCurrentFile)
 	ON_BN_CLICKED(IDC_BUTTON4, &CMMDViewerDlg::OnBnClickedSaveCurrentFileAs)
-	ON_BN_CLICKED(IDC_BUTTON5, &CMMDViewerDlg::OnBnClickedOpenCurrentTextFile)
 	ON_BN_CLICKED(IDC_BUTTON6, &CMMDViewerDlg::OnBnClickedOpenCurrentFolder)
 	ON_NOTIFY(NM_RCLICK, IDC_TREE1, &CMMDViewerDlg::OnNMRClick)
 	ON_NOTIFY(TVN_SELCHANGED, IDC_TREE1, &CMMDViewerDlg::OnTvnSelchangedTree)
@@ -118,10 +117,10 @@ BOOL CMMDViewerDlg::OnInitDialog()
 	m_ToolTip.AddTool(GetDlgItem(IDC_BUTTON2), L"동일 경로의 파일을 다시 읽어들입니다.");
 	m_ToolTip.AddTool(GetDlgItem(IDC_RADIO1), L"파일 저장시 이진 포맷으로 저장합니다.");
 	m_ToolTip.AddTool(GetDlgItem(IDC_RADIO2), L"파일 저장시 텍스트 포맷으로 저장합니다.");
+	m_ToolTip.AddTool(GetDlgItem(IDC_RADIO2), L"파일 저장시 엑셀 포맷으로 저장합니다.");
 	m_ToolTip.AddTool(GetDlgItem(IDC_BUTTON3), L"기존 파일 경로에 덮어씁니다.");
 	m_ToolTip.AddTool(GetDlgItem(IDC_BUTTON4), L"새 경로에 파일을 저장합니다.");
 	m_ToolTip.AddTool(GetDlgItem(IDC_CHECK1), L"같은 이름의 파일이 존재하면 자동으로 백업 파일을 만듭니다.");
-	m_ToolTip.AddTool(GetDlgItem(IDC_BUTTON5), L"현재 파일을 별도의 텍스트 에디터로 엽니다.");
 	m_ToolTip.AddTool(GetDlgItem(IDC_BUTTON6), L"현재 작업중인 폴더를 엽니다.");
 	m_ToolTip.SetMaxTipWidth(300);
 	m_ToolTip.SetDelayTime(TTDT_AUTOPOP, 10000); // 10 secs
@@ -228,14 +227,6 @@ void CMMDViewerDlg::OnBnClickedSaveCurrentFileAs()
 	if (filePath.GetSaveFilePathFromDialog(m_hWnd))
 	{
 		_SaveTargetFile(m_DataNode, filePath, true);
-	}
-}
-
-void CMMDViewerDlg::OnBnClickedOpenCurrentTextFile()
-{
-	if (!m_CurrPath.Empty())
-	{
-		m_CurrPath.OpenFileInVerb();
 	}
 }
 
@@ -409,8 +400,7 @@ void CMMDViewerDlg::_ClearCurrentNode(void)
 {
 	m_DataNode.Clear();
 	m_CurrPath.Clear();
-	m_IsTextFile = false;
-
+	
 	m_EB_HierarchyView.SetWindowTextW(L"");
 }
 
@@ -459,11 +449,11 @@ void CMMDViewerDlg::_UpdateControlAvailable(void)
 
 	m_RB_BinaryFile.EnableWindow(enableFile);
 	m_RB_TextFile.EnableWindow(enableFile);
+	m_RB_ExcelFile.EnableWindow(enableFile);
 
 	m_BT_OverwriteCurrentFile.EnableWindow(enableFile);
 	m_BT_SaveCurrentFileAs.EnableWindow(enableFile);
 
-	m_BT_OpenCurrentTextFile.EnableWindow((m_IsTextFile) ? TRUE : FALSE);
 	m_BT_OpenCurrentFolder.EnableWindow(enableFile);
 }
 
@@ -524,7 +514,6 @@ void CMMDViewerDlg::_LoadTargetFile(const MkPathName& filePath)
 	if (m_DataNode.Load(filePath, result))
 	{
 		m_CurrPath = filePath;
-		m_IsTextFile = (result == MkDataNode::eLR_Text);
 
 		MkPathName::SetWorkingDirectory(m_CurrPath.GetPath());
 
@@ -541,8 +530,24 @@ void CMMDViewerDlg::_LoadTargetFile(const MkPathName& filePath)
 
 	m_TC_NodeView.Expand(m_TC_NodeView.GetRootItem(), TVE_EXPAND);
 
-	m_RB_BinaryFile.SetCheck((m_IsTextFile) ? FALSE : TRUE);
-	m_RB_TextFile.SetCheck((m_IsTextFile) ? TRUE : FALSE);
+	switch (result)
+	{
+	case MkDataNode::eLR_Text:
+		m_RB_BinaryFile.SetCheck(FALSE);
+		m_RB_TextFile.SetCheck(TRUE);
+		m_RB_ExcelFile.SetCheck(FALSE);
+		break;
+	case MkDataNode::eLR_Binary:
+		m_RB_BinaryFile.SetCheck(TRUE);
+		m_RB_TextFile.SetCheck(FALSE);
+		m_RB_ExcelFile.SetCheck(FALSE);
+		break;
+	case MkDataNode::eLR_Excel:
+		m_RB_BinaryFile.SetCheck(FALSE);
+		m_RB_TextFile.SetCheck(FALSE);
+		m_RB_ExcelFile.SetCheck(TRUE);
+		break;
+	}
 }
 
 void CMMDViewerDlg::_SaveTargetFile(const MkDataNode& node, const MkPathName& filePath, bool updateData)
@@ -588,16 +593,19 @@ void CMMDViewerDlg::_SaveTargetFile(const MkDataNode& node, const MkPathName& fi
 
 	// binary
 	bool ok = false;
-	if ((m_RB_BinaryFile.GetCheck() == TRUE) && (m_RB_TextFile.GetCheck() == FALSE))
+	if ((m_RB_BinaryFile.GetCheck() == TRUE) && (m_RB_TextFile.GetCheck() == FALSE) && (m_RB_ExcelFile.GetCheck() == FALSE))
 	{
 		ok = node.SaveToBinary(filePath);
-		m_IsTextFile = false;
 	}
 	// text
-	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == TRUE))
+	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == TRUE) && (m_RB_ExcelFile.GetCheck() == FALSE))
 	{
 		ok = node.SaveToText(filePath);
-		m_IsTextFile = true;
+	}
+	// excel
+	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == FALSE) && (m_RB_ExcelFile.GetCheck() == TRUE))
+	{
+		ok = node.SaveToExcel(filePath);
 	}
 	else
 		return;

@@ -35,7 +35,6 @@ public:
 	afx_msg void OnBnClickedReloadCurrentFile();
 	afx_msg void OnBnClickedOverwriteCurrentFile();
 	afx_msg void OnBnClickedSaveCurrentFileAs();
-	afx_msg void OnBnClickedOpenCurrentTextFile();
 	afx_msg void OnBnClickedOpenCurrentFolder();
 
 	afx_msg void OnNMRClick(NMHDR *pNMHDR, LRESULT *pResult);
@@ -62,15 +61,14 @@ protected:
 	MkWin32Application m_MkApplication;
 	MkDataNode m_DataNode;
 	MkPathName m_CurrPath;
-	bool m_IsTextFile;
-
+	
 	CButton m_BT_ReloadCurrentFile;
 	CButton m_RB_BinaryFile;
 	CButton m_RB_TextFile;
+	CButton m_RB_ExcelFile;
 	CButton m_BT_OverwriteCurrentFile;
 	CButton m_BT_SaveCurrentFileAs;
 	CButton m_CB_AutoBackup;
-	CButton m_BT_OpenCurrentTextFile;
 	CButton m_BT_OpenCurrentFolder;
 	CEdit m_EB_HierarchyView;
 	CNodeTreeCtrl m_TC_NodeView;

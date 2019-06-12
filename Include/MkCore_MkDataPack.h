@@ -130,6 +130,9 @@ public:
 	bool Equals(const MkHashStr& key, const MkDataUnitInterface& source) const;
 	bool Equals(const MkDataPack& source, const MkHashStr& key) const;
 
+	// 동일 unit type, key인지 판단. 값은 달라도 상관 없음
+	bool SameForm(const MkDataPack& source) const;
+
 	// 할당
 	MkDataPack& operator = (const MkDataPack& source);
 

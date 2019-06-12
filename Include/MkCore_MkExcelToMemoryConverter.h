@@ -15,7 +15,7 @@
 
 class MkPathName;
 class MkInterfaceForDataWriting;
-class MkExcelFileReader;
+class MkExcelFileInterface;
 
 class MkExcelToMemoryConverter
 {
@@ -30,22 +30,6 @@ public:
 
 protected:
 
-	class _CellPos
-	{
-	public:
-		inline _CellPos& operator = (const _CellPos& pos) { r = pos.r; c = pos.c; return *this; }
-		inline _CellPos operator + (const _CellPos& pos) const { return _CellPos(r + pos.r, c + pos.c); }
-		inline _CellPos& operator += (const _CellPos& pos) { r += pos.r; c += pos.c; return *this; }
-
-		_CellPos() { r = 0; c = 0; }
-		_CellPos(unsigned int ir, unsigned int ic) { r = ir; c = ic; }
-		_CellPos(const _CellPos& pos) { r = pos.r; c = pos.c; }
-
-	public:
-		unsigned int r; // row
-		unsigned int c; // column
-	};
-
 	typedef struct _SheetData
 	{
 		MkStr templateName; // table type sheet의 경우 자식 노드들에게 일괄적으로 적용될 템플릿명
@@ -58,14 +42,14 @@ protected:
 
 protected:
 
-	bool _BuildSheetData(MkExcelFileReader& reader);
+	bool _BuildSheetData(MkExcelFileInterface& reader);
 
-	bool _GetBaseValue(MkExcelFileReader& reader, const MkStr& position, const MkArray<MkStr>& availableList, MkStr& result) const;
+	bool _GetBaseValue(MkExcelFileInterface& reader, const MkStr& position, const MkArray<MkStr>& availableList, MkStr& result) const;
 
-	bool _ParseTable(MkExcelFileReader& reader, const MkStr& type, const MkStr& anchor, const MkStr& startPosition, SheetData& dest);
+	bool _ParseTable(MkExcelFileInterface& reader, const MkStr& type, const MkStr& anchor, const MkStr& startPosition, SheetData& dest);
 
-	unsigned int _GetRowCount(const MkExcelFileReader& reader, const _CellPos& startPos) const;
-	unsigned int _GetColumnCount(const MkExcelFileReader& reader, const _CellPos& startPos) const;
+	unsigned int _GetRowCount(const MkExcelFileInterface& reader, const MkUInt2& startPos) const;
+	unsigned int _GetColumnCount(const MkExcelFileInterface& reader, const MkUInt2& startPos) const;
 
 	bool _StringFilter(const MkStr& source, MkStr& buffer) const;
 	bool _StringFilter(const MkStr& source, MkArray<MkStr>& buffer) const;

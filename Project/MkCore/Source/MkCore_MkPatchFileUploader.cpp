@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------------------------//
 
 bool MkPatchFileUploader::StartUploading
-(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password)
+(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode)
 {
 	if (m_State != eReady)
 		return false;
@@ -105,8 +105,9 @@ bool MkPatchFileUploader::StartUploading
 	MK_DEV_PANEL.MsgToLog(L"  RemotePath : " + remotePath);
 	MK_DEV_PANEL.MsgToLog(L"  UserName : " + userName);
 	MK_DEV_PANEL.MsgToLog(L"  Password : " + password);
+	MK_DEV_PANEL.MsgToLog((passiveMode) ? L"  Passive mode" : L"  Active mode");
 
-	if (!m_FTP.Connect(url, remotePath, userName, password))
+	if (!m_FTP.Connect(url, remotePath, userName, password, passiveMode))
 	{
 		MK_DEV_PANEL.MsgToLog(L"  FTP 접속을 실패했습니다!");
 		MK_DEV_PANEL.InsertEmptyLine();

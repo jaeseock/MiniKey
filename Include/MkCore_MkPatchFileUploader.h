@@ -11,7 +11,7 @@ class MkPatchFileUploader
 {
 public:
 
-	bool StartUploading(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password);
+	bool StartUploading(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode);
 
 	bool Update(void);
 

@@ -28,6 +28,7 @@
 // - node <-> memory <-> binary data(tag + compressed data) <-> binary file(real/file system)
 //                   <-> text data(MkStr) <-> text file(real/file system)
 //                   <-  excel file(real)
+//         ->  excel file(real)
 //------------------------------------------------------------------------------------------------//
 
 #include "MkCore_MkSingleTypeTreePattern.h"
@@ -85,6 +86,9 @@ public:
 
 	// binary file로 출력
 	bool SaveToBinary(const MkPathName& filePath) const;
+
+	// excel file로 출력
+	bool SaveToExcel(const MkPathName& filePath) const;
 
 	//------------------------------------------------------------------------------------------------//
 	// 링크 수정은 템플릿 포맷이 보존되는 케이스만 허용
@@ -329,6 +333,9 @@ public:
 	// 템플릿 노드들이 등록된 순서대로 앞에 위치하고 일반 노드들이 철자별로 정렬되에 뒤에 위치
 	// validOnly 인자로 유효한 노드만 대상으로 할지 선정
 	void __GetClassifiedChildNodeNameList(MkArray<MkHashStr>& templateNodeList, MkArray<MkHashStr>& normalNodeList, bool validOnly = true) const;
+
+	// 유닛 type, key, 자식 노드들의 수와 key 동여부 반환
+	bool __SameForm(const MkDataNode& source) const;
 
 	// static table
 	static MkDataNode& __GetTemplateRoot(void);

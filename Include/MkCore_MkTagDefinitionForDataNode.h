@@ -14,6 +14,21 @@
 #define MKDEF_DNC_MSG_COMPLETE 0xfffffffe
 #define MKDEF_DNC_MSG_ERROR 0xffffffff
 
+#define MKDEF_EXCEL_SHEET_TYPE_POS L"B1"
+#define MKDEF_EXCEL_SHEET_ANCHOR_POS L"B2"
+#define MKDEF_EXCEL_SHEET_STARTPOSITION_POS L"B3"
+#define MKDEF_EXCEL_SHEET_DEF_STARTPOSITION L"C6"
+
+#define MKDEF_EXCEL_SHEET_COMMENT_TAG L"_"
+
+#define MKDEF_EXCEL_SHEET_ROOT_NAME L"ROOT"
+
+#define MKDEF_EXCEL_SHEET_SINGLE_TYPE L"Single"
+#define MKDEF_EXCEL_SHEET_TABLE_TYPE L"Table"
+
+#define MKDEF_EXCEL_SHEET_VERTICAL_ANCHOR L"Vertical"
+#define MKDEF_EXCEL_SHEET_HORIZONTAL_ANCHOR L"Horizontal"
+
 //------------------------------------------------------------------------------------------------//
 
 class MkTagDefinitionForDataNode
