@@ -306,7 +306,7 @@ int unzlocal_GetCurrentFileInfoInternal(unzFile file,
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkInterfaceForZipFileReading::SetUp(const MkPathName& filePath)
+bool MkInterfaceForZipFileReading::SetUp(const MkPathName& filePath, bool addRelativePathToKey)
 {
 	Clear();
 
@@ -318,7 +318,7 @@ bool MkInterfaceForZipFileReading::SetUp(const MkPathName& filePath)
 
 	MkPathName relPath = m_CurrentFilePath;
 	MkPathName dirPath;
-	if (relPath.ConvertToRootBasisRelativePath())
+	if (addRelativePathToKey && relPath.ConvertToRootBasisRelativePath())
 	{
 		dirPath = relPath.GetPath();
 		dirPath.ToLower();
@@ -340,24 +340,23 @@ bool MkInterfaceForZipFileReading::SetUp(const MkPathName& filePath)
 		char fileNameBuf[MAX_PATH] = {0,};
 		unz_file_info currInfo;
 		unzGetCurrentFileInfo(zipFile, &currInfo, fileNameBuf, MAX_PATH, NULL, 0, NULL, 0);
-		if ((currInfo.flag & 0x1) != 0x1) // 암호 걸린 파일은 무시
+		
+		MkPathName fileKey;
+		fileKey.ImportMultiByteString(std::string(fileNameBuf));
+		if (!fileKey.IsDirectoryPath()) // 디렉토리 경로는 무시
 		{
-			MkPathName fileKey;
-			fileKey.ImportMultiByteString(std::string(fileNameBuf));
-			if (!fileKey.IsDirectoryPath()) // 디렉토리 경로는 무시
-			{
-				fileKey.ReplaceKeyword(L"/", L"\\");
-				fileKey.ToLower();
+			fileKey.ReplaceKeyword(L"/", L"\\");
+			fileKey.ToLower();
 
-				MkPathName pathFromRoot = dirPath;
-				pathFromRoot += fileKey;
+			MkPathName pathFromRoot = dirPath;
+			pathFromRoot += fileKey;
 
-				_CompFileInfo& cfi = m_FileInfos.Create(pathFromRoot);
+			_CompFileInfo& cfi = m_FileInfos.Create(pathFromRoot);
 
-				unz_s* filePt = reinterpret_cast<unz_s*>(zipFile);
-				cfi.numFile = filePt->num_file;
-				cfi.posInCentralDir = filePt->pos_in_central_dir;
-			}
+			unz_s* filePt = reinterpret_cast<unz_s*>(zipFile);
+			cfi.numFile = filePt->num_file;
+			cfi.posInCentralDir = filePt->pos_in_central_dir;
+			cfi.needPassword = ((currInfo.flag & 0x1) == 0x1);
 		}
 
 		rlt = unzGoToNextFile(zipFile);
@@ -369,34 +368,12 @@ bool MkInterfaceForZipFileReading::SetUp(const MkPathName& filePath)
 
 unsigned int MkInterfaceForZipFileReading::Read(const MkPathName& filePath, MkByteArray& destBuffer)
 {
-	if (m_ZipFile == NULL)
-		return 0;
+	return _Read(filePath, MkStr::EMPTY, destBuffer);
+}
 
-	MkStr pathCopy = filePath;
-	pathCopy.ToLower();
-	MkHashStr pathKey = pathCopy;
-
-	if (!m_FileInfos.Exist(pathKey))
-		return 0;
-
-	unzFile zipFile = m_ZipFile;
-	const _CompFileInfo& cfi = m_FileInfos[pathKey];
-	unz_s* filePt = reinterpret_cast<unz_s*>(zipFile);
-	filePt->num_file = cfi.numFile;
-	filePt->pos_in_central_dir = cfi.posInCentralDir;
-	filePt->current_file_ok = 1;
-
-	unzlocal_GetCurrentFileInfoInternal(zipFile, &filePt->cur_file_info, &filePt->cur_file_info_internal, NULL, 0, NULL, 0, NULL, 0);
-	unzOpenCurrentFile(zipFile);
-
-	if (filePt->cur_file_info.uncompressed_size == 0)
-		return 0;
-
-	destBuffer.Fill(filePt->cur_file_info.uncompressed_size);
-	unzReadCurrentFile(zipFile, destBuffer.GetPtr(), destBuffer.GetSize());
-	unzCloseCurrentFile(zipFile);
-
-	return destBuffer.GetSize();
+unsigned int MkInterfaceForZipFileReading::Read(const MkPathName& filePath, const MkStr& password, MkByteArray& destBuffer)
+{
+	return _Read(filePath, password, destBuffer);
 }
 
 void MkInterfaceForZipFileReading::Clear(void)
@@ -414,6 +391,51 @@ void MkInterfaceForZipFileReading::Clear(void)
 MkInterfaceForZipFileReading::MkInterfaceForZipFileReading()
 {
 	m_ZipFile = NULL;
+}
+
+unsigned int MkInterfaceForZipFileReading::_Read(const MkPathName& filePath, const MkStr& password, MkByteArray& destBuffer)
+{
+	if (m_ZipFile == NULL)
+		return 0;
+
+	MkStr pathCopy = filePath;
+	pathCopy.ToLower();
+	MkHashStr pathKey = pathCopy;
+
+	if (!m_FileInfos.Exist(pathKey))
+		return 0;
+
+	unzFile zipFile = m_ZipFile;
+	const _CompFileInfo& cfi = m_FileInfos[pathKey];
+	if (cfi.needPassword && password.Empty())
+		return 0;
+
+	unz_s* filePt = reinterpret_cast<unz_s*>(zipFile);
+	filePt->num_file = cfi.numFile;
+	filePt->pos_in_central_dir = cfi.posInCentralDir;
+	filePt->current_file_ok = 1;
+
+	unzlocal_GetCurrentFileInfoInternal(zipFile, &filePt->cur_file_info, &filePt->cur_file_info_internal, NULL, 0, NULL, 0, NULL, 0);
+
+	if (cfi.needPassword)
+	{
+		std::string pw;
+		password.ExportMultiByteString(pw);
+		unzOpenCurrentFilePassword(zipFile, pw.c_str());
+	}
+	else
+	{
+		unzOpenCurrentFile(zipFile);
+	}
+
+	if (filePt->cur_file_info.uncompressed_size == 0)
+		return 0;
+
+	destBuffer.Fill(filePt->cur_file_info.uncompressed_size);
+	unzReadCurrentFile(zipFile, destBuffer.GetPtr(), destBuffer.GetSize());
+	unzCloseCurrentFile(zipFile);
+
+	return destBuffer.GetSize();
 }
 
 //------------------------------------------------------------------------------------------------//

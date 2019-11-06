@@ -117,6 +117,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkSound", "Project\MkSound\
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SealPackOperator", "Tool\SealPackOperator\SealPackOperator.vcproj", "{61CB513F-4322-425D-84A1-806C6E7D1E4A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -262,6 +267,12 @@ Global
 		{B9A5CD10-E007-4D82-8CE4-D6BD8110B38B}.Release|Win32.Build.0 = Release|Win32
 		{B9A5CD10-E007-4D82-8CE4-D6BD8110B38B}.Shipping|Win32.ActiveCfg = Shipping|Win32
 		{B9A5CD10-E007-4D82-8CE4-D6BD8110B38B}.Shipping|Win32.Build.0 = Shipping|Win32
+		{61CB513F-4322-425D-84A1-806C6E7D1E4A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{61CB513F-4322-425D-84A1-806C6E7D1E4A}.Debug|Win32.Build.0 = Debug|Win32
+		{61CB513F-4322-425D-84A1-806C6E7D1E4A}.Release|Win32.ActiveCfg = Release|Win32
+		{61CB513F-4322-425D-84A1-806C6E7D1E4A}.Release|Win32.Build.0 = Release|Win32
+		{61CB513F-4322-425D-84A1-806C6E7D1E4A}.Shipping|Win32.ActiveCfg = Release|Win32
+		{61CB513F-4322-425D-84A1-806C6E7D1E4A}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

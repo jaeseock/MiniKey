@@ -210,12 +210,15 @@ bool MkFileChunk::GetBlockInfo(unsigned int blockIndex, MkDataNode& directoryNod
 	if (block.Available())
 	{
 		MkPathName filePath = block.GetRelativeFilePath();
+
+		MkByteArray emptyMD5;
 		MkDataNode* fileNode = filePath.GetFileName().__CreateFileStructureInfo
 			(directoryNode,
 			block.GetBlockState() == MkFileBlock::eCompressed,
 			block.GetUncompressedSize(),
 			block.GetDataSize(),
-			block.GetWrittenTime());
+			block.GetWrittenTime(),
+			emptyMD5);
 
 		// chunk & block 정보 기록
 		if (includeChunkInfo && (fileNode != NULL))

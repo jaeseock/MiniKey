@@ -1,6 +1,7 @@
 
 #include <ShlObj.h>
 #include <atltime.h>
+#include <wincrypt.h>
 #include "MkCore_MkCheck.h"
 #include "MkCore_MkHashMap.h"
 #include "MkCore_MkHashStr.h"
@@ -35,7 +36,7 @@ public:
 			targetPath.ConvertToRootBasisAbsolutePath(startPath);
 			if (targetPath.CheckAvailable())
 			{
-				_ScoutDirectory(targetPath, includeSubDirectory, NULL);
+				_ScoutDirectory(targetPath, includeSubDirectory, NULL, false);
 				totalFileSize = m_TotalFileSize;
 				return m_TotalFileCount;
 			}
@@ -47,7 +48,7 @@ public:
 	// startPath : 탐색을 시작할 디렉토리 경로
 	// node : 정보가 담길 data node
 	// 반환 값은 소속 파일이 마지막으로 수정된 시간
-	unsigned int ScoutDirectory(const MkPathName& startPath, MkDataNode& node)
+	unsigned int ScoutDirectory(const MkPathName& startPath, MkDataNode& node, bool useMD5)
 	{
 		if (startPath.IsDirectoryPath())
 		{
@@ -56,7 +57,7 @@ public:
 			if (targetPath.CheckAvailable())
 			{
 				node.Clear();
-				_ScoutDirectory(targetPath, true, &node);
+				_ScoutDirectory(targetPath, true, &node, useMD5);
 				return m_HighestWrittenTime;
 			}
 		}
@@ -73,7 +74,7 @@ public:
 protected:
 	
 	// currentDirectoryPath는 존재하는 디렉토리 절대 경로
-	void _ScoutDirectory(const MkPathName& currentDirectoryPath, bool includeSubDirectory, MkDataNode* node)
+	void _ScoutDirectory(const MkPathName& currentDirectoryPath, bool includeSubDirectory, MkDataNode* node, bool useMD5)
 	{
 		// 최초 핸들 얻음
 		WIN32_FIND_DATA fd;
@@ -112,7 +113,13 @@ protected:
 								m_HighestWrittenTime = writtenTime;
 							}
 
-							if (fileName.__CreateFileStructureInfo(*node, false, fd.nFileSizeLow, 0, writtenTime) != NULL)
+							MkByteArray md5Value;
+							if (useMD5)
+							{
+								MK_CHECK(targetPath.GetMD5Value(md5Value), targetPath + L" 파일 MD5 값 검출 실패") {}
+							}
+
+							if (fileName.__CreateFileStructureInfo(*node, false, fd.nFileSizeLow, 0, writtenTime, md5Value) != NULL)
 							{
 								MkPathName::__IncreaseFileCount(*node);
 							}
@@ -134,7 +141,7 @@ protected:
 						MkPathName targetPath = currentDirectoryPath;
 						targetPath += targetName;
 						targetPath += L"\\";
-						_ScoutDirectory(targetPath, includeSubDirectory, childNode); // 재귀
+						_ScoutDirectory(targetPath, includeSubDirectory, childNode, useMD5); // 재귀
 
 						if (childNode != NULL)
 						{
@@ -446,6 +453,59 @@ void MkPathName::SplitPath(MkPathName& path, MkStr& name, MkStr& extension) cons
 	{
 		ext.GetSubStr(MkArraySection(1), extension);
 	}
+}
+
+bool MkPathName::GetMD5Value(MkByteArray& value) const
+{
+	value.Clear();
+	if (IsDirectoryPath())
+		return false;
+
+	MkByteArray fileData;
+	MkInterfaceForFileReading frInterface;
+	if (!frInterface.SetUp(*this))
+		return false;
+
+	frInterface.Read(fileData, MkArraySection(0));
+	frInterface.Clear();
+
+	HCRYPTPROV hProv = NULL;
+	HCRYPTHASH hHash = NULL;
+
+	do
+	{
+		if (!CryptAcquireContext(&hProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+			break;
+
+		if (!CryptCreateHash(hProv, CALG_MD5, 0, 0, &hHash))
+			break;
+
+		if (!fileData.Empty())
+		{
+			if (!CryptHashData(hHash, fileData.GetPtr(), fileData.GetSize(), 0))
+				break;
+		}
+
+		BYTE tmpValue[16];
+		DWORD hashCount = 16;
+		if (!CryptGetHashParam(hHash, HP_HASHVAL, tmpValue, &hashCount, 0))
+			break;
+
+		value.PushBack(MkMemoryBlockDescriptor<unsigned char>(tmpValue, hashCount));
+	}
+	while (false);
+
+	if (hHash != NULL)
+	{
+		CryptDestroyHash(hHash);
+	}
+
+	if (hProv != NULL)
+	{
+		CryptReleaseContext(hProv, 0);
+	}
+
+	return (!value.Empty());
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -1173,10 +1233,10 @@ bool MkPathName::GetDirectoryPathFromDialog(const MkStr& msg, HWND owner, const 
 
 //------------------------------------------------------------------------------------------------//
 
-unsigned int MkPathName::ExportSystemStructure(MkDataNode& node) const
+unsigned int MkPathName::ExportSystemStructure(MkDataNode& node, bool useMD5) const
 {
 	__DirectoryScouter scouter;
-	return scouter.ScoutDirectory(*this, node);
+	return scouter.ScoutDirectory(*this, node, useMD5);
 }
 
 void MkPathName::__GetSubDirectories(const MkDataNode& node, MkArray<MkHashStr>& subDirs)
@@ -1208,6 +1268,15 @@ unsigned int MkPathName::__CountTotalFiles(const MkDataNode& node)
 
 bool MkPathName::__CheckFileDifference(const MkDataNode& lastFileNode, MkDataNode& currFileNode)
 {
+	// 둘 모두 MD5값이 있으면 우선 비교
+	if (lastFileNode.IsValidKey(KeyMD5) && currFileNode.IsValidKey(KeyMD5))
+	{
+		MkByteArray lastMD5, currMD5;
+		lastFileNode.GetData(KeyMD5, lastMD5, 0);
+		currFileNode.GetData(KeyMD5, currMD5, 0);
+		return (lastMD5 != currMD5);
+	}
+
 	MkArray<unsigned int> size0(2);
 	unsigned int wt0 = 0;
 	if (!lastFileNode.GetData(KeyFileSize, size0))
@@ -1229,7 +1298,7 @@ bool MkPathName::__CheckFileDifference(const MkDataNode& lastFileNode, MkDataNod
 }
 
 MkDataNode* MkPathName::__CreateFileStructureInfo
-(MkDataNode& node, bool compressed, unsigned int origSize, unsigned int compSize, unsigned int writtenTime)
+(MkDataNode& node, bool compressed, unsigned int origSize, unsigned int compSize, unsigned int writtenTime, const MkByteArray& md5Value)
 {
 	if (Empty() || IsDirectoryPath())
 		return NULL;
@@ -1257,6 +1326,13 @@ MkDataNode* MkPathName::__CreateFileStructureInfo
 		// 수정 시간
 		if (!fileNode->CreateUnit(KeyWrittenTime, writtenTime))
 			break;
+
+		// MD5
+		if (!md5Value.Empty())
+		{
+			if (!fileNode->CreateUnit(KeyMD5, md5Value))
+				break;
+		}
 
 		return fileNode;
 	}
@@ -1329,9 +1405,17 @@ void MkPathName::_UpdateCurrentPath(const MkPathName& basePath, const MkPathName
 
 bool MkPathName::_CheckOnSameDevice(const MkPathName& basePath, const MkPathName& targetPath) const
 {
-	const wchar_t& b0 = basePath.GetAt(0);
+	MkStr b0Buf = basePath.GetAt(0);
+	b0Buf.ToLower();
+	const wchar_t& b0 = b0Buf.GetAt(0);
+
+	MkStr t0Buf = targetPath.GetAt(0);
+	t0Buf.ToLower();
+	const wchar_t& t0 = t0Buf.GetAt(0);
+
 	const wchar_t& b1 = basePath.GetAt(1);
-	if ((b0 == targetPath.GetAt(0)) && (b1 == targetPath.GetAt(1))) // 처음 두 문자가 일치
+
+	if ((b0 == t0) && (b1 == targetPath.GetAt(1))) // 처음 두 문자가 일치
 	{
 		// 네트워크 경로인 경우 장치명 확인
 		if ((b0 == L'\\') && (b1 == L'\\')) 
@@ -1397,15 +1481,22 @@ bool MkPathName::_ConvertToRelativePath(const MkPathName& basePath)
 						break;
 				}
 
-				// 완전한 basePath 하위가 아닌데도 모든 구간이 일치하는 경우는 현 경로가 확장자 없는 파일명인 케이스
-				// ex> basePath == L"d:\\a\\b\\", currPath == L"d:\\a\\b
 				if (baseCount == index)
 				{
-					assert(baseCount > 1); // upstair 탐색이 가능하려면 최소한 장치명 포함, 구간이 2개 이상이어야 함
-
-					Flush();
-					*this += L"..\\";
-					*this += currTokens[currCount - 1];
+					if (baseCount == 1)
+					{
+						// 장치명만 동일
+						// ex> basePath == L"d:\\", currPath == L"d:\\a\\b
+						PopFront(baseTokens[0].GetSize() + 1);
+					}
+					else
+					{
+						// 완전한 basePath 하위가 아닌데도 모든 구간이 일치하는 경우는 현 경로가 확장자 없는 파일명인 케이스
+						// ex> basePath == L"d:\\a\\b\\", currPath == L"d:\\a\\b
+						Flush();
+						*this += L"..\\";
+						*this += currTokens[currCount - 1];
+					}
 				}
 				else
 				{

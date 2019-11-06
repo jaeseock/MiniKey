@@ -88,6 +88,7 @@ const MkHashStr MkPathName::KeyFileCount(L"#FC");
 const MkHashStr MkPathName::KeyDirCount(L"#DC");
 const MkHashStr MkPathName::KeyFileSize(L"#SZ");
 const MkHashStr MkPathName::KeyWrittenTime(L"#WT");
+const MkHashStr MkPathName::KeyMD5(L"#MD5");
 
 // MkPrimitiveDataType
 ePrimitiveDataType MkPrimitiveDataType::GetEnum(const MkStr& tag)

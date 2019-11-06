@@ -113,6 +113,10 @@ public:
 	// ex> (L"test\\.txt").SplitPath(path, name, extension) -> path == L"test\\", name == L"", extension == L".txt"
 	void SplitPath(MkPathName& path, MkStr& name, MkStr& extension) const;
 
+	// 파일에 대한 MD5 값 반환
+	// (out) value : 결과값. 문자열 형태로 보려면 MkStr::ImportByteArray() 사용
+	bool GetMD5Value(MkByteArray& value) const;
+
 	//------------------------------------------------------------------------------------------------//
 	// 경로 필터 처리용 유틸리티
 	//------------------------------------------------------------------------------------------------//
@@ -464,13 +468,14 @@ public:
 	// 해당 디렉토리 경로에 속한 모든 파일, 디렉토리 정보를 data node에 출력
 	// 크기가 4G가 넘는 단일 파일과 하위에 아무것도 없는 디렉토리는 제외함
 	// (out) node : 출력 노드
+	// (int) useMD5 : MD5값 기록 여부
 	// return : 소속 파일이 마지막으로 수정된 시간
 	// ex>
 	//	MkPathName path = L"D:\\Docs\\";
 	//	MkDataNode node;
 	//	unsigned int wt = path.ExportSystemStructure(node);
 	//	node.SaveToText(MkStr(wt) + L".txt");
-	unsigned int ExportSystemStructure(MkDataNode& node) const;
+	unsigned int ExportSystemStructure(MkDataNode& node, bool useMD5 = false) const;
 
 	// node의 하위에 존재하는 디렉토리 key 반환
 	static void __GetSubDirectories(const MkDataNode& node, MkArray<MkHashStr>& subDirs);
@@ -489,18 +494,20 @@ public:
 	// 같으면 currFileNode의 size정보를 lastFileNode와 동일하게 맞춤(lastFileNode는 압축 크기 정보 복사)
 	static bool __CheckFileDifference(const MkDataNode& lastFileNode, MkDataNode& currFileNode);
 
-	// 파일명을 node name으로 생성해 크기(KeyFileSize), 수정시간(KeyWrittenTime) 기록
+	// 파일명을 node name으로 생성해 크기(KeyFileSize), 수정시간(KeyWrittenTime), MD5값(KeyMD5) 기록
 	// (out) node : 파일이 존재하는 디렉토리 node
 	// (in) compressed : 압축 여부
 	// (in) origSize : 원본 파일 크기
 	// (in) compSize : compressed가 true일 경우 압축 후 크기
 	// (in) writtenTime : 파일 수정시간
+	// (in) md5Value : MD5 값
 	// return : 생성된 노드 포인터
 	// ex 0>
 	//	Node "28.mp3"
 	//	{
 	//		uint SZ = 1930819;
 	//		uint WT = 534955830;
+	//		bar MD5 = "5D37602D03F5D1D4490EC3C497B09D79";
 	//	}
 	// ex 1>
 	//	Node "datanode_00.bin"
@@ -509,7 +516,7 @@ public:
 	//			2080 / 701;
 	//		uint WT = 534955830;
 	//	}
-	MkDataNode* __CreateFileStructureInfo(MkDataNode& node, bool compressed, unsigned int origSize, unsigned int compSize, unsigned int writtenTime);
+	MkDataNode* __CreateFileStructureInfo(MkDataNode& node, bool compressed, unsigned int origSize, unsigned int compSize, unsigned int writtenTime, const MkByteArray& md5Value);
 
 	//------------------------------------------------------------------------------------------------//
 
@@ -553,6 +560,7 @@ public:
 	static const MkHashStr KeyDirCount;
 	static const MkHashStr KeyFileSize;
 	static const MkHashStr KeyWrittenTime;
+	static const MkHashStr KeyMD5;
 };
 
 #endif

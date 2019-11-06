@@ -16,6 +16,67 @@ Node "FontResource"
 		// }
 		
 		str DefaultType = "¸¼Àº°íµñ";
+
+		Node "¹èÂî"
+		{
+			str FontFilePath = "Text\Bazzi.ttf";
+
+			Node "DefaultT" // duty
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 14;
+				int thickness = 0;
+			}
+			
+			Node "Small"
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 12;
+				int thickness = 0;
+			}
+			
+			Node "SmallBold"
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 12;
+				int thickness = 2;
+			}
+			
+			Node "Medium"
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 14;
+				int thickness = 0;
+			}
+			
+			Node "MediumBold"
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 14;
+				int thickness = 2;
+			}
+			
+			Node "Large"
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 16;
+				int thickness = 0;
+			}
+			
+			Node "LargeBold"
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 16;
+				int thickness = 2;
+			}
+			
+			Node "Special"
+			{
+				str face = "¹èÂîÃ¼";
+				uint size = 20;
+				int thickness = 2;
+			}
+		}
 			
 		Node "¸¼Àº°íµñ"
 		{

@@ -24,8 +24,9 @@ public:
 
 	// 초기화 (파일 오픈 후 대기)
 	// (in) filePath : 읽을 zip파일의 절대 혹은 root directory기준 상대 경로
+	// (in) addRelativePathToKey : zip파일 내 리스트에 root directory기준 상대 경로를 덧붙힐지 여부
 	// return : 파일오픈 성공여부
-	bool SetUp(const MkPathName& filePath);
+	bool SetUp(const MkPathName& filePath, bool addRelativePathToKey = true);
 
 	// 읽기 유효성 반환
 	inline bool IsValid(void) const { return (m_ZipFile != NULL); }
@@ -39,9 +40,11 @@ public:
 	// 메모리 블록으로 압축 풀린 원본 데이터를 읽어들임
 	// SetUp() ~ Clear() 사이에서 복수 호출 가능
 	// (in) filePath : 읽어들일 파일의 root directory기준 상대 경로
+	// (in) password : 암호화 파일의 경우 해당 암호
 	// (in) destBuffer : 읽어들인 데이터가 담길 byte array
 	// return : 실제 읽어들인 크기
 	unsigned int Read(const MkPathName& filePath, MkByteArray& destBuffer);
+	unsigned int Read(const MkPathName& filePath, const MkStr& password, MkByteArray& destBuffer);
 
 	// 파일 닫음
 	void Clear(void);
@@ -58,8 +61,11 @@ protected:
 	{
 		uLong posInCentralDir;
 		uLong numFile;
+		bool needPassword;
 	}
 	_CompFileInfo;
+
+	unsigned int _Read(const MkPathName& filePath, const MkStr& password, MkByteArray& destBuffer);
 
 protected:
 
