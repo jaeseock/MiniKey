@@ -117,7 +117,7 @@ public:
 	inline wchar_t* GetPtr(void) { return m_Str.GetPtr(); }
 	inline const wchar_t* GetPtr(void) const { return m_Str.GetPtr(); }
 
-	inline bool Equals(unsigned int position, const MkHashStr& str) const { return m_Str.Equals(position, str.GetString()); }
+	inline bool Equals(unsigned int position, const MkHashStr& str) const { return (m_HashKey == str.GetHashKey()) && m_Str.Equals(position, str.GetString()); }
 
 	inline const MkStr& GetString(void) const { return m_Str; }
 
