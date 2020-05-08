@@ -1,0 +1,1 @@
+_fxc.exe /T fx_2_0 /Fo ..\obj_1D_2PassToon.fxo obj_1D_2PassToon.fx

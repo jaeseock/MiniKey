@@ -1,0 +1,12 @@
+
+texture baseTex : TEXTURE0;
+texture addTex : TEXTURE1 <string path = "../s01.jpg";>;
+sampler baseMap = sampler_state { Texture = (baseTex); };
+sampler addMap = sampler_state { Texture = (addTex); };
+
+float4 PS(float2 uv : TEXCOORD0) : COLOR
+{
+	float4 baseColor = tex2D(baseMap, uv);
+	float4 addColor = tex2D(addMap, uv);
+	return float4(baseColor.rgb * addColor.rgb * 0.5f, baseColor.a);
+}

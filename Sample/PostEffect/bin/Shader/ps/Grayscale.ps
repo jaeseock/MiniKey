@@ -1,0 +1,14 @@
+
+float blendingWeight : UDP = 1.f;
+
+texture baseTex : TEXTURE0;
+sampler baseMap = sampler_state { Texture = (baseTex); };
+
+float4 PS(float2 uv : TEXCOORD0) : COLOR
+{
+  float4 baseColor = tex2D(baseMap, uv);
+  float luminance = 0.299f * baseColor.r + 0.587f * baseColor.g + 0.114f * baseColor.b;
+  float3 offset = (float3(luminance, luminance, luminance) - baseColor.rgb) * blendingWeight;
+  
+  return float4(baseColor.rgb + offset, baseColor.a);
+}

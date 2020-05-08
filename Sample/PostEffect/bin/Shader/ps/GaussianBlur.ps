@@ -1,0 +1,36 @@
+
+// linear sampling
+// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+
+const float c_Offset[4] = {0.f, 1.384615f, 3.230769f, 5.f};
+const float c_Weight[4] = {0.2f, 0.1f, 0.065f, 0.035f};
+
+float2 s_MapSize : SCRSIZE;
+float blendingWeight : UDP = 1.f;
+
+texture baseTex : TEXTURE0;
+sampler baseMap = sampler_state { Texture = (baseTex); };
+
+float4 PS(float2 uv : TEXCOORD0) : COLOR
+{
+  float4 baseColor = tex2D(baseMap, uv);
+  float4 fragmentColor = baseColor * c_Offset[0];
+
+  for (int i=1; i<4; i++)
+  {
+    float blendOffset = c_Offset[i] * blendingWeight;
+    float xOffset = blendOffset / s_MapSize.r;
+    float yOffset = blendOffset / s_MapSize.g;
+
+    fragmentColor += tex2D(baseMap, uv + float2(xOffset, 0.f)) * c_Weight[i];
+    fragmentColor += tex2D(baseMap, uv - float2(xOffset, 0.f)) * c_Weight[i];
+    fragmentColor += tex2D(baseMap, uv + float2(0.f, yOffset)) * c_Weight[i];
+    fragmentColor += tex2D(baseMap, uv - float2(0.f, yOffset)) * c_Weight[i];
+  }
+	//float ss = s_MapSize.y / 768.f * 0.5f;
+
+  return fragmentColor;
+//return float4(ss, ss, ss, 1.f);
+}
+
+// approximately 39 instruction slots used (9 texture, 30 arithmetic)
