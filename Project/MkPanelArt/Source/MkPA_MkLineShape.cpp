@@ -237,7 +237,7 @@ void MkLineShape::__Update(const MkSceneTransform* parentTransform)
 		}
 		else // 자체 transform이 없으므로 부모 노드의 것을 그대로 사용
 		{
-			parentTransform->GetWorldVertices(m_LocalVertices, m_WorldVertices);
+			parentTransform->GetWorldVertices(m_LocalVertices, m_WorldVertices, false);
 			m_WorldDepth += parentTransform->GetWorldDepth();
 		}
 

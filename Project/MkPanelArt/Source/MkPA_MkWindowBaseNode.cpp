@@ -39,7 +39,7 @@ void MkWindowBaseNode::UpdateCursorInput
 {
 	if (cursorInside)
 	{
-		if (IsQuadForm())
+		if (GetEnable() && IsQuadForm())
 		{
 			switch (leftBS)
 			{
@@ -58,58 +58,70 @@ void MkWindowBaseNode::UpdateCursorInput
 
 		if (!m_CursorInside)
 		{
-			_SetTooltipVisible(true);
+			if (GetEnable())
+			{
+				_SetTooltipVisible(true);
+			}
 
 			StartNodeReportTypeEvent(ePA_SNE_CursorEntered, NULL);
 		}
 
-		switch (leftBS)
+		if (GetEnable())
 		{
-		case eBS_Released:
-			_StartCursorReport(ePA_SNE_CursorLBtnReleased, position);
+			switch (leftBS)
+			{
+			case eBS_Released:
+				_StartCursorReport(ePA_SNE_CursorLBtnReleased, position);
+				m_HoldingEventType = ePA_SNE_None;
+				break;
+			case eBS_Pressed:
+				_StartCursorReport(ePA_SNE_CursorLBtnPressed, position);
+				_StartHoldingCheck(ePA_SNE_CursorLBtnHold, position);
+				break;
+			case eBS_DoubleClicked:
+				_StartCursorReport(ePA_SNE_CursorLBtnDBClicked, position);
+				_StartHoldingCheck(ePA_SNE_CursorLBtnHold, position);
+				break;
+			}
+
+			switch (middleBS)
+			{
+			case eBS_Released:
+				_StartCursorReport(ePA_SNE_CursorMBtnReleased, position);
+				m_HoldingEventType = ePA_SNE_None;
+				break;
+			case eBS_Pressed:
+				_StartCursorReport(ePA_SNE_CursorMBtnPressed, position);
+				_StartHoldingCheck(ePA_SNE_CursorMBtnHold, position);
+				break;
+			case eBS_DoubleClicked:
+				_StartCursorReport(ePA_SNE_CursorMBtnDBClicked, position);
+				_StartHoldingCheck(ePA_SNE_CursorMBtnHold, position);
+				break;
+			}
+
+			switch (rightBS)
+			{
+			case eBS_Released:
+				_StartCursorReport(ePA_SNE_CursorRBtnReleased, position);
+				m_HoldingEventType = ePA_SNE_None;
+				break;
+			case eBS_Pressed:
+				_StartCursorReport(ePA_SNE_CursorRBtnPressed, position);
+				_StartHoldingCheck(ePA_SNE_CursorRBtnHold, position);
+				break;
+			case eBS_DoubleClicked:
+				_StartCursorReport(ePA_SNE_CursorRBtnDBClicked, position);
+				_StartHoldingCheck(ePA_SNE_CursorRBtnHold, position);
+				break;
+			}
+		}
+		else
+		{
 			m_HoldingEventType = ePA_SNE_None;
-			break;
-		case eBS_Pressed:
-			_StartCursorReport(ePA_SNE_CursorLBtnPressed, position);
-			_StartHoldingCheck(ePA_SNE_CursorLBtnHold, position);
-			break;
-		case eBS_DoubleClicked:
-			_StartCursorReport(ePA_SNE_CursorLBtnDBClicked, position);
-			_StartHoldingCheck(ePA_SNE_CursorLBtnHold, position);
-			break;
 		}
 
-		switch (middleBS)
-		{
-		case eBS_Released:
-			_StartCursorReport(ePA_SNE_CursorMBtnReleased, position);
-			m_HoldingEventType = ePA_SNE_None;
-			break;
-		case eBS_Pressed:
-			_StartCursorReport(ePA_SNE_CursorMBtnPressed, position);
-			_StartHoldingCheck(ePA_SNE_CursorMBtnHold, position);
-			break;
-		case eBS_DoubleClicked:
-			_StartCursorReport(ePA_SNE_CursorMBtnDBClicked, position);
-			_StartHoldingCheck(ePA_SNE_CursorMBtnHold, position);
-			break;
-		}
-
-		switch (rightBS)
-		{
-		case eBS_Released:
-			_StartCursorReport(ePA_SNE_CursorRBtnReleased, position);
-			m_HoldingEventType = ePA_SNE_None;
-			break;
-		case eBS_Pressed:
-			_StartCursorReport(ePA_SNE_CursorRBtnPressed, position);
-			_StartHoldingCheck(ePA_SNE_CursorRBtnHold, position);
-			break;
-		case eBS_DoubleClicked:
-			_StartCursorReport(ePA_SNE_CursorRBtnDBClicked, position);
-			_StartHoldingCheck(ePA_SNE_CursorRBtnHold, position);
-			break;
-		}
+		
 
 		// holding check
 		if ((m_HoldingEventType == ePA_SNE_CursorLBtnHold) || (m_HoldingEventType == ePA_SNE_CursorMBtnHold) || (m_HoldingEventType == ePA_SNE_CursorRBtnHold))
@@ -130,7 +142,7 @@ void MkWindowBaseNode::UpdateCursorInput
 			_StartCursorReport(ePA_SNE_CursorMoved, position);
 		}
 
-		if (wheelDelta != 0)
+		if (GetEnable() && (wheelDelta != 0))
 		{
 			MkDataNode arg;
 			arg.CreateUnit(MkWindowBaseNode::ArgKey_WheelDelta, wheelDelta);
@@ -139,7 +151,7 @@ void MkWindowBaseNode::UpdateCursorInput
 	}
 	else
 	{
-		if (IsQuadForm())
+		if (GetEnable() && IsQuadForm())
 		{
 			SetFormState(MkWindowThemeFormData::eS_Normal);
 		}
@@ -156,19 +168,25 @@ void MkWindowBaseNode::UpdateCursorInput
 
 void MkWindowBaseNode::Activate(void)
 {
-	SetFormState(MkWindowThemeFormData::eS_Default);
+	if (GetEnable())
+	{
+		SetFormState(MkWindowThemeFormData::eS_Default);
+	}
 }
 
 void MkWindowBaseNode::Deactivate(void)
 {
 	_SetTooltipVisible(false);
 
-	SetFormState(MkWindowThemeFormData::eS_Default);
+	if (GetEnable())
+	{
+		SetFormState(MkWindowThemeFormData::eS_Default);
+	}
 }
 
 void MkWindowBaseNode::OnFocus(void)
 {
-	if (IsDualForm())
+	if (GetEnable() && IsDualForm())
 	{
 		SetFormState(MkWindowThemeFormData::eS_Front);
 	}
@@ -176,7 +194,7 @@ void MkWindowBaseNode::OnFocus(void)
 
 void MkWindowBaseNode::LostFocus(void)
 {
-	if (IsDualForm())
+	if (GetEnable() && IsDualForm())
 	{
 		SetFormState(MkWindowThemeFormData::eS_Back);
 	}

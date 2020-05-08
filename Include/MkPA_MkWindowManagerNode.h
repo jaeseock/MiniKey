@@ -44,6 +44,9 @@ public:
 	// 현재 프레임의 활성화 여부 반환
 	bool IsActivating(const MkHashStr& windowName) const;
 
+	// 현재 모달 윈도우 활성화 여부 반환
+	inline bool IsModalWindowActivating(void) const { return (!m_ModalWindow.Empty()); }
+
 	// 최상위 윈도우 여부 반환(modal 이거나 첫번째 activating window)
 	MkHashStr GetFrontWindowName(void) const;
 

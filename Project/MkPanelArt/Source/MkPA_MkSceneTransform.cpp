@@ -66,10 +66,12 @@ void MkSceneTransform::ClearLocalTransform(void)
 	m_LocalAlpha = 1.f;
 }
 
-void MkSceneTransform::GetWorldVertices(const MkArray<MkFloat2>& localVertices, MkArray<MkFloat2>& worldVertices) const
+void MkSceneTransform::GetWorldVertices(const MkArray<MkFloat2>& localVertices, MkArray<MkFloat2>& worldVertices, bool roundOffPosition) const
 {
 	if (!localVertices.Empty())
 	{
+		MkFloat2 worldPosition = (roundOffPosition) ? MkFloat2(MkFloatOp::RoundingOff(m_WorldPosition.x), MkFloatOp::RoundingOff(m_WorldPosition.y)) : m_WorldPosition;
+
 		worldVertices.Fill(localVertices.GetSize());
 
 		float cosR = (m_WorldRotation == 0.f) ? 1.f : MkAngleOp::Cos(m_WorldRotation);
@@ -80,32 +82,34 @@ void MkSceneTransform::GetWorldVertices(const MkArray<MkFloat2>& localVertices, 
 			const MkFloat2& localVertex = localVertices[i];
 			MkFloat2& worldVertex = worldVertices[i];
 
-			worldVertex.x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
-			worldVertex.y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+			worldVertex.x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, worldPosition);
+			worldVertex.y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, worldPosition);
 		}
 	}
 }
 
-void MkSceneTransform::GetWorldVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const
+void MkSceneTransform::GetWorldVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName], bool roundOffPosition) const
 {
+	MkFloat2 worldPosition = (roundOffPosition) ? MkFloat2(MkFloatOp::RoundingOff(m_WorldPosition.x), MkFloatOp::RoundingOff(m_WorldPosition.y)) : m_WorldPosition;
+
 	float cosR = (m_WorldRotation == 0.f) ? 1.f : MkAngleOp::Cos(m_WorldRotation);
 	float sinR = (m_WorldRotation == 0.f) ? 0.f : MkAngleOp::Sin(m_WorldRotation);
 
 	MkFloat2 localVertex = rect.GetAbsolutePosition(MkFloatRect::eLeftTop, false);
-	vertices[MkFloatRect::eLeftTop].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
-	vertices[MkFloatRect::eLeftTop].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+	vertices[MkFloatRect::eLeftTop].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, worldPosition);
+	vertices[MkFloatRect::eLeftTop].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, worldPosition);
 
 	localVertex = rect.GetAbsolutePosition(MkFloatRect::eRightTop, false);
-	vertices[MkFloatRect::eRightTop].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
-	vertices[MkFloatRect::eRightTop].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+	vertices[MkFloatRect::eRightTop].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, worldPosition);
+	vertices[MkFloatRect::eRightTop].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, worldPosition);
 
 	localVertex = rect.GetAbsolutePosition(MkFloatRect::eLeftBottom, false);
-	vertices[MkFloatRect::eLeftBottom].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
-	vertices[MkFloatRect::eLeftBottom].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+	vertices[MkFloatRect::eLeftBottom].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, worldPosition);
+	vertices[MkFloatRect::eLeftBottom].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, worldPosition);
 
 	localVertex = rect.GetAbsolutePosition(MkFloatRect::eRightBottom, false);
-	vertices[MkFloatRect::eRightBottom].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
-	vertices[MkFloatRect::eRightBottom].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, m_WorldPosition);
+	vertices[MkFloatRect::eRightBottom].x = MKDEF_CW_ROTATE_X(sinR, cosR, localVertex, m_WorldScale, worldPosition);
+	vertices[MkFloatRect::eRightBottom].y = MKDEF_CW_ROTATE_Y(sinR, cosR, localVertex, m_WorldScale, worldPosition);
 }
 
 void MkSceneTransform::SetObjectTemplate(MkDataNode& node)

@@ -50,10 +50,10 @@ public:
 	void ClearLocalTransform(void);
 
 	// local vertices -> world vertices
-	void GetWorldVertices(const MkArray<MkFloat2>& localVertices, MkArray<MkFloat2>& worldVertices) const;
+	void GetWorldVertices(const MkArray<MkFloat2>& localVertices, MkArray<MkFloat2>& worldVertices, bool roundOffPosition) const;
 
 	// local rect -> world rect vertices
-	void GetWorldVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName]) const;
+	void GetWorldVertices(const MkFloatRect& rect, MkFloat2 (&vertices)[MkFloatRect::eMaxPointName], bool roundOffPosition) const;
 	
 	// in & out
 	static void SetObjectTemplate(MkDataNode& node);

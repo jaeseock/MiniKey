@@ -80,34 +80,43 @@ MkBaseTexture* MkBitmapPool::GetBitmapTexture(const MkPathName& filePath)
 
 MkBaseTexture* MkBitmapPool::GetBitmapTexture(const MkHashStr& filePath)
 {
+	MkPathName path = filePath;
+	MkHashStr key = path;
+
 	// 없으면 생성
-	if (!m_Pool.Exist(filePath))
+	if (!m_Pool.Exist(key))
 	{
-		if (!LoadBitmapTexture(filePath))
+		if (!LoadBitmapTexture(path))
 			return NULL;
 	}
 	
 	// 참조 반환
-	return m_Pool[filePath];
+	return m_Pool[key];
 }
 
-void MkBitmapPool::UnloadBitmapTexture(const MkPathName& filePath)
+bool MkBitmapPool::UnloadBitmapTexture(const MkPathName& filePath)
 {
-	UnloadBitmapTexture(MkHashStr(filePath));
+	return UnloadBitmapTexture(MkHashStr(filePath));
 }
 
-void MkBitmapPool::UnloadBitmapTexture(const MkHashStr& filePath)
+bool MkBitmapPool::UnloadBitmapTexture(const MkHashStr& filePath)
 {
-	if (m_Pool.Exist(filePath))
+	MkPathName path = filePath;
+	MkHashStr key = path;
+
+	if (m_Pool.Exist(key))
 	{
-		MK_CHECK(m_Pool[filePath].GetReferenceCounter() == 1, L"<WARNING> 참조 중인 bitmap texture " + filePath.GetString() + L"를 삭제 시도")
-			return;
+		if (m_Pool[key].GetReferenceCounter() == 1)
+		{
+			m_Pool.Erase(key);
 
-		m_Pool.Erase(filePath);
-
-		MK_DEV_PANEL.MsgToLog(L"bitmap 삭제 : " + filePath.GetString(), true);
-		MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_TEXPOOL, MKDEF_BITMAPS_ON_POOL_MSG_TEXT + MkStr(m_Pool.GetSize()));
+			MK_DEV_PANEL.MsgToLog(L"bitmap 삭제 : " + key.GetString(), true);
+			MK_DEV_PANEL.__MsgToSystemBoard(MKDEF_PREDEFINED_SYSTEM_INDEX_TEXPOOL, MKDEF_BITMAPS_ON_POOL_MSG_TEXT + MkStr(m_Pool.GetSize()));
+			return true;
+		}
+		return false;
 	}
+	return true;
 }
 
 void MkBitmapPool::UnloadGroup(const MkHashStr& groupName)

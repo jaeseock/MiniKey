@@ -438,7 +438,7 @@ void MkPanel::__ApplyRenderState(void) const
 
 bool MkPanel::__IsShaderEffectApplied(void) const
 {
-	return (m_ShaderEffectSetting != NULL);
+	return (m_ShaderEffectEnable && (m_ShaderEffectSetting != NULL));
 }
 
 void MkPanel::__DrawWithShaderEffect(LPDIRECT3DDEVICE9 device) const
@@ -965,7 +965,7 @@ void MkPanel::__Update(const MkSceneTransform* parentTransform, double currTime)
 			}
 
 			// vertices
-			m_Transform.GetWorldVertices(localVisibleRect, m_WorldVertice);
+			m_Transform.GetWorldVertices(localVisibleRect, m_WorldVertice, true);
 
 			// filtering mode. 이미지 원본을 확대/축소 할 경우 point보다는 linear filtering이 유리
 			// 원칙적으로는 최종 출력 rect로 비교해야 하지만 잘라 그리기의 경우 uv로부터 size를 역산해야되는데 floating 계산 특성상 발생하는
@@ -1039,6 +1039,7 @@ MkPanel::MkPanel(void) : MkSceneRenderObject()
 	m_TargetTextNodePtr = NULL;
 	m_DrawStep = NULL;
 
+	m_ShaderEffectEnable = true;
 	m_ShaderEffectSetting = NULL;
 }
 
@@ -1092,19 +1093,24 @@ void MkPanel::_UpdateEffectUV(unsigned int index, double currentTimeStamp)
 void MkPanel::_FillVertexData(MkFloatRect::ePointName pn, bool hr, bool vr, MkByteArray& buffer) const
 {
 	MkArray<float> data;
-	if (m_EffectTexture[2] != NULL)
+
+	if (__IsShaderEffectApplied())
 	{
-		data.Fill(11);
+		if (m_EffectTexture[2] != NULL)
+		{
+			data.Fill(11);
+		}
+		else if (m_EffectTexture[1] != NULL)
+		{
+			data.Fill(9);
+		}
+		else if (m_EffectTexture[0] != NULL)
+		{
+			data.Fill(7);
+		}
 	}
-	else if (m_EffectTexture[1] != NULL)
-	{
-		data.Fill(9);
-	}
-	else if (m_EffectTexture[0] != NULL)
-	{
-		data.Fill(7);
-	}
-	else
+
+	if (data.Empty())
 	{
 		data.Fill(5);
 	}

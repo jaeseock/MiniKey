@@ -79,6 +79,4 @@ protected:
 	
 	eTargetType m_TargetType;
 	D3DCOLOR m_BackgroundColor;
-
-	MkFloatRect m_RegionRect;
 };

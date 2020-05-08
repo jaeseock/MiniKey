@@ -63,7 +63,6 @@ void MkRenderTarget::Clear(void)
 {
 	m_TargetType = eBackbuffer;
 	m_TargetTexture.Clear();
-	m_RegionRect.Clear();
 }
 
 MkInt2 MkRenderTarget::GetScreenSize(void) const

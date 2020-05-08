@@ -84,8 +84,6 @@ public:
 
 protected:
 
-	MkFloat2 _ConvertToEvenValue(const MkFloat2& value) const;
-
 	bool _UpdateIcon(void);
 	bool _UpdateText(void);
 	bool _UpdateRegion(void); // (NOTE) 호출 전 icon과 text 중 최소 하나는 존재해야 함

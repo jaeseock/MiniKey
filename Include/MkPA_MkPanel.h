@@ -206,6 +206,9 @@ public:
 	// shader effect
 	//------------------------------------------------------------------------------------------------//
 
+	inline void SetShaderEffectEnable(bool enable) { m_ShaderEffectEnable = enable; }
+	inline bool GetShaderEffectEnable(void) const { return m_ShaderEffectEnable; }
+
 	// effect 설정
 	// (NOTE) 변경시 기존 설정되어 있던 technique, texture, UDP값은 모두 삭제 됨
 	bool SetShaderEffect(const MkHashStr& name);
@@ -356,6 +359,7 @@ protected:
 	MkDrawStepInterface* m_DrawStep;
 
 	// shader effect
+	bool m_ShaderEffectEnable;
 	MkHashStr m_ShaderEffectName;
 	MkShaderEffectSetting* m_ShaderEffectSetting;
 

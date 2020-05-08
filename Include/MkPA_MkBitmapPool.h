@@ -34,8 +34,9 @@ public:
 
 	// 해당 bitmap texture를 pool에서 해제
 	// (NOTE) 호출 전 해당 텍스쳐에 대한 외부 참조는 모두 해제된 상태이어야 함
-	void UnloadBitmapTexture(const MkPathName& filePath);
-	void UnloadBitmapTexture(const MkHashStr& filePath);
+	// 반환 값은 해당 텍스쳐가 존재하지 않는지 여부(애초에 없어도 true 반환)
+	bool UnloadBitmapTexture(const MkPathName& filePath);
+	bool UnloadBitmapTexture(const MkHashStr& filePath);
 
 	// 해당 group에 속한 bitmap texture들을 pool에서 해제
 	// (NOTE) 호출 전 해당 텍스쳐들에 대한 외부 참조는 모두 해제된 상태이어야 함
