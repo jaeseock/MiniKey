@@ -68,6 +68,8 @@
 
 //------------------------------------------------------------------------------------------------//
 
+MkInt2 g_AppSize = MkInt2(1024, 768);
+
 // TestPage 선언
 class TestPage : public MkBasePage
 {
@@ -86,6 +88,17 @@ public:
 
 			// screen shot path
 			_UpdateDirPath(L"ScreenShotPath", L"Default\\Scenes", L"게임 스크린샷 디렉토리를 지정해주세요.");
+
+			if (m_AppSettingNode.IsValidKey(L"Size"))
+			{
+				m_AppSettingNode.SetData(L"Size", g_AppSize, 0);
+			}
+			else
+			{
+				m_AppSettingNode.CreateUnit(L"Size", g_AppSize);
+			}
+
+			m_AppSettingNode.SaveToText(L"AppSetting.txt");
 		}
 
 		SceneSelectionWindowNode* sceneSelectionWN = NULL;
@@ -229,7 +242,12 @@ public:
 		rbStep->SetSceneNode(m_RootNode[eDST_RadialBlur]);
 
 		// final
-		m_RootNode[eDST_Final]->GetChildNode(L"<Scene>")->CreatePanel(L"Main").SetTexture(rbStep->GetTargetTexture());
+		{
+			MkPanel& mainPanel = m_RootNode[eDST_Final]->GetChildNode(L"<Scene>")->CreatePanel(L"Main");
+			mainPanel.SetTexture(rbStep->GetTargetTexture());
+			mainPanel.SetPanelSize(MkFloat2(static_cast<float>(g_AppSize.x), static_cast<float>(g_AppSize.y)));
+			mainPanel.SetSmallerSourceOp(MkPanel::eExpandSource);
+		}
 
 		MkDrawSceneNodeStep* finalStep = MK_RENDERER.GetDrawQueue().CreateDrawSceneNodeStep(L"Final");
 		finalStep->SetSceneNode(m_RootNode[eDST_Final]);
@@ -267,6 +285,16 @@ public:
 
 	virtual void Update(const MkTimeState& timeState)
 	{
+		{
+			MkStr msg;
+			msg.Reserve(512);
+
+			msg += L"커서 : ";
+			msg += MK_INPUT_MGR.GetAbsoluteMousePosition(true);
+
+			MK_DEV_PANEL.MsgToFreeboard(8, msg);
+		}
+
 		// show origin -> depth
 		if (MK_INPUT_MGR.GetKeyReleased(VK_F2) && (!m_WindowMgr->IsModalWindowActivating()))
 		{
@@ -351,6 +379,26 @@ public:
 			}
 		}
 
+		if (MK_INPUT_MGR.GetKeyReleased(VK_F7))
+		{
+			++m_SizeIndex;
+			if (m_SizeIndex > 1)
+			{
+				m_SizeIndex = 0;
+			}
+			switch (m_SizeIndex)
+			{
+			case 0:
+				MK_RENDERER.ChangeDisplayMode(MkInt2(1024, 768), false);
+				m_RootNode[eDST_Final]->GetChildNode(L"<Scene>")->GetPanel(L"Main")->SetPanelSize(MkFloat2(1024.f, 768.f));
+				break;
+			case 1:
+				MK_RENDERER.ChangeDisplayMode(MkInt2(1600, 900), false);
+				m_RootNode[eDST_Final]->GetChildNode(L"<Scene>")->GetPanel(L"Main")->SetPanelSize(MkFloat2(1600.f, 900.f));
+				break;
+			}
+		}
+
 		if (MK_INPUT_MGR.GetMouseRightButtonPushing() &&
 			MK_INPUT_MGR.GetMousePointerAvailable() &&
 			m_WindowMgr->IsActivating(L"Edit_RadialBlur"))
@@ -392,6 +440,7 @@ public:
 
 	TestPage(const MkHashStr& name) : MkBasePage(name)
 	{
+		m_SizeIndex = 0;
 		
 	}
 
@@ -438,6 +487,8 @@ protected:
 
 	MkArray<MkSceneNode*> m_RootNode;
 	MkWindowManagerNode* m_WindowMgr;
+
+	int m_SizeIndex;
 };
 
 class TestFramework : public MkRenderFramework
@@ -472,9 +523,27 @@ public:
 // 엔트리 포인트에서의 TestApplication 실행
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
+	MkStr::SetUp();
+	MkPathName::SetUp(L"..\\FileRoot");
+
+	MkPathName settingFilePath;
+	settingFilePath.ConvertToRootBasisAbsolutePath(L"AppSetting.txt");
+	if (settingFilePath.CheckAvailable())
+	{
+		MkDataNode node;
+		if (node.Load(settingFilePath))
+		{
+			MkInt2 size;
+			if (node.GetData(L"Size", size, 0) && (size.x >= 1024) && (size.y >= 768))
+			{
+				g_AppSize = size;
+			}
+		}
+	}
+
 	TestApplication application;
 	//application.Run(hI, L"떼스또", L"..\\FileRoot", true, eSWP_FixedSize, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768);
-	application.Run(hI, L"로한 후처리 테스터", L"", true, eSWP_FixedSize, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768);
+	application.Run(hI, L"로한 후처리 테스터", L"..\\FileRoot", true, eSWP_FixedSize, CW_USEDEFAULT, CW_USEDEFAULT, g_AppSize.x, g_AppSize.y);
 
 	return 0;
 }
