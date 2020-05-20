@@ -54,7 +54,7 @@ bool MkDataNodeToMemoryConverter::ConvertToMemory(const MkDataNode& source, MkBy
 	return true;
 }
 
-bool MkDataNodeToMemoryConverter::ConvertToBinaryFile(const MkDataNode& source, const MkPathName& filePath) const
+bool MkDataNodeToMemoryConverter::ConvertToBinaryData(const MkDataNode& source, MkByteArray& destination) const
 {
 	MkByteArray binBuffer;
 	if (!ConvertToMemory(source, binBuffer))
@@ -63,16 +63,28 @@ bool MkDataNodeToMemoryConverter::ConvertToBinaryFile(const MkDataNode& source, 
 	MkByteArray compBuffer;
 	if (!binBuffer.Empty())
 	{	
-		MK_CHECK(MkZipCompressor::Compress(binBuffer.GetPtr(), binBuffer.GetSize(), compBuffer) > 0, MkStr(filePath) + L" 경로에 저장 할 " + source.GetNodeName().GetString() + L" 노드 압축 실패")
+		MK_CHECK(MkZipCompressor::Compress(binBuffer.GetPtr(), binBuffer.GetSize(), compBuffer) > 0, source.GetNodeName().GetString() + L" 노드 압축 실패")
 			return false;
 	}
+	binBuffer.Clear();
+
+	destination.Reserve(MkTagDefinitionForDataNode::TagForBinaryDataNode.GetSize() + compBuffer.GetSize());
+	destination += MkTagDefinitionForDataNode::TagForBinaryDataNode;
+	destination += compBuffer;
+	return true;
+}
+
+bool MkDataNodeToMemoryConverter::ConvertToBinaryFile(const MkDataNode& source, const MkPathName& filePath) const
+{
+	MkByteArray binBuffer;
+	if (!ConvertToBinaryData(source, binBuffer))
+		return false;
 
 	MkInterfaceForFileWriting fwInterface;
 	MK_CHECK(fwInterface.SetUp(filePath, true, true), MkStr(filePath) + L" 경로 파일 열기 실패")
 		return false;
 
-	fwInterface.Write(MkTagDefinitionForDataNode::TagForBinaryDataNode, MkArraySection(0));
-	fwInterface.Write(compBuffer, MkArraySection(0));
+	fwInterface.Write(binBuffer, MkArraySection(0));
 	fwInterface.Clear();
 	return true;
 }

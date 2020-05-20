@@ -171,6 +171,12 @@ bool MkDataNode::SaveToBinary(const MkPathName& filePath) const
 	return dataNodeToMemoryConverter.ConvertToBinaryFile(*this, filePath);
 }
 
+bool MkDataNode::SaveToBinary(MkByteArray& fileData) const
+{
+	MkDataNodeToMemoryConverter dataNodeToMemoryConverter;
+	return dataNodeToMemoryConverter.ConvertToBinaryData(*this, fileData);
+}
+
 bool MkDataNode::SaveToExcel(const MkPathName& filePath) const
 {
 	MkDataNodeToExcelConverter dataNodeToExcelConverter;

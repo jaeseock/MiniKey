@@ -1052,7 +1052,12 @@ bool MkPanel::_SetEffectTexture(unsigned int index, const MkBaseTexture* texture
 		return false;
 
 	m_EffectTexture[index] = const_cast<MkBaseTexture*>(texture); // ref++
-	return _SetEffectSubsetOrSequenceName(index, subsetOrSequenceName);
+	bool ok = _SetEffectSubsetOrSequenceName(index, subsetOrSequenceName);
+	if (ok && (m_ShaderEffectSetting != NULL))
+	{
+		_UpdateEffectUV(index, 0.);
+	}
+	return ok;
 }
 
 bool MkPanel::_SetEffectSubsetOrSequenceName(unsigned int index, const MkHashStr& subsetOrSequenceName)

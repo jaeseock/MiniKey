@@ -12,10 +12,7 @@
 	if (m_Texture##index.handle != NULL) \
 	{ \
 		MkBaseTexture* value = (objectSetting == NULL) ? m_Texture##index.defValue : objectSetting->GetTexture##index(); \
-		if (m_Texture##index.currValue.Commit(value)) \
-		{ \
-			m_Effect->SetTexture(m_Texture##index.handle, (value == NULL) ? NULL : value->GetTexture()); \
-		} \
+		m_Effect->SetTexture(m_Texture##index.handle, (value == NULL) ? NULL : value->GetTexture()); \
 	}
 
 //------------------------------------------------------------------------------------------------//

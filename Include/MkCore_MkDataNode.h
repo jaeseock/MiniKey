@@ -87,6 +87,9 @@ public:
 	// binary file로 출력
 	bool SaveToBinary(const MkPathName& filePath) const;
 
+	// binary data로 출력
+	bool SaveToBinary(MkByteArray& fileData) const;
+
 	// excel file로 출력
 	bool SaveToExcel(const MkPathName& filePath) const;
 

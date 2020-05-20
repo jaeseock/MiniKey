@@ -1,0 +1,1 @@
+_fxc.exe /T fx_2_0 /Fc obj_1D_DiffSpecRimNorm.fxc obj_1D_DiffSpecRimNorm.fx

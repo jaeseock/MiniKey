@@ -39,7 +39,7 @@ public:
 		MkStr patchUrlKey = MKDEF_PATCH_DOWNLOAD_URL_KEY;
 		if (cmdLine.HasPair(patchUrlKey))
 		{
-			m_PatchURL = cmdLine.GetValue(patchUrlKey, 0);
+			m_PatchURL = cmdLine.GetValue(patchUrlKey, 0); // ex> #PURL=http://patch.playwith.co.kr/rohan_effect_tester;
 		}
 
 		if (m_PatchURL.Empty())
@@ -361,7 +361,7 @@ protected:
 		if (!MkWin32Application::_CheckExcution(cmdLine, myMutexHandle, myTitle))
 			return false;
 
-		g_LayeredWindow.SetUp(L"SimpleLauncherIntroImage", L"launcher.png");
+		//g_LayeredWindow.SetUp(L"SimpleLauncherIntroImage", L"launcher.png");
 		return true;
 	}
 };

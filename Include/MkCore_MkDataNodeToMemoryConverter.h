@@ -23,7 +23,10 @@ public:
 	// data node -> memory
 	bool ConvertToMemory(const MkDataNode& source, MkByteArray& destination) const;
 
-	// ConvertToMemory() -> binary data(tag + compressed data) -> binary file
+	// ConvertToMemory() -> binary data(tag + compressed data)
+	bool ConvertToBinaryData(const MkDataNode& source, MkByteArray& destination) const;
+
+	// ConvertToBinaryData() -> binary file
 	bool ConvertToBinaryFile(const MkDataNode& source, const MkPathName& filePath) const;
 
 protected:

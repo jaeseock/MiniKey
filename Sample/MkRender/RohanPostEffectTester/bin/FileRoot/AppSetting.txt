@@ -1,0 +1,9 @@
+﻿//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path : AppSetting.txt
+//   - time stamp : 2020.05.20 (13:40:59)
+//   - exporter : pc (RohanPostEffectTester)
+//--------------------------------------------------------------------//
+
+
+str ScreenShotPath = "D:\Solutions\MiniKey\MiniKey\Sample\MkRender\RohanPostEffectTester\bin\FileRoot\Default\Scenes";

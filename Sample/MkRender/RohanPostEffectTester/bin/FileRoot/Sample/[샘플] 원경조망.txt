@@ -1,0 +1,28 @@
+﻿//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path : d:\Solutions\MiniKey\MiniKey\Sample\MkRender\RohanPostEffectTester\bin\FileRoot\[샘플] 원경조망.txt
+//   - time stamp : 2020.05.19 (17:06:17)
+//   - exporter : pc (RohanPostEffectTester)
+//--------------------------------------------------------------------//
+
+
+str Scene = "[샘플]원경 조망";
+
+Node "DepthFog"
+{
+	str AddMap = "add_00";
+	float Mixer = 0.68;
+	str MultMap = "mult_00";
+}
+
+Node "DepthOfField"
+{
+	float Position = 0.0625;
+	float Range = 20;
+}
+
+Node "FakeHDR"
+{
+	float PowerHigh = 0.8;
+	float PowerLow = 0.61;
+}

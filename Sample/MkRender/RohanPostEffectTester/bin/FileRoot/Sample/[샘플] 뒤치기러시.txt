@@ -1,0 +1,24 @@
+﻿//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path : d:\Solutions\MiniKey\MiniKey\Sample\MkRender\RohanPostEffectTester\bin\FileRoot\[샘플] 뒤치기러시.txt
+//   - time stamp : 2020.05.19 (17:09:24)
+//   - exporter : pc (RohanPostEffectTester)
+//--------------------------------------------------------------------//
+
+
+str Scene = "[샘플]정글";
+
+Node "ColorEdit"
+{
+	float Brightness = 1.35;
+	vec3 ColorBalance = (0, 0, 0);
+	float Contrast = 1.2;
+	float Saturation = 1.53;
+}
+
+Node "RadialBlur"
+{
+	vec2 Position = (0.5, 0.5);
+	float Power = 0.01;
+	float StartRange = 0.1;
+}
