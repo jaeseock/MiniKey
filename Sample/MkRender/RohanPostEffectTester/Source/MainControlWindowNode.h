@@ -40,8 +40,12 @@ protected:
 
 	MkPanel* _GetMainPanel(eDrawStepType drawStep);
 	void _SetShaderEffectEnableOfMainPanel(eDrawStepType drawStep, bool enable);
+
+	void _SetMinimapPanel(const MkHashStr& key);
 	
 protected:
 
 	MkArray<MkSceneNode*> m_RootNode;
+
+	MkHashMap<MkHashStr, MkHashStr> m_MinimapNameTable;
 };

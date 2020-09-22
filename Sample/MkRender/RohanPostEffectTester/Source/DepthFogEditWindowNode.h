@@ -17,24 +17,18 @@ public:
 
 	virtual void Activate(void);
 
-	DepthFogEditWindowNode(const MkHashStr& name) : MkTitleBarControlNode(name) { m_RootNode = NULL; m_Reloading = false; }
+	DepthFogEditWindowNode(const MkHashStr& name) : MkTitleBarControlNode(name) { m_RootNode = NULL; }
 	virtual ~DepthFogEditWindowNode() {}
 
-	bool UpdateMultGradation(void);
-	bool UpdateAddGradation(void);
-
 protected:
-
-	void _UpdateMapDir(const MkPathName& dirPath, const MkHashStr& ddListName);
 
 	void _ResetEffectValue(void);
 
+	void _UpdateGraph(void);
+	void _SetFogColor(const MkColor& color);
+	void _UpdateColorTag(void);
+
 protected:
-
-	MkPathName m_MultMapPath;
-	MkPathName m_AddMapPath;
-
-	bool m_Reloading;
 
 	MkSceneNode* m_RootNode;
 };

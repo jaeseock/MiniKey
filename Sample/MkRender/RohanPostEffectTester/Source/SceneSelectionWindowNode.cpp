@@ -153,20 +153,35 @@ void SceneSelectionWindowNode::SelectTargetScene(void)
 	basePanel.SetTexture(fileInfo.baseKey);
 	basePanel.SetShaderEffect(L"ColorEdit");
 	basePanel.SetUserDefinedProperty(L"g_ColorFactor", SREPO.GetColorEditBrightness(), SREPO.GetColorEditSaturation(), SREPO.GetColorEditContrast());
-	basePanel.SetUserDefinedProperty(L"g_ColorShift", SREPO.GetColorEditColorBalanceR(), SREPO.GetColorEditColorBalanceG(), SREPO.GetColorEditColorBalanceB());
 	basePanel.SetShaderEffectEnable(SREPO.GetColorEditEnable());
 
 	// eDST_DepthFog
 	{
 		MkPanel* mainPanel = m_RootNode[eDST_DepthFog]->GetPanel(L"Main");
 		mainPanel->SetShaderEffect(L"DepthFog");
-		mainPanel->SetUserDefinedProperty(L"g_FogMixer", SREPO.GetDepthFogMixer());
-		mainPanel->SetEffectTexture1(fileInfo.depthKey);
+		mainPanel->SetUserDefinedProperty(L"g_DFogGraph", SREPO.GetDepthFogGraphBegin(), SREPO.GetDepthFogGraphEnd());
 
-		MkWindowManagerNode* mgrNode = GetWindowManagerNode();
-		DepthFogEditWindowNode* editWN = dynamic_cast<DepthFogEditWindowNode*>(mgrNode->GetChildNode(L"Edit_DepthFog"));
-		editWN->UpdateMultGradation();
-		editWN->UpdateAddGradation();
+		if (SREPO.GetDepthFogMixerB() > 0.f)
+		{
+			mainPanel->SetUserDefinedProperty(L"g_DFogBlendColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+			mainPanel->SetUserDefinedProperty(L"g_DFogMultColor", 1.f, 1.f, 1.f, 0.3f);
+			mainPanel->SetUserDefinedProperty(L"g_DFogAddColor", 1.f, 1.f, 1.f, 0.3f);
+		}
+		else if (SREPO.GetDepthFogMixerM() > 0.f)
+		{
+			mainPanel->SetUserDefinedProperty(L"g_DFogBlendColor", 1.f, 1.f, 1.f, 0.3f);
+			mainPanel->SetUserDefinedProperty(L"g_DFogMultColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+			mainPanel->SetUserDefinedProperty(L"g_DFogAddColor", 1.f, 1.f, 1.f, 0.3f);
+		}
+		else if (SREPO.GetDepthFogMixerA() > 0.f)
+		{
+			mainPanel->SetUserDefinedProperty(L"g_DFogBlendColor", 1.f, 1.f, 1.f, 0.3f);
+			mainPanel->SetUserDefinedProperty(L"g_DFogMultColor", 1.f, 1.f, 1.f, 0.3f);
+			mainPanel->SetUserDefinedProperty(L"g_DFogAddColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+		}
+
+		mainPanel->SetUserDefinedProperty(L"g_DFogMixer", SREPO.GetDepthFogMixerB(), SREPO.GetDepthFogMixerM(), SREPO.GetDepthFogMixerA());
+		mainPanel->SetEffectTexture1(fileInfo.depthKey);
 
 		mainPanel->SetShaderEffectEnable(SREPO.GetDepthFogEnable());
 	}
@@ -180,7 +195,6 @@ void SceneSelectionWindowNode::SelectTargetScene(void)
 		mainPanel->SetEffectTexture1(fileInfo.depthKey);
 		mainPanel->SetShaderEffectEnable(SREPO.GetEdgeDetectionEnable());
 	}
-
 	
 	// eDST_HDR_Blend
 	{

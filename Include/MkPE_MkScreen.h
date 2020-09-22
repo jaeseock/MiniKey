@@ -21,8 +21,8 @@ public:
 
 	// render target -> render to texture로 초기화
 	// size : texture 크기
-	bool SetUp(const MkInt2& size, MkRenderToTexture::eTargetFormat format);
-	bool SetUp(const MkInt2& size, const MkArray<MkRenderToTexture::eTargetFormat>& formats);
+	bool SetUp(const MkInt2& size, MkRenderToTexture::eTargetFormat format, bool fixedSize = false);
+	bool SetUp(const MkInt2& size, const MkArray<MkRenderToTexture::eTargetFormat>& formats, bool fixedSize = false);
 
 	// 크기 변경
 	// render to texture인 경우에만 해당
@@ -58,6 +58,7 @@ protected:
 
 	bool m_Enable;
 	bool m_ClearLastRenderTarget;
+	bool m_FixedSize;
 
 	MkRenderTarget m_RenderTarget;
 

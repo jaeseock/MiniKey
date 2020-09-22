@@ -36,8 +36,11 @@ public:
 	// 이미 존재하면 해제 후 반환
 	MkScreen* CreateScreen(int index); // backbuffer
 	MkScreen* CreateScreen(int index, MkRenderToTexture::eTargetFormat format); // single render to texture
+	MkScreen* CreateScreen(int index, const MkInt2& size, MkRenderToTexture::eTargetFormat format); // single render to texture
 	MkScreen* CreateScreen(int index, const MkArray<MkRenderToTexture::eTargetFormat>& formats); // MRT
+	MkScreen* CreateScreen(int index, const MkInt2& size, const MkArray<MkRenderToTexture::eTargetFormat>& formats); // MRT
 	MkScreen* GetScreen(int index);
+	void ClearAllScreens(void);
 
 	// 그리기
 	void Draw(void);

@@ -23,7 +23,7 @@ void ColorEditWindowNode::SetUp(MkSceneNode* rootNode)
 	SetAlignmentOffset(MkFloat2(-10.f, -10.f));
 	
 	// body frame
-	const float HEIGHT = 490.f;
+	const float HEIGHT = 320.f;
 
 	MkBodyFrameControlNode* bodyFrame = MkBodyFrameControlNode::CreateChildNode(this, L"BodyFrame");
 	bodyFrame->SetBodyFrame
@@ -71,32 +71,6 @@ void ColorEditWindowNode::SetUp(MkSceneNode* rootNode)
 		sliderNode->SetLocalDepth(-1.f);
 	}
 
-	// color balance
-	{
-		MkPanel& panel = bodyFrame->CreatePanel(L"ST_ColorBalance");
-		panel.SetLocalPosition(MkFloat2(10.f, HEIGHT - 320.f));
-		panel.SetLocalDepth(-1.f);
-		panel.SetTextMsg(L"Color balance(R/G/B)");
-		
-		MkSliderControlNode* sliderNode = MkSliderControlNode::CreateChildNode(bodyFrame, L"SL_ColorBalanceR");
-		sliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, -100, 200, static_cast<int>(SREPO.GetColorEditColorBalanceR() * 100.f));
-		sliderNode->SetAlignmentPosition(eRAP_LeftTop);
-		sliderNode->SetAlignmentOffset(MkFloat2(10.f, -350.f));
-		sliderNode->SetLocalDepth(-1.f);
-
-		sliderNode = MkSliderControlNode::CreateChildNode(bodyFrame, L"SL_ColorBalanceG");
-		sliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, -100, 200, static_cast<int>(SREPO.GetColorEditColorBalanceG() * 100.f));
-		sliderNode->SetAlignmentPosition(eRAP_LeftTop);
-		sliderNode->SetAlignmentOffset(MkFloat2(10.f, -390.f));
-		sliderNode->SetLocalDepth(-1.f);
-
-		sliderNode = MkSliderControlNode::CreateChildNode(bodyFrame, L"SL_ColorBalanceB");
-		sliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, -100, 200, static_cast<int>(SREPO.GetColorEditColorBalanceB() * 100.f));
-		sliderNode->SetAlignmentPosition(eRAP_LeftTop);
-		sliderNode->SetAlignmentOffset(MkFloat2(10.f, -430.f));
-		sliderNode->SetLocalDepth(-1.f);
-	}
-
 	{
 		MkWindowFactory wndFactory;
 		wndFactory.SetMinClientSizeForButton(MkFloat2(205.f, 12.f));
@@ -131,21 +105,6 @@ void ColorEditWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 				SREPO.SetColorEditContrast(_FactorToValue(factor));
 				resetValue = true;
 			}
-			else if (path[1].Equals(0, L"SL_ColorBalanceR"))
-			{
-				SREPO.SetColorEditColorBalanceR(factor / 100.f);
-				resetValue = true;
-			}
-			else if (path[1].Equals(0, L"SL_ColorBalanceG"))
-			{
-				SREPO.SetColorEditColorBalanceG(factor / 100.f);
-				resetValue = true;
-			}
-			else if (path[1].Equals(0, L"SL_ColorBalanceB"))
-			{
-				SREPO.SetColorEditColorBalanceB(factor / 100.f);
-				resetValue = true;
-			}
 
 			if (resetValue && (m_RootNode != NULL))
 			{
@@ -153,7 +112,6 @@ void ColorEditWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, 
 				if (mainPanel != NULL)
 				{
 					mainPanel->SetUserDefinedProperty(L"g_ColorFactor", SREPO.GetColorEditBrightness(), SREPO.GetColorEditSaturation(), SREPO.GetColorEditContrast());
-					mainPanel->SetUserDefinedProperty(L"g_ColorShift", SREPO.GetColorEditColorBalanceR(), SREPO.GetColorEditColorBalanceG(), SREPO.GetColorEditColorBalanceB());
 				}
 				return;
 			}
@@ -205,13 +163,6 @@ void ColorEditWindowNode::_ResetEffectValue(void)
 
 	sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_Contrast"));
 	sliderNode->SetSliderValue(_ValueToFactor(SREPO.GetColorEditContrast()));
-
-	sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_ColorBalanceR"));
-	sliderNode->SetSliderValue(static_cast<int>(SREPO.GetColorEditColorBalanceR() * 100.f));
-	sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_ColorBalanceG"));
-	sliderNode->SetSliderValue(static_cast<int>(SREPO.GetColorEditColorBalanceG() * 100.f));
-	sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_ColorBalanceB"));
-	sliderNode->SetSliderValue(static_cast<int>(SREPO.GetColorEditColorBalanceB() * 100.f));
 }
 
 //------------------------------------------------------------------------------------------------//

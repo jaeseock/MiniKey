@@ -72,7 +72,7 @@ void MkRenderToTexture::ChangeRenderTarget(void)
 
 void MkRenderToTexture::RestoreRenderTarget(void)
 {
-	if ((m_OldRenderTarget != NULL) && (m_OldDepthBuffer != NULL))
+	if (m_DepthBuffer != NULL)
 	{
 		LPDIRECT3DDEVICE9 device = MK_DEVICE_MGR.GetDevice();
 		device->SetRenderTarget(m_TargetIndex, m_OldRenderTarget);

@@ -403,8 +403,7 @@ public:
 			MK_INPUT_MGR.GetMousePointerAvailable() &&
 			m_WindowMgr->IsActivating(L"Edit_RadialBlur"))
 		{
-			MkVec2 pos = MK_INPUT_MGR.GetRelativeMousePosition();
-			SREPO.SetRadialBlurPosition(MkFloat2(pos.x, pos.y));
+			SREPO.SetRadialBlurPosition(MK_INPUT_MGR.GetRelativeMousePosition());
 
 			MkPanel* mainPanel = m_RootNode[eDST_RadialBlur]->GetPanel(L"Main");
 			if (mainPanel != NULL)
@@ -542,7 +541,6 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 	}
 
 	TestApplication application;
-	//application.Run(hI, L"떼스또", L"..\\FileRoot", true, eSWP_FixedSize, CW_USEDEFAULT, CW_USEDEFAULT, 1024, 768);
 	application.Run(hI, L"로한 후처리 테스터", L"..\\FileRoot", true, eSWP_FixedSize, CW_USEDEFAULT, CW_USEDEFAULT, g_AppSize.x, g_AppSize.y);
 
 	return 0;

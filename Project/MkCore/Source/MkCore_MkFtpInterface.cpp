@@ -31,7 +31,7 @@ bool MkFtpInterface::Connect(void)
 		if (m_Session == NULL)
 			break;
 
-		m_Connect = ::InternetConnect(m_Session, m_URL.GetPtr(), 21, m_UserName.GetPtr(), m_Password.GetPtr(), INTERNET_SERVICE_FTP, (m_PassiveMode) ? INTERNET_FLAG_PASSIVE : 0, 0);
+		m_Connect = ::InternetConnect(m_Session, m_URL.GetPtr(), INTERNET_DEFAULT_FTP_PORT, m_UserName.GetPtr(), m_Password.GetPtr(), INTERNET_SERVICE_FTP, (m_PassiveMode) ? INTERNET_FLAG_PASSIVE : 0, 0);
 		if (m_Connect == NULL)
 			break;
 

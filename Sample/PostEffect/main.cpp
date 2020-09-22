@@ -154,6 +154,7 @@ public:
 		fxos.PushBack(L"..\\Shader\\GaussianBlur.fxo");
 		fxos.PushBack(L"..\\Shader\\CircularZoomingBlur.fxo");
 		fxos.PushBack(L"..\\Shader\\Box48BlurBlur.fxo");
+		fxos.PushBack(L"..\\Shader\\HDR_Reduction.fxo");
 		
 		MK_POST_EFFECT.SetUp(m_Device, currSize, fxos, true);
 		MK_POST_EFFECT.CreateSourceRenderTarget(MkRenderToTexture::eTF_RGB);
@@ -173,23 +174,24 @@ public:
 			drawCall->SetTexture(1, L"..\\depth.png");
 		}
 
-		MkScreen* screen1 = MK_POST_EFFECT.CreateScreen(1);
+		MkScreen* screen1 = MK_POST_EFFECT.CreateScreen(1, MkInt2(128, 96), MkRenderToTexture::eTF_RGB);
+		{
+			MkDrawCall* drawCall = screen1->CreateDrawCall(0);
+			drawCall->SetTexture(0, screen0->GetTargetTexture(0));
+			drawCall->SetShaderEffect(L"HDR_Reduction");
+		}
+
+		MkScreen* screen2 = MK_POST_EFFECT.CreateScreen(2);
 		{
 			{
-				MkDrawCall* drawCall = screen1->CreateDrawCall(0);
-				drawCall->SetTexture(0, screen0->GetTargetTexture(0));
-
-				//drawCall->SetShaderEffect(L"CircularZoomingBlur");
-				drawCall->SetShaderEffect(L"Box48BlurBlur");
+				MkDrawCall* drawCall = screen2->CreateDrawCall(0);
+				drawCall->SetTexture(0, screen1->GetTargetTexture(0));
 			}
 			{
-				MkDrawCall* drawCall = screen1->CreateDrawCall(1);
+				MkDrawCall* drawCall = screen2->CreateDrawCall(1);
 				drawCall->SetTexture(0, L"..\\ui.png");
 			}
 		}
-
-		m_TimeStamp = ::timeGetTime();
-		m_CurrTime = 0.f;
 	}
 
 	virtual void Update(void)
@@ -222,27 +224,6 @@ public:
 
 			if (m_Renderable)
 			{
-				MK_POST_EFFECT.UnloadResource();
-				MK_POST_EFFECT.ReloadResource();
-
-				DWORD currTimeStamp = ::timeGetTime();
-				float elapsed = static_cast<float>(currTimeStamp - m_TimeStamp) / 1000.f;
-
-				float exp;
-				float valPerSec = modff(m_CurrTime, &exp);
-
-				MkScreen* screen1 = MK_POST_EFFECT.GetScreen(1);
-				MkDrawCall* drawCall = screen1->GetDrawCall(0);
-				if ((drawCall->GetShaderEffect() == MkHashStr(L"Grayscale")) ||
-					(drawCall->GetShaderEffect() == MkHashStr(L"GaussianBlur")))
-				{
-					drawCall->SetUDP(L"blendingWeight", D3DXVECTOR4(valPerSec, 0.f, 0.f, 0.f));
-				}
-				else if (drawCall->GetShaderEffect() == MkHashStr(L"CircularZoomingBlur"))
-				{
-					drawCall->SetUDP(L"circularBlurFactor", D3DXVECTOR4(0.5f, 0.5f, 0.1f, valPerSec * 0.02f));
-				}
-
 				// source
 				m_Device->BeginScene();
 				MK_POST_EFFECT.GetSourceRenderTarget().__Push();
@@ -254,10 +235,6 @@ public:
 
 				// poset effect
 				MK_POST_EFFECT.Draw();
-
-				// done
-				m_CurrTime += elapsed;
-				m_TimeStamp = currTimeStamp;
 
 				m_DeviceLost = (m_Device->Present(NULL, NULL, NULL, NULL) == D3DERR_DEVICELOST);
 			}
@@ -306,10 +283,6 @@ protected:
 	bool m_DeviceLost;
 
 	MkDrawCall m_SourceDC;
-
-	// sample
-	DWORD m_TimeStamp;
-	float m_CurrTime;
 };
 
 

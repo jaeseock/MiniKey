@@ -9,18 +9,30 @@ void MkScreen::SetUp(void)
 	m_RenderTarget.SetUp();
 }
 
-bool MkScreen::SetUp(const MkInt2& size, MkRenderToTexture::eTargetFormat format)
+bool MkScreen::SetUp(const MkInt2& size, MkRenderToTexture::eTargetFormat format, bool fixedSize)
 {
+	m_FixedSize = fixedSize;
 	return m_RenderTarget.SetUp(size, format);
 }
 
-bool MkScreen::SetUp(const MkInt2& size, const MkArray<MkRenderToTexture::eTargetFormat>& formats)
+bool MkScreen::SetUp(const MkInt2& size, const MkArray<MkRenderToTexture::eTargetFormat>& formats, bool fixedSize)
 {
+	m_FixedSize = fixedSize;
 	return m_RenderTarget.SetUp(size, formats);
 }
 
 bool MkScreen::Resize(const MkInt2& size)
 {
+	if (m_FixedSize)
+	{
+		const MkRenderToTexture* rtt = m_RenderTarget.GetTargetTexture(0);
+		if (rtt == NULL)
+			return false;
+
+		MkInt2 originSize = rtt->GetSize();
+		return m_RenderTarget.Resize(originSize);
+
+	}
 	return m_RenderTarget.Resize(size);
 }
 
@@ -70,6 +82,7 @@ MkScreen::MkScreen()
 {
 	m_Enable = true;
 	m_ClearLastRenderTarget = false;
+	m_FixedSize = false;
 }
 
 void MkScreen::__Draw(LPDIRECT3DDEVICE9 device, const MkFloat2& screenSize)

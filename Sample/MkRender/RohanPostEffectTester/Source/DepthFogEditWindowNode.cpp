@@ -26,74 +26,80 @@ void DepthFogEditWindowNode::SetUp(MkSceneNode* rootNode)
 	SetAlignmentOffset(MkFloat2(-10.f, -10.f));
 	
 	// body frame
-	const float HEIGHT = 330.f;
+	const float HEIGHT = 240.f;
 
 	MkBodyFrameControlNode* bodyFrame = MkBodyFrameControlNode::CreateChildNode(this, L"BodyFrame");
 	bodyFrame->SetBodyFrame
 		(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(224.f, HEIGHT));
 
-	MkWindowFactory wndFactory;
-	wndFactory.SetMinClientSizeForButton(MkFloat2(205.f, 12.f));
-
-	// refresh btn
+	// graph
 	{
-		MkWindowBaseNode* btnInst = wndFactory.CreateButtonTypeNode(L"RefreshDir", MkWindowThemeData::eCT_OKBtn, L"맵 리스트 갱신");
-		btnInst->SetLocalPosition(MkFloat2(10.f, HEIGHT - 50.f));
+		MkSceneNode* graphNode = new MkSceneNode(L"Graph");
+		bodyFrame->AttachChildNode(graphNode);
+		MkLineShape& lineShape = graphNode->CreateLine(L"LS_Axis");
+		MkArray<MkFloat2> lineVertices(4);
+		lineVertices.PushBack(MkFloat2(0.f, 25.f));
+		lineVertices.PushBack(MkFloat2(0.f, 0.f));
+		lineVertices.PushBack(MkFloat2(200.f, 0.f));
+		lineVertices.PushBack(MkFloat2(200.f, 25.f));
+		lineShape.AddLine(lineVertices);
+		lineShape.AddLine(MkFloat2(40.f, 0.f), MkFloat2(40.f, 25.f));
+		lineShape.SetColor(MkColor::LightGray);
+		graphNode->SetLocalPosition(MkFloat2(15.f, HEIGHT - 50.f));
+		graphNode->SetLocalDepth(-0.5f);
+	}
+
+	{
+		MkSliderControlNode* sliderNode = MkSliderControlNode::CreateChildNode(bodyFrame, L"SL_BeginPos");
+		sliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, -200, 1000, static_cast<int>(SREPO.GetDepthFogGraphBegin() * 800.f));
+		sliderNode->SetLocalPosition(MkFloat2(12.f, HEIGHT - 80.f));
+		sliderNode->SetLocalDepth(-1.f);
+	}
+	{
+		MkSliderControlNode* sliderNode = MkSliderControlNode::CreateChildNode(bodyFrame, L"SL_EndPos");
+		sliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, -200, 1000, static_cast<int>(SREPO.GetDepthFogGraphEnd() * 800.f));
+		sliderNode->SetLocalPosition(MkFloat2(12.f, HEIGHT - 110.f));
+		sliderNode->SetLocalDepth(-1.f);
+	}
+
+	// color
+	{
+		MkWindowFactory wndFactory;
+		wndFactory.SetMinClientSizeForButton(MkFloat2(100.f, 12.f));
+
+		MkWindowBaseNode* btnInst = wndFactory.CreateButtonTypeNode(L"Btn_Color", MkWindowThemeData::eCT_NormalBtn, MkStr::EMPTY);
+		btnInst->SetLocalPosition(MkFloat2(110.f, HEIGHT - 160.f));
 		bodyFrame->AttachChildNode(btnInst);
 	}
 
-	// mult map
-	MkDropDownListControlNode* multDDList;
+	// method
 	{
-		multDDList = MkDropDownListControlNode::CreateChildNode(bodyFrame, L"DD_MultMap");
-		multDDList->SetDropDownList(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 205.f, 12);
-		multDDList->SetLocalDepth(-2.f);
-		multDDList->SetLocalPosition(MkFloat2(10.f, HEIGHT - 90.f));
-
-		MkWindowBaseNode* btnInst = wndFactory.CreateButtonTypeNode(L"Reload_MultMap", MkWindowThemeData::eCT_NormalBtn, L"Multiply 파일 다시 열기");
-		btnInst->SetLocalPosition(MkFloat2(10.f, HEIGHT - 120.f));
-		bodyFrame->AttachChildNode(btnInst);
+		MkDropDownListControlNode* ddList;
+		ddList = MkDropDownListControlNode::CreateChildNode(bodyFrame, L"DD_Method");
+		ddList->SetDropDownList(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 80.f, 12);
+		ddList->SetLocalDepth(-3.f);
+		ddList->SetLocalPosition(MkFloat2(10.f, HEIGHT - 160.f));
+		ddList->AddItem(L"B", L"Blend");
+		ddList->AddItem(L"M", L"Multiply");
+		ddList->AddItem(L"A", L"Add");
 	}
 
-	// add map
-	MkDropDownListControlNode* addDDList;
+	// alpha
 	{
-		addDDList = MkDropDownListControlNode::CreateChildNode(bodyFrame, L"DD_AddMap");
-		addDDList->SetDropDownList(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 205.f, 12);
-		addDDList->SetLocalDepth(-2.f);
-		addDDList->SetLocalPosition(MkFloat2(10.f, HEIGHT - 160.f));
-
-		MkWindowBaseNode* btnInst = wndFactory.CreateButtonTypeNode(L"Reload_AddMap", MkWindowThemeData::eCT_NormalBtn, L"Add 파일 다시 열기");
-		btnInst->SetLocalPosition(MkFloat2(10.f, HEIGHT - 190.f));
-		bodyFrame->AttachChildNode(btnInst);
-	}
-
-	// mixer
-	{
-		MkPanel& textPanel = bodyFrame->CreatePanel(L"ST_Mixer");
-		textPanel.SetLocalPosition(MkFloat2(10.f, HEIGHT - 240.f));
-		textPanel.SetLocalDepth(-1.f);
-		textPanel.SetTextMsg(L"[Mult color] ~ [Add color]");
-
-		MkSliderControlNode* sliderNode = MkSliderControlNode::CreateChildNode(bodyFrame, L"SL_Mixer");
-		sliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 204.f, 0, 100, static_cast<int>(SREPO.GetDepthFogMixer() * 100.f));
-		sliderNode->SetLocalPosition(MkFloat2(10.f, HEIGHT - 270.f));
+		MkSliderControlNode* sliderNode = MkSliderControlNode::CreateChildNode(bodyFrame, L"SL_Alpha");
+		sliderNode->SetHorizontalSlider(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 200.f, 0, 100, static_cast<int>(SREPO.GetDepthFogColorA() * 100.f));
+		sliderNode->SetLocalPosition(MkFloat2(12.f, HEIGHT - 190.f));
 		sliderNode->SetLocalDepth(-1.f);
 	}
 
 	{
+		MkWindowFactory wndFactory;
+		wndFactory.SetMinClientSizeForButton(MkFloat2(205.f, 12.f));
+
 		MkWindowBaseNode* btnInst = wndFactory.CreateButtonTypeNode(L"Btn_Reset", MkWindowThemeData::eCT_CancelBtn, L"설정 초기화");
 		btnInst->SetLocalPosition(MkFloat2(10.f, 10.f));
 		bodyFrame->AttachChildNode(btnInst);
 	}
-
-	m_MultMapPath.ConvertToRootBasisAbsolutePath(L"Gradation\\Mult");
-	_UpdateMapDir(m_MultMapPath, L"DD_MultMap");
-	UpdateMultGradation();
-
-	m_AddMapPath.ConvertToRootBasisAbsolutePath(L"Gradation\\Add");
-	_UpdateMapDir(m_AddMapPath, L"DD_AddMap");
-	UpdateAddGradation();
 }
 
 void DepthFogEditWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
@@ -105,14 +111,46 @@ void DepthFogEditWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventTyp
 			int factor;
 			argument->GetData(MkSliderControlNode::ArgKey_SliderPos, factor, 0);
 
-			SREPO.SetDepthFogMixer(static_cast<float>(factor) / 100.f);
+			MkPanel* mainPanel = (m_RootNode != NULL) ? m_RootNode->GetPanel(L"Main") : NULL;
 
-			if (m_RootNode != NULL)
+			if (path[1].Equals(0, L"SL_BeginPos"))
 			{
-				MkPanel* mainPanel = m_RootNode->GetPanel(L"Main");
+				SREPO.SetDepthFogGraphBegin(static_cast<float>(factor) / 800.f);
+
+				_UpdateGraph();
 				if (mainPanel != NULL)
 				{
-					mainPanel->SetUserDefinedProperty(L"g_FogMixer", SREPO.GetDepthFogMixer());
+					mainPanel->SetUserDefinedProperty(L"g_DFogGraph", SREPO.GetDepthFogGraphBegin(), SREPO.GetDepthFogGraphEnd());
+				}
+			}
+			else if (path[1].Equals(0, L"SL_EndPos"))
+			{
+				SREPO.SetDepthFogGraphEnd(static_cast<float>(factor) / 800.f);
+
+				_UpdateGraph();
+				if (mainPanel != NULL)
+				{
+					mainPanel->SetUserDefinedProperty(L"g_DFogGraph", SREPO.GetDepthFogGraphBegin(), SREPO.GetDepthFogGraphEnd());
+				}
+			}
+			else if (path[1].Equals(0, L"SL_Alpha"))
+			{
+				SREPO.SetDepthFogColorA(static_cast<float>(factor) / 100.f);
+
+				if (mainPanel != NULL)
+				{
+					if (SREPO.GetDepthFogMixerB() > 0.f)
+					{
+						mainPanel->SetUserDefinedProperty(L"g_DFogBlendColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+					}
+					else if (SREPO.GetDepthFogMixerM() > 0.f)
+					{
+						mainPanel->SetUserDefinedProperty(L"g_DFogMultColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+					}
+					else if (SREPO.GetDepthFogMixerA() > 0.f)
+					{
+						mainPanel->SetUserDefinedProperty(L"g_DFogAddColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+					}
 				}
 			}
 			return;
@@ -122,22 +160,48 @@ void DepthFogEditWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventTyp
 	{
 		if (path.GetSize() == 2)
 		{
-			if (path[1].Equals(0, L"DD_MultMap") && (!m_Reloading))
+			MkHashStr buffer;
+			if (argument->GetDataEx(MkListBoxControlNode::ArgKey_Item, buffer, 0) && (!buffer.Empty()))
 			{
-				MkHashStr buffer;
-				if (argument->GetDataEx(MkListBoxControlNode::ArgKey_Item, buffer, 0) && (!buffer.Empty()))
+				if (buffer.Equals(0, L"B"))
 				{
-					SREPO.SetDepthFogMultMap(buffer);
-					UpdateMultGradation();
+					SREPO.SetDepthFogMixerB(1.f);
+					SREPO.SetDepthFogMixerM(0.f);
+					SREPO.SetDepthFogMixerA(0.f);
 				}
-			}
-			else if (path[1].Equals(0, L"DD_AddMap") && (!m_Reloading))
-			{
-				MkHashStr buffer;
-				if (argument->GetDataEx(MkListBoxControlNode::ArgKey_Item, buffer, 0) && (!buffer.Empty()))
+				else if (buffer.Equals(0, L"M"))
 				{
-					SREPO.SetDepthFogAddMap(buffer);
-					UpdateAddGradation();
+					SREPO.SetDepthFogMixerB(0.f);
+					SREPO.SetDepthFogMixerM(1.f);
+					SREPO.SetDepthFogMixerA(0.f);
+				}
+				else if (buffer.Equals(0, L"A"))
+				{
+					SREPO.SetDepthFogMixerB(0.f);
+					SREPO.SetDepthFogMixerM(0.f);
+					SREPO.SetDepthFogMixerA(1.f);
+				}
+
+				if (m_RootNode != NULL)
+				{
+					MkPanel* mainPanel = m_RootNode->GetPanel(L"Main");
+					if (mainPanel != NULL)
+					{
+						mainPanel->SetUserDefinedProperty(L"g_DFogMixer", SREPO.GetDepthFogMixerB(), SREPO.GetDepthFogMixerM(), SREPO.GetDepthFogMixerA());
+
+						if (SREPO.GetDepthFogMixerB() > 0.f)
+						{
+							mainPanel->SetUserDefinedProperty(L"g_DFogBlendColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+						}
+						else if (SREPO.GetDepthFogMixerM() > 0.f)
+						{
+							mainPanel->SetUserDefinedProperty(L"g_DFogMultColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+						}
+						else if (SREPO.GetDepthFogMixerA() > 0.f)
+						{
+							mainPanel->SetUserDefinedProperty(L"g_DFogAddColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+						}
+					}
 				}
 			}
 		}
@@ -146,23 +210,23 @@ void DepthFogEditWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventTyp
 	{
 		if (path.GetSize() == 2)
 		{
-			if (path[1].Equals(0, L"RefreshDir"))
+			if (path[1].Equals(0, L"Btn_Color"))
 			{
-				_UpdateMapDir(m_MultMapPath, L"DD_MultMap");
-				UpdateMultGradation();
+				CHOOSECOLOR cc;
+				::ZeroMemory(&cc, sizeof(CHOOSECOLOR));
 
-				_UpdateMapDir(m_AddMapPath, L"DD_AddMap");
-				UpdateAddGradation();
-			}
-			else if (path[1].Equals(0, L"Reload_MultMap"))
-			{
-				UpdateMultGradation();
-				return;
-			}
-			else if (path[1].Equals(0, L"Reload_AddMap"))
-			{
-				UpdateAddGradation();
-				return;
+				static COLORREF crTemp[16];
+				cc.lStructSize = sizeof(CHOOSECOLOR);
+				cc.lpCustColors = crTemp;
+				cc.Flags = 0;
+
+				if (::ChooseColor(&cc) != 0)
+				{
+					MkColor color;
+					color.SetByCOLORREF(cc.rgbResult);
+
+					_SetFogColor(color);
+				}
 			}
 			else if (path[1].Equals(0, L"Btn_Reset"))
 			{
@@ -182,124 +246,115 @@ void DepthFogEditWindowNode::Activate(void)
 	MkTitleBarControlNode::Activate();
 }
 
-bool DepthFogEditWindowNode::UpdateMultGradation(void)
-{
-	MkHashStr targetKey;
-
-	MkSceneNode* bodyFrame = GetChildNode(L"BodyFrame");
-	MkDropDownListControlNode* ddList = dynamic_cast<MkDropDownListControlNode*>(bodyFrame->GetChildNode(L"DD_MultMap"));
-	if (ddList->ItemExist(SREPO.GetDepthFogMultMap()))
-	{
-		targetKey = SREPO.GetDepthFogMultMap();
-	}
-	else
-	{
-		MkArray<MkHashStr> keyList;
-		ddList->GetItemKeyList(keyList);
-		if (!keyList.Empty())
-		{
-			targetKey = keyList[0];
-			SREPO.SetDepthFogMultMap(targetKey);
-		}
-	}
-
-	if (targetKey.Empty())
-		return false;
-
-	ddList->SetTargetItemKey(targetKey);
-
-	MkPathName newPath = m_MultMapPath + targetKey.GetString() + L".png";
-
-	bool ok = false;
-	MkPanel* mainPanel = m_RootNode->GetPanel(L"Main");
-	if (mainPanel != NULL)
-	{
-		const MkBaseTexture* lastTex = mainPanel->GetEffectTexturePtr2();
-		if (lastTex != NULL)
-		{
-			mainPanel->SetEffectTexture2(NULL);
-			MK_BITMAP_POOL.UnloadBitmapTexture(lastTex->GetPoolKey());
-		}
-		return mainPanel->SetEffectTexture2(newPath);
-	}
-	return false;
-}
-
-bool DepthFogEditWindowNode::UpdateAddGradation(void)
-{
-	MkHashStr targetKey;
-
-	MkSceneNode* bodyFrame = GetChildNode(L"BodyFrame");
-	MkDropDownListControlNode* ddList = dynamic_cast<MkDropDownListControlNode*>(bodyFrame->GetChildNode(L"DD_AddMap"));
-	if (ddList->ItemExist(SREPO.GetDepthFogAddMap()))
-	{
-		targetKey = SREPO.GetDepthFogAddMap();
-	}
-	else
-	{
-		MkArray<MkHashStr> keyList;
-		ddList->GetItemKeyList(keyList);
-		if (!keyList.Empty())
-		{
-			targetKey = keyList[0];
-			SREPO.SetDepthFogAddMap(targetKey);
-		}
-	}
-
-	if (targetKey.Empty())
-		return false;
-
-	ddList->SetTargetItemKey(targetKey);
-
-	MkPathName newPath = m_AddMapPath + targetKey.GetString() + L".png";
-
-	bool ok = false;
-	MkPanel* mainPanel = m_RootNode->GetPanel(L"Main");
-	if (mainPanel != NULL)
-	{
-		const MkBaseTexture* lastTex = mainPanel->GetEffectTexturePtr3();
-		if (lastTex != NULL)
-		{
-			mainPanel->SetEffectTexture3(NULL);
-			MK_BITMAP_POOL.UnloadBitmapTexture(lastTex->GetPoolKey());
-		}
-		return mainPanel->SetEffectTexture3(newPath);
-	}
-	return false;
-}
-
 //------------------------------------------------------------------------------------------------//
-
-void DepthFogEditWindowNode::_UpdateMapDir(const MkPathName& dirPath, const MkHashStr& ddListName)
-{
-	MkSceneNode* bodyFrame = GetChildNode(L"BodyFrame");
-	MkDropDownListControlNode* ddList = dynamic_cast<MkDropDownListControlNode*>(bodyFrame->GetChildNode(ddListName));
-
-	ddList->ClearAllItems();
-	
-	MkArray<MkPathName> filePathList;
-	MkArray<MkPathName> extensionFilter;
-	extensionFilter.PushBack(L"png");
-
-	dirPath.GetWhiteFileList(filePathList, NULL, &extensionFilter, NULL, NULL, false, false);
-
-	m_Reloading = true;
-	MK_INDEXING_LOOP(filePathList, i)
-	{
-		MkPathName fileName = filePathList[i].GetFileName(false);
-		ddList->AddItem(fileName, fileName);
-	}
-	m_Reloading = false;
-}
 
 void DepthFogEditWindowNode::_ResetEffectValue(void)
 {
-	UpdateMultGradation();
-	UpdateAddGradation();
-
 	MkSceneNode* bodyFrame = GetChildNode(L"BodyFrame");
-	MkSliderControlNode* sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_Mixer"));
-	sliderNode->SetSliderValue(static_cast<int>(SREPO.GetDepthFogMixer() * 100.f));
+	{
+		MkSliderControlNode* sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_BeginPos"));
+		sliderNode->SetSliderValue(static_cast<int>(SREPO.GetDepthFogGraphBegin() * 800.f));
+	}
+	{
+		MkSliderControlNode* sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_EndPos"));
+		sliderNode->SetSliderValue(static_cast<int>(SREPO.GetDepthFogGraphEnd() * 800.f));
+	}
+
+	{
+		MkDropDownListControlNode* ddList = dynamic_cast<MkDropDownListControlNode*>(bodyFrame->GetChildNode(L"DD_Method"));
+		if (SREPO.GetDepthFogMixerB() > 0.f)
+		{
+			ddList->SetTargetItemKey(L"B");
+		}
+		else if (SREPO.GetDepthFogMixerM() > 0.f)
+		{
+			ddList->SetTargetItemKey(L"M");
+		}
+		else if (SREPO.GetDepthFogMixerA() > 0.f)
+		{
+			ddList->SetTargetItemKey(L"A");
+		}
+	}
+
+	{
+		MkSliderControlNode* sliderNode = dynamic_cast<MkSliderControlNode*>(bodyFrame->GetChildNode(L"SL_Alpha"));
+		sliderNode->SetSliderValue(static_cast<int>(SREPO.GetDepthFogColorA() * 100.f));
+	}
+
+	_SetFogColor(MkColor(SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB()));
+}
+
+void DepthFogEditWindowNode::_UpdateGraph(void)
+{
+	MkSceneNode* bodyFrame = GetChildNode(L"BodyFrame");
+	MkSceneNode* graphNode = bodyFrame->GetChildNode(L"Graph");
+
+	float beginPos = SREPO.GetDepthFogGraphBegin() * 160.f + 40.f;
+	float endPos = max(beginPos, SREPO.GetDepthFogGraphEnd() * 160.f + 40.f);
+
+	MkLineShape& lineShape = graphNode->CreateLine(L"LS_Value");
+	MkArray<MkFloat2> lineVertices(4);
+
+	if (beginPos > 0.f)
+	{
+		lineVertices.PushBack(MkFloat2(0.f, 0.f));
+	}
+	lineVertices.PushBack(MkFloat2(beginPos, 0.f));
+	lineVertices.PushBack(MkFloat2(endPos, 25.f));
+	if (endPos < 200.f)
+	{
+		lineVertices.PushBack(MkFloat2(200.f, 25.f));
+	}
+
+	lineShape.AddLine(lineVertices);
+	lineShape.SetColor(MkColor::Red);
+	lineShape.SetLocalDepth(-0.5f);
+}
+
+void DepthFogEditWindowNode::_SetFogColor(const MkColor& color)
+{
+	SREPO.SetDepthFogColorR(color.r);
+	SREPO.SetDepthFogColorG(color.g);
+	SREPO.SetDepthFogColorB(color.b);
+
+	MkPanel* mainPanel = (m_RootNode != NULL) ? m_RootNode->GetPanel(L"Main") : NULL;
+	if (mainPanel != NULL)
+	{
+		if (SREPO.GetDepthFogMixerB() > 0.f)
+		{
+			mainPanel->SetUserDefinedProperty(L"g_DFogBlendColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+		}
+		else if (SREPO.GetDepthFogMixerM() > 0.f)
+		{
+			mainPanel->SetUserDefinedProperty(L"g_DFogMultColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+		}
+		else if (SREPO.GetDepthFogMixerA() > 0.f)
+		{
+			mainPanel->SetUserDefinedProperty(L"g_DFogAddColor", SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB(), SREPO.GetDepthFogColorA());
+		}
+	}
+
+	_UpdateColorTag();
+}
+
+void DepthFogEditWindowNode::_UpdateColorTag(void)
+{
+	MkSceneNode* bodyFrame = GetChildNode(L"BodyFrame");
+	MkSceneNode* btnNode = bodyFrame->GetChildNode(L"Btn_Color");
+	if (btnNode != NULL)
+	{
+		MkLineShape& lineShape = btnNode->CreateLine(L"LS_Color");
+		lineShape.ReserveSegments(18);
+
+		for (int i=0; i<12; ++i)
+		{
+			float height = static_cast<float>(i);
+			lineShape.AddLine(MkFloat2(3.f, 3.f + height), MkFloat2(103.f, 3.f + height));
+		}
+		
+		lineShape.SetColor(MkColor(SREPO.GetDepthFogColorR(), SREPO.GetDepthFogColorG(), SREPO.GetDepthFogColorB()));
+		lineShape.SetLocalDepth(-1.f);
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

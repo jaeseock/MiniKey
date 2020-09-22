@@ -1,9 +1,11 @@
 
 //#include "MkCore_MkCheck.h"
-#include "MkCore_MkPathNAme.h"
+#include "MkCore_MkDataNode.h"
 
 #include "MkPA_MkBodyFrameControlNode.h"
 #include "MkPA_MkCheckBoxControlNode.h"
+#include "MkPA_MkListBoxControlNode.h"
+#include "MkPA_MkDropDownListControlNode.h"
 #include "MkPA_MkWindowFactory.h"
 #include "MkPA_MkWindowManagerNode.h"
 
@@ -28,11 +30,11 @@ void MainControlWindowNode::SetUp(const MkArray<MkSceneNode*>& rootNode)
 	// body frame
 	MkBodyFrameControlNode* bodyFrame = MkBodyFrameControlNode::CreateChildNode(this, L"BodyFrame");
 	bodyFrame->SetBodyFrame
-		(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(320.f, 250.f));
+		(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eCT_DefaultBox, true, MkBodyFrameControlNode::eHT_IncludeParentAtTop, MkFloat2(320.f, 280.f + 256.f));
 
 	// btn - load, save as
 	MkWindowFactory wndFactory;
-	wndFactory.SetMinClientSizeForButton(MkFloat2(140.f, 12.f));
+	wndFactory.SetMinClientSizeForButton(MkFloat2(100.f, 12.f));
 	{
 		MkWindowBaseNode* btnInst = wndFactory.CreateButtonTypeNode(L"BTN_Load", MkWindowThemeData::eCT_NormalBtn, L"이펙트 설정 열기");
 		btnInst->SetAlignmentPosition(eRAP_LeftTop);
@@ -41,18 +43,74 @@ void MainControlWindowNode::SetUp(const MkArray<MkSceneNode*>& rootNode)
 	}
 	{
 		MkWindowBaseNode* btnInst = wndFactory.CreateButtonTypeNode(L"BTN_SaveAs", MkWindowThemeData::eCT_NormalBtn, L"다른 이름으로 저장");
-		btnInst->SetAlignmentPosition(eRAP_RightTop);
-		btnInst->SetAlignmentOffset(MkFloat2(-10.f, -30.f));
+		btnInst->SetAlignmentPosition(eRAP_LeftTop);
+		btnInst->SetAlignmentOffset(MkFloat2(122.f, -30.f));
 		bodyFrame->AttachChildNode(btnInst);
 	}
 
+	// view option
+	{
+		MkCheckBoxControlNode* checkBox = MkCheckBoxControlNode::CreateChildNode(bodyFrame, L"CB_ViewOpt");
+		checkBox->SetCheckBox(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, L"보기 옵션", true);
+		checkBox->SetLocalDepth(-1.f);
+		checkBox->SetAlignmentPosition(eRAP_LeftTop);
+		checkBox->SetAlignmentOffset(MkFloat2(240.f, -30.f));
+	}
+
+	// world
+	{
+		MkDropDownListControlNode* ddList;
+		ddList = MkDropDownListControlNode::CreateChildNode(bodyFrame, L"DD_World");
+		ddList->SetDropDownList(MkWindowThemeData::DefaultThemeName, MkWindowThemeData::eFT_Small, 294.f, 14);
+		ddList->SetLocalDepth(-3.f);
+		ddList->SetAlignmentPosition(eRAP_LeftTop);
+		ddList->SetAlignmentOffset(MkFloat2(10.f, -60.f));
+
+		MkDataNode node;
+		MkPathName filePath;
+		filePath.ConvertToRootBasisAbsolutePath(L"WorldSetting.txt");
+		if (filePath.CheckAvailable() && node.Load(filePath))
+		{
+			MkArray<MkHashStr> keys;
+			node.GetChildNodeList(keys);
+			keys.SortInAscendingOrder();
+
+			MK_INDEXING_LOOP(keys, i)
+			{
+				MkDataNode& childNode = *node.GetChildNode(keys[i]);
+				MkStr name;
+				childNode.GetData(L"Name", name, 0);
+				ddList->AddItem(keys[i], name);
+
+				MkInt2 xy;
+				if (childNode.GetData(L"XY", xy, 0))
+				{
+					m_MinimapNameTable.Create(keys[i], MkStr(xy.x) + L"-" + MkStr(xy.y));
+				}
+			}
+
+			unsigned int defPos = keys.FindFirstInclusion(MkArraySection(0), L"#Default");
+			if (defPos == MKDEF_ARRAY_ERROR)
+			{
+				ddList->AddItem(L"#Default", L"[전체 기본]");
+			}
+		}
+
+		ddList->SetTargetItemKey(L"#Default");
+
+		m_MinimapNameTable.Create(L"#Default", L"Def");
+	}
+
+	// minimap
+	_SetMinimapPanel(m_MinimapNameTable[L"#Default"]);
+
 	// main scene
-	_AddEffect(bodyFrame, L"Color", L"원본 컬러 수정", -70.f, false);
-	_AddEffect(bodyFrame, L"DepthFog", L"깊이 안개", -100.f, false);
-	_AddEffect(bodyFrame, L"EdgeDetection", L"외곽선 검출", -130.f, false);
-	_AddEffect(bodyFrame, L"HDR", L"HDR", -160.f, false);
-	_AddEffect(bodyFrame, L"DepthOfField", L"피사계 심도", -190.f, false);
-	_AddEffect(bodyFrame, L"RadialBlur", L"원형 블러", -220.f, false);
+	_AddEffect(bodyFrame, L"Color", L"원본 컬러 수정", -100.f - 256.f, false);
+	_AddEffect(bodyFrame, L"DepthFog", L"깊이 안개", -130.f - 256.f, false);
+	_AddEffect(bodyFrame, L"EdgeDetection", L"외곽선 검출", -160.f - 256.f, false);
+	_AddEffect(bodyFrame, L"HDR", L"HDR", -190.f - 256.f, false);
+	_AddEffect(bodyFrame, L"DepthOfField", L"피사계 심도", -220.f - 256.f, false);
+	_AddEffect(bodyFrame, L"RadialBlur", L"원형 블러", -250.f - 256.f, false);
 }
 
 void MainControlWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType, MkArray<MkHashStr>& path, MkDataNode* argument)
@@ -94,6 +152,19 @@ void MainControlWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType
 			SREPO.SetRadialBlurEnable(true);
 			_SetShaderEffectEnableOfMainPanel(eDST_RadialBlur, true);
 			return;
+		}
+		if (path.GetSize() == 2)
+		{
+			if (path[1].Equals(0, L"CB_ViewOpt"))
+			{
+				SREPO.SetColorEditEnable(true);
+				SREPO.SetDepthFogEnable(true);
+				SREPO.SetFakeHDREnable(true);
+				SREPO.SetDepthOfFieldEnable(true);
+
+				UpdateEffectSetting();
+				return;
+			}
 		}
 	}
 	else if (eventType == ePA_SNE_CheckOff)
@@ -176,6 +247,36 @@ void MainControlWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType
 			}
 		}
 	}
+	else if (eventType == ePA_SNE_DropDownItemSet)
+	{
+		if (path.GetSize() == 2)
+		{
+			MkHashStr buffer;
+			if (argument->GetDataEx(MkListBoxControlNode::ArgKey_Item, buffer, 0) && (!buffer.Empty()))
+			{
+				if (path[1].Equals(0, L"DD_World"))
+				{
+					SREPO.SetTargetRegion(buffer);
+
+					if (m_MinimapNameTable.Exist(buffer))
+					{
+						_SetMinimapPanel(m_MinimapNameTable[buffer]);
+					}
+
+					MkCheckBoxControlNode* cbNode = dynamic_cast<MkCheckBoxControlNode*>(GetChildNode(L"BodyFrame")->GetChildNode(L"CB_ViewOpt"));
+					if ((cbNode != NULL) && cbNode->GetCheck())
+					{
+						SREPO.SetColorEditEnable(true);
+						SREPO.SetDepthFogEnable(true);
+						SREPO.SetFakeHDREnable(true);
+						SREPO.SetDepthOfFieldEnable(true);
+					}
+
+					UpdateEffectSetting();
+				}
+			}
+		}
+	}
 
 	MkTitleBarControlNode::SendNodeReportTypeEvent(eventType, path, argument);
 }
@@ -183,16 +284,19 @@ void MainControlWindowNode::SendNodeReportTypeEvent(ePA_SceneNodeEvent eventType
 void MainControlWindowNode::UpdateEffectSetting(void)
 {
 	MkWindowManagerNode* mgrNode = GetWindowManagerNode();
-	SceneSelectionWindowNode* selWin = dynamic_cast<SceneSelectionWindowNode*>(mgrNode->GetChildNode(L"SceneSelection"));
-	selWin->SelectTargetScene();
+	if (mgrNode != NULL)
+	{
+		SceneSelectionWindowNode* selWin = dynamic_cast<SceneSelectionWindowNode*>(mgrNode->GetChildNode(L"SceneSelection"));
+		selWin->SelectTargetScene();
 
-	// check box 반영, edit window 끔
-	_UpdateCheckBox(L"Color", SREPO.GetColorEditEnable(), mgrNode);
-	_UpdateCheckBox(L"DepthFog", SREPO.GetDepthFogEnable(), mgrNode);
-	_UpdateCheckBox(L"EdgeDetection", SREPO.GetEdgeDetectionEnable(), mgrNode);
-	_UpdateCheckBox(L"HDR", SREPO.GetFakeHDREnable(), mgrNode);
-	_UpdateCheckBox(L"DepthOfField", SREPO.GetDepthOfFieldEnable(), mgrNode);
-	_UpdateCheckBox(L"RadialBlur", SREPO.GetRadialBlurEnable(), mgrNode);
+		// check box 반영, edit window 끔
+		_UpdateCheckBox(L"Color", SREPO.GetColorEditEnable(), mgrNode);
+		_UpdateCheckBox(L"DepthFog", SREPO.GetDepthFogEnable(), mgrNode);
+		_UpdateCheckBox(L"EdgeDetection", SREPO.GetEdgeDetectionEnable(), mgrNode);
+		_UpdateCheckBox(L"HDR", SREPO.GetFakeHDREnable(), mgrNode);
+		_UpdateCheckBox(L"DepthOfField", SREPO.GetDepthOfFieldEnable(), mgrNode);
+		_UpdateCheckBox(L"RadialBlur", SREPO.GetRadialBlurEnable(), mgrNode);
+	}
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -290,6 +394,14 @@ void MainControlWindowNode::_SetShaderEffectEnableOfMainPanel(eDrawStepType draw
 	{
 		mainPanel->SetShaderEffectEnable(enable);
 	}
+}
+
+void MainControlWindowNode::_SetMinimapPanel(const MkHashStr& key)
+{
+	MkPanel& panel = GetChildNode(L"BodyFrame")->CreatePanel(L"P_Map");
+	panel.SetTexture(L"Default\\rohan_map.png", key);
+	panel.SetLocalPosition(MkFloat2(32.f, 195.f));
+	panel.SetLocalDepth(-1.f);
 }
 
 //------------------------------------------------------------------------------------------------//

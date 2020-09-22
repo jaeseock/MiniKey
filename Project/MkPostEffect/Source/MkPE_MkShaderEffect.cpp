@@ -122,7 +122,10 @@ unsigned int MkShaderEffect::BeginTechnique(const MkDrawCall& drawCall, const Mk
 			{
 				MkBaseTexture* dcTex = drawCall.GetTexture(i);
 				MkBaseTexture* effTex = (dcTex == NULL) ? m_Texture[i].defValue : dcTex;
-				m_Effect->SetTexture(m_Texture[i].handle, effTex->GetTexture());
+				if (effTex != NULL)
+				{
+					m_Effect->SetTexture(m_Texture[i].handle, effTex->GetTexture());
+				}
 			}
 		}
 
