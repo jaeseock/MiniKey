@@ -23,7 +23,7 @@ public:
 	bool SetPatchRootDirectoryPath(const MkPathName& patchDirPath);
 	bool SetUpdatingRootDirectoryPath(const MkPathName& updatingDirPath, const MkArray<MkStr>& destList);
 
-	bool GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress = true);
+	bool GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress, const MkArray<MkStr>& doNotCompressExts);
 
 	bool Update(void);
 
@@ -114,6 +114,7 @@ protected:
 
 	// updating patch data
 	bool m_TryCompress;
+	MkArray<MkStr> m_DoNotCompressExts;
 	MkPathName m_UpdatingRootPath;
 	MkArray<MkStr> m_UpdatingDestName;
 	MkArray<MkPathName> m_UpdatingDestPath; // m_UpdatingRootPath + m_UpdatingDestName[n]

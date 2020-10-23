@@ -32,6 +32,7 @@ public:
 		static bool _CreateDefaultService(MkDataNode& dataNode);
 		static bool _CheckServiceEnable(const MkDataNode& serviceNode, MkStr& errorMsg);
 		static bool _CheckPathEnable(const MkDataNode& targetNode, const MkHashStr& fileKey, const MkPathName& clientPath, MkStr& errorMsg);
+		static bool _CheckAllPathEnable(const MkDataNode& targetNode, const MkHashStr& fileKey, const MkPathName& clientPath, MkStr& errorMsg);
 		static bool _CheckShortcutEnable(const MkDataNode& targetNode, const MkPathName& clientPath, MkStr& errorMsg);
 
 	protected:
@@ -47,8 +48,9 @@ public:
 	//------------------------------------------------------------------------------------------------//
 	// 레지스트리, 숏컷, client 파일 삭제
 	// GenerateServiceData::SaveService()로 저장된 service data 기반
-	// ex> MkApplicationRegister::UninstallService(L"registerinfo.mmd", false);
-	static bool UninstallService(const MkPathName& targetServicesFilePath, bool requireConfirm = true);
+	// confirmMsg가 비어 있으면 바로 삭제하고 존재하면 [프로젝트명] + confirmMsg로 삭제여부 질문
+	// ex> MkApplicationRegister::UninstallService(L"registerinfo.mmd");
+	static bool UninstallService(const MkPathName& targetServicesFilePath);
 
 	//------------------------------------------------------------------------------------------------//
 };

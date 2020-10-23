@@ -263,12 +263,18 @@ bool MkPatchFileGenerator::SetUpdatingRootDirectoryPath(const MkPathName& updati
 	return ok;
 }
 
-bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress)
+bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress, const MkArray<MkStr>& doNotCompressExts)
 {
 	if (m_MainState != eReady)
 		return false;
 
 	m_TryCompress = tryCompress;
+
+	m_DoNotCompressExts = doNotCompressExts;
+	MK_INDEXING_LOOP(m_DoNotCompressExts, i)
+	{
+		m_DoNotCompressExts[i].ToLower();
+	}
 
 	bool ok = false;
 	do
@@ -512,12 +518,23 @@ bool MkPatchFileGenerator::Update(void)
 						MkByteArray compData; // 압축 후 데이터
 						if (m_TryCompress && (srcSize > 0))
 						{
-							MkZipCompressor::Compress(srcData.GetPtr(), srcData.GetSize(), compData);
-							srcData.Clear();
-
-							if (ConvertToPercentage<unsigned int, unsigned int>(compData.GetSize(), srcSize) > 90)
+							bool extPass = true;
+							if (!m_DoNotCompressExts.Empty())
 							{
-								compData.Clear(); // 압축 후 크기가 지정된 비율보다 높으면(압축률이 낮으면) 원본 파일 그대로 복사
+								MkStr ext = targetFilePath.GetFileExtension();
+								ext.ToLower();
+								extPass = !m_DoNotCompressExts.Exist(MkArraySection(0), ext);
+							}
+
+							if (extPass)
+							{
+								MkZipCompressor::Compress(srcData.GetPtr(), srcData.GetSize(), compData);
+								srcData.Clear();
+
+								if (ConvertToPercentage<unsigned int, unsigned int>(compData.GetSize(), srcSize) > 90)
+								{
+									compData.Clear(); // 압축 후 크기가 지정된 비율보다 높으면(압축률이 낮으면) 원본 파일 그대로 복사
+								}
 							}
 						}
 

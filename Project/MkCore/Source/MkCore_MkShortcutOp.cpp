@@ -57,7 +57,8 @@ bool MkShortcutOperator::CreateShortcut
 
 static void __MakeLocationPath(const MkPathName& shortcutFilePath, int csidl, MkPathName& locationPath)
 {
-	MkPathName fpCopy = (shortcutFilePath.GetFileExtension() == MkStr::EMPTY) ? (shortcutFilePath + L".lnk") : shortcutFilePath;
+	MkStr ext = shortcutFilePath.GetFileExtension();
+	MkPathName fpCopy = ((ext == MkStr::EMPTY) || (ext.GetSize() > 4)) ? (shortcutFilePath + L".lnk") : shortcutFilePath; // 확장자는 4자리까지만 인정
 	locationPath.ConvertToSystemBasisAbsolutePath(fpCopy, csidl);
 }
 

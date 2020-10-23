@@ -30,6 +30,7 @@ const static MkHashStr KEY_StartPath = L"StartPath";
 const static MkHashStr KEY_LauncherFileName = L"LauncherFileName";
 const static MkHashStr KEY_RunFilePath = L"RunFilePath";
 const static MkHashStr KEY_TryCompress = L"TryCompress";
+const static MkHashStr KEY_DoNotCompressExt = L"DoNotCompressExt";
 
 const static MkHashStr KEY_ExportNodeName = L"[EXPORT]";
 const static MkHashStr KEY_DestURL = L"URL";
@@ -69,6 +70,8 @@ public:
 			m_RunFilePath = tmpRFP;
 
 			m_SettingNode.GetData(KEY_TryCompress, m_TryCompress, 0);
+
+			m_SettingNode.GetData(KEY_DoNotCompressExt, m_DoNotCompressExts);
 
 			if (m_SettingNode.ChildExist(KEY_ExportNodeName))
 			{
@@ -157,7 +160,7 @@ public:
 	{
 		if (m_OnPacking == _eStartPatching)
 		{
-			if (m_PG.GeneratePatchFiles(m_ResRootPath, m_TryCompress))
+			if (m_PG.GeneratePatchFiles(m_ResRootPath, m_TryCompress, m_DoNotCompressExts))
 			{
 				m_ResRootPath[m_ResRootPath.GetSize() - 1] = L'/'; // L'\\' -> '/'
 
@@ -500,6 +503,7 @@ protected:
 	MkPathName m_ResRootPath;
 
 	bool m_TryCompress;
+	MkArray<MkStr> m_DoNotCompressExts;
 
 	MkArray<MkStr> m_OutDirNames;
 	

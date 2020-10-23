@@ -12,24 +12,23 @@ Node "Korea - Playwith(web launch)"
 	// 기본 정보 레지스트리 등록(필수)
 	Node "[RegisterProjectInfo]"
 	{
-		// 언인스톨시 해당 노드 삭제(옵션)
-		str #UninstallList = "군타라 온라인 for 플레이위드";
+		// 프로젝트 이름(필수)
+		str #ProjectName = "군타라 온라인 for 플레이위드";
 
-		// 프로젝트(최소 하나는 필수)
-		Node "군타라 온라인 for 플레이위드"
-		{
-			// 퍼블리셔 이름(옵션)
-			str #PublisherName = "Playwith-GAMES Entertainment";
+		// 퍼블리셔 이름(옵션)
+		str #PublisherName = "Playwith-GAMES Entertainment";
 
-			// 아이콘 파일 경로(옵션)
-			str #IconFile = "Kuntara.ico";
+		// 아이콘 파일 경로(옵션)
+		str #IconFile = "Kuntara.ico";
 
-			// 홈페이지 주소(옵션)
-			str #HomePage = "http://www.kuntara.co.kr";
+		// 홈페이지 주소(옵션)
+		str #HomePage = "http://www.kuntara.co.kr";
 
-			// 삭제 프로그램 경로(필수)
-			str #UninstallApp = "Uninstall.exe";
-		}
+		// 삭제 프로그램 경로(필수)
+		str #UninstallApp = "Uninstall.exe";
+
+		// 삭제 여부 질문(옵션)
+		str #UninstallMsg = "군타라 온라인을 정말로 삭제하시겠습니까?";
 	}
 
 	// 웹 스타트용 custom URL scheme 등록(옵션)
@@ -116,24 +115,23 @@ Node "Korea - Playwith(client launch)"
 	// 기본 정보 레지스트리 등록(필수)
 	Node "[RegisterProjectInfo]"
 	{
-		// 언인스톨시 해당 노드 삭제(옵션)
-		str #UninstallList = "군타라 온라인 for 플레이위드";
+		// 프로젝트 이름(필수)
+		str #ProjectName = "군타라 온라인 for 플레이위드";
 
-		// 프로젝트(최소 하나는 필수)
-		Node "군타라 온라인 for 플레이위드"
-		{
-			// 퍼블리셔 이름(옵션)
-			str #PublisherName = "Playwith-GAMES Entertainment";
+		// 퍼블리셔 이름(옵션)
+		str #PublisherName = "Playwith-GAMES Entertainment";
 
-			// 아이콘 파일 경로(옵션)
-			str #IconFile = "Kuntara.ico";
+		// 아이콘 파일 경로(옵션)
+		str #IconFile = "Kuntara.ico";
 
-			// 홈페이지 주소(옵션)
-			str #HomePage = "http://www.kuntara.co.kr";
+		// 홈페이지 주소(옵션)
+		str #HomePage = "http://www.kuntara.co.kr";
 
-			// 삭제 프로그램 경로(필수)
-			str #UninstallApp = "Uninstall.exe";
-		}
+		// 삭제 프로그램 경로(필수)
+		str #UninstallApp = "Uninstall.exe";
+
+		// 삭제 여부 질문(옵션)
+		str #UninstallMsg = "군타라 온라인을 정말로 삭제하시겠습니까?";
 	}
 
 	// 바탕화면 숏컷(옵션)
@@ -203,24 +201,23 @@ Node "Korea - Naver(web launch)"
 	// 기본 정보 레지스트리 등록(필수)
 	Node "[RegisterProjectInfo]"
 	{
-		// 언인스톨시 해당 노드 삭제(옵션)
-		str #UninstallList = "군타라 온라인 for 네이버";
+		// 프로젝트 이름(필수)
+		str #ProjectName = "군타라 온라인 for 네이버";
 
-		// 프로젝트(최소 하나는 필수)
-		Node "군타라 온라인 for 네이버"
-		{
-			// 퍼블리셔 이름(옵션)
-			str #PublisherName = "Naver";
+		// 퍼블리셔 이름(옵션)
+		str #PublisherName = "네이버";
 
-			// 아이콘 파일 경로(옵션)
-			str #IconFile = "Kuntara.ico";
+		// 아이콘 파일 경로(옵션)
+		str #IconFile = "Kuntara.ico";
 
-			// 홈페이지 주소(옵션)
-			str #HomePage = "http://www.kuntara.co.kr";
+		// 홈페이지 주소(옵션)
+		str #HomePage = "http://www.kuntara.co.kr";
 
-			// 삭제 프로그램 경로(필수)
-			str #UninstallApp = "Uninstall.exe";
-		}
+		// 삭제 프로그램 경로(필수)
+		str #UninstallApp = "Uninstall.exe";
+
+		// 삭제 여부 질문(옵션)
+		str #UninstallMsg = "군타라 온라인을 정말로 삭제하시겠습니까?";
 	}
 
 	// 웹 스타트용 custom URL scheme 등록(옵션)

@@ -12,12 +12,14 @@ static const MkHashStr NKEY_ClientDeleteList = L"[ClientDeleteList]"; // CDL(Cli
 
 static const MkHashStr UKEY_ClientPath = L"#ClientPath"; // GenerateServiceData only
 
-static const MkHashStr UKEY_UninstallList = L"#UninstallList"; // all
+static const MkHashStr UKEY_UninstallList = L"#UninstallList"; // RCS, SC, CDL
 
+static const MkHashStr UKEY_ProjectName = L"#ProjectName"; // RPI
 static const MkHashStr UKEY_PublisherName = L"#PublisherName"; // RPI
 static const MkHashStr UKEY_IconFile = L"#IconFile"; // RPI, SC
 static const MkHashStr UKEY_HomePage = L"#HomePage"; // RPI
 static const MkHashStr UKEY_UninstallApp = L"#UninstallApp"; // RPI
+static const MkHashStr UKEY_UninstallMsg = L"#UninstallMsg"; // RPI
 
 static const MkHashStr UKEY_TargetApp = L"#TargetApp"; // RCS, SC
 static const MkHashStr UKEY_AcceptArg = L"#AcceptArg"; // RCS
@@ -211,16 +213,12 @@ bool MkApplicationRegister::GenerateServiceData::_CreateDefaultService(MkDataNod
 		MkDataNode* rpiNode = serviceNode->CreateChildNode(NKEY_RegisterProjectInfo);
 		if (rpiNode == NULL) return false;
 		{
-			MkDataNode* projectNode = rpiNode->CreateChildNode(L"군타라 온라인 for 플레이위드");
-			if (projectNode == NULL) return false;
-			{
-				if (!projectNode->CreateUnit(UKEY_PublisherName, MkStr(L"Playwith-GAMES Entertainment"))) return false;
-				if (!projectNode->CreateUnit(UKEY_IconFile, MkStr(L"Kuntara.ico"))) return false;
-				if (!projectNode->CreateUnit(UKEY_HomePage, MkStr(L"http://www.kuntara.co.kr"))) return false;
-				if (!projectNode->CreateUnit(UKEY_UninstallApp, MkStr(L"Uninstall.exe"))) return false;
-			}
-
-			if (!rpiNode->CreateUnit(UKEY_UninstallList, projectNode->GetNodeName().GetString())) return false;
+			if (!rpiNode->CreateUnit(UKEY_ProjectName, MkStr(L"군타라 온라인 for 플레이위드"))) return false;
+			if (!rpiNode->CreateUnit(UKEY_PublisherName, MkStr(L"Playwith-GAMES Entertainment"))) return false;
+			if (!rpiNode->CreateUnit(UKEY_IconFile, MkStr(L"Kuntara.ico"))) return false;
+			if (!rpiNode->CreateUnit(UKEY_HomePage, MkStr(L"http://www.kuntara.co.kr"))) return false;
+			if (!rpiNode->CreateUnit(UKEY_UninstallApp, MkStr(L"Uninstall.exe"))) return false;
+			if (!rpiNode->CreateUnit(UKEY_UninstallMsg, MkStr(L"정말 군타라 온라인을 삭제하시겠습니까?"))) return false;
 		}
 
 		// register custom url scheme
@@ -324,9 +322,9 @@ bool MkApplicationRegister::GenerateServiceData::_CheckServiceEnable(const MkDat
 		return false;
 	}
 
-	if (rpiNode->GetChildNodeCount() == 0)
+	if (!rpiNode->IsValidKey(UKEY_ProjectName))
 	{
-		errorMsg = NKEY_RegisterProjectInfo.GetString() + L" 노드에 등록 프로젝트가 없음";
+		errorMsg = NKEY_RegisterProjectInfo.GetString() + L" 노드에 프로젝트 이름이 없음";
 		return false;
 	}
 
@@ -337,7 +335,7 @@ bool MkApplicationRegister::GenerateServiceData::_CheckServiceEnable(const MkDat
 	const MkDataNode* rcsNode = serviceNode.GetChildNode(NKEY_RegisterCustomURLScheme);
 	if (rcsNode != NULL)
 	{
-		if (!_CheckPathEnable(*rcsNode, UKEY_TargetApp, clientPath, errorMsg))
+		if (!_CheckAllPathEnable(*rcsNode, UKEY_TargetApp, clientPath, errorMsg))
 			return false;
 	}
 
@@ -363,25 +361,33 @@ bool MkApplicationRegister::GenerateServiceData::_CheckServiceEnable(const MkDat
 bool MkApplicationRegister::GenerateServiceData::_CheckPathEnable
 (const MkDataNode& targetNode, const MkHashStr& fileKey, const MkPathName& clientPath, MkStr& errorMsg)
 {
+	MkStr buffer;
+	if ((!targetNode.GetData(fileKey, buffer, 0)) || buffer.Empty())
+	{
+		errorMsg = targetNode.GetNodeName().GetString() + L" -> " + fileKey.GetString() + L" 값이 없음";
+		return false;
+	}
+
+	MkPathName appPath = clientPath + buffer;
+	if (!appPath.CheckAvailable())
+	{
+		errorMsg = targetNode.GetNodeName().GetString() + L" -> " + fileKey.GetString() + L" 파일이 존재하지 않음";
+		return false;
+	}
+	
+	return true;
+}
+
+bool MkApplicationRegister::GenerateServiceData::_CheckAllPathEnable
+(const MkDataNode& targetNode, const MkHashStr& fileKey, const MkPathName& clientPath, MkStr& errorMsg)
+{
 	MkArray<MkHashStr> children;
 	if (targetNode.GetChildNodeList(children) > 0)
 	{
 		MK_INDEXING_LOOP(children, i)
 		{
-			const MkHashStr& currKey = children[i];
-			MkStr buffer;
-			if ((!targetNode.GetChildNode(currKey)->GetData(fileKey, buffer, 0)) || buffer.Empty())
-			{
-				errorMsg = currKey.GetString() + L" -> " + fileKey.GetString() + L" 값이 없음";
+			if (!_CheckPathEnable(*targetNode.GetChildNode(children[i]), fileKey, clientPath, errorMsg))
 				return false;
-			}
-
-			MkPathName appPath = clientPath + buffer;
-			if (!appPath.CheckAvailable())
-			{
-				errorMsg = currKey.GetString() + L" -> " + fileKey.GetString() + L" 파일이 존재하지 않음";
-				return false;
-			}
 		}
 	}
 	return true;
@@ -569,23 +575,14 @@ bool MkApplicationRegister::UpdateService(const MkPathName& targetServicesFilePa
 	const MkDataNode* rpiNode = serviceNode.GetChildNode(NKEY_RegisterProjectInfo);
 	if (rpiNode != NULL)
 	{
-		MkArray<MkHashStr> children;
-		if (rpiNode->GetChildNodeList(children) > 0)
-		{
-			MK_INDEXING_LOOP(children, i)
-			{
-				const MkHashStr& currKey = children[i];
-				const MkDataNode& childNode = *rpiNode->GetChildNode(currKey);
+		MkStr projectName, publisherName, iconFile, homePage, uninstallApp;
+		rpiNode->GetData(UKEY_ProjectName, projectName, 0);
+		rpiNode->GetData(UKEY_PublisherName, publisherName, 0);
+		rpiNode->GetData(UKEY_IconFile, iconFile, 0);
+		rpiNode->GetData(UKEY_HomePage, homePage, 0);
+		rpiNode->GetData(UKEY_UninstallApp, uninstallApp, 0);
 
-				MkStr publisherName, iconFile, homePage, uninstallApp;
-				childNode.GetData(UKEY_PublisherName, publisherName, 0);
-				childNode.GetData(UKEY_IconFile, iconFile, 0);
-				childNode.GetData(UKEY_HomePage, homePage, 0);
-				childNode.GetData(UKEY_UninstallApp, uninstallApp, 0);
-
-				MkRegistryOperator::RegistApplicationInfo(currKey.GetString(), currKey.GetString(), iconFile, publisherName, homePage, uninstallApp);
-			}
-		}
+		MkRegistryOperator::RegistApplicationInfo(projectName, projectName, iconFile, publisherName, homePage, uninstallApp);
 	}
 
 	// register custom url scheme
@@ -641,7 +638,7 @@ bool MkApplicationRegister::UpdateService(const MkPathName& targetServicesFilePa
 	return true;
 }
 
-bool MkApplicationRegister::UninstallService(const MkPathName& targetServicesFilePath, bool requireConfirm)
+bool MkApplicationRegister::UninstallService(const MkPathName& targetServicesFilePath)
 {
 	MkPathName fullPath;
 	fullPath.ConvertToModuleBasisAbsolutePath(targetServicesFilePath);
@@ -656,24 +653,21 @@ bool MkApplicationRegister::UninstallService(const MkPathName& targetServicesFil
 	const MkDataNode* rpiNode = serviceNode.GetChildNode(NKEY_RegisterProjectInfo);
 	if (rpiNode != NULL)
 	{
-		MkArray<MkStr> uninstallList;
-		__GetUninstallList(*rpiNode, MkStr::EMPTY, uninstallList);
+		// 삭제 확인
+		MkStr uninstallMsg;
+		rpiNode->GetData(UKEY_UninstallMsg, uninstallMsg, 0);
 
-		// 삭제 확인해야 하고 삭제 할 프로젝트가 있을 경우
-		if (requireConfirm && (!uninstallList.Empty()))
+		if (!uninstallMsg.Empty())
 		{
-			MkStr msg = L"[ ";
-			msg += uninstallList[0];
-			msg += L"]\n서비스를 삭제하시겠습니까?";
-			
-			if (::MessageBox(NULL, msg.GetPtr(), L"Uninstall", MB_YESNO) == IDNO)
+			if (::MessageBox(NULL, uninstallMsg.GetPtr(), L"Uninstall", MB_YESNO) == IDNO)
 				return false;
 		}
 
-		MK_INDEXING_LOOP(uninstallList, i)
-		{
-			MkRegistryOperator::DeleteApplicationInfo(uninstallList[i]);
-		}
+		MkStr projectName;
+		if ((!rpiNode->GetData(UKEY_ProjectName, projectName, 0)) || projectName.Empty())
+			return false;
+
+		MkRegistryOperator::DeleteApplicationInfo(projectName);
 	}
 
 	// register custom url scheme

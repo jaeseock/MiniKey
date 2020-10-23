@@ -23,6 +23,9 @@
 
 #define MKDEF_APP_BTN_START_ID 5
 
+// Starter로부터 온 경로가 비어 있으면 대신 설정. 필요 없으면 공문자열(L"").
+#define MKDEF_DEFAULT_PATCH_URL L"http://patch.playwith.co.kr/rohan_queentoolv2"
+
 static bool g_RunGame = false;
 static MkLayeredWindow g_LayeredWindow;
 
@@ -44,8 +47,13 @@ public:
 
 		if (m_PatchURL.Empty())
 		{
-			::MessageBox(NULL, L"No URL.", L"SimpleLauncher", MB_OK);
-			return false; // quit
+			m_PatchURL = MKDEF_DEFAULT_PATCH_URL;
+
+			if (m_PatchURL.Empty())
+			{
+				::MessageBox(NULL, L"No URL.", L"SimpleLauncher", MB_OK);
+				return false; // quit
+			}
 		}
 
 		// launcher가 app을 실행하므로 복수 실행 예외 처리
@@ -78,7 +86,11 @@ public:
 		m_SubProgHandle = ::CreateWindowEx(0, PROGRESS_CLASS, NULL, WS_CHILD | WS_VISIBLE, 5, currentY, 400, 15, hWnd, reinterpret_cast<HMENU>(MKDEF_APP_PROG_SUB_ID), hInstance, NULL);
 
 		currentY += 30;
-		m_RunBtnHandle = _CreateControl(hWnd, hInstance, L"button", MKDEF_APP_BTN_START_ID, L"게임 시작", buttonControlStyle, MkIntRect(5, currentY, 400, 40));
+		m_RunBtnHandle = _CreateControl(hWnd, hInstance, L"button", MKDEF_APP_BTN_START_ID, L"어플리케이션 시작", buttonControlStyle, MkIntRect(5, currentY, 400, 40));
+		if (m_RunBtnHandle != NULL)
+		{
+			EnableWindow(m_RunBtnHandle, FALSE);
+		}
 
 		// 강제로 foreground로 보냄
 		HWND frontWnd = ::GetForegroundWindow();
@@ -243,10 +255,15 @@ public:
 				case MkPatchFileDownloader::eShowSuccessResult:
 					mainDesc = L" 완료";
 					::SendMessage(m_MainProgHandle, PBM_SETPOS, 100, 0);
+
+					if (m_RunBtnHandle != NULL)
+					{
+						EnableWindow(m_RunBtnHandle, TRUE);
+					}
 					break;
 
 				case MkPatchFileDownloader::eShowFailedResult:
-					mainDesc = L" 실패";
+					mainDesc = L" 실패. 잠시 후 재시도 요청";
 					::SendMessage(m_MainProgHandle, PBM_SETPOS, 100, 0);
 					break;
 				}

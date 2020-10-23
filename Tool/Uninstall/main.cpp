@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 	MkStr::SetUp();
 	MkPathName::SetUp();
 
-	MkApplicationRegister::UninstallService(MKDEF_REGISTER_FILENAME, true);
+	MkApplicationRegister::UninstallService(MKDEF_REGISTER_FILENAME);
 
 	return 0;
 }
