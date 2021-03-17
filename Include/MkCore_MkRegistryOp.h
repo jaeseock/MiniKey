@@ -56,6 +56,9 @@ public:
 	//	}
 	static bool Read(HKEY rootKey, const MkStr& subKey, MkDataNode& node);
 
+	// Read()를 통해 읽은 node에서 subKey에 매칭되는 value값을 반환
+	static bool ReadValue(const MkDataNode& node, const MkStr& subKey, MkStr& value);
+
 	// node에 담긴 정보를 그대로 레지스트리에 기록(node 구성 형식은 위와 동일)
 	// (NOTE) 관리자 권한 요구
 	static bool Write(const MkDataNode& node);

@@ -56,6 +56,22 @@ bool MkRegistryOperator::Read(HKEY rootKey, const MkStr& subKey, MkDataNode& nod
 	return false;
 }
 
+bool MkRegistryOperator::ReadValue(const MkDataNode& node, const MkStr& subKey, MkStr& value)
+{
+	value.Clear();
+
+	MkArray<MkStr> subKeys;
+	if (node.GetData(KEY_Subkeys, subKeys))
+	{
+		unsigned int pos = subKeys.FindFirstInclusion(MkArraySection(0), subKey);
+		if (pos != MKDEF_ARRAY_ERROR)
+		{
+			return node.GetData(KEY_Values, value, pos);
+		}
+	}
+	return false;
+}
+
 bool MkRegistryOperator::Write(const MkDataNode& node)
 {
 	MkArray<MkHashStr> rootKeys;

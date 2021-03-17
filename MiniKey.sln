@@ -127,6 +127,22 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanDisableQuestRemover", 
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StopThere", "Sample\MkRender\StopThere\StopThere.vcproj", "{688772FE-DEF6-4640-9222-3A92CD3C6CDB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC} = {30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanWorldAtrWrapper", "Application\RohanWorldAtrWrapper\RohanWorldAtrWrapper.vcproj", "{B8C6930A-59C5-4281-91A6-720C77005EC1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TeamCardUsageConverter", "Application\TeamCardUsageConverter\TeamCardUsageConverter.vcproj", "{B517F50F-78AA-4F4F-805C-FCD7D6152549}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -284,6 +300,24 @@ Global
 		{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}.Release|Win32.Build.0 = Release|Win32
 		{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}.Shipping|Win32.ActiveCfg = Release|Win32
 		{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}.Shipping|Win32.Build.0 = Release|Win32
+		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Debug|Win32.Build.0 = Debug|Win32
+		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Release|Win32.ActiveCfg = Release|Win32
+		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Release|Win32.Build.0 = Release|Win32
+		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Shipping|Win32.ActiveCfg = Release|Win32
+		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Shipping|Win32.Build.0 = Release|Win32
+		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Debug|Win32.Build.0 = Debug|Win32
+		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Release|Win32.ActiveCfg = Release|Win32
+		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Release|Win32.Build.0 = Release|Win32
+		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Shipping|Win32.ActiveCfg = Release|Win32
+		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Shipping|Win32.Build.0 = Release|Win32
+		{B517F50F-78AA-4F4F-805C-FCD7D6152549}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B517F50F-78AA-4F4F-805C-FCD7D6152549}.Debug|Win32.Build.0 = Debug|Win32
+		{B517F50F-78AA-4F4F-805C-FCD7D6152549}.Release|Win32.ActiveCfg = Release|Win32
+		{B517F50F-78AA-4F4F-805C-FCD7D6152549}.Release|Win32.Build.0 = Release|Win32
+		{B517F50F-78AA-4F4F-805C-FCD7D6152549}.Shipping|Win32.ActiveCfg = Release|Win32
+		{B517F50F-78AA-4F4F-805C-FCD7D6152549}.Shipping|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
