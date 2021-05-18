@@ -14,11 +14,13 @@
 #include "MkCore_MkBaseFramework.h"
 #include "MkCore_MkWin32Application.h"
 
-//#include "MkCore_MkInterfaceForFileReading.h"
+#include "MkCore_MkExcelFileInterface.h"
 #include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkInterfaceForZipFileReading.h"
 
+
 #include "MkCore_MkFileManager.h"
+#include "MkCore_MkRegistryOp.h"
 
 
 // steam -----------------------------------------------------
@@ -125,6 +127,9 @@ class TestFramework : public MkBaseFramework
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
+//		int* k = NULL;
+//		*k = 10;
+
 #if DEF_STEAM_LOGIN
 		if ( SteamAPI_RestartAppIfNecessary( 838330 ) )
 			return false; // EXIT_FAILURE
@@ -359,14 +364,114 @@ public:
 
 //------------------------------------------------------------------------------------------------//
 
+int ReadItemCode(MkExcelFileInterface& excel, const MkStr& name, int c, MkStr& outBuffer)
+{
+	MkStr items;
+	items.Reserve(1024);
+
+	int cnt = 0;
+	int r = 0;
+	while (true)
+	{
+		MkStr buffer;
+		if (excel.GetData(r, c, buffer) && (!buffer.Empty()))
+		{
+			if (!items.Empty())
+			{
+				items += L" / ";
+			}
+
+			items += buffer;
+			++cnt;
+		}
+		else
+			break;
+
+		++r;
+	}
+
+	outBuffer += name;
+	outBuffer += L"(";
+	outBuffer += cnt;
+	outBuffer += L")";
+	outBuffer += MkStr::LF;
+	outBuffer += items;
+	outBuffer += MkStr::LF;
+	return cnt;
+}
+
+int ReadItemCode(MkExcelFileInterface& excel, const MkPathName& filePath, int c)
+{
+	MkStr msg;
+	msg.Reserve(1024 * 8);
+
+	int cnt = 0;
+	int r = 0;
+	while (true)
+	{
+		MkStr codeBuf, nameBuf;
+		if (excel.GetData(r, c, codeBuf) && (!codeBuf.Empty()) && excel.GetData(r, c + 1, nameBuf) && (!nameBuf.Empty()))
+		{
+			msg += L"create ";
+			msg += codeBuf;
+			msg += MkStr::TAB;
+			msg += L"// ";
+			msg += nameBuf;
+			msg += MkStr::LF;
+			++cnt;
+		}
+		else
+			break;
+
+		++r;
+	}
+	msg.WriteToTextFile(filePath, true, false);
+	return cnt;
+}
+
 // 엔트리 포인트에서의 TestApplication 실행
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
+	/*
+	// http://patch.playwith.co.kr/WebUpdater/RohanNewWebLaunchingUpdater.exe
+
+	MkStr::SetUp();
+	MkPathName::SetUp();
+
+	MkExcelFileInterface excel;
+	if (!excel.SetUp(L"RH_equipment_List_20210108.xlsx"))
+	{
+		::MessageBox(NULL, L"엑셀 파일 열기 실패", L"으잉?", MB_OK);
+		return 0;
+	}
+	excel.SetActiveSheet(0);
+*/
+	/*
+	ReadItemCode(excel, L"환상", 1, outBuffer);
+	ReadItemCode(excel, L"페르켄", 4, outBuffer);
+	ReadItemCode(excel, L"탈리", 7, outBuffer);
+	ReadItemCode(excel, L"글라시엘", 10, outBuffer);
+	ReadItemCode(excel, L"오파니엘", 13, outBuffer);
+	ReadItemCode(excel, L"초월된 이그니엘", 16, outBuffer);
+	ReadItemCode(excel, L"초월된 칠흑의 오닉스", 19, outBuffer);
+	ReadItemCode(excel, L"초월된 심연", 22, outBuffer);
+	*/
+	/*
+	ReadItemCode(excel, L"환상.txt", 1);
+	ReadItemCode(excel, L"페르켄.txt", 4);
+	ReadItemCode(excel, L"탈리.txt", 7);
+	ReadItemCode(excel, L"글라시엘.txt", 10);
+	ReadItemCode(excel, L"오파니엘.txt", 13);
+	ReadItemCode(excel, L"이그니엘.txt", 16);
+	ReadItemCode(excel, L"오닉스.txt", 19);
+	ReadItemCode(excel, L"심연.txt", 22);
+
+	::MessageBox(NULL, L"End", L"TransExcel.xlsx", MB_OK);	
+*/
 	TestApplication application;
 	application.Run(hI, L"WhiteBoard", L"..\\ResRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 200, 200);
-
+	
 	return 0;
 }
 
 //------------------------------------------------------------------------------------------------//
-

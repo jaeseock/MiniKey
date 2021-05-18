@@ -1,3 +1,0 @@
-
-uint Colors = 4;
-uint Simbols = 4;
