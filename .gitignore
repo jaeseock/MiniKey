@@ -1,12 +1,15 @@
 *.user
 *.log
+*.tlog
 *.db
 *.exe
 *.htm
 *.dep
 *.obj
+*.iobj
 *.ilk
 *.pdb
+*.ipdb
 *.manifest
 *manifest.res
 *.lib
@@ -16,3 +19,4 @@
 *.pch
 *.res
 *.rsp
+*.cache

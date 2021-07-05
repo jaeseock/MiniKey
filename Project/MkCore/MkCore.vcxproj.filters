@@ -1,0 +1,794 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Data type">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{876bae66-8894-4086-b54a-11d3861f2248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pattern">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Pattern\Container">
+      <UniqueIdentifier>{2cfae298-1e56-4900-bbf1-7615856f19c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pattern\Container\Set">
+      <UniqueIdentifier>{891ea6d0-12f4-4e02-bea3-6edd3ded9aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pattern\Container\Descriptor">
+      <UniqueIdentifier>{0f639b44-2e7f-4d7c-b753-8921fc824ad9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pattern\Archive">
+      <UniqueIdentifier>{af063c73-4163-4b7b-a3eb-f417665303f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pattern\Tree">
+      <UniqueIdentifier>{fe0e0b68-ea40-4063-9aa1-a906a769a42b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{9417dee2-304b-4d85-8bc6-d976b79b9147}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Pure function">
+      <UniqueIdentifier>{c821fcea-9156-492a-a3d8-d79c30448fd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Multi thread management">
+      <UniqueIdentifier>{5d5d32d3-5c49-48e2-b855-778f9f196b26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Archive">
+      <UniqueIdentifier>{a9c14c49-cc12-4d5f-b671-93af62fa135a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Random">
+      <UniqueIdentifier>{17f66d35-3df3-415e-be61-5986501b8273}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Graph">
+      <UniqueIdentifier>{904f69f4-f982-4e38-848d-6d2890805c8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\System">
+      <UniqueIdentifier>{d898ea26-0609-4dfe-82ce-311a7332c02c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Web interface">
+      <UniqueIdentifier>{cbf8cd96-af07-4a4f-939a-99c5e07536c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management">
+      <UniqueIdentifier>{48b871e6-1c8c-4630-bd9f-3254f5787e2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\IO Interface">
+      <UniqueIdentifier>{8d71c4d5-8726-4af3-8508-165cbf8e098f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\File system">
+      <UniqueIdentifier>{ea3f8338-e176-48fe-899a-ff7077b33326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Data node">
+      <UniqueIdentifier>{fc3f26ee-b400-4e5a-8f9e-a16163b094cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Data node\Converting interface">
+      <UniqueIdentifier>{be35aafc-879e-417e-9486-967400997bbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Patch system">
+      <UniqueIdentifier>{024540b6-8fb1-4444-94b7-1d2678b48274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Patch system\0. Make patch files">
+      <UniqueIdentifier>{b8db3b26-57d1-42bc-9afb-7c471ef52adc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Patch system\3. Check, download and update files">
+      <UniqueIdentifier>{55053e6a-db61-411d-80a6-34fbe4e1cec3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Patch system\2. Start patching">
+      <UniqueIdentifier>{27b13357-ef1a-46e1-b663-37b6cdc3fbc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Patch system\1. Upload files">
+      <UniqueIdentifier>{835cef50-aea1-498b-8c25-448bb668b368}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Patch system\opt. Extract patch file">
+      <UniqueIdentifier>{ba7aae31-f096-43bc-8bf7-67ba4d27a250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data management\Patch system\opt. Recover patch source">
+      <UniqueIdentifier>{b3f7a437-64f0-4de5-8d25-12641477f3b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{2b6afb3e-9f80-40e2-9e7a-02243e19b6b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\Singleton">
+      <UniqueIdentifier>{abbdd4ad-0a77-4628-ae28-1284508dc20d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\System class">
+      <UniqueIdentifier>{94012b75-c6c6-4478-8066-e4f9d28cf46f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\Window">
+      <UniqueIdentifier>{4b4c9c52-4f22-4cf5-80c9-5f0ace0895a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\Framework">
+      <UniqueIdentifier>{36739211-712a-4289-85f1-2b0268978814}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\MkCore_MkBitField32.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkColor.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataTypeDefinition.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkHashStr.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkLinearSection.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkMat3.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPathName.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPlane.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkQuaternion.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkRect.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSphere.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkStr.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkType2.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkVec2.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkVec3.h">
+      <Filter>Data type</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkGlobalDefinition.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkGlobalFunction.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkGlobalFunctor.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkProjectDefinition.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkContainerDefinition.h">
+      <Filter>Pattern\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkArray.h">
+      <Filter>Pattern\Container\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkCircularDeque.h">
+      <Filter>Pattern\Container\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDeque.h">
+      <Filter>Pattern\Container\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkHashMap.h">
+      <Filter>Pattern\Container\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkMap.h">
+      <Filter>Pattern\Container\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkMultiMap.h">
+      <Filter>Pattern\Container\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPairArray.h">
+      <Filter>Pattern\Container\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkArraySection.h">
+      <Filter>Pattern\Container\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkMemoryBlockDescriptor.h">
+      <Filter>Pattern\Container\Descriptor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDoubleBufferingPattern.h">
+      <Filter>Pattern\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkEventQueuePattern.h">
+      <Filter>Pattern\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFiniteStateMachinePattern.h">
+      <Filter>Pattern\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSingletonPattern.h">
+      <Filter>Pattern\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkStackPattern.h">
+      <Filter>Pattern\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSingleTypeTreePattern.h">
+      <Filter>Pattern\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkUniqueKeyTreePattern.h">
+      <Filter>Pattern\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkAngleOp.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkCheck.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkClipboard.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkCodeDefinitionConverter.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFloatOp.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkRegistryOp.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkShortcutOp.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkStringOp.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkXORer.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkZipCompressor.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkBaseThreadUnit.h">
+      <Filter>Utility\Multi thread management</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkCriticalSection.h">
+      <Filter>Utility\Multi thread management</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkLockable.h">
+      <Filter>Utility\Multi thread management</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSRWLock.h">
+      <Filter>Utility\Multi thread management</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkThreadManager.h">
+      <Filter>Utility\Multi thread management</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkCmdLine.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkCurveInterpolator.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkExcelFileInterface.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInstanceDeallocator.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkLinkageSequencer.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkMessageHistory.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkNameSelection.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkRTTI.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkStringTableForParser.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkTypeHierarchy.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkValueDecision.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkVersionTag.h">
+      <Filter>Utility\Archive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkBiasedDice.h">
+      <Filter>Utility\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkRandomGenerator.h">
+      <Filter>Utility\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkUniformDice.h">
+      <Filter>Utility\Random</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkArctangentForm.h">
+      <Filter>Utility\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkNoiseGenerator1D.h">
+      <Filter>Utility\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkNoiseGenerator2D.h">
+      <Filter>Utility\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkQueueingLinearGraph.h">
+      <Filter>Utility\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkStandardLinearGraph.h">
+      <Filter>Utility\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkAccessibilityShortcutKeySetter.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkApplicationRegister.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFixedFPUSetter.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkLayeredWindow.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkM128Operator.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkTimeCounter.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_StackWalker.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFileDownloader.h">
+      <Filter>Utility\Web interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFtpInterface.h">
+      <Filter>Utility\Web interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkVisitWebPage.h">
+      <Filter>Utility\Web interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkWebBrowser.h">
+      <Filter>Utility\Web interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForDataReading.h">
+      <Filter>Data management\IO Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForDataWriting.h">
+      <Filter>Data management\IO Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForFileReading.h">
+      <Filter>Data management\IO Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForFileTag.h">
+      <Filter>Data management\IO Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForFileWriting.h">
+      <Filter>Data management\IO Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForZipFileReading.h">
+      <Filter>Data management\IO Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForZipFileWriting.h">
+      <Filter>Data management\IO Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFileBlock.h">
+      <Filter>Data management\File system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFileChunk.h">
+      <Filter>Data management\File system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFilePathListContainer.h">
+      <Filter>Data management\File system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFileSystem.h">
+      <Filter>Data management\File system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataNode.h">
+      <Filter>Data management\Data node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataNodeLoadingTarget.h">
+      <Filter>Data management\Data node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataPack.h">
+      <Filter>Data management\Data node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataUnit.h">
+      <Filter>Data management\Data node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataNodeToExcelConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataNodeToMemoryConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDataTextToMemoryConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkExcelToMemoryConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkHelperForDataNodeConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkMemoryToDataNodeConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkMemoryToDataTextConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkTagDefinitionForDataNode.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileGenerator.h">
+      <Filter>Data management\Patch system\0. Make patch files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileDownloader.h">
+      <Filter>Data management\Patch system\3. Check, download and update files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPatchStarter.h">
+      <Filter>Data management\Patch system\2. Start patching</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileUploader.h">
+      <Filter>Data management\Patch system\1. Upload files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileExtractor.h">
+      <Filter>Data management\Patch system\opt. Extract patch file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPatchSrcRecovery.h">
+      <Filter>Data management\Patch system\opt. Recover patch source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkBackgroundLoader.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkDevPanel.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkFileManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkInputManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkKeywordFilter.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkLogManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkPageManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkProfilingManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSharedPointerManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSystemEnvironment.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkTimeManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkBaseLoadingTarget.h">
+      <Filter>Main\System class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkBasePage.h">
+      <Filter>Main\System class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkCheatMessage.h">
+      <Filter>Main\System class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSharedPointer.h">
+      <Filter>Main\System class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkTimeState.h">
+      <Filter>Main\System class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkBaseWindow.h">
+      <Filter>Main\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkListeningWindow.h">
+      <Filter>Main\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkSnappingWindow.h">
+      <Filter>Main\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkTitleBarHooker.h">
+      <Filter>Main\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkWindowUpdateListener.h">
+      <Filter>Main\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkBaseFramework.h">
+      <Filter>Main\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkLoadingThreadUnit.h">
+      <Filter>Main\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkLogicThreadUnit.h">
+      <Filter>Main\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkWin32Application.h">
+      <Filter>Main\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkJsonAndDataNodeConverter.h">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkWindowStartRegister.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkWindowProcessOp.h">
+      <Filter>Utility\System</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MkCore_MkDataTypeDefinition.cpp">
+      <Filter>Data type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkHashStr.cpp">
+      <Filter>Data type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPathName.cpp">
+      <Filter>Data type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkQuaternion.cpp">
+      <Filter>Data type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkStr.cpp">
+      <Filter>Data type</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkAngleOp.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkCheck.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkClipboard.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkCodeDefinitionConverter.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFloatOp.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkRegistryOp.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkShortcutOp.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkStringOp.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkXORer.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkZipCompressor.cpp">
+      <Filter>Utility\Pure function</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkBaseThreadUnit.cpp">
+      <Filter>Utility\Multi thread management</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkThreadManager.cpp">
+      <Filter>Utility\Multi thread management</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkCmdLine.cpp">
+      <Filter>Utility\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkExcelFileInterface.cpp">
+      <Filter>Utility\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInstanceDeallocator.cpp">
+      <Filter>Utility\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkMessageHistory.cpp">
+      <Filter>Utility\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkStringTableForParser.cpp">
+      <Filter>Utility\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkVersionTag.cpp">
+      <Filter>Utility\Archive</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkRandomGenerator.cpp">
+      <Filter>Utility\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkUniformDice.cpp">
+      <Filter>Utility\Random</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkArctangentForm.cpp">
+      <Filter>Utility\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkNoiseGenerator1D.cpp">
+      <Filter>Utility\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkNoiseGenerator2D.cpp">
+      <Filter>Utility\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkQueueingLinearGraph.cpp">
+      <Filter>Utility\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkStandardLinearGraph.cpp">
+      <Filter>Utility\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkAccessibilityShortcutKeySetter.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkApplicationRegister.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFixedFPUSetter.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkLayeredWindow.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkTimeCounter.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_StackWalker.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFileDownloader.cpp">
+      <Filter>Utility\Web interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFtpInterface.cpp">
+      <Filter>Utility\Web interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkVisitWebPage.cpp">
+      <Filter>Utility\Web interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkWebBrowser.cpp">
+      <Filter>Utility\Web interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInterfaceForDataReading.cpp">
+      <Filter>Data management\IO Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInterfaceForDataWriting.cpp">
+      <Filter>Data management\IO Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInterfaceForFileReading.cpp">
+      <Filter>Data management\IO Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInterfaceForFileWriting.cpp">
+      <Filter>Data management\IO Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInterfaceForZipFileReading.cpp">
+      <Filter>Data management\IO Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInterfaceForZipFileWriting.cpp">
+      <Filter>Data management\IO Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFileBlock.cpp">
+      <Filter>Data management\File system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFileChunk.cpp">
+      <Filter>Data management\File system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFileSystem.cpp">
+      <Filter>Data management\File system</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkDataNode.cpp">
+      <Filter>Data management\Data node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkDataPack.cpp">
+      <Filter>Data management\Data node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkDataNodeToExcelConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkDataNodeToMemoryConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkDataTextToMemoryConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkExcelToMemoryConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkHelperForDataNodeConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkMemoryToDataNodeConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkMemoryToDataTextConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkTagDefinitionForDataNode.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPatchFileGenerator.cpp">
+      <Filter>Data management\Patch system\0. Make patch files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPatchFileDownloader.cpp">
+      <Filter>Data management\Patch system\3. Check, download and update files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPatchStarter.cpp">
+      <Filter>Data management\Patch system\2. Start patching</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPatchFileUploader.cpp">
+      <Filter>Data management\Patch system\1. Upload files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPatchFileExtractor.cpp">
+      <Filter>Data management\Patch system\opt. Extract patch file</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPatchSrcRecovery.cpp">
+      <Filter>Data management\Patch system\opt. Recover patch source</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkBackgroundLoader.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkDevPanel.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkFileManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkInputManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkKeywordFilter.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkLogManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkPageManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkProfilingManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkSharedPointerManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkSystemEnvironment.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkTimeManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkBasePage.cpp">
+      <Filter>Main\System class</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkCheatMessage.cpp">
+      <Filter>Main\System class</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkBaseWindow.cpp">
+      <Filter>Main\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkListeningWindow.cpp">
+      <Filter>Main\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkSnappingWindow.cpp">
+      <Filter>Main\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkTitleBarHooker.cpp">
+      <Filter>Main\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkBaseFramework.cpp">
+      <Filter>Main\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkLoadingThreadUnit.cpp">
+      <Filter>Main\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkLogicThreadUnit.cpp">
+      <Filter>Main\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkWin32Application.cpp">
+      <Filter>Main\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkJsonAndDataNodeConverter.cpp">
+      <Filter>Data management\Data node\Converting interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkWindowStartRegister.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkWindowProcessOp.cpp">
+      <Filter>Utility\System</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

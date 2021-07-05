@@ -16,6 +16,7 @@
 
 #include <string>
 #include <vector>
+#include <atlcoll.h>
 #include <windef.h>
 
 

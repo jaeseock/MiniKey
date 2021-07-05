@@ -51,6 +51,10 @@ public:
 	bool LoadFromText(const MkPathName& filePath);
 	bool LoadFromText(const MkByteArray& fileData);
 
+	// 실제 혹은 파일 시스템상의 json 파일, 데이터로부터 초기화
+	bool LoadFromJson(const MkPathName& filePath);
+	bool LoadFromJson(const MkByteArray& fileData);
+
 	// 실제 혹은 파일 시스템상의 binary format 파일, 데이터로부터 초기화
 	bool LoadFromBinary(const MkPathName& filePath);
 	bool LoadFromBinary(const MkByteArray& fileData);
@@ -69,7 +73,8 @@ public:
 		eLR_Failed = 0,
 		eLR_Text,
 		eLR_Binary,
-		eLR_Excel
+		eLR_Excel,
+		eLR_Json
 	};
 
 	bool Load(const MkPathName& filePath, eLoadResult& result);
@@ -83,6 +88,9 @@ public:
 
 	// text file로 출력
 	bool SaveToText(const MkPathName& filePath) const;
+
+	// json file로 출력
+	bool SaveToJson(const MkPathName& filePath) const;
 
 	// binary file로 출력
 	bool SaveToBinary(const MkPathName& filePath) const;

@@ -93,10 +93,11 @@ bool MkRegistryOperator::Write(const MkDataNode& node)
 
 		MkArray<MkStr> subKeys;
 		WriteOp op;
-		if (op.Open(rootKey, subKeys))
-		{
-			_Write(rootKey, subKeys, op, *node.GetChildNode(currRootKey));
-		}
+		if (!op.Open(rootKey, subKeys))
+			return false;
+
+		_Write(rootKey, subKeys, op, *node.GetChildNode(currRootKey));
+		return true;
 	}
 	return false;
 }
@@ -109,6 +110,19 @@ bool MkRegistryOperator::Delete(HKEY hKey, const MkStr& subKey)
 	{
 		::RegCloseKey(tmpKey);
 		return (::RegDeleteTree(hKey, skName) == ERROR_SUCCESS);
+	}
+	return true;
+}
+
+bool MkRegistryOperator::Delete(HKEY hKey, const MkStr& subKey, const MkStr& value)
+{
+	const wchar_t* skName = subKey.Empty() ? NULL : subKey.GetPtr();
+	HKEY targetKey = NULL;
+	if (::RegOpenKeyEx(hKey, skName, 0, KEY_ALL_ACCESS, &targetKey) == ERROR_SUCCESS)
+	{
+		bool ok = (::RegDeleteValue(targetKey, value.GetPtr()) == ERROR_SUCCESS);
+		::RegCloseKey(targetKey);
+		return ok;
 	}
 	return true;
 }

@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|Win32">
+      <Configuration>Shipping</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1D14FD43-951E-4BFA-AB57-116744B27658}</ProjectGuid>
+    <RootNamespace>Vorbis</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)Lib\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)Lib\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <OutDir>$(SolutionDir)Lib\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\analysis.c" />
+    <ClCompile Include="Src\bitrate.c" />
+    <ClCompile Include="Src\block.c" />
+    <ClCompile Include="Src\codebook.c" />
+    <ClCompile Include="Src\envelope.c" />
+    <ClCompile Include="Src\floor0.c" />
+    <ClCompile Include="Src\floor1.c" />
+    <ClCompile Include="Src\info.c" />
+    <ClCompile Include="Src\lookup.c" />
+    <ClCompile Include="Src\lpc.c" />
+    <ClCompile Include="Src\lsp.c" />
+    <ClCompile Include="Src\mapping0.c" />
+    <ClCompile Include="Src\mdct.c" />
+    <ClCompile Include="Src\psy.c" />
+    <ClCompile Include="Src\registry.c" />
+    <ClCompile Include="Src\res0.c" />
+    <ClCompile Include="Src\sharedbook.c" />
+    <ClCompile Include="Src\smallft.c" />
+    <ClCompile Include="Src\synthesis.c" />
+    <ClCompile Include="Src\vorbisenc.c" />
+    <ClCompile Include="Src\window.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\vorbis\codec.h" />
+    <ClInclude Include="..\..\Include\vorbis\vorbisenc.h" />
+    <ClInclude Include="..\..\Include\vorbis\vorbisfile.h" />
+    <ClInclude Include="Src\backends.h" />
+    <ClInclude Include="Src\bitrate.h" />
+    <ClInclude Include="Src\books\coupled\res_books_51.h" />
+    <ClInclude Include="Src\books\coupled\res_books_stereo.h" />
+    <ClInclude Include="Src\books\floor\floor_books.h" />
+    <ClInclude Include="Src\books\uncoupled\res_books_uncoupled.h" />
+    <ClInclude Include="Src\codebook.h" />
+    <ClInclude Include="Src\codec_internal.h" />
+    <ClInclude Include="Src\envelope.h" />
+    <ClInclude Include="Src\highlevel.h" />
+    <ClInclude Include="Src\lookup.h" />
+    <ClInclude Include="Src\lookup_data.h" />
+    <ClInclude Include="Src\lpc.h" />
+    <ClInclude Include="Src\lsp.h" />
+    <ClInclude Include="Src\masking.h" />
+    <ClInclude Include="Src\mdct.h" />
+    <ClInclude Include="Src\misc.h" />
+    <ClInclude Include="Src\modes\floor_all.h" />
+    <ClInclude Include="Src\modes\psych_11.h" />
+    <ClInclude Include="Src\modes\psych_16.h" />
+    <ClInclude Include="Src\modes\psych_44.h" />
+    <ClInclude Include="Src\modes\psych_8.h" />
+    <ClInclude Include="Src\modes\residue_16.h" />
+    <ClInclude Include="Src\modes\residue_44.h" />
+    <ClInclude Include="Src\modes\residue_44p51.h" />
+    <ClInclude Include="Src\modes\residue_44u.h" />
+    <ClInclude Include="Src\modes\residue_8.h" />
+    <ClInclude Include="Src\modes\setup_11.h" />
+    <ClInclude Include="Src\modes\setup_16.h" />
+    <ClInclude Include="Src\modes\setup_22.h" />
+    <ClInclude Include="Src\modes\setup_32.h" />
+    <ClInclude Include="Src\modes\setup_44.h" />
+    <ClInclude Include="Src\modes\setup_44p51.h" />
+    <ClInclude Include="Src\modes\setup_44u.h" />
+    <ClInclude Include="Src\modes\setup_8.h" />
+    <ClInclude Include="Src\modes\setup_X.h" />
+    <ClInclude Include="Src\os.h" />
+    <ClInclude Include="Src\psy.h" />
+    <ClInclude Include="Src\registry.h" />
+    <ClInclude Include="Src\scales.h" />
+    <ClInclude Include="Src\smallft.h" />
+    <ClInclude Include="Src\window.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -29,6 +29,7 @@ void CMMDViewerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_RADIO1, m_RB_BinaryFile);
 	DDX_Control(pDX, IDC_RADIO2, m_RB_TextFile);
 	DDX_Control(pDX, IDC_RADIO3, m_RB_ExcelFile);
+	DDX_Control(pDX, IDC_RADIO4, m_RB_JsonFile);
 	DDX_Control(pDX, IDC_BUTTON3, m_BT_OverwriteCurrentFile);
 	DDX_Control(pDX, IDC_BUTTON4, m_BT_SaveCurrentFileAs);
 	DDX_Control(pDX, IDC_CHECK1, m_CB_AutoBackup);
@@ -450,6 +451,7 @@ void CMMDViewerDlg::_UpdateControlAvailable(void)
 	m_RB_BinaryFile.EnableWindow(enableFile);
 	m_RB_TextFile.EnableWindow(enableFile);
 	m_RB_ExcelFile.EnableWindow(enableFile);
+	m_RB_JsonFile.EnableWindow(enableFile);
 
 	m_BT_OverwriteCurrentFile.EnableWindow(enableFile);
 	m_BT_SaveCurrentFileAs.EnableWindow(enableFile);
@@ -536,16 +538,25 @@ void CMMDViewerDlg::_LoadTargetFile(const MkPathName& filePath)
 		m_RB_BinaryFile.SetCheck(FALSE);
 		m_RB_TextFile.SetCheck(TRUE);
 		m_RB_ExcelFile.SetCheck(FALSE);
+		m_RB_JsonFile.SetCheck(FALSE);
 		break;
 	case MkDataNode::eLR_Binary:
 		m_RB_BinaryFile.SetCheck(TRUE);
 		m_RB_TextFile.SetCheck(FALSE);
 		m_RB_ExcelFile.SetCheck(FALSE);
+		m_RB_JsonFile.SetCheck(FALSE);
 		break;
 	case MkDataNode::eLR_Excel:
 		m_RB_BinaryFile.SetCheck(FALSE);
 		m_RB_TextFile.SetCheck(FALSE);
 		m_RB_ExcelFile.SetCheck(TRUE);
+		m_RB_JsonFile.SetCheck(FALSE);
+		break;
+	case MkDataNode::eLR_Json:
+		m_RB_BinaryFile.SetCheck(FALSE);
+		m_RB_TextFile.SetCheck(FALSE);
+		m_RB_ExcelFile.SetCheck(FALSE);
+		m_RB_JsonFile.SetCheck(TRUE);
 		break;
 	}
 }
@@ -593,19 +604,24 @@ void CMMDViewerDlg::_SaveTargetFile(const MkDataNode& node, const MkPathName& fi
 
 	// binary
 	bool ok = false;
-	if ((m_RB_BinaryFile.GetCheck() == TRUE) && (m_RB_TextFile.GetCheck() == FALSE) && (m_RB_ExcelFile.GetCheck() == FALSE))
+	if ((m_RB_BinaryFile.GetCheck() == TRUE) && (m_RB_TextFile.GetCheck() == FALSE) && (m_RB_ExcelFile.GetCheck() == FALSE) && (m_RB_JsonFile.GetCheck() == FALSE))
 	{
 		ok = node.SaveToBinary(filePath);
 	}
 	// text
-	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == TRUE) && (m_RB_ExcelFile.GetCheck() == FALSE))
+	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == TRUE) && (m_RB_ExcelFile.GetCheck() == FALSE) && (m_RB_JsonFile.GetCheck() == FALSE))
 	{
 		ok = node.SaveToText(filePath);
 	}
 	// excel
-	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == FALSE) && (m_RB_ExcelFile.GetCheck() == TRUE))
+	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == FALSE) && (m_RB_ExcelFile.GetCheck() == TRUE) && (m_RB_JsonFile.GetCheck() == FALSE))
 	{
 		ok = node.SaveToExcel(filePath);
+	}
+	// json
+	else if ((m_RB_BinaryFile.GetCheck() == FALSE) && (m_RB_TextFile.GetCheck() == FALSE) && (m_RB_ExcelFile.GetCheck() == FALSE) && (m_RB_JsonFile.GetCheck() == TRUE))
+	{
+		ok = node.SaveToJson(filePath);
 	}
 	else
 		return;

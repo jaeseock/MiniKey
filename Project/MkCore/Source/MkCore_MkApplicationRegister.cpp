@@ -1,6 +1,8 @@
 
 #include "MkCore_MkRegistryOp.h"
 #include "MkCore_MkShortcutOp.h"
+#include "MkCore_MkWindowStartRegister.h"
+#include "MkCore_MkWindowProcessOp.h"
 #include "MkCore_MkApplicationRegister.h"
 
 
@@ -8,6 +10,7 @@ static const MkHashStr NKEY_RegisterProjectInfo = L"[RegisterProjectInfo]";  // 
 static const MkHashStr NKEY_RegisterCustomURLScheme = L"[RegisterCustomURLScheme]"; // RCS(RegisterCustomURLScheme)
 static const MkHashStr NKEY_DesktopDirectoryShortcut = L"[DesktopDirectoryShortcut]"; // SC(ShortCut)
 static const MkHashStr NKEY_ProgramsShortcut = L"[ProgramsShortcut]"; // SC(ShortCut)
+static const MkHashStr NKEY_RegisterWindowStart = L"[RegisterWindowStart]"; // RWS(RegisterWindowStart)
 static const MkHashStr NKEY_ClientDeleteList = L"[ClientDeleteList]"; // CDL(ClientDeleteList)
 
 static const MkHashStr UKEY_ClientPath = L"#ClientPath"; // GenerateServiceData only
@@ -21,11 +24,13 @@ static const MkHashStr UKEY_HomePage = L"#HomePage"; // RPI
 static const MkHashStr UKEY_UninstallApp = L"#UninstallApp"; // RPI
 static const MkHashStr UKEY_UninstallMsg = L"#UninstallMsg"; // RPI
 
-static const MkHashStr UKEY_TargetApp = L"#TargetApp"; // RCS, SC
+static const MkHashStr UKEY_TargetApp = L"#TargetApp"; // RCS, SC, RWS
 static const MkHashStr UKEY_AcceptArg = L"#AcceptArg"; // RCS
 
 static const MkHashStr UKEY_TargetURL = L"#TargetURL"; // SC
 static const MkHashStr UKEY_Desc = L"#Desc"; // SC
+
+static const MkHashStr UKEY_Excute = L"#Excute"; // RWS
 
 static const MkHashStr UKEY_Files = L"#Files"; // CDL
 static const MkHashStr UKEY_Dirs = L"#Dirs"; // CDL
@@ -277,6 +282,18 @@ bool MkApplicationRegister::GenerateServiceData::_CreateDefaultService(MkDataNod
 			if (!psNode->CreateUnit(UKEY_UninstallList, dirNode->GetNodeName().GetString())) return false;
 		}
 
+		// register window start
+		MkDataNode* rwsNode = serviceNode->CreateChildNode(NKEY_RegisterWindowStart);
+		if (rwsNode == NULL) return false;
+		{
+			MkDataNode* regNode = psNode->CreateChildNode(L"SteamCafe_SrvMonitor");
+			if (regNode == NULL) return false;
+			{
+				if (!regNode->CreateUnit(UKEY_TargetApp, MkStr(L"SteamCafe_SrvMonitor.exe"))) return false;
+				if (!regNode->CreateUnit(UKEY_Excute, false)) return false;
+			}
+		}
+
 		// client path
 		MkPathName clientPath;
 		clientPath.GetDirectoryPathFromDialog(L"[ " + serviceNode->GetNodeName().GetString() + L" ] 서비스의 클라이언트 디렉토리 지정");
@@ -341,7 +358,7 @@ bool MkApplicationRegister::GenerateServiceData::_CheckServiceEnable(const MkDat
 
 	// shortcut - desktop directory
 	const MkDataNode* dsNode = serviceNode.GetChildNode(NKEY_DesktopDirectoryShortcut);
-	if (dsNode == NULL)
+	if (dsNode != NULL)
 	{
 		if (!_CheckShortcutEnable(*dsNode, clientPath, errorMsg))
 			return false;
@@ -349,10 +366,35 @@ bool MkApplicationRegister::GenerateServiceData::_CheckServiceEnable(const MkDat
 
 	// shortcut - programs
 	const MkDataNode* psNode = serviceNode.GetChildNode(NKEY_ProgramsShortcut);
-	if (psNode == NULL)
+	if (psNode != NULL)
 	{
 		if (!_CheckShortcutEnable(*psNode, clientPath, errorMsg))
 			return false;
+	}
+
+	// register window start
+	const MkDataNode* rwsNode = serviceNode.GetChildNode(NKEY_RegisterWindowStart);
+	if (rwsNode != NULL)
+	{
+		MkArray<MkHashStr> keys;
+		rwsNode->GetChildNodeList(keys);
+
+		MK_INDEXING_LOOP(keys, i)
+		{
+			MkStr buffer;
+			if (!rwsNode->GetChildNode(keys[i])->GetData(UKEY_TargetApp, buffer, 0))
+			{
+				errorMsg = keys[i].GetString() + L" -> " + UKEY_TargetApp.GetString() + L" 값이 없음";
+				return false;
+			}
+
+			MkPathName appPath = clientPath + buffer;
+			if (!appPath.CheckAvailable())
+			{
+				errorMsg = keys[i].GetString() + L" -> " + UKEY_TargetApp.GetString() + L" : " + buffer + L" 파일이 존재하지 않음";
+				return false;
+			}
+		}
 	}
 
 	return true;
@@ -635,6 +677,32 @@ bool MkApplicationRegister::UpdateService(const MkPathName& targetServicesFilePa
 		}
 	}
 
+	// register window start
+	const MkDataNode* rwsNode = serviceNode.GetChildNode(NKEY_RegisterWindowStart);
+	if (rwsNode != NULL)
+	{
+		MkArray<MkHashStr> keys;
+		rwsNode->GetChildNodeList(keys);
+
+		MK_INDEXING_LOOP(keys, i)
+		{
+			const MkDataNode* regNode = rwsNode->GetChildNode(keys[i]);
+			MkStr targetApp;
+			regNode->GetData(UKEY_TargetApp, targetApp, 0);
+			if (MkWindowStartRegister::RegisterStartProgram(keys[i].GetString(), targetApp))
+			{
+				bool excute = false;
+				regNode->GetData(UKEY_Excute, excute, 0);
+				if (excute && (!MkWindowProcessOp::Exist(MkPathName(targetApp).GetFileName())))
+				{
+					MkPathName fullPath;
+					fullPath.ConvertToModuleBasisAbsolutePath(targetApp);
+					fullPath.OpenFileInVerb();
+				}
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -714,6 +782,30 @@ bool MkApplicationRegister::UninstallService(const MkPathName& targetServicesFil
 		MK_INDEXING_LOOP(uninstallDirList, i)
 		{
 			MkShortcutOperator::DeleteDirectoryInCommonPrograms(uninstallDirList[i]);
+		}
+	}
+
+	// register window start
+	const MkDataNode* rwsNode = serviceNode.GetChildNode(NKEY_RegisterWindowStart);
+	if (rwsNode != NULL)
+	{
+		MkArray<MkHashStr> keys;
+		rwsNode->GetChildNodeList(keys);
+
+		MK_INDEXING_LOOP(keys, i)
+		{
+			if (MkWindowStartRegister::RemoveStartProgram(keys[i].GetString()))
+			{
+				// process가 존재하면 죽임
+				const MkDataNode* regNode = rwsNode->GetChildNode(keys[i]);
+				MkStr targetApp;
+				regNode->GetData(UKEY_TargetApp, targetApp, 0);
+
+				MkWindowProcessOp::Kill(MkPathName(targetApp).GetFileName());
+
+				// 프로세스 삭제 대기
+				::Sleep(2000);
+			}
 		}
 	}
 

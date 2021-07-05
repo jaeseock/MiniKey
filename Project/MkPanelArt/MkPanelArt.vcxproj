@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|Win32">
+      <Configuration>Shipping</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}</ProjectGuid>
+    <RootNamespace>MkPanelArt</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)Lib\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)Lib\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <OutDir>$(SolutionDir)Lib\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+    <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(DXSDK_DIR)Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;MK_SHIPPING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MkPA_MkBaseTexture.cpp" />
+    <ClCompile Include="Source\MkPA_MkBitmapPool.cpp" />
+    <ClCompile Include="Source\MkPA_MkBitmapTexture.cpp" />
+    <ClCompile Include="Source\MkPA_MkBodyFrameControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkCheckBoxControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkCursorManager.cpp" />
+    <ClCompile Include="Source\MkPA_MkD3DDefinition.cpp" />
+    <ClCompile Include="Source\MkPA_MkDeviceManager.cpp" />
+    <ClCompile Include="Source\MkPA_MkDrawingMonitor.cpp" />
+    <ClCompile Include="Source\MkPA_MkDrawQueue.cpp" />
+    <ClCompile Include="Source\MkPA_MkDrawSceneNodeStep.cpp" />
+    <ClCompile Include="Source\MkPA_MkDrawTextNodeStep.cpp" />
+    <ClCompile Include="Source\MkPA_MkDrawToStaticTextureStep.cpp" />
+    <ClCompile Include="Source\MkPA_MkDropDownListControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkEditBoxControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkFontManager.cpp" />
+    <ClCompile Include="Source\MkPA_MkHiddenEditBox.cpp" />
+    <ClCompile Include="Source\MkPA_MkImageInfo.cpp" />
+    <ClCompile Include="Source\MkPA_MkLineShape.cpp" />
+    <ClCompile Include="Source\MkPA_MkListBoxControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkOrthogonalCamera.cpp" />
+    <ClCompile Include="Source\MkPA_MkPanel.cpp" />
+    <ClCompile Include="Source\MkPA_MkProgressBarNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkRenderer.cpp" />
+    <ClCompile Include="Source\MkPA_MkRenderFramework.cpp" />
+    <ClCompile Include="Source\MkPA_MkRenderStateSetter.cpp" />
+    <ClCompile Include="Source\MkPA_MkRenderTarget.cpp" />
+    <ClCompile Include="Source\MkPA_MkRenderToTexture.cpp" />
+    <ClCompile Include="Source\MkPA_MkResetableResourcePool.cpp" />
+    <ClCompile Include="Source\MkPA_MkSceneNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkSceneObject.cpp" />
+    <ClCompile Include="Source\MkPA_MkScenePortalNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkSceneTransform.cpp" />
+    <ClCompile Include="Source\MkPA_MkScrollBarControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkShaderEffect.cpp" />
+    <ClCompile Include="Source\MkPA_MkShaderEffectPool.cpp" />
+    <ClCompile Include="Source\MkPA_MkSliderControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkStaticResourceContainer.cpp" />
+    <ClCompile Include="Source\MkPA_MkTextNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkTitleBarControlNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkVisualPatternNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowBaseNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowDispositioner.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowFactory.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowManagerNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowTagNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowThemeData.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowThemedNode.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowThemeFormData.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowThemeSet.cpp" />
+    <ClCompile Include="Source\MkPA_MkWindowThemeUnitData.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\MkPA_MkBaseResetableResource.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkBaseTexture.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkBitmapPool.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkBitmapTexture.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkBodyFrameControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkCheckBoxControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkCursorManager.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkD3DDefinition.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDeviceManager.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDrawingMonitor.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDrawQueue.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDrawSceneNodeStep.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDrawStepInterface.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDrawTextNodeStep.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDrawToStaticTextureStep.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkDropDownListControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkEditBoxControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkFontManager.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkGlobalDefinition.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkHiddenEditBox.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkImageInfo.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkLineShape.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkListBoxControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkOrthogonalCamera.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkPanel.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkProgressBarNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkProjectDefinition.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkRenderer.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkRenderFramework.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkRenderStateSetter.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkRenderTarget.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkRenderToTexture.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkResetableResourcePool.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkSceneNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkSceneObject.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkScenePortalNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkSceneTransform.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkScrollBarControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkShaderEffect.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkShaderEffectPool.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkShaderEffectSetting.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkSliderControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkStaticResourceContainer.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkTextNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkTitleBarControlNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkVisualPatternNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowBaseNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowDispositioner.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowFactory.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowManagerNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowTagNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeData.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemedNode.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeFormData.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeSet.h" />
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeUnitData.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MkCore\MkCore.vcxproj">
+      <Project>{095eb475-d5c1-414e-a4dc-9a44f2101c4d}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

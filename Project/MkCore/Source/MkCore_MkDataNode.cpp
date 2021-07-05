@@ -4,6 +4,7 @@
 #include "MkCore_MkFileManager.h"
 #include "MkCore_MkDataTextToMemoryConverter.h"
 #include "MkCore_MkMemoryToDataNodeConverter.h"
+#include "MkCore_MkJsonAndDataNodeConverter.h"
 #include "MkCore_MkDataNodeToMemoryConverter.h"
 #include "MkCore_MkMemoryToDataTextConverter.h"
 #include "MkCore_MkExcelToMemoryConverter.h"
@@ -43,6 +44,30 @@ bool MkDataNode::LoadFromText(const MkByteArray& fileData)
 			MkMemoryToDataNodeConverter memoryToDataNodeConverter;
 			return memoryToDataNodeConverter.ConvertMemory(buffer, *this);
 		}
+	}
+	return false;
+}
+
+bool MkDataNode::LoadFromJson(const MkPathName& filePath)
+{
+	if (!GetReadOnly())
+	{
+		Clear();
+		
+		MkJsonAndDataNodeConverter converter;
+		return converter.Convert(filePath, *this);
+	}
+	return false;
+}
+
+bool MkDataNode::LoadFromJson(const MkByteArray& fileData)
+{
+	if (!GetReadOnly())
+	{
+		Clear();
+
+		MkJsonAndDataNodeConverter converter;
+		return converter.Convert(fileData, *this);
 	}
 	return false;
 }
@@ -105,12 +130,16 @@ bool MkDataNode::Load(const MkPathName& filePath, eLoadResult& result)
 	}
 	else
 	{
-		// Excel 파일인지 확장자 체크
 		MkStr ext = filePath.GetFileExtension();
 		ext.ToLower();
-		if (ext.CheckPrefix(L"xls"))
+		
+		if (ext.CheckPrefix(L"xls")) // Excel 파일인지 확장자 체크
 		{
 			result = LoadFromExcel(filePath) ? eLR_Excel : eLR_Failed;
+		}
+		else if (ext.CheckPrefix(L"json")) // JSON 파일인지 확장자 체크
+		{
+			result = LoadFromJson(filePath) ? eLR_Json : eLR_Failed;
 		}
 		else
 		{
@@ -130,7 +159,7 @@ bool MkDataNode::Load(const MkPathName& filePath, eLoadResult& result)
 bool MkDataNode::Load(const MkByteArray& fileData, eLoadResult& result)
 {
 	// 먼저 binary format으로 읽기 시도(tag 검사)
-	// 실패하면 text format으로 읽기 시도
+	// 실패하면 text, json format으로 읽기 시도
 	if (GetReadOnly())
 	{
 		result = eLR_ReadOnly;
@@ -145,12 +174,22 @@ bool MkDataNode::Load(const MkByteArray& fileData, eLoadResult& result)
 		{
 			result = eLR_Text;
 		}
+		else if (LoadFromJson(fileData))
+		{
+			result = eLR_Json;
+		}
 		else
 		{
 			result = eLR_Failed;
 		}
 	}
 	return (result > eLR_Failed);
+}
+
+bool MkDataNode::SaveToJson(const MkPathName& filePath) const
+{
+	MkJsonAndDataNodeConverter jsonAndDataNodeConverter;
+	return jsonAndDataNodeConverter.Convert(*this, filePath);
 }
 
 bool MkDataNode::SaveToText(const MkPathName& filePath) const

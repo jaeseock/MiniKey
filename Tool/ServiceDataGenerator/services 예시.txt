@@ -104,6 +104,20 @@ Node "Korea - Playwith(web launch)"
 			}
 		}
 	}
+	
+	// 윈도우 시작 프로그램 등록(옵션)
+	Node "[RegisterWindowStart]"
+	{
+		// 레지스트리 등록 Key(필수)
+		Node "SteamCafeProcAgent"
+		{
+			// 대상 프로그램 경로(필수)
+			str #TargetApp = "SteamCafeProcAgent.exe";
+			
+			// 바로 실행할지 여부(옵션)
+			bool #Excute = true;
+		}
+	}
 }
 
 // 서비스 타입

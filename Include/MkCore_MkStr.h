@@ -584,13 +584,15 @@ public:
 	// 파일관리자가 존재하면 파일관리자를 통해서, 그렇지 않으면 직접 경로에서 읽어들임
 	// (in) filePath : 읽어들일 절대, 혹은 root directory 기준 상대 파일 경로
 	// (in) ignoreComment : 주석 자동 삭제 여부
+	// (in) ANSI : 디코딩 방식. true면 ANSI, false면 UTF-8. BOM이 있으면 값 상관 없이 UTF-8로 인식
 	// return : 성공 여부
-	bool ReadTextFile(const MkPathName& filePath, bool ignoreComment = true);
+	bool ReadTextFile(const MkPathName& filePath, bool ignoreComment = true, bool ANSI = true);
 
 	// 텍스트가 저장된 MkByteArray를 현 문자열 뒤에 추가
 	// (in) byteArray : 텍스트가 저장된 MkByteArray
 	// (in) ignoreComment : 주석 자동 삭제 여부
-	void ReadTextStream(const MkByteArray& byteArray, bool ignoreComment = true);
+	// (in) ANSI : 디코딩 방식. true면 ANSI, false면 UTF-8. BOM이 있으면 값 상관 없이 UTF-8로 인식
+	void ReadTextStream(const MkByteArray& byteArray, bool ignoreComment = true, bool ANSI = true);
 
 	// 현 문자열을 실제 경로의 텍스트 파일로 출력
 	// (in) filePath : 출력 할 절대, 혹은 root directory 기준 상대 파일 경로

@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by MMD Viewer.rc
+// Microsoft Visual C++에서 생성한 포함 파일입니다.
+// MMD Viewer.rc에서 사용되고 있습니다.
 //
 #define IDD_MMDVIEWER_DIALOG            102
 #define IDR_MAINFRAME                   128
@@ -31,12 +31,13 @@
 #define IDC_EDIT1                       1009
 #define IDC_TREE1                       1010
 #define IDC_RADIO3                      1011
+#define IDC_RADIO4                      1012
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        144
+#define _APS_NEXT_RESOURCE_VALUE        145
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           101

@@ -66,6 +66,7 @@ protected:
 	CButton m_RB_BinaryFile;
 	CButton m_RB_TextFile;
 	CButton m_RB_ExcelFile;
+	CButton m_RB_JsonFile;
 	CButton m_BT_OverwriteCurrentFile;
 	CButton m_BT_SaveCurrentFileAs;
 	CButton m_CB_AutoBackup;

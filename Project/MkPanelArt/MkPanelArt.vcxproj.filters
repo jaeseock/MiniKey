@@ -1,0 +1,412 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Main\Framework">
+      <UniqueIdentifier>{d2a2b801-35d4-4025-a222-160baa3e96b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\Singleton">
+      <UniqueIdentifier>{7ef6f5df-b894-4846-9291-c2b3beb55b29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\System class">
+      <UniqueIdentifier>{e6f8cfd4-b49a-44d0-b954-ea411231f25f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\System class\Text node">
+      <UniqueIdentifier>{857b7602-a5a4-442c-a8cc-db5346a5a4cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\System class\Image">
+      <UniqueIdentifier>{d7bbc26d-df19-49c6-8077-1742b2465c06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\System class\Window theme data">
+      <UniqueIdentifier>{6c110bb0-7bf6-4924-8a29-2e98d5796618}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\System class\Shader">
+      <UniqueIdentifier>{aad6a4cb-0b91-4a4a-92bc-43c76bd8f989}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{41ee773e-656a-47ab-ae30-4946f15006c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object">
+      <UniqueIdentifier>{fee81417-2357-416f-a983-bdc2a218a91b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Camera">
+      <UniqueIdentifier>{ca943a6b-0b3a-44ea-9f16-e7e66abde825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Panel">
+      <UniqueIdentifier>{43c30911-b0f6-406b-a773-d0651e6231e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node">
+      <UniqueIdentifier>{f83cc6a7-fba1-4488-8e80-fee08c511c8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Window manager node">
+      <UniqueIdentifier>{807eba0c-6e5e-44ce-b723-413d68494b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node">
+      <UniqueIdentifier>{8bbc8a17-20b8-4d26-b172-d4dc0f6fa43e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node\Window tag node">
+      <UniqueIdentifier>{cfbde868-59a1-4c3b-9e32-8c691fccd0ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node\Window themed node">
+      <UniqueIdentifier>{d97fc460-94b8-4c45-bbb0-4f2df462b5b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node\Window themed node\Window base node">
+      <UniqueIdentifier>{319c2959-6279-427e-ba94-cc090fbe994a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node">
+      <UniqueIdentifier>{b464c93a-257a-49d3-bf30-fce49f5fa73a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Scene portal node">
+      <UniqueIdentifier>{1862a1ff-2e23-4f96-9720-ba37a271484b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Helper">
+      <UniqueIdentifier>{dc136505-ccd9-4c2b-bddd-c6f9d029049c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Scene node\Visual pattern node\Window themed node\Progress bar node">
+      <UniqueIdentifier>{230379c8-f132-4cdc-a813-ec0f796904c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene object\Line">
+      <UniqueIdentifier>{e1c2251e-6b3b-436f-b5d0-d3d4c02ffbe5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draw">
+      <UniqueIdentifier>{1e18f89d-b151-4617-90b4-b8686bbffac3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draw\Render target">
+      <UniqueIdentifier>{546335ae-8222-4112-b0fe-9c9f279e14b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draw\Draw step">
+      <UniqueIdentifier>{43ef11e3-4d39-4e7a-8347-e318c3d2bb7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Draw\Draw queue">
+      <UniqueIdentifier>{f945e452-47d4-44f4-95ca-9801f7e14162}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MkPA_MkRenderFramework.cpp">
+      <Filter>Main\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkBitmapPool.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkCursorManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkDeviceManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkDrawingMonitor.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkFontManager.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkHiddenEditBox.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkRenderer.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkRenderStateSetter.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkResetableResourcePool.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkShaderEffectPool.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkStaticResourceContainer.cpp">
+      <Filter>Main\Singleton</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkTextNode.cpp">
+      <Filter>Main\System class\Text node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkBaseTexture.cpp">
+      <Filter>Main\System class\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkBitmapTexture.cpp">
+      <Filter>Main\System class\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkImageInfo.cpp">
+      <Filter>Main\System class\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkRenderToTexture.cpp">
+      <Filter>Main\System class\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowThemeData.cpp">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowThemeFormData.cpp">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowThemeSet.cpp">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowThemeUnitData.cpp">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkShaderEffect.cpp">
+      <Filter>Main\System class\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkD3DDefinition.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkSceneObject.cpp">
+      <Filter>Scene object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkSceneTransform.cpp">
+      <Filter>Scene object</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkOrthogonalCamera.cpp">
+      <Filter>Scene object\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkPanel.cpp">
+      <Filter>Scene object\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkSceneNode.cpp">
+      <Filter>Scene object\Scene node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowManagerNode.cpp">
+      <Filter>Scene object\Scene node\Window manager node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkVisualPatternNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowTagNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window tag node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowThemedNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowBaseNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkBodyFrameControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkCheckBoxControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkDropDownListControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkEditBoxControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkListBoxControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkScrollBarControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkSliderControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkTitleBarControlNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkScenePortalNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Scene portal node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowDispositioner.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkWindowFactory.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkProgressBarNode.cpp">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Progress bar node</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkLineShape.cpp">
+      <Filter>Scene object\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkRenderTarget.cpp">
+      <Filter>Draw\Render target</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkDrawSceneNodeStep.cpp">
+      <Filter>Draw\Draw step</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkDrawTextNodeStep.cpp">
+      <Filter>Draw\Draw step</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkDrawToStaticTextureStep.cpp">
+      <Filter>Draw\Draw step</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPA_MkDrawQueue.cpp">
+      <Filter>Draw\Draw queue</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\MkPA_MkRenderFramework.h">
+      <Filter>Main\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkBitmapPool.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkCursorManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDeviceManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDrawingMonitor.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkFontManager.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkHiddenEditBox.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkRenderer.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkRenderStateSetter.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkResetableResourcePool.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkShaderEffectPool.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkStaticResourceContainer.h">
+      <Filter>Main\Singleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkBaseResetableResource.h">
+      <Filter>Main\System class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkTextNode.h">
+      <Filter>Main\System class\Text node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkBaseTexture.h">
+      <Filter>Main\System class\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkBitmapTexture.h">
+      <Filter>Main\System class\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkImageInfo.h">
+      <Filter>Main\System class\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkRenderToTexture.h">
+      <Filter>Main\System class\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeData.h">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeFormData.h">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeSet.h">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemeUnitData.h">
+      <Filter>Main\System class\Window theme data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkShaderEffect.h">
+      <Filter>Main\System class\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkShaderEffectSetting.h">
+      <Filter>Main\System class\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkD3DDefinition.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkGlobalDefinition.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkProjectDefinition.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkSceneObject.h">
+      <Filter>Scene object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkSceneTransform.h">
+      <Filter>Scene object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkOrthogonalCamera.h">
+      <Filter>Scene object\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkPanel.h">
+      <Filter>Scene object\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkSceneNode.h">
+      <Filter>Scene object\Scene node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowManagerNode.h">
+      <Filter>Scene object\Scene node\Window manager node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkVisualPatternNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowTagNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window tag node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowThemedNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowBaseNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkBodyFrameControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkCheckBoxControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDropDownListControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkEditBoxControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkListBoxControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkScrollBarControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkSliderControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkTitleBarControlNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Control node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkScenePortalNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Scene portal node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowDispositioner.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkWindowFactory.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Window base node\Helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkProgressBarNode.h">
+      <Filter>Scene object\Scene node\Visual pattern node\Window themed node\Progress bar node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkLineShape.h">
+      <Filter>Scene object\Line</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkRenderTarget.h">
+      <Filter>Draw\Render target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDrawSceneNodeStep.h">
+      <Filter>Draw\Draw step</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDrawStepInterface.h">
+      <Filter>Draw\Draw step</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDrawTextNodeStep.h">
+      <Filter>Draw\Draw step</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDrawToStaticTextureStep.h">
+      <Filter>Draw\Draw step</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPA_MkDrawQueue.h">
+      <Filter>Draw\Draw queue</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

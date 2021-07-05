@@ -1,7 +1,6 @@
 ﻿
 #include <assert.h>
 #include <locale>
-#include <atlcoll.h>
 #include <fstream>
 #include <time.h>
 #include "MkCore_MkVec2.h"
@@ -1457,17 +1456,17 @@ MkVec3 MkStr::ToVec3(void) const
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkStr::ReadTextFile(const MkPathName& filePath, bool ignoreComment)
+bool MkStr::ReadTextFile(const MkPathName& filePath, bool ignoreComment, bool ANSI)
 {
 	MkByteArray byteArray;
 	if (!MkFileManager::GetFileData(filePath, byteArray))
 		return false;
 
-	ReadTextStream(byteArray, ignoreComment);
+	ReadTextStream(byteArray, ignoreComment, ANSI);
 	return true;
 }
 
-void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment)
+void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment, bool ANSI)
 {
 	// text 파일은 멀티바이트 폼으로 저장되므로 std::wifstream를 사용하면 자동으로 인코딩 해 주지만
 	// 파일 시스템을 통해 std::ifstream(unsigned char)로 읽은 상태라 별도 디코딩을 함
@@ -1484,7 +1483,7 @@ void MkStr::ReadTextStream(const MkByteArray& byteArray, bool ignoreComment)
 	else
 	{
 		srcData = byteArray;
-		codePage = gCurrentCodePage;
+		codePage = (ANSI) ? gCurrentCodePage : CP_UTF8;
 	}
 	srcData.PushBack(NULL);
 

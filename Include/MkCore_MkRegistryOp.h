@@ -69,6 +69,11 @@ public:
 	// (NOTE) 관리자 권한 요구
 	static bool Delete(HKEY hKey, const MkStr& subKey);
 
+	// 해당 노드의 value 삭제
+	// 반환값은 성공여부가 아닌 해당 value가 존재하지 않는지 여부(삭제 할 value가 없어도 true)
+	// (NOTE) 관리자 권한 요구
+	static bool Delete(HKEY hKey, const MkStr& subKey, const MkStr& value);
+
 	//------------------------------------------------------------------------------------------------//
 	// predefined set
 	//------------------------------------------------------------------------------------------------//

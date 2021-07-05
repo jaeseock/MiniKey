@@ -4,6 +4,9 @@
 #define DEF_STEAM_LOGIN FALSE
 
 #include <windows.h>
+#include <ShellAPI.h>
+#include <tlhelp32.h>
+#include "MkCore_MkRegistryOp.h"
 
 #include "minizip/unzip.h"
 
@@ -22,6 +25,8 @@
 #include "MkCore_MkFileManager.h"
 #include "MkCore_MkRegistryOp.h"
 
+#include "json/json.h"
+#pragma comment (lib, "JsonCpp.lib")
 
 // steam -----------------------------------------------------
 #if DEF_STEAM_LOGIN
@@ -127,9 +132,6 @@ class TestFramework : public MkBaseFramework
 public:
 	virtual bool SetUp(int clientWidth, int clientHeight, bool fullScreen, const MkCmdLine& cmdLine)
 	{
-//		int* k = NULL;
-//		*k = 10;
-
 #if DEF_STEAM_LOGIN
 		if ( SteamAPI_RestartAppIfNecessary( 838330 ) )
 			return false; // EXIT_FAILURE
@@ -191,13 +193,23 @@ public:
 
 		return true; // EXIT_SUCCESS
 	}
-
+	
 	virtual void StartLooping(void)
 	{
-		//MkPathName filePath = L"D:\\인수인계\\02.정기업무\\";
-		//MkDataNode node;
-		//filePath.ExportSystemStructure(node, true);
-		//node.SaveToText(L"test.txt");
+		int* boom = NULL;
+		*boom = 0;
+
+		MkDataNode node;
+		if (node.Load(L"CharClass.json"))
+		{
+			node.SaveToText(L"_CharClass1.txt");
+			node.SaveToJson(L"_CharClass.json");
+		}
+		node.Clear();
+		if (node.Load(L"_CharClass.json"))
+		{
+			node.SaveToText(L"_CharClass2.txt");
+		}
 
 		/*
 		do
@@ -432,12 +444,12 @@ int ReadItemCode(MkExcelFileInterface& excel, const MkPathName& filePath, int c)
 // 엔트리 포인트에서의 TestApplication 실행
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
-	/*
 	// http://patch.playwith.co.kr/WebUpdater/RohanNewWebLaunchingUpdater.exe
 
 	MkStr::SetUp();
 	MkPathName::SetUp();
 
+	/*
 	MkExcelFileInterface excel;
 	if (!excel.SetUp(L"RH_equipment_List_20210108.xlsx"))
 	{
@@ -468,8 +480,8 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 
 	::MessageBox(NULL, L"End", L"TransExcel.xlsx", MB_OK);	
 */
-	TestApplication application;
-	application.Run(hI, L"WhiteBoard", L"..\\ResRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 200, 200);
+	//TestApplication application;
+	//application.Run(hI, L"WhiteBoard", L"..\\ResRoot", true, eSWP_All, CW_USEDEFAULT, CW_USEDEFAULT, 200, 200);
 	
 	return 0;
 }

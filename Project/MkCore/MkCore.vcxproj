@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|Win32">
+      <Configuration>Shipping</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{095EB475-D5C1-414E-A4DC-9A44F2101C4D}</ProjectGuid>
+    <RootNamespace>MkCore</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <OutDir>$(SolutionDir)Lib\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <ProgramDataBaseFileName>$(OutDir)$(ProjectName).pdb</ProgramDataBaseFileName>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;MK_SHIPPING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\MkCore_MkAccessibilityShortcutKeySetter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkAngleOp.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkApplicationRegister.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkArctangentForm.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkArray.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkArraySection.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBackgroundLoader.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBaseFramework.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBaseLoadingTarget.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBasePage.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBaseThreadUnit.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBaseWindow.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBiasedDice.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkBitField32.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkCheatMessage.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkCheck.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkCircularDeque.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkClipboard.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkCmdLine.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkCodeDefinitionConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkColor.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkContainerDefinition.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkCriticalSection.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkCurveInterpolator.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataNode.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataNodeLoadingTarget.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataNodeToExcelConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataNodeToMemoryConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataPack.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataTextToMemoryConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataTypeDefinition.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDataUnit.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDeque.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDevPanel.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkDoubleBufferingPattern.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkEventQueuePattern.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkExcelFileInterface.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkExcelToMemoryConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFileBlock.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFileChunk.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFileDownloader.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFileManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFilePathListContainer.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFileSystem.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFiniteStateMachinePattern.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFixedFPUSetter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFloatOp.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkFtpInterface.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkGlobalDefinition.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkGlobalFunction.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkGlobalFunctor.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkHashMap.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkHashStr.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkHelperForDataNodeConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInputManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInstanceDeallocator.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForDataReading.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForDataWriting.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForFileReading.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForFileTag.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForFileWriting.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForZipFileReading.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkInterfaceForZipFileWriting.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkJsonAndDataNodeConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkKeywordFilter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkLayeredWindow.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkLinearSection.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkLinkageSequencer.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkListeningWindow.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkLoadingThreadUnit.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkLockable.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkLogicThreadUnit.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkLogManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkM128Operator.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkMap.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkMat3.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkMemoryBlockDescriptor.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkMemoryToDataNodeConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkMemoryToDataTextConverter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkMessageHistory.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkMultiMap.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkNameSelection.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkNoiseGenerator1D.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkNoiseGenerator2D.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPageManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPairArray.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileDownloader.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileExtractor.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileGenerator.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPatchFileUploader.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPatchSrcRecovery.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPatchStarter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPathName.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkPlane.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkProfilingManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkProjectDefinition.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkQuaternion.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkQueueingLinearGraph.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkRandomGenerator.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkRect.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkRegistryOp.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkRTTI.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSharedPointer.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSharedPointerManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkShortcutOp.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSingletonPattern.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSingleTypeTreePattern.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSnappingWindow.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSphere.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSRWLock.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkStackPattern.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkStandardLinearGraph.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkStr.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkStringOp.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkStringTableForParser.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkSystemEnvironment.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkTagDefinitionForDataNode.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkThreadManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkTimeCounter.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkTimeManager.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkTimeState.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkTitleBarHooker.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkType2.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkTypeHierarchy.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkUniformDice.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkUniqueKeyTreePattern.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkValueDecision.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkVec2.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkVec3.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkVersionTag.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkVisitWebPage.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkWebBrowser.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkWin32Application.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkWindowProcessOp.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkWindowStartRegister.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkWindowUpdateListener.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkXORer.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkZipCompressor.h" />
+    <ClInclude Include="..\..\Include\MkCore_StackWalker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MkCore_MkAccessibilityShortcutKeySetter.cpp" />
+    <ClCompile Include="Source\MkCore_MkAngleOp.cpp" />
+    <ClCompile Include="Source\MkCore_MkApplicationRegister.cpp" />
+    <ClCompile Include="Source\MkCore_MkArctangentForm.cpp" />
+    <ClCompile Include="Source\MkCore_MkBackgroundLoader.cpp" />
+    <ClCompile Include="Source\MkCore_MkBaseFramework.cpp" />
+    <ClCompile Include="Source\MkCore_MkBasePage.cpp" />
+    <ClCompile Include="Source\MkCore_MkBaseThreadUnit.cpp" />
+    <ClCompile Include="Source\MkCore_MkBaseWindow.cpp" />
+    <ClCompile Include="Source\MkCore_MkCheatMessage.cpp" />
+    <ClCompile Include="Source\MkCore_MkCheck.cpp" />
+    <ClCompile Include="Source\MkCore_MkClipboard.cpp" />
+    <ClCompile Include="Source\MkCore_MkCmdLine.cpp" />
+    <ClCompile Include="Source\MkCore_MkCodeDefinitionConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkDataNode.cpp" />
+    <ClCompile Include="Source\MkCore_MkDataNodeToExcelConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkDataNodeToMemoryConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkDataPack.cpp" />
+    <ClCompile Include="Source\MkCore_MkDataTextToMemoryConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkDataTypeDefinition.cpp" />
+    <ClCompile Include="Source\MkCore_MkDevPanel.cpp" />
+    <ClCompile Include="Source\MkCore_MkExcelFileInterface.cpp" />
+    <ClCompile Include="Source\MkCore_MkExcelToMemoryConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkFileBlock.cpp" />
+    <ClCompile Include="Source\MkCore_MkFileChunk.cpp" />
+    <ClCompile Include="Source\MkCore_MkFileDownloader.cpp" />
+    <ClCompile Include="Source\MkCore_MkFileManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkFileSystem.cpp" />
+    <ClCompile Include="Source\MkCore_MkFixedFPUSetter.cpp" />
+    <ClCompile Include="Source\MkCore_MkFloatOp.cpp" />
+    <ClCompile Include="Source\MkCore_MkFtpInterface.cpp" />
+    <ClCompile Include="Source\MkCore_MkHashStr.cpp" />
+    <ClCompile Include="Source\MkCore_MkHelperForDataNodeConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkInputManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkInstanceDeallocator.cpp" />
+    <ClCompile Include="Source\MkCore_MkInterfaceForDataReading.cpp" />
+    <ClCompile Include="Source\MkCore_MkInterfaceForDataWriting.cpp" />
+    <ClCompile Include="Source\MkCore_MkInterfaceForFileReading.cpp" />
+    <ClCompile Include="Source\MkCore_MkInterfaceForFileWriting.cpp" />
+    <ClCompile Include="Source\MkCore_MkInterfaceForZipFileReading.cpp" />
+    <ClCompile Include="Source\MkCore_MkInterfaceForZipFileWriting.cpp" />
+    <ClCompile Include="Source\MkCore_MkJsonAndDataNodeConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkKeywordFilter.cpp" />
+    <ClCompile Include="Source\MkCore_MkLayeredWindow.cpp" />
+    <ClCompile Include="Source\MkCore_MkListeningWindow.cpp" />
+    <ClCompile Include="Source\MkCore_MkLoadingThreadUnit.cpp" />
+    <ClCompile Include="Source\MkCore_MkLogicThreadUnit.cpp" />
+    <ClCompile Include="Source\MkCore_MkLogManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkMemoryToDataNodeConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkMemoryToDataTextConverter.cpp" />
+    <ClCompile Include="Source\MkCore_MkMessageHistory.cpp" />
+    <ClCompile Include="Source\MkCore_MkNoiseGenerator1D.cpp" />
+    <ClCompile Include="Source\MkCore_MkNoiseGenerator2D.cpp" />
+    <ClCompile Include="Source\MkCore_MkPageManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkPatchFileDownloader.cpp" />
+    <ClCompile Include="Source\MkCore_MkPatchFileExtractor.cpp" />
+    <ClCompile Include="Source\MkCore_MkPatchFileGenerator.cpp" />
+    <ClCompile Include="Source\MkCore_MkPatchFileUploader.cpp" />
+    <ClCompile Include="Source\MkCore_MkPatchSrcRecovery.cpp" />
+    <ClCompile Include="Source\MkCore_MkPatchStarter.cpp" />
+    <ClCompile Include="Source\MkCore_MkPathName.cpp" />
+    <ClCompile Include="Source\MkCore_MkProfilingManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkQuaternion.cpp" />
+    <ClCompile Include="Source\MkCore_MkQueueingLinearGraph.cpp" />
+    <ClCompile Include="Source\MkCore_MkRandomGenerator.cpp" />
+    <ClCompile Include="Source\MkCore_MkRegistryOp.cpp" />
+    <ClCompile Include="Source\MkCore_MkSharedPointerManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkShortcutOp.cpp" />
+    <ClCompile Include="Source\MkCore_MkSnappingWindow.cpp" />
+    <ClCompile Include="Source\MkCore_MkStandardLinearGraph.cpp" />
+    <ClCompile Include="Source\MkCore_MkStr.cpp" />
+    <ClCompile Include="Source\MkCore_MkStringOp.cpp" />
+    <ClCompile Include="Source\MkCore_MkStringTableForParser.cpp" />
+    <ClCompile Include="Source\MkCore_MkSystemEnvironment.cpp" />
+    <ClCompile Include="Source\MkCore_MkTagDefinitionForDataNode.cpp" />
+    <ClCompile Include="Source\MkCore_MkThreadManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkTimeCounter.cpp" />
+    <ClCompile Include="Source\MkCore_MkTimeManager.cpp" />
+    <ClCompile Include="Source\MkCore_MkTitleBarHooker.cpp" />
+    <ClCompile Include="Source\MkCore_MkUniformDice.cpp" />
+    <ClCompile Include="Source\MkCore_MkVersionTag.cpp" />
+    <ClCompile Include="Source\MkCore_MkVisitWebPage.cpp" />
+    <ClCompile Include="Source\MkCore_MkWebBrowser.cpp" />
+    <ClCompile Include="Source\MkCore_MkWin32Application.cpp" />
+    <ClCompile Include="Source\MkCore_MkWindowProcessOp.cpp" />
+    <ClCompile Include="Source\MkCore_MkWindowStartRegister.cpp" />
+    <ClCompile Include="Source\MkCore_MkXORer.cpp" />
+    <ClCompile Include="Source\MkCore_MkZipCompressor.cpp" />
+    <ClCompile Include="Source\MkCore_StackWalker.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
