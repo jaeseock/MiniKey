@@ -9,6 +9,8 @@ bool MkInterfaceForFileWriting::SetUp(const MkPathName& filePath, bool overwrite
 {
 	// 경로 구성
 	m_CurrentFilePath.ConvertToRootBasisAbsolutePath(filePath);
+	if (m_CurrentFilePath.CheckPostfix(L"\\") || m_CurrentFilePath.CheckPostfix(L"/"))
+		m_CurrentFilePath.BackSpace(1);
 
 	if (makeDirectoryPath)
 	{

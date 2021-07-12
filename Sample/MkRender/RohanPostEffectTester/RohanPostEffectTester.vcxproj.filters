@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Window">
+      <UniqueIdentifier>{5d5f0393-c21e-4ef5-9ee6-aa9d3cc6a89c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Window\Edit">
+      <UniqueIdentifier>{4eeaee3c-f935-451b-8866-3818865eb511}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MainControlWindowNode.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneSelectionWindowNode.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ColorEditWindowNode.cpp">
+      <Filter>Window\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DepthFogEditWindowNode.cpp">
+      <Filter>Window\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DepthOfFieldEditWindowNode.cpp">
+      <Filter>Window\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EdgeDetectionEditWindowNode.cpp">
+      <Filter>Window\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\HDREditWindowNode.cpp">
+      <Filter>Window\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\RadialBlurEditWindowNode.cpp">
+      <Filter>Window\Edit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\SettingRepository.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\MainControlWindowNode.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneSelectionWindowNode.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ColorEditWindowNode.h">
+      <Filter>Window\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DepthFogEditWindowNode.h">
+      <Filter>Window\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DepthOfFieldEditWindowNode.h">
+      <Filter>Window\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EdgeDetectionEditWindowNode.h">
+      <Filter>Window\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\HDREditWindowNode.h">
+      <Filter>Window\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\RadialBlurEditWindowNode.h">
+      <Filter>Window\Edit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AppDefinition.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Source\SettingRepository.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Source\Rohan.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="RohanPostEffectTester.rc" />
+  </ItemGroup>
+</Project>

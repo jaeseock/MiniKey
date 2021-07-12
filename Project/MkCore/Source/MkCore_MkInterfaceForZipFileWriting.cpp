@@ -12,6 +12,8 @@ bool MkInterfaceForZipFileWriting::SetUp(const MkPathName& filePath, bool overwr
 	Clear();
 
 	m_CurrentFilePath.ConvertToRootBasisAbsolutePath(filePath);
+	if (m_CurrentFilePath.CheckPostfix(L"\\") || m_CurrentFilePath.CheckPostfix(L"/"))
+		m_CurrentFilePath.BackSpace(1);
 
 	if (makeDirectoryPath)
 	{

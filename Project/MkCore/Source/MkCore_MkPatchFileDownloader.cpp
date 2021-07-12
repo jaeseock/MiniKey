@@ -469,6 +469,9 @@ void MkPatchFileDownloader::Update(void)
 				{
 					MkPathName realFilePath;
 					realFilePath.ConvertToRootBasisAbsolutePath(fileInfo.filePath); // ex> D:\\Client\\AAA\\BBB\\abc.mmd
+					if (realFilePath.CheckPostfix(L"\\") || realFilePath.CheckPostfix(L"/"))
+						realFilePath.BackSpace(1);
+
 					if (tempFilePath.CopyCurrentFile(realFilePath, false)) // overwrite
 					{
 						// 파일 수정시간 기록이 실패했을 경우 재패치를 피하기 위해 별도의 기록을 패치 잔여 정보에 남김

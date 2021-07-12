@@ -24,7 +24,8 @@
 #define MKDEF_APP_BTN_START_ID 5
 
 // Starter로부터 온 경로가 비어 있으면 대신 설정. 필요 없으면 공문자열(L"").
-#define MKDEF_DEFAULT_PATCH_URL L"http://patch.playwith.co.kr/rohan_queentoolv2"
+//#define MKDEF_DEFAULT_PATCH_URL L"http://patch.playwith.co.kr/rohan_queentoolv2"
+#define MKDEF_DEFAULT_PATCH_URL L""
 
 static bool g_RunGame = false;
 static MkLayeredWindow g_LayeredWindow;

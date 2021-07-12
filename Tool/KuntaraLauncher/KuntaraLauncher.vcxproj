@@ -1,5 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -9,13 +9,24 @@
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Shipping|Win32">
+      <Configuration>Shipping</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{72F0401D-FBA1-4097-8402-8D4FB6D03CB3}</ProjectGuid>
-    <RootNamespace>MMDViewer</RootNamespace>
+    <ProjectGuid>{F60E0E9A-688D-41C8-8AF8-15D5FD9D5969}</ProjectGuid>
+    <RootNamespace>KuntaraLauncher</RootNamespace>
     <Keyword>MFCProj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
@@ -32,6 +43,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -40,10 +54,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+    <_ProjectFileVersion>16.0.31401.40</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
+    <OutDir>D:\_PatchTest\Client\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -51,7 +65,15 @@
     <CodeAnalysisRuleAssemblies />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)bin\$(Configuration)\</OutDir>
+    <OutDir>D:\_PatchTest\Client\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules />
+    <CodeAnalysisRuleAssemblies />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <OutDir>D:\_PatchTest\Client\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
@@ -119,46 +141,85 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;MK_SHIPPING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0412</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(SolutionDir)Lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MMD Viewer.cpp" />
-    <ClCompile Include="MMD ViewerDlg.cpp" />
-    <ClCompile Include="NodeTreeCtrl.cpp" />
+    <ClCompile Include="CImgBtn.cpp" />
+    <ClCompile Include="CImgProgress.cpp" />
+    <ClCompile Include="CWebBrowser2.cpp" />
+    <ClCompile Include="GDIPlusManager.cpp" />
+    <ClCompile Include="KuntaraLauncher.cpp" />
+    <ClCompile Include="KuntaraLauncherDlg.cpp" />
+    <ClCompile Include="MkAppManager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MMD Viewer.h" />
-    <ClInclude Include="MMD ViewerDlg.h" />
-    <ClInclude Include="NodeTreeCtrl.h" />
+    <ClInclude Include="CImgBtn.h" />
+    <ClInclude Include="CImgProgress.h" />
+    <ClInclude Include="CWebBrowser2.h" />
+    <ClInclude Include="GDIPlusManager.h" />
+    <ClInclude Include="KuntaraLauncher.h" />
+    <ClInclude Include="KuntaraLauncherDlg.h" />
+    <ClInclude Include="MkAppManager.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="assets\icon_element.ico" />
-    <Image Include="assets\icon_node.ico" />
-    <Image Include="assets\icon_tag.ico" />
-    <Image Include="assets\icon_template.ico" />
-    <Image Include="assets\icon_unit_bar.ico" />
-    <Image Include="assets\icon_unit_bool.ico" />
-    <Image Include="assets\icon_unit_dint.ico" />
-    <Image Include="assets\icon_unit_duint.ico" />
-    <Image Include="assets\icon_unit_float.ico" />
-    <Image Include="assets\icon_unit_int.ico" />
-    <Image Include="assets\icon_unit_int2.ico" />
-    <Image Include="assets\icon_unit_str.ico" />
-    <Image Include="assets\icon_unit_uint.ico" />
-    <Image Include="assets\icon_unit_vec2.ico" />
-    <Image Include="assets\icon_unit_vec3.ico" />
-    <Image Include="res\MMD Viewer.ico" />
+    <Image Include="launcher\gage_b.png" />
+    <Image Include="launcher\gage_f.png" />
+    <Image Include="launcher\launcher.png" />
+    <Image Include="launcher\launcher_bg.png" />
+    <Image Include="launcher\quit_d.png" />
+    <Image Include="launcher\quit_e.png" />
+    <Image Include="launcher\quit_f.png" />
+    <Image Include="launcher\quit_p.png" />
+    <Image Include="launcher\start_d.png" />
+    <Image Include="launcher\start_e.png" />
+    <Image Include="launcher\start_f.png" />
+    <Image Include="launcher\start_p.png" />
+    <Image Include="res\bitmap1.bmp" />
+    <Image Include="res\KuntaraLauncher.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="MMD Viewer.rc" />
+    <ResourceCompile Include="KuntaraLauncher.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\MMDViewer.rc2" />
+    <None Include="res\KuntaraLauncher.rc2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Project\MkCore\MkCore.vcxproj">
@@ -171,7 +232,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="MMD Viewer.rc" />
+      <UserProperties _x007B_8856F961-340A-11D0-A96B-00C04FD705A2_x007D_="CWebBrowser2" RESOURCE_FILE="KuntaraLauncher.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

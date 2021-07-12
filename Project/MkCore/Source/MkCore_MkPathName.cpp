@@ -1024,6 +1024,9 @@ bool MkPathName::SetWrittenTime(int year, int month, int day, int hour, int min,
 {
 	MkPathName tmpPath;
 	tmpPath.ConvertToRootBasisAbsolutePath(*this);
+	if (tmpPath.CheckPostfix(L"\\") || tmpPath.CheckPostfix(L"/"))
+		tmpPath.BackSpace(1);
+
 	if (tmpPath.CheckAvailable())
 	{
 		HANDLE hFile = ::CreateFile
@@ -1300,7 +1303,7 @@ bool MkPathName::__CheckFileDifference(const MkDataNode& lastFileNode, MkDataNod
 MkDataNode* MkPathName::__CreateFileStructureInfo
 (MkDataNode& node, bool compressed, unsigned int origSize, unsigned int compSize, unsigned int writtenTime, const MkByteArray& md5Value)
 {
-	if (Empty() || IsDirectoryPath())
+	if (Empty())
 		return NULL;
 
 	MkDataNode* fileNode = node.CreateChildNode(*this);
@@ -1368,12 +1371,14 @@ unsigned int MkPathName::_GetExtensionPosition(void) const
 
 		if (currChar == L'.')
 		{
+			/* 진짜 파일명이 없는 놈들이 있다... (ex> ".gitignore")
 			if (i == 0)
 				return MKDEF_ARRAY_ERROR; // 파일명 없음, error. ex> ".ext"
 
 			const wchar_t& nameChar = m_Str[i-1];
 			if ((nameChar == L'\\') || (nameChar == L'/'))
 				return MKDEF_ARRAY_ERROR; // 파일명 없음, error. ex> "\\.ext"
+			*/
 
 			return (i + 1); // 확장자 위치 반환
 		}
@@ -1534,11 +1539,14 @@ bool MkPathName::_ConvertToRelativePath(const MkPathName& basePath)
 
 bool MkPathName::_CopyOrMoveCurrentFile(const MkPathName& newPath, bool copy, bool failIfExists) const
 {
-	if (Empty() || IsDirectoryPath() || newPath.Empty())
+	if (Empty() || newPath.Empty())
 		return false;
 
 	MkPathName tmpPath;
 	tmpPath.ConvertToRootBasisAbsolutePath(*this);
+	if (tmpPath.CheckPostfix(L"\\") || tmpPath.CheckPostfix(L"/"))
+		tmpPath.BackSpace(1);
+
 	if (tmpPath.CheckAvailable())
 	{
 		MkPathName targetPath;
@@ -1550,17 +1558,11 @@ bool MkPathName::_CopyOrMoveCurrentFile(const MkPathName& newPath, bool copy, bo
 		{
 			targetPath = tmpPath.GetPath() + newPath;
 			targetPath.OptimizePath();
+			if (targetPath.CheckPostfix(L"\\") || targetPath.CheckPostfix(L"/"))
+				targetPath.BackSpace(1);
 		}
 
-		if (targetPath.IsDirectoryPath())
-		{
-			targetPath.CheckAndAddBackslash();
-			if (!targetPath.MakeDirectoryPath())
-				return false;
-
-			targetPath += GetFileName();
-		}
-		else if (!targetPath.GetPath().MakeDirectoryPath())
+		if (!targetPath.GetPath().MakeDirectoryPath())
 			return false;
 
 		if (copy)

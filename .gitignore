@@ -17,6 +17,12 @@
 *.ncb
 *.suo
 *.pch
+*.ipch
 *.res
 *.rsp
 *.cache
+*.db-shm
+*.db-wal
+*.opendb
+*.recipe
+*FileListAbsolute.txt

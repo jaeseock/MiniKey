@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Src">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AnimationViewWindowNode.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="AppWindowCreationHelper.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="MinimapWindowBodyNode.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="SequenceWindowBodyNode.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemWindowBodyNode.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AnimationViewWindowNode.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="AppWindowCreationHelper.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="MinimapWindowBodyNode.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="SequenceWindowBodyNode.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemWindowBodyNode.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="asset\main.ico">
+      <Filter>Src</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MII Editor.rc">
+      <Filter>Src</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

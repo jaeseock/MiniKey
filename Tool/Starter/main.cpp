@@ -29,7 +29,7 @@ protected:
 		newCmd.GetFullStr(cmdPass);
 
 		//MkPatchStarter::StartLauncher(L"http://210.207.252.151/kuntara/korea", cmdPass.GetPtr());
-		MkPatchStarter::StartLauncher(L"http://qa.sealonline.co.kr/dev", cmdPass.GetPtr());
+		MkPatchStarter::StartLauncher(L"https://intpatch-rohan2m.playwith.co.kr/devclient", cmdPass.GetPtr());
 		return false; // Á¾·á
 	}
 };

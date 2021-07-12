@@ -449,6 +449,14 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 	MkStr::SetUp();
 	MkPathName::SetUp();
 
+	MkPathName f1path = L"D:\\Works\\Rohan2\\Build\\Window\\Client\\Rohan M2_Data\\globalgamemanagers";
+	MkPathName f2path = L"D:\\Works\\Rohan2\\Build\\Window\\Client\\Rohan M2_Data\\globalgamemanagers.assets";
+
+	unsigned int f1ok = f1path.GetWrittenTime();
+	unsigned int f2ok = f2path.GetWrittenTime();
+
+	f1path.Clear();
+
 	/*
 	MkExcelFileInterface excel;
 	if (!excel.SetUp(L"RH_equipment_List_20210108.xlsx"))

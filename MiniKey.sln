@@ -1,21 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkCore", "Project\MkCore\MkCore.vcxproj", "{095EB475-D5C1-414E-A4DC-9A44F2101C4D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Sample\MkRender\Test\Test.vcxproj", "{0B5AA43D-73F6-4144-952D-A791D188BE48}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkFilePacker", "Tool\MkFilePacker\MkFilePacker.vcproj", "{6C91CA08-CB17-4E39-BFB1-69DFB06E46C9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkFilePacker", "Tool\MkFilePacker\MkFilePacker.vcxproj", "{6C91CA08-CB17-4E39-BFB1-69DFB06E46C9}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkChunkNavigator", "Tool\MkChunkNavigator\MkChunkNavigator.vcproj", "{846235E2-BD4C-4DB6-A531-AB2356336A79}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkChunkNavigator", "Tool\MkChunkNavigator\MkChunkNavigator.vcxproj", "{846235E2-BD4C-4DB6-A531-AB2356336A79}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkPanelArt", "Project\MkPanelArt\MkPanelArt.vcxproj", "{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}"
 EndProject
@@ -23,15 +17,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimplePatchFileGenerator", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleLauncher", "Tool\SimpleLauncher\SimpleLauncher.vcxproj", "{7B4C97D5-792E-4709-A738-05E7FAA298D8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Starter", "Tool\Starter\Starter.vcproj", "{7FAA0F57-E34D-4509-9DC8-A0D3B1EAC4B6}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Starter", "Tool\Starter\Starter.vcxproj", "{7FAA0F57-E34D-4509-9DC8-A0D3B1EAC4B6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KuntaraLauncher", "Tool\KuntaraLauncher\KuntaraLauncher.vcproj", "{F60E0E9A-688D-41C8-8AF8-15D5FD9D5969}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KuntaraLauncher", "Tool\KuntaraLauncher\KuntaraLauncher.vcxproj", "{F60E0E9A-688D-41C8-8AF8-15D5FD9D5969}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Uninstall", "Tool\Uninstall\Uninstall.vcxproj", "{CFFD2ABB-15C2-47F6-8121-45DEDF6C1D0D}"
 EndProject
@@ -43,76 +31,31 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClientInstaller", "Tool\Cli
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WhiteBoardForTest", "Sample\WhiteBoardForTest\WhiteBoardForTest.vcxproj", "{0103EE0D-2A7F-45D2-978A-F27076AB5A63}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkCodeDefinitionConverter", "Tool\MkCodeDefinitionConverter\MkCodeDefinitionConverter.vcproj", "{F57F046B-907B-41FD-84FC-0ADA44E3B350}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkCodeDefinitionConverter", "Tool\MkCodeDefinitionConverter\MkCodeDefinitionConverter.vcxproj", "{F57F046B-907B-41FD-84FC-0ADA44E3B350}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimplePatchFileExtractor", "Tool\SimplePatchFileExtractor\SimplePatchFileExtractor.vcproj", "{C71B4964-96C1-4FC5-941B-5943D3FC9EC0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimplePatchFileExtractor", "Tool\SimplePatchFileExtractor\SimplePatchFileExtractor.vcxproj", "{C71B4964-96C1-4FC5-941B-5943D3FC9EC0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CodeSwitchSample", "Sample\CodeSwitchSample\CodeSwitchSample.vcproj", "{BCCC7CE8-600E-4F3D-80B0-72758945BAEC}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CodeSwitchSample", "Sample\CodeSwitchSample\CodeSwitchSample.vcxproj", "{BCCC7CE8-600E-4F3D-80B0-72758945BAEC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MMD Viewer", "Tool\MMD Viewer\MMD Viewer.vcxproj", "{72F0401D-FBA1-4097-8402-8D4FB6D03CB3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Collisions", "Sample\MkRender\Collisions\Collisions.vcproj", "{2813832E-235F-4D45-A46F-A6998750E1A0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC} = {30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Collisions", "Sample\MkRender\Collisions\Collisions.vcxproj", "{2813832E-235F-4D45-A46F-A6998750E1A0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimplePatchSrcRecovery", "Tool\SimplePatchSrcRecovery\SimplePatchSrcRecovery.vcproj", "{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimplePatchSrcRecovery", "Tool\SimplePatchSrcRecovery\SimplePatchSrcRecovery.vcxproj", "{AA5852F4-B4B8-4CC5-AF7E-903CBA730223}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MII Editor", "Tool\MII Editor\MII Editor.vcproj", "{DDB6FB20-D0DC-4007-AF2D-1C9034A5274C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC} = {30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MII Editor", "Tool\MII Editor\MII Editor.vcxproj", "{DDB6FB20-D0DC-4007-AF2D-1C9034A5274C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkSound", "Project\MkSound\MkSound.vcproj", "{B9A5CD10-E007-4D82-8CE4-D6BD8110B38B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MkSound", "Project\MkSound\MkSound.vcxproj", "{B9A5CD10-E007-4D82-8CE4-D6BD8110B38B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SealPackOperator", "Tool\SealPackOperator\SealPackOperator.vcproj", "{61CB513F-4322-425D-84A1-806C6E7D1E4A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SealPackOperator", "Tool\SealPackOperator\SealPackOperator.vcxproj", "{61CB513F-4322-425D-84A1-806C6E7D1E4A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanPostEffectTester", "Sample\MkRender\RohanPostEffectTester\RohanPostEffectTester.vcproj", "{695E535C-864B-477C-BA79-92560FACBF59}"
-	ProjectSection(ProjectDependencies) = postProject
-		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC} = {30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanPostEffectTester", "Sample\MkRender\RohanPostEffectTester\RohanPostEffectTester.vcxproj", "{695E535C-864B-477C-BA79-92560FACBF59}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanDisableQuestRemover", "Tool\RohanDisableQuestRemover\RohanDisableQuestRemover.vcproj", "{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanDisableQuestRemover", "Tool\RohanDisableQuestRemover\RohanDisableQuestRemover.vcxproj", "{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StopThere", "Sample\MkRender\StopThere\StopThere.vcproj", "{688772FE-DEF6-4640-9222-3A92CD3C6CDB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{30698B24-B6FC-4B2B-AE5E-EAA17B645DFC} = {30698B24-B6FC-4B2B-AE5E-EAA17B645DFC}
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanWorldAtrWrapper", "Application\RohanWorldAtrWrapper\RohanWorldAtrWrapper.vcxproj", "{B8C6930A-59C5-4281-91A6-720C77005EC1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RohanWorldAtrWrapper", "Application\RohanWorldAtrWrapper\RohanWorldAtrWrapper.vcproj", "{B8C6930A-59C5-4281-91A6-720C77005EC1}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TeamCardUsageConverter", "Application\TeamCardUsageConverter\TeamCardUsageConverter.vcproj", "{B517F50F-78AA-4F4F-805C-FCD7D6152549}"
-	ProjectSection(ProjectDependencies) = postProject
-		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TeamCardUsageConverter", "Application\TeamCardUsageConverter\TeamCardUsageConverter.vcxproj", "{B517F50F-78AA-4F4F-805C-FCD7D6152549}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SteamPC_SrvMonitor", "Application\SteamPC_SrvMonitor\SteamPC_SrvMonitor.vcxproj", "{D6D80279-F972-48F6-923C-6E2B8A875332}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -357,15 +300,6 @@ Global
 		{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}.Shipping|Win32.ActiveCfg = Release|Win32
 		{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}.Shipping|Win32.Build.0 = Release|Win32
 		{2184CDAE-AAAB-46F6-B4E6-E77A01AD3A81}.Shipping|x64.ActiveCfg = Release|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Debug|Win32.ActiveCfg = Debug|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Debug|Win32.Build.0 = Debug|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Debug|x64.ActiveCfg = Debug|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Release|Win32.ActiveCfg = Release|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Release|Win32.Build.0 = Release|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Release|x64.ActiveCfg = Release|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Shipping|Win32.ActiveCfg = Release|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Shipping|Win32.Build.0 = Release|Win32
-		{688772FE-DEF6-4640-9222-3A92CD3C6CDB}.Shipping|x64.ActiveCfg = Release|Win32
 		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Debug|Win32.ActiveCfg = Debug|Win32
 		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Debug|Win32.Build.0 = Debug|Win32
 		{B8C6930A-59C5-4281-91A6-720C77005EC1}.Debug|x64.ActiveCfg = Debug|Win32
@@ -399,5 +333,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A4B0B2E-92E1-4B73-B962-488BE4E8F598}
 	EndGlobalSection
 EndGlobal

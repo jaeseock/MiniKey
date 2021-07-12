@@ -57,6 +57,8 @@ public:
 	{
 		// 경로 구성
 		m_CurrentFilePath.ConvertToRootBasisAbsolutePath(filePath);
+		if (m_CurrentFilePath.CheckPostfix(L"\\") || m_CurrentFilePath.CheckPostfix(L"/"))
+			m_CurrentFilePath.BackSpace(1);
 		bool ok = m_CurrentFilePath.CheckAvailable();
 		MK_CHECK(ok, filePath + L" 경로에 파일이 존재하지 않음")
 			return false;

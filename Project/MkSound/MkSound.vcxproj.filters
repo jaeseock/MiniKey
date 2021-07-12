@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Buffer">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Channel">
+      <UniqueIdentifier>{bdf20ac7-599c-433c-8a07-733feb0b88f3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\MkSound_MkSoundBuffer.cpp">
+      <Filter>Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MkSound_MkSoundInterface.cpp">
+      <Filter>Buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MkSound_MkSoundChannel.cpp">
+      <Filter>Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\MkSound_MkSoundManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\MkSound_MkSoundBuffer.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkSound_MkSoundInterface.h">
+      <Filter>Buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkSound_MkSoundChannel.h">
+      <Filter>Channel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkSound_MkSoundManager.h" />
+  </ItemGroup>
+</Project>
