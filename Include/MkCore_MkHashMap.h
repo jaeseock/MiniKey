@@ -174,7 +174,7 @@ public:
 	inline FieldType& operator [] (const KeyType& key)
 	{
 		assert(!m_Pair.IsEmpty());
-		CAtlMap<KeyType, FieldType>::CPair* pair = m_Pair.Lookup(key);
+		typename CAtlMap<KeyType, FieldType>::CPair* pair = m_Pair.Lookup(key);
 		assert(pair != NULL);
 		return pair->m_value;
 	}

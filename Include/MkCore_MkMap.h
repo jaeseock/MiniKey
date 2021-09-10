@@ -73,7 +73,7 @@ public:
 
 		unsigned int size = GetSize();
 		buffer.Reserve(size);
-		for (std::map<KeyType, FieldType>::const_iterator itr = m_Pair.begin(); itr != m_Pair.end(); ++itr)
+		for (typename std::map<KeyType, FieldType>::const_iterator itr = m_Pair.begin(); itr != m_Pair.end(); ++itr)
 		{
 			buffer.PushBack(itr->first);
 		}
@@ -89,7 +89,7 @@ public:
 
 		unsigned int size = GetSize();
 		buffer.Reserve(size);
-		for (std::map<KeyType, FieldType>::const_iterator itr = m_Pair.begin(); itr != m_Pair.end(); ++itr)
+		for (typename std::map<KeyType, FieldType>::const_iterator itr = m_Pair.begin(); itr != m_Pair.end(); ++itr)
 		{
 			buffer.PushBack(itr->second);
 		}
@@ -100,7 +100,7 @@ public:
 	inline const KeyType& GetFirstKey(void) const
 	{
 		assert(!Empty());
-		std::map<KeyType, FieldType>::const_iterator itr = m_Pair.begin();
+		typename std::map<KeyType, FieldType>::const_iterator itr = m_Pair.begin();
 		return itr->first;
 	}
 
@@ -108,7 +108,7 @@ public:
 	inline const KeyType& GetLastKey(void) const
 	{
 		assert(!Empty());
-		std::map<KeyType, FieldType>::const_reverse_iterator itr = m_Pair.rbegin();
+		typename std::map<KeyType, FieldType>::const_reverse_iterator itr = m_Pair.rbegin();
 		return itr->first;
 	}
 
@@ -148,7 +148,7 @@ public:
 		// 멤버가 하나일 경우 위 과정에서 리턴 됨
 		// 따라서 이 시점까지 진행되는 조건은 최소 멤버가 두개 이상임
 		// (lastKey <= key)조건이 제외되므로 upper_bound() 안전하게 사용가능(반드시 존재)
-		std::map<KeyType, FieldType>::const_iterator itr = m_Pair.upper_bound(key);
+		typename std::map<KeyType, FieldType>::const_iterator itr = m_Pair.upper_bound(key);
 		upperBoundKey = itr->first;
 
 		// (firstKey >= key)조건이 제외되므로 --itr 안전하게 사용가능(반드시 존재)
@@ -161,7 +161,7 @@ public:
 	{
 		KeyType lowerBoundKey, upperBoundKey;
 		GetBoundKey(key, lowerBoundKey, upperBoundKey);
-		std::map<KeyType, FieldType>::iterator itr = m_Pair.find(lowerBoundKey);
+		typename std::map<KeyType, FieldType>::iterator itr = m_Pair.find(lowerBoundKey);
 		return itr->second;
 	}
 
@@ -169,7 +169,7 @@ public:
 	{
 		KeyType lowerBoundKey, upperBoundKey;
 		GetBoundKey(key, lowerBoundKey, upperBoundKey);
-		std::map<KeyType, FieldType>::const_iterator itr = m_Pair.find(lowerBoundKey);
+		typename std::map<KeyType, FieldType>::const_iterator itr = m_Pair.find(lowerBoundKey);
 		return itr->second;
 	}
 
@@ -178,7 +178,7 @@ public:
 	inline FieldType& operator [] (const KeyType& key)
 	{
 		assert(!m_Pair.empty());
-		std::map<KeyType, FieldType>::iterator itr = m_Pair.find(key);
+		typename std::map<KeyType, FieldType>::iterator itr = m_Pair.find(key);
 		assert(itr != m_Pair.end());
 		return itr->second;
 	}
@@ -186,7 +186,7 @@ public:
 	inline const FieldType& operator [] (const KeyType& key) const
 	{
 		assert(!m_Pair.empty());
-		std::map<KeyType, FieldType>::const_iterator itr = m_Pair.find(key);
+		typename std::map<KeyType, FieldType>::const_iterator itr = m_Pair.find(key);
 		assert(itr != m_Pair.end());
 		return itr->second;
 	}

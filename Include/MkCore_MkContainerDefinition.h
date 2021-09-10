@@ -50,11 +50,11 @@ class MkStlLooper : public MkBaseStlLooper<KeyType, IteratorType>
 public:
 	inline void SetUp(ContainerType& target)
 	{
-		m_Itr = target.__GetBeginItr();
-		m_End = target.__GetEndItr();
+		this->m_Itr = target.__GetBeginItr();
+		this->m_End = target.__GetEndItr();
 	}
 
-	inline FieldType& GetCurrentField(void) { return m_Itr->second; }
+	inline FieldType& GetCurrentField(void) { return this->m_Itr->second; }
 	MkStlLooper(ContainerType& target) { SetUp(target); }
 };
 
@@ -64,11 +64,11 @@ class MkConstStlLooper : public MkBaseStlLooper<KeyType, IteratorType>
 public:
 	inline void SetUp(const ContainerType& target)
 	{
-		m_Itr = target.__GetBeginItr();
-		m_End = target.__GetEndItr();
+		this->m_Itr = target.__GetBeginItr();
+		this->m_End = target.__GetEndItr();
 	}
 
-	inline const FieldType& GetCurrentField(void) const { return m_Itr->second; }
+	inline const FieldType& GetCurrentField(void) const { return this->m_Itr->second; }
 	MkConstStlLooper(const ContainerType& target) { SetUp(target); }
 };
 

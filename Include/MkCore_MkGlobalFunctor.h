@@ -130,9 +130,9 @@ protected:
 	{
 		if (a != b)
 		{
-			KeyType tmpKey = m_Keys[a];
-			m_Keys[a] = m_Keys[b];
-			m_Keys[b] = tmpKey;
+			KeyType tmpKey = this->m_Keys[a];
+			this->m_Keys[a] = this->m_Keys[b];
+			this->m_Keys[b] = tmpKey;
 
 			FieldType tmpField = m_Fields[a];
 			m_Fields[a] = m_Fields[b];
@@ -145,10 +145,10 @@ protected:
 		if ((keys == 0) || (fields == 0) || (arraySize < 2))
 			return;
 
-		m_Keys = keys;
+		this->m_Keys = keys;
 		m_Fields = fields;
 
-		_SortOperation(arraySize, minHeap);
+		MkSingleArraySorter<KeyType>::_SortOperation(arraySize, minHeap);
 	}
 
 protected:
