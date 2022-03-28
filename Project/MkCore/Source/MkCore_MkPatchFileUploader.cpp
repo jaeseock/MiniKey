@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------------------------//
 
 bool MkPatchFileUploader::StartUploading
-(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode)
+(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode, MkStr* outMsg)
 {
 	if (m_State != eReady)
 		return false;
@@ -17,9 +17,9 @@ bool MkPatchFileUploader::StartUploading
 	m_UploadDirectoryPath.ConvertToRootBasisAbsolutePath(targetDirPath);
 	if (!m_UploadDirectoryPath.CheckAvailable())
 	{
-		MK_DEV_PANEL.MsgToLog(L"> " + targetDirPath);
-		MK_DEV_PANEL.MsgToLog(L"  대상 디렉토리가 존재하지 않습니다.");
-		MK_DEV_PANEL.InsertEmptyLine();
+		_AddLogMessage(outMsg, L"> " + targetDirPath);
+		_AddLogMessage(outMsg, L"  대상 디렉토리가 존재하지 않습니다.");
+		_AddLogMessage(outMsg, MkStr::EMPTY);
 		return false;
 	}
 
@@ -27,10 +27,10 @@ bool MkPatchFileUploader::StartUploading
 	MkDataNode uploadNode;
 	if (m_UploadDirectoryPath.ExportSystemStructure(uploadNode) == 0)
 	{
-		MK_DEV_PANEL.MsgToLog(L"> " + targetDirPath);
-		MK_DEV_PANEL.MsgToLog(L"  대상 디렉토리에 파일이 없습니다.");
-		MK_DEV_PANEL.InsertEmptyLine();
-		return false;
+		_AddLogMessage(outMsg, L"> " + targetDirPath);
+		_AddLogMessage(outMsg, L"  대상 디렉토리에 파일이 없습니다.");
+		_AddLogMessage(outMsg, MkStr::EMPTY);
+		return true; // 갱신 파일이 없는 경우 패치 대상도 없어 업로드 대상이 없을 수도 있음
 	}
 
 	// launcher info 설정파일 검사
@@ -39,9 +39,9 @@ bool MkPatchFileUploader::StartUploading
 	MkPatchFileGenerator::ConvertFilePathToDownloadable(launcherInfoFileName, launcherInfoFileDown); // ex> LauncherFile.mmd.rp
 	if (!uploadNode.ChildExist(launcherInfoFileDown))
 	{
-		MK_DEV_PANEL.MsgToLog(L"> " + targetDirPath);
-		MK_DEV_PANEL.MsgToLog(L"  디렉토리에 " + launcherInfoFileDown + L" 파일이 존재하지 않습니다.");
-		MK_DEV_PANEL.InsertEmptyLine();
+		_AddLogMessage(outMsg, L"> " + targetDirPath);
+		_AddLogMessage(outMsg, L"  디렉토리에 " + launcherInfoFileDown + L" 파일이 존재하지 않습니다.");
+		_AddLogMessage(outMsg, MkStr::EMPTY);
 		return false;
 	}
 	
@@ -51,9 +51,9 @@ bool MkPatchFileUploader::StartUploading
 	MkPatchFileGenerator::ConvertFilePathToDownloadable(patchInfoFileName, patchInfoFileDown); // ex> PatchInfo.mmd.rp
 	if (!uploadNode.ChildExist(patchInfoFileDown))
 	{
-		MK_DEV_PANEL.MsgToLog(L"> " + targetDirPath);
-		MK_DEV_PANEL.MsgToLog(L"  디렉토리에 " + patchInfoFileDown + L" 파일이 존재하지 않습니다.");
-		MK_DEV_PANEL.InsertEmptyLine();
+		_AddLogMessage(outMsg, L"> " + targetDirPath);
+		_AddLogMessage(outMsg, L"  디렉토리에 " + patchInfoFileDown + L" 파일이 존재하지 않습니다.");
+		_AddLogMessage(outMsg, MkStr::EMPTY);
 		return false;
 	}
 
@@ -97,25 +97,26 @@ bool MkPatchFileUploader::StartUploading
 		case eUploadFile: ++uploadFileCount; break;
 		}
 	}
-	MK_DEV_PANEL.MsgToLog(L"> " + MkStr(uploadDirCount) + L"개의 디렉토리에 " + MkStr(uploadFileCount) + L"개의 파일 업로드 존재.");
-	MK_DEV_PANEL.InsertEmptyLine();
+
+	_AddLogMessage(outMsg, L"> " + MkStr(uploadDirCount) + L"개의 디렉토리에 " + MkStr(uploadFileCount) + L"개의 파일 업로드 존재.");
+	_AddLogMessage(outMsg, MkStr::EMPTY);
 	
 	// ftp 연결
-	MK_DEV_PANEL.MsgToLog(L"> URL : " + url);
-	MK_DEV_PANEL.MsgToLog(L"  RemotePath : " + remotePath);
-	MK_DEV_PANEL.MsgToLog(L"  UserName : " + userName);
-	MK_DEV_PANEL.MsgToLog(L"  Password : " + password);
-	MK_DEV_PANEL.MsgToLog((passiveMode) ? L"  Passive mode" : L"  Active mode");
+	_AddLogMessage(outMsg, L"> URL : " + url);
+	_AddLogMessage(outMsg, L"  RemotePath : " + remotePath);
+	_AddLogMessage(outMsg, L"  UserName : " + userName);
+	_AddLogMessage(outMsg, L"  Password : " + password);
+	_AddLogMessage(outMsg, (passiveMode) ? L"  Passive mode" : L"  Active mode");
 
 	if (!m_FTP.Connect(url, remotePath, userName, password, passiveMode))
 	{
-		MK_DEV_PANEL.MsgToLog(L"  FTP 접속을 실패했습니다!");
-		MK_DEV_PANEL.InsertEmptyLine();
+		_AddLogMessage(outMsg, L"  FTP 접속을 실패했습니다!");
+		_AddLogMessage(outMsg, MkStr::EMPTY);
 		return false;
 	}
 
-	MK_DEV_PANEL.MsgToLog(L"  FTP 접속을 성공했습니다.");
-	MK_DEV_PANEL.InsertEmptyLine();
+	_AddLogMessage(outMsg, L"  FTP 접속을 성공했습니다.");
+	_AddLogMessage(outMsg, MkStr::EMPTY);
 
 	// 삭제 할 파일과 data directory가 존재하면 purge state
 	if (!m_PurgeList.Empty())
@@ -128,7 +129,7 @@ bool MkPatchFileUploader::StartUploading
 
 		if (m_FTP.MoveToChild(dataDir, false))
 		{
-			MK_DEV_PANEL.MsgToLog(L"> " + MkStr(m_PurgeList.GetSize()) + L"개의 파일을 삭제 시도합니다.");
+			_AddLogMessage(outMsg, L"> " + MkStr(m_PurgeList.GetSize()) + L"개의 파일을 삭제 시도합니다.");
 
 			m_State = ePurgeFiles;
 		}
@@ -137,8 +138,8 @@ bool MkPatchFileUploader::StartUploading
 	// 아니면 바로 upload state
 	if (m_State != ePurgeFiles)
 	{
-		MK_DEV_PANEL.MsgToLog(L"> 삭제(Purge) 할 파일이 없습니다. 바로 파일 업로드를 시작합니다.");
-		MK_DEV_PANEL.InsertEmptyLine();
+		_AddLogMessage(outMsg, L"> 삭제(Purge) 할 파일이 없습니다. 바로 파일 업로드를 시작합니다.");
+		_AddLogMessage(outMsg, MkStr::EMPTY);
 
 		m_State = eUploadingFiles;
 	}
@@ -146,7 +147,7 @@ bool MkPatchFileUploader::StartUploading
 	return true;
 }
 
-bool MkPatchFileUploader::Update(void)
+bool MkPatchFileUploader::Update(MkStr* outMsg)
 {
 	switch (m_State)
 	{
@@ -160,14 +161,14 @@ bool MkPatchFileUploader::Update(void)
 				MkPathName currPath = m_PurgeList[m_PurgeList.GetSize() - 1]; // 마지막 element
 				if (m_FTP.DeleteChildFile(currPath))
 				{
-					MK_DEV_PANEL.MsgToLog(L"  - " + currPath);
+					_AddLogMessage(outMsg, L"  - " + currPath);
 				}
 
 				m_PurgeList.PopBack();
 			}
 			else
 			{
-				MK_DEV_PANEL.InsertEmptyLine();
+				_AddLogMessage(outMsg, MkStr::EMPTY);
 
 				m_State = ePurgeDirs;
 			}
@@ -178,22 +179,23 @@ bool MkPatchFileUploader::Update(void)
 		{
 			if (m_PurgeDirNode.GetChildNodeCount() > 0)
 			{
-				MK_DEV_PANEL.MsgToLog(L"> 디렉토리 최적화를 시도합니다.");
+				_AddLogMessage(outMsg, L"> 디렉토리 최적화를 시도합니다.");
 
-				_PurgeEmptyDirectory(m_PurgeDirNode);
+				_PurgeEmptyDirectory(m_PurgeDirNode, outMsg);
 
-				MK_DEV_PANEL.InsertEmptyLine();
+				_AddLogMessage(outMsg, MkStr::EMPTY);
 			}
 
 			if (m_FTP.MoveToParent())
 			{
-				MK_DEV_PANEL.MsgToLog(L"> 파일 업로드를 시작합니다.");
+				_AddLogMessage(outMsg, L"> 파일 업로드를 시작합니다.");
 
 				m_State = eUploadingFiles;
 			}
 			else
 			{
-				MK_DEV_PANEL.MsgToLog(L"> 디렉토리 최적화 후 root directory로 이동이 실패했습니다.");
+				_AddLogMessage(outMsg, L"> 디렉토리 최적화 후 root directory로 이동이 실패했습니다.");
+
 				m_State = eReady;
 			}
 		}
@@ -243,7 +245,7 @@ bool MkPatchFileUploader::Update(void)
 					break;
 				}
 
-				MK_DEV_PANEL.MsgToLog(msg);
+				_AddLogMessage(outMsg, msg);
 
 				// 성공했으면 다음 커맨드로
 				if (success)
@@ -254,11 +256,11 @@ bool MkPatchFileUploader::Update(void)
 				// 실패했으면 재시도
 				else if (m_CurrCommandCounter == 30)
 				{
-					MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------");
-					MK_DEV_PANEL.MsgToLog(L"> " + MkStr(m_CurrCommandCounter) + L"회의 시도가 모두 실패해서 취소합니다.");
-					MK_DEV_PANEL.MsgToLog(L"> 이대로 작업을 멈추고 클라이언트팀에 문의 바랍니다.");
-					MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------");
-					MK_DEV_PANEL.InsertEmptyLine();
+					_AddLogMessage(outMsg, L"---------------------------------------------------------------");
+					_AddLogMessage(outMsg, L"> " + MkStr(m_CurrCommandCounter) + L"회의 시도가 모두 실패해서 취소합니다.");
+					_AddLogMessage(outMsg, L"> 이대로 작업을 멈추고 클라이언트팀에 문의 바랍니다.");
+					_AddLogMessage(outMsg, L"---------------------------------------------------------------");
+					_AddLogMessage(outMsg, MkStr::EMPTY);
 
 					m_State = eReady;
 					_Clear();
@@ -266,9 +268,9 @@ bool MkPatchFileUploader::Update(void)
 			}
 			else
 			{
-				MK_DEV_PANEL.InsertEmptyLine();
-				MK_DEV_PANEL.MsgToLog(L"> 대상 디렉토리를 정리합니다.");
-				MK_DEV_PANEL.InsertEmptyLine();
+				_AddLogMessage(outMsg, MkStr::EMPTY);
+				_AddLogMessage(outMsg, L"> 대상 디렉토리를 정리합니다.");
+				_AddLogMessage(outMsg, MkStr::EMPTY);
 
 				m_State = eClearTargetDir;
 			}
@@ -282,10 +284,10 @@ bool MkPatchFileUploader::Update(void)
 				m_UploadDirectoryPath.MakeDirectoryPath();
 			}
 
-			MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------");
-			MK_DEV_PANEL.MsgToLog(L"> 업로드가 완료되었습니다.");
-			MK_DEV_PANEL.MsgToLog(L"---------------------------------------------------------------");
-			MK_DEV_PANEL.InsertEmptyLine();
+			_AddLogMessage(outMsg, L"---------------------------------------------------------------");
+			_AddLogMessage(outMsg, L"> 업로드가 완료되었습니다.");
+			_AddLogMessage(outMsg, L"---------------------------------------------------------------");
+			_AddLogMessage(outMsg, MkStr::EMPTY);
 
 			m_State = eReady;
 			_Clear();
@@ -332,7 +334,7 @@ void MkPatchFileUploader::_AddPurgeDirectory(const MkStr& filePath, MkDataNode& 
 	}
 }
 
-bool MkPatchFileUploader::_PurgeEmptyDirectory(MkDataNode& purgeDirNode)
+bool MkPatchFileUploader::_PurgeEmptyDirectory(MkDataNode& purgeDirNode, MkStr* outMsg)
 {
 	MkArray<MkHashStr> dirs;
 	purgeDirNode.GetChildNodeList(dirs);
@@ -348,7 +350,7 @@ bool MkPatchFileUploader::_PurgeEmptyDirectory(MkDataNode& purgeDirNode)
 			// 해당 노드에 자식이 존재하면 depth를 높여 재귀
 			if (childNode.GetChildNodeCount() > 0)
 			{
-				if (!_PurgeEmptyDirectory(childNode))
+				if (!_PurgeEmptyDirectory(childNode, outMsg))
 					return false;
 			}
 
@@ -367,7 +369,7 @@ bool MkPatchFileUploader::_PurgeEmptyDirectory(MkDataNode& purgeDirNode)
 				currPath += L"\\";
 				currPath += dirName.GetString();
 				currPath.PopFront(MkPatchFileGenerator::PatchDataDirName.GetSize() + 1);
-				MK_DEV_PANEL.MsgToLog(L"  - " + currPath);
+				_AddLogMessage(outMsg, L"  - " + currPath);
 			}
 		}
 	}
@@ -413,6 +415,17 @@ void MkPatchFileUploader::_BuildUploadCommand(const MkDataNode& structureNode, c
 
 		// pop
 		m_UploadCommand.PushBack().command = eMoveToParent;
+	}
+}
+
+void MkPatchFileUploader::_AddLogMessage(MkStr* outMsg, const MkStr& msg)
+{
+	MK_DEV_PANEL.MsgToLog(msg);
+
+	if (outMsg != NULL)
+	{
+		*outMsg += msg;
+		*outMsg += MkStr::LF;
 	}
 }
 

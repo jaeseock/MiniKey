@@ -1,0 +1,33 @@
+Node "in\Starter.exe"
+{
+	Node "out\dev\Starter.exe"
+	{
+		str URL = "http://intpatch-sealm.playwith.co.kr/dev_win_patch";
+	}
+
+	Node "out\pp\Starter.exe"
+	{
+		str URL = "http://intpatch-sealm.playwith.co.kr/pp_win_patch";
+	}
+}
+
+Node "in\SimpleWebInstaller.exe"
+{
+	Node "out\dev\SealM_WebInstaller.exe"
+	{
+		str AppTitle = "希望M PC(Dev) Web installer";
+		bool UseKorean = true;
+		str ClientFolderName = "Playwith\SealM";
+		str DownloadURL = "http://intpatch-sealm.playwith.co.kr/dev_win_full";
+	}
+
+	Node "out\pp\SealM_PP_WebInstaller.exe"
+	{
+		str AppTitle = "希望M(PC Porting) Web installer";
+		bool UseKorean = false;
+		str ClientFolderName = "Playwith\SealM_PP";
+		str DownloadURL = "http://intpatch-sealm.playwith.co.kr/pp_win_full";
+	}
+}
+
+str CodeSign = "codesign\CodeSignCmd.bat";

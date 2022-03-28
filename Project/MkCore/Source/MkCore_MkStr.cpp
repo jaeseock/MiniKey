@@ -1532,9 +1532,9 @@ bool MkStr::WriteToTextFile(const MkPathName& filePath, bool overwrite, bool ANS
 		MkByteArray outData;
 		outData.Reserve(3 + strSize);
 
-		outData.PushBack(0xEF); // BOM
-		outData.PushBack(0xBB);
-		outData.PushBack(0xBF);
+		//outData.PushBack(0xEF); // BOM은 이제는 유물이다...
+		//outData.PushBack(0xBB);
+		//outData.PushBack(0xBF);
 
 		outData.PushBack(MkMemoryBlockDescriptor<unsigned char>(reinterpret_cast<const unsigned char*>(buffer.c_str()), strSize));
 

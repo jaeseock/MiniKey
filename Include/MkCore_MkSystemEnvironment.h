@@ -69,10 +69,10 @@ public:
 	inline const MkInt2& GetBackgroundResolution(void) const { return m_BackgroundResolution; }
 
 	// 현재 날자를 얻음 (년.월.일)
-	MkStr GetCurrentSystemDate(void) const;
+	static MkStr GetCurrentSystemDate(void);
 
 	// 현재 시간을 얻음 (시:분:초)
-	MkStr GetCurrentSystemTime(void) const;
+	static MkStr GetCurrentSystemTime(void);
 
 	// 현재 시스템 로그온된 유저 이름을 얻음
 	inline const MkStr& GetCurrentLogOnUserName(void) const { return m_CurrentUserName; }

@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Scene\Render target">
+      <UniqueIdentifier>{85a63cab-6ea6-4963-9c89-2a630439d397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Draw call">
+      <UniqueIdentifier>{cc06e305-cf89-4127-85b6-fc709d170e9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Draw call\Texture">
+      <UniqueIdentifier>{6cb88d46-0e48-4e7a-8e0a-b96d244e7180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Draw call\Shader effect">
+      <UniqueIdentifier>{75e02d5b-5e60-4bfa-9826-4679dbe8bf37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene\Camera">
+      <UniqueIdentifier>{38cb8b69-92e4-4911-9fdb-5630df26bd80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\MkPE_MkScreen.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkRenderTarget.cpp">
+      <Filter>Scene\Render target</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkDrawCall.cpp">
+      <Filter>Scene\Draw call</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkBaseTexture.cpp">
+      <Filter>Scene\Draw call\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkBitmapTexture.cpp">
+      <Filter>Scene\Draw call\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkRenderToTexture.cpp">
+      <Filter>Scene\Draw call\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkShaderEffect.cpp">
+      <Filter>Scene\Draw call\Shader effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkOrthogonalCamera.cpp">
+      <Filter>Scene\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkBitmapPool.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkPostEffectRenderer.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkShaderEffectPool.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkPE_MkD3DDefinition.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Include\MkPE_MkScreen.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkRenderTarget.h">
+      <Filter>Scene\Render target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkDrawCall.h">
+      <Filter>Scene\Draw call</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkBaseTexture.h">
+      <Filter>Scene\Draw call\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkBitmapTexture.h">
+      <Filter>Scene\Draw call\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkRenderToTexture.h">
+      <Filter>Scene\Draw call\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkShaderEffect.h">
+      <Filter>Scene\Draw call\Shader effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkOrthogonalCamera.h">
+      <Filter>Scene\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkBitmapPool.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkPostEffectRenderer.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkShaderEffectPool.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Include\MkPE_MkD3DDefinition.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

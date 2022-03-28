@@ -62,6 +62,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SteamPC_SrvMonitor", "Appli
 		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleWebInstaller", "Tool\SimpleWebInstaller\SimpleWebInstaller.vcxproj", "{ED0774B6-EFBA-44F4-B878-615128CA7D69}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SealM_PatchUploader", "Application\SealM_PatchUploader\SealM_PatchUploader.vcxproj", "{53848F85-4DC1-41A3-84A0-BA4905767DEB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InsertDownloadInfos", "Tool\InsertDownloadInfos\InsertDownloadInfos.vcxproj", "{65167E09-BCCC-4C12-9561-2FAB5B7E2296}"
+	ProjectSection(ProjectDependencies) = postProject
+		{095EB475-D5C1-414E-A4DC-9A44F2101C4D} = {095EB475-D5C1-414E-A4DC-9A44F2101C4D}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -330,6 +345,42 @@ Global
 		{D6D80279-F972-48F6-923C-6E2B8A875332}.Shipping|Win32.Build.0 = Release|Win32
 		{D6D80279-F972-48F6-923C-6E2B8A875332}.Shipping|x64.ActiveCfg = Release|x64
 		{D6D80279-F972-48F6-923C-6E2B8A875332}.Shipping|x64.Build.0 = Release|x64
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Debug|Win32.ActiveCfg = Debug|Win32
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Debug|Win32.Build.0 = Debug|Win32
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Debug|x64.ActiveCfg = Debug|x64
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Debug|x64.Build.0 = Debug|x64
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Release|Win32.ActiveCfg = Release|Win32
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Release|Win32.Build.0 = Release|Win32
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Release|x64.ActiveCfg = Release|x64
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Release|x64.Build.0 = Release|x64
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Shipping|Win32.ActiveCfg = Shipping|Win32
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Shipping|Win32.Build.0 = Shipping|Win32
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Shipping|x64.ActiveCfg = Debug|x64
+		{ED0774B6-EFBA-44F4-B878-615128CA7D69}.Shipping|x64.Build.0 = Debug|x64
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Debug|Win32.Build.0 = Debug|Win32
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Debug|x64.ActiveCfg = Debug|x64
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Debug|x64.Build.0 = Debug|x64
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Release|Win32.ActiveCfg = Release|Win32
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Release|Win32.Build.0 = Release|Win32
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Release|x64.ActiveCfg = Release|x64
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Release|x64.Build.0 = Release|x64
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Shipping|Win32.ActiveCfg = Debug|Win32
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Shipping|Win32.Build.0 = Debug|Win32
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Shipping|x64.ActiveCfg = Debug|x64
+		{53848F85-4DC1-41A3-84A0-BA4905767DEB}.Shipping|x64.Build.0 = Debug|x64
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Debug|Win32.ActiveCfg = Debug|Win32
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Debug|Win32.Build.0 = Debug|Win32
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Debug|x64.ActiveCfg = Debug|x64
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Debug|x64.Build.0 = Debug|x64
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Release|Win32.ActiveCfg = Release|Win32
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Release|Win32.Build.0 = Release|Win32
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Release|x64.ActiveCfg = Release|x64
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Release|x64.Build.0 = Release|x64
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Shipping|Win32.ActiveCfg = Debug|Win32
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Shipping|Win32.Build.0 = Debug|Win32
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Shipping|x64.ActiveCfg = Debug|x64
+		{65167E09-BCCC-4C12-9561-2FAB5B7E2296}.Shipping|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

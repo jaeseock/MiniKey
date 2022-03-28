@@ -85,12 +85,12 @@ template <class DataType>
 class IsFixedSizeType
 {
 public:
-	static bool Get(void) { return false; }
+	inline static bool Get(void) { return false; }
 };
 
 // 고정 크기 선언
 #define MKDEF_DECLARE_FIXED_SIZE_TYPE(t) \
-	template <> static bool IsFixedSizeType<t>::Get(void) { return true; }
+	template <> inline static bool IsFixedSizeType<t>::Get(void) { return true; }
 
 // primitive type의 경우 크기 고정
 MKDEF_DECLARE_FIXED_SIZE_TYPE(bool)

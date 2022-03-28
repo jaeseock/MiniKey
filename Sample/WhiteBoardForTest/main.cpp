@@ -18,9 +18,10 @@
 #include "MkCore_MkWin32Application.h"
 
 #include "MkCore_MkExcelFileInterface.h"
+#include "MkCore_MkInterfaceForFileReading.h"
 #include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkInterfaceForZipFileReading.h"
-
+#include "MkCore_MkTailData.h"
 
 #include "MkCore_MkFileManager.h"
 #include "MkCore_MkRegistryOp.h"
@@ -448,15 +449,21 @@ int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 
 	MkStr::SetUp();
 	MkPathName::SetUp();
-
-	MkPathName f1path = L"D:\\Works\\Rohan2\\Build\\Window\\Client\\Rohan M2_Data\\globalgamemanagers";
-	MkPathName f2path = L"D:\\Works\\Rohan2\\Build\\Window\\Client\\Rohan M2_Data\\globalgamemanagers.assets";
-
-	unsigned int f1ok = f1path.GetWrittenTime();
-	unsigned int f2ok = f2path.GetWrittenTime();
-
-	f1path.Clear();
-
+	
+	MkByteArray tailDataBuffer;
+	bool okok = MkTailData::GetTailData(tailDataBuffer);
+	if (okok)
+	{
+		MkDataNode tailDataNode;
+		if (tailDataNode.Load(tailDataBuffer))
+		{
+			tailDataNode.SaveToText(L"__data.txt");
+		}
+	}
+	
+	//bool okok = MkTailData::AttachData(L"exe.exe", L"data.mmd", L"newexe.exe");
+	::MessageBox(NULL, MkStr(okok), L"title", MB_OK);
+	
 	/*
 	MkExcelFileInterface excel;
 	if (!excel.SetUp(L"RH_equipment_List_20210108.xlsx"))

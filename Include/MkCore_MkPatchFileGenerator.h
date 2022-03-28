@@ -23,9 +23,9 @@ public:
 	bool SetPatchRootDirectoryPath(const MkPathName& patchDirPath);
 	bool SetUpdatingRootDirectoryPath(const MkPathName& updatingDirPath, const MkArray<MkStr>& destList);
 
-	bool GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress, const MkArray<MkStr>& doNotCompressExts);
+	bool GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress, const MkArray<MkStr>& doNotCompressExts, MkStr* outMsg = NULL);
 
-	bool Update(void);
+	bool Update(MkStr* outMsg = NULL);
 
 	unsigned int GetTotalPatchFileCount(void) const { return m_TotalPatchFileCount; }
 	unsigned int GetDonePatchFileCount(void) const { return m_DonePatchFileCount; }
@@ -70,8 +70,8 @@ protected:
 
 	//------------------------------------------------------------------------------------------------//
 
-	bool _LoadCurrentStructure(const MkPathName& sourceDirPath);
-	bool _LoadTargetHistoryFile(unsigned int targetIndex);
+	bool _LoadCurrentStructure(const MkPathName& sourceDirPath, MkStr* outMsg);
+	bool _LoadTargetHistoryFile(unsigned int targetIndex, MkStr* outMsg);
 
 	unsigned int _GetPatchFileListByType(const MkHashStr& key, MkArray<MkHashStr>& buffer);
 
@@ -91,6 +91,8 @@ protected:
 
 	static bool _SetAllDirsToUpdate
 		(const MkStr& dirPath, const MkDataNode& targetDirNode, MkDataNode& updateRoot, const MkHashStr& updateType, bool copySrcData, int purgeState, unsigned int& writtenTime);
+
+	static void _AddLogMessage(MkStr* outMsg, const MkStr& msg);
 
 	//------------------------------------------------------------------------------------------------//
 

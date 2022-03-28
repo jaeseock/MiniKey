@@ -202,7 +202,7 @@ template <> void MkArray<MkHashStr>::SortInDescendingOrder(void)
 }
 
 // 오름차순 정렬(ex> 1, 2, 3, ...)
-template <> void MkArray<MkHashStr>::SortInAscendingOrder(void)
+template <> inline void MkArray<MkHashStr>::SortInAscendingOrder(void)
 {
 	unsigned int size = GetSize();
 	MkArray<MkStr> strList;

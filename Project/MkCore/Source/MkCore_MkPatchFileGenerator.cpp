@@ -57,24 +57,31 @@ bool MkPatchFileGenerator::SetHistoryDirectoryPath(const MkPathName& historyDirP
 	targetDir.ConvertToRootBasisAbsolutePath(historyDirPath);
 	if (!targetDir.CheckAvailable())
 	{
-		MkStr msg;
-		msg.Reserve(512);
-		msg += targetDir;
-		msg += MkStr::LF;
-		msg += L"history 폴더가 존재하지 않습니다.";
-		msg += MkStr::LF;
-		msg += MkStr::LF;
-		msg += L"생성 후 초기화 하시겠습니까?";
-		
-		int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
-		if (rlt == IDYES)
+		if (m_hWnd == NULL)
 		{
 			targetDir.MakeDirectoryPath(); // 생성
 		}
-		else if (rlt == IDNO)
+		else
 		{
-			targetDir.Clear();
-			targetDir.GetDirectoryPathFromDialog(L"기존 history 폴더 선택.", m_hWnd, MkPathName::GetRootDirectory()); // 선택
+			MkStr msg;
+			msg.Reserve(512);
+			msg += targetDir;
+			msg += MkStr::LF;
+			msg += L"history 폴더가 존재하지 않습니다.";
+			msg += MkStr::LF;
+			msg += MkStr::LF;
+			msg += L"생성 후 초기화 하시겠습니까?";
+
+			int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
+			if (rlt == IDYES)
+			{
+				targetDir.MakeDirectoryPath(); // 생성
+			}
+			else if (rlt == IDNO)
+			{
+				targetDir.Clear();
+				targetDir.GetDirectoryPathFromDialog(L"기존 history 폴더 선택.", m_hWnd, MkPathName::GetRootDirectory()); // 선택
+			}
 		}
 	}
 
@@ -132,24 +139,31 @@ bool MkPatchFileGenerator::SetPatchRootDirectoryPath(const MkPathName& patchDirP
 	targetDir.ConvertToRootBasisAbsolutePath(patchDirPath);
 	if (!targetDir.CheckAvailable())
 	{
-		MkStr msg;
-		msg.Reserve(512);
-		msg += targetDir;
-		msg += MkStr::LF;
-		msg += L"patch root 폴더가 존재하지 않습니다.";
-		msg += MkStr::LF;
-		msg += MkStr::LF;
-		msg += L"생성 후 초기화 하시겠습니까?";
-		
-		int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
-		if (rlt == IDYES)
+		if (m_hWnd == NULL)
 		{
 			targetDir.MakeDirectoryPath(); // 생성
 		}
-		else if (rlt == IDNO)
+		else
 		{
-			targetDir.Clear();
-			targetDir.GetDirectoryPathFromDialog(L"기존 patch root 폴더 선택.", m_hWnd, MkPathName::GetRootDirectory()); // 선택
+			MkStr msg;
+			msg.Reserve(512);
+			msg += targetDir;
+			msg += MkStr::LF;
+			msg += L"patch root 폴더가 존재하지 않습니다.";
+			msg += MkStr::LF;
+			msg += MkStr::LF;
+			msg += L"생성 후 초기화 하시겠습니까?";
+
+			int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
+			if (rlt == IDYES)
+			{
+				targetDir.MakeDirectoryPath(); // 생성
+			}
+			else if (rlt == IDNO)
+			{
+				targetDir.Clear();
+				targetDir.GetDirectoryPathFromDialog(L"기존 patch root 폴더 선택.", m_hWnd, MkPathName::GetRootDirectory()); // 선택
+			}
 		}
 	}
 
@@ -188,24 +202,31 @@ bool MkPatchFileGenerator::SetUpdatingRootDirectoryPath(const MkPathName& updati
 	targetDir.ConvertToRootBasisAbsolutePath(updatingDirPath);
 	if (!targetDir.CheckAvailable())
 	{
-		MkStr msg;
-		msg.Reserve(512);
-		msg += targetDir;
-		msg += MkStr::LF;
-		msg += L"updating root 폴더가 존재하지 않습니다.";
-		msg += MkStr::LF;
-		msg += MkStr::LF;
-		msg += L"생성 후 초기화 하시겠습니까?";
-		
-		int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
-		if (rlt == IDYES)
+		if (m_hWnd == NULL)
 		{
 			targetDir.MakeDirectoryPath(); // 생성
 		}
-		else if (rlt == IDNO)
+		else
 		{
-			targetDir.Clear();
-			targetDir.GetDirectoryPathFromDialog(L"기존 updating root 폴더 선택.", m_hWnd, MkPathName::GetRootDirectory()); // 선택
+			MkStr msg;
+			msg.Reserve(512);
+			msg += targetDir;
+			msg += MkStr::LF;
+			msg += L"updating root 폴더가 존재하지 않습니다.";
+			msg += MkStr::LF;
+			msg += MkStr::LF;
+			msg += L"생성 후 초기화 하시겠습니까?";
+
+			int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
+			if (rlt == IDYES)
+			{
+				targetDir.MakeDirectoryPath(); // 생성
+			}
+			else if (rlt == IDNO)
+			{
+				targetDir.Clear();
+				targetDir.GetDirectoryPathFromDialog(L"기존 updating root 폴더 선택.", m_hWnd, MkPathName::GetRootDirectory()); // 선택
+			}
 		}
 	}
 
@@ -263,7 +284,7 @@ bool MkPatchFileGenerator::SetUpdatingRootDirectoryPath(const MkPathName& updati
 	return ok;
 }
 
-bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress, const MkArray<MkStr>& doNotCompressExts)
+bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, bool tryCompress, const MkArray<MkStr>& doNotCompressExts, MkStr* outMsg)
 {
 	if (m_MainState != eReady)
 		return false;
@@ -281,19 +302,19 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 	{
 		if (m_HistoryDirPath.Empty())
 		{
-			MK_DEV_PANEL.MsgToLog(L"> 지정된 history 폴더가 없습니다.");
+			_AddLogMessage(outMsg, L"> 지정된 history 폴더가 없습니다.");
 			break;
 		}
 
 		if (m_PatchRootPath.Empty())
 		{
-			MK_DEV_PANEL.MsgToLog(L"> 지정된 patch root 폴더가 없습니다.");
+			_AddLogMessage(outMsg, L"> 지정된 patch root 폴더가 없습니다.");
 			break;
 		}
 
 		if (m_UpdatingRootPath.Empty())
 		{
-			MK_DEV_PANEL.MsgToLog(L"> 지정된 updating root 폴더가 없습니다.");
+			_AddLogMessage(outMsg, L"> 지정된 updating root 폴더가 없습니다.");
 			break;
 		}
 
@@ -302,7 +323,7 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 		m_UpdateWrittenTime = MkPathName::ConvertWrittenTime(ct.GetYear(), ct.GetMonth(), ct.GetDay(), ct.GetHour(), ct.GetMinute(), ct.GetSecond());
 
 		// 원본 확인
-		if (!_LoadCurrentStructure(sourceDirPath))
+		if (!_LoadCurrentStructure(sourceDirPath, outMsg))
 			break;
 
 		// 마지막 history 확인
@@ -311,22 +332,22 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 
 		if (m_HistoryList.Empty())
 		{
-			MK_DEV_PANEL.MsgToLog(L"> 초기 상태이므로 원본 파일 정보를 그대로 사용합니다.");
-			MK_DEV_PANEL.InsertEmptyLine();
+			_AddLogMessage(outMsg, L"> 초기 상태이므로 원본 파일 정보를 그대로 사용합니다.");
+			_AddLogMessage(outMsg, MkStr::EMPTY);
 		}
 		else
 		{
 			targetHistoryIndex = m_HistoryList[0];
 			if (targetHistoryIndex >= m_UpdateWrittenTime)
 			{
-				MK_DEV_PANEL.MsgToLog(L"> 현재 시간은 대상보다 최신이어야 합니다.");
-				MK_DEV_PANEL.MsgToLog(L"  현재 시간 : " + ConvertWrittenTimeToStr(m_UpdateWrittenTime));
-				MK_DEV_PANEL.MsgToLog(L"  대상 시간 : " + ConvertWrittenTimeToStr(targetHistoryIndex));
-				MK_DEV_PANEL.MsgToLog(L"  갱신을 취소합니다.");
+				_AddLogMessage(outMsg, L"> 현재 시간은 대상보다 최신이어야 합니다.");
+				_AddLogMessage(outMsg, L"  현재 시간 : " + ConvertWrittenTimeToStr(m_UpdateWrittenTime));
+				_AddLogMessage(outMsg, L"  대상 시간 : " + ConvertWrittenTimeToStr(targetHistoryIndex));
+				_AddLogMessage(outMsg, L"  갱신을 취소합니다.");
 				break;
 			}
 
-			if (!_LoadTargetHistoryFile(targetHistoryIndex))
+			if (!_LoadTargetHistoryFile(targetHistoryIndex, outMsg))
 				break;
 		}
 
@@ -334,7 +355,7 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 		MkDataNode* updateNode = m_CurrentHistory.CreateChildNode(KEY_UpdateNode);
 		if (updateNode == NULL)
 		{
-			MK_DEV_PANEL.MsgToLog(L"> " + KEY_UpdateNode.GetString() + L" 노드 생성 실패.");
+			_AddLogMessage(outMsg, L"> " + KEY_UpdateNode.GetString() + L" 노드 생성 실패.");
 			break;
 		}
 
@@ -357,7 +378,7 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 		{
 			if (!m_CurrentHistory.CreateUnit(KEY_RunFilePath, m_RunFilePath))
 			{
-				MK_DEV_PANEL.MsgToLog(L"> " + KEY_RunFilePath.GetString() + L" unit 생성 실패.");
+				_AddLogMessage(outMsg, L"> " + KEY_RunFilePath.GetString() + L" unit 생성 실패.");
 				break;
 			}
 		}
@@ -369,7 +390,7 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 			m_CurrentHistory.GetChildNode(KEY_StructureNode),
 			*updateNode, m_UpdateWrittenTime))
 		{
-			MK_DEV_PANEL.MsgToLog(L"> 변경사항 탐색 실패.");
+			_AddLogMessage(outMsg, L"> 변경사항 탐색 실패.");
 			break;
 		}
 
@@ -378,7 +399,7 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 		m_CurrentHistory.CreateUnit(KEY_CurrWT, m_UpdateWrittenTime);
 		m_CurrentHistory.CreateUnit(KEY_LastWT, targetHistoryIndex);
 
-		MK_DEV_PANEL.MsgToLog(L"> 갱신 성공 : " + ConvertWrittenTimeToStr(m_UpdateWrittenTime));
+		_AddLogMessage(outMsg, L"> 갱신 성공 : " + ConvertWrittenTimeToStr(m_UpdateWrittenTime));
 		
 		ok = true; // 여기까지 오면 성공
 
@@ -395,27 +416,33 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 
 		if (changed || m_HistoryList.Empty())
 		{
-			if (m_HistoryList.Empty())
+			if (m_hWnd != NULL)
 			{
-				msg += L"완전 초기 상태로 ";
-			}
+				if (m_HistoryList.Empty())
+				{
+					msg += L"완전 초기 상태로 ";
+				}
 
-			msg += L"패치 파일을 만드시겠습니까?";
-			if (::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO) == IDNO)
-			{
-				MK_DEV_PANEL.MsgToLog(L"  갱신을 취소합니다.");
-				break;
+				msg += L"패치 파일을 만드시겠습니까?";
+				if (::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO) == IDNO)
+				{
+					_AddLogMessage(outMsg, L"  갱신을 취소합니다.");
+					break;
+				}
 			}
 		}
 		else
 		{
-			msg += L"변경 사항 없음. 출력 무시."; // 성공이지만 무의미
-			::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_OK);
+			if (m_hWnd != NULL)
+			{
+				msg += L"변경 사항 없음. 출력 무시."; // 성공이지만 무의미
+				::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_OK);
+			}
 
-			MK_DEV_PANEL.MsgToLog(L"  변경 사항 없음. 출력 무시.");
+			_AddLogMessage(outMsg, L"  변경 사항 없음. 출력 무시.");
 			break;
 		}
-		MK_DEV_PANEL.InsertEmptyLine();
+		_AddLogMessage(outMsg, MkStr::EMPTY);
 
 		// 패치 파일 갱신 시작
 		m_MainState = eStartPatchWorks;
@@ -427,11 +454,11 @@ bool MkPatchFileGenerator::GeneratePatchFiles(const MkPathName& sourceDirPath, b
 	m_LastHistory.Clear();
 	m_UpdateWrittenTime = 0;
 
-	MK_DEV_PANEL.InsertEmptyLine();
+	_AddLogMessage(outMsg, MkStr::EMPTY);
 	return ok;
 }
 
-bool MkPatchFileGenerator::Update(void)
+bool MkPatchFileGenerator::Update(MkStr* outMsg)
 {
 	bool onWorking = true;
 
@@ -453,7 +480,7 @@ bool MkPatchFileGenerator::Update(void)
 			m_TotalPatchFileCount += _GetPatchFileListByType(KEY_ReplaceNode, m_PatchFilePathList[eUpdateTypeRep]);
 			m_TotalPatchFileCount += _GetPatchFileListByType(KEY_DeleteNode, m_PatchFilePathList[eUpdateTypeDel]);
 
-			MK_DEV_PANEL.MsgToLog(L"> working directory를 갱신하고 backup을 만듭니다.");
+			_AddLogMessage(outMsg, L"> working directory를 갱신하고 backup을 만듭니다.");
 		}
 		break;
 
@@ -494,7 +521,7 @@ bool MkPatchFileGenerator::Update(void)
 					destFilePath.PushBack(m_UpdatingDataPath[i] + patchFilePath); // updating patch data
 				}
 
-				MK_DEV_PANEL.MsgToLog(typePrefix + targetFilePath);
+				_AddLogMessage(outMsg, typePrefix + targetFilePath);
 
 				bool ok = false;
 				do
@@ -508,7 +535,7 @@ bool MkPatchFileGenerator::Update(void)
 						MkInterfaceForFileReading frInterface;
 						if (!frInterface.SetUp(srcFilePath))
 						{
-							MK_DEV_PANEL.MsgToLog(L"   원본 파일 없음. 갱신을 취소합니다.");
+							_AddLogMessage(outMsg, L"   원본 파일 없음. 갱신을 취소합니다.");
 							break;
 						}
 
@@ -552,7 +579,7 @@ bool MkPatchFileGenerator::Update(void)
 							}
 							if (error)
 							{
-								MK_DEV_PANEL.MsgToLog(L"   복사 중 실패. 갱신을 취소합니다.");
+								_AddLogMessage(outMsg, L"   복사 중 실패. 갱신을 취소합니다.");
 								break;
 							}
 						}
@@ -572,7 +599,7 @@ bool MkPatchFileGenerator::Update(void)
 							}
 							if (error)
 							{
-								MK_DEV_PANEL.MsgToLog(L"   압축파일 기록 중 실패. 갱신을 취소합니다.");
+								_AddLogMessage(outMsg, L"   압축파일 기록 중 실패. 갱신을 취소합니다.");
 								break;
 							}
 							
@@ -580,7 +607,7 @@ bool MkPatchFileGenerator::Update(void)
 							MkDataNode* fileInfo = _GetSourceFileInfoNode(targetFilePath);
 							if (fileInfo == NULL)
 							{
-								MK_DEV_PANEL.MsgToLog(L"   압축파일 정보 기록을 위한 노드가 없음. 갱신을 취소합니다.");
+								_AddLogMessage(outMsg, L"   압축파일 정보 기록을 위한 노드가 없음. 갱신을 취소합니다.");
 								break;
 							}
 
@@ -589,7 +616,7 @@ bool MkPatchFileGenerator::Update(void)
 							sizeBuf.PushBack(compData.GetSize());
 							if (!fileInfo->SetData(MkPathName::KeyFileSize, sizeBuf))
 							{
-								MK_DEV_PANEL.MsgToLog(L"   압축파일 저장 후 정보 수정 실패. 갱신을 취소합니다.");
+								_AddLogMessage(outMsg, L"   압축파일 저장 후 정보 수정 실패. 갱신을 취소합니다.");
 								break;
 							}
 						}
@@ -608,7 +635,7 @@ bool MkPatchFileGenerator::Update(void)
 						}
 						if (error)
 						{
-							MK_DEV_PANEL.MsgToLog(L"   삭제 중 실패. 갱신을 취소합니다.");
+							_AddLogMessage(outMsg, L"   삭제 중 실패. 갱신을 취소합니다.");
 							break;
 						}
 					}
@@ -621,7 +648,7 @@ bool MkPatchFileGenerator::Update(void)
 
 				if (!ok)
 				{
-					MK_DEV_PANEL.InsertEmptyLine();
+					_AddLogMessage(outMsg, MkStr::EMPTY);
 					m_MainState = eReady;
 				}
 			}
@@ -651,15 +678,15 @@ bool MkPatchFileGenerator::Update(void)
 				}
 				else
 				{
-					MK_DEV_PANEL.MsgToLog(L"> " + LauncherFileName.GetString() + L" unit 생성 중 실패.");
-					MK_DEV_PANEL.InsertEmptyLine();
+					_AddLogMessage(outMsg, L"> " + LauncherFileName.GetString() + L" unit 생성 중 실패.");
+					_AddLogMessage(outMsg, MkStr::EMPTY);
 					m_MainState = eReady;
 				}
 			}
 			else
 			{
-				MK_DEV_PANEL.MsgToLog(L"> " + KEY_LauncherNode.GetString() + L" 노드 생성 중 실패.");
-				MK_DEV_PANEL.InsertEmptyLine();
+				_AddLogMessage(outMsg, L"> " + KEY_LauncherNode.GetString() + L" 노드 생성 중 실패.");
+				_AddLogMessage(outMsg, MkStr::EMPTY);
 				m_MainState = eReady;
 			}
 		}
@@ -671,10 +698,10 @@ bool MkPatchFileGenerator::Update(void)
 			MkPathName historyFilePath = m_HistoryDirPath + MkStr(m_UpdateWrittenTime) + L"." + MkDataNode::DefaultFileExtension;
 			m_CurrentHistory.SaveToBinary(historyFilePath);
 
-			MK_DEV_PANEL.InsertEmptyLine();
-			MK_DEV_PANEL.MsgToLog(L"> " + historyFilePath);
-			MK_DEV_PANEL.MsgToLog(L"  경로에 history 파일 저장 완료.");
-			MK_DEV_PANEL.InsertEmptyLine();
+			_AddLogMessage(outMsg, MkStr::EMPTY);
+			_AddLogMessage(outMsg, L"> " + historyFilePath);
+			_AddLogMessage(outMsg, L"  경로에 history 파일 저장 완료.");
+			_AddLogMessage(outMsg, MkStr::EMPTY);
 
 			bool error = false;
 
@@ -687,7 +714,7 @@ bool MkPatchFileGenerator::Update(void)
 				MkPathName launcherFilePath = m_PatchRootPath + launcherFileName;
 
 				launcherNode->SaveToBinary(launcherFilePath);
-				MK_DEV_PANEL.MsgToLog(L"> " + launcherFilePath);
+				_AddLogMessage(outMsg, L"> " + launcherFilePath);
 
 				MK_INDEXING_LOOP(m_UpdatingDestPath, i)
 				{
@@ -697,7 +724,7 @@ bool MkPatchFileGenerator::Update(void)
 						error = true;
 						break;
 					}
-					MK_DEV_PANEL.MsgToLog(L"> " + updatingDestPath);
+					_AddLogMessage(outMsg, L"> " + updatingDestPath);
 				}
 				m_CurrentHistory.RemoveChildNode(KEY_LauncherNode);
 			}
@@ -738,7 +765,7 @@ bool MkPatchFileGenerator::Update(void)
 				MkPathName infoFilePath = m_PatchRootPath + infoFileName;
 
 				m_CurrentHistory.SaveToBinary(infoFilePath);
-				MK_DEV_PANEL.MsgToLog(L"> " + infoFilePath);
+				_AddLogMessage(outMsg, L"> " + infoFilePath);
 
 				MK_INDEXING_LOOP(m_UpdatingDestPath, i)
 				{
@@ -748,26 +775,26 @@ bool MkPatchFileGenerator::Update(void)
 						error = true;
 						break;
 					}
-					MK_DEV_PANEL.MsgToLog(L"> " + updatingDestPath);
+					_AddLogMessage(outMsg, L"> " + updatingDestPath);
 				}
 			}
 
 			if (error)
 			{
-				MK_DEV_PANEL.MsgToLog(L"  경로에 파일 저장 실패. 갱신을 취소합니다.");
+				_AddLogMessage(outMsg, L"  경로에 파일 저장 실패. 갱신을 취소합니다.");
 			}
 			else
 			{
-				MK_DEV_PANEL.MsgToLog(L"  경로에 파일 저장 완료.");
+				_AddLogMessage(outMsg, L"  경로에 파일 저장 완료.");
 
 				m_HistoryList.Insert(0, m_UpdateWrittenTime); // history list에 등록
 
-				MK_DEV_PANEL.InsertEmptyLine();
-				MK_DEV_PANEL.MsgToLog(L"-------------------------------------");
-				MK_DEV_PANEL.MsgToLog(L"[ 패치 파일 생성이 완료되었습니다. ]");
-				MK_DEV_PANEL.MsgToLog(L"-------------------------------------");
+				_AddLogMessage(outMsg, MkStr::EMPTY);
+				_AddLogMessage(outMsg, L"-------------------------------------");
+				_AddLogMessage(outMsg, L"[ 패치 파일 생성이 완료되었습니다. ]");
+				_AddLogMessage(outMsg, L"-------------------------------------");
 			}
-			MK_DEV_PANEL.InsertEmptyLine();
+			_AddLogMessage(outMsg, MkStr::EMPTY);
 
 			m_PatchFilePathList[eUpdateTypeAdd].Clear();
 			m_PatchFilePathList[eUpdateTypeRep].Clear();
@@ -886,13 +913,13 @@ MkPatchFileGenerator::MkPatchFileGenerator()
 
 //------------------------------------------------------------------------------------------------//
 
-bool MkPatchFileGenerator::_LoadCurrentStructure(const MkPathName& sourceDirPath)
+bool MkPatchFileGenerator::_LoadCurrentStructure(const MkPathName& sourceDirPath, MkStr* outMsg)
 {
 	m_CurrentHistory.Clear();
 	MkDataNode* structureNode = m_CurrentHistory.CreateChildNode(KEY_StructureNode);
 	if (structureNode == NULL)
 	{
-		MK_DEV_PANEL.MsgToLog(KEY_StructureNode.GetString() + L" 노드 생성 실패.");
+		_AddLogMessage(outMsg, KEY_StructureNode.GetString() + L" 노드 생성 실패.");
 		return false;
 	}
 	
@@ -903,90 +930,100 @@ bool MkPatchFileGenerator::_LoadCurrentStructure(const MkPathName& sourceDirPath
 	{
 		m_CurrentHistory.SetDataTypeTag(DataType_PatchHistory); // tag 삽입
 		
-		MK_DEV_PANEL.MsgToLog(L"> " + m_SourcePath);
-		MK_DEV_PANEL.MsgToLog(L"  위치의 현 원본 파일 정보 구축 완료.");
+		_AddLogMessage(outMsg, L"> " + m_SourcePath);
+		_AddLogMessage(outMsg, L"  위치의 현 원본 파일 정보 구축 완료.");
 	}
 	else
 	{
 		if (m_SourcePath.IsDirectoryPath() && m_SourcePath.CheckAvailable())
 		{
 			// 디렉토리는 존재하지만 파일은 없음. 완전 초기 상태
-			MkStr msg;
-			msg.Reserve(512);
-			msg += m_SourcePath;
-			msg += MkStr::LF;
-			msg += L"위치에 원본 파일이 없습니다.";
-			msg += MkStr::LF;
-			msg += MkStr::LF;
-			msg += L"올바른 상태입니까?";
-			
-			int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
-			if (rlt == IDYES)
+			if (m_hWnd == NULL)
 			{
 				m_CurrentHistory.SetDataTypeTag(DataType_PatchHistory); // tag 삽입
 
 				ok = true;
 			}
-			else if (rlt == IDNO)
+			else
 			{
-				MK_DEV_PANEL.MsgToLog(L"> " + m_SourcePath);
-				MK_DEV_PANEL.MsgToLog(L"  위치에 현 원본 파일이 없습니다. 확인이 필요합니다.");
+				MkStr msg;
+				msg.Reserve(512);
+				msg += m_SourcePath;
+				msg += MkStr::LF;
+				msg += L"위치에 원본 파일이 없습니다.";
+				msg += MkStr::LF;
+				msg += MkStr::LF;
+				msg += L"올바른 상태입니까?";
+
+				int rlt = ::MessageBox(m_hWnd, msg.GetPtr(), L"MkPatchFileGenerator", MB_YESNO);
+				if (rlt == IDYES)
+				{
+					m_CurrentHistory.SetDataTypeTag(DataType_PatchHistory); // tag 삽입
+
+					ok = true;
+				}
+				else if (rlt == IDNO)
+				{
+					_AddLogMessage(outMsg, L"> " + m_SourcePath);
+					_AddLogMessage(outMsg, L"  위치에 현 원본 파일이 없습니다. 확인이 필요합니다.");
+				}
 			}
 		}
 		else
 		{
-			MK_DEV_PANEL.MsgToLog(L"> " + m_SourcePath);
-			MK_DEV_PANEL.MsgToLog(L"  위치가 잘못되었습니다. 확인이 필요합니다.");
+			_AddLogMessage(outMsg, L"> " + m_SourcePath);
+			_AddLogMessage(outMsg, L"  위치가 잘못되었습니다. 확인이 필요합니다.");
 		}
 	}
-	MK_DEV_PANEL.InsertEmptyLine();
+
+	_AddLogMessage(outMsg, MkStr::EMPTY);
 	return ok;
 }
 
-bool MkPatchFileGenerator::_LoadTargetHistoryFile(unsigned int targetIndex)
+bool MkPatchFileGenerator::_LoadTargetHistoryFile(unsigned int targetIndex, MkStr* outMsg)
 {
 	do
 	{
 		if (!m_HistoryList.Exist(MkArraySection(0), targetIndex))
 		{
-			MK_DEV_PANEL.MsgToLog(L"> " + MkStr(targetIndex) + L" 대상 history는 존재하지 않습니다.");
+			_AddLogMessage(outMsg, L"> " + MkStr(targetIndex) + L" 대상 history는 존재하지 않습니다.");
 			break;
 		}
 
 		MkPathName targetFilePath = m_HistoryDirPath + MkStr(targetIndex) + L"." + MkDataNode::DefaultFileExtension;
-		MK_DEV_PANEL.MsgToLog(L"> " + targetFilePath);
+		_AddLogMessage(outMsg, L"> " + targetFilePath);
 
 		if (!m_LastHistory.Load(targetFilePath))
 		{
-			MK_DEV_PANEL.MsgToLog(L"  대상 history 파일이 없거나 MkDataNode 형식이 아닙니다.");
+			_AddLogMessage(outMsg, L"  대상 history 파일이 없거나 MkDataNode 형식이 아닙니다.");
 			break;
 		}
 
 		if (m_LastHistory.GetDataTypeTag() != DataType_PatchHistory)
 		{
-			MK_DEV_PANEL.MsgToLog(L"  대상 history 파일은 올바른 형식의 파일이 아닙니다.");
+			_AddLogMessage(outMsg, L"  대상 history 파일은 올바른 형식의 파일이 아닙니다.");
 			break;
 		}
 
 		if (!m_LastHistory.ChildExist(KEY_StructureNode))
 		{
-			MK_DEV_PANEL.MsgToLog(L"  대상 history 파일에 " + KEY_StructureNode.GetString() + L" 노드가 없습니다.");
+			_AddLogMessage(outMsg, L"  대상 history 파일에 " + KEY_StructureNode.GetString() + L" 노드가 없습니다.");
 			break;
 		}
 
 		if (!m_LastHistory.ChildExist(KEY_UpdateNode))
 		{
-			MK_DEV_PANEL.MsgToLog(L"  대상 history 파일에 " + KEY_UpdateNode.GetString() + L" 노드가 없습니다.");
+			_AddLogMessage(outMsg, L"  대상 history 파일에 " + KEY_UpdateNode.GetString() + L" 노드가 없습니다.");
 			break;
 		}
 		
-		MK_DEV_PANEL.MsgToLog(L"  대상 history 파일 로딩 완료 : " + ConvertWrittenTimeToStr(targetIndex));
-		MK_DEV_PANEL.InsertEmptyLine();
+		_AddLogMessage(outMsg, L"  대상 history 파일 로딩 완료 : " + ConvertWrittenTimeToStr(targetIndex));
+		_AddLogMessage(outMsg, MkStr::EMPTY);
 		return true;
 	}
 	while (false);
 
-	MK_DEV_PANEL.InsertEmptyLine();
+	_AddLogMessage(outMsg, MkStr::EMPTY);
 	m_LastHistory.Clear();
 	return false;
 }
@@ -1262,6 +1299,17 @@ bool MkPatchFileGenerator::_SetAllDirsToUpdate
 		}
 	}
 	return true;
+}
+
+void MkPatchFileGenerator::_AddLogMessage(MkStr* outMsg, const MkStr& msg)
+{
+	MK_DEV_PANEL.MsgToLog(msg);
+
+	if (outMsg != NULL)
+	{
+		*outMsg += msg;
+		*outMsg += MkStr::LF;
+	}
 }
 
 //------------------------------------------------------------------------------------------------//

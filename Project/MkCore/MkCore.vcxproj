@@ -18,7 +18,7 @@
     <ProjectGuid>{095EB475-D5C1-414E-A4DC-9A44F2101C4D}</ProjectGuid>
     <RootNamespace>MkCore</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Shipping|Win32'" Label="Configuration">
@@ -225,6 +225,7 @@
     <ClInclude Include="..\..\Include\MkCore_MkStringTableForParser.h" />
     <ClInclude Include="..\..\Include\MkCore_MkSystemEnvironment.h" />
     <ClInclude Include="..\..\Include\MkCore_MkTagDefinitionForDataNode.h" />
+    <ClInclude Include="..\..\Include\MkCore_MkTailData.h" />
     <ClInclude Include="..\..\Include\MkCore_MkThreadManager.h" />
     <ClInclude Include="..\..\Include\MkCore_MkTimeCounter.h" />
     <ClInclude Include="..\..\Include\MkCore_MkTimeManager.h" />
@@ -324,6 +325,7 @@
     <ClCompile Include="Source\MkCore_MkStringTableForParser.cpp" />
     <ClCompile Include="Source\MkCore_MkSystemEnvironment.cpp" />
     <ClCompile Include="Source\MkCore_MkTagDefinitionForDataNode.cpp" />
+    <ClCompile Include="Source\MkCore_MkTailData.cpp" />
     <ClCompile Include="Source\MkCore_MkThreadManager.cpp" />
     <ClCompile Include="Source\MkCore_MkTimeCounter.cpp" />
     <ClCompile Include="Source\MkCore_MkTimeManager.cpp" />

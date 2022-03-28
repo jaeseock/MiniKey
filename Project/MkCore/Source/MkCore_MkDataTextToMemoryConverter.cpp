@@ -20,7 +20,7 @@ bool MkDataTextToMemoryConverter::Convert(const MkPathName& filePath, MkByteArra
 bool MkDataTextToMemoryConverter::Convert(const MkByteArray& source, MkByteArray& destination)
 {
 	MkStr textSource;
-	textSource.ReadTextStream(source);
+	textSource.ReadTextStream(source, true, false); // UTF-8·Î ÀÐÀ½
 
 	return _Convert(textSource, L"<TextData>", destination);
 }

@@ -1178,7 +1178,7 @@ protected:
 // 블록 확장시 용량 결정
 // (NOTE) s는 1 이상일 것. 1이면 요구 용량 그대로 할당
 #define MKDEF_DECALRE_BLOCK_EXPANSION_SIZE_IN_ARRAY(t, s) \
-	template <> unsigned int MkArray<t>::__GetBlockExpansionSizeInArray(void) const { return s; }
+	template <> inline unsigned int MkArray<t>::__GetBlockExpansionSizeInArray(void) const { return s; }
 
 // wchar_t의 경우(문자열) 32개씩 확장
 MKDEF_DECALRE_BLOCK_EXPANSION_SIZE_IN_ARRAY(wchar_t, 32)

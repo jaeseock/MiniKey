@@ -521,6 +521,9 @@
     <ClInclude Include="..\..\Include\MkCore_MkWindowProcessOp.h">
       <Filter>Utility\System</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\Include\MkCore_MkTailData.h">
+      <Filter>Utility\Pure function</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\MkCore_MkDataTypeDefinition.cpp">
@@ -789,6 +792,9 @@
     </ClCompile>
     <ClCompile Include="Source\MkCore_MkWindowProcessOp.cpp">
       <Filter>Utility\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MkCore_MkTailData.cpp">
+      <Filter>Utility\Pure function</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

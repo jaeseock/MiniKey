@@ -1581,7 +1581,7 @@ bool MkPathName::_ExcuteProcess(const MkStr& processTitle, DWORD flag, const MkS
 		return false;
 
 	extension.ToLower();
-	if (extension != L"exe")
+	if (!((extension == L"exe") || (extension == L"bat")))
 		return false;
 
 	MkPathName tmpPath;

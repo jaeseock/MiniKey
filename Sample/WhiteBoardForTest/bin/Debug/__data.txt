@@ -1,0 +1,64 @@
+//--------------------------------------------------------------------//
+// MiniKey data node text source
+//   - file path : __data.txt
+//--------------------------------------------------------------------//
+
+
+
+Node "[ClientDeleteList]"
+{
+	str #Dirs = // [2]
+		"MonoBleedingEdge" /
+		"SealM_Windows_Data";
+	str #Files = // [11]
+		"AppServiceData.mmd" /
+		"icon.ico" /
+		"Launcher.exe" /
+		"multi_start_sample.bat" /
+		"SealM_Windows.exe" /
+		"Starter.exe" /
+		"Uninstall.exe" /
+		"UnityCrashHandler64.exe" /
+		"UnityPlayer.dll" /
+		"UpdateService.exe" /
+		"씰m(Dev) PC버전.docx";
+}
+
+Node "[DesktopDirectoryShortcut]"
+{
+	str #UninstallList = "SealM(PC Porting)";
+
+	Node "SealM(PC Porting)"
+	{
+		str #IconFile = "icon.ico";
+		str #TargetApp = "Starter.exe";
+	}
+}
+
+Node "[ProgramsShortcut]"
+{
+	str #UninstallList = "SealM(PC Porting)";
+
+	Node "SealM(PC Porting)"
+	{
+		Node "Delete SealM(PC Porting)"
+		{
+			str #IconFile = "Uninstall.exe";
+			str #TargetApp = "Uninstall.exe";
+		}
+
+		Node "Run SealM(PC Porting)"
+		{
+			str #IconFile = "icon.ico";
+			str #TargetApp = "Starter.exe";
+		}
+	}
+}
+
+Node "[RegisterProjectInfo]"
+{
+	str #IconFile = "icon.ico";
+	str #ProjectName = "SealM(PC Porting)";
+	str #PublisherName = "Playwith-GAMES Entertainment";
+	str #UninstallApp = "Uninstall.exe";
+}

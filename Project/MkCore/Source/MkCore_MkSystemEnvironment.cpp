@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------------------------//
 
-MkStr MkSystemEnvironment::GetCurrentSystemDate(void) const
+MkStr MkSystemEnvironment::GetCurrentSystemDate(void)
 {
 	wchar_t dateBuf[9];
 	_wstrdate_s(dateBuf, 9);
@@ -29,7 +29,7 @@ MkStr MkSystemEnvironment::GetCurrentSystemDate(void) const
 	return result;
 }
 
-MkStr MkSystemEnvironment::GetCurrentSystemTime(void) const
+MkStr MkSystemEnvironment::GetCurrentSystemTime(void)
 {
 	wchar_t timeBuf[9];
 	_wstrtime_s(timeBuf, 9);

@@ -11,9 +11,9 @@ class MkPatchFileUploader
 {
 public:
 
-	bool StartUploading(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode);
+	bool StartUploading(const MkPathName& targetDirPath, const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode, MkStr* outMsg = NULL);
 
-	bool Update(void);
+	bool Update(MkStr* outMsg = NULL);
 
 	MkPatchFileUploader();
 	~MkPatchFileUploader() { _Clear(); }
@@ -24,9 +24,11 @@ protected:
 	void _Clear(void);
 
 	void _AddPurgeDirectory(const MkStr& filePath, MkDataNode& purgeDirNode);
-	bool _PurgeEmptyDirectory(MkDataNode& purgeDirNode);
+	bool _PurgeEmptyDirectory(MkDataNode& purgeDirNode, MkStr* outMsg);
 
 	void _BuildUploadCommand(const MkDataNode& structureNode, const MkPathName& currPath);
+
+	static void _AddLogMessage(MkStr* outMsg, const MkStr& msg);
 
 protected:
 

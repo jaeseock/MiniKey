@@ -1,0 +1,84 @@
+{
+	"FileVersion": 2112272052,
+
+	"loginServerList": [
+		{
+			"LoginServerURL": "http://210.207.251.223:20001",
+			"LoginServerName": "개발 로그인 서버",
+			"RemoteTypeList": [
+				"Dev_Local_Copy",
+				"Dev_Common_Hosting"
+			]
+		},
+		{
+			"LoginServerURL": "http://127.0.0.1:20001",
+			"LoginServerName": "로컬 로그인 서버"
+		},
+		{
+			"LoginServerURL": "http://210.207.251.226:20001",
+			"LoginServerName": "공용(외부) 로그인 서버",
+			"RemoteTypeList": [
+				"Public_Local_Copy",
+				"Public_Common_Hosting"
+			]
+		},
+		{
+			"LoginServerURL": "http://210.207.251.221:20001",
+			"LoginServerName": "공용(내부) 로그인 서버"
+		},
+		{
+			"LoginServerURL": "http://172.27.128.140:20001",
+			"LoginServerName": "대기열 테스트"
+		},
+		{
+			"LoginServerURL": "http://61.219.243.160:20001",
+			"LoginServerName": "퀘스트 공용"
+		},
+		{
+			"LoginServerURL": "https://review-loginweb01.sealm.com.tw:20001",
+			"LoginServerName": "리뷰 로그인 서버",
+			"RemoteTypeList": [
+				"Review_Local_Copy",
+				"Review_Common_Hosting"
+			]
+		},
+		{
+			"LoginServerURL": "http://18.141.59.203:20001",
+			"LoginServerName": "AWS 로그인서버"
+		}
+	],
+	"statusChkServerList": [
+		{
+			"StatusChkServerURL": "http://210.207.251.223:20101",
+			"StatusChkServerName": "개발 점검 서버",
+			"RemoteTypeList": [
+				"Dev_Local_Copy",
+				"Dev_Common_Hosting"
+			]
+		},
+		{
+			"StatusChkServerURL": "https://review-loginweb01.sealm.com.tw:20101",
+			"StatusChkServerName": "리뷰 점검 서버"
+		}
+	],
+	"pgServerInfo": [
+		{
+			"PGServerURL": "https://dev.withplayground.co.kr",
+			"PGServerName": "개발 QA용 PG server",
+			"RemoteTypeList": [
+				"Dev_Local_Copy",
+				"Dev_Common_Hosting",
+				"Public_Local_Copy",
+				"Public_Common_Hosting"
+			]
+		},
+		{
+			"PGServerURL": "https://qa-ap-southeast-1.withplayground.com",
+			"PGServerName": "리뷰용 QA PG 서버",
+			"RemoteTypeList": [
+				"Review_Local_Copy",
+				"Review_Common_Hosting"
+			]
+		}
+	]
+}
