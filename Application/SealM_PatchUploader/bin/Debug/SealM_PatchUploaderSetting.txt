@@ -53,6 +53,15 @@ Template "DefaultSrvList_Info" : "DefaultFTP_Info"
 	str ListFileName = "ServerList.json";
 }
 
+Template "DefaultAny_Info" : "DefaultFTP_Info"
+{
+	str RemotePath = "chunk";
+	str SrcResPath = "D:\Work\Minikey\Application\SealM_PatchUploader\bin\Debug";
+	str PreLoadFiles = "Untitled2.mp4";
+	str BundleFiles = "Prologue_BGM.mp4";
+	str InfoFileName = "_Any.mmd";
+}
+
 Node "assets"
 {
 	Node "Dev_Common_Hosting\Android\Group" : "DefaultAsset_Info" {}
@@ -63,6 +72,8 @@ Node "assets"
 	Node "Review_Common_Hosting\Android\Group" : "DefaultAsset_Info" {}
 	Node "Review_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_Info" {}
 	Node "Review_Common_Hosting\iOS\Group" : "DefaultAsset_Info" {}
+
+	Node "PCPorting_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_Info" {}
 }
 
 Node "apk"
@@ -76,15 +87,29 @@ Node "chunk"
 {
 	Node "Dev_Common_Hosting" : "DefaultChunk_Info" {}
 	Node "Public_Common_Hosting" : "DefaultChunk_Info" {}
+
+	Node "Test_Common_Hosting" : "DefaultChunk_Info" {}
 }
 
 Node "exe"
 {
 	Node "Dev_Common_Hosting" : "DefaultExe_Info" {}
 	Node "Public_Common_Hosting" : "DefaultExe_Info" {}
+
+	Node "PCPorting_Common_Hosting"
+	{
+		str LocalHomePath = "F:\WorkResult\SealM_Windows_Hosting_Resource";
+		str ClientPath = "F:\WorkResult\SealM_Windows_Hosting_Resource\PCPortingWindowLauncher\Client";
+	}
 }
 
 Node "srvlist"
 {
 	Node "Taiwan" : "DefaultSrvList_Info" {}
+}
+
+Node "any"
+{
+	Node "Dev_Common_Hosting" : "DefaultAny_Info" {}
+	Node "Public_Common_Hosting" : "DefaultAny_Info" {}
 }

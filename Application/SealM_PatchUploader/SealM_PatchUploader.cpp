@@ -70,8 +70,9 @@ int main()
 		bool isExe = buildType.Equals(0, L"exe");
 		bool isChunk = buildType.Equals(0, L"chunk");
 		bool isSrvList = buildType.Equals(0, L"srvlist");
+		bool isAny = buildType.Equals(0, L"any");
 
-		if ((!isBundle) && (!isApk) && (!isExe) && (!isChunk) && (!isSrvList))
+		if ((!isBundle) && (!isApk) && (!isExe) && (!isChunk) && (!isSrvList) && (!isAny))
 		{
 			logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일에 buildType 잘못 입력";
 			break;
@@ -96,7 +97,7 @@ int main()
 		MkStr url, remotePath, userName, password;
 		bool passiveMode;
 		
-		if (isBundle || isApk || isChunk || isSrvList)
+		if (isBundle || isApk || isChunk || isAny)
 		{
 			if (!targetNode.GetData(L"URL", url, 0))
 			{
@@ -252,7 +253,8 @@ int main()
 			successCount = 0;
 			MK_INDEXING_LOOP(catalogs, i)
 			{
-				MkPathName catalogFilePath = bundleSrcPath + catalogs[i];
+				//MkPathName catalogFilePath = bundleSrcPath + catalogs[i];
+				MkPathName catalogFilePath = buildResultFullPath + catalogs[i];
 				if (!ftpInterface.UploadFile(catalogFilePath))
 					break;
 
@@ -346,9 +348,11 @@ int main()
 			MK_INDEXING_LOOP(lastestIndice, i)
 			{
 				MkPathName tmpPath = buildResultFullPath + subFiles[lastestIndice[i]].GetString();
-				apkSrcPath.PushBack(tmpPath);
-
-				logMsg += L"apkSrcPath : " + tmpPath + MkStr::LF;
+				if (tmpPath.GetFileSize() < 1024 * 1024 * 1024) // 1G 이하만 허용
+				{
+					apkSrcPath.PushBack(tmpPath);
+					logMsg += L"apkSrcPath : " + tmpPath + MkStr::LF;
+				}
 			}
 			logMsg += MkStr::LF;
 
@@ -636,71 +640,114 @@ int main()
 			}
 			logMsg += MkStr::LF;
 
+			// 결과를 올릴 위치
+			MkStr destDirPath;
+			targetNode.GetData(L"DestDirPath", destDirPath, 0);
+
 			// ftp 업로드
-			MkFtpInterface ftpInterface;
-			if (!ftpInterface.Connect(url, remotePath, userName, password, passiveMode))
+			if (destDirPath.Empty())
 			{
-				logMsg += L"ftp 접속 실패";
-				break;
-			}
+				logMsg += L"청크 ftp 업로드 시도" + MkStr::LF;
 
-			if (!ftpInterface.MoveToChild(arg2, true))
-			{
-				logMsg += L"ftp 탐색 실패";
-				break;
-			}
-
-			// chunk 파일들 업로드
-			int successCount = 0;
-			MK_INDEXING_LOOP(targetCompFiles, i)
-			{
-				if (!ftpInterface.UploadFile(targetCompFiles[i]))
+				MkFtpInterface ftpInterface;
+				if (!ftpInterface.Connect(url, remotePath, userName, password, passiveMode))
+				{
+					logMsg += L"ftp 접속 실패";
 					break;
+				}
 
-				++successCount;
+				if (!ftpInterface.MoveToChild(arg2, true))
+				{
+					logMsg += L"ftp 탐색 실패";
+					break;
+				}
+
+				// chunk 파일들 업로드
+				int successCount = 0;
+				MK_INDEXING_LOOP(targetCompFiles, i)
+				{
+					if (!ftpInterface.UploadFile(targetCompFiles[i]))
+						break;
+
+					++successCount;
+				}
+
+				if (successCount < targetCompFiles.GetSize())
+				{
+					logMsg += L"청크 업로드 실패";
+					break;
+				}
+
+				if (!ftpInterface.UploadFile(infoFilePath))
+				{
+					logMsg += L"정보 파일 업로드 실패";
+					break;
+				}
+
+				uploadingResult = 0;
+				logMsg += L"청크 업로드 성공!!!" + MkStr::LF;
 			}
-
-			if (successCount < targetCompFiles.GetSize())
+			else
 			{
-				logMsg += L"청크 업로드 실패";
-				break;
-			}
+				MkPathName destPath = destDirPath;
+				destPath.CheckAndAddBackslash();
 
-			if (!ftpInterface.UploadFile(infoFilePath))
-			{
-				logMsg += L"정보 파일 업로드 실패";
-				break;
-			}
+				if (destPath.CheckAvailable())
+				{
+					destPath.DeleteCurrentDirectory();
+				}
+				destPath.MakeDirectoryPath();
 
-			uploadingResult = 0;
-			logMsg += L"청크 업로드 성공!!!" + MkStr::LF;
+				logMsg += L"청크 복사 시도 >> " + destPath + MkStr::LF;
+
+				int successCount = 0;
+				MK_INDEXING_LOOP(targetCompFiles, i)
+				{
+					if (!targetCompFiles[i].CopyCurrentFile(destPath + targetCompFiles[i].GetFileName(), false))
+						break;
+
+					++successCount;
+				}
+
+				if (successCount < targetCompFiles.GetSize())
+				{
+					logMsg += L"청크 복사 실패";
+					break;
+				}
+
+				if (!infoFilePath.CopyCurrentFile(destPath + infoFilePath.GetFileName(), false))
+				{
+					logMsg += L"정보 파일 복사 실패";
+					break;
+				}
+
+				uploadingResult = 0;
+				logMsg += L"청크 복사 성공!!!" + MkStr::LF;
+			}
 		}
 		// 서버 리스트 파일
 		else if (isSrvList)
 		{
 			logMsg += MkStr::LF;
 
-			MkStr srcResPath;
-			if (!targetNode.GetData(L"SrcResPath", srcResPath, 0))
+			MkStr listFilePath;
+			if (!targetNode.GetData(L"ListFilePath", listFilePath, 0))
 			{
-				logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일에 SrcResPath가 없음";
+				logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일에 ListFilePath가 없음";
 				break;
 			}
-			logMsg += L"SrcResPath : " + srcResPath + MkStr::LF;
+			logMsg += L"ListFilePath : " + listFilePath + MkStr::LF;
 
-			MkStr listFileName;
-			if (!targetNode.GetData(L"ListFileName", listFileName, 0))
+			MkStr destDirPath;
+			if (!targetNode.GetData(L"DestDirPath", destDirPath, 0))
 			{
-				logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일에 ListFileName가 없음";
+				logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일에 DestDirPath가 없음";
 				break;
 			}
-			logMsg += L"ListFileName : " + listFileName + MkStr::LF;
-
-			MkPathName baseResPath = srcResPath;
-			baseResPath.CheckAndAddBackslash();
+			logMsg += L"DestDirPath : " + destDirPath + MkStr::LF;
 
 			// 리스트 파일에 버전 정보를 삽입
-			MkPathName targetFilePath = baseResPath + listFileName;
+			MkPathName targetFilePath = listFilePath;
 			if (!targetFilePath.CheckAvailable())
 			{
 				logMsg += L"리스트 파일이 없음 : " + targetFilePath;
@@ -757,6 +804,7 @@ int main()
 			}
 
 			// 변경 된 파일을 임시로 저장
+			MkStr listFileName = targetFilePath.GetFileName();
 			MkPathName tmpTextFileName = L"t_" + listFileName;
 			MkPathName tmpTextFilePath = tempArchivePath + tmpTextFileName;
 			if (!fileStr.WriteToTextFile(tmpTextFilePath, true, false)) // UTF-8
@@ -792,23 +840,232 @@ int main()
 			}
 			logMsg += L"압축해 저장 성공 : " + targetCompFilePath + L"(" + MkStr(origSize) + L" -> " + MkStr(compFileData.GetSize()) + L")" + MkStr::LF;
 
-			// ftp 업로드
-			MkFtpInterface ftpInterface;
-			if (!ftpInterface.Connect(url, remotePath, userName, password, passiveMode))
-			{
-				logMsg += L"ftp 접속 실패";
-				break;
-			}
+			MkPathName destPath = destDirPath;
+			destPath.CheckAndAddBackslash();
 
-			// 파일 업로드
-			if (!ftpInterface.UploadFile(targetCompFilePath))
+			if (destPath.CheckAvailable())
 			{
-				logMsg += L"리스트 파일 업로드 실패";
+				destPath.DeleteCurrentDirectory();
+			}
+			destPath.MakeDirectoryPath();
+
+			logMsg += L"청크 복사 시도 >> " + destPath + MkStr::LF;
+
+			if (!targetCompFilePath.CopyCurrentFile(destPath + listFileName, false))
+			{
+				logMsg += L"청크 복사 실패";
 				break;
 			}
 
 			uploadingResult = 0;
-			logMsg += L"리스트 파일 업로드 성공!!!" + MkStr::LF;
+			logMsg += L"청크 복사 성공!!!" + MkStr::LF;
+		}
+		// any files
+		else if (isAny)
+		{
+			logMsg += MkStr::LF;
+
+			MkStr srcResPath;
+			if (!targetNode.GetData(L"SrcResPath", srcResPath, 0))
+			{
+				logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일에 SrcResPath가 없음";
+				break;
+			}
+
+			MkArray<MkStr> preLoadFiles, bundleFiles;
+			targetNode.GetData(L"PreLoadFiles", preLoadFiles);
+			targetNode.GetData(L"BundleFiles", bundleFiles);
+
+			MkStr infoFileName;
+			if (!targetNode.GetData(L"InfoFileName", infoFileName, 0))
+			{
+				logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일에 InfoFileName가 없음";
+				break;
+			}
+
+			MkPathName baseResPath = srcResPath;
+			baseResPath.CheckAndAddBackslash();
+
+			MkDataNode infoNode;
+
+			// 원본 파일의 파일 크기로 정보 파일을 생성
+			MkArray<MkPathName> targetSrcFiles(preLoadFiles.GetSize() + bundleFiles.GetSize());
+			//MkArray<MkPathName> targetCompFiles(preLoadFiles.GetSize() + bundleFiles.GetSize());
+
+			if (!preLoadFiles.Empty())
+			{
+				MK_INDEXING_LOOP(preLoadFiles, i)
+				{
+					MkPathName targetFilePath = baseResPath + preLoadFiles[i];
+					if (targetFilePath.CheckAvailable())
+					{
+						MkDataNode* destNode = infoNode.ChildExist(L"PreLoad") ? infoNode.GetChildNode(L"PreLoad") : infoNode.CreateChildNode(L"PreLoad");
+						if (destNode->CreateUnit(preLoadFiles[i], targetFilePath.GetFileSize())) // 노드에 생성
+						{
+							targetSrcFiles.PushBack(targetFilePath);
+							//targetCompFiles.PushBack(tempArchivePath + preLoadFiles[i]);
+
+							logMsg += L"Any(PreLoad) : " + targetFilePath + MkStr::LF;
+						}
+					}
+				}
+				logMsg += MkStr::LF;
+			}
+
+			if (!bundleFiles.Empty())
+			{
+				MK_INDEXING_LOOP(bundleFiles, i)
+				{
+					MkPathName targetFilePath = baseResPath + bundleFiles[i];
+					if (targetFilePath.CheckAvailable())
+					{
+						MkDataNode* destNode = infoNode.ChildExist(L"Bundle") ? infoNode.GetChildNode(L"Bundle") : infoNode.CreateChildNode(L"Bundle");
+						if (destNode->CreateUnit(bundleFiles[i], targetFilePath.GetFileSize())) // 노드에 생성
+						{
+							targetSrcFiles.PushBack(targetFilePath);
+							//targetCompFiles.PushBack(tempArchivePath + bundleFiles[i]);
+
+							logMsg += L"Any(Bundle) : " + targetFilePath + MkStr::LF;
+						}
+					}
+				}
+				logMsg += MkStr::LF;
+			}
+			
+			MkPathName infoFilePath = tempArchivePath + infoFileName;
+			if (infoNode.SaveToBinary(infoFilePath))
+			{
+				logMsg += L"any 정보 파일 생성 성공 : " + infoFilePath + MkStr::LF;
+				logMsg += MkStr::LF;
+			}
+			else
+			{
+				logMsg += L"any 정보 파일 생성 실패 : " + infoFilePath + MkStr::LF;
+				break;
+			}
+
+			MK_INDEXING_LOOP(targetSrcFiles, i)
+			{
+				/*
+				// 압축할 원본 파일 읽음
+				MkByteArray origFileData;
+				MkInterfaceForFileReading frInterface;
+				if (frInterface.SetUp(targetSrcFiles[i]))
+				{
+					frInterface.Read(origFileData, MkArraySection(0));
+					frInterface.Clear();
+				}
+
+				// 압축
+				MkByteArray compFileData;
+				MkZipCompressor::Compress(origFileData.GetPtr(), origFileData.GetSize(), compFileData);
+				unsigned int origSize = origFileData.GetSize();
+				origFileData.Clear();
+
+				// 저장
+				MkInterfaceForFileWriting fwInterface;
+				if (fwInterface.SetUp(targetCompFiles[i], true, true))
+				{
+					fwInterface.Write(compFileData, MkArraySection(0));
+					fwInterface.Clear();
+				}
+
+				logMsg += L"압축해 저장 성공 : " + targetCompFiles[i] + L"(" + MkStr(origSize) + L" -> " + MkStr(compFileData.GetSize()) + L")" + MkStr::LF;
+				*/
+			}
+			logMsg += MkStr::LF;
+
+			// 결과를 올릴 위치
+			MkStr destDirPath;
+			targetNode.GetData(L"DestDirPath", destDirPath, 0);
+
+			// ftp 업로드
+			if (destDirPath.Empty())
+			{
+				MkFtpInterface ftpInterface;
+				if (!ftpInterface.Connect(url, remotePath, userName, password, passiveMode))
+				{
+					logMsg += L"ftp 접속 실패";
+					break;
+				}
+
+				if (!ftpInterface.MoveToChild(arg2, true))
+				{
+					logMsg += L"ftp 탐색 실패";
+					break;
+				}
+
+				// any 파일들 업로드
+				int successCount = 0;
+				//MK_INDEXING_LOOP(targetCompFiles, i)
+				MK_INDEXING_LOOP(targetSrcFiles, i)
+				{
+					//if (!ftpInterface.UploadFile(targetCompFiles[i]))
+					if (!ftpInterface.UploadFile(targetSrcFiles[i])) // 현재로서는 동영상뿐이라 압축하지 않고 그대로 올림. decoding 비용이 뼈아프다;;
+						break;
+
+					++successCount;
+				}
+
+				//if (successCount < targetCompFiles.GetSize())
+				if (successCount < targetSrcFiles.GetSize())
+				{
+					logMsg += L"any 업로드 실패";
+					break;
+				}
+
+				if (!ftpInterface.UploadFile(infoFilePath))
+				{
+					logMsg += L"any 파일 업로드 실패";
+					break;
+				}
+
+				uploadingResult = 0;
+				logMsg += L"any 업로드 성공!!!" + MkStr::LF;
+			}
+			else
+			{
+				MkPathName destPath = destDirPath;
+				destPath.CheckAndAddBackslash();
+
+				if (destPath.CheckAvailable())
+				{
+					destPath.DeleteCurrentDirectory();
+				}
+				destPath.MakeDirectoryPath();
+
+				logMsg += L"any 복사 시도 >> " + destPath + MkStr::LF;
+
+				// any 파일들 업로드
+				int successCount = 0;
+				//MK_INDEXING_LOOP(targetCompFiles, i)
+				MK_INDEXING_LOOP(targetSrcFiles, i)
+				{
+					if (!targetSrcFiles[i].CopyCurrentFile(destPath + targetSrcFiles[i].GetFileName(), false))
+					//if (!ftpInterface.UploadFile(targetCompFiles[i]))
+					//if (!ftpInterface.UploadFile(targetSrcFiles[i])) // 현재로서는 동영상뿐이라 압축하지 않고 그대로 올림. decoding 비용이 뼈아프다;;
+						break;
+
+					++successCount;
+				}
+
+				//if (successCount < targetCompFiles.GetSize())
+				if (successCount < targetSrcFiles.GetSize())
+				{
+					logMsg += L"any 복사 실패";
+					break;
+				}
+
+				if (!infoFilePath.CopyCurrentFile(destPath + infoFilePath.GetFileName(), false))
+				//if (!ftpInterface.UploadFile(infoFilePath))
+				{
+					logMsg += L"any 파일 복사 실패";
+					break;
+				}
+
+				uploadingResult = 0;
+				logMsg += L"any 복사 성공!!!" + MkStr::LF;
+			}
 		}
 	}
 	while (false);
@@ -817,6 +1074,8 @@ int main()
 	{
 		logMsg += MkStr::LF;
 		wprintf_s(logMsg);
+
+		//std::wcout << logMsg.GetPtr() << std::endl;
 	}
 
 	return uploadingResult;

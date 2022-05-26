@@ -37,15 +37,17 @@ bool MkFtpInterface::Connect(void)
 
 		if (!m_RemotePath.Empty())
 		{
-			if (::FtpSetCurrentDirectory(m_Connect, m_RemotePath.GetPtr()) == FALSE)
+			MkArray<MkStr> dirs;
+			if (m_RemotePath.Tokenize(dirs, L"/") == 0)
+				break;
+			
+			for (unsigned int i = 0; i < dirs.GetSize(); ++i)
 			{
-				if (::FtpCreateDirectory(m_Connect, m_RemotePath.GetPtr()) == TRUE)
+				if (!MoveToChild(dirs[i], true))
 				{
-					if (::FtpSetCurrentDirectory(m_Connect, m_RemotePath.GetPtr()) == FALSE)
-						break;
+					Close();
+					return false;
 				}
-				else
-					break;
 			}
 		}
 

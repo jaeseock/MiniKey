@@ -1267,10 +1267,8 @@ unsigned int MkStr::Insert(unsigned int position, const MkStr& source)
 		if (!source.Empty())
 		{
 			m_Str.Insert(position, source.GetBodyBlockDescriptor());
-			return (position + source.GetSize());
 		}
-		else
-			return size;
+		return (position + source.GetSize());
 	}
 	return MKDEF_ARRAY_ERROR;
 }
