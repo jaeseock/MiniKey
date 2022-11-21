@@ -71,6 +71,7 @@ public:
 
 	// 디렉토리 경로 여부 반환
 	// return : true면 디렉토리, false면 파일 경로
+	// (NOTE) 확장자가 없는 파일 경로도 디렉토리 취급 당하니 주의
 	bool IsDirectoryPath(void) const;
 
 	// 절대경로 여부 반환

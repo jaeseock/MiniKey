@@ -445,24 +445,41 @@ int ReadItemCode(MkExcelFileInterface& excel, const MkPathName& filePath, int c)
 // 엔트리 포인트에서의 TestApplication 실행
 int WINAPI WinMain(HINSTANCE hI, HINSTANCE hPI, LPSTR cmdline, int iWinMode)
 {
-	// http://patch.playwith.co.kr/WebUpdater/RohanNewWebLaunchingUpdater.exe
-
 	MkStr::SetUp();
 	MkPathName::SetUp();
-	
-	MkByteArray tailDataBuffer;
-	bool okok = MkTailData::GetTailData(tailDataBuffer);
-	if (okok)
+
+	const wchar_t* cmdLine = ::GetCommandLine();
+	int lineCount = 0;
+	LPWSTR* cmdLines = ::CommandLineToArgvW(cmdLine, &lineCount);
+
+	//for (int i = 1; i < lineCount; ++i)
 	{
-		MkDataNode tailDataNode;
-		if (tailDataNode.Load(tailDataBuffer))
+		//MkPathName targetFilePath = cmdLines[i];
+		MkPathName targetFilePath = L"D:\\Work\\SealM\\Git\\seal-classic-root\\design\\TW\\REVIEW\\GameData_FormatChange\\CharCreate.xlsm";
+
+		MkExcelFileInterface excel;
+		if (!excel.SetUp(targetFilePath))
 		{
-			tailDataNode.SaveToText(L"__data.txt");
+			::MessageBox(NULL, targetFilePath + MkStr::LF + L"엑셀 파일 열기 오류", L"ERROR", MB_OK);
+			//continue;
+			return 0;
+		}
+
+		for (int currSheetIndex = 2; currSheetIndex < excel.GetSheetSize(); ++currSheetIndex)
+		{
+			MkStr currSheetName = excel.GetSheetName(currSheetIndex);
+			//if (currSheetName.Equals(L"Config"))
+				//continue;
+
+			//if (currSheetName.Equals(L"유효성 검사"))
+				//continue;
+
 		}
 	}
+
+	::MessageBox(NULL, L"컨버팅 완료", L"우하우하후", MB_OK);
+
 	
-	//bool okok = MkTailData::AttachData(L"exe.exe", L"data.mmd", L"newexe.exe");
-	::MessageBox(NULL, MkStr(okok), L"title", MB_OK);
 	
 	/*
 	MkExcelFileInterface excel;

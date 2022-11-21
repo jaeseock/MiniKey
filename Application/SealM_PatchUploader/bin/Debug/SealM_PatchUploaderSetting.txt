@@ -8,15 +8,21 @@ Template "DefaultFTP_Info"
 {
 	str URL = "210.207.251.229";
 	str UserName = "sealmftp";
-	str Password = "Tlfdpa1!";
+	str Password = "Tlfdpa1";
 	bool PassiveMode = false;
 }
 
-Template "DefaultAsset_Info" : "DefaultFTP_Info"
+Template "DefaultAsset_InfoTW" : "DefaultFTP_Info"
 {
 	str RemotePath = "bundle";
 	str LocalHomePath = "D:\ProjectSealM\Bundles";
 	str Catalogs = "catalog_DEV.hash" / "catalog_DEV.json" / "catalog_DEV_info.json";
+}
+
+Template "DefaultAsset_InfoSEA" : "DefaultAsset_InfoTW"
+{
+	str RemotePath = "sea/bundle";
+	str LocalHomePath = "D:\ProjectSealM\Bundles\sea";
 }
 
 Template "DefaultApk_Info" : "DefaultFTP_Info"
@@ -28,13 +34,12 @@ Template "DefaultApk_Info" : "DefaultFTP_Info"
 Template "DefaultExe_Info"
 {
 	str LocalHomePath = "F:\WorkResult\SealM_Windows_Hosting_Resource";
-	str ClientPath = "F:\WorkResult\SealM_Windows_Hosting_Resource\DevWindowLauncher\Client";
 }
 
 Template "DefaultChunk_Info" : "DefaultFTP_Info"
 {
 	str RemotePath = "chunk";
-	str SrcResPath = "D:\ProjectSealM\SealClassic_Client\Assets\Resources";
+	str SrcResPath = "E:\SealM\git\root-aos-dev-tw\client\Assets\Resources";
 	str ChunkFiles =
 		"CommonGameDataTable.bytes" /
 		"Language_Korean.bytes" /
@@ -46,70 +51,289 @@ Template "DefaultChunk_Info" : "DefaultFTP_Info"
 	str InfoFileName = "_Version.mmd";
 }
 
-Template "DefaultSrvList_Info" : "DefaultFTP_Info"
+Template "DefaultAny_InfoTW" : "DefaultFTP_Info"
 {
 	str RemotePath = "chunk";
-	str SrcResPath = "D:\ProjectSealM\SealClassic_Client\Assets\Resources";
-	str ListFileName = "ServerList.json";
+	str SrcResPath = "E:\SealM\git\root-aos-dev-tw\client\Movies\Output";
+	str PreLoadFiles = "PV.mp4" / "H_PV.mp4";
+	str BundleFiles = "Prologue_BGM.mp4" / "H_Prologue_BGM.mp4" /
+		"A.mp4" / "H_A.mp4" / "B.mp4" / "H_B.mp4" / "C.mp4" / "H_C.mp4" / "D.mp4" / "H_D.mp4" / "E.mp4" / "H_E.mp4";
+	str InfoFileName = "_Any.mmd";
 }
 
-Template "DefaultAny_Info" : "DefaultFTP_Info"
+Template "DefaultAny_InfoSEA" : "DefaultAny_InfoTW"
 {
-	str RemotePath = "chunk";
-	str SrcResPath = "D:\Work\Minikey\Application\SealM_PatchUploader\bin\Debug";
-	str PreLoadFiles = "Untitled2.mp4";
-	str BundleFiles = "Prologue_BGM.mp4";
-	str InfoFileName = "_Any.mmd";
+	str RemotePath = "sea/chunk";
+	str SrcResPath = "E:\SealM\git\root-aos-dev-sea\client\Movies\Output";
 }
 
 Node "assets"
 {
-	Node "Dev_Common_Hosting\Android\Group" : "DefaultAsset_Info" {}
-	Node "Dev_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_Info" {}
-	Node "Public_Common_Hosting\Android\Group" : "DefaultAsset_Info" {}
-	Node "Public_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_Info" {}
-	Node "Public_Common_Hosting\iOS\Group" : "DefaultAsset_Info" {}
-	Node "Review_Common_Hosting\Android\Group" : "DefaultAsset_Info" {}
-	Node "Review_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_Info" {}
-	Node "Review_Common_Hosting\iOS\Group" : "DefaultAsset_Info" {}
+	Node "TW"
+	{
+		Node "Dev_Common_Hosting\Android\Group" : "DefaultAsset_InfoTW" {}
+		Node "Dev_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_InfoTW" {}
+		Node "Public_Common_Hosting\Android\Group" : "DefaultAsset_InfoTW" {}
+		Node "QANext_Common_Hosting\Android\Group" : "DefaultAsset_InfoTW" {}
+		Node "Public_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_InfoTW" {}
+		Node "Public_Common_Hosting\iOS\Group" : "DefaultAsset_InfoTW" {}
+	}
 
-	Node "PCPorting_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_Info" {}
+	Node "SEA"
+	{
+		Node "Public_Common_Hosting\Android\Group" : "DefaultAsset_InfoSEA" {}
+		Node "Public_Common_Hosting\StandaloneWindows64\Group" : "DefaultAsset_InfoSEA" {}
+		Node "Public_Common_Hosting\iOS\Group" : "DefaultAsset_InfoSEA" {}
+	}
 }
 
 Node "apk"
 {
-	Node "Dev_Common_Hosting" : "DefaultApk_Info" {}
-	Node "Public_Common_Hosting" : "DefaultApk_Info" {}
-	Node "Review_Common_Hosting" : "DefaultApk_Info" {}
+	Node "TW"
+	{
+		Node "Dev_Common_Hosting" : "DefaultApk_Info" {}
+		Node "Public_Common_Hosting" : "DefaultApk_Info" {}
+		Node "QANext_Common_Hosting" : "DefaultApk_Info" {}
+		Node "Review_Common_Hosting" : "DefaultApk_Info" {}
+
+		Node "Out" : "DefaultApk_Info"
+		{
+			str LocalHomePath = "E:\SealM\AbbPostBuild";
+		}
+
+		Node "OutApk" : "DefaultApk_Info"
+		{
+			str LocalHomePath = "E:\SealM\ApkPostBuild";
+		}
+	}
+
+	Node "SEA"
+	{
+		Node "Dev_Common_Hosting" : "DefaultApk_Info" {}
+		Node "Public_Common_Hosting" : "DefaultApk_Info" {}
+		Node "Review_Common_Hosting" : "DefaultApk_Info" {}
+
+		Node "Out" : "DefaultApk_Info"
+		{
+			str LocalHomePath = "E:\SealM\AbbPostBuild";
+		}
+
+		Node "OutApk" : "DefaultApk_Info"
+		{
+			str LocalHomePath = "E:\SealM\ApkPostBuild";
+		}
+	}
 }
 
 Node "chunk"
 {
-	Node "Dev_Common_Hosting" : "DefaultChunk_Info" {}
-	Node "Public_Common_Hosting" : "DefaultChunk_Info" {}
+	Node "TW"
+	{
+		Node "Dev_Common_Hosting" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "D:\Work\SealM\Git\seal-classic-root\client\Assets\Resources";
+		}
 
-	Node "Test_Common_Hosting" : "DefaultChunk_Info" {}
+		Node "Public_Common_Hosting" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-qa-tw\client\Assets\Resources";
+		}
+
+		Node "QANext_Common_Hosting" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-qanext-tw\client\Assets\Resources";
+		}
+
+		Node "Review_Common_Hosting" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Assets\Resources";
+			str DestDirPath = "E:\SealM\_Temp\chunk\Review_Common_Hosting";
+		}
+
+		Node "Live" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Assets\Resources";
+			str DestDirPath = "E:\SealM\_Temp\chunk\Live";
+		}
+
+		Node "LiveTest" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Assets\Resources";
+			str DestDirPath = "E:\SealM\_Temp\chunk\LiveTest";
+		}
+	}
+
+	Node "SEA"
+	{
+		Node "Dev_Common_Hosting" : "DefaultChunk_Info" {}
+
+		Node "Public_Common_Hosting" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-qa-tw\client\Assets\Resources";
+		}
+
+		Node "Review_Common_Hosting" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Assets\Resources";
+			str DestDirPath = "E:\SealM\_Temp\chunk\Review_Common_Hosting";
+		}
+
+		Node "Live" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Assets\Resources";
+			str DestDirPath = "E:\SealM\_Temp\chunk\Live";
+		}
+
+		Node "LiveTest" : "DefaultChunk_Info"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Assets\Resources";
+			str DestDirPath = "E:\SealM\_Temp\chunk\LiveTest";
+		}
+	}
 }
 
 Node "exe"
 {
-	Node "Dev_Common_Hosting" : "DefaultExe_Info" {}
-	Node "Public_Common_Hosting" : "DefaultExe_Info" {}
-
-	Node "PCPorting_Common_Hosting"
+	Node "TW"
 	{
-		str LocalHomePath = "F:\WorkResult\SealM_Windows_Hosting_Resource";
-		str ClientPath = "F:\WorkResult\SealM_Windows_Hosting_Resource\PCPortingWindowLauncher\Client";
+		Node "Dev_Common_Hosting" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_dev_tw\Client";
+		}
+		Node "Public_Common_Hosting" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_qa_tw\Client";
+		}
+		Node "Review_Common_Hosting" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_review_tw\Client";
+		}
+		Node "Live" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_live_tw\Client";
+		}
+	}
+
+	Node "SEA"
+	{
+		Node "Dev_Common_Hosting" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_dev_tw\Client";
+		}
+		Node "Public_Common_Hosting" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_qa_tw\Client";
+		}
+		Node "Review_Common_Hosting" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_review_tw\Client";
+		}
+		Node "Live" : "DefaultExe_Info"
+		{
+			str ClientPath = "E:\SealM\WindowServices\_live_tw\Client";
+		}
 	}
 }
 
 Node "srvlist"
 {
-	Node "Taiwan" : "DefaultSrvList_Info" {}
+	Node "TW"
+	{
+		Node "Review_Common_Hosting"
+		{
+			str ListFilePath = "E:\SealM\git\root-aos-dev-tw\client\Assets\Resources\ServerList.json";
+			str DestDirPath = "E:\SealM\_Temp\srvlist\Review_Common_Hosting";
+		}
+
+		Node "Live"
+		{
+			str ListFilePath = "E:\SealM\git\root-aos-dev-tw\client\Assets\Resources\ServerList.json";
+			str DestDirPath = "E:\SealM\_Temp\srvlist\Live";
+		}
+
+		Node "LiveTest"
+		{
+			str ListFilePath = "E:\SealM\git\root-aos-dev-tw\client\Assets\Resources\ServerList.json";
+			str DestDirPath = "E:\SealM\_Temp\srvlist\LiveTest";
+		}
+	}
+
+	Node "SEA"
+	{
+		Node "Review_Common_Hosting"
+		{
+			str ListFilePath = "E:\SealM\git\root-aos-dev-tw\client\Assets\Resources\ServerList.json";
+			str DestDirPath = "E:\SealM\_Temp\srvlist\Review_Common_Hosting";
+		}
+
+		Node "Live"
+		{
+			str ListFilePath = "E:\SealM\git\root-aos-dev-tw\client\Assets\Resources\ServerList.json";
+			str DestDirPath = "E:\SealM\_Temp\srvlist\Live";
+		}
+	}
 }
 
 Node "any"
 {
-	Node "Dev_Common_Hosting" : "DefaultAny_Info" {}
-	Node "Public_Common_Hosting" : "DefaultAny_Info" {}
+	Node "TW"
+	{
+		Node "Dev_Common_Hosting" : "DefaultAny_InfoTW" {}
+
+		Node "Public_Common_Hosting" : "DefaultAny_InfoTW"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-qa-tw\client\Movies\Output";
+		}
+
+		Node "QANext_Common_Hosting" : "DefaultAny_InfoTW"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-qanext-tw\client\Movies\Output";
+		}
+
+		Node "Review_Common_Hosting" : "DefaultAny_InfoTW"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Movies\Output";
+			str DestDirPath = "E:\SealM\_Temp\any\Review_Common_Hosting";
+		}
+
+		Node "Live" : "DefaultAny_InfoTW"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Movies\Output";
+			str DestDirPath = "E:\SealM\_Temp\any\Live";
+		}
+
+		Node "LiveTest" : "DefaultAny_InfoTW"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-tw\client\Movies\Output";
+			str DestDirPath = "E:\SealM\_Temp\any\LiveTest";
+		}
+	}
+
+	Node "SEA"
+	{
+		Node "Dev_Common_Hosting" : "DefaultAny_InfoSEA" {}
+
+		Node "Public_Common_Hosting" : "DefaultAny_InfoSEA"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-qa-sea\client\Movies\Output";
+		}
+
+		Node "Review_Common_Hosting" : "DefaultAny_InfoSEA"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-sea\client\Movies\Output";
+			str DestDirPath = "E:\SealM\_Temp\any\Review_Common_Hosting";
+		}
+
+		Node "Live" : "DefaultAny_InfoSEA"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-sea\client\Movies\Output";
+			str DestDirPath = "E:\SealM\_Temp\any\Live";
+		}
+
+		Node "LiveTest" : "DefaultAny_InfoSEA"
+		{
+			str SrcResPath = "E:\SealM\git\root-aos-review-sea\client\Movies\Output";
+			str DestDirPath = "E:\SealM\_Temp\any\LiveTest";
+		}
+	}
 }

@@ -47,6 +47,8 @@ public:
 	bool MoveToChild(const MkStr& name, bool force = false);
 
 	// 현재 경로에 파일 업로드
+	// (NOTE) '+'문자는 표준파일경로에서는 허용되어도 웹경로에서는 인정 안될 수 있으므로 PlusTag로 치환해 업로드
+	// ex> a++.mmd -> a_-plus-__-plus-_.mmd
 	bool UploadFile(const MkPathName& filePath);
 
 	// 현재 경로에 해당 디렉토리내 전체 파일(하위 디렉토리 포함) 업로드
@@ -73,6 +75,7 @@ protected:
 protected:
 
 	MkStr m_URL;
+	int m_Port;
 	MkStr m_RemotePath;
 	MkStr m_UserName;
 	MkStr m_Password;
@@ -80,4 +83,8 @@ protected:
 
 	HINTERNET m_Session;
 	HINTERNET m_Connect;
+
+public:
+
+	static const MkStr PlusTag;
 };

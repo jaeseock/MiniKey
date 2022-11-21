@@ -34,14 +34,17 @@ int main()
 		// argv
 		MkStr buildType; // ex> assets/apk/exe/chunk/srvlist
 
+		// 그룹(국가). TW, SEA, ...
+		MkStr arg2;
+
 		// ex>
 		// assets일 경우 Public_Common_Hosting\Android\Group
 		// apk일 경우 Public_Common_Hosting
 		// chunk일 경우 Public_Common_Hosting
-		MkStr arg2;
+		MkStr arg3;
 
 		// apk일 경우 파일 prefix(SealM_Android_Dev_Debug_)
-		MkStr arg3;
+		MkStr arg4;
 		
 		const wchar_t* cmdLine = ::GetCommandLine();
 		int lineCount = 0;
@@ -53,14 +56,16 @@ int main()
 			case 1: buildType = cmdLines[i]; break;
 			case 2: arg2 = cmdLines[i]; break;
 			case 3: arg3 = cmdLines[i]; break;
+			case 4: arg4 = cmdLines[i]; break;
 			}
 		}
 
 		logMsg += L"buildType : " + buildType + MkStr::LF;
 		logMsg += L"arg2 : " + arg2 + MkStr::LF;
-		if (!arg3.Empty())
+		logMsg += L"arg3 : " + arg3 + MkStr::LF;
+		if (!arg4.Empty())
 		{
-			logMsg += L"arg3 : " + arg3 + MkStr::LF;
+			logMsg += L"arg4 : " + arg4 + MkStr::LF;
 		}
 		logMsg += MkStr::LF;
 
@@ -92,7 +97,14 @@ int main()
 			break;
 		}
 
-		const MkDataNode& targetNode = *typeNode.GetChildNode(arg2);
+		const MkDataNode& groupNode = *typeNode.GetChildNode(arg2);
+		if (!groupNode.ChildExist(arg3))
+		{
+			logMsg += L"SealM_PatchUploaderSetting.txt 설정 파일의 " + arg2 + L" 그룹에 " + arg3 + L" 항목이 없음";
+			break;
+		}
+
+		const MkDataNode& targetNode = *groupNode.GetChildNode(arg3);
 
 		MkStr url, remotePath, userName, password;
 		bool passiveMode;
@@ -170,7 +182,7 @@ int main()
 			logMsg += MkStr::LF;
 
 			// 빌드 결과 경로
-			MkPathName buildResultFullPath = localHomePath + arg2;
+			MkPathName buildResultFullPath = localHomePath + arg3;
 			buildResultFullPath.CheckAndAddBackslash(); // ex> D:\ProjectSealM\Bundles\Public_Common_Hosting\Android\Group\
 
 			// 존재여부 확인
@@ -224,7 +236,7 @@ int main()
 			MkArray<MkStr> targetTokensSeperator;
 			targetTokensSeperator.PushBack(L"\\");
 			targetTokensSeperator.PushBack(L"/");
-			arg2.Tokenize(targetPathTokens, targetTokensSeperator);
+			arg3.Tokenize(targetPathTokens, targetTokensSeperator);
 
 			// ftp 업로드
 			MkFtpInterface ftpInterface;
@@ -289,7 +301,7 @@ int main()
 			logMsg += MkStr::LF;
 
 			// 빌드 결과 경로
-			MkPathName buildResultFullPath = localHomePath + arg2;
+			MkPathName buildResultFullPath = localHomePath + arg3;
 			buildResultFullPath.CheckAndAddBackslash(); // ex> F:\WorkResult\SealM_Android_Hosting_Resource\Public_Common_Hosting\
 
 			// 존재여부 확인
@@ -310,16 +322,16 @@ int main()
 			unsigned __int64 lastestBuildTime = 0;
 			MkArray<unsigned int> lastestIndice;
 
-			arg3.ToLower();
+			arg4.ToLower();
 
 			MK_INDEXING_LOOP(subFiles, i)
 			{
 				MkPathName fileNamePath = subFiles[i].GetString(); // ex> SealM_Android_Dev_Public_Debug_211203_1424.apk
 				fileNamePath.ToLower();
-				if (fileNamePath.CheckPrefix(arg3))
+				if (fileNamePath.CheckPrefix(arg4))
 				{
 					MkStr timePart;
-					fileNamePath.GetSubStr(MkArraySection(arg3.GetSize(), 11), timePart); // 시간 부분만 추출. ex> 211203_1424
+					fileNamePath.GetSubStr(MkArraySection(arg4.GetSize(), 11), timePart); // 시간 부분만 추출. ex> 211203_1424
 					timePart.RemoveKeyword(L"_"); // 숫자파트만 남김. ex> 2112031424
 
 					unsigned __int64 currBuildTime = timePart.ToDoubleUnsignedInteger();
@@ -394,7 +406,7 @@ int main()
 			logMsg += MkStr::LF;
 
 			// 빌드 결과 경로
-			MkPathName buildResultFullPath = localHomePath + arg2;
+			MkPathName buildResultFullPath = localHomePath + arg3;
 			buildResultFullPath.CheckAndAddBackslash(); // ex> F:\WorkResult\SealM_Windows_Hosting_Resource\Public_Common_Hosting\
 
 			// 존재여부 확인
@@ -524,13 +536,14 @@ int main()
 			baseResPath.CheckAndAddBackslash();
 
 			MkDataNode infoNode;
+			MkDataNode& patchInfoNode = *infoNode.CreateChildNode(L"PatchInfo");
 
-			// 키 파일에서 버전 정보를 얻음
+			// 테이블 버전 정보를 얻음
 			{
 				MkPathName targetFilePath = baseResPath + chunkFiles[0];
 				if (!targetFilePath.CheckAvailable())
 				{
-					logMsg += L"기준 파일이 없음 : " + targetFilePath;
+					logMsg += L"테이블 파일이 없음 : " + targetFilePath;
 					break;
 				}
 
@@ -544,7 +557,7 @@ int main()
 
 				if (fileData.GetSize() < sizeof(int))
 				{
-					logMsg += L"정상적인 기준 파일이 아님 : " + targetFilePath;
+					logMsg += L"정상적인 테이블 파일이 아님 : " + targetFilePath;
 					break;
 				}
 
@@ -559,7 +572,7 @@ int main()
 				version.Tokenize(tokens, L".");
 				if (tokens.GetSize() != 2)
 				{
-					logMsg += L"정상적인 기준 파일이 아님 : " + targetFilePath;
+					logMsg += L"정상적인 테이블 파일이 아님 : " + targetFilePath;
 					break;
 				}
 
@@ -567,13 +580,81 @@ int main()
 				verData.PushBack(tokens[0].ToInteger());
 				verData.PushBack(tokens[1].ToInteger());
 
-				if (!infoNode.CreateUnit(L"Version", verData))
+				MkDataNode& targetFileNode = *patchInfoNode.CreateChildNode(chunkFiles[0]);
+				if (!targetFileNode.CreateUnit(L"Version", verData))
 				{
 					logMsg += L"버전 정보 기록 실패";
 					break;
 				}
 
-				logMsg += L"기준 파일 버전 : " + version + MkStr::LF;
+				logMsg += L"테이블 파일 버전(" + chunkFiles[0] + L") : " + version + MkStr::LF;
+				logMsg += MkStr::LF;
+			}
+
+			// 언어 버전 정보를 얻음
+			MK_INDEXING_LOOP(chunkFiles, i)
+			{
+				if (i == 0)
+					continue;
+				
+				MkPathName targetFilePath = baseResPath + chunkFiles[i];
+				if (!targetFilePath.CheckAvailable())
+				{
+					logMsg += L"언어 파일이 없음 : " + targetFilePath;
+					break;
+				}
+
+				MkByteArray fileData;
+				MkInterfaceForFileReading frInterface;
+				if (!frInterface.SetUp(targetFilePath))
+					return false;
+
+				frInterface.Read(fileData, MkArraySection(0));
+				frInterface.Clear();
+
+				BYTE headerSize = 0;
+				memcpy_s(&headerSize, sizeof(BYTE), fileData.GetPtr() + 4, sizeof(BYTE));
+				if (headerSize == 0)
+				{
+					logMsg += L"정상적인 언어 파일이 아님 : " + targetFilePath;
+					continue;
+				}
+
+				BYTE* headerBuffer = new BYTE[headerSize + 1];
+				headerBuffer[headerSize] = NULL;
+				memcpy_s(headerBuffer, sizeof(BYTE) * headerSize, fileData.GetPtr() + 5, sizeof(BYTE) * headerSize);
+
+				MkStr headerStr;
+				headerStr.ImportMultiByteString(std::string(reinterpret_cast<char*>(headerBuffer)));
+				delete[] headerBuffer;
+
+				MkStr version;
+				if (headerStr.GetFirstBlock(0, L"\"Version\":\"", L"\"", version) == MKDEF_ARRAY_ERROR)
+				{
+					logMsg += L"정상적인 언어 파일이 아님 : " + targetFilePath;
+					continue;
+				}
+
+				MkArray<MkStr> tokens;
+				version.Tokenize(tokens, L".");
+				if (tokens.GetSize() != 2)
+				{
+					logMsg += L"정상적인 언어 파일이 아님 : " + targetFilePath;
+					continue;
+				}
+
+				MkArray<int> verData;
+				verData.PushBack(tokens[0].ToInteger());
+				verData.PushBack(tokens[1].ToInteger());
+
+				MkDataNode& targetFileNode = *patchInfoNode.CreateChildNode(chunkFiles[i]);
+				if (!targetFileNode.CreateUnit(L"Version", verData))
+				{
+					logMsg += L"버전 정보 기록 실패";
+					continue;
+				}
+
+				logMsg += L"언어 파일 버전(" + chunkFiles[i] + L") : " + version + MkStr::LF;
 				logMsg += MkStr::LF;
 			}
 
@@ -583,11 +664,12 @@ int main()
 			MK_INDEXING_LOOP(chunkFiles, i)
 			{
 				MkPathName targetFilePath = baseResPath + chunkFiles[i];
-				if (targetFilePath.CheckAvailable())
+				MkDataNode* targetFileNode = patchInfoNode.GetChildNode(chunkFiles[i]);
+				if (targetFilePath.CheckAvailable() && (targetFileNode != NULL))
 				{
 					MkByteArray md5Value;
 					if (targetFilePath.GetMD5Value(md5Value) && // md5 값을 얻고
-						infoNode.CreateUnit(chunkFiles[i], md5Value)) // 노드에 생성
+						targetFileNode->CreateUnit(L"MD5", md5Value)) // 노드에 생성
 					{
 						targetSrcFiles.PushBack(targetFilePath);
 
@@ -656,7 +738,7 @@ int main()
 					break;
 				}
 
-				if (!ftpInterface.MoveToChild(arg2, true))
+				if (!ftpInterface.MoveToChild(arg3, true))
 				{
 					logMsg += L"ftp 탐색 실패";
 					break;
@@ -989,7 +1071,7 @@ int main()
 					break;
 				}
 
-				if (!ftpInterface.MoveToChild(arg2, true))
+				if (!ftpInterface.MoveToChild(arg3, true))
 				{
 					logMsg += L"ftp 탐색 실패";
 					break;

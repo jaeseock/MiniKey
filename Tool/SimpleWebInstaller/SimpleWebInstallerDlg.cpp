@@ -59,6 +59,7 @@ BOOL CSimpleWebInstallerDlg::OnInitDialog()
 	bool useKorean = true;
 	MkStr clientFolderName;
 
+	bool params = false;
 	MkByteArray tailDataBuffer;
 	if (MkTailData::GetTailData(tailDataBuffer))
 	{
@@ -73,10 +74,16 @@ BOOL CSimpleWebInstallerDlg::OnInitDialog()
 			tailDataNode.GetData(L"UseKorean", useKorean, 0);
 			tailDataNode.GetData(L"ClientFolderName", clientFolderName, 0);
 			tailDataNode.GetData(L"DownloadURL", m_PatchURL, 0);
+
+			params = true;
 		}
 	}
 
-	m_PatchURL = L"http://intpatch-sealm.playwith.co.kr/dev_win_full";
+	// for debugging
+	appTitle = L"씰 유니버스(DEV) Web installer";
+	useKorean = true;
+	clientFolderName = L"Playwith\\SealUniverse_DEV";
+	m_PatchURL = L"http://intpatch-sealm.playwith.co.kr/su_dev/full";
 
 	if (clientFolderName.Empty() || m_PatchURL.Empty())
 	{
@@ -97,7 +104,7 @@ BOOL CSimpleWebInstallerDlg::OnInitDialog()
 	while (true)
 	{
 		MkStr selDirMsg = (useKorean) ?
-			(L"게임이 설치될 상위 폴더를 정해주세요.\n선택한 폴더 아래 [" + clientFolderName + L"] 위치에 구성됩니다.") : 
+			(L"게임이 설치될 상위 폴더를 정해주세요.\n폴더 아래 [" + clientFolderName + L"] 위치에 구성됩니다.") : 
 			(L"Please select folder for Tool Client. The folder [" + clientFolderName + L"] will be saved in the folder you select.");
 
 		targetRootPath.Clear();
@@ -130,7 +137,7 @@ BOOL CSimpleWebInstallerDlg::OnInitDialog()
 		}
 	}
 
-	if (!APP_MGR.GetApplication().SetUpFramework(m_hWnd, targetRootPath.GetPtr(), false, false))
+	if (!APP_MGR.GetApplication().SetUpFramework(m_hWnd, targetRootPath.GetPtr(), true, false))
 	{
 		AfxGetMainWnd()->PostMessage(WM_CLOSE);
 		return TRUE;

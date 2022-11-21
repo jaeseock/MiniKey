@@ -8,11 +8,27 @@
 
 #pragma comment (lib, "wininet.lib")
 
+const MkStr MkFtpInterface::PlusTag(L"_-plus-_");
+
 //------------------------------------------------------------------------------------------------//
 
 bool MkFtpInterface::Connect(const MkStr& url, const MkStr& remotePath, const MkStr& userName, const MkStr& password, bool passiveMode)
 {
-	m_URL = url;
+	unsigned int tokenPos = url.GetFirstKeywordPosition(L":");
+	if (tokenPos == MKDEF_ARRAY_ERROR)
+	{
+		m_URL = url;
+		m_Port = INTERNET_DEFAULT_FTP_PORT;
+	}
+	else
+	{
+		url.GetSubStr(MkArraySection(0, tokenPos), m_URL);
+
+		MkStr portStr;
+		url.GetSubStr(MkArraySection(tokenPos + 1), portStr);
+		m_Port = portStr.ToInteger();
+	}
+
 	m_RemotePath = remotePath;
 	m_UserName = userName;
 	m_Password = password;
@@ -31,7 +47,7 @@ bool MkFtpInterface::Connect(void)
 		if (m_Session == NULL)
 			break;
 
-		m_Connect = ::InternetConnect(m_Session, m_URL.GetPtr(), INTERNET_DEFAULT_FTP_PORT, m_UserName.GetPtr(), m_Password.GetPtr(), INTERNET_SERVICE_FTP, (m_PassiveMode) ? INTERNET_FLAG_PASSIVE : 0, 0);
+		m_Connect = ::InternetConnect(m_Session, m_URL.GetPtr(), m_Port, m_UserName.GetPtr(), m_Password.GetPtr(), INTERNET_SERVICE_FTP, (m_PassiveMode) ? INTERNET_FLAG_PASSIVE : 0, 0);
 		if (m_Connect == NULL)
 			break;
 
@@ -125,6 +141,9 @@ bool MkFtpInterface::UploadFile(const MkPathName& filePath)
 		return false;
 
 	MkPathName fileName = fullPath.GetFileName();
+
+	// 파일 경로로는 가능하지만 네트워크 경로로는 사용 불가능한 '+'기호 변조
+	fileName.ReplaceKeyword(L"+", PlusTag);
 
 	// 기존 파일이 존재한다면 삭제
 	DeleteChildFile(fileName);

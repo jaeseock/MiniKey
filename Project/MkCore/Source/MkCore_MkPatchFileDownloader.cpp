@@ -3,6 +3,7 @@
 #include "MkCore_MkDevPanel.h"
 #include "MkCore_MkFileManager.h"
 #include "MkCore_MkTimeManager.h"
+#include "MkCore_MkFtpInterface.h"
 #include "MkCore_MkInterfaceForFileWriting.h"
 #include "MkCore_MkInterfaceForFileReading.h"
 #include "MkCore_MkZipCompressor.h"
@@ -276,8 +277,23 @@ void MkPatchFileDownloader::Update(void)
 				{
 					// url
 					MkPathName relPathInServer, relPathInClient;
-					MkPatchFileGenerator::ConvertFilePathToDownloadable(fileInfo.filePath, relPathInServer); // ex> AAA\\BBB\\abc.mmd -> AAA\\BBB\\abc.mmd.rp
-					relPathInClient = relPathInServer;
+					
+					// 네트워크 불가 키워드가 있으면 교체
+					MkPathName localFileName = fileInfo.filePath.GetFileName(false);
+					if (localFileName.Exist(L"+"))
+					{
+						localFileName.ReplaceKeyword(L"+", MkFtpInterface::PlusTag); // ex> AAA\\BBB\\a++.mmd -> AAA\\BBB\\a_-plus-__-plus-_.mmd
+						MkPathName localRelPath = fileInfo.filePath;
+						localRelPath.ChangeFileName(localFileName);
+						MkPatchFileGenerator::ConvertFilePathToDownloadable(localRelPath, relPathInServer); // ex> AAA\\BBB\\a_-plus-__-plus-_.mmd -> AAA\\BBB\\a_-plus-__-plus-_.mmd.rp
+						MkPatchFileGenerator::ConvertFilePathToDownloadable(fileInfo.filePath, relPathInClient); // ex> AAA\\BBB\\a++.mmd -> AAA\\BBB\\a++.mmd.rp
+					}
+					else
+					{
+						MkPatchFileGenerator::ConvertFilePathToDownloadable(fileInfo.filePath, relPathInServer); // ex> AAA\\BBB\\abc.mmd -> AAA\\BBB\\abc.mmd.rp
+						relPathInClient = relPathInServer;
+					}
+					
 					relPathInServer.ReplaceKeyword(L"\\", L"/"); // ex> AAA/BBB/abc.mmd.rp
 					MkStr urlPath = m_DataRootURL + relPathInServer; // ex> http://210.207.252.151/Test/data/AAA/BBB/abc.mmd.rp
 					MK_DEV_PANEL.MsgToLog(L" ∇ " + relPathInServer);
@@ -658,6 +674,12 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 		MkPathName realPath;
 		realPath.ConvertToRootBasisAbsolutePath(filePath);
 
+		// 패치는 파일만 대상이기에 디렉토리 경로는 없음. 즉 확장자 없는 파일임
+		if (realPath.IsDirectoryPath())
+		{
+			realPath.BackSpace(1); // '\' 제거해 다시 파일 경로로 만듬
+		}
+
 		bool posOnRealPath = true;
 		if (m_UseFileSystem)
 		{
@@ -669,7 +691,15 @@ void MkPatchFileDownloader::_FindFilesToDownload(const MkDataNode& node, const M
 		bool downTheFile = false;
 		if (realFileExist)
 		{
-			downTheFile = (realPath.GetFileSize() != patchOrigSize); // 크기 비교
+			unsigned int realFileSize = 0;
+			MkInterfaceForFileReading frInterface;
+			if (frInterface.SetUp(realPath))
+			{
+				realFileSize = frInterface.GetFileSize();
+				frInterface.Clear();
+			}
+
+			downTheFile = (realFileSize != patchOrigSize); // 크기 비교
 			if (!downTheFile)
 			{
 				unsigned int writtenTimeOfRealFile = realPath.GetWrittenTime();
