@@ -80,10 +80,10 @@ BOOL CSimpleWebInstallerDlg::OnInitDialog()
 	}
 
 	// for debugging
-	appTitle = L"씰 유니버스(DEV) Web installer";
-	useKorean = true;
-	clientFolderName = L"Playwith\\SealUniverse_DEV";
-	m_PatchURL = L"http://intpatch-sealm.playwith.co.kr/su_dev/full";
+	//appTitle = L"씰 유니버스(DEV) Web installer";
+	//useKorean = true;
+	//clientFolderName = L"Playwith\\SealUniverse_DEV";
+	//m_PatchURL = L"http://intpatch-sealm.playwith.co.kr/su_dev/full";
 
 	if (clientFolderName.Empty() || m_PatchURL.Empty())
 	{
