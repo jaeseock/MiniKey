@@ -114,6 +114,12 @@ BOOL CSimpleWebInstallerDlg::OnInitDialog()
 			return TRUE;
 		}
 
+		if (targetRootPath.Exist(MkArraySection(0), L"Program Files"))
+		{
+			int rlt = ::MessageBox(m_hWnd, L"게임은 [Program Files] 폴더 하위에 설치될 수 없습니다.\n경로를 다시 지정해주세요.", appTitle.GetPtr(), MB_OK);
+			continue;
+		}
+
 		targetRootPath += clientFolderName;
 
 		MkStr confirmMsg = (useKorean) ? L"다음 경로에 구성합니다.\n[" : L"Save in folder\n[";

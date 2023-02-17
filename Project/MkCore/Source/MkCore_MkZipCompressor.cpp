@@ -43,8 +43,8 @@ unsigned int MkZipCompressor::Uncompress
 		return 0;
 
 	// compressedSize를 destBufRate배하거나 unsigned int의 최대 수를 버퍼사이즈로 잡음
-	bool onMaxBufferSize = (srcSize >= (0xffffffff / destBufRate));
-	unsigned int bufSize = (onMaxBufferSize) ? 0xffffffff : (srcSize * destBufRate);
+	bool onMaxBufferSize = (srcSize >= (0x40000000 / destBufRate));
+	unsigned int bufSize = (onMaxBufferSize) ? 0x40000000 : (srcSize * destBufRate);
 	uLongf destSize = static_cast<uLongf>(bufSize);
 
 	unsigned char* destArray = new unsigned char[destSize];
